@@ -1,6 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.interfaces;
+package com.github.aakumykov.sync_dir_to_cloud.interfaces;
 
-import com.github.aakumykov.sync_dir_to_cloud.view.domain.entities.SyncTask;
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask;
 
 public interface iSyncTaskStarter {
 

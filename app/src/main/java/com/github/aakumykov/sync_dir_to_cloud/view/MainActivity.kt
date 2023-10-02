@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.view
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.fragments.task_edit.TaskEditFragment
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
     private val DEFAULT_BACK_STACK_NAME = "default_back_stack"
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navigationViewModel: NavigationViewModel
+    private val navigationViewModel: NavigationViewModel by viewModels()
     private lateinit var fragmentManager: androidx.fragment.app.FragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        navigationViewModel = ViewModelProvider(this).get(NavigationViewModel::class.java)
         navigationViewModel.getNavigationTargetEvents().observe(this, this::onNewNavTarget)
 
         fragmentManager = supportFragmentManager

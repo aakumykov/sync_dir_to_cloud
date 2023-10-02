@@ -1,11 +1,11 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.domain.use_cases.sync_task;
+package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task;
 
 import android.util.Log;
 
-import com.github.aakumykov.sync_dir_to_cloud.view.domain.entities.SyncTask;
-import com.github.aakumykov.sync_dir_to_cloud.view.interfaces.iSyncTaskStarter;
-import com.github.aakumykov.sync_dir_to_cloud.view.interfaces.iSyncTaskStopper;
-import com.github.aakumykov.sync_dir_to_cloud.view.interfaces.iSyncTaskUpdater;
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask;
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskStarter;
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskStopper;
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater;
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils;
 
 public class StartStopSyncTaskUseCase {

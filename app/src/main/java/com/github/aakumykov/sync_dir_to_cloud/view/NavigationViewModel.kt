@@ -8,6 +8,10 @@ class NavigationViewModel : ViewModel() {
     private val mNavigationTargetSingleLiveEvent: SingleLiveEvent<NavTarget> =
         SingleLiveEvent()
 
+    init {
+        mNavigationTargetSingleLiveEvent.value = NavStart
+    }
+
     fun getNavigationTargetEvents(): SingleLiveEvent<NavTarget> {
         return mNavigationTargetSingleLiveEvent
     }

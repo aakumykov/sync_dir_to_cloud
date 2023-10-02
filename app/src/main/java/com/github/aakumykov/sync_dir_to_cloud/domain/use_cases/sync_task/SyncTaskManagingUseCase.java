@@ -1,10 +1,10 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.domain.use_cases.sync_task;
+package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task;
 
 import androidx.lifecycle.LiveData;
 
-import com.github.aakumykov.sync_dir_to_cloud.view.domain.entities.SyncTask;
-import com.github.aakumykov.sync_dir_to_cloud.view.interfaces.iSyncTaskManager;
-import com.github.aakumykov.sync_dir_to_cloud.view.interfaces.iSyncTaskUpdater;
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask;
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskManager;
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater;
 
 import java.util.List;
 

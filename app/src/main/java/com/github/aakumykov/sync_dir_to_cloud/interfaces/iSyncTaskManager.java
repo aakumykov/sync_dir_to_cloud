@@ -1,8 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.interfaces;
+package com.github.aakumykov.sync_dir_to_cloud.interfaces;
 
 import androidx.lifecycle.LiveData;
 
-import com.github.aakumykov.sync_dir_to_cloud.view.domain.entities.SyncTask;
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask;
 
 import java.util.List;
 

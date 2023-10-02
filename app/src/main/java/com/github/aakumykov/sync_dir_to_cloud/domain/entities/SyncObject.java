@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.domain.entities;
+package com.github.aakumykov.sync_dir_to_cloud.domain.entities;
 
 public class SyncObject {
 
