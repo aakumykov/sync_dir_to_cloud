@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">sync_dir_to_cloud</string>
+    <string name="description_sync_task_add_button">Добавление задачи по синхронизации</string>
 </resources>

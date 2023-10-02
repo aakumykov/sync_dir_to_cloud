@@ -5,14 +5,18 @@ import com.github.aakumykov.single_live_event.SingleLiveEvent
 
 class NavigationViewModel : ViewModel() {
 
-    private val mNavigationTargetSingleLiveEvent: SingleLiveEvent<NavTarget> =
+    private val navigationTargetSingleLiveEvent: SingleLiveEvent<NavTarget> =
         SingleLiveEvent()
 
     init {
-        mNavigationTargetSingleLiveEvent.value = NavStart
+        navigationTargetSingleLiveEvent.value = NavStart
     }
 
     fun getNavigationTargetEvents(): SingleLiveEvent<NavTarget> {
-        return mNavigationTargetSingleLiveEvent
+        return navigationTargetSingleLiveEvent
+    }
+
+    fun navigateTo(navTarget: NavTarget) {
+        navigationTargetSingleLiveEvent.value = navTarget
     }
 }
