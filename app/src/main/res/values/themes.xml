@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.StartStopTemplate" parent="BasicTheme">
+    <style name="Theme.Sync_dir_to_cloud" parent="BasicTheme">
         <!-- Customize your theme here. -->
     </style>
 </resources>
