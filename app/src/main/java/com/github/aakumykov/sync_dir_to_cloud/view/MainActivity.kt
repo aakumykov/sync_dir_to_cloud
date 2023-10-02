@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     private val DEFAULT_BACK_STACK_NAME = "default_back_stack"
     private lateinit var binding: ActivityMainBinding
     private val navigationViewModel: NavigationViewModel by viewModels()
+    private val pageTitleViewModel: PageTitleViewModel by viewModels()
     private lateinit var fragmentManager: androidx.fragment.app.FragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,10 +22,16 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         navigationViewModel.getNavigationTargetEvents().observe(this, this::onNewNavTarget)
+        pageTitleViewModel.getPageTitle().observe(this, this::onPageTitleChanged)
 
         fragmentManager = supportFragmentManager
+    }
+
+    private fun onPageTitleChanged(title: String) {
+        setTitle(title)
     }
 
     private fun onNewNavTarget(navTarget: NavTarget) {

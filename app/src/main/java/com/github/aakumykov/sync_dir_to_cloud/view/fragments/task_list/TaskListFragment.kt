@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.NavAdd
 import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
 import com.gitlab.aakumykov.simple_list_view_driver.SimpleListViewDriver
 import com.gitlab.aakumykov.simple_list_view_driver.iTitleItem
 
@@ -24,6 +26,7 @@ class TaskListFragment : Fragment() {
 
     private val taskListViewModel: TaskListViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
+    private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private val simpleListViewDriver by lazy {
         SimpleListViewDriver(binding.listView)
@@ -39,6 +42,7 @@ class TaskListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         taskListViewModel.getTaskList().observe(viewLifecycleOwner, this::onListChanged)
+        pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_LIST_title))
     }
 
 

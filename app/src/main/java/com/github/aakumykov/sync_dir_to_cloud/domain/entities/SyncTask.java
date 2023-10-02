@@ -12,10 +12,13 @@ import com.gitlab.aakumykov.simple_list_view_driver.iTitleItem;
 public class SyncTask implements iTitleItem {
 
     @PrimaryKey @NonNull public final String id;
+
     @ColumnInfo(name = "source_type") public final String sourceType;
     @ColumnInfo(name = "target_type") public final String targetType;
+
     @ColumnInfo(name = "source_path") public final String sourcePath;
     @ColumnInfo(name = "target_path") public final String targetPath;
+
     @ColumnInfo(name = "regularity") public final long regularity;
 
     @ColumnInfo(name = "is_progress") public boolean isProgress = false;
