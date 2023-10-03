@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
-import com.github.aakumykov.sync_dir_to_cloud.view.NavAdd
+import com.github.aakumykov.sync_dir_to_cloud.view.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
 import com.gitlab.aakumykov.simple_list_view_driver.SimpleListViewDriver
@@ -34,7 +34,7 @@ class TaskListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTaskListBinding.inflate(inflater, container, false)
-        binding.addButton.setOnClickListener { navigationViewModel.navigateTo(NavAdd) }
+        binding.addButton.setOnClickListener { navigationViewModel.navigateTo(NavTarget.Add) }
         return binding.root
     }
 

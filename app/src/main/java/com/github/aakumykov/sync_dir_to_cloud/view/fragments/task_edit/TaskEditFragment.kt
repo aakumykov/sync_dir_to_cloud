@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
-import com.github.aakumykov.sync_dir_to_cloud.view.NavBack
+import com.github.aakumykov.sync_dir_to_cloud.view.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
 
@@ -38,7 +38,7 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
         }
 
         binding.cancelButton.setOnClickListener {
-            navigationViewModel.navigateTo(NavBack)
+            navigationViewModel.navigateTo(NavTarget.Back)
         }
 
         return binding.root

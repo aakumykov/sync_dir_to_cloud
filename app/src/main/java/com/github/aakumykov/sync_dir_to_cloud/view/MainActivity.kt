@@ -36,9 +36,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun onNewNavTarget(navTarget: NavTarget) {
         when (navTarget) {
-//            is NavStart, NavList -> setFragment(TaskListFragment.create())
-            is NavAdd -> loadFragment(TaskEditFragment.create())
-            is NavEdit -> loadFragment(TaskEditFragment.create(navTarget.id))
+//            is NavTarget.Start, NavTarget.List -> setFragment(TaskListFragment.create())
+            is NavTarget.Add -> loadFragment(TaskEditFragment.create())
+            is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
+            is NavTarget.Back -> returnToPrevFragment()
             else -> setFragment(TaskListFragment.create())
         }
     }
@@ -59,5 +60,9 @@ class MainActivity : AppCompatActivity() {
             .setReorderingAllowed(true)
             .replace(R.id.fragmentContainerView, fragment)
             .commit()
+    }
+
+    private fun returnToPrevFragment() {
+        fragmentManager.popBackStack()
     }
 }

@@ -9,7 +9,7 @@ class NavigationViewModel : ViewModel() {
         SingleLiveEvent()
 
     init {
-        navigationTargetSingleLiveEvent.value = NavStart
+        navigationTargetSingleLiveEvent.value = NavTarget.Start
     }
 
     fun getNavigationTargetEvents(): SingleLiveEvent<NavTarget> {
