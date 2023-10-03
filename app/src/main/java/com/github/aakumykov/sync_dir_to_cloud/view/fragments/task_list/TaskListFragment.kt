@@ -37,18 +37,31 @@ class TaskListFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentTaskListBinding.inflate(inflater, container, false)
-
+        prepareLayout(inflater, container)
         prepareRecyclerView()
-
-        binding.addButton.setOnClickListener { navigationViewModel.navigateTo(NavTarget.Add) }
-
+        prepareButtons()
+        prepareViewModels()
         return binding.root
     }
 
+
+    private fun prepareViewModels() {
+        taskListViewModel.getTaskList().observe(viewLifecycleOwner, this::onListChanged)
+    }
+
+
+    private fun prepareLayout(inflater: LayoutInflater, container: ViewGroup?) {
+        _binding = FragmentTaskListBinding.inflate(inflater, container, false)
+    }
+
+
+    private fun prepareButtons() {
+        binding.addButton.setOnClickListener { onAddClicked() }
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        taskListViewModel.getTaskList().observe(viewLifecycleOwner, this::onListChanged)
         pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_LIST_title))
     }
 
@@ -68,6 +81,11 @@ class TaskListFragment : Fragment() {
 
     private fun onListChanged(list: List<SyncTask>) {
         taskListAdapter.setList(list)
+    }
+
+
+    private fun onAddClicked() {
+        navigationViewModel.navigateTo(NavTarget.Add)
     }
 }
 
