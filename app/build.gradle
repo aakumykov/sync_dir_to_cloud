@@ -69,4 +69,6 @@ dependencies {
     implementation 'com.github.aakumykov:simple_list_view_driver:v0.0.6-alpha'
 
     implementation 'com.github.aakumykov:exception_utils:0.4'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 }

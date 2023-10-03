@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
@@ -24,17 +25,22 @@ class TaskListFragment : Fragment() {
     private var _binding: FragmentTaskListBinding? = null
     private val binding get() = _binding!!
 
-    private val taskListViewModel: TaskListViewModel by viewModels()
-    private val navigationViewModel: NavigationViewModel by activityViewModels()
-    private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
-
     private val simpleListViewDriver by lazy {
         SimpleListViewDriver(binding.listView)
     }
 
+    private val taskListViewModel: TaskListViewModel by viewModels()
+    private val navigationViewModel: NavigationViewModel by activityViewModels()
+    private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTaskListBinding.inflate(inflater, container, false)
         binding.addButton.setOnClickListener { navigationViewModel.navigateTo(NavTarget.Add) }
+        simpleListViewDriver.setItemClickListener { androidx.core.util.Consumer<iTitleItem> {
+            val syncTask: SyncTask = it as SyncTask
+            navigationViewModel.navigateTo(NavTarget.Edit(syncTask.id))
+        } }
         return binding.root
     }
 
