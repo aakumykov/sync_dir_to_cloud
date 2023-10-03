@@ -26,7 +26,7 @@ class TaskListFragment : Fragment() {
     private var _binding: FragmentTaskListBinding? = null
     private val binding get() = _binding!!
 
-    private val taskListAdapter: TaskListAdapter by lazy { TaskListAdapter() }
+    private lateinit var taskListAdapter: TaskListAdapter
 
     private val taskListViewModel: TaskListViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
@@ -44,6 +44,7 @@ class TaskListFragment : Fragment() {
     }
 
     private fun prepareRecyclerView() {
+        taskListAdapter = TaskListAdapter()
         binding.recyclerView.adapter = taskListAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
@@ -52,7 +53,7 @@ class TaskListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        taskListViewModel.getTaskList().observe(viewLifecycleOwner, this::onListChanged)
+//        taskListViewModel.getTaskList().observe(viewLifecycleOwner, taskListObserver)
         pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_LIST_title))
     }
 
