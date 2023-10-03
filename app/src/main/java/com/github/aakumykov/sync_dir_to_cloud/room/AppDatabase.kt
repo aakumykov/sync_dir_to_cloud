@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
+
 @Database(
     entities = [ SyncTask::class ],
     version = 1,

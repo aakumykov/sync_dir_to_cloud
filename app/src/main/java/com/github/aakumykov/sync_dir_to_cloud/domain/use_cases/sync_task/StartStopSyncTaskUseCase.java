@@ -26,16 +26,16 @@ public class StartStopSyncTaskUseCase {
         mSyncTaskStarter.startSyncTask(syncTask, new iSyncTaskStarter.Callbacks() {
             @Override
             public void onSyncTaskStarted() {
-                syncTask.setIsProgress(true);
-                syncTask.setProgressError(null);
+//                syncTask.setIsProgress(true);
+//                syncTask.setProgressError(null);
                 mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
             public void onSyncTaskStartingError(Exception e) {
-                syncTask.setIsProgress(false);
-                syncTask.setIsSuccess(false);
-                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
+//                syncTask.setIsProgress(false);
+//                syncTask.setIsSuccess(false);
+//                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
                 mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }
@@ -47,17 +47,17 @@ public class StartStopSyncTaskUseCase {
         mSyncTaskStopper.stopSyncTask(syncTask, new iSyncTaskStopper.Callbacks() {
             @Override
             public void onSyncTaskStopped() {
-                syncTask.setIsProgress(false);
-                syncTask.setIsSuccess(false);
-                syncTask.setProgressError(null);
+//                syncTask.setIsProgress(false);
+//                syncTask.setIsSuccess(false);
+//                syncTask.setProgressError(null);
                 mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
             public void onSyncTaskStoppingError(Exception e) {
-                syncTask.setIsProgress(false);
-                syncTask.setIsSuccess(false);
-                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
+//                syncTask.setIsProgress(false);
+//                syncTask.setIsSuccess(false);
+//                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
                 mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }

@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+
 
 class TaskListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

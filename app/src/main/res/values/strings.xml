@@ -12,4 +12,5 @@
     <string name="BUTTON_task_edit_save">Сохранить</string>
     <string name="description_sync_task_play_button">Запустить задачу</string>
     <string name="description_sync_task_edit_button">Редактировать задачу</string>
+    <string name="hint_sync_task_regularity">Периодичность</string>
 </resources>

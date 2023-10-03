@@ -15,11 +15,12 @@
             android:id="@+id/sourcePathInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            tools:text="@string/tools_source_path"
-            android:importantForAutofill="no"
+            android:layout_weight="1"
             android:hint="@string/hint_source_path_input"
-            android:layout_weight="1"/>
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            tools:text="@string/tools_source_path" />
 
         <Button
             android:id="@+id/selectSourcePathButton"
@@ -38,12 +39,13 @@
             android:id="@+id/targetPathInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPersonName"
-            tools:text="@string/tools_target_path"
-            android:importantForAutofill="no"
             android:hint="@string/hint_target_path_input"
-            android:layout_weight="1"/>
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            tools:text="@string/tools_target_path" />
 
         <Button
             android:id="@+id/selectTargetPathButton"
