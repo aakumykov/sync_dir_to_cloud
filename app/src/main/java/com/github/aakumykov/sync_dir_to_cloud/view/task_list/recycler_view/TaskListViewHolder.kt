@@ -22,6 +22,6 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     fun fill(syncTask: SyncTask) {
         currentTask = syncTask
-        titleView.text = currentTask.id
+        titleView.text = currentTask.getTitle()
     }
 }

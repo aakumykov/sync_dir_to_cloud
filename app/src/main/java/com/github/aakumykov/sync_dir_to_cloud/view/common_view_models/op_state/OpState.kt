@@ -4,7 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
 
 sealed class OpState {
     object Idle: OpState()
-    object Success : OpState()
+    class Success(val textMessage: TextMessage) : OpState()
     class Busy(val textMessage: TextMessage): OpState()
     class Error(val errorMessage: TextMessage): OpState()
 }

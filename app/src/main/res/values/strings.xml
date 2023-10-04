@@ -15,4 +15,6 @@
     <string name="hint_sync_task_regularity">Периодичность</string>
     <string name="creating_new_task">Создаём новое задание</string>
     <string name="sync_task_created">Задача добавлена</string>
+    <string name="updating_task">Обновляем задачу</string>
+    <string name="sync_task_updated">Задача обновлена</string>
 </resources>

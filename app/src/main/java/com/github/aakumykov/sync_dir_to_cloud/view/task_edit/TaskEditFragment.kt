@@ -69,14 +69,14 @@ class TaskEditFragment : Fragment() {
         when (opState) {
             is OpState.Idle -> showIdleOpState()
             is OpState.Busy -> showBusyOpState(opState)
-            is OpState.Success -> finishWork()
+            is OpState.Success -> finishWork(opState)
             is OpState.Error -> showErrorOpState(opState)
         }
     }
 
 
-    private fun finishWork() {
-        Toast.makeText(requireContext(), getString(R.string.sync_task_created), Toast.LENGTH_SHORT).show()
+    private fun finishWork(successOpState: OpState.Success) {
+        Toast.makeText(requireContext(), successOpState.textMessage.get(requireContext()), Toast.LENGTH_SHORT).show()
         navigationViewModel.navigateBack()
     }
 

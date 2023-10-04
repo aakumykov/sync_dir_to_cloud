@@ -26,9 +26,9 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
 
     fun loadTask(id: String) {
         viewModelScope.launch {
-            val syncTask = syncTaskManagingUseCase.getSyncTask(id)
-            if (null != syncTask)
-                currentTaskMutableLiveData.postValue(syncTask)
+            currentTask = syncTaskManagingUseCase.getSyncTask(id)
+            if (null != currentTask)
+                currentTaskMutableLiveData.postValue(currentTask!!)
         }
     }
 
@@ -41,7 +41,7 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
         if (null == currentTask)
             createNewTask(syncTaskBase)
         else
-            updateExistingTask(syncTaskBase)
+            updateExistingTask(currentTask!!, syncTaskBase)
     }
 
     private fun createNewTask(syncTaskBase: SyncTaskBase) {
@@ -50,15 +50,26 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
 
         setOpState(OpState.Busy(TextMessage(R.string.creating_new_task)))
 
+        // TODO: переместить диспетчер в репозиторий
         viewModelScope.launch(Dispatchers.IO) {
             syncTaskManagingUseCase.addSyncTask(syncTask)
             delay(1000)
         }
 
-        setOpState(OpState.Success)
+        setOpState(OpState.Success(TextMessage(R.string.sync_task_created)))
     }
 
-    private fun updateExistingTask(syncTaskBase: SyncTaskBase) {
-        TODO("Not yet implemented")
+    private fun updateExistingTask(currentTask: SyncTask, newSyncTaskBase: SyncTaskBase) {
+
+        val updatedTask = currentTask.updateValues(newSyncTaskBase)
+
+        setOpState(OpState.Busy(TextMessage(R.string.updating_task)))
+
+        // TODO: переместить диспетчер в репозиторий
+        viewModelScope.launch(Dispatchers.IO) {
+            syncTaskManagingUseCase.updateSyncTask(updatedTask)
+        }
+
+        setOpState(OpState.Success(TextMessage(R.string.sync_task_updated)))
     }
 }
