@@ -7,15 +7,21 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 
-class TaskListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TaskListViewHolder(private val itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
 
-    private val titleView: TextView
+    private val titleView: TextView = itemView.findViewById(R.id.titleView)
+    private val editButton: View = itemView.findViewById(R.id.editButton)
+    private val runButton: View = itemView.findViewById(R.id.runButton)
+
+    private lateinit var currentTask: SyncTask
 
     init {
-        titleView = itemView.findViewById(R.id.titleView)
+        editButton.setOnClickListener { itemClickCallback.onEditItemClicked(currentTask.id) }
+        runButton.setOnClickListener { itemClickCallback.onRunItemClicked(currentTask.id) }
     }
 
     fun fill(syncTask: SyncTask) {
-        titleView.text = syncTask.id
+        currentTask = syncTask
+        titleView.text = currentTask.id
     }
 }

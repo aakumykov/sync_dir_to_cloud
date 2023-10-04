@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 
-class TaskListAdapter : RecyclerView.Adapter<TaskListViewHolder>() {
+class TaskListAdapter(private val itemClickCallback: ItemClickCallback) : RecyclerView.Adapter<TaskListViewHolder>() {
 
     private val list: MutableList<SyncTask> = mutableListOf()
 
@@ -19,7 +19,7 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.task_list_item, parent,false)
-        return TaskListViewHolder(view)
+        return TaskListViewHolder(view, itemClickCallback)
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {

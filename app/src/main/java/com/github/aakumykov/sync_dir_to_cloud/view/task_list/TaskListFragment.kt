@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -16,10 +17,11 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import kotlinx.coroutines.launch
 
-class TaskListFragment : Fragment() {
+class TaskListFragment : Fragment(), ItemClickCallback {
 
     companion object {
         fun create() : TaskListFragment = TaskListFragment()
@@ -30,7 +32,7 @@ class TaskListFragment : Fragment() {
     private val binding get() = _binding!!
 
     // RecyclerView adapter
-    private val taskListAdapter: TaskListAdapter by lazy { TaskListAdapter() }
+    private val taskListAdapter: TaskListAdapter by lazy { TaskListAdapter(this) }
 
     // ViewModels
     private val taskListViewModel: TaskListViewModel by viewModels()
@@ -90,6 +92,23 @@ class TaskListFragment : Fragment() {
 
     private fun onAddClicked() {
         navigationViewModel.navigateTo(NavTarget.Add)
+    }
+
+
+    override fun onEditItemClicked(taskId: String) {
+        navigationViewModel.navigateTo(NavTarget.Edit(taskId))
+    }
+
+    override fun onRunItemClicked(taskId: String) {
+        Toast.makeText(requireContext(), "Не реализовано", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDeleteItemClicked(taskId: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onItemInfoClicked(taskId: String) {
+        TODO("Not yet implemented")
     }
 }
 

@@ -25,7 +25,7 @@
         android:contentDescription="@string/description_sync_task_edit_button" />
 
     <ImageButton
-        android:id="@+id/playButton"
+        android:id="@+id/runButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0"
