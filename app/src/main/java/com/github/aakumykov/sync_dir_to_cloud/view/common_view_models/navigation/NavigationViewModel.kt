@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view
+package com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 
 import androidx.lifecycle.ViewModel
 import com.github.aakumykov.single_live_event.SingleLiveEvent

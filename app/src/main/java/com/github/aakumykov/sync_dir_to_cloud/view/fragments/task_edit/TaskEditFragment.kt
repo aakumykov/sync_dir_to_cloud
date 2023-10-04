@@ -12,12 +12,11 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
-
-import com.github.aakumykov.sync_dir_to_cloud.view.NavTarget
-import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.TextMessage
-import com.github.aakumykov.sync_dir_to_cloud.view.fragments.op_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
 
 class TaskEditFragment constructor(val id: String?) : Fragment() {
 

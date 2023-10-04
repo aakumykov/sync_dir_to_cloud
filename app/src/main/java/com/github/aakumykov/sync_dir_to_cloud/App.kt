@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.github.aakumykov.sync_dir_to_cloud.room.AppDatabase
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 
 class App : Application() {
 

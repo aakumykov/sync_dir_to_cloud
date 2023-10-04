@@ -1,10 +1,10 @@
-package com.github.aakumykov.sync_dir_to_cloud.repository.sync_task
+package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskManager
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.sync_task.data_sources.SyncTaskLocalDataSource
+import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 
 class SyncTaskRepository(private val mSyncTaskLocalDataSource: SyncTaskLocalDataSource) :
     iSyncTaskManager, iSyncTaskUpdater {

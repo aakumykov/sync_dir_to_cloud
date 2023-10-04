@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.view.NavTarget
-import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.fragments.task_list.recycler_view.TaskListAdapter
 import kotlinx.coroutines.launch
 

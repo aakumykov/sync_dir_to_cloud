@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view
+package com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 
 sealed class NavTarget {
     object Start : NavTarget()

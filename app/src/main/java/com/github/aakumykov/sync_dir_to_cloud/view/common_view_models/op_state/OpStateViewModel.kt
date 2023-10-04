@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.fragments.op_state
+package com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

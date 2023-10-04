@@ -1,8 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud.repository.sync_task.data_sources
+package com.github.aakumykov.sync_dir_to_cloud.repository.data_sources
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.room.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
