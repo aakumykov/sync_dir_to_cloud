@@ -4,9 +4,12 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
+import com.github.aakumykov.sync_dir_to_cloud.view.TextMessage
 import com.github.aakumykov.sync_dir_to_cloud.view.fragments.TaskManagingViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.fragments.operation_state.OpState
 import kotlinx.coroutines.launch
 
 class TaskEditViewModel(application: Application) : TaskManagingViewModel(application) {
@@ -22,7 +25,8 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
     fun loadTask(id: String) {
         viewModelScope.launch {
             val syncTask = syncTaskManagingUseCase.getSyncTask(id)
-            currentTaskMutableLiveData.postValue(syncTask)
+            if (null != syncTask)
+                currentTaskMutableLiveData.postValue(syncTask)
         }
     }
 
@@ -30,7 +34,8 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
         return currentTaskMutableLiveData
     }
 
-    fun onSaveButtonClicked(syncTaskBase: SyncTaskBase) {
+    fun createOrSaveSyncTask(syncTaskBase: SyncTaskBase) {
+        // FIXME: загрузка currentTask происходит асинхронно, это условие ненадёжно
         if (null == currentTask)
             createNewTask(syncTaskBase)
         else
@@ -38,7 +43,9 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
     }
 
     private fun createNewTask(syncTaskBase: SyncTaskBase) {
-        TODO("Not yet implemented")
+        val syncTask = SyncTask(syncTaskBase)
+        setOpState(OpState.Busy(TextMessage(R.string.creating_new_task)))
+        syncTaskManagingUseCase.addSyncTask(syncTask)
     }
 
     private fun updateExistingTask(syncTaskBase: SyncTaskBase) {

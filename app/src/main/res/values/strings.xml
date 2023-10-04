@@ -13,4 +13,5 @@
     <string name="description_sync_task_play_button">Запустить задачу</string>
     <string name="description_sync_task_edit_button">Редактировать задачу</string>
     <string name="hint_sync_task_regularity">Периодичность</string>
+    <string name="creating_new_task">Создаём новое задание</string>
 </resources>

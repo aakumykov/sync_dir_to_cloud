@@ -7,13 +7,20 @@ import com.github.aakumykov.sync_dir_to_cloud.room.AppDatabase
 
 class App : Application() {
 
-    val appDatabase by lazy {
-        prepareRoomDatabase(this)
-    }
+    companion object {
 
-    private fun prepareRoomDatabase(appContext: Context): AppDatabase {
-        return Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
-            .fallbackToDestructiveMigration()
-            .build()
+        private var _appDatabase: AppDatabase? = null
+
+        private fun prepareRoomDatabase(appContext: Context) {
+            _appDatabase = Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
+                .fallbackToDestructiveMigration()
+                .build()
+        }
+
+        fun getAppDatabase(context: Context) : AppDatabase {
+            if (null == _appDatabase)
+                prepareRoomDatabase(context)
+            return _appDatabase!!
+        }
     }
 }
