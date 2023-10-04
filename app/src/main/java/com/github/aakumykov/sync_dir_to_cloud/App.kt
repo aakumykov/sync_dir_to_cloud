@@ -16,17 +16,4 @@ class App : Application() {
             .fallbackToDestructiveMigration()
             .build()
     }
-
-    /*companion object {
-
-        fun getAppDatabase(appContext: Context): AppDatabase {
-            if (null == appDatabase) {
-                appDatabase = prepareRoomDatabase(appContext)
-                return appDatabase
-            }
-            return appDatabase
-        }
-
-
-    }*/
 }

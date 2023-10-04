@@ -4,11 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
-@Entity
+@Entity(tableName = "sync_tasks")
 class SyncTask : SyncTaskBase {
-
-    @PrimaryKey
-    val id: String
 
     constructor(syncTaskBase: SyncTaskBase) : super(syncTaskBase.sourcePath, syncTaskBase.targetPath) {
         id = UUID.randomUUID().toString()
@@ -17,4 +14,6 @@ class SyncTask : SyncTaskBase {
     constructor(id: String, sourcePath: String, targetPath: String) : super(sourcePath, targetPath) {
         this.id = id
     }
+
+    @PrimaryKey val id: String
 }

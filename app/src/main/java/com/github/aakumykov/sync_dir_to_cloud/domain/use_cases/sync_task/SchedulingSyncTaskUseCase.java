@@ -22,15 +22,15 @@ public class SchedulingSyncTaskUseCase {
         mSyncTaskScheduler.scheduleSyncTask(syncTask, new iSyncTaskScheduler.ScheduleCallbacks() {
             @Override
             public void onSyncTaskScheduleSuccess() {
-                syncTask.setScheduled(true);
-                syncTask.setSchedulingError(null);
+//                syncTask.setScheduled(true);
+//                syncTask.setSchedulingError(null);
                 mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
             public void onSyncTaskScheduleError(Exception e) {
-                syncTask.setScheduled(false);
-                syncTask.setSchedulingError(ExceptionUtils.getErrorMessage(e));
+//                syncTask.setScheduled(false);
+//                syncTask.setSchedulingError(ExceptionUtils.getErrorMessage(e));
                 mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }
@@ -42,15 +42,15 @@ public class SchedulingSyncTaskUseCase {
         mSyncTaskScheduler.unScheduleSyncTask(syncTask, new iSyncTaskScheduler.UnScheduleCallbacks() {
             @Override
             public void onSyncTaskUnScheduleSuccess() {
-                syncTask.setScheduled(false);
-                syncTask.setSchedulingError(null);
+//                syncTask.setScheduled(false);
+//                syncTask.setSchedulingError(null);
                 mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
             public void onSyncTaskUnScheduleError(Exception e) {
-                syncTask.setScheduled(true);
-                syncTask.setSchedulingError(ExceptionUtils.getErrorMessage(e));
+//                syncTask.setScheduled(true);
+//                syncTask.setSchedulingError(ExceptionUtils.getErrorMessage(e));
                 mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }
