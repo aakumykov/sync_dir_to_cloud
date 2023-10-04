@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
 import com.github.aakumykov.sync_dir_to_cloud.view.TextMessage
 import com.github.aakumykov.sync_dir_to_cloud.view.fragments.TaskManagingViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.fragments.operation_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.fragments.op_state.OpState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

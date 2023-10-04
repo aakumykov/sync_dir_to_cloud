@@ -7,9 +7,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskManager
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_task.SyncTaskRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_task.data_sources.SyncTaskLocalDataSource
-import com.github.aakumykov.sync_dir_to_cloud.view.fragments.operation_state.OperationStateViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.fragments.op_state.OpStateViewModel
 
-abstract class TaskManagingViewModel(application: Application) : OperationStateViewModel(application) {
+abstract class TaskManagingViewModel(application: Application) : OpStateViewModel(application) {
 
     private var _syncTaskManagingUseCase: SyncTaskManagingUseCase
     protected val syncTaskManagingUseCase get() = _syncTaskManagingUseCase

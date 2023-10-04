@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.TextMessage
-import com.github.aakumykov.sync_dir_to_cloud.view.fragments.operation_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.fragments.op_state.OpState
 
 class TaskEditFragment constructor(val id: String?) : Fragment() {
 
@@ -48,13 +48,13 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
         }
 
         taskEditViewModel.getCurrentTask().observe(viewLifecycleOwner, this::onCurrentTaskChanged)
-        taskEditViewModel.getOperationState().observe(viewLifecycleOwner, this::onOperationStateChanged)
+        taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
 
         return binding.root
     }
 
 
-    private fun onOperationStateChanged(opState: OpState) {
+    private fun onOpStateChanged(opState: OpState) {
         when (opState) {
             is OpState.Idle -> showIdleOpState()
             is OpState.Busy -> showBusyOpState(opState)

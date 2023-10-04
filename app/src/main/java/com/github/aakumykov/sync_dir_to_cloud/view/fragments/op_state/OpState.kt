@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.fragments.operation_state
+package com.github.aakumykov.sync_dir_to_cloud.view.fragments.op_state
 
 import com.github.aakumykov.sync_dir_to_cloud.view.TextMessage
 
