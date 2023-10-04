@@ -5,5 +5,5 @@ sealed class NavTarget {
     object Back : NavTarget()
     object List : NavTarget()
     object Add : NavTarget()
-    data class Edit(val id: String?) : NavTarget()
+    data class Edit(val id: String) : NavTarget()
 }

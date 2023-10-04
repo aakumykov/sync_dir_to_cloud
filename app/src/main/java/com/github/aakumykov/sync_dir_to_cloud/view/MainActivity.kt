@@ -14,7 +14,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private val DEFAULT_BACK_STACK_NAME = "default_back_stack"
     private lateinit var binding: ActivityMainBinding
     private val navigationViewModel: NavigationViewModel by viewModels()
     private val pageTitleViewModel: PageTitleViewModel by viewModels()
@@ -67,5 +66,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun returnToPrevFragment() {
         fragmentManager.popBackStack()
+    }
+
+    companion object {
+        private const val DEFAULT_BACK_STACK_NAME = "default_back_stack"
     }
 }

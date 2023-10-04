@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -18,20 +19,30 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
 
-class TaskEditFragment constructor(val id: String?) : Fragment() {
-
-    constructor() : this(null)
+class TaskEditFragment : Fragment() {
 
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
+
     private val taskEditViewModel: TaskEditViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        prepareLayout(inflater, container)
+        prepareButtons()
+        prepareViewModels()
+        return binding.root
+    }
 
+
+    private fun prepareLayout(inflater: LayoutInflater, container: ViewGroup?) {
         _binding = FragmentTaskEditBinding.inflate(inflater, container, false)
+    }
+
+
+    private fun prepareButtons() {
 
         binding.saveButton.setOnClickListener {
             taskEditViewModel.createOrSaveSyncTask(
@@ -45,11 +56,12 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
         binding.cancelButton.setOnClickListener {
             navigationViewModel.navigateTo(NavTarget.Back)
         }
+    }
 
+
+    private fun prepareViewModels() {
         taskEditViewModel.getCurrentTask().observe(viewLifecycleOwner, this::onCurrentTaskChanged)
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
-
-        return binding.root
     }
 
 
@@ -61,6 +73,44 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
             is OpState.Error -> showErrorOpState(opState)
         }
     }
+
+
+    private fun finishWork() {
+        Toast.makeText(requireContext(), getString(R.string.sync_task_created), Toast.LENGTH_SHORT).show()
+        navigationViewModel.navigateBack()
+    }
+
+
+    private fun onCurrentTaskChanged(syncTask: SyncTask) {
+        fillForm(syncTask)
+    }
+
+
+    private fun fillForm(syncTask: SyncTask) {
+        binding.sourcePathInput.setText(syncTask.sourcePath)
+        binding.targetPathInput.setText(syncTask.targetPath)
+//        binding.regularityInput.setText(syncTask.regularity.toString())
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val taskId: String? = arguments?.getString(TASK_ID)
+
+        pageTitleViewModel.setPageTitle(taskId ?: getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
+
+        // TODO: преобразовать в один метод "prepare"
+        if (null == taskId)
+            taskEditViewModel.prepareForNewTask()
+        else
+            taskEditViewModel.loadTask(taskId)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     private fun showIdleOpState() {
         hideProgressBar()
@@ -81,40 +131,6 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
         hideProgressMessage()
         enableForm()
         showErrorMessage(opState.errorMessage)
-    }
-
-    private fun finishWork() {
-        Toast.makeText(requireContext(), getString(R.string.sync_task_created), Toast.LENGTH_SHORT).show()
-        navigationViewModel.navigateBack()
-    }
-
-
-
-    private fun onCurrentTaskChanged(syncTask: SyncTask) {
-        fillForm(syncTask)
-    }
-
-    private fun fillForm(syncTask: SyncTask) {
-        binding.sourcePathInput.setText(syncTask.sourcePath)
-        binding.targetPathInput.setText(syncTask.targetPath)
-//        binding.regularityInput.setText(syncTask.regularity.toString())
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        pageTitleViewModel.setPageTitle(id ?: getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
-
-        // TODO: преобразовать в один метод "prepare"
-        if (null == id)
-            taskEditViewModel.prepareForNewTask()
-        else
-            taskEditViewModel.loadTask(id)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
 
@@ -170,7 +186,17 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
 
 
     companion object {
-        fun create(id: String?) : TaskEditFragment = TaskEditFragment(id)
-        fun create() : TaskEditFragment = TaskEditFragment()
+
+        private const val TASK_ID = "TASK_ID"
+
+        fun create(): TaskEditFragment =
+            createFragment(null)
+
+        fun create(taskId: String): TaskEditFragment =
+            createFragment(taskId)
+
+        private fun createFragment(taskId: String?) = TaskEditFragment().apply {
+                arguments = bundleOf(TASK_ID to taskId)
+        }
     }
 }
