@@ -28,7 +28,7 @@ public class StartStopSyncTaskUseCase {
             public void onSyncTaskStarted() {
 //                syncTask.setIsProgress(true);
 //                syncTask.setProgressError(null);
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
@@ -36,7 +36,7 @@ public class StartStopSyncTaskUseCase {
 //                syncTask.setIsProgress(false);
 //                syncTask.setIsSuccess(false);
 //                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }
         });
@@ -50,7 +50,7 @@ public class StartStopSyncTaskUseCase {
 //                syncTask.setIsProgress(false);
 //                syncTask.setIsSuccess(false);
 //                syncTask.setProgressError(null);
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
@@ -58,7 +58,7 @@ public class StartStopSyncTaskUseCase {
 //                syncTask.setIsProgress(false);
 //                syncTask.setIsSuccess(false);
 //                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }
         });

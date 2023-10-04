@@ -10,27 +10,27 @@ class SyncTaskManagingUseCase(
     private val mISyncTaskUpdater: iSyncTaskUpdater
 ) {
 
-    fun listSyncTasks(): LiveData<List<SyncTask>> {
+    suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return mSyncTaskManager.listSyncTasks()
     }
 
 
-    fun addSyncTask(syncTask: SyncTask?) {
+    suspend fun addSyncTask(syncTask: SyncTask) {
         mSyncTaskManager.createSyncTask(syncTask)
     }
 
 
-    fun updateSyncTask(syncTask: SyncTask?) {
+    suspend fun updateSyncTask(syncTask: SyncTask) {
         mISyncTaskUpdater.updateSyncTask(syncTask)
     }
 
 
-    fun getSyncTask(id: String?): SyncTask? {
+    suspend fun getSyncTask(id: String): SyncTask? {
         return mSyncTaskManager.getSyncTask(id)
     }
 
 
-    fun deleteSyncTask(syncTask: SyncTask?) {
+    suspend fun deleteSyncTask(syncTask: SyncTask) {
         mSyncTaskManager.deleteSyncTask(syncTask)
     }
 }

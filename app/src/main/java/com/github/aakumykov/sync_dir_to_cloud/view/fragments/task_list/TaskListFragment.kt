@@ -7,16 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-
 import com.github.aakumykov.sync_dir_to_cloud.view.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.fragments.task_list.recycler_view.TaskListAdapter
+import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {
 
@@ -47,7 +48,9 @@ class TaskListFragment : Fragment() {
 
 
     private fun prepareViewModels() {
-        taskListViewModel.getTaskList().observe(viewLifecycleOwner, this::onListChanged)
+        lifecycleScope.launch {
+            taskListViewModel.getTaskList().observe(viewLifecycleOwner) { onListChanged(it) }
+        }
     }
 
 

@@ -1,9 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.room
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Dao
@@ -14,4 +12,13 @@ interface SyncTaskDAO {
 
     @Insert
     fun add(syncTask: SyncTask)
+
+    @Query("SELECT * FROM sync_tasks WHERE id = :id")
+    fun get(id: String): SyncTask?
+
+    @Delete
+    fun delete(syncTask: SyncTask)
+
+    @Update
+    fun update(syncTask: SyncTask)
 }

@@ -8,5 +8,5 @@ import com.github.aakumykov.sync_dir_to_cloud.view.fragments.TaskManagingViewMod
 
 class TaskListViewModel(application: Application) : TaskManagingViewModel(application) {
 
-    fun getTaskList(): LiveData<List<SyncTask>> = syncTaskManagingUseCase.listSyncTasks()
+    suspend fun getTaskList(): LiveData<List<SyncTask>> = syncTaskManagingUseCase.listSyncTasks()
 }

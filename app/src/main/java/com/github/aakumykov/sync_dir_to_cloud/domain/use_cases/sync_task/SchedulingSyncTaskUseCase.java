@@ -24,14 +24,14 @@ public class SchedulingSyncTaskUseCase {
             public void onSyncTaskScheduleSuccess() {
 //                syncTask.setScheduled(true);
 //                syncTask.setSchedulingError(null);
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
             public void onSyncTaskScheduleError(Exception e) {
 //                syncTask.setScheduled(false);
 //                syncTask.setSchedulingError(ExceptionUtils.getErrorMessage(e));
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }
         });
@@ -44,14 +44,14 @@ public class SchedulingSyncTaskUseCase {
             public void onSyncTaskUnScheduleSuccess() {
 //                syncTask.setScheduled(false);
 //                syncTask.setSchedulingError(null);
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
             }
 
             @Override
             public void onSyncTaskUnScheduleError(Exception e) {
 //                syncTask.setScheduled(true);
 //                syncTask.setSchedulingError(ExceptionUtils.getErrorMessage(e));
-                mSyncTaskUpdater.updateSyncTask(syncTask);
+//                mSyncTaskUpdater.updateSyncTask(syncTask);
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
             }
         });
