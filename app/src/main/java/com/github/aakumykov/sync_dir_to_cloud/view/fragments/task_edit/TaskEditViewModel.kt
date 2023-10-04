@@ -10,6 +10,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
 import com.github.aakumykov.sync_dir_to_cloud.view.TextMessage
 import com.github.aakumykov.sync_dir_to_cloud.view.fragments.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.fragments.operation_state.OpState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TaskEditViewModel(application: Application) : TaskManagingViewModel(application) {
@@ -43,9 +45,17 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
     }
 
     private fun createNewTask(syncTaskBase: SyncTaskBase) {
+
         val syncTask = SyncTask(syncTaskBase)
+
         setOpState(OpState.Busy(TextMessage(R.string.creating_new_task)))
-        syncTaskManagingUseCase.addSyncTask(syncTask)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            syncTaskManagingUseCase.addSyncTask(syncTask)
+            delay(1000)
+        }
+
+        setOpState(OpState.Success)
     }
 
     private fun updateExistingTask(syncTaskBase: SyncTaskBase) {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -57,6 +58,7 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
         when (opState) {
             is OpState.Idle -> showIdleOpState()
             is OpState.Busy -> showBusyOpState(opState)
+            is OpState.Success -> finishWork()
             is OpState.Error -> showErrorOpState(opState)
         }
     }
@@ -80,6 +82,11 @@ class TaskEditFragment constructor(val id: String?) : Fragment() {
         hideProgressMessage()
         enableForm()
         showErrorMessage(opState.errorMessage)
+    }
+
+    private fun finishWork() {
+        Toast.makeText(requireContext(), getString(R.string.sync_task_created), Toast.LENGTH_SHORT).show()
+        navigationViewModel.navigateBack()
     }
 
 

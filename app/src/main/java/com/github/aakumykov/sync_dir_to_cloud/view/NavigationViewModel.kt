@@ -19,4 +19,8 @@ class NavigationViewModel : ViewModel() {
     fun navigateTo(navTarget: NavTarget) {
         navigationTargetSingleLiveEvent.value = navTarget
     }
+
+    fun navigateBack() {
+        navigationTargetSingleLiveEvent.value = NavTarget.Back
+    }
 }
