@@ -47,8 +47,7 @@ class TaskListFragment : Fragment() {
 
 
     private fun prepareViewModels() {
-        taskListViewModel.getTaskList()
-//            .observe(viewLifecycleOwner, this::onListChanged)
+        taskListViewModel.getTaskList().observe(viewLifecycleOwner, this::onListChanged)
     }
 
 
@@ -82,7 +81,7 @@ class TaskListFragment : Fragment() {
 
 
     private fun onListChanged(list: List<SyncTask>) {
-//        taskListAdapter.setList(list)
+        taskListAdapter.setList(list)
     }
 
 

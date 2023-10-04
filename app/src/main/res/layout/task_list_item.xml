@@ -13,6 +13,7 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
         android:textSize="18sp"
+        android:singleLine="true"
         tools:text="Заголовок" />
 
     <ImageButton

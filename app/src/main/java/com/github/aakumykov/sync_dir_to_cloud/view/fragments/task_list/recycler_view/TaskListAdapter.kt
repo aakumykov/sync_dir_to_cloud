@@ -14,6 +14,7 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListViewHolder>() {
     fun setList(newList: List<SyncTask>) {
         list.clear()
         list.addAll(newList)
+        notifyItemRangeChanged(0, newList.size)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
