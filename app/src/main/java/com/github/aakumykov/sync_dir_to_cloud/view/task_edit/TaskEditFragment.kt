@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.fragments.task_edit
+package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.os.Bundle
 import android.view.LayoutInflater

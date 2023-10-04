@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.fragments.task_list
+package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,7 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.fragments.task_list.recycler_view.TaskListAdapter
+import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {

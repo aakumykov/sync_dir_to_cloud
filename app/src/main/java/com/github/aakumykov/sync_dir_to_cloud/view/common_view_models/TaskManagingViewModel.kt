@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.fragments
+package com.github.aakumykov.sync_dir_to_cloud.view.common_view_models
 
 import android.app.Application
 import com.github.aakumykov.sync_dir_to_cloud.App

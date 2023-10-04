@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.fragments.task_list.recycler_view
+package com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view
 
 import android.view.View
 import android.widget.TextView
