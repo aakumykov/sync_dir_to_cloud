@@ -3,12 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskManager
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 
 class SyncTaskRepository(private val mSyncTaskLocalDataSource: SyncTaskLocalDataSource) :
-    iSyncTaskManager, iSyncTaskUpdater {
-
+    iSyncTaskReader, iSyncTaskManager, iSyncTaskUpdater
+{
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return mSyncTaskLocalDataSource.listSyncTasks()
     }
