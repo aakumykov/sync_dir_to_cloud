@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
@@ -8,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 import javax.inject.Inject
 
+@AppScope
 class SyncTaskRepository @Inject constructor(
     private val mSyncTaskLocalDataSource: SyncTaskLocalDataSource
 ) : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater
