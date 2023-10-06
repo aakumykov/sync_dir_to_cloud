@@ -7,8 +7,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStopper
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import javax.inject.Inject
 
-class StartStopSyncTaskUseCase(
+class StartStopSyncTaskUseCase @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStarter: SyncTaskStarter,
     private val syncTaskStopper: SyncTaskStopper,

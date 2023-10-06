@@ -4,8 +4,9 @@ import androidx.work.WorkManager
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStopper
+import javax.inject.Inject
 
-class SyncTaskStarterStopper(private val workManager: WorkManager) : SyncTaskStarter,
+class SyncTaskStarterStopper @Inject constructor(private val workManager: WorkManager) : SyncTaskStarter,
     SyncTaskStopper {
 
     override fun startSyncTask(syncTask: SyncTask, callbacks: SyncTaskStarter.Callbacks) {
