@@ -2,13 +2,15 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskManager
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskCreatorDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
+import javax.inject.Inject
 
-class SyncTaskRepository(private val mSyncTaskLocalDataSource: SyncTaskLocalDataSource) :
-    iSyncTaskReader, iSyncTaskManager, iSyncTaskUpdater
+class SyncTaskRepository @Inject constructor(
+    private val mSyncTaskLocalDataSource: SyncTaskLocalDataSource
+) : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return mSyncTaskLocalDataSource.listSyncTasks()

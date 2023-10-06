@@ -4,11 +4,13 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskStarterStopper
 import kotlinx.coroutines.launch
@@ -20,15 +22,19 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
     init {
         val workManager: WorkManager = WorkManager.getInstance(application)
 
-        val syncTaskStarterStopper: SyncTaskStarterStopper = SyncTaskStarterStopper(workManager)
+        val syncTaskStarterStopper = SyncTaskStarterStopper(workManager)
 
-        val syncTaskRepository: SyncTaskRepository = SyncTaskRepository()
+        val syncTaskDAO = App.getAppDatabase(application).getSyncTaskDAO()
+
+        val syncTaskLocalDataSource = SyncTaskLocalDataSource(syncTaskDAO)
+
+        val syncTaskRepository = SyncTaskRepository(syncTaskLocalDataSource)
 
         startStopUseCase = StartStopSyncTaskUseCase(
-            syncTaskRepository as iSyncTaskReader,
+            syncTaskRepository as SyncTaskReader,
             syncTaskStarterStopper,
             syncTaskStarterStopper,
-            syncTaskRepository as iSyncTaskUpdater
+            syncTaskRepository as SyncTaskUpdater
         )
     }
 

@@ -1,7 +1,7 @@
-package com.github.aakumykov.sync_dir_to_cloud.interfaces
+package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
-interface iSyncTaskUpdater {
+interface SyncTaskUpdater {
     suspend fun updateSyncTask(syncTask: SyncTask)
 }

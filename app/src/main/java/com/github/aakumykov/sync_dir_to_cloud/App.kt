@@ -1,26 +1,37 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
+import com.github.aakumykov.sync_dir_to_cloud.config.DbConfig
+import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
+import com.github.aakumykov.sync_dir_to_cloud.di.DaggerAppComponent
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomModule
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 
 class App : Application() {
 
+    private val appComponent: AppComponent by lazy {
+        DaggerAppComponent.builder()
+            .contextModule(ContextModule(this))
+            .roomModule(RoomModule(appDatabase))
+            .build()
+    }
+
+    private val appDatabase: AppDatabase by lazy {
+        Room.databaseBuilder(
+            this,
+            AppDatabase::class.java,
+            DbConfig.APP_DB_NAME
+        ).build()
+    }
+
     companion object {
-
-        private var _appDatabase: AppDatabase? = null
-
-        private fun prepareRoomDatabase(appContext: Context) {
-            _appDatabase = Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
-                .fallbackToDestructiveMigration()
-                .build()
+        fun getAppComponent(application: Application): AppComponent {
+            return (application as App).appComponent
         }
-
-        fun getAppDatabase(context: Context) : AppDatabase {
-            if (null == _appDatabase)
-                prepareRoomDatabase(context)
-            return _appDatabase!!
+        fun getAppDatabase(application: Application) : AppDatabase {
+            return (application as App).appDatabase
         }
     }
 }

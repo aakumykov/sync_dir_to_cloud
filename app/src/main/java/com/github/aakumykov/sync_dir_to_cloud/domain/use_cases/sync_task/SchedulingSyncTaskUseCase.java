@@ -3,23 +3,23 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task;
 import android.util.Log;
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask;
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskScheduler;
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater;
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater;
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler;
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils;
 
 public class SchedulingSyncTaskUseCase {
 
     private static final String TAG = SchedulingSyncTaskUseCase.class.getSimpleName();
-    private final iSyncTaskScheduler mSyncTaskScheduler;
-    private final iSyncTaskUpdater mSyncTaskUpdater;
+    private final SyncTaskScheduler mSyncTaskScheduler;
+    private final SyncTaskUpdater mSyncTaskUpdater;
 
-    public SchedulingSyncTaskUseCase(iSyncTaskScheduler syncTaskScheduler, iSyncTaskUpdater syncTaskUpdater) {
+    public SchedulingSyncTaskUseCase(SyncTaskScheduler syncTaskScheduler, SyncTaskUpdater syncTaskUpdater) {
         mSyncTaskScheduler = syncTaskScheduler;
         mSyncTaskUpdater = syncTaskUpdater;
     }
 
     public void scheduleSyncTask(final SyncTask syncTask) {
-        mSyncTaskScheduler.scheduleSyncTask(syncTask, new iSyncTaskScheduler.ScheduleCallbacks() {
+        mSyncTaskScheduler.scheduleSyncTask(syncTask, new SyncTaskScheduler.ScheduleCallbacks() {
             @Override
             public void onSyncTaskScheduleSuccess() {
 //                syncTask.setScheduled(true);
@@ -39,7 +39,7 @@ public class SchedulingSyncTaskUseCase {
 
 
     public void unScheduleSyncTask(final SyncTask syncTask) {
-        mSyncTaskScheduler.unScheduleSyncTask(syncTask, new iSyncTaskScheduler.UnScheduleCallbacks() {
+        mSyncTaskScheduler.unScheduleSyncTask(syncTask, new SyncTaskScheduler.UnScheduleCallbacks() {
             @Override
             public void onSyncTaskUnScheduleSuccess() {
 //                syncTask.setScheduled(false);

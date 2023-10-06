@@ -2,24 +2,24 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskStarter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskStopper
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStopper
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 class StartStopSyncTaskUseCase(
-    private val syncTaskReader: iSyncTaskReader,
-    private val syncTaskStarter: iSyncTaskStarter,
-    private val syncTaskStopper: iSyncTaskStopper,
-    private val syncTaskUpdater: iSyncTaskUpdater
+    private val syncTaskReader: SyncTaskReader,
+    private val syncTaskStarter: SyncTaskStarter,
+    private val syncTaskStopper: SyncTaskStopper,
+    private val syncTaskUpdater: SyncTaskUpdater
 ) {
     suspend fun startSyncTask(syncTaskId: String) {
 
         val syncTask: SyncTask = syncTaskReader.getSyncTask(syncTaskId)
             ?: throw Exception("Задание не найдено")
 
-        syncTaskStarter.startSyncTask(syncTask, object : iSyncTaskStarter.Callbacks {
+        syncTaskStarter.startSyncTask(syncTask, object : SyncTaskStarter.Callbacks {
             override fun onSyncTaskStarted() {
 //                syncTask.setIsProgress(true);
 //                syncTask.setProgressError(null);
@@ -37,7 +37,7 @@ class StartStopSyncTaskUseCase(
     }
 
     fun stopSyncTask(syncTask: SyncTask?) {
-        syncTaskStopper.stopSyncTask(syncTask!!, object : iSyncTaskStopper.Callbacks {
+        syncTaskStopper.stopSyncTask(syncTask!!, object : SyncTaskStopper.Callbacks {
             override fun onSyncTaskStopped() {
 //                syncTask.setIsProgress(false);
 //                syncTask.setIsSuccess(false);

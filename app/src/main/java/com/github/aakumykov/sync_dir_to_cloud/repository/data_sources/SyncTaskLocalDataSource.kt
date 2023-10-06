@@ -5,8 +5,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SyncTaskLocalDataSource(private val mSyncTaskDAO: SyncTaskDAO) {
+class SyncTaskLocalDataSource @Inject constructor(private val mSyncTaskDAO: SyncTaskDAO) {
 
     suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return withContext(Dispatchers.IO) {

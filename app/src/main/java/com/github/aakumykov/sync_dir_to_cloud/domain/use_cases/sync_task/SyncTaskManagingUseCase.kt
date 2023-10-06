@@ -2,35 +2,38 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskManager
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.iSyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskCreatorDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
+import javax.inject.Inject
 
-class SyncTaskManagingUseCase(
-    private val mSyncTaskManager: iSyncTaskManager,
-    private val mISyncTaskUpdater: iSyncTaskUpdater
+class SyncTaskManagingUseCase @Inject constructor(
+    val syncTaskReader: SyncTaskReader,
+    val syncTaskCreatorDeleter: SyncTaskCreatorDeleter,
+    val syncTaskUpdater: SyncTaskUpdater
 ) {
 
     suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
-        return mSyncTaskManager.listSyncTasks()
+        return syncTaskReader.listSyncTasks()
     }
 
 
     suspend fun addSyncTask(syncTask: SyncTask) {
-        mSyncTaskManager.createSyncTask(syncTask)
+        syncTaskCreatorDeleter.createSyncTask(syncTask)
     }
 
 
     suspend fun updateSyncTask(syncTask: SyncTask) {
-        mISyncTaskUpdater.updateSyncTask(syncTask)
+        syncTaskUpdater.updateSyncTask(syncTask)
     }
 
 
     suspend fun getSyncTask(id: String): SyncTask? {
-        return mSyncTaskManager.getSyncTask(id)
+        return syncTaskReader.getSyncTask(id)
     }
 
 
     suspend fun deleteSyncTask(syncTask: SyncTask) {
-        mSyncTaskManager.deleteSyncTask(syncTask)
+        syncTaskCreatorDeleter.deleteSyncTask(syncTask)
     }
 }
