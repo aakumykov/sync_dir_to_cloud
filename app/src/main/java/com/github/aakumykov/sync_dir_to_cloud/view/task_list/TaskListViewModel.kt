@@ -14,7 +14,7 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
     private val startStopUseCase: StartStopSyncTaskUseCase
 
     init {
-        startStopUseCase = App.getAppComponent(application).getStartStopSyncTaskUseCase()
+        startStopUseCase = App.appComponent().getStartStopSyncTaskUseCase()
     }
 
 

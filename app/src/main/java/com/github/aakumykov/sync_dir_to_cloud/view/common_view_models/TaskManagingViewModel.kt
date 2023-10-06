@@ -10,6 +10,6 @@ abstract class TaskManagingViewModel(application: Application) : OpStateViewMode
     val syncTaskManagingUseCase: SyncTaskManagingUseCase
 
     init {
-        syncTaskManagingUseCase = App.getAppComponent(application).getSyncTaskManagingUseCase()
+        syncTaskManagingUseCase = App.appComponent().getSyncTaskManagingUseCase()
     }
 }

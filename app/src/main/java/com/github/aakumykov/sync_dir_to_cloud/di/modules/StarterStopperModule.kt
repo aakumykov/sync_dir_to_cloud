@@ -12,9 +12,4 @@ class StarterStopperModule {
     fun provideSyncTaskStarter(syncTaskStarterStopper: SyncTaskStarterStopperStopper): SyncTaskStarterStopper {
         return syncTaskStarterStopper
     }
-
-    @Provides
-    fun provideSyncTaskStopper(syncTaskStarterStopper: SyncTaskStarterStopperStopper): SyncTaskStopper {
-        return syncTaskStarterStopper
-    }
 }

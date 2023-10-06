@@ -8,14 +8,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class SystemModule(private val appContext: Context) {
-
-    @AppScope
-    @Provides
-    @AppContext
-    fun provideAppContext(): Context {
-        return appContext
-    }
+class WorkerModule {
 
     @AppScope
     @Provides
