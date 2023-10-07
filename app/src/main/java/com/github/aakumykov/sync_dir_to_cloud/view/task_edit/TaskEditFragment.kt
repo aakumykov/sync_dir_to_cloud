@@ -94,7 +94,12 @@ class TaskEditFragment : Fragment() {
 
         val taskId: String? = arguments?.getString(TASK_ID)
 
-        pageTitleViewModel.setPageTitle(taskId ?: getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
+        pageTitleViewModel.setPageTitle(getString(
+            when(taskId) {
+                null -> R.string.FRAGMENT_TASK_EDIT_creation_title
+                else -> R.string.FRAGMENT_TASK_EDIT_edition_title
+            }
+        ))
 
         // TODO: преобразовать в один метод "prepare"
         if (null == taskId)

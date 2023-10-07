@@ -8,6 +8,7 @@
     <string name="hint_source_path_input">Путь к источнику</string>
     <string name="FRAGMENT_TASK_LIST_title">Задания синхронизации</string>
     <string name="FRAGMENT_TASK_EDIT_creation_title">Новое задание</string>
+    <string name="FRAGMENT_TASK_EDIT_edition_title">Правка задания</string>
     <string name="BUTTON_task_edit_cancel">Отменить</string>
     <string name="BUTTON_task_edit_save">Сохранить</string>
     <string name="description_sync_task_play_button">Запустить задачу</string>
