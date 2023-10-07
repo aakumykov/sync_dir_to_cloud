@@ -8,6 +8,8 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
+import com.github.aakumykov.sync_dir_to_cloud.utils.SimpleFileWriter
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -19,12 +21,18 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     @Inject
     lateinit var syncTaskReader: SyncTaskReader
 
+    private val context: Context
 
     init {
         App.appComponent().injectWorker2(this)
+        this.context = context
     }
 
     override suspend fun doWork(): Result {
+
+        val fileWriter = SimpleFileWriter(context.cacheDir, SyncTaskWorker::class.simpleName+".log")
+
+        fileWriter.writeln(CurrentDateTime.get()+", start")
 
         val taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("taskId is null"))
@@ -39,6 +47,8 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         syncTask.state = SyncTask.State.SUCCESS
         syncTaskUpdater.updateSyncTask(syncTask)
+
+        fileWriter.writeln(CurrentDateTime.get()+", end")
 
         return Result.success()
     }
