@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
@@ -36,21 +35,20 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
         return currentTaskMutableLiveData
     }
 
-    fun createOrSaveSyncTask(syncTaskBase: SyncTaskBase) {
-        // FIXME: загрузка currentTask происходит асинхронно, это условие ненадёжно
+    // FIXME: загрузка currentTask происходит асинхронно, это условие ненадёжно
+    fun createOrSaveSyncTask(sourcePath: String, targetPath: String) {
         if (null == currentTask)
-            createNewTask(syncTaskBase)
+            createNewTask(sourcePath, targetPath)
         else
-            updateExistingTask(currentTask!!, syncTaskBase)
+            updateExistingTask(sourcePath, targetPath)
     }
 
-    private fun createNewTask(syncTaskBase: SyncTaskBase) {
+    private fun createNewTask(sourcePath: String, targetPath: String) {
 
-        val syncTask = SyncTask(syncTaskBase)
+        val syncTask = SyncTask(sourcePath, targetPath)
 
         setOpState(OpState.Busy(TextMessage(R.string.creating_new_task)))
 
-        // TODO: переместить диспетчер в репозиторий
         viewModelScope.launch(Dispatchers.IO) {
             syncTaskManagingUseCase.addSyncTask(syncTask)
             delay(1000)
@@ -59,17 +57,19 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
         setOpState(OpState.Success(TextMessage(R.string.sync_task_created)))
     }
 
-    private fun updateExistingTask(currentTask: SyncTask, newSyncTaskBase: SyncTaskBase) {
+    private fun updateExistingTask(sourcePath: String, targetPath: String) {
 
-        val updatedTask = currentTask.updateValues(newSyncTaskBase)
+        currentTask?.let {
+            it.sourcePath = sourcePath
+            it.targetPath = targetPath
 
-        setOpState(OpState.Busy(TextMessage(R.string.updating_task)))
+            setOpState(OpState.Busy(TextMessage(R.string.updating_task)))
 
-        // TODO: переместить диспетчер в репозиторий
-        viewModelScope.launch(Dispatchers.IO) {
-            syncTaskManagingUseCase.updateSyncTask(updatedTask)
+            viewModelScope.launch(Dispatchers.IO) {
+                syncTaskManagingUseCase.updateSyncTask(it)
+            }
+
+            setOpState(OpState.Success(TextMessage(R.string.sync_task_updated)))
         }
-
-        setOpState(OpState.Success(TextMessage(R.string.sync_task_updated)))
     }
 }

@@ -16,6 +16,16 @@
         android:singleLine="true"
         tools:text="Заголовок" />
 
+    <ImageView
+        android:id="@+id/taskStateView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="6dp"
+        android:layout_weight="0"
+        app:tint="@android:color/darker_gray"
+        android:contentDescription="@string/description_sync_task_state"
+        tools:srcCompat="@drawable/ic_task_state_scheduled" />
+
     <ImageButton
         android:id="@+id/editButton"
         android:layout_width="wrap_content"
@@ -31,5 +41,13 @@
         android:layout_weight="0"
         app:srcCompat="@drawable/ic_baseline_play_arrow_24"
         android:contentDescription="@string/description_sync_task_play_button" />
+
+    <ImageButton
+        android:id="@+id/moreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        app:srcCompat="@drawable/ic_baseline_more_vert_24"
+        android:contentDescription="@string/description_sync_task_more_actions" />
 
 </LinearLayout>

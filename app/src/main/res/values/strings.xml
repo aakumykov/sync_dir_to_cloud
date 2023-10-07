@@ -17,4 +17,7 @@
     <string name="sync_task_created">Задача добавлена</string>
     <string name="updating_task">Обновляем задачу</string>
     <string name="sync_task_updated">Задача обновлена</string>
+    <string name="description_sync_task_state">Состояние задачи</string>
+    <string name="description_sync_task_more_actions">Дополнительные действия</string>
+    <string name="not_implemented_yet">Ещё не реализовано</string>
 </resources>

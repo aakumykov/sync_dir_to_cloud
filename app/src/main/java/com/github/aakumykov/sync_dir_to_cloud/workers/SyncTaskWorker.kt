@@ -5,6 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import kotlinx.coroutines.delay
@@ -31,12 +32,12 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         val syncTask = syncTaskReader.getSyncTask(taskId)
             ?: return Result.failure(errorData("SyncTask is null"))
 
-        syncTask.setIsProgress(true)
+        syncTask.state = SyncTask.State.RUNNING
         syncTaskUpdater.updateSyncTask(syncTask)
 
         delay(1000)
 
-        syncTask.setIsProgress(false)
+        syncTask.state = SyncTask.State.SUCCESS
         syncTaskUpdater.updateSyncTask(syncTask)
 
         return Result.success()
