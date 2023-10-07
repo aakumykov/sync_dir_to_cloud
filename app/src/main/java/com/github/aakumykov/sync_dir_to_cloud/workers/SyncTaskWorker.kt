@@ -35,7 +35,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         syncTask.state = SyncTask.State.RUNNING
         syncTaskUpdater.updateSyncTask(syncTask)
 
-        delay(1000)
+        delay(3000)
 
         syncTask.state = SyncTask.State.SUCCESS
         syncTaskUpdater.updateSyncTask(syncTask)
