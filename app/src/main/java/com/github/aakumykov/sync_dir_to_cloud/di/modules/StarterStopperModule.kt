@@ -1,7 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
-import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskStarterStopperStopper
 import dagger.Module
 import dagger.Provides
 
@@ -9,7 +7,7 @@ import dagger.Provides
 class StarterStopperModule {
 
     @Provides
-    fun provideSyncTaskStarter(syncTaskStarterStopper: SyncTaskStarterStopperStopper): SyncTaskStarterStopper {
+    fun provideSyncTaskStarter(syncTaskStarterStopper: com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskStarterStopper): com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper {
         return syncTaskStarterStopper
     }
 }
