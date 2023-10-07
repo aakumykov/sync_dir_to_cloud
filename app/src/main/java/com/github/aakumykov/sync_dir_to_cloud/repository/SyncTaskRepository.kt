@@ -2,35 +2,43 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AppScope
 class SyncTaskRepository @Inject constructor(
-    private val mSyncTaskLocalDataSource: SyncTaskLocalDataSource
+    private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
+    private val coroutineScope: CoroutineScope,
+    @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher
 ) : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
-        return mSyncTaskLocalDataSource.listSyncTasks()
+        return syncTaskLocalDataSource.listSyncTasks()
     }
 
     override suspend fun getSyncTask(id: String): SyncTask? {
-        return mSyncTaskLocalDataSource.getTask(id)
+        return syncTaskLocalDataSource.getTask(id)
     }
 
     override suspend fun createSyncTask(syncTask: SyncTask) {
-        mSyncTaskLocalDataSource.addTask(syncTask)
+        syncTaskLocalDataSource.addTask(syncTask)
     }
 
     override suspend fun deleteSyncTask(syncTask: SyncTask) {
-        mSyncTaskLocalDataSource.delete(syncTask)
+        syncTaskLocalDataSource.delete(syncTask)
     }
 
-    override suspend fun updateSyncTask(syncTask: SyncTask) {
-        mSyncTaskLocalDataSource.update(syncTask)
+    override fun updateSyncTask(syncTask: SyncTask) {
+        coroutineScope.launch(coroutineDispatcher) {
+            syncTaskLocalDataSource.update(syncTask)
+        }
     }
 }

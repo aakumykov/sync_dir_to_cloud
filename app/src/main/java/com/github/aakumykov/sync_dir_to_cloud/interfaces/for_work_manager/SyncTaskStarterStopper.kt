@@ -9,11 +9,11 @@ interface SyncTaskStarterStopper {
 
     interface StartCallbacks {
         fun onSyncTaskStarted()
-        fun onSyncTaskStartingError(e: Exception)
+        fun onSyncTaskStartingError(throwable: Throwable)
     }
 
     interface StopCallbacks {
         fun onSyncTaskStopped()
-        fun onSyncTaskStoppingError(e: Exception)
+        fun onSyncTaskStoppingError(throwable: Throwable)
     }
 }

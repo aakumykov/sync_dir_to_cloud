@@ -13,7 +13,8 @@ import dagger.Component
         RoomModule::class,
         RepositoryInterfacesModule::class,
         StarterStopperModule::class,
-        WorkerModule::class
+        WorkerModule::class,
+        CoroutineModule::class
     ]
 )
 @AppScope

@@ -1,9 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class StartStopSyncTaskUseCase @Inject constructor(
@@ -18,21 +20,21 @@ class StartStopSyncTaskUseCase @Inject constructor(
         val syncTask: SyncTask = syncTaskReader.getSyncTask(syncTaskId)
             ?: throw Exception("Задание не найдено")
 
-        /*syncTaskStarterStopper.startSyncTask(syncTask, object : SyncTaskStarterStopper.Callbacks {
+        syncTaskStarterStopper.startSyncTask(syncTask, object : SyncTaskStarterStopper.StartCallbacks {
             override fun onSyncTaskStarted() {
-//                syncTask.setIsProgress(true);
-//                syncTask.setProgressError(null);
-//                mSyncTaskUpdater.updateSyncTask(syncTask);
+                syncTask.setIsProgress(true)
+                syncTask.setProgressError(null)
+                syncTaskUpdater.updateSyncTask(syncTask)
             }
 
-            override fun onSyncTaskStartingError(e: Exception) {
+            override fun onSyncTaskStartingError(throwable: Throwable) {
 //                syncTask.setIsProgress(false);
 //                syncTask.setIsSuccess(false);
 //                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
 //                mSyncTaskUpdater.updateSyncTask(syncTask);
-                Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+                Log.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
             }
-        })*/
+        })
     }
 
     fun stopSyncTask(syncTask: SyncTask?) {

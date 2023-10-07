@@ -5,7 +5,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
 import javax.inject.Inject
 
-class SyncTaskStarterStopperStopper @Inject constructor(private val workManager: WorkManager) : SyncTaskStarterStopper {
+// TODO: передавать создатель задачи через конструктор
+class SyncTaskStarterStopperStopper @Inject constructor(
+    private val workManager: WorkManager
+) : SyncTaskStarterStopper {
 
     override fun startSyncTask(syncTask: SyncTask, callbacks: SyncTaskStarterStopper.StartCallbacks) {
 
@@ -27,14 +30,21 @@ class SyncTaskStarterStopperStopper @Inject constructor(private val workManager:
             .setInputData(inputData)
             .setConstraints(networkConstraints)
 //            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+//            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .build()
 
         workManager.beginUniqueWork(
             workName,
             ExistingWorkPolicy.KEEP, // FIXME: отменять?
-            manualSyncStartWorkRequest
-        ).enqueue()
+            manualSyncStartWorkRequest)
+            .enqueue()
+            .state.observeForever {
+                when(it) {
+                    is Operation.State.IN_PROGRESS -> {}
+                    is Operation.State.SUCCESS -> callbacks.onSyncTaskStarted()
+                    is Operation.State.FAILURE -> callbacks.onSyncTaskStartingError(it.throwable)
+                }
+            }
     }
 
     override fun stopSyncTask(syncTask: SyncTask, callbacks: SyncTaskStarterStopper.StopCallbacks) {

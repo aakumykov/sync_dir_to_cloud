@@ -27,9 +27,24 @@ class SyncTask : SyncTaskBase {
 
     @Ignore fun getTitle() = "$sourcePath - $targetPath"
 
-    @ColumnInfo(name = "is_progress") val isProgress: Boolean
+    @ColumnInfo(name = "is_progress") private var isProgress: Boolean
+
+    @ColumnInfo(name = "progress_error") private var progressError: String? = null
+
+    fun setIsProgress(isProgress: Boolean) {
+        this.isProgress = isProgress
+    }
+
+    fun getIsProgress(): Boolean = isProgress
 
 
+    fun setProgressError(errorMsg: String?) {
+        this.progressError = errorMsg
+    }
+
+    fun getProgressError(): String? = progressError
+
+    @Deprecated("Переименовать в updateValuesFromBase()")
     fun updateValues(syncTaskBase: SyncTaskBase): SyncTask {
         return SyncTask(
             id,
