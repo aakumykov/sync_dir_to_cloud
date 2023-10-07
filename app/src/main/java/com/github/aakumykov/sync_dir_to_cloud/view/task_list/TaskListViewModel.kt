@@ -11,11 +11,7 @@ import kotlinx.coroutines.launch
 
 class TaskListViewModel(application: Application) : TaskManagingViewModel(application) {
 
-    private val startStopUseCase: StartStopSyncTaskUseCase
-
-    init {
-        startStopUseCase = App.appComponent().getStartStopSyncTaskUseCase()
-    }
+    private val startStopUseCase: StartStopSyncTaskUseCase = App.appComponent().getStartStopSyncTaskUseCase()
 
 
     suspend fun getTaskList(): LiveData<List<SyncTask>> =

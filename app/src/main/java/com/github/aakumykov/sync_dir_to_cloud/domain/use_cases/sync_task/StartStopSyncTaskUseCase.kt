@@ -1,59 +1,27 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class StartStopSyncTaskUseCase @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStarterStopper: SyncTaskStarterStopper,
-    private val syncTaskUpdater: SyncTaskUpdater
 ) {
-    suspend fun startSyncTask(syncTaskId: String) {
-
+    suspend fun startSyncTask(taskId: String) {
         // TODO: кинуть исключение просто так
-
-        val syncTask: SyncTask = syncTaskReader.getSyncTask(syncTaskId)
-            ?: throw Exception("Задание не найдено")
-
-        syncTaskStarterStopper.startSyncTask(syncTask, object : SyncTaskStarterStopper.StartCallbacks {
-            override fun onSyncTaskStarted() {
-                syncTask.setIsProgress(true)
-                syncTask.setProgressError(null)
-                syncTaskUpdater.updateSyncTask(syncTask)
-            }
-
-            override fun onSyncTaskStartingError(throwable: Throwable) {
-//                syncTask.setIsProgress(false);
-//                syncTask.setIsSuccess(false);
-//                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
-//                mSyncTaskUpdater.updateSyncTask(syncTask);
-                Log.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
-            }
-        })
+        syncTaskStarterStopper.startSyncTask(getSyncTask(taskId))
     }
 
     fun stopSyncTask(syncTask: SyncTask?) {
-        /*syncTaskStopper.stopSyncTask(syncTask!!, object : SyncTaskStopper.Callbacks {
-            override fun onSyncTaskStopped() {
-//                syncTask.setIsProgress(false);
-//                syncTask.setIsSuccess(false);
-//                syncTask.setProgressError(null);
-//                mSyncTaskUpdater.updateSyncTask(syncTask);
-            }
 
-            override fun onSyncTaskStoppingError(e: Exception) {
-//                syncTask.setIsProgress(false);
-//                syncTask.setIsSuccess(false);
-//                syncTask.setProgressError(ExceptionUtils.getErrorMessage(e));
-//                mSyncTaskUpdater.updateSyncTask(syncTask);
-                Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
-            }
-        })*/
+    }
+
+    private suspend fun getSyncTask(taskId: String): SyncTask {
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+            ?: throw IllegalStateException("SyncTask with id $taskId not found in database.")
+        return syncTask
     }
 
     companion object {

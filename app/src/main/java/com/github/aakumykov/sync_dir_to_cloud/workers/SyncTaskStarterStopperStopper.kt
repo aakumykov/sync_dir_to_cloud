@@ -6,11 +6,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTa
 import javax.inject.Inject
 
 // TODO: передавать создатель задачи через конструктор
-class SyncTaskStarterStopperStopper @Inject constructor(
-    private val workManager: WorkManager
-) : SyncTaskStarterStopper {
+class SyncTaskStarterStopperStopper @Inject constructor(private val workManager: WorkManager) : SyncTaskStarterStopper {
 
-    override fun startSyncTask(syncTask: SyncTask, callbacks: SyncTaskStarterStopper.StartCallbacks) {
+    override fun startSyncTask(syncTask: SyncTask) {
 
         val workName = syncTask.id
 
@@ -26,28 +24,21 @@ class SyncTaskStarterStopperStopper @Inject constructor(
             setRequiresBatteryNotLow(true)
         }.build()*/
 
-        val manualSyncStartWorkRequest: OneTimeWorkRequest = OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
+        val manualSyncStartWorkRequest: OneTimeWorkRequest =
+            OneTimeWorkRequest
+            .Builder(Worker2::class.java)
             .setInputData(inputData)
             .setConstraints(networkConstraints)
 //            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно
 //            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .build()
 
-        workManager.beginUniqueWork(
-            workName,
-            ExistingWorkPolicy.KEEP, // FIXME: отменять?
-            manualSyncStartWorkRequest)
+        workManager
+            .beginUniqueWork(workName, ExistingWorkPolicy.KEEP, manualSyncStartWorkRequest)
             .enqueue()
-            .state.observeForever {
-                when(it) {
-                    is Operation.State.IN_PROGRESS -> {}
-                    is Operation.State.SUCCESS -> callbacks.onSyncTaskStarted()
-                    is Operation.State.FAILURE -> callbacks.onSyncTaskStartingError(it.throwable)
-                }
-            }
     }
 
-    override fun stopSyncTask(syncTask: SyncTask, callbacks: SyncTaskStarterStopper.StopCallbacks) {
+    override fun stopSyncTask(syncTask: SyncTask) {
 //        workManager.cancelUniqueWork(syncTask.id)
     }
 

@@ -40,11 +40,11 @@ class App : Application() {
         }
 
         fun prepareAndGetAppDatabase(appContext: Context): AppDatabase {
-            _appDatabase = Room.databaseBuilder(
-                appContext,
-                AppDatabase::class.java,
-                DbConfig.APP_DB_NAME
-            ).build()
+            _appDatabase = Room
+                .databaseBuilder(appContext, AppDatabase::class.java, DbConfig.APP_DB_NAME)
+                // FIXME: убрать
+                .fallbackToDestructiveMigration()
+                .build()
             return _appDatabase!!
         }
     }

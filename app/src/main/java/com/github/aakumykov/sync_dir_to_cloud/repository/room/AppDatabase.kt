@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Database(
     entities = [ SyncTask::class ],
-    version = 5,
+    version = 1,
     autoMigrations = []
 )
 abstract class AppDatabase : RoomDatabase() {

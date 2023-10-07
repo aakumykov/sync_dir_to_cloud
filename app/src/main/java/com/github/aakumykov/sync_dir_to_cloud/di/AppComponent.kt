@@ -4,7 +4,8 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.*
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
+import com.github.aakumykov.sync_dir_to_cloud.workers.Worker2
 import dagger.Component
 
 @Component(
@@ -20,8 +21,10 @@ import dagger.Component
 @AppScope
 interface AppComponent {
 
+    // TODO: убрать это
     fun getSyncTaskManagingUseCase(): SyncTaskManagingUseCase
     fun getStartStopSyncTaskUseCase(): StartStopSyncTaskUseCase
 
-    fun getSyncTaskUpdater(): SyncTaskUpdater
+    fun injectSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
+    fun injectWorker2(worker2: Worker2)
 }
