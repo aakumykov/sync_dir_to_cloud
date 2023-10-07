@@ -26,7 +26,7 @@ class SyncTaskStarterStopperStopper @Inject constructor(private val workManager:
 
         val manualSyncStartWorkRequest: OneTimeWorkRequest =
             OneTimeWorkRequest
-            .Builder(Worker2::class.java)
+            .Builder(SyncTaskWorker::class.java)
             .setInputData(inputData)
             .setConstraints(networkConstraints)
 //            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно

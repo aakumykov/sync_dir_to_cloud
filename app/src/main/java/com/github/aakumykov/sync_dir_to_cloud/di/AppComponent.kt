@@ -5,7 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.*
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
-import com.github.aakumykov.sync_dir_to_cloud.workers.Worker2
 import dagger.Component
 
 @Component(
@@ -26,5 +25,5 @@ interface AppComponent {
     fun getStartStopSyncTaskUseCase(): StartStopSyncTaskUseCase
 
     fun injectSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
-    fun injectWorker2(worker2: Worker2)
+    fun injectWorker2(syncTaskWorker: SyncTaskWorker)
 }

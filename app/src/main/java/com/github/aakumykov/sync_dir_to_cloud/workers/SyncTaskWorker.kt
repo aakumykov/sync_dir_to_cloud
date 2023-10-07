@@ -1,49 +1,43 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import android.content.Context
+import androidx.work.CoroutineWorker
 import androidx.work.Data
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
+class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
-    @Inject lateinit var syncTaskUpdater: SyncTaskUpdater
-    @Inject lateinit var syncTaskReader: SyncTaskReader
-    private val scope = CoroutineScope(Dispatchers.IO)
+    @Inject
+    lateinit var syncTaskUpdater: SyncTaskUpdater
+
+    @Inject
+    lateinit var syncTaskReader: SyncTaskReader
+
 
     init {
-        App.appComponent().injectSyncTaskWorker(this)
+        App.appComponent().injectWorker2(this)
     }
 
-    // TODO: переделать в CoroutineWorker
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
 
-        val taskId: String = inputData.getString(TASK_ID)
-            ?: return Result.failure(errorData("Task is is null"))
+        val taskId = inputData.getString(TASK_ID)
+            ?: return Result.failure(errorData("taskId is null"))
 
-        // FIXME: как прервать корутину, если syncTask == null ?
-        scope.launch {
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+            ?: return Result.failure(errorData("SyncTask is null"))
 
-            val syncTask = syncTaskReader.getSyncTask(taskId)
+        syncTask.setIsProgress(true)
+        syncTaskUpdater.updateSyncTask(syncTask)
 
-            if (null != syncTask) {
-                syncTask.setIsProgress(true)
-                syncTaskUpdater.updateSyncTask(syncTask)
+        delay(1000)
 
-                delay(1000)
-
-                syncTask.setIsProgress(false)
-                syncTaskUpdater.updateSyncTask(syncTask)
-            }
-        }
+        syncTask.setIsProgress(false)
+        syncTaskUpdater.updateSyncTask(syncTask)
 
         return Result.success()
     }
