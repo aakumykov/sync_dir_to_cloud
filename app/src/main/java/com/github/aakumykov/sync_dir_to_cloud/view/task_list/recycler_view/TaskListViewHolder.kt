@@ -32,18 +32,22 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     fun fill(syncTask: SyncTask) {
         currentTask = syncTask
         displayTitle()
-        displayState()
+        displaySchedulingState()
+        displayOpState()
     }
 
     private fun displayTitle() {
         titleView.text = currentTask.getTitle()
     }
 
-    private fun displayState() {
+    private fun displaySchedulingState() {
+        enablingSwitch.isChecked = currentTask.enabled
+    }
+
+    private fun displayOpState() {
         stateView.setImageResource(
             when(currentTask.state) {
-                SyncTask.State.DISABLED -> R.drawable.ic_task_state_disabled
-                SyncTask.State.ENABLED -> R.drawable.ic_task_state_scheduled
+                SyncTask.State.IDLE -> R.drawable.ic_task_state_scheduled // FIXME: не то
                 SyncTask.State.RUNNING -> R.drawable.ic_task_state_running
                 SyncTask.State.SUCCESS -> R.drawable.ic_task_state_success
                 SyncTask.State.ERROR -> R.drawable.ic_task_state_error

@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
@@ -25,7 +24,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
             override fun onSyncTaskScheduleSuccess() {
-                syncTask.state = SyncTask.State.ENABLED
+                syncTask.enabled = true
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 
@@ -43,7 +42,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
 
             override fun onSyncTaskUnScheduleSuccess() {
-                syncTask.state = SyncTask.State.DISABLED
+                syncTask.enabled = false
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 

@@ -13,13 +13,13 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
         syncTask: SyncTask,
         callbacks: SyncTaskScheduler.ScheduleCallbacks
     ) {
-
+        callbacks.onSyncTaskScheduleSuccess()
     }
 
     override fun unScheduleSyncTask(
         syncTask: SyncTask,
         callbacks: SyncTaskScheduler.UnScheduleCallbacks
     ) {
-
+        callbacks.onSyncTaskUnScheduleSuccess()
     }
 }
