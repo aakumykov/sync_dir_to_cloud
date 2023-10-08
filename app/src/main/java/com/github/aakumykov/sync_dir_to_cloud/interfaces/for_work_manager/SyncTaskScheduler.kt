@@ -9,11 +9,11 @@ interface SyncTaskScheduler {
 
     interface ScheduleCallbacks {
         fun onSyncTaskScheduleSuccess()
-        fun onSyncTaskScheduleError(e: Exception)
+        fun onSyncTaskScheduleError(error: Throwable)
     }
 
     interface UnScheduleCallbacks {
         fun onSyncTaskUnScheduleSuccess()
-        fun onSyncTaskUnScheduleError(e: Exception)
+        fun onSyncTaskUnScheduleError(error: Throwable)
     }
 }

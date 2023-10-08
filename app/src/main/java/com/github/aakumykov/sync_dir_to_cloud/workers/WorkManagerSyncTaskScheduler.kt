@@ -1,8 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
-import androidx.work.WorkManager
+import androidx.work.*
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class WorkManagerSyncTaskScheduler @Inject constructor(
@@ -13,13 +14,44 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
         syncTask: SyncTask,
         callbacks: SyncTaskScheduler.ScheduleCallbacks
     ) {
-        callbacks.onSyncTaskScheduleSuccess()
+        val batteryNotLowConstraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .build()
+
+        val periodicWorkRequest = PeriodicWorkRequest.Builder(
+            SyncTaskWorker::class.java,
+            syncTask.regularity,
+            TimeUnit.MINUTES,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
+            .addTag(SyncTask.TAG)
+            .setConstraints(batteryNotLowConstraints)
+            .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            syncTask.id,
+            ExistingPeriodicWorkPolicy.UPDATE,
+            periodicWorkRequest
+        ).state.observeForever {
+            when(it) {
+                is Operation.State.SUCCESS -> callbacks.onSyncTaskScheduleSuccess()
+                is Operation.State.IN_PROGRESS -> {}
+                is Operation.State.FAILURE -> callbacks.onSyncTaskScheduleError(it.throwable)
+            }
+        }
     }
 
     override fun unScheduleSyncTask(
         syncTask: SyncTask,
         callbacks: SyncTaskScheduler.UnScheduleCallbacks
     ) {
-        callbacks.onSyncTaskUnScheduleSuccess()
+        workManager.cancelUniqueWork(syncTask.id).state.observeForever {
+            when(it) {
+                is Operation.State.SUCCESS -> callbacks.onSyncTaskUnScheduleSuccess()
+                is Operation.State.IN_PROGRESS -> {}
+                is Operation.State.FAILURE -> callbacks.onSyncTaskUnScheduleError(it.throwable)
+            }
+        }
     }
 }

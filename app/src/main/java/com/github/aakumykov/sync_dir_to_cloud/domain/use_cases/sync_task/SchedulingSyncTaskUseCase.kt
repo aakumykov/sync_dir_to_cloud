@@ -28,8 +28,8 @@ class SchedulingSyncTaskUseCase @Inject constructor(
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 
-            override fun onSyncTaskScheduleError(e: Exception) {
-                Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+            override fun onSyncTaskScheduleError(error: Throwable) {
+                Log.e(TAG, ExceptionUtils.getErrorMessage(error), error)
             }
         })
     }
@@ -46,8 +46,8 @@ class SchedulingSyncTaskUseCase @Inject constructor(
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 
-            override fun onSyncTaskUnScheduleError(e: Exception) {
-                Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+            override fun onSyncTaskUnScheduleError(error: Throwable) {
+                Log.e(TAG, ExceptionUtils.getErrorMessage(error), error)
             }
         })
     }
