@@ -31,7 +31,7 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     private val binding get() = _binding!!
 
     // RecyclerView adapter
-    private val taskListAdapter: TaskListAdapter by lazy { TaskListAdapter(this) }
+    private var taskListAdapter: TaskListAdapter? = null
 
     // ViewModels
     private val taskListViewModel: TaskListViewModel by viewModels()
@@ -41,17 +41,19 @@ class TaskListFragment : Fragment(), ItemClickCallback {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         prepareLayout(inflater, container)
+        prepareAdapter()
         prepareRecyclerView()
         prepareButtons()
         prepareViewModels()
+        setPageTitle()
         return binding.root
     }
 
 
-    private fun prepareViewModels() {
-        lifecycleScope.launch {
-            taskListViewModel.getTaskList().observe(viewLifecycleOwner) { onListChanged(it) }
-        }
+    override fun onDestroyView() {
+        taskListAdapter = null
+        _binding = null
+        super.onDestroyView()
     }
 
 
@@ -60,20 +62,8 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     }
 
 
-    private fun prepareButtons() {
-        binding.addButton.setOnClickListener { onAddClicked() }
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_LIST_title))
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun prepareAdapter() {
+        taskListAdapter = TaskListAdapter(this)
     }
 
 
@@ -84,8 +74,25 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     }
 
 
+    private fun prepareViewModels() {
+        lifecycleScope.launch {
+            taskListViewModel.getTaskList().observe(viewLifecycleOwner) { onListChanged(it) }
+        }
+    }
+
+
+    private fun setPageTitle() {
+        pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_LIST_title))
+    }
+
+
+    private fun prepareButtons() {
+        binding.addButton.setOnClickListener { onAddClicked() }
+    }
+
+
     private fun onListChanged(list: List<SyncTask>) {
-        taskListAdapter.setList(list)
+        taskListAdapter?.setList(list)
     }
 
 
