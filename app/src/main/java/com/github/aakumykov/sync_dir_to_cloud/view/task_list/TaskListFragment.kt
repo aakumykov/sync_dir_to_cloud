@@ -57,6 +57,27 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     }
 
 
+    override fun onTaskEditClicked(taskId: String) {
+        navigationViewModel.navigateTo(NavTarget.Edit(taskId))
+    }
+
+    override fun onTaskRunClicked(taskId: String) {
+        taskListViewModel.runTask(taskId)
+    }
+
+    override fun onTaskDeleteClicked(taskId: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onTaskInfoClicked(taskId: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onTaskEnableSwitchToggled(taskId: String, isEnabled: Boolean) {
+        taskListViewModel.changeTaskEnabled(taskId, isEnabled)
+    }
+
+
     private fun prepareLayout(inflater: LayoutInflater, container: ViewGroup?) {
         _binding = FragmentTaskListBinding.inflate(inflater, container, false)
     }
@@ -98,23 +119,6 @@ class TaskListFragment : Fragment(), ItemClickCallback {
 
     private fun onAddClicked() {
         navigationViewModel.navigateTo(NavTarget.Add)
-    }
-
-
-    override fun onEditItemClicked(taskId: String) {
-        navigationViewModel.navigateTo(NavTarget.Edit(taskId))
-    }
-
-    override fun onRunItemClicked(taskId: String) {
-        taskListViewModel.runTask(taskId)
-    }
-
-    override fun onDeleteItemClicked(taskId: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onItemInfoClicked(taskId: String) {
-        TODO("Not yet implemented")
     }
 }
 

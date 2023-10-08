@@ -26,6 +26,12 @@
         android:contentDescription="@string/description_sync_task_state"
         tools:srcCompat="@drawable/ic_task_state_scheduled" />
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/enablingSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0" />
+
     <ImageButton
         android:id="@+id/editButton"
         android:layout_width="wrap_content"

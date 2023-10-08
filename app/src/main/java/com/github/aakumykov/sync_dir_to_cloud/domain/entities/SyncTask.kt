@@ -25,7 +25,7 @@ class SyncTask (
 
     enum class State {
         DISABLED,
-        SCHEDULED,
+        ENABLED,
         RUNNING,
         SUCCESS,
         ERROR,

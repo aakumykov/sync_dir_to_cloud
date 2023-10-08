@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTa
 import javax.inject.Inject
 
 // TODO: передавать создатель задачи через конструктор
-class SyncTaskStarterStopper @Inject constructor(
+class WorkManagerSyncTaskStarterStopper @Inject constructor(
     private val workManager: WorkManager
 ) : SyncTaskStarterStopper
 {
