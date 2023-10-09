@@ -13,13 +13,15 @@
 
         <EditText
             android:id="@+id/sourcePathInput"
+            style="@style/path_input"
             android:hint="@string/hint_source_path_input"
-            android:importantForAutofill="no"
-            style="@style/path_input" />
+            android:importantForAutofill="no" />
 
-        <Button
-            android:id="@+id/selectSourcePathButton"
-            style="@style/path_select_button" />
+        <ImageButton
+            android:id="@+id/sourcePathSelectionButton"
+            style="@style/path_select_button"
+            android:contentDescription="@string/description_sync_task_select_source_path"
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -33,17 +35,11 @@
             android:hint="@string/hint_target_path_input"
             android:importantForAutofill="no" />
 
-        <Button
-            android:id="@+id/selectTargetPathButton"
-            style="@style/path_select_button"/>
+        <ImageButton
+            android:id="@+id/targetPathSelectionButton"
+            style="@style/path_select_button"
+            android:contentDescription="@string/description_sync_task_select_target_path" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/sync_task_period_label"
-        android:textAlignment="center"
-        android:textColor="@color/primaryVariant" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,20 +47,22 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/periodHoursView"
-            style="@style/sync_task_period_input"
-            android:textAlignment="textEnd"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/hint_sync_task_period_hours"
+            android:id="@+id/periodView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textAlignment="textStart"
+            android:hint="@string/hint_sync_task_period"
+            android:enabled="false"
             android:importantForAutofill="no" />
 
-        <EditText
-            android:id="@+id/periodMinutesView"
-            style="@style/sync_task_period_input"
-            android:textAlignment="textStart"
-            android:layout_marginStart="8dp"
-            android:hint="@string/hint_sync_task_period_minutes"
-            android:importantForAutofill="no" />
+        <ImageButton
+            android:id="@+id/periodSelectionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:src="@drawable/ic_period_button"
+            android:contentDescription="@string/description_sync_task_period_change_button" />
 
     </LinearLayout>
 

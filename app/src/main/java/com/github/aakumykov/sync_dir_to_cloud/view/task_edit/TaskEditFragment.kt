@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.utils.DateUtils
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -20,7 +21,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.O
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import java.util.*
 
 class TaskEditFragment : Fragment() {
 
@@ -47,8 +47,9 @@ class TaskEditFragment : Fragment() {
 
     private fun prepareButtons() {
 
-        binding.periodHoursView.setOnClickListener { pickExecutionPeriod() }
-        binding.periodMinutesView.setOnClickListener { pickExecutionPeriod() }
+        binding.periodSelectionButton.setOnClickListener {
+            pickExecutionPeriod()
+        }
 
         binding.saveButton.setOnClickListener {
             taskEditViewModel.createOrSaveSyncTask(
@@ -75,7 +76,7 @@ class TaskEditFragment : Fragment() {
             .build()
 
         picker.addOnPositiveButtonClickListener {
-
+            binding.periodView.setText("каждые ${picker.hour} часов ${picker.minute} минут")
         }
 
         picker.showNow(childFragmentManager, "")
@@ -117,11 +118,9 @@ class TaskEditFragment : Fragment() {
     }
 
     private fun fillPeriodView(syncTask: SyncTask) {
-        val calendar: Calendar = Calendar.getInstance().apply {
-            time = Date(syncTask.executionPeriod)
-        }
-        binding.periodHoursView.setText(calendar.get(Calendar.HOUR).toString())
-        binding.periodMinutesView.setText(calendar.get(Calendar.MINUTE).toString())
+        binding.periodView.setText(DateUtils.formatTime(
+            requireContext(), "HH:mm", syncTask.executionPeriod
+        ))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -195,8 +194,8 @@ class TaskEditFragment : Fragment() {
         binding.sourcePathInput.isEnabled = true
         binding.targetPathInput.isEnabled = true
 
-        binding.selectSourcePathButton.isEnabled = true
-        binding.selectTargetPathButton.isEnabled = true
+        binding.sourcePathSelectionButton.isEnabled = true
+        binding.targetPathSelectionButton.isEnabled = true
 
         binding.saveButton.isEnabled = true
     }
@@ -205,8 +204,8 @@ class TaskEditFragment : Fragment() {
         binding.sourcePathInput.isEnabled = false
         binding.targetPathInput.isEnabled = false
 
-        binding.selectSourcePathButton.isEnabled = false
-        binding.selectTargetPathButton.isEnabled = false
+        binding.sourcePathSelectionButton.isEnabled = false
+        binding.targetPathSelectionButton.isEnabled = false
 
         binding.saveButton.isEnabled = false
     }
