@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.os.Bundle
+import android.text.format.DateFormat.is24HourFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
+import java.util.*
 
 class TaskEditFragment : Fragment() {
 
@@ -43,6 +47,9 @@ class TaskEditFragment : Fragment() {
 
     private fun prepareButtons() {
 
+        binding.periodHoursView.setOnClickListener { pickExecutionPeriod() }
+        binding.periodMinutesView.setOnClickListener { pickExecutionPeriod() }
+
         binding.saveButton.setOnClickListener {
             taskEditViewModel.createOrSaveSyncTask(
                 binding.sourcePathInput.text.toString(),
@@ -53,6 +60,25 @@ class TaskEditFragment : Fragment() {
         binding.cancelButton.setOnClickListener {
             navigationViewModel.navigateTo(NavTarget.Back)
         }
+    }
+
+    private fun pickExecutionPeriod() {
+
+        val isSystem24Hour = is24HourFormat(requireContext())
+        val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(clockFormat)
+            .setHour(12)
+            .setMinute(10)
+            .setTitleText(R.string.sync_task_regulatiry_picker_title)
+            .build()
+
+        picker.addOnPositiveButtonClickListener {
+
+        }
+
+        picker.showNow(childFragmentManager, "")
     }
 
 
@@ -86,7 +112,16 @@ class TaskEditFragment : Fragment() {
     private fun fillForm(syncTask: SyncTask) {
         binding.sourcePathInput.setText(syncTask.sourcePath)
         binding.targetPathInput.setText(syncTask.targetPath)
-//        binding.regularityInput.setText(syncTask.regularity.toString())
+
+        fillPeriodView(syncTask)
+    }
+
+    private fun fillPeriodView(syncTask: SyncTask) {
+        val calendar: Calendar = Calendar.getInstance().apply {
+            time = Date(syncTask.executionPeriod)
+        }
+        binding.periodHoursView.setText(calendar.get(Calendar.HOUR).toString())
+        binding.periodMinutesView.setText(calendar.get(Calendar.MINUTE).toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

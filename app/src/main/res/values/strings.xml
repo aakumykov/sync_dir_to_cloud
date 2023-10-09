@@ -13,7 +13,8 @@
     <string name="BUTTON_task_edit_save">Сохранить</string>
     <string name="description_sync_task_play_button">Запустить задачу</string>
     <string name="description_sync_task_edit_button">Редактировать задачу</string>
-    <string name="hint_sync_task_regularity">Периодичность</string>
+    <string name="hint_sync_task_period_hours">Часов</string>
+    <string name="hint_sync_task_period_minutes">Минут</string>
     <string name="creating_new_task">Создаём новое задание</string>
     <string name="sync_task_created">Задача добавлена</string>
     <string name="updating_task">Обновляем задачу</string>
@@ -21,4 +22,6 @@
     <string name="description_sync_task_state">Состояние задачи</string>
     <string name="description_sync_task_more_actions">Дополнительные действия</string>
     <string name="not_implemented_yet">Ещё не реализовано</string>
+    <string name="sync_task_regulatiry_picker_title">Выберите интервал синхронизаций</string>
+    <string name="sync_task_period_label">Выполнять каждые</string>
 </resources>

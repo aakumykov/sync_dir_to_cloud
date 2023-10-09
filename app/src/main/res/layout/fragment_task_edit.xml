@@ -13,21 +13,13 @@
 
         <EditText
             android:id="@+id/sourcePathInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:hint="@string/hint_source_path_input"
             android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            tools:text="@string/tools_source_path" />
+            style="@style/path_input" />
 
         <Button
             android:id="@+id/selectSourcePathButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/BUTTON_dots"
-            android:layout_weight="0"/>
+            style="@style/path_select_button" />
     </LinearLayout>
 
     <LinearLayout
@@ -37,29 +29,50 @@
 
         <EditText
             android:id="@+id/targetPathInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
+            style="@style/path_input"
             android:hint="@string/hint_target_path_input"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            tools:text="@string/tools_target_path" />
+            android:importantForAutofill="no" />
 
         <Button
             android:id="@+id/selectTargetPathButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/BUTTON_dots"
-            android:layout_weight="0"/>
+            style="@style/path_select_button"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sync_task_period_label"
+        android:textAlignment="center"
+        android:textColor="@color/primaryVariant" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/periodHoursView"
+            style="@style/sync_task_period_input"
+            android:textAlignment="textEnd"
+            android:layout_marginEnd="8dp"
+            android:hint="@string/hint_sync_task_period_hours"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/periodMinutesView"
+            style="@style/sync_task_period_input"
+            android:textAlignment="textStart"
+            android:layout_marginStart="8dp"
+            android:hint="@string/hint_sync_task_period_minutes"
+            android:importantForAutofill="no" />
+
     </LinearLayout>
 
     <Button
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/BUTTON_task_edit_save"/>
+        android:text="@string/BUTTON_task_edit_save" />
 
     <Button
         android:id="@+id/cancelButton"

@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.github.aakumykov.sync_dir_to_cloud.config.SyncTaskExecutionConfig
 import java.util.*
 
 @Entity(tableName = "sync_tasks")
@@ -12,7 +13,7 @@ class SyncTask(
     @ColumnInfo(name = "target_path") var targetPath: String,
     @ColumnInfo(name = "state") var state: State, // TODO: OpState
     @ColumnInfo(name = "enabled") var enabled: Boolean,
-    @ColumnInfo(name = "regularity") val regularity: Long
+    @ColumnInfo(name = "execution_period") val executionPeriod: Long
 ) {
     constructor(sourcePath: String, targetPath: String) : this(
         UUID.randomUUID().toString(),
@@ -20,7 +21,7 @@ class SyncTask(
         targetPath,
         State.IDLE,
         false,
-        60
+        SyncTaskExecutionConfig.DEFAULT_EXECUTION_PERIOD_MINUTES
     )
 
     fun getTitle(): String {
