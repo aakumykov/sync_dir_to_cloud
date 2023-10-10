@@ -13,7 +13,7 @@
     <string name="BUTTON_task_edit_save">Сохранить</string>
     <string name="description_sync_task_play_button">Запустить задачу</string>
     <string name="description_sync_task_edit_button">Редактировать задачу</string>
-    <string name="hint_sync_task_period">Периодичность</string>
+    <string name="hint_sync_task_regularity">Интервал</string>
     <string name="creating_new_task">Создаём новое задание</string>
     <string name="sync_task_created">Задача добавлена</string>
     <string name="updating_task">Обновляем задачу</string>
@@ -26,4 +26,5 @@
     <string name="description_sync_task_period_change_button">Изменить период выполнения</string>
     <string name="description_sync_task_select_source_path">Выбрать путь к источнику</string>
     <string name="description_sync_task_select_target_path">Выбрать путь назначения</string>
+    <string name="sync_task_interval_view">%1$d %2$s %3$d %4$s</string>
 </resources>

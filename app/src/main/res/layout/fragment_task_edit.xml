@@ -47,22 +47,17 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/periodView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textAlignment="textStart"
-            android:hint="@string/hint_sync_task_period"
-            android:enabled="false"
+            android:id="@+id/regularityInput"
+            style="@style/path_input"
+            android:hint="@string/hint_sync_task_regularity"
             android:importantForAutofill="no" />
 
         <ImageButton
             android:id="@+id/periodSelectionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
+            style="@style/path_select_button"
+            android:contentDescription="@string/description_sync_task_period_change_button"
             android:src="@drawable/ic_period_button"
-            android:contentDescription="@string/description_sync_task_period_change_button" />
+            tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
 

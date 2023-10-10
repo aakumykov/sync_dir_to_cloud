@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.utils
+package com.github.aakumykov.sync_dir_to_cloud.view.view_utils
 
 import android.content.Context
 

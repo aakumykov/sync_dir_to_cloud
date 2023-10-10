@@ -13,12 +13,11 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.utils.DateUtils
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
-import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
+import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 
@@ -31,96 +30,16 @@ class TaskEditFragment : Fragment() {
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
+    private var firstRun: Boolean = true
+    private lateinit var currentTask: SyncTask
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        firstRun = null == savedInstanceState
         prepareLayout(inflater, container)
         prepareButtons()
         prepareViewModels()
         return binding.root
-    }
-
-
-    private fun prepareLayout(inflater: LayoutInflater, container: ViewGroup?) {
-        _binding = FragmentTaskEditBinding.inflate(inflater, container, false)
-    }
-
-
-    private fun prepareButtons() {
-
-        binding.periodSelectionButton.setOnClickListener {
-            pickExecutionPeriod()
-        }
-
-        binding.saveButton.setOnClickListener {
-            taskEditViewModel.createOrSaveSyncTask(
-                binding.sourcePathInput.text.toString(),
-                binding.targetPathInput.text.toString()
-            )
-        }
-
-        binding.cancelButton.setOnClickListener {
-            navigationViewModel.navigateTo(NavTarget.Back)
-        }
-    }
-
-    private fun pickExecutionPeriod() {
-
-        val isSystem24Hour = is24HourFormat(requireContext())
-        val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
-
-        val picker = MaterialTimePicker.Builder()
-            .setTimeFormat(clockFormat)
-            .setHour(12)
-            .setMinute(10)
-            .setTitleText(R.string.sync_task_regulatiry_picker_title)
-            .build()
-
-        picker.addOnPositiveButtonClickListener {
-            binding.periodView.setText("каждые ${picker.hour} часов ${picker.minute} минут")
-        }
-
-        picker.showNow(childFragmentManager, "")
-    }
-
-
-    private fun prepareViewModels() {
-        taskEditViewModel.getCurrentTask().observe(viewLifecycleOwner, this::onCurrentTaskChanged)
-        taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
-    }
-
-
-    private fun onOpStateChanged(opState: OpState) {
-        when (opState) {
-            is OpState.Idle -> showIdleOpState()
-            is OpState.Busy -> showBusyOpState(opState)
-            is OpState.Success -> finishWork(opState)
-            is OpState.Error -> showErrorOpState(opState)
-        }
-    }
-
-
-    private fun finishWork(successOpState: OpState.Success) {
-        Toast.makeText(requireContext(), successOpState.textMessage.get(requireContext()), Toast.LENGTH_SHORT).show()
-        navigationViewModel.navigateBack()
-    }
-
-
-    private fun onCurrentTaskChanged(syncTask: SyncTask) {
-        fillForm(syncTask)
-    }
-
-
-    private fun fillForm(syncTask: SyncTask) {
-        binding.sourcePathInput.setText(syncTask.sourcePath)
-        binding.targetPathInput.setText(syncTask.targetPath)
-
-        fillPeriodView(syncTask)
-    }
-
-    private fun fillPeriodView(syncTask: SyncTask) {
-        binding.periodView.setText(DateUtils.formatTime(
-            requireContext(), "HH:mm", syncTask.executionPeriod
-        ))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -135,17 +54,122 @@ class TaskEditFragment : Fragment() {
             }
         ))
 
-        // TODO: преобразовать в один метод "prepare"
-        if (null == taskId)
-            taskEditViewModel.prepareForNewTask()
-        else
+        if (null != taskId)
             taskEditViewModel.loadTask(taskId)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        setFormValuesToCurrentTask()
+        taskEditViewModel.storeCurrentTask(currentTask)
+    }
+
+    private fun setFormValuesToCurrentTask() {
+        currentTask.sourcePath = binding.sourcePathInput.text.toString()
+        currentTask.targetPath = binding.targetPathInput.text.toString()
+//        currentTask.intervalMinutes
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
+
+    private fun prepareLayout(inflater: LayoutInflater, container: ViewGroup?) {
+        _binding = FragmentTaskEditBinding.inflate(inflater, container, false)
+    }
+
+    private fun prepareButtons() {
+        binding.periodSelectionButton.setOnClickListener { onTimeButtonClicked() }
+        binding.saveButton.setOnClickListener { onSaveButtonClicked() }
+        binding.cancelButton.setOnClickListener { onCancelButtonClicked() }
+    }
+
+    private fun prepareViewModels() {
+        taskEditViewModel.getCurrentTask().observe(viewLifecycleOwner, this::onCurrentTaskChanged)
+        taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
+    }
+
+
+    private fun onCurrentTaskChanged(syncTask: SyncTask) {
+        currentTask = syncTask
+        fillForm()
+    }
+
+    private fun onOpStateChanged(opState: OpState) {
+        when (opState) {
+            is OpState.Idle -> showIdleOpState()
+            is OpState.Busy -> showBusyOpState(opState)
+            is OpState.Success -> finishWork(opState)
+            is OpState.Error -> showErrorOpState(opState)
+        }
+    }
+
+
+    private fun onSaveButtonClicked() {
+        taskEditViewModel.createOrSaveSyncTask2()
+    }
+
+    private fun onCancelButtonClicked() {
+        navigationViewModel.navigateTo(NavTarget.Back)
+    }
+
+    private fun onTimeButtonClicked() {
+
+        val isSystem24Hour = is24HourFormat(requireContext())
+        val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(clockFormat)
+            .setHour(12)
+            .setMinute(10)
+            .setTitleText(R.string.sync_task_regulatiry_picker_title)
+            .build()
+
+        picker.addOnPositiveButtonClickListener {
+            fillPeriodView(picker.hour, picker.minute)
+        }
+
+        picker.showNow(childFragmentManager, "")
+    }
+
+    private fun finishWork(successOpState: OpState.Success) {
+        Toast.makeText(requireContext(), successOpState.textMessage.get(requireContext()), Toast.LENGTH_SHORT).show()
+        navigationViewModel.navigateBack()
+    }
+
+
+
+    private fun fillForm() {
+        if (firstRun) {
+            binding.sourcePathInput.setText(currentTask.sourcePath)
+            binding.targetPathInput.setText(currentTask.targetPath)
+
+            fillPeriodView()
+        }
+    }
+
+    private fun fillPeriodView() {
+        fillPeriodView(currentTask.intervalHours, currentTask.intervalMinutes)
+    }
+
+    private fun fillPeriodView(hourNumber: Int, minuteNumber: Int) {
+
+        val h = if (0 == hourNumber) 24 else hourNumber
+        val m = minuteNumber
+
+        val hPluralName = requireContext().resources.getQuantityString(R.plurals.hours, h)
+        val mPluralName = requireContext().resources.getQuantityString(R.plurals.minutes, m)
+
+        binding.regularityInput.setText(getString(
+            R.string.sync_task_interval_view,
+            h, hPluralName,
+            m, mPluralName
+        ))
+    }
+
 
 
     private fun showIdleOpState() {
@@ -224,6 +248,8 @@ class TaskEditFragment : Fragment() {
     companion object {
 
         private const val TASK_ID = "TASK_ID"
+        private const val REGULARITY_HOURS = "REGULARITY_HOURS"
+        private const val REGULARITY_MINUTES = "REGULARITY_MINUTES"
 
         fun create(): TaskEditFragment =
             createFragment(null)

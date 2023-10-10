@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
-import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
+import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -18,10 +18,6 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
     private var currentTask: SyncTask? = null
     private val currentTaskMutableLiveData: MutableLiveData<SyncTask> = MutableLiveData()
 
-
-    fun prepareForNewTask() {
-
-    }
 
     fun loadTask(id: String) {
         viewModelScope.launch {
@@ -71,5 +67,13 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
 
             setOpState(OpState.Success(TextMessage(R.string.sync_task_updated)))
         }
+    }
+
+    fun createOrSaveSyncTask2() {
+
+    }
+
+    fun storeCurrentTask(syncTask: SyncTask) {
+        currentTask = syncTask
     }
 }

@@ -20,7 +20,7 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
 
         val periodicWorkRequest = PeriodicWorkRequest.Builder(
             SyncTaskWorker::class.java,
-            syncTask.executionPeriod,
+            syncTask.getExecutionIntervalMinutes(),
             TimeUnit.MINUTES,
             PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
             TimeUnit.MILLISECONDS
