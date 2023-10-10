@@ -42,14 +42,20 @@
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/regularityInput"
-            style="@style/path_input"
-            android:hint="@string/hint_sync_task_regularity"
+            android:id="@+id/intervalHours"
+            android:hint="@string/hint_sync_task_interval_hour"
+            style="@style/regularity_input"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/intervalMinutes"
+            android:hint="@string/hint_sync_task_interval_minute"
+            style="@style/regularity_input"
             android:importantForAutofill="no" />
 
         <ImageButton

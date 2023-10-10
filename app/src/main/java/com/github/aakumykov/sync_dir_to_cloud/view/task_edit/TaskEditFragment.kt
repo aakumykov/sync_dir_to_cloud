@@ -58,18 +58,6 @@ class TaskEditFragment : Fragment() {
             taskEditViewModel.loadTask(taskId)
     }
 
-    override fun onStop() {
-        super.onStop()
-        setFormValuesToCurrentTask()
-        taskEditViewModel.storeCurrentTask(currentTask)
-    }
-
-    private fun setFormValuesToCurrentTask() {
-        currentTask.sourcePath = binding.sourcePathInput.text.toString()
-        currentTask.targetPath = binding.targetPathInput.text.toString()
-//        currentTask.intervalMinutes
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -82,9 +70,12 @@ class TaskEditFragment : Fragment() {
     }
 
     private fun prepareButtons() {
-        binding.periodSelectionButton.setOnClickListener { onTimeButtonClicked() }
         binding.saveButton.setOnClickListener { onSaveButtonClicked() }
         binding.cancelButton.setOnClickListener { onCancelButtonClicked() }
+
+        binding.intervalHours.setOnClickListener { onSelectTimeClicked() }
+        binding.intervalMinutes.setOnClickListener { onSelectTimeClicked() }
+        binding.periodSelectionButton.setOnClickListener { onSelectTimeClicked() }
     }
 
     private fun prepareViewModels() {
@@ -108,15 +99,8 @@ class TaskEditFragment : Fragment() {
     }
 
 
-    private fun onSaveButtonClicked() {
-        taskEditViewModel.createOrSaveSyncTask2()
-    }
 
-    private fun onCancelButtonClicked() {
-        navigationViewModel.navigateTo(NavTarget.Back)
-    }
-
-    private fun onTimeButtonClicked() {
+    private fun onSelectTimeClicked() {
 
         val isSystem24Hour = is24HourFormat(requireContext())
         val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
@@ -129,10 +113,24 @@ class TaskEditFragment : Fragment() {
             .build()
 
         picker.addOnPositiveButtonClickListener {
-            fillPeriodView(picker.hour, picker.minute)
+            binding.intervalHours.setText(picker.hour.toString())
+            binding.intervalMinutes.setText(picker.minute.toString())
         }
 
         picker.showNow(childFragmentManager, "")
+    }
+
+    private fun onSaveButtonClicked() {
+        currentTask.sourcePath = binding.sourcePathInput.text.toString()
+        currentTask.targetPath = binding.targetPathInput.text.toString()
+        currentTask.intervalHours = binding.intervalHours.text.toString().toInt()
+        currentTask.intervalMinutes = binding.intervalMinutes.text.toString().toInt()
+        
+        taskEditViewModel.createOrSaveSyncTask2(currentTask)
+    }
+
+    private fun onCancelButtonClicked() {
+        navigationViewModel.navigateTo(NavTarget.Back)
     }
 
     private fun finishWork(successOpState: OpState.Success) {
@@ -156,18 +154,8 @@ class TaskEditFragment : Fragment() {
     }
 
     private fun fillPeriodView(hourNumber: Int, minuteNumber: Int) {
-
-        val h = if (0 == hourNumber) 24 else hourNumber
-        val m = minuteNumber
-
-        val hPluralName = requireContext().resources.getQuantityString(R.plurals.hours, h)
-        val mPluralName = requireContext().resources.getQuantityString(R.plurals.minutes, m)
-
-        binding.regularityInput.setText(getString(
-            R.string.sync_task_interval_view,
-            h, hPluralName,
-            m, mPluralName
-        ))
+        binding.intervalHours.setText(hourNumber.toString())
+        binding.intervalMinutes.setText(minuteNumber.toString())
     }
 
 
@@ -248,8 +236,6 @@ class TaskEditFragment : Fragment() {
     companion object {
 
         private const val TASK_ID = "TASK_ID"
-        private const val REGULARITY_HOURS = "REGULARITY_HOURS"
-        private const val REGULARITY_MINUTES = "REGULARITY_MINUTES"
 
         fun create(): TaskEditFragment =
             createFragment(null)
