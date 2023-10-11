@@ -18,6 +18,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     @Inject lateinit var syncTaskUpdater: SyncTaskUpdater
     @Inject lateinit var syncTaskReader: SyncTaskReader
     private val context: Context
+    private lateinit var currentTask: SyncTask
 
     init {
         App.appComponent().injectWorker2(this)
@@ -31,20 +32,16 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         fileWriter.writeln(CurrentDateTime.get()+", start")
 
         val taskId = inputData.getString(TASK_ID)
-            ?: return Result.failure(errorData("taskId is null"))
+            ?: return Result.failure(data(ERROR_MSG,"taskId is null"))
 
-        val syncTask = syncTaskReader.getSyncTask(taskId)
+        currentTask = syncTaskReader.getSyncTask(taskId)
 
-        if (syncTask.state == SyncTask.State.RUNNING)
+        if (currentTask.state == SyncTask.State.RUNNING)
             return Result.retry()
 
-        syncTask.state = SyncTask.State.RUNNING
-        syncTaskUpdater.updateSyncTask(syncTask)
-
+        changeTaskState(SyncTask.State.RUNNING)
         delay(10000)
-
-        syncTask.state = SyncTask.State.SUCCESS
-        syncTaskUpdater.updateSyncTask(syncTask)
+        changeTaskState(SyncTask.State.SUCCESS)
 
         fileWriter.writeln(CurrentDateTime.get()+", end")
 
@@ -52,9 +49,15 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
 
-    private fun errorData(errorMsg: String): Data {
+    private fun changeTaskState(state: SyncTask.State) {
+        currentTask.state = state
+        syncTaskUpdater.updateSyncTask(currentTask)
+    }
+
+
+    private fun data(key: String, message: String): Data {
         return Data.Builder().apply {
-            putString(ERROR_MSG, errorMsg)
+            putString(key, message)
         }.build()
     }
 
