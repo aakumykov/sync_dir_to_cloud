@@ -9,9 +9,13 @@ class StartStopSyncTaskUseCase @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStarterStopper: SyncTaskStarterStopper,
 ) {
-    suspend fun startSyncTask(taskId: String) {
+    suspend fun startStopSyncTask(taskId: String) {
         // TODO: кинуть исключение просто так
-        syncTaskStarterStopper.startSyncTask(getSyncTask(taskId))
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+        when (syncTask.state) {
+            SyncTask.State.RUNNING -> syncTaskStarterStopper.stopSyncTask(syncTask)
+            else -> syncTaskStarterStopper.startSyncTask(syncTask)
+        }
     }
 
     fun stopSyncTask(syncTask: SyncTask?) {
@@ -20,7 +24,6 @@ class StartStopSyncTaskUseCase @Inject constructor(
 
     private suspend fun getSyncTask(taskId: String): SyncTask {
         val syncTask = syncTaskReader.getSyncTask(taskId)
-            ?: throw IllegalStateException("SyncTask with id $taskId not found in database.")
         return syncTask
     }
 

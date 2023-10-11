@@ -62,7 +62,7 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     }
 
     override fun onTaskRunClicked(taskId: String) {
-        taskListViewModel.runTask(taskId)
+        taskListViewModel.startStopTask(taskId)
     }
 
     override fun onTaskDeleteClicked(taskId: String) {

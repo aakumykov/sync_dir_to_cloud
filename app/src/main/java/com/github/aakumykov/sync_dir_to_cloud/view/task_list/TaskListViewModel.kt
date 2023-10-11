@@ -20,9 +20,9 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
         syncTaskManagingUseCase.listSyncTasks()
 
 
-    fun runTask(id: String) {
+    fun startStopTask(taskId: String) {
         viewModelScope.launch {
-            startStopUseCase.startSyncTask(id)
+            startStopUseCase.startStopSyncTask(taskId)
         }
     }
 
