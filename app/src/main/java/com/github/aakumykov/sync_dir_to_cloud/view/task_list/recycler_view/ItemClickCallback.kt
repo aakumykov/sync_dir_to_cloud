@@ -5,5 +5,5 @@ interface ItemClickCallback {
     fun onTaskRunClicked(taskId: String)
     fun onTaskDeleteClicked(taskId: String)
     fun onTaskInfoClicked(taskId: String)
-    fun onTaskEnableSwitchToggled(taskId: String, isEnabled: Boolean)
+    fun onTaskEnableSwitchClicked(taskId: String)
 }

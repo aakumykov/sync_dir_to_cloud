@@ -73,8 +73,8 @@ class TaskListFragment : Fragment(), ItemClickCallback {
         TODO("Not yet implemented")
     }
 
-    override fun onTaskEnableSwitchToggled(taskId: String, isEnabled: Boolean) {
-        taskListViewModel.changeTaskEnabled(taskId, isEnabled)
+    override fun onTaskEnableSwitchClicked(taskId: String) {
+        taskListViewModel.changeTaskEnabled(taskId)
     }
 
 

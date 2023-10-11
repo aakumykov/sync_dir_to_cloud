@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
@@ -17,9 +18,14 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     // TODO: испытать поведение при ошибках
 
     suspend fun scheduleSyncTask(taskId: String) {
+        scheduleSyncTask(syncTaskReader.getSyncTask(taskId))
+    }
 
-        val syncTask = syncTaskReader.getSyncTask(taskId)
+    suspend fun unScheduleSyncTask(taskId: String) {
+        unScheduleSyncTask(syncTaskReader.getSyncTask(taskId))
+    }
 
+    private fun scheduleSyncTask(syncTask: SyncTask) {
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
             override fun onSyncTaskScheduleSuccess() {
@@ -33,9 +39,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         })
     }
 
-    suspend fun unScheduleSyncTask(taskId: String) {
-
-        val syncTask = syncTaskReader.getSyncTask(taskId)
+    private fun unScheduleSyncTask(syncTask: SyncTask) {
 
         syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
 
@@ -48,6 +52,14 @@ class SchedulingSyncTaskUseCase @Inject constructor(
                 Log.e(TAG, ExceptionUtils.getErrorMessage(error), error)
             }
         })
+    }
+
+    suspend fun toggleTaskScheduling(taskId: String) {
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+        if (syncTask.isEnabled)
+            unScheduleSyncTask(syncTask)
+        else
+            scheduleSyncTask(syncTask)
     }
 
     companion object {

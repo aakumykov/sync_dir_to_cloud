@@ -15,6 +15,7 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
     private val startStopUseCase: StartStopSyncTaskUseCase = App.appComponent().getStartStopSyncTaskUseCase()
     private val taskSchedulingUseCase: SchedulingSyncTaskUseCase = App.appComponent().getTaskSchedulingUseCase()
 
+
     suspend fun getTaskList(): LiveData<List<SyncTask>> =
         syncTaskManagingUseCase.listSyncTasks()
 
@@ -25,12 +26,9 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
         }
     }
 
-    fun changeTaskEnabled(taskId: String, isEnabled: Boolean) {
+    fun changeTaskEnabled(taskId: String) {
         viewModelScope.launch {
-            if (isEnabled)
-                taskSchedulingUseCase.scheduleSyncTask(taskId)
-            else
-                taskSchedulingUseCase.unScheduleSyncTask(taskId)
+            taskSchedulingUseCase.toggleTaskScheduling(taskId)
         }
     }
 }

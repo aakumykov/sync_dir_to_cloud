@@ -23,10 +23,15 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     init {
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
+
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
+
         moreButton.setOnClickListener { Toast.makeText(moreButton.context, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show() }
-        enablingSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            itemClickCallback.onTaskEnableSwitchToggled(currentTask.id, isChecked) }
+
+        // Переключается не прямо, а после изменения статуса SyncTask (в БД).
+        enablingSwitch.setOnClickListener {
+            itemClickCallback.onTaskEnableSwitchClicked(currentTask.id)
+        }
     }
 
     fun fill(syncTask: SyncTask) {
@@ -45,13 +50,17 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     }
 
     private fun displayOpState() {
-        stateView.setImageResource(
-            when(currentTask.state) {
-                SyncTask.State.IDLE -> R.drawable.ic_task_state_scheduled // FIXME: не то
-                SyncTask.State.RUNNING -> R.drawable.ic_task_state_running
-                SyncTask.State.SUCCESS -> R.drawable.ic_task_state_success
-                SyncTask.State.ERROR -> R.drawable.ic_task_state_error
-            }
-        )
+        if (currentTask.isEnabled) {
+            stateView.setImageResource(
+                when (currentTask.state) {
+                    SyncTask.State.IDLE -> R.drawable.ic_task_state_scheduled // FIXME: не то
+                    SyncTask.State.RUNNING -> R.drawable.ic_task_state_running
+                    SyncTask.State.SUCCESS -> R.drawable.ic_task_state_success
+                    SyncTask.State.ERROR -> R.drawable.ic_task_state_error
+                }
+            )
+        }
+        else
+            stateView.setImageResource(R.drawable.ic_task_state_disabled)
     }
 }
