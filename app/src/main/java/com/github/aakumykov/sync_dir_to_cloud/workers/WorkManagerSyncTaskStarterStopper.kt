@@ -12,7 +12,7 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
 {
     override fun startSyncTask(syncTask: SyncTask) {
 
-        val workName = syncTask.id
+        val workName = workName(syncTask.id)
 
         val inputData = Data.Builder().apply {
             putString(TASK_ID, syncTask.id)
@@ -27,24 +27,26 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
         }.build()*/
 
         val manualSyncStartWorkRequest: OneTimeWorkRequest =
-            OneTimeWorkRequest
-            .Builder(SyncTaskWorker::class.java)
-            .setInputData(inputData)
-            .setConstraints(networkConstraints)
+            OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
+                .setInputData(inputData)
+                .setConstraints(networkConstraints)
 //            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно
 //            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .build()
+                .build()
 
         workManager
             .beginUniqueWork(workName, ExistingWorkPolicy.KEEP, manualSyncStartWorkRequest)
             .enqueue()
     }
 
+    private fun workName(taskId: String): String = MANUAL_WORK_ID_PREFIX + taskId
+
     override fun stopSyncTask(syncTask: SyncTask) {
-//        workManager.cancelUniqueWork(syncTask.id)
+        workManager.cancelUniqueWork(workName(syncTask.id))
     }
 
     companion object {
         const val TASK_ID = "TASK_ID"
+        const val MANUAL_WORK_ID_PREFIX = "MANUAL-"
     }
 }

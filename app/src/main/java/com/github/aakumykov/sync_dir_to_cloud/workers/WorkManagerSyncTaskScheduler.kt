@@ -54,4 +54,11 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
             }
         }
     }
+
+    private fun workName(taskId: String) = PERIODIC_WORK_NAME_PREFIX + taskId
+
+    companion object {
+        const val PERIODIC_WORK_NAME_PREFIX = "PERIODIC-"
+    }
 }
+
