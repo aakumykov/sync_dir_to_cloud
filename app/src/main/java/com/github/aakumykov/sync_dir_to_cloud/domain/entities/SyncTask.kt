@@ -34,9 +34,9 @@ class SyncTask {
     }
 
 
-
-    val title: String
-        @Ignore get() = "$sourcePath -> $targetPath"
+    fun getTitle(): String {
+        return "$sourcePath -> $targetPath"
+    }
 
 
     @Ignore

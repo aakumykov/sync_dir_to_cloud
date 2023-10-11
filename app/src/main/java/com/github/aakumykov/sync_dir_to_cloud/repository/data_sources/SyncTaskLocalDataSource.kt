@@ -27,9 +27,9 @@ class SyncTaskLocalDataSource @Inject constructor(private val mSyncTaskDAO: Sync
         }
     }
 
-    suspend fun delete(taskId: String) {
+    suspend fun delete(syncTask: SyncTask) {
         return withContext(Dispatchers.IO) {
-            mSyncTaskDAO.delete(taskId)
+            mSyncTaskDAO.delete(syncTask)
         }
     }
 

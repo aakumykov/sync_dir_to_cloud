@@ -7,5 +7,5 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.O
 
 abstract class TaskManagingViewModel(application: Application) : OpStateViewModel(application) {
 
-    val taskManagingUseCase: SyncTaskManagingUseCase = App.appComponent().getSyncTaskManagingUseCase()
+    val syncTaskManagingUseCase: SyncTaskManagingUseCase = App.appComponent().getSyncTaskManagingUseCase()
 }

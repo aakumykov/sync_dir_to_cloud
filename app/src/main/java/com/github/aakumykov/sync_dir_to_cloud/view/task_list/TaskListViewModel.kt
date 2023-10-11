@@ -17,7 +17,7 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
 
 
     suspend fun getTaskList(): LiveData<List<SyncTask>> =
-        taskManagingUseCase.listSyncTasks()
+        syncTaskManagingUseCase.listSyncTasks()
 
 
     fun runTask(id: String) {
@@ -29,12 +29,6 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
     fun changeTaskEnabled(taskId: String) {
         viewModelScope.launch {
             taskSchedulingUseCase.toggleTaskScheduling(taskId)
-        }
-    }
-
-    fun deleteTask(taskId: String) {
-        viewModelScope.launch {
-            taskManagingUseCase.deleteSyncTask(taskId)
         }
     }
 }

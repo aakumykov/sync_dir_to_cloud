@@ -25,8 +25,8 @@ class SyncTaskManagingUseCase @Inject constructor(
     }
 
 
-    suspend fun deleteSyncTask(taskId: String) {
-        syncTaskCreatorDeleter.deleteSyncTask(taskId)
+    suspend fun deleteSyncTask(syncTask: SyncTask) {
+        syncTaskCreatorDeleter.deleteSyncTask(syncTask)
     }
 
 
