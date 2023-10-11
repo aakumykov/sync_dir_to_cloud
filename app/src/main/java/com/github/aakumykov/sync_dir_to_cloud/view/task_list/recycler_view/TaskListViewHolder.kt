@@ -63,7 +63,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
             true -> R.color.button_icon_tint_active
             false -> R.color.button_icon_tint_inactive
         })
-        runButton.drawable.setColorFilter(colorForFilter, PorterDuff.Mode.MULTIPLY)
+        runButton.setColorFilter(colorForFilter, PorterDuff.Mode.MULTIPLY)
     }
 
     private fun displayTitle() {
