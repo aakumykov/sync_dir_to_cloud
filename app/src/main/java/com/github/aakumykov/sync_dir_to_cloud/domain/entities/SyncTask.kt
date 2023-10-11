@@ -45,6 +45,10 @@ class SyncTask {
     }
 
 
+    override fun toString(): String {
+        return SyncTask::class.simpleName + " { enabled: " + isEnabled + ", " + sourcePath + " -> " + targetPath + " }"
+    }
+
     enum class State {
         IDLE,
         RUNNING,
