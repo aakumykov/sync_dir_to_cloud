@@ -31,7 +31,6 @@ class TaskEditFragment : Fragment() {
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
-    private lateinit var currentTask: SyncTask
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,6 +45,7 @@ class TaskEditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val taskId: String? = arguments?.getString(TASK_ID)
+        taskEditViewModel.prepare(taskId)
 
         pageTitleViewModel.setPageTitle(getString(
             when(taskId) {
@@ -53,9 +53,6 @@ class TaskEditFragment : Fragment() {
                 else -> R.string.FRAGMENT_TASK_EDIT_edition_title
             }
         ))
-
-        if (null != taskId)
-            taskEditViewModel.loadTask(taskId)
     }
 
     override fun onDestroyView() {
@@ -85,8 +82,7 @@ class TaskEditFragment : Fragment() {
 
 
     private fun onCurrentTaskChanged(syncTask: SyncTask) {
-        currentTask = syncTask
-        fillForm()
+        fillForm(syncTask)
     }
 
     private fun onOpStateChanged(opState: OpState) {
@@ -121,12 +117,12 @@ class TaskEditFragment : Fragment() {
     }
 
     private fun onSaveButtonClicked() {
-        currentTask.sourcePath = binding.sourcePathInput.text.toString()
-        currentTask.targetPath = binding.targetPathInput.text.toString()
-        currentTask.intervalHours = binding.intervalHours.text.toString().toInt()
-        currentTask.intervalMinutes = binding.intervalMinutes.text.toString().toInt()
-        
-        taskEditViewModel.createOrSaveSyncTask2(currentTask)
+        taskEditViewModel.createOrSaveSyncTask(
+            binding.sourcePathInput.text.toString(),
+            binding.targetPathInput.text.toString(),
+            binding.intervalHours.text.toString().toInt(),
+            binding.intervalMinutes.text.toString().toInt()
+        )
     }
 
     private fun onCancelButtonClicked() {
@@ -140,17 +136,17 @@ class TaskEditFragment : Fragment() {
 
 
 
-    private fun fillForm() {
+    private fun fillForm(syncTask: SyncTask) {
         if (firstRun) {
-            binding.sourcePathInput.setText(currentTask.sourcePath)
-            binding.targetPathInput.setText(currentTask.targetPath)
+            binding.sourcePathInput.setText(syncTask.sourcePath)
+            binding.targetPathInput.setText(syncTask.targetPath)
 
-            fillPeriodView()
+            fillPeriodView(syncTask)
         }
     }
 
-    private fun fillPeriodView() {
-        fillPeriodView(currentTask.intervalHours, currentTask.intervalMinutes)
+    private fun fillPeriodView(syncTask: SyncTask) {
+        fillPeriodView(syncTask.intervalHours, syncTask.intervalMinutes)
     }
 
     private fun fillPeriodView(hourNumber: Int, minuteNumber: Int) {

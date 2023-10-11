@@ -14,7 +14,7 @@ interface SyncTaskDAO {
     fun add(syncTask: SyncTask)
 
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
-    fun get(id: String): SyncTask?
+    fun get(id: String): SyncTask
 
     @Delete
     fun delete(syncTask: SyncTask)

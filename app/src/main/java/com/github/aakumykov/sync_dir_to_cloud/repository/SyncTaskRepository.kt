@@ -24,7 +24,7 @@ class SyncTaskRepository @Inject constructor(
         return syncTaskLocalDataSource.listSyncTasks()
     }
 
-    override suspend fun getSyncTask(id: String): SyncTask? {
+    override suspend fun getSyncTask(id: String): SyncTask {
         return syncTaskLocalDataSource.getTask(id)
     }
 

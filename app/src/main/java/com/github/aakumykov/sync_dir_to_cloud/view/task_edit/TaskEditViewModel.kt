@@ -13,16 +13,18 @@ import kotlinx.coroutines.launch
 
 class TaskEditViewModel(application: Application) : TaskManagingViewModel(application) {
 
-    private var currentTask: SyncTask? = null
+    private lateinit var currentTask: SyncTask
     private val currentTaskMutableLiveData: MutableLiveData<SyncTask> = MutableLiveData()
 
 
-    fun loadTask(id: String) {
+    fun prepare(id: String?) {
         viewModelScope.launch {
-            syncTaskManagingUseCase.getSyncTask(id)?.let {
-                currentTask = it
-                currentTaskMutableLiveData.postValue(it)
-            }
+            if (null == id)
+                currentTask = SyncTask()
+            else
+                currentTask = syncTaskManagingUseCase.getSyncTask(id)
+
+            currentTaskMutableLiveData.postValue(currentTask)
         }
     }
 
@@ -30,10 +32,20 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
         return currentTaskMutableLiveData
     }
 
-    fun createOrSaveSyncTask2(syncTask: SyncTask) {
+    fun createOrSaveSyncTask(
+        sourcePath: String,
+        targetPath: String,
+        intervalHours: Int,
+        intervalMinutes: Int
+    ) {
+        currentTask.sourcePath = sourcePath
+        currentTask.targetPath = targetPath
+        currentTask.intervalHours = intervalHours
+        currentTask.intervalMinutes = intervalMinutes
+
         viewModelScope.launch {
             setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))
-            syncTaskManagingUseCase.createOrUpdateSyncTask(syncTask)
+            syncTaskManagingUseCase.createOrUpdateSyncTask(currentTask)
             setOpState(OpState.Success(TextMessage(R.string.task_saved)))
         }
     }

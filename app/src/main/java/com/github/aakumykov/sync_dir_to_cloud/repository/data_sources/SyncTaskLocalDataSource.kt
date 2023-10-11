@@ -21,7 +21,7 @@ class SyncTaskLocalDataSource @Inject constructor(private val mSyncTaskDAO: Sync
         }
     }
 
-    suspend fun getTask(id: String): SyncTask? {
+    suspend fun getTask(id: String): SyncTask {
         return withContext(Dispatchers.IO) {
             mSyncTaskDAO.get(id)
         }

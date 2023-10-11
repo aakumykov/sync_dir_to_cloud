@@ -20,17 +20,7 @@ class SyncTaskManagingUseCase @Inject constructor(
     }
 
 
-    suspend fun addSyncTask(syncTask: SyncTask) {
-        syncTaskCreatorDeleter.createSyncTask(syncTask)
-    }
-
-
-    suspend fun updateSyncTask(syncTask: SyncTask) {
-        syncTaskUpdater.updateSyncTask(syncTask)
-    }
-
-
-    suspend fun getSyncTask(id: String): SyncTask? {
+    suspend fun getSyncTask(id: String): SyncTask {
         return syncTaskReader.getSyncTask(id)
     }
 
@@ -38,6 +28,7 @@ class SyncTaskManagingUseCase @Inject constructor(
     suspend fun deleteSyncTask(syncTask: SyncTask) {
         syncTaskCreatorDeleter.deleteSyncTask(syncTask)
     }
+
 
     suspend fun createOrUpdateSyncTask(syncTask: SyncTask) {
         if (null != syncTaskReader.getSyncTask(syncTask.id))

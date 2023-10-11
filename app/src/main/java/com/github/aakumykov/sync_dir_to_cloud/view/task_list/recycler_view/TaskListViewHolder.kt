@@ -41,7 +41,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     }
 
     private fun displaySchedulingState() {
-        enablingSwitch.isChecked = currentTask.enabled
+        enablingSwitch.isChecked = currentTask.isEnabled
     }
 
     private fun displayOpState() {

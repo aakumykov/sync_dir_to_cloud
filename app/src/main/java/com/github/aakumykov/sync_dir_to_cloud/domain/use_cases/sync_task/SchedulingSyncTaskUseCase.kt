@@ -19,12 +19,11 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     suspend fun scheduleSyncTask(taskId: String) {
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
-            ?: throw IllegalStateException("SyncTask with id '${taskId}' not found.")
 
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
             override fun onSyncTaskScheduleSuccess() {
-                syncTask.enabled = true
+                syncTask.isEnabled = true
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 
@@ -37,12 +36,11 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     suspend fun unScheduleSyncTask(taskId: String) {
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
-            ?: throw IllegalStateException("SyncTask with id '${taskId}' not found.")
 
         syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
 
             override fun onSyncTaskUnScheduleSuccess() {
-                syncTask.enabled = false
+                syncTask.isEnabled = false
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 
