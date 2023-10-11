@@ -49,11 +49,11 @@
         app:srcCompat="@drawable/ic_task_start" />
 
     <ImageButton
-        android:id="@+id/moreButton"
+        android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0"
-        app:srcCompat="@drawable/ic_baseline_more_vert_24"
+        app:srcCompat="@drawable/ic_task_delete"
         android:contentDescription="@string/description_sync_task_more_actions" />
 
 </LinearLayout>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -65,8 +66,15 @@ class TaskListFragment : Fragment(), ItemClickCallback {
         taskListViewModel.runTask(taskId)
     }
 
-    override fun onTaskDeleteClicked(taskId: String) {
-        TODO("Not yet implemented")
+    override fun onTaskDeleteClicked(taskId: String, title: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Удалить задачу?")
+            .setMessage(title)
+            .setPositiveButton("Да") { dialog, which ->
+                taskListViewModel.deleteTask(taskId)
+            }
+            .create()
+            .show()
     }
 
     override fun onTaskInfoClicked(taskId: String) {

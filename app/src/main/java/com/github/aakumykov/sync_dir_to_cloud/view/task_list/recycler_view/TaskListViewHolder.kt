@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -18,7 +17,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     private val stateView: ImageView = itemView.findViewById(R.id.taskStateView)
     private val editButton: View = itemView.findViewById(R.id.editButton)
     private val runButton: ImageButton = itemView.findViewById(R.id.runButton)
-    private val moreButton: View = itemView.findViewById(R.id.moreButton)
+    private val deleteButton: View = itemView.findViewById(R.id.deleteButton)
     private val enablingSwitch: SwitchCompat = itemView.findViewById(R.id.enablingSwitch)
 
     private lateinit var currentTask: SyncTask
@@ -28,7 +27,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
 
-        moreButton.setOnClickListener { Toast.makeText(moreButton.context, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show() }
+        deleteButton.setOnClickListener { itemClickCallback.onTaskDeleteClicked(currentTask.id, currentTask.title) }
 
         // Переключается не прямо, а после изменения статуса SyncTask (в БД).
         enablingSwitch.setOnClickListener {
@@ -67,7 +66,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     }
 
     private fun displayTitle() {
-        titleView.text = currentTask.getTitle()
+        titleView.text = currentTask.title
     }
 
     private fun displaySchedulingState() {

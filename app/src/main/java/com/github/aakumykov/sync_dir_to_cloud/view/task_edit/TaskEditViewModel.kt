@@ -22,7 +22,7 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
             if (null == id)
                 currentTask = SyncTask()
             else
-                currentTask = syncTaskManagingUseCase.getSyncTask(id)
+                currentTask = taskManagingUseCase.getSyncTask(id)
 
             currentTaskMutableLiveData.postValue(currentTask)
         }
@@ -45,7 +45,7 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
 
         viewModelScope.launch {
             setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))
-            syncTaskManagingUseCase.createOrUpdateSyncTask(currentTask)
+            taskManagingUseCase.createOrUpdateSyncTask(currentTask)
             setOpState(OpState.Success(TextMessage(R.string.task_saved)))
         }
     }

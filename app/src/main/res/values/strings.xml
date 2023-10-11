@@ -18,6 +18,7 @@
     <string name="saving_new_task">Сохряняем задание</string>
     <string name="task_saved">Задача сохранена</string>
     <string name="description_sync_task_state">Состояние задачи</string>
+    <string name="description_sync_task_delete">Удалить задачу</string>
     <string name="description_sync_task_more_actions">Дополнительные действия</string>
     <string name="not_implemented_yet">Ещё не реализовано</string>
     <string name="sync_task_regulatiry_picker_title">Интервал синхронизации</string>
