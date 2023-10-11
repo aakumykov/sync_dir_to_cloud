@@ -34,7 +34,7 @@ class SyncTask(
 
     @Ignore
     fun getExecutionIntervalMinutes(): Long {
-        return (intervalHours * 60 + intervalMinutes) * 60 * 1000L
+        return (intervalHours * 60 + intervalMinutes) * 60L
     }
 
     // TODO: поменять на OpState
