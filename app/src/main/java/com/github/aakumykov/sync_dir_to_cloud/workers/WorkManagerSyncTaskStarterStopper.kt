@@ -41,8 +41,12 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
 
     private fun workName(taskId: String): String = MANUAL_WORK_ID_PREFIX + taskId
 
-    override fun stopSyncTask(syncTask: SyncTask) {
-        workManager.cancelUniqueWork(workName(syncTask.id))
+    override fun stopSyncTask(syncTask: SyncTask, callback: SyncTaskStarterStopper.StopCallback) {
+        workManager.cancelUniqueWork(workName(syncTask.id)).state.observeForever {
+            when (it) {
+                is Operation.State.SUCCESS -> callback.onSyncTaskStopped(syncTask.id)
+            }
+        }
     }
 
     companion object {

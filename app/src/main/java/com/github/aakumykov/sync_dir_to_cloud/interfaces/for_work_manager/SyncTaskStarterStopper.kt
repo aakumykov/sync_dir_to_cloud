@@ -4,5 +4,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 interface SyncTaskStarterStopper {
     fun startSyncTask(syncTask: SyncTask)
-    fun stopSyncTask(syncTask: SyncTask)
+    fun stopSyncTask(syncTask: SyncTask, callback: StopCallback)
+
+    interface StopCallback {
+        fun onSyncTaskStopped(taskId: String)
+    }
 }

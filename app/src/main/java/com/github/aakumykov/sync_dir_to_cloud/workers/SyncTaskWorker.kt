@@ -15,18 +15,15 @@ import javax.inject.Inject
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
-    @Inject
-    lateinit var syncTaskUpdater: SyncTaskUpdater
-
-    @Inject
-    lateinit var syncTaskReader: SyncTaskReader
-
+    @Inject lateinit var syncTaskUpdater: SyncTaskUpdater
+    @Inject lateinit var syncTaskReader: SyncTaskReader
     private val context: Context
 
     init {
         App.appComponent().injectWorker2(this)
         this.context = context
     }
+
 
     override suspend fun doWork(): Result {
 
@@ -54,11 +51,13 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         return Result.success()
     }
 
+
     private fun errorData(errorMsg: String): Data {
         return Data.Builder().apply {
             putString(ERROR_MSG, errorMsg)
         }.build()
     }
+
 
     companion object {
         const val TASK_ID = "TASK_ID"
