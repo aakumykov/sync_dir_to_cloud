@@ -31,14 +31,15 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     override suspend fun doWork(): Result {
 
         val fileWriter = SimpleFileWriter(context.cacheDir, SyncTaskWorker::class.simpleName+".log")
-
         fileWriter.writeln(CurrentDateTime.get()+", start")
 
         val taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("taskId is null"))
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
-            ?: return Result.failure(errorData("SyncTask is null"))
+
+        if (syncTask.state == SyncTask.State.RUNNING)
+            return Result.retry()
 
         syncTask.state = SyncTask.State.RUNNING
         syncTaskUpdater.updateSyncTask(syncTask)
@@ -61,6 +62,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
     companion object {
         const val TASK_ID = "TASK_ID"
+        const val SUCCESS_MSG = "SUCCESS_MSG"
         const val ERROR_MSG = "ERROR_MSG"
     }
 }
