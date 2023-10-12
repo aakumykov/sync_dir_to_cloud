@@ -1,10 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.common_view_models
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 
-abstract class PageTitleViewModel : ViewModel() {
+abstract class PageTitleViewModel(application: Application) : AndroidViewModel(application) {
 
     private val pageTitleLiveData = MutableLiveData<String>()
 
