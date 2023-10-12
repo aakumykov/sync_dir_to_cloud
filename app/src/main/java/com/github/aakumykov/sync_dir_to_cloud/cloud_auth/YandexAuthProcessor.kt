@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.cloud_auth
 
 import android.app.Activity
-import android.os.Bundle
+import android.content.Intent
 import com.github.aakumykov.yandex_auth_helper.YandexAuthHelper
 
 class YandexAuthProcessor(
@@ -9,7 +9,7 @@ class YandexAuthProcessor(
     requestCode: Int,
 ) : CloudAuthProcessor, YandexAuthHelper.Callbacks {
 
-    val yandexAuthHelper: YandexAuthHelper
+    private val yandexAuthHelper: YandexAuthHelper
 
     init {
         yandexAuthHelper = YandexAuthHelper(activity, requestCode, this)
@@ -17,19 +17,20 @@ class YandexAuthProcessor(
 
 
     override fun startCloudAuth() {
-        TODO("Not yet implemented")
+        yandexAuthHelper.beginAuthorization()
     }
 
-    override fun processCloudAuthResult(data: Bundle?) {
-        TODO("Not yet implemented")
+    override fun processCloudAuthResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        yandexAuthHelper.processAuthResult(requestCode, resultCode, data)
     }
 
 
     override fun onYandexAuthSuccess(authToken: String) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onYandexAuthFailed(errorMsg: String) {
-        TODO("Not yet implemented")
+
     }
 }
+
