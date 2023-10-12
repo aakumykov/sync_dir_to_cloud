@@ -4,10 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import com.github.aakumykov.yandex_auth_helper.YandexAuthHelper
 
-class YandexAuthProcessor(
+class YandexDiskAuthenticator (
     activity: Activity,
     requestCode: Int,
-) : CloudAuthProcessor, YandexAuthHelper.Callbacks {
+    private val cloudAuthenticatorCallbacks: CloudAuthenticator.Callbacks?
+) : CloudAuthenticator, YandexAuthHelper.Callbacks {
 
     private val yandexAuthHelper: YandexAuthHelper
 
@@ -24,13 +25,12 @@ class YandexAuthProcessor(
         yandexAuthHelper.processAuthResult(requestCode, resultCode, data)
     }
 
-
     override fun onYandexAuthSuccess(authToken: String) {
-
+        cloudAuthenticatorCallbacks?.onCloudAuthSuccess(authToken)
     }
 
     override fun onYandexAuthFailed(errorMsg: String) {
-
+        cloudAuthenticatorCallbacks?.onCloudAuthFailed(errorMsg)
     }
 }
 

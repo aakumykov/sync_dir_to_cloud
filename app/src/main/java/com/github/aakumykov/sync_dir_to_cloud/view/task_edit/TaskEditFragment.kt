@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListActivity
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -73,6 +75,8 @@ class TaskEditFragment : Fragment() {
         binding.intervalHours.setOnClickListener { onSelectTimeClicked() }
         binding.intervalMinutes.setOnClickListener { onSelectTimeClicked() }
         binding.periodSelectionButton.setOnClickListener { onSelectTimeClicked() }
+
+        binding.authSelectionButton.setOnClickListener { onAuthSelectionClicked() }
     }
 
     private fun prepareViewModels() {
@@ -114,6 +118,10 @@ class TaskEditFragment : Fragment() {
         }
 
         picker.showNow(childFragmentManager, "")
+    }
+
+    private fun onAuthSelectionClicked() {
+        startActivity(Intent(requireContext(), AuthListActivity::class.java))
     }
 
     private fun onSaveButtonClicked() {

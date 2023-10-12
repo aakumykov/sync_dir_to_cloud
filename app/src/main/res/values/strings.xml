@@ -26,4 +26,10 @@
     <string name="description_sync_task_select_source_path">Выбрать путь к источнику</string>
     <string name="description_sync_task_select_target_path">Выбрать путь назначения</string>
     <string name="sync_task_interval_view">%1$d %2$s %3$d %4$s</string>
+    <string name="BUTTON_task_edit_select_auth">Выбрать авторизацию</string>
+    <string name="AUTH_LIST_ACTIVITY_title">Список авторизаций</string>
+    <string name="description_cloud_auth_add_button">Добавление облачной авторизации</string>
+    <string name="DIALOG_AUTH_TYPE_title">Выберите вид облака</string>
+    <string name="CLOUD_TYPE_NAME_yandex_disk">Яндекс.Диск</string>
+    <string name="CLOUD_TYPE_NAME_google_drive">Google Drive</string>
 </resources>

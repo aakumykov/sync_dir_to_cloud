@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:background="@color/primary"
-        app:titleTextColor="@color/onPrimary" />
+        app:titleTextColor="@color/onPrimary"
+        tools:title="MainActivity"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"

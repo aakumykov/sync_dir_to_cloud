@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="8dp">
 
@@ -19,9 +20,8 @@
 
         <ImageButton
             android:id="@+id/sourcePathSelectionButton"
-            style="@style/path_select_button"
-            android:contentDescription="@string/description_sync_task_select_source_path"
-            />
+            style="@style/end_line_image_button"
+            android:contentDescription="@string/description_sync_task_select_source_path" />
     </LinearLayout>
 
     <LinearLayout
@@ -37,35 +37,67 @@
 
         <ImageButton
             android:id="@+id/targetPathSelectionButton"
-            style="@style/path_select_button"
+            style="@style/end_line_image_button"
             android:contentDescription="@string/description_sync_task_select_target_path" />
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/intervalHours"
-            android:hint="@string/hint_sync_task_interval_hour"
             style="@style/regularity_input"
+            android:hint="@string/hint_sync_task_interval_hour"
             android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/intervalMinutes"
-            android:hint="@string/hint_sync_task_interval_minute"
             style="@style/regularity_input"
+            android:hint="@string/hint_sync_task_interval_minute"
             android:importantForAutofill="no" />
 
         <ImageButton
             android:id="@+id/periodSelectionButton"
-            style="@style/path_select_button"
+            style="@style/end_line_image_button"
             android:contentDescription="@string/description_sync_task_period_change_button"
             android:src="@drawable/ic_period_button"
             tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:spinnerMode="dialog" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            style="@style/end_line_image_button"
+            app:srcCompat="@drawable/ic_baseline_add_24" />
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/authSelectionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorButtonNormal"
+        app:icon="@drawable/ic_baseline_add_24"
+        app:iconGravity="textEnd"
+        app:iconPadding="16dp"
+        app:iconTint="@color/black"
+        android:text="@string/BUTTON_task_edit_select_auth"
+        android:textColor="@color/black"/>
 
     <Button
         android:id="@+id/saveButton"
@@ -86,11 +118,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:textAlignment="center"
+        android:textColor="@color/secondaryVariant"
         android:textSize="16sp"
         android:visibility="gone"
-        android:textColor="@color/secondaryVariant"
-        tools:visibility="visible"
-        tools:text="Сообщение об операции" />
+        tools:text="Сообщение об операции"
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -107,10 +139,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:textAlignment="center"
+        android:textColor="@color/design_default_color_error"
         android:textSize="16sp"
         android:visibility="gone"
-        android:textColor="@color/design_default_color_error"
-        tools:visibility="visible"
-        tools:text="Сообщение об ошибке" />
+        tools:text="Сообщение об ошибке"
+        tools:visibility="visible" />
 
 </LinearLayout>

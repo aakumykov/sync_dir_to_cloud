@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cloud_types">
+        <item>@string/CLOUD_TYPE_NAME_yandex_disk</item>
+        <item>@string/CLOUD_TYPE_NAME_google_drive</item>
+    </string-array>
+</resources>

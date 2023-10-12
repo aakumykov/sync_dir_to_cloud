@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sync_dir_to_cloud"
         tools:targetApi="31">
+
         <activity
             android:name=".view.MainActivity"
             android:exported="true">
@@ -26,6 +27,9 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity android:name="com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListActivity"
+            android:exported="true"/>
     </application>
 
 </manifest>

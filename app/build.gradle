@@ -22,6 +22,8 @@ android {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
+
+        manifestPlaceholders = [YANDEX_CLIENT_ID:"572b4663be414854ac5542bc72e93011"]
     }
     buildFeatures {
         viewBinding true
@@ -57,6 +59,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
 
     implementation "androidx.fragment:fragment-ktx:1.6.1"
+    implementation "androidx.activity:activity-ktx:1.8.0"
 
 //    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
@@ -84,5 +87,5 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.44'
     kapt 'com.google.dagger:dagger-compiler:2.44'
 
-    implementation 'com.github.aakumykov:yandex_auth_helper:0.0.2'
+    implementation 'com.github.aakumykov:yandex_auth_helper:0.0.3'
 }

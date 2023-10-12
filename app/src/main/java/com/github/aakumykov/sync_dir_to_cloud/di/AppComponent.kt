@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.*
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -28,4 +29,7 @@ interface AppComponent {
 
     fun injectSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
     fun injectWorker2(syncTaskWorker: SyncTaskWorker)
+
+    // FIXME: временное
+    fun getCloudAuthDAO(): CloudAuthDAO
 }
