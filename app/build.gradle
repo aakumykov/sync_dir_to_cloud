@@ -25,9 +25,6 @@ android {
 
         manifestPlaceholders = [YANDEX_CLIENT_ID:"572b4663be414854ac5542bc72e93011"]
     }
-    buildFeatures {
-        viewBinding true
-    }
     buildTypes {
         release {
             minifyEnabled false
@@ -40,6 +37,14 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+        compose true
+    }
+    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
 }
 
@@ -56,7 +61,7 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
 
     implementation "androidx.fragment:fragment-ktx:1.6.1"
     implementation "androidx.activity:activity-ktx:1.8.0"
@@ -88,4 +93,14 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.44'
 
     implementation 'com.github.aakumykov:yandex_auth_helper:0.0.3'
+
+    implementation("androidx.activity:activity-compose:1.8.0")
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation "androidx.compose.material:material:1.5.3"
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

@@ -29,7 +29,8 @@
         </activity>
 
         <activity android:name="com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListActivity"
-            android:exported="true"/>
+            android:exported="true" />
+
     </application>
 
 </manifest>
