@@ -87,12 +87,12 @@
 
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/authSelectionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="?attr/colorButtonNormal"
-        app:icon="@drawable/ic_baseline_add_24"
+        app:icon="@drawable/ic_cloud_auth_button"
         app:iconGravity="textEnd"
         app:iconPadding="16dp"
         app:iconTint="@color/black"
