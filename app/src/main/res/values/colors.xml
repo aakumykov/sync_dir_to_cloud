@@ -10,4 +10,6 @@
 
     <color name="button_icon_tint_active">#000</color>
     <color name="button_icon_tint_inactive">#A0A0A0</color>
+
+    <color name="whitesmoke">#f5f5f5</color>
 </resources>
