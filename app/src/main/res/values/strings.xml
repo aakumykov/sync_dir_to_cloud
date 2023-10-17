@@ -33,4 +33,6 @@
     <string name="CLOUD_TYPE_NAME_yandex_disk">Яндекс.Диск</string>
     <string name="CLOUD_TYPE_NAME_google_drive">Google Drive</string>
     <string name="CLOUD_AUTH_LIST_page_title">Облачные авторизации</string>
+    <string name="description_select_source_path_button">Выбор пути к источнику</string>
+    <string name="BUTTON_select_cloud_auth">Выбор облачной авторизации</string>
 </resources>

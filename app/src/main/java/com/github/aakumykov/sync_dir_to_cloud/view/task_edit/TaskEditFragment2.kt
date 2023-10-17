@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEdit2Binding
@@ -28,7 +27,7 @@ class TaskEditFragment2 : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
-                    Text("Правка задачи")
+                    TaskEditFragment2MainContent()
                 }
             }
         }
@@ -39,5 +38,19 @@ class TaskEditFragment2 : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val TASK_ID = "TASK_ID"
+        fun create(): TaskEditFragment2 {
+            return TaskEditFragment2()
+        }
+        fun create(taskId: String): TaskEditFragment2 {
+            return TaskEditFragment2().apply {
+                arguments = Bundle().apply {
+                    putString(TASK_ID, taskId)
+                }
+            }
+        }
     }
 }
