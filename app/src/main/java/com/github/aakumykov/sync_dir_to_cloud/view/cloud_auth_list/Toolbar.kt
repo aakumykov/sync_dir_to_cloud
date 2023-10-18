@@ -9,14 +9,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.github.aakumykov.sync_dir_to_cloud.R
 
 @Composable
-fun CloudAuthListToolbar(title: String) {
+fun Toolbar(
+    title: String,
+    homeIcon: ImageVector = Icons.Filled.ArrowBack,
+    homeIconDescription: String = stringResource(R.string.description_home_icon_back),
+    onHomeClicked: () -> Unit
+) {
+
     TopAppBar {
-        IconButton(onClick = {  }) {
-            Icon(Icons.Filled.ArrowBack, contentDescription = "Меню")
+        IconButton(onClick = { onHomeClicked.invoke() }) {
+            Icon(homeIcon, contentDescription = homeIconDescription)
         }
 
         Text(text = title,
@@ -37,5 +46,8 @@ fun CloudAuthListToolbar(title: String) {
 @Composable
 @Preview
 fun CloudAuthListToolbarPreview() {
-    CloudAuthListToolbar("Заголовок")
+    Toolbar(
+        title = "Заголовок",
+        onHomeClicked = {}
+    )
 }

@@ -12,7 +12,9 @@ class CloudAuthListActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                CloudAuthListMainContent()
+                CloudAuthListMainContent {
+                    finish()
+                }
             }
         }
     }

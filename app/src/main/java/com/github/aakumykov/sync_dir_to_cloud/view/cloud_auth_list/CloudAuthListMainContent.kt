@@ -9,9 +9,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.aakumykov.sync_dir_to_cloud.R
 
 @Composable
-fun CloudAuthListMainContent() {
+fun CloudAuthListMainContent(onHomeIconClicked: () -> Unit) {
     Column {
-        CloudAuthListToolbar(stringResource(R.string.CLOUD_AUTH_LIST_page_title))
+        Toolbar(
+            stringResource(R.string.CLOUD_AUTH_LIST_page_title),
+            onHomeClicked = { onHomeIconClicked.invoke() }
+        )
     }
 }
 
@@ -19,6 +22,6 @@ fun CloudAuthListMainContent() {
 @Preview(device = Devices.PIXEL, showSystemUi = true, showBackground = true)
 fun CloudAuthListPreview() {
     MaterialTheme {
-        CloudAuthListMainContent()
+        CloudAuthListMainContent({})
     }
 }
