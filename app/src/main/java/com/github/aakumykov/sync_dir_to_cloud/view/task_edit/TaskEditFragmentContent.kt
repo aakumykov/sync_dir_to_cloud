@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.github.aakumykov.sync_dir_to_cloud.R
 
 @Composable
-fun TaskEditFragmentContent() {
+fun TaskEditFragmentContent(
+    onSelectCloudAuthClicked: () -> Unit
+) {
 
     val (sourcePath, setSourcePath) = remember { mutableStateOf("") }
     val (targetPath, setTargetPath) = remember { mutableStateOf("") }
@@ -72,7 +74,7 @@ fun TaskEditFragmentContent() {
         }
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onSelectCloudAuthClicked.invoke() },
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -99,5 +101,7 @@ fun TaskEditFragmentContent() {
 @Composable
 @Preview/*(showSystemUi = true, device = Devices.PIXEL)*/
 fun TaskEditFragmentContentPreview() {
-    TaskEditFragmentContent()
+    TaskEditFragmentContent(
+        onSelectCloudAuthClicked = {}
+    )
 }

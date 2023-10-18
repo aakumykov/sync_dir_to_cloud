@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list
+package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.compose
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.Icon
