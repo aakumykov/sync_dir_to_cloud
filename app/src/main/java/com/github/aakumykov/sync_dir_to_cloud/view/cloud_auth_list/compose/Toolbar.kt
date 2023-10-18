@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.compose
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -12,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.github.aakumykov.sync_dir_to_cloud.R
 
 @Composable
@@ -29,7 +29,7 @@ fun Toolbar(
         }
 
         Text(text = title,
-            fontSize = 22.sp)
+            style = MaterialTheme.typography.h6)
 
         Spacer(Modifier.weight(1f, true))
 
