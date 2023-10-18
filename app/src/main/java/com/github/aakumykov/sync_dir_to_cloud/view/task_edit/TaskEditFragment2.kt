@@ -27,7 +27,7 @@ class TaskEditFragment2 : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
-                    TaskEditFragment2MainContent()
+                    TaskEditFragmentContent()
                 }
             }
         }
