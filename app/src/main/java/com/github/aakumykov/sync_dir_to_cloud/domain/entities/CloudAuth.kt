@@ -9,4 +9,8 @@ class CloudAuth (
     @PrimaryKey val id: String,
     val name: String,
     @ColumnInfo(name = "auth_token") val authToken: String
-)
+) {
+    override fun toString(): String {
+        return name
+    }
+}

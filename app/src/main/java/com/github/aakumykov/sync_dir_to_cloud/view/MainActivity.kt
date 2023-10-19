@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment2
+import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 
 class MainActivity : AppCompatActivity() {
@@ -39,8 +39,8 @@ class MainActivity : AppCompatActivity() {
     private fun onNewNavTarget(navTarget: NavTarget) {
         when (navTarget) {
 //            is NavTarget.Start, NavTarget.List -> setFragment(TaskListFragment.create())
-            is NavTarget.Add -> loadFragment(TaskEditFragment2.create())
-            is NavTarget.Edit -> loadFragment(TaskEditFragment2.create(navTarget.id))
+            is NavTarget.Add -> loadFragment(TaskEditFragment.create())
+            is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
             else -> setFragment(TaskListFragment.create())
         }
