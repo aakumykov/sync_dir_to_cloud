@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.github.aakumykov.sync_dir_to_cloud.config.DbConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.DaggerAppComponent
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomModule
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
@@ -15,7 +16,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        prepareAppComponent(this)
+        prepareAppComponent(this, this)
         prepareAndGetAppDatabase(this)
     }
 
@@ -32,9 +33,10 @@ class App : Application() {
             return _appDatabase!!
         }
 
-        fun prepareAppComponent(appContext: Context) {
+        fun prepareAppComponent(application: Application, appContext: Context) {
             _appComponent = DaggerAppComponent.builder()
                 .contextModule(ContextModule(appContext))
+                .applicationModule(ApplicationModule(application))
                 .roomModule(RoomModule(prepareAndGetAppDatabase(appContext)))
                 .build()
         }
