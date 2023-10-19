@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import java.util.*
+import java.util.UUID
 
 @Entity(tableName = "sync_tasks")
 class SyncTask {
@@ -17,6 +17,8 @@ class SyncTask {
     @ColumnInfo(name = "target_path") var targetPath: String?
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
+
+    @ColumnInfo(name = "cloud_auth_id") var cloudAuthId: String? = null
 
 
     constructor() {

@@ -37,12 +37,14 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
         sourcePath: String,
         targetPath: String,
         intervalHours: Int,
-        intervalMinutes: Int
+        intervalMinutes: Int,
+        cloudAuthId: String
     ) {
         currentTask.sourcePath = sourcePath
         currentTask.targetPath = targetPath
         currentTask.intervalHours = intervalHours
         currentTask.intervalMinutes = intervalMinutes
+        currentTask.cloudAuthId = cloudAuthId
 
         viewModelScope.launch {
             setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))

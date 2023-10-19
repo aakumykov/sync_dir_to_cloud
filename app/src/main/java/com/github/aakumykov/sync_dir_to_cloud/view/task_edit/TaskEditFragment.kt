@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListActivity
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -33,6 +34,7 @@ class TaskEditFragment : Fragment() {
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
+    private var cloudAuth:CloudAuth? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -125,12 +127,15 @@ class TaskEditFragment : Fragment() {
     }
 
     private fun onSaveButtonClicked() {
-        taskEditViewModel.createOrSaveSyncTask(
-            binding.sourcePathInput.text.toString(),
-            binding.targetPathInput.text.toString(),
-            binding.intervalHours.text.toString().toInt(),
-            binding.intervalMinutes.text.toString().toInt()
-        )
+        cloudAuth?.let { cloudAuth ->
+            taskEditViewModel.createOrSaveSyncTask(
+                binding.sourcePathInput.text.toString(),
+                binding.targetPathInput.text.toString(),
+                binding.intervalHours.text.toString().toInt(),
+                binding.intervalMinutes.text.toString().toInt(),
+                cloudAuth.id
+            )
+        }
     }
 
     private fun onCancelButtonClicked() {
