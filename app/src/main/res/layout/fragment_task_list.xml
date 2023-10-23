@@ -23,7 +23,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="10dp"
         android:contentDescription="@string/description_sync_task_add_button" />
 
 </RelativeLayout>

@@ -108,7 +108,9 @@ class TaskListFragment : Fragment(), ItemClickCallback {
 
 
     private fun prepareButtons() {
-        binding.addButton.setOnClickListener { onAddClicked() }
+        binding.addButton.setOnClickListener {
+            navigationViewModel.navigateTo(NavTarget.Add)
+        }
     }
 
 
@@ -116,9 +118,5 @@ class TaskListFragment : Fragment(), ItemClickCallback {
         taskListAdapter?.setList(list)
     }
 
-
-    private fun onAddClicked() {
-        navigationViewModel.navigateTo(NavTarget.Add)
-    }
 }
 
