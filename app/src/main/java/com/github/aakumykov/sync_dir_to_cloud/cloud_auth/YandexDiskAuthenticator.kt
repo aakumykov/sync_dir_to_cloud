@@ -1,36 +1,35 @@
 package com.github.aakumykov.sync_dir_to_cloud.cloud_auth
 
-import android.app.Activity
-import android.content.Intent
-import com.github.aakumykov.yandex_auth_helper.YandexAuthHelper
+import androidx.activity.result.ActivityResultLauncher
+import androidx.fragment.app.Fragment
+import com.yandex.authsdk.YandexAuthLoginOptions
+import com.yandex.authsdk.YandexAuthOptions
+import com.yandex.authsdk.YandexAuthSdkContract
+import com.yandex.authsdk.internal.strategy.LoginType
 
 class YandexDiskAuthenticator (
-    activity: Activity,
-    requestCode: Int,
-    private val cloudAuthenticatorCallbacks: CloudAuthenticator.Callbacks?
-) : CloudAuthenticator, YandexAuthHelper.Callbacks {
+    fragment: Fragment,
+    private val loginType: LoginType,
+    private val cloudAuthenticatorCallbacks: CloudAuthenticator.Callbacks
+) : CloudAuthenticator {
 
-    private val yandexAuthHelper: YandexAuthHelper
+    private val activityResultLauncher: ActivityResultLauncher<YandexAuthLoginOptions>
 
     init {
-        yandexAuthHelper = YandexAuthHelper(activity, requestCode, this)
+        val yandexAuthOptions = YandexAuthOptions(fragment.requireContext(), true)
+        val yandexAuthSdkContract = YandexAuthSdkContract(yandexAuthOptions)
+
+        activityResultLauncher = fragment.registerForActivityResult(yandexAuthSdkContract) { result ->
+            val yandexAuthToken = result?.getOrElse { throwable ->
+                cloudAuthenticatorCallbacks.onCloudAuthFailed(throwable)
+            }
+            cloudAuthenticatorCallbacks.onCloudAuthSuccess(yandexAuthToken as String)
+        }
     }
 
-
-    override fun startCloudAuth() {
-        yandexAuthHelper.beginAuthorization()
+    override fun startAuth() {
+        activityResultLauncher.launch(YandexAuthLoginOptions(loginType))
     }
 
-    override fun processCloudAuthResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        yandexAuthHelper.processAuthResult(requestCode, resultCode, data)
-    }
-
-    override fun onYandexAuthSuccess(authToken: String) {
-        cloudAuthenticatorCallbacks?.onCloudAuthSuccess(authToken)
-    }
-
-    override fun onYandexAuthFailed(errorMsg: String) {
-        cloudAuthenticatorCallbacks?.onCloudAuthFailed(errorMsg)
-    }
 }
 
