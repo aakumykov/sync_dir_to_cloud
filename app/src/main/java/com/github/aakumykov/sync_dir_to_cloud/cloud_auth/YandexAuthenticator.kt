@@ -5,9 +5,10 @@ import androidx.fragment.app.Fragment
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdkContract
+import com.yandex.authsdk.YandexAuthToken
 import com.yandex.authsdk.internal.strategy.LoginType
 
-class YandexDiskAuthenticator (
+class YandexAuthenticator (
     fragment: Fragment,
     private val loginType: LoginType,
     private val cloudAuthenticatorCallbacks: CloudAuthenticator.Callbacks
@@ -20,10 +21,12 @@ class YandexDiskAuthenticator (
         val yandexAuthSdkContract = YandexAuthSdkContract(yandexAuthOptions)
 
         activityResultLauncher = fragment.registerForActivityResult(yandexAuthSdkContract) { result ->
-            val yandexAuthToken = result?.getOrElse { throwable ->
-                cloudAuthenticatorCallbacks.onCloudAuthFailed(throwable)
-            }
-            cloudAuthenticatorCallbacks.onCloudAuthSuccess(yandexAuthToken as String)
+
+            val yandexAuthToken: YandexAuthToken = result.getOrElse {
+                cloudAuthenticatorCallbacks.onCloudAuthFailed(it)
+            } as YandexAuthToken
+
+            cloudAuthenticatorCallbacks.onCloudAuthSuccess(yandexAuthToken.value)
         }
     }
 
