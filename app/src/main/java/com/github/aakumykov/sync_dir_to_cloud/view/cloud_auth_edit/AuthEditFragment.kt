@@ -25,7 +25,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
     private var authToken: String? = null
     private var authName: String? = null
 
-    private val authEditViewModel: AuthEditViewModel by viewModels()
+    private val viewModel: AuthEditViewModel by viewModels()
 
 
     override fun onAttach(context: Context) {
@@ -43,6 +43,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
         _binding = FragmentAuthEditBinding.bind(view)
 
+
         authToken = savedInstanceState?.getString(AUTH_TOKEN)
         authToken?.let { binding.tokenView.text = it }
 
@@ -58,11 +59,26 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
             showToast(R.string.not_implemented_yet)
         }
 
-        binding.buttonsInclude.saveButton.setOnClickListener { showToast("СОХРАНЕНИЕ...") }
+        binding.buttonsInclude.saveButton.setOnClickListener { saveCloudAuth() }
 
         binding.buttonsInclude.cancelButton.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun saveCloudAuth() {
+
+        if (null == authToken) {
+            showToast("Авторизуйтесь в облаке")
+            return
+        }
+
+        authName = binding.authNameView.text.toString()
+
+        authName?.let {
+            viewModel.createCloudAuth(authName!!, authToken!!)
+            dismiss()
+        } ?: binding.authNameView.setError("Не может быть пустым")
     }
 
 

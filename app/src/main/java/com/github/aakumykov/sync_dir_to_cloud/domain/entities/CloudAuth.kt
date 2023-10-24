@@ -2,7 +2,9 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(tableName = "cloud_auth")
 class CloudAuth (
@@ -10,6 +12,12 @@ class CloudAuth (
     val name: String,
     @ColumnInfo(name = "auth_token") val authToken: String
 ) {
+    @Ignore
+    constructor(name: String, authToken: String) : this(
+        UUID.randomUUID().toString(),
+        name,
+        authToken)
+
     override fun toString(): String {
         return name
     }
