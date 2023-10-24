@@ -8,9 +8,10 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.O
 
 class AuthListViewModel(application: Application) : OpStateViewModel(application) {
 
-    private val cloudAuthDAO = App.appComponent().getCloudAuthDAO()
+    private val cloudAuthLister = App.getAppComponent().getCloudAuthLister()
 
-    fun getAuthList(): LiveData<List<CloudAuth>> {
-        return cloudAuthDAO.list()
-    }
+    suspend fun getAuthList(): LiveData<List<CloudAuth>>
+        = cloudAuthLister.listCloudAuth()
+
+
 }

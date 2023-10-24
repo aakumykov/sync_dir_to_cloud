@@ -38,4 +38,7 @@
     <string name="AUTH_BUTTON_yandex">Авторизоваться в Яндекс</string>
     <string name="AUTH_BUTTON_google">Авторизоваться в Google</string>
     <string name="hint_auth_name">Название</string>
+    <string name="BUTTON_cancel">Отменить</string>
+    <string name="BUTTON_save">Сохранить</string>
+    <string name="DIALOG_AUTH_CREATE_title">Создание новой авторизации</string>
 </resources>

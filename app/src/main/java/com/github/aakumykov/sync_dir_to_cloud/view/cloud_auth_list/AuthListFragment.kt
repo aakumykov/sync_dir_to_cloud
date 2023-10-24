@@ -6,11 +6,13 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
+import kotlinx.coroutines.launch
 
 class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
 
@@ -50,9 +52,11 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
     }
 
     private fun prepareViewModel() {
-        viewModel.getAuthList().observe(viewLifecycleOwner) { authList ->
-            authList?.let {
-                listAdapter.setList(authList)
+        lifecycleScope.launch {
+            viewModel.getAuthList().observe(viewLifecycleOwner) { authList ->
+                authList?.let {
+                    listAdapter.setList(authList)
+                }
             }
         }
     }

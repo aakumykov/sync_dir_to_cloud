@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class RepositoryInterfacesModule {
+class SyncTaskRepositoryInterfacesModule {
 
     @Provides
     fun provideSyncTaskReader(syncTaskRepository: SyncTaskRepository): SyncTaskReader {
@@ -24,4 +24,6 @@ class RepositoryInterfacesModule {
     fun provideSyncTaskCreatorDeleter(syncTaskRepository: SyncTaskRepository): SyncTaskCreatorDeleter {
         return syncTaskRepository
     }
+
+
 }

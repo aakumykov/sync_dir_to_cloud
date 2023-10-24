@@ -21,7 +21,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     private lateinit var currentTask: SyncTask
 
     init {
-        App.appComponent().injectWorker2(this)
+        App.getAppComponent().injectWorker2(this)
         this.context = context
     }
 

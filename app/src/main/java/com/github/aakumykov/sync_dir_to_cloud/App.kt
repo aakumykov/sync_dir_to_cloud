@@ -25,7 +25,7 @@ class App : Application() {
         private var _appComponent: AppComponent? = null
         private var _appDatabase: AppDatabase? = null
 
-        fun appComponent(): AppComponent {
+        fun getAppComponent(): AppComponent {
             return _appComponent!!
         }
 
