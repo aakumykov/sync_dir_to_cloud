@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp">
 
-    <Button
-        android:id="@+id/authButton"
+    <EditText
+        android:id="@+id/authNameView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Авторизоваться в Яндекс" />
+        android:inputType="text"
+        android:singleLine="true"
+        android:textAlignment="center"
+        android:hint="@string/hint_auth_name"
+        android:importantForAutofill="no" />
+
+    <Button
+        android:id="@+id/yandexAuthButton"
+        style="@style/cloud_auth_button"
+        android:backgroundTint="@color/yandex_button"
+        android:text="@string/AUTH_BUTTON_yandex" />
+
+    <Button
+        android:id="@+id/googleAuthButton"
+        style="@style/cloud_auth_button"
+        android:text="@string/AUTH_BUTTON_google" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tokenView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Токен" />
+        android:text="Токен" />
 
     <TextView
         android:id="@+id/errorView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/error"
-        tools:text="Ошибка" />
+        android:text="Ошибка" />
 
 </LinearLayout>

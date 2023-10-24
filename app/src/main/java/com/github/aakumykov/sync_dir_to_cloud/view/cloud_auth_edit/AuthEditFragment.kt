@@ -16,13 +16,13 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 {
     private var _binding: FragmentAuthEditBinding? = null
     private val binding get() = _binding!!
-    private lateinit var cloudAuthenticator: YandexAuthenticator
+    private lateinit var yandexAuthenticator: YandexAuthenticator
     private var currentAuthToken: String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        cloudAuthenticator = YandexAuthenticator(
+        yandexAuthenticator = YandexAuthenticator(
             this,
             LoginType.CHROME_TAB,
             this)
@@ -34,10 +34,10 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         _binding = FragmentAuthEditBinding.bind(view)
 
         currentAuthToken = savedInstanceState?.getString(AUTH_TOKEN)
-        currentAuthToken?.let { binding.textView.text = it }
+        currentAuthToken?.let { binding.tokenView.text = it }
 
-        binding.authButton.setOnClickListener {
-            cloudAuthenticator.startAuth()
+        binding.yandexAuthButton.setOnClickListener {
+            yandexAuthenticator.startAuth()
         }
     }
 
@@ -50,12 +50,12 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
     override fun onCloudAuthSuccess(authToken: String) {
         currentAuthToken = authToken
-        binding.textView.text = authToken
+        binding.tokenView.text = authToken
         binding.errorView.text = ""
     }
 
     override fun onCloudAuthFailed(throwable: Throwable) {
-        binding.textView.text = ""
+        binding.tokenView.text = ""
         binding.errorView.text = ExceptionUtils.getErrorMessage(throwable)
     }
 
