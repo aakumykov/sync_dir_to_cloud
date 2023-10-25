@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,22 +11,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/DIALOG_AUTH_CREATE_title"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textColor="@color/black"
         android:textAlignment="center"
         android:textStyle="bold"
         android:paddingBottom="6dp"/>
 
     <EditText
-        android:id="@+id/authNameView"
+        android:id="@+id/nameView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_auth_name"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="textPersonName"
         android:minHeight="48dp"
         android:singleLine="true"
         android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/tokenView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/yandexAuthButton"
@@ -39,17 +48,12 @@
         android:text="@string/AUTH_BUTTON_google" />
 
     <TextView
-        android:id="@+id/tokenView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Токен" />
-
-    <TextView
-        android:id="@+id/errorView"
+        android:id="@+id/tokenErrorView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/error"
-        android:text="Ошибка" />
+        tools:text="Ошибка токена"
+        android:textAlignment="center" />
 
     <include
         android:id="@+id/buttonsInclude"

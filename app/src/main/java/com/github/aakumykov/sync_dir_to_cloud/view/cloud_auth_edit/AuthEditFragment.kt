@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -10,7 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.ext_functions.showToast
-import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.ValidationResult
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.yandex.authsdk.internal.strategy.LoginType
 
@@ -20,13 +20,8 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 {
     private var _binding: FragmentAuthEditBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var yandexAuthenticator: YandexAuthenticator
-
-    private var authToken: String? = null
-    private var authName: String? = null
-
     private val viewModel: AuthEditViewModel by viewModels()
+    private lateinit var yandexAuthenticator: YandexAuthenticator
 
 
     override fun onAttach(context: Context) {
@@ -42,19 +37,15 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentAuthEditBinding.bind(view)
+        prepareLayout(view)
+        prepareButtons()
+        prepareViewModel()
 
+        // FIXME: если есть ViewModel, можно хранить в ней
+        restoreFormValues(savedInstanceState)
+    }
 
-        authToken = savedInstanceState?.getString(AUTH_TOKEN)
-        authToken?.let { binding.tokenView.text = it }
-
-        authName = savedInstanceState?.getString(AUTH_NAME)
-        authName?.let { binding.authNameView.setText(it) }
-
-
-        viewModel.nameValidationResult.observe(viewLifecycleOwner, this::onNameCheckChanged)
-        viewModel.tokenValidationResult.observe(viewLifecycleOwner, this::onTokenCheckChanged)
-
+    private fun prepareButtons() {
 
         binding.yandexAuthButton.setOnClickListener {
             yandexAuthenticator.startAuth()
@@ -64,61 +55,79 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
             showToast(R.string.not_implemented_yet)
         }
 
-        binding.buttonsInclude.saveButton.setOnClickListener { saveCloudAuth() }
+        binding.buttonsInclude.saveButton.setOnClickListener {
+            hideTokenError()
+            viewModel.createCloudAuth(
+                binding.nameView.text.toString(),
+                binding.tokenView.text.toString()
+            )
+        }
 
         binding.buttonsInclude.cancelButton.setOnClickListener {
             dismiss()
         }
     }
 
-    private fun onNameCheckChanged(nameValidationResult: ValidationResult?) {
-        nameValidationResult?.error?.let { errorMessage ->
-            binding.authNameView.error = errorMessage.get(requireContext())
-        }
+    private fun restoreFormValues(savedInstanceState: Bundle?) {
+        binding.tokenView.setText(savedInstanceState?.getString(AUTH_TOKEN))
+        binding.nameView.setText(savedInstanceState?.getString(AUTH_NAME))
     }
 
-    private fun onTokenCheckChanged(tokenValidationResult: ValidationResult?) {
-        tokenValidationResult?.error?.let { errorMessage ->
-            binding.errorView.text = errorMessage.get(requireContext())
-        } ?: {
-            binding.errorView.text = ""
-        }
+    private fun prepareViewModel() {
+        viewModel.formState.observe(viewLifecycleOwner, this::onFormStateChanged)
     }
 
-    private fun saveCloudAuth() {
+    private fun prepareLayout(view: View) {
+        _binding = FragmentAuthEditBinding.bind(view)
+    }
 
-        if (null == authToken) {
-            showToast("Авторизуйтесь в облаке")
+
+    private fun onFormStateChanged(formState: FormState?) {
+        if (null == formState)
+            return
+
+        if (formState.isFinished) {
+            dismiss()
             return
         }
 
-        authName = binding.authNameView.text.toString()
+        formState.nameError?.let {
+            binding.nameView.setError(it)
+        }
 
-        authName?.let {
-            viewModel.createCloudAuth(authName!!, authToken!!)
-            dismiss()
-        } ?: binding.authNameView.setError("Не может быть пустым")
+        formState.tokenError?.let {
+            binding.tokenErrorView.setText(it)
+        }
     }
 
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        authToken?.let { outState.putString(AUTH_TOKEN, it) }
-        authName?.let { outState.putString(AUTH_NAME, it) }
+        binding.tokenView.text.toString().let { outState.putString(AUTH_TOKEN, it) }
+        binding.nameView.text.toString().let { outState.putString(AUTH_NAME, it) }
     }
 
 
     override fun onCloudAuthSuccess(authToken: String) {
-        this.authToken = authToken
-        binding.tokenView.text = authToken
-        binding.errorView.text = ""
+        binding.tokenView.setText(authToken)
+        hideTokenError()
     }
 
     override fun onCloudAuthFailed(throwable: Throwable) {
-        binding.tokenView.text = ""
-        binding.errorView.text = ExceptionUtils.getErrorMessage(throwable)
+        binding.tokenView.setText("")
+        binding.tokenErrorView.text = ExceptionUtils.getErrorMessage(throwable)
+
+        showToast(R.string.auth_error)
+        Log.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
     }
 
+    private fun showTokenError(errorMsg: String) {
+        binding.tokenErrorView.text = errorMsg
+    }
+
+    private fun hideTokenError() {
+        binding.tokenErrorView.text = ""
+    }
 
     companion object {
         val TAG: String = AuthEditFragment::class.java.simpleName

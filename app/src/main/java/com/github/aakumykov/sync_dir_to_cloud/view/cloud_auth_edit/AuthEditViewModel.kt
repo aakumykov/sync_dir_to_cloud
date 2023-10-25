@@ -8,9 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.FailedValidationResult
-import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.SuccessValidationResult
-import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.ValidationResult
+import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import kotlinx.coroutines.launch
 
 class AuthEditViewModel(application: Application) : AndroidViewModel(application) {
@@ -18,41 +16,45 @@ class AuthEditViewModel(application: Application) : AndroidViewModel(application
     private val cloudAuthAdder = App.getAppComponent().getCloudAuthAdder()
     private val cloudAuthChecker = App.getAppComponent().getCloudAuthChecker()
 
-    private val _nameValidationResult: MutableLiveData<ValidationResult> = MutableLiveData()
-    val nameValidationResult get(): LiveData<ValidationResult> = _nameValidationResult
-
-    private val _tokenValidationResult: MutableLiveData<ValidationResult> = MutableLiveData()
-    val tokenValidationResult get(): LiveData<ValidationResult> = _nameValidationResult
+    private val _formState: MutableLiveData<FormState> = MutableLiveData()
+    val formState: LiveData<FormState> get() = _formState
 
 
     fun createCloudAuth(authName: String, authToken: String) {
         viewModelScope.launch {
-            if (nameIsValid() && tokenIsValid()) {
-                _nameValidationResult.value = checkName(authName)
-                _tokenValidationResult.value = checkToken(authToken)
-                cloudAuthAdder.addCloudAuth(CloudAuth(authName, authToken))
-            }
+
+            val formState = FormState(false,
+                authName,
+                authToken,
+                checkName(authName),
+                checkToken(authToken)
+            )
+
+            if (formState.isValid())
+                createCloudAuthReal(formState)
+            else
+                _formState.value = formState
         }
     }
 
-    private suspend fun checkToken(authToken: String): ValidationResult {
-        authToken.isEmpty().let {
-            return FailedValidationResult(R.string.VALIDATION_token_is_empty)
-        }
+    private suspend fun createCloudAuthReal(formState: FormState) {
+        cloudAuthAdder.addCloudAuth(CloudAuth(formState.name!!, formState.token!!))
+        _formState.value = formState.copy(isFinished = true)
     }
 
-    private suspend fun checkName(authName: String): ValidationResult {
-        if (cloudAuthChecker.hasAuthWithName(authName))
-            return FailedValidationResult(R.string.VALIDATION_name_already_used)
-        else
-            return SuccessValidationResult()
+    private fun checkToken(authToken: String): TextMessage? {
+        return if (authToken.isEmpty())
+            TextMessage(R.string.VALIDATION_token_is_empty)
+        else null
     }
 
-    private fun tokenIsValid(): Boolean {
-        return tokenValidationResult.value is SuccessValidationResult
-    }
+    private suspend fun checkName(authName: String): TextMessage? {
 
-    private fun nameIsValid(): Boolean {
-        return nameValidationResult.value is SuccessValidationResult
+        if (authName.isEmpty())
+            return TextMessage(R.string.VALIDATION_cannot_be_empty)
+
+        return if (cloudAuthChecker.hasAuthWithName(authName))
+            TextMessage(R.string.VALIDATION_name_already_used)
+        else null
     }
 }
