@@ -8,13 +8,11 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
-import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -23,7 +21,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 
-class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
+class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
+    AuthListDialog.AuthSelectionCallback {
 
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
@@ -31,7 +30,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private val taskEditViewModel: TaskEditViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
-    private val authSelectionViewModel: AuthSelectionViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
     private var cloudAuth:CloudAuth? = null
@@ -43,6 +41,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         super.onViewCreated(view, savedInstanceState)
 
         firstRun = null == savedInstanceState
+
+        // "Connect to child dialogs"
+        childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let {  fragment ->
+            if (fragment is AuthListDialog)
+                fragment.setAuthSelectionCallback(this)
+        }
 
         prepareLayout(view)
         prepareButtons()
@@ -83,12 +87,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun prepareViewModels() {
         taskEditViewModel.getCurrentTask().observe(viewLifecycleOwner, this::onCurrentTaskChanged)
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
-
-        authSelectionViewModel.getSelectedCloudAuth().observe(viewLifecycleOwner, object: Observer<CloudAuth> {
-            override fun onChanged(value: CloudAuth) {
-                binding.cloudAuthId.setText(value.id)
-            }
-        })
     }
 
 
@@ -128,6 +126,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun onAuthSelectionClicked() {
+        authListDialog.setAuthSelectionCallback(this)
         authListDialog.show(childFragmentManager, AuthListDialog.TAG)
     }
 
@@ -260,5 +259,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         private fun createFragment(taskId: String?) = TaskEditFragment().apply {
                 arguments = bundleOf(TASK_ID to taskId)
         }
+    }
+
+    override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
+        binding.cloudAuthId.setText(cloudAuth.id)
     }
 }

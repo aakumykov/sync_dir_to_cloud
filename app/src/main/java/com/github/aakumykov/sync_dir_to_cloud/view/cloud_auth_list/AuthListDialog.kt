@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -21,9 +20,9 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
 
     private lateinit var listAdapter: ListViewAdapter<CloudAuth>
 
-    // FIXME: зачем их две?
     private val authListViewModel: AuthListViewModel by viewModels()
-    private val authSelectionViewModel: AuthSelectionViewModel by activityViewModels()
+
+    private var authSelectionCallback: AuthSelectionCallback? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,10 +76,9 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
 
         binding.listView.adapter = listAdapter
 
-        binding.listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        binding.listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             listAdapter.getItem(position)?.let { cloudAuth ->
-//                selectedCloudAuth.value = cloudAuth
-                authSelectionViewModel.setSelectedCloudAuth(cloudAuth)
+                authSelectionCallback?.onCloudAuthSelected(cloudAuth)
                 dismiss()
             }
         }
@@ -93,6 +91,14 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
         binding.addButton.visibility = View.VISIBLE
     }
 
+    fun setAuthSelectionCallback(callback: AuthSelectionCallback) {
+        this.authSelectionCallback = callback
+    }
+
+
+    interface AuthSelectionCallback {
+        fun onCloudAuthSelected(cloudAuth: CloudAuth)
+    }
 
     companion object {
         val TAG: String = AuthListDialog::class.java.simpleName
