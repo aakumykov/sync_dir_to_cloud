@@ -34,7 +34,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private var firstRun: Boolean = true
     private var cloudAuth:CloudAuth? = null
 
-    private val authListDialog: AuthListDialog by lazy { AuthListDialog() }
+    private var authListDialog: AuthListDialog? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,11 +42,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         firstRun = null == savedInstanceState
 
-        // "Connect to child dialogs"
-        childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let {  fragment ->
-            if (fragment is AuthListDialog)
-                fragment.setAuthSelectionCallback(this)
-        }
+        reconnectToChildDialog()
 
         prepareLayout(view)
         prepareButtons()
@@ -61,6 +57,15 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                 else -> R.string.FRAGMENT_TASK_EDIT_edition_title
             }
         ))
+    }
+
+    private fun reconnectToChildDialog() {
+        childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let {  fragment ->
+            if (fragment is AuthListDialog) {
+                authListDialog = fragment
+                authListDialog?.setAuthSelectionCallback(this)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -126,8 +131,10 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun onAuthSelectionClicked() {
-        authListDialog.setAuthSelectionCallback(this)
-        authListDialog.show(childFragmentManager, AuthListDialog.TAG)
+        if (null == authListDialog)
+            authListDialog = AuthListDialog()
+        authListDialog?.setAuthSelectionCallback(this)
+        authListDialog?.show(childFragmentManager, AuthListDialog.TAG)
     }
 
     private fun onSaveButtonClicked() {
@@ -261,6 +268,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         }
     }
 
+    // FIXME: после поворота текст на кнопке не восстанавливается. А значит, нужно хранить состояние формы во ViewModel
     override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
         binding.cloudAuthId.setText(cloudAuth.id)
     }
