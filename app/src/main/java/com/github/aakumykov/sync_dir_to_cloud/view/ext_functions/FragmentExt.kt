@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.ext_functions
+package com.github.aakumykov.sync_dir_to_cloud.view.ext_functions
 
 import android.widget.Toast
 import androidx.annotation.StringRes
