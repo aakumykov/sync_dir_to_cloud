@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.ValidationResult
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.yandex.authsdk.internal.strategy.LoginType
 
@@ -51,6 +52,10 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         authName?.let { binding.authNameView.setText(it) }
 
 
+        viewModel.nameValidationResult.observe(viewLifecycleOwner, this::onNameCheckChanged)
+        viewModel.tokenValidationResult.observe(viewLifecycleOwner, this::onTokenCheckChanged)
+
+
         binding.yandexAuthButton.setOnClickListener {
             yandexAuthenticator.startAuth()
         }
@@ -63,6 +68,20 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
         binding.buttonsInclude.cancelButton.setOnClickListener {
             dismiss()
+        }
+    }
+
+    private fun onNameCheckChanged(nameValidationResult: ValidationResult?) {
+        nameValidationResult?.error?.let { errorMessage ->
+            binding.authNameView.error = errorMessage.get(requireContext())
+        }
+    }
+
+    private fun onTokenCheckChanged(tokenValidationResult: ValidationResult?) {
+        tokenValidationResult?.error?.let { errorMessage ->
+            binding.errorView.text = errorMessage.get(requireContext())
+        } ?: {
+            binding.errorView.text = ""
         }
     }
 

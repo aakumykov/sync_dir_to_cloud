@@ -19,4 +19,8 @@ class CloudAuthLocalDataSource @Inject constructor(private val cloudAuthDAO: Clo
     suspend fun add(cloudAuth: CloudAuth) = withContext(Dispatchers.IO) {
         cloudAuthDAO.add(cloudAuth)
     }
+
+    suspend fun hasAuthWithName(name: String): Boolean = withContext(Dispatchers.IO) {
+        cloudAuthDAO.hasName(name)
+    }
 }

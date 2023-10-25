@@ -41,4 +41,6 @@
     <string name="BUTTON_cancel">Отменить</string>
     <string name="BUTTON_save">Сохранить</string>
     <string name="DIALOG_AUTH_CREATE_title">Создание новой авторизации</string>
+    <string name="VALIDATION_token_is_empty">Пустой токен авторизации</string>
+    <string name="VALIDATION_name_already_used">Название уже используется</string>
 </resources>

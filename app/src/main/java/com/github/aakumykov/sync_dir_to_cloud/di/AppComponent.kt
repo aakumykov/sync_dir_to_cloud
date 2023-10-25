@@ -13,7 +13,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.Schedul
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthLister
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthChecker
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -42,5 +43,6 @@ interface AppComponent {
 
     // FIXME: временное
     fun getCloudAuthAdder(): CloudAuthAdder
-    fun getCloudAuthLister(): CloudAuthLister
+    fun getCloudAuthLister(): CloudAuthReader
+    fun getCloudAuthChecker(): CloudAuthChecker
 }

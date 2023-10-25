@@ -14,4 +14,7 @@ interface CloudAuthDAO {
 
     @Query("SELECT * FROM cloud_auth")
     fun list(): LiveData<List<CloudAuth>>
+
+    @Query("SELECT * FROM cloud_auth WHERE name = :name")
+    fun hasName(name: String): Boolean
 }

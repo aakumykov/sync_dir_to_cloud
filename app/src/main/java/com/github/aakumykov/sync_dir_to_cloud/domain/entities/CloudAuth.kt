@@ -6,7 +6,10 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-@Entity(tableName = "cloud_auth")
+@Entity(
+    tableName = "cloud_auth"
+)
+// FIXME: уникальность имён
 class CloudAuth (
     @PrimaryKey val id: String,
     val name: String,
