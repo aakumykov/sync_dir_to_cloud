@@ -3,14 +3,15 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.CloudAuthSetter
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
@@ -20,8 +21,9 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
     private val binding get() = _binding!!
 
     private lateinit var listAdapter: ListViewAdapter<CloudAuth>
-
     private val viewModel: AuthListViewModel by viewModels()
+
+    private lateinit var cloudAuthSetter: CloudAuthSetter
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,7 +31,9 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
         prepareLayout(view)
         prepareButtons()
         prepareViewModel()
-        prepareList()
+        prepareListView()
+
+        cloudAuthSetter = App.getAppComponent().getCloudAuthSetter()
     }
 
 
@@ -64,7 +68,7 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
     }
 
 
-    private fun prepareList() {
+    private fun prepareListView() {
 
         listAdapter = ListViewAdapter<CloudAuth>(
             requireContext(),
@@ -77,7 +81,7 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
 
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             listAdapter.getItem(position)?.let {
-                Toast.makeText(requireContext(), it.name, Toast.LENGTH_SHORT).show()
+
                 dismiss()
             }
         }

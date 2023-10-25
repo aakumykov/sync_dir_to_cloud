@@ -1,12 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
+import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.InterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsRealModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
@@ -15,6 +18,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.CloudAuthSetter
+import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -27,11 +32,16 @@ import dagger.Component
         CloudAuthRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,
         WorkerModule::class,
-        CoroutineModule::class
+//        CoroutineModule::class,
+        ViewModelsModule::class,
+        ViewModelsRealModule::class,
+        InterfacesModule::class
     ]
 )
 @AppScope
 interface AppComponent {
+
+    fun getViewModelsFactory(): ViewModelFactory
 
     // TODO: убрать это
     fun getSyncTaskManagingUseCase(): SyncTaskManagingUseCase
@@ -45,4 +55,7 @@ interface AppComponent {
     fun getCloudAuthAdder(): CloudAuthAdder
     fun getCloudAuthLister(): CloudAuthReader
     fun getCloudAuthChecker(): CloudAuthChecker
+
+    fun getCloudAuthSetter(): CloudAuthSetter
+    fun getTaskEditViewModel(): TaskEditViewModel
 }
