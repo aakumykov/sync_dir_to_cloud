@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.BuildConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpStateViewModel
 import kotlinx.coroutines.delay
@@ -17,7 +18,10 @@ class AuthListViewModel(application: Application) : OpStateViewModel(application
     val authList: LiveData<AuthList> get() = _authListMediatorLiveData
 
     suspend fun startLoadingList() {
-        delay(1000)
+
+        if (BuildConfig.DEBUG)
+            delay(1000)
+
         _authListMediatorLiveData.addSource(cloudAuthLister.listCloudAuth()) {
             _authListMediatorLiveData.setValue(it)
         }
