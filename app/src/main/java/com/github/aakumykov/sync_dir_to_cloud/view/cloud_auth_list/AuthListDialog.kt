@@ -3,10 +3,10 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.single_live_event.SingleLiveEvent
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -14,7 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragm
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
-class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
+class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
 
     private var _binding: FragmentAuthListBinding? = null
     private val binding get() = _binding!!
@@ -22,6 +22,8 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
     private lateinit var listAdapter: ListViewAdapter<CloudAuth>
 
     private val viewModel: AuthListViewModel by viewModels()
+
+    val selectedCloudAuth: SingleLiveEvent<CloudAuth> = SingleLiveEvent()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,8 +78,8 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
         binding.listView.adapter = listAdapter
 
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            listAdapter.getItem(position)?.let {
-                Toast.makeText(requireContext(), it.name, Toast.LENGTH_SHORT).show()
+            listAdapter.getItem(position)?.let { cloudAuth ->
+                selectedCloudAuth.value = cloudAuth
                 dismiss()
             }
         }
@@ -92,6 +94,6 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
 
 
     companion object {
-        val TAG: String = AuthListFragment::class.java.simpleName
+        val TAG: String = AuthListDialog::class.java.simpleName
     }
 }

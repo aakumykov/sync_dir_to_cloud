@@ -2,9 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -14,16 +12,17 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 
-class TaskEditFragment : Fragment() {
+class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
@@ -35,17 +34,17 @@ class TaskEditFragment : Fragment() {
     private var firstRun: Boolean = true
     private var cloudAuth:CloudAuth? = null
 
+    private val authListDialog: AuthListDialog by lazy { AuthListDialog() }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        firstRun = null == savedInstanceState
-        prepareLayout(inflater, container)
-        prepareButtons()
-        prepareViewModels()
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        firstRun = null == savedInstanceState
+
+        prepareLayout(view)
+        prepareButtons()
+        prepareViewModels()
 
         val taskId: String? = arguments?.getString(TASK_ID)
         taskEditViewModel.prepare(taskId)
@@ -59,14 +58,13 @@ class TaskEditFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 
 
-
-    private fun prepareLayout(inflater: LayoutInflater, container: ViewGroup?) {
-        _binding = FragmentTaskEditBinding.inflate(inflater, container, false)
+    private fun prepareLayout(view: View) {
+        _binding = FragmentTaskEditBinding.bind(view)
     }
 
     private fun prepareButtons() {
@@ -122,7 +120,11 @@ class TaskEditFragment : Fragment() {
     }
 
     private fun onAuthSelectionClicked() {
-        AuthListFragment().show(childFragmentManager, AuthListFragment.TAG)
+        authListDialog.selectedCloudAuth.observe(viewLifecycleOwner) { cloudAuth ->
+            binding.cloudAuthId.setText(cloudAuth.id)
+            showToast(cloudAuth.name+"\n"+cloudAuth.id)
+        }
+        authListDialog.show(childFragmentManager, AuthListDialog.TAG)
     }
 
     private fun onSaveButtonClicked() {

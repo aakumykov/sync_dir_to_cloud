@@ -99,6 +99,15 @@
         android:text="@string/BUTTON_task_edit_select_auth"
         android:textColor="@color/black"/>
 
+    <EditText
+        android:id="@+id/cloudAuthId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        tools:text="cloudAuthId"
+        android:visibility="gone"
+        android:importantForAutofill="no" />
+
     <Button
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
