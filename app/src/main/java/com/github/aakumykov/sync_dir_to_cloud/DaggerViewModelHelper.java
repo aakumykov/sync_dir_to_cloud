@@ -12,7 +12,7 @@ public class DaggerViewModelHelper {
     ) {
         return new ViewModelProvider(
                 viewModelStoreOwner,
-                App.Companion.getAppComponent().getViewModelsFactory()
+                App.Companion.getAppComponent().getViewModelFactory()
         ).get(viewModelClass);
     }
 }

@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
+import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
@@ -32,6 +33,8 @@ import dagger.Component
 )
 @AppScope
 interface AppComponent {
+
+    fun getViewModelFactory(): ViewModelFactory
 
     // TODO: убрать это
     fun getSyncTaskManagingUseCase(): SyncTaskManagingUseCase
