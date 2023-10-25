@@ -8,16 +8,17 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
-import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -30,6 +31,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private val taskEditViewModel: TaskEditViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
+    private val authSelectionViewModel: AuthSelectionViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
     private var cloudAuth:CloudAuth? = null
@@ -81,6 +83,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun prepareViewModels() {
         taskEditViewModel.getCurrentTask().observe(viewLifecycleOwner, this::onCurrentTaskChanged)
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
+
+        authSelectionViewModel.getSelectedCloudAuth().observe(viewLifecycleOwner, object: Observer<CloudAuth> {
+            override fun onChanged(value: CloudAuth) {
+                binding.cloudAuthId.setText(value.id)
+            }
+        })
     }
 
 
@@ -120,10 +128,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun onAuthSelectionClicked() {
-        authListDialog.selectedCloudAuth.observe(viewLifecycleOwner) { cloudAuth ->
-            binding.cloudAuthId.setText(cloudAuth.id)
-            showToast(cloudAuth.name+"\n"+cloudAuth.id)
-        }
         authListDialog.show(childFragmentManager, AuthListDialog.TAG)
     }
 

@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.github.aakumykov.single_live_event.SingleLiveEvent
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -21,9 +21,9 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
 
     private lateinit var listAdapter: ListViewAdapter<CloudAuth>
 
-    private val viewModel: AuthListViewModel by viewModels()
-
-    val selectedCloudAuth: SingleLiveEvent<CloudAuth> = SingleLiveEvent()
+    // FIXME: зачем их две?
+    private val authListViewModel: AuthListViewModel by viewModels()
+    private val authSelectionViewModel: AuthSelectionViewModel by activityViewModels()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,13 +55,13 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
 
     private fun prepareViewModel() {
 
-        viewModel.authList.observe(viewLifecycleOwner) { authList ->
+        authListViewModel.authList.observe(viewLifecycleOwner) { authList ->
             listAdapter.setList(authList)
             hideProgressShowList()
         }
 
         lifecycleScope.launch {
-            viewModel.startLoadingList()
+            authListViewModel.startLoadingList()
         }
     }
 
@@ -79,7 +79,8 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
 
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             listAdapter.getItem(position)?.let { cloudAuth ->
-                selectedCloudAuth.value = cloudAuth
+//                selectedCloudAuth.value = cloudAuth
+                authSelectionViewModel.setSelectedCloudAuth(cloudAuth)
                 dismiss()
             }
         }
