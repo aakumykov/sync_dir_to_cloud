@@ -12,7 +12,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.O
 import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import kotlinx.coroutines.launch
 
-class TaskEditViewModel(application: Application) : TaskManagingViewModel(application), CloudAuthSetter
+class TaskEditViewModel(application: Application)
+    : TaskManagingViewModel(application), CloudAuthSetter
 {
     private lateinit var currentTask: SyncTask
     private val currentTaskMutableLiveData: MutableLiveData<SyncTask> = MutableLiveData()

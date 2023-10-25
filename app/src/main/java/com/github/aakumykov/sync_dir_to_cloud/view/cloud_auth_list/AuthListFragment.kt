@@ -29,7 +29,7 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
         prepareLayout(view)
         prepareButtons()
         prepareViewModel()
-        prepareListAdapter()
+        prepareList()
     }
 
 
@@ -64,7 +64,7 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
     }
 
 
-    private fun prepareListAdapter() {
+    private fun prepareList() {
 
         listAdapter = ListViewAdapter<CloudAuth>(
             requireContext(),
@@ -78,6 +78,7 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             listAdapter.getItem(position)?.let {
                 Toast.makeText(requireContext(), it.name, Toast.LENGTH_SHORT).show()
+                dismiss()
             }
         }
     }
