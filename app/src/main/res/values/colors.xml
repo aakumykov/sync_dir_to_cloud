@@ -15,4 +15,7 @@
 
     <color name="error">@color/design_default_color_error</color>
     <color name="yandex_button">#fb3e1c</color>
+
+    <color name="grey">#808080</color>
+    <color name="list_divider">#CCCCCC</color>
 </resources>

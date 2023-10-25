@@ -54,11 +54,20 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
     private fun prepareViewModel() {
         lifecycleScope.launch {
             viewModel.getAuthList().observe(viewLifecycleOwner) { authList ->
-                authList?.let {
-                    listAdapter.setList(authList)
-                }
+                listAdapter.setList(authList)
+                hideProgressBar()
+                showListWithAddButton()
             }
         }
+    }
+
+    private fun hideProgressBar() {
+        binding.progressBar.visibility = View.GONE
+    }
+
+    private fun showListWithAddButton() {
+        binding.listView.visibility = View.VISIBLE
+        binding.addButton.visibility = View.VISIBLE
     }
 
     private fun prepareListAdapter() {
