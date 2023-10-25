@@ -32,43 +32,37 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
         prepareListAdapter()
     }
 
-    private fun prepareButtons() {
-        binding.addButton.setOnClickListener {
-            AuthEditFragment().show(childFragmentManager, AuthEditFragment.TAG)
-        }
-    }
-
-    private fun prepareLayout(view: View) {
-        _binding = FragmentAuthListBinding.bind(view)
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    companion object {
-        val TAG: String = AuthListFragment::class.java.simpleName
+
+    private fun prepareLayout(view: View) {
+        _binding = FragmentAuthListBinding.bind(view)
     }
 
-    private fun prepareViewModel() {
-        lifecycleScope.launch {
-            viewModel.getAuthList().observe(viewLifecycleOwner) { authList ->
-                listAdapter.setList(authList)
-                hideProgressBar()
-                showListWithAddButton()
-            }
+
+    private fun prepareButtons() {
+        binding.addButton.setOnClickListener {
+            AuthEditFragment().show(childFragmentManager, AuthEditFragment.TAG)
         }
     }
 
-    private fun hideProgressBar() {
-        binding.progressBar.visibility = View.GONE
+
+    private fun prepareViewModel() {
+
+        viewModel.authList.observe(viewLifecycleOwner) { authList ->
+            listAdapter.setList(authList)
+            hideProgressShowList()
+        }
+
+        lifecycleScope.launch {
+            viewModel.startLoadingList()
+        }
     }
 
-    private fun showListWithAddButton() {
-        binding.listView.visibility = View.VISIBLE
-        binding.addButton.visibility = View.VISIBLE
-    }
 
     private fun prepareListAdapter() {
 
@@ -86,5 +80,17 @@ class AuthListFragment : DialogFragment(R.layout.fragment_auth_list) {
                 Toast.makeText(requireContext(), it.name, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+
+    private fun hideProgressShowList() {
+        binding.progressBar.visibility = View.GONE
+        binding.listView.visibility = View.VISIBLE
+        binding.addButton.visibility = View.VISIBLE
+    }
+
+
+    companion object {
+        val TAG: String = AuthListFragment::class.java.simpleName
     }
 }
