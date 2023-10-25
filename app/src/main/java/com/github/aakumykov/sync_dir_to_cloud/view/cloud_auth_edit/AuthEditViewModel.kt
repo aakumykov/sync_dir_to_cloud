@@ -44,7 +44,7 @@ class AuthEditViewModel(application: Application) : AndroidViewModel(application
 
     private fun checkToken(authToken: String): TextMessage? {
         return if (authToken.isEmpty())
-            TextMessage(R.string.VALIDATION_token_is_empty)
+            TextMessage(R.string.VALIDATION_cloud_authorization_required)
         else null
     }
 
