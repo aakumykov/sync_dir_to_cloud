@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBindin
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -22,7 +23,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
-    AuthListDialog.AuthSelectionCallback {
+    AuthSelectionDialog.Callback {
 
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
@@ -32,9 +33,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
-    private var cloudAuth:CloudAuth? = null
 
-    private var authListDialog: AuthListDialog? = null
+    private var authSelectionDialog: AuthSelectionDialog? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,6 +48,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         prepareButtons()
         prepareViewModels()
 
+        restoreSomeViewState()
+
         val taskId: String? = arguments?.getString(TASK_ID)
         taskEditViewModel.prepare(taskId)
 
@@ -59,11 +61,19 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         ))
     }
 
+    private fun restoreSomeViewState() {
+        binding.cloudAuthId.text.toString().also {
+            if (!it.isEmpty())
+                binding.authSelectionButton.text = it
+        }
+    }
+
+
     private fun reconnectToChildDialog() {
-        childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let {  fragment ->
-            if (fragment is AuthListDialog) {
-                authListDialog = fragment
-                authListDialog?.setAuthSelectionCallback(this)
+        childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let { fragment ->
+            if (fragment is AuthSelectionDialog) {
+                authSelectionDialog = fragment
+                authSelectionDialog?.setCallback(this)
             }
         }
     }
@@ -79,7 +89,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun prepareButtons() {
-        binding.saveButton.setOnClickListener { onSaveButtonClicked() }
+        binding.saveButton.setOnClickListener {
+            onSaveButtonClicked()
+        }
         binding.cancelButton.setOnClickListener { onCancelButtonClicked() }
 
         binding.intervalHours.setOnClickListener { onSelectTimeClicked() }
@@ -131,22 +143,24 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun onAuthSelectionClicked() {
-        if (null == authListDialog)
-            authListDialog = AuthListDialog()
-        authListDialog?.setAuthSelectionCallback(this)
-        authListDialog?.show(childFragmentManager, AuthListDialog.TAG)
+        val authListDialog = AuthListDialog()
+        authListDialog.show(childFragmentManager, AuthListDialog.TAG)
+        authListDialog.setCallback(this@TaskEditFragment)
+
+        /*with(AuthListDialog()) {
+            setCallback(this@TaskEditFragment)
+            show(childFragmentManager, AuthListDialog.TAG)
+        }*/
     }
 
     private fun onSaveButtonClicked() {
-        cloudAuth?.let { cloudAuth ->
-            taskEditViewModel.createOrSaveSyncTask(
-                binding.sourcePathInput.text.toString(),
-                binding.targetPathInput.text.toString(),
-                binding.intervalHours.text.toString().toInt(),
-                binding.intervalMinutes.text.toString().toInt(),
-                cloudAuth.id
-            )
-        }
+        taskEditViewModel.createOrSaveSyncTask(
+            binding.sourcePathInput.text.toString(),
+            binding.targetPathInput.text.toString(),
+            binding.intervalHours.text.toString().toInt(),
+            binding.intervalMinutes.text.toString().toInt(),
+            binding.cloudAuthId.text.toString()
+        )
     }
 
     private fun onCancelButtonClicked() {
@@ -271,5 +285,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     // FIXME: после поворота текст на кнопке не восстанавливается. А значит, нужно хранить состояние формы во ViewModel
     override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
         binding.cloudAuthId.setText(cloudAuth.id)
+        binding.authSelectionButton.text = cloudAuth.name
     }
 }

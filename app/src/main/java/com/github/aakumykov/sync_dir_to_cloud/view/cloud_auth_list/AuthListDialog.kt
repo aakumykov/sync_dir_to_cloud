@@ -13,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragm
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
-class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
+class AuthListDialog : DialogFragment(R.layout.fragment_auth_list), AuthSelectionDialog {
 
     private var _binding: FragmentAuthListBinding? = null
     private val binding get() = _binding!!
@@ -22,7 +22,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
 
     private val authListViewModel: AuthListViewModel by viewModels()
 
-    private var authSelectionCallback: AuthSelectionCallback? = null
+    private var authSelectionCallback: AuthSelectionDialog.Callback? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,16 +91,16 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list) {
         binding.addButton.visibility = View.VISIBLE
     }
 
-    fun setAuthSelectionCallback(callback: AuthSelectionCallback) {
-        this.authSelectionCallback = callback
-    }
-
-
-    interface AuthSelectionCallback {
-        fun onCloudAuthSelected(cloudAuth: CloudAuth)
-    }
-
     companion object {
         val TAG: String = AuthListDialog::class.java.simpleName
+    }
+
+
+    override fun setCallback(callback: AuthSelectionDialog.Callback) {
+        authSelectionCallback = callback
+    }
+
+    override fun unsetCallback() {
+        authSelectionCallback = null
     }
 }
