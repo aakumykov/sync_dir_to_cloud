@@ -111,4 +111,5 @@ dependencies {
     // Optional - Integration with LiveData
 //    implementation 'androidx.compose.runtime:runtime-livedata'
 
+    implementation "com.github.permissions-dispatcher:ktx:1.1.4"
 }
