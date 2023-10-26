@@ -20,7 +20,7 @@ class SyncTask {
 
     @ColumnInfo(name = "cloud_auth_id") var cloudAuthId: String? = null
 
-
+    @Ignore
     constructor() {
         this.sourcePath = null
         this.targetPath = null
