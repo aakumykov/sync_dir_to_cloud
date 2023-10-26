@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 10,
-    "identityHash": "e000d5500bf7b3dc1164db4b45c34f5d",
+    "identityHash": "71ccbc057e77283cd9445e1d3fad3604",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -191,14 +191,24 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_cloud_auth_name",
+            "unique": true,
+            "columnNames": [
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_cloud_auth_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e000d5500bf7b3dc1164db4b45c34f5d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71ccbc057e77283cd9445e1d3fad3604')"
     ]
   }
 }
