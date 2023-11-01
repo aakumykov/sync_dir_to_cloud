@@ -112,4 +112,6 @@ dependencies {
 //    implementation 'androidx.compose.runtime:runtime-livedata'
 
     implementation "com.github.permissions-dispatcher:ktx:1.1.4"
+
+    implementation 'com.github.aakumykov:yandex_disk_file_selector:0.0.1-local'
 }
