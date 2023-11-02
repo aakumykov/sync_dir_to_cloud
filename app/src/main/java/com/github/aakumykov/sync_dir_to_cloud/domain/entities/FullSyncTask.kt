@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.Embedded
 import androidx.room.Relation
 
-class SyncTaskWithCloudAuth(
+class FullSyncTask (
     @Embedded
     val syncTask: SyncTask,
 

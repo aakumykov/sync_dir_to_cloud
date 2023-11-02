@@ -16,4 +16,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
     abstract fun getSyncObjectDAO(): SyncObjectDAO
     abstract fun getCloudAuthDAO(): CloudAuthDAO
+    abstract fun getFullSyncTaskDAO(): FullSyncTaskDAO
 }
