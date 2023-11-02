@@ -18,8 +18,7 @@ class SyncTaskRepository @Inject constructor(
     private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
-)
-    : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater
+) : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return syncTaskLocalDataSource.listSyncTasks()

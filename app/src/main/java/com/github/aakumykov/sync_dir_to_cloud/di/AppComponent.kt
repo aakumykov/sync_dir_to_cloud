@@ -6,7 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.FullSyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
@@ -27,7 +26,6 @@ import dagger.Component
         ContextModule::class,
         RoomModule::class,
         SyncTaskRepositoryInterfacesModule::class,
-        FullSyncTaskRepositoryInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,
         WorkerModule::class,
