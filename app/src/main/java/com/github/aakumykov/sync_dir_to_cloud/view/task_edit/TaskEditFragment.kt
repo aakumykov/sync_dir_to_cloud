@@ -28,7 +28,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
 
-    private val taskEditViewModel: TaskEditViewModel by viewModels()
+    private val taskEditViewModel2: TaskEditViewModel2 by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
@@ -40,32 +40,22 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firstRun = null == savedInstanceState
-
-        reconnectToChildDialog()
-
         prepareLayout(view)
         prepareButtons()
         prepareViewModels()
 
-        restoreSomeViewState()
+        reconnectToChildDialog()
+        initialFillForm()
 
-        val taskId: String? = arguments?.getString(TASK_ID)
-        taskEditViewModel.prepare(taskId)
+        /*val taskId: String? = arguments?.getString(TASK_ID)
+        taskEditViewModel.prepare(taskId)*/
 
-        pageTitleViewModel.setPageTitle(getString(
+        /*pageTitleViewModel.setPageTitle(getString(
             when(taskId) {
                 null -> R.string.FRAGMENT_TASK_EDIT_creation_title
                 else -> R.string.FRAGMENT_TASK_EDIT_edition_title
             }
-        ))
-    }
-
-    private fun restoreSomeViewState() {
-        binding.cloudAuthId.text.toString().also {
-            if (!it.isEmpty())
-                binding.authSelectionButton.text = it
-        }
+        ))*/
     }
 
 
@@ -102,14 +92,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun prepareViewModels() {
-        taskEditViewModel.getCurrentTask().observe(viewLifecycleOwner, this::onCurrentTaskChanged)
-        taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
+//        taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
     }
 
-
-    private fun onCurrentTaskChanged(syncTask: SyncTask) {
-        fillForm(syncTask)
-    }
 
     private fun onOpStateChanged(opState: OpState) {
         when (opState) {
@@ -154,13 +139,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun onSaveButtonClicked() {
-        taskEditViewModel.createOrSaveSyncTask(
-            binding.sourcePathInput.text.toString(),
-            binding.targetPathInput.text.toString(),
-            binding.intervalHours.text.toString().toInt(),
-            binding.intervalMinutes.text.toString().toInt(),
-            binding.cloudAuthId.text.toString()
-        )
+        taskEditViewModel2.saveSyncTask()
     }
 
     private fun onCancelButtonClicked() {
@@ -174,23 +153,30 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
 
-    private fun fillForm(syncTask: SyncTask) {
+    private fun initialFillForm() {
         if (firstRun) {
-            binding.sourcePathInput.setText(syncTask.sourcePath)
-            binding.targetPathInput.setText(syncTask.targetPath)
-
+            firstRun = false;
+            val syncTask = taskEditViewModel2.syncTask
+            fillPaths(syncTask)
             fillPeriodView(syncTask)
+            fillAuthButton(syncTask)
         }
     }
 
-    private fun fillPeriodView(syncTask: SyncTask) {
-        fillPeriodView(syncTask.intervalHours, syncTask.intervalMinutes)
+    private fun fillPaths(syncTask: SyncTask) {
+        binding.sourcePathInput.setText(syncTask.sourcePath)
+        binding.targetPathInput.setText(syncTask.targetPath)
     }
 
-    private fun fillPeriodView(hourNumber: Int, minuteNumber: Int) {
-        binding.intervalHours.setText(hourNumber.toString())
-        binding.intervalMinutes.setText(minuteNumber.toString())
+    private fun fillPeriodView(syncTask: SyncTask) {
+        binding.intervalHours.setText(syncTask.intervalHours.toString())
+        binding.intervalMinutes.setText(syncTask.intervalMinutes.toString())
     }
+
+    private fun fillAuthButton(syncTask: SyncTask) {
+        // TODO: сделать
+    }
+
 
 
 
