@@ -34,6 +34,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private var firstRun: Boolean = true
 
+    private val currentTask: SyncTask
+        get() = taskEditViewModel2.syncTask
+
     private var authSelectionDialog: AuthSelectionDialog? = null
 
 
@@ -76,6 +79,30 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private fun prepareLayout(view: View) {
         _binding = FragmentTaskEditBinding.bind(view)
+
+        binding.sourcePathInput.addTextChangedListener(object: SimpleTextWatcher(){
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                currentTask?.sourcePath = s.toString()
+            }
+        })
+
+        binding.targetPathInput.addTextChangedListener(object: SimpleTextWatcher(){
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                currentTask?.targetPath = s.toString()
+            }
+        })
+
+        binding.intervalHours.addTextChangedListener(object: SimpleTextWatcher(){
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                currentTask?.intervalHours = s.toString().toInt()
+            }
+        })
+
+        binding.intervalMinutes.addTextChangedListener(object: SimpleTextWatcher(){
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                currentTask?.intervalMinutes = s.toString().toInt()
+            }
+        })
     }
 
     private fun prepareButtons() {
@@ -156,10 +183,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private fun initialFillForm() {
         if (firstRun) {
             firstRun = false;
-            val syncTask = taskEditViewModel2.syncTask
-            fillPaths(syncTask)
-            fillPeriodView(syncTask)
-            fillAuthButton(syncTask)
+            currentTask.let {
+                fillPaths(it)
+                fillPeriodView(it)
+                fillAuthButton(it)
+            }
         }
     }
 
@@ -268,9 +296,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         }
     }
 
-    // FIXME: после поворота текст на кнопке не восстанавливается. А значит, нужно хранить состояние формы во ViewModel
     override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
-        binding.cloudAuthId.setText(cloudAuth.id)
+        currentTask.cloudAuthId = cloudAuth.id
+        updateAuthSelectionButton(cloudAuth)
+    }
+
+    private fun updateAuthSelectionButton(cloudAuth: CloudAuth) {
         binding.authSelectionButton.text = cloudAuth.name
     }
 }
