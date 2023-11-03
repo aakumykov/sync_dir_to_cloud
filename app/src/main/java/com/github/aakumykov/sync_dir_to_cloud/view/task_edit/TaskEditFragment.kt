@@ -33,9 +33,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
-
-    private val currentTask: SyncTask
-        get() = taskEditViewModel2.syncTask
+    private val currentTask get(): SyncTask? = taskEditViewModel2.syncTask
 
     private var authSelectionDialog: AuthSelectionDialog? = null
 
@@ -48,17 +46,29 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         prepareViewModels()
 
         reconnectToChildDialog()
+        prepareForCreationOfEdition()
         initialFillForm()
+    }
 
-        /*val taskId: String? = arguments?.getString(TASK_ID)
-        taskEditViewModel.prepare(taskId)*/
 
-        /*pageTitleViewModel.setPageTitle(getString(
-            when(taskId) {
-                null -> R.string.FRAGMENT_TASK_EDIT_creation_title
-                else -> R.string.FRAGMENT_TASK_EDIT_edition_title
-            }
-        ))*/
+    private fun prepareViewModels() {
+        taskEditViewModel2.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
+    }
+
+
+    private fun prepareForCreationOfEdition() {
+
+        val taskId = arguments?.getString(TASK_ID)
+
+        if (null != taskId) {
+            taskEditViewModel2.prepareForEdit(taskId)
+            pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_edition_title))
+        } else {
+            taskEditViewModel2.prepareForCreate()
+            pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
+        }
+
+
     }
 
 
@@ -118,17 +128,13 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.authSelectionButton.setOnClickListener { onAuthSelectionClicked() }
     }
 
-    private fun prepareViewModels() {
-//        taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
-    }
-
 
     private fun onOpStateChanged(opState: OpState) {
         when (opState) {
             is OpState.Idle -> showIdleOpState()
             is OpState.Busy -> showBusyOpState(opState)
-            is OpState.Success -> finishWork(opState)
             is OpState.Error -> showErrorOpState(opState)
+            is OpState.Success -> finishWork(opState)
         }
     }
 
@@ -178,12 +184,10 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         navigationViewModel.navigateBack()
     }
 
-
-
     private fun initialFillForm() {
         if (firstRun) {
-            firstRun = false;
-            currentTask.let {
+            firstRun = false
+            currentTask?.let {
                 fillPaths(it)
                 fillPeriodView(it)
                 fillAuthButton(it)
@@ -202,7 +206,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun fillAuthButton(syncTask: SyncTask) {
-        // TODO: сделать
+        binding.authSelectionButton.text = syncTask.cloudAuthId
     }
 
 
@@ -280,6 +284,15 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.errorMessage.visibility = View.GONE
     }
 
+    override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
+        currentTask?.cloudAuthId = cloudAuth.id
+        displayCLoudAuthSelectionState(cloudAuth)
+    }
+
+    private fun displayCLoudAuthSelectionState(cloudAuth: CloudAuth) {
+        binding.authSelectionButton.text = cloudAuth.name
+    }
+
 
     companion object {
 
@@ -292,16 +305,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             createFragment(taskId)
 
         private fun createFragment(taskId: String?) = TaskEditFragment().apply {
-                arguments = bundleOf(TASK_ID to taskId)
+            arguments = bundleOf(TASK_ID to taskId)
         }
-    }
-
-    override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
-        currentTask.cloudAuthId = cloudAuth.id
-        updateAuthSelectionButton(cloudAuth)
-    }
-
-    private fun updateAuthSelectionButton(cloudAuth: CloudAuth) {
-        binding.authSelectionButton.text = cloudAuth.name
     }
 }
