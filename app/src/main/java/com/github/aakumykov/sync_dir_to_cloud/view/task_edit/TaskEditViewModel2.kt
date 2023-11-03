@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
@@ -13,14 +14,29 @@ import kotlinx.coroutines.launch
 
 class TaskEditViewModel2(application: Application) : TaskManagingViewModel(application) {
 
+
+    //
     // LiveData для оповещения View о том, что можно отображать данные.
+    //
     private val _syncTaskMutableLiveData: MutableLiveData<SyncTask> = MutableLiveData()
     val syncTaskLiveData: LiveData<SyncTask> = _syncTaskMutableLiveData
 
+    //
     // Объект из этого поля выступает в качестве временного хранилища редактируемых данных
     // (чтобы при сохранении не передавать их через аргументы метода, а просто брать объект из этого поля).
+    //
     val currentTask get(): SyncTask? = _syncTaskMutableLiveData.value
 
+    //
+    // LiveData с объектом CloudAuth, который связан с текущим
+    //
+    private val _cloudAuthMutableLiveData: MutableLiveData<CloudAuth> = MutableLiveData()
+    val cloudAuthLiveData: LiveData<CloudAuth> get() = _cloudAuthMutableLiveData
+
+    //
+    // Поле для более удобного обращения к текущему CloudAuth (возможно, понадобится "var").
+    //
+    val currentCloudAuth get(): CloudAuth? = _cloudAuthMutableLiveData.value
 
 
 
@@ -39,6 +55,8 @@ class TaskEditViewModel2(application: Application) : TaskManagingViewModel(appli
         viewModelScope.launch {
             val syncTask = syncTaskManagingUseCase.getSyncTask(taskId)
             _syncTaskMutableLiveData.value = syncTask
+
+            loadCloudAuth(syncTask.cloudAuthId)
         }
     }
 
@@ -46,5 +64,10 @@ class TaskEditViewModel2(application: Application) : TaskManagingViewModel(appli
     fun prepareForCreate() {
         val newSyncTask = SyncTask()
         _syncTaskMutableLiveData.value = newSyncTask
+    }
+
+
+    private fun loadCloudAuth(cloudAuthId: String?) {
+
     }
 }
