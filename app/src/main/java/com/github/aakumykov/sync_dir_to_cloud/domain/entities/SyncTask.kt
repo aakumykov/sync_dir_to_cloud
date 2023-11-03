@@ -2,11 +2,22 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-@Entity(tableName = "sync_tasks")
+@Entity(
+    tableName = "sync_tasks",
+    foreignKeys = [
+        ForeignKey(entity = CloudAuth::class,
+            parentColumns = ["cloud_auth_id"],
+            childColumns = ["id"],
+            onDelete = NO_ACTION,
+            onUpdate = NO_ACTION)
+    ]
+)
 class SyncTask {
 
     @PrimaryKey var id: String = UUID.randomUUID().toString()
