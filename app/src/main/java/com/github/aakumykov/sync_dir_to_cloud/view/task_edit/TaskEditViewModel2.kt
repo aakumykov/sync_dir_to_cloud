@@ -13,16 +13,15 @@ import kotlinx.coroutines.launch
 
 class TaskEditViewModel2(application: Application) : TaskManagingViewModel(application) {
 
-    private var _currentSyncTask: SyncTask? = null
-    val currentSyncTask get(): SyncTask? = _currentSyncTask
-
     private val _syncTaskMutableLiveData: MutableLiveData<SyncTask> = MutableLiveData()
     val syncTaskLiveData: LiveData<SyncTask> = _syncTaskMutableLiveData
+
+    val currentTaskLiveData get(): SyncTask? = _syncTaskMutableLiveData.value
 
 
     fun saveSyncTask() {
         viewModelScope.launch {
-            currentSyncTask?.let {
+            currentTaskLiveData?.let {
                 setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))
                 syncTaskManagingUseCase.createOrUpdateSyncTask(it)
                 setOpState(OpState.Success(TextMessage(R.string.task_saved)))
@@ -34,7 +33,6 @@ class TaskEditViewModel2(application: Application) : TaskManagingViewModel(appli
     fun prepareForEdit(taskId: String) {
         viewModelScope.launch {
             val syncTask = syncTaskManagingUseCase.getSyncTask(taskId)
-            _currentSyncTask = syncTask
             _syncTaskMutableLiveData.value = syncTask
         }
     }
@@ -42,7 +40,6 @@ class TaskEditViewModel2(application: Application) : TaskManagingViewModel(appli
 
     fun prepareForCreate() {
         val newSyncTask = SyncTask()
-        _currentSyncTask = newSyncTask
         _syncTaskMutableLiveData.value = newSyncTask
     }
 }
