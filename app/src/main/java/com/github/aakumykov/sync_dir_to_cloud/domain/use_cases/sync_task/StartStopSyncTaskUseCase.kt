@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
@@ -16,11 +17,11 @@ class StartStopSyncTaskUseCase @Inject constructor(
         // TODO: кинуть исключение просто так
         val syncTask = syncTaskReader.getSyncTask(taskId)
 
-        if (syncTask.state == SyncTask.State.RUNNING) {
+        if (syncTask.task.state == SyncTaskBase.State.RUNNING) {
             syncTaskStarterStopper.stopSyncTask(syncTask, object:SyncTaskStarterStopper.StopCallback {
                 override fun onSyncTaskStopped(taskId: String) {
                     // FIXME: устанавливать более специфичное состояние?
-                    syncTask.state = SyncTask.State.IDLE
+                    syncTask.task.state = SyncTaskBase.State.IDLE
                     syncTaskUpdater.updateSyncTask(syncTask)
                 }
             })

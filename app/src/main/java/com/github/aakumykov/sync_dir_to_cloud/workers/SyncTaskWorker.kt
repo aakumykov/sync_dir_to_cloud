@@ -6,6 +6,7 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
@@ -36,12 +37,12 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         currentTask = syncTaskReader.getSyncTask(taskId)
 
-        if (currentTask.state == SyncTask.State.RUNNING)
+        if (currentTask.task.state == SyncTaskBase.State.RUNNING)
             return Result.retry()
 
-        changeTaskState(SyncTask.State.RUNNING)
+        changeTaskState(SyncTaskBase.State.RUNNING)
         delay(10000)
-        changeTaskState(SyncTask.State.SUCCESS)
+        changeTaskState(SyncTaskBase.State.SUCCESS)
 
         fileWriter.writeln(CurrentDateTime.get()+", end")
 
@@ -49,8 +50,8 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
 
-    private fun changeTaskState(state: SyncTask.State) {
-        currentTask.state = state
+    private fun changeTaskState(state: SyncTaskBase.State) {
+        currentTask.task.state = state
         syncTaskUpdater.updateSyncTask(currentTask)
     }
 

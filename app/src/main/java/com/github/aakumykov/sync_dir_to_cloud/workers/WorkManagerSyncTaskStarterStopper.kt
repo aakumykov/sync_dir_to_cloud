@@ -12,10 +12,10 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
 {
     override fun startSyncTask(syncTask: SyncTask) {
 
-        val workName = workName(syncTask.id)
+        val workName = workName(syncTask.task.id)
 
         val inputData = Data.Builder().apply {
-            putString(TASK_ID, syncTask.id)
+            putString(TASK_ID, syncTask.task.id)
         }.build()
 
         val networkConstraints = Constraints.Builder().apply {
@@ -42,9 +42,9 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
     private fun workName(taskId: String): String = MANUAL_WORK_ID_PREFIX + taskId
 
     override fun stopSyncTask(syncTask: SyncTask, callback: SyncTaskStarterStopper.StopCallback) {
-        workManager.cancelUniqueWork(workName(syncTask.id)).state.observeForever {
+        workManager.cancelUniqueWork(workName(syncTask.task.id)).state.observeForever {
             when (it) {
-                is Operation.State.SUCCESS -> callback.onSyncTaskStopped(syncTask.id)
+                is Operation.State.SUCCESS -> callback.onSyncTaskStopped(syncTask.task.id)
             }
         }
     }

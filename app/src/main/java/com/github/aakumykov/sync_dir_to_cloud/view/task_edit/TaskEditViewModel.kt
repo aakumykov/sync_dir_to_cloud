@@ -41,7 +41,7 @@ class TaskEditViewModel(application: Application)
         intervalMinutes: Int,
         cloudAuthId: String
     ) {
-        currentTask.sourcePath = sourcePath
+        /*currentTask.sourcePath = sourcePath
         currentTask.targetPath = targetPath
         currentTask.intervalHours = intervalHours
         currentTask.intervalMinutes = intervalMinutes
@@ -51,7 +51,7 @@ class TaskEditViewModel(application: Application)
             setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))
             syncTaskManagingUseCase.createOrUpdateSyncTask(currentTask)
             setOpState(OpState.Success(TextMessage(R.string.task_saved)))
-        }
+        }*/
     }
 
     override fun setCloudAuth(cloudAuth: CloudAuth) {

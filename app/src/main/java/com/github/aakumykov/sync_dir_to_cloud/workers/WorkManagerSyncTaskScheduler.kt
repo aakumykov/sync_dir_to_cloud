@@ -20,7 +20,7 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
 
         val periodicWorkRequest = PeriodicWorkRequest.Builder(
             SyncTaskWorker::class.java,
-            syncTask.getExecutionIntervalMinutes(),
+            syncTask.task.getExecutionIntervalMinutes(),
             TimeUnit.MINUTES,
             PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
             TimeUnit.MILLISECONDS
@@ -30,7 +30,7 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            syncTask.id,
+            syncTask.task.id,
             ExistingPeriodicWorkPolicy.UPDATE,
             periodicWorkRequest
         ).state.observeForever {
@@ -46,7 +46,7 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
         syncTask: SyncTask,
         callbacks: SyncTaskScheduler.UnScheduleCallbacks
     ) {
-        workManager.cancelUniqueWork(syncTask.id).state.observeForever {
+        workManager.cancelUniqueWork(syncTask.task.id).state.observeForever {
             when(it) {
                 is Operation.State.SUCCESS -> callbacks.onSyncTaskUnScheduleSuccess()
                 is Operation.State.IN_PROGRESS -> {}

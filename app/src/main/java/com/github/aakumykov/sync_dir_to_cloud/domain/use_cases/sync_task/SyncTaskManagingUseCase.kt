@@ -31,9 +31,9 @@ class SyncTaskManagingUseCase @Inject constructor(
 
 
     suspend fun createOrUpdateSyncTask(syncTask: SyncTask) {
-        if (null != syncTaskReader.getSyncTask(syncTask.id))
+        /*if (null != syncTaskReader.getSyncTask(syncTask.id))
             syncTaskUpdater.updateSyncTask(syncTask)
         else
-            syncTaskCreatorDeleter.createSyncTask(syncTask)
+            syncTaskCreatorDeleter.createSyncTask(syncTask)*/
     }
 }
