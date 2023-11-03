@@ -33,7 +33,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
-    private val currentTask get(): SyncTask? = taskEditViewModel2.syncTask
+    private val currentTask get(): SyncTask? = taskEditViewModel2.currentSyncTask
 
     private var authSelectionDialog: AuthSelectionDialog? = null
 
@@ -47,14 +47,18 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         reconnectToChildDialog()
         prepareForCreationOfEdition()
-        initialFillForm()
     }
 
 
     private fun prepareViewModels() {
         taskEditViewModel2.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
+        taskEditViewModel2.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
     }
 
+    private fun onSyncTaskChanged(syncTask: SyncTask?) {
+        if (null != syncTask)
+            fillForm(syncTask)
+    }
 
     private fun prepareForCreationOfEdition() {
 
@@ -184,14 +188,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         navigationViewModel.navigateBack()
     }
 
-    private fun initialFillForm() {
+    private fun fillForm(syncTask: SyncTask) {
         if (firstRun) {
             firstRun = false
-            currentTask?.let {
-                fillPaths(it)
-                fillPeriodView(it)
-                fillAuthButton(it)
-            }
+            fillPaths(syncTask)
+            fillPeriodView(syncTask)
+            fillAuthButton(syncTask)
         }
     }
 
