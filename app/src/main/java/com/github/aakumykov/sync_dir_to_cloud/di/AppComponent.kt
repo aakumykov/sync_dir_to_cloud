@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInter
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
+import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.cloud_auth.CloudAuthManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
@@ -42,6 +43,8 @@ interface AppComponent {
     fun getSyncTaskManagingUseCase(): SyncTaskManagingUseCase
     fun getStartStopSyncTaskUseCase(): StartStopSyncTaskUseCase
     fun getTaskSchedulingUseCase(): SchedulingSyncTaskUseCase
+
+    fun getCloudAuthManagingUseCase(): CloudAuthManagingUseCase
 
     fun injectSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
     fun injectWorker2(syncTaskWorker: SyncTaskWorker)

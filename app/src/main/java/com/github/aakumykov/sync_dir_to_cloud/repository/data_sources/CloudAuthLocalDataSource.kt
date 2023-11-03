@@ -16,11 +16,12 @@ class CloudAuthLocalDataSource @Inject constructor(private val cloudAuthDAO: Clo
         }
     }
 
-    suspend fun add(cloudAuth: CloudAuth) = withContext(Dispatchers.IO) {
-        cloudAuthDAO.add(cloudAuth)
-    }
+    suspend fun add(cloudAuth: CloudAuth)
+        = withContext(Dispatchers.IO) { cloudAuthDAO.add(cloudAuth) }
 
-    suspend fun hasAuthWithName(name: String): Boolean = withContext(Dispatchers.IO) {
-        cloudAuthDAO.hasName(name)
-    }
+    suspend fun hasAuthWithName(name: String): Boolean
+        = withContext(Dispatchers.IO) { cloudAuthDAO.hasName(name) }
+
+    suspend fun get(id: String): CloudAuth
+        = withContext(Dispatchers.IO) { cloudAuthDAO.get(id) }
 }

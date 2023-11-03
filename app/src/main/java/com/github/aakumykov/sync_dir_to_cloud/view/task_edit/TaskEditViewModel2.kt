@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -26,6 +27,10 @@ class TaskEditViewModel2(application: Application) : TaskManagingViewModel(appli
     // (чтобы при сохранении не передавать их через аргументы метода, а просто брать объект из этого поля).
     //
     val currentTask get(): SyncTask? = _syncTaskMutableLiveData.value
+
+
+    private val cloudAuthManagingUseCase = App.getAppComponent().getCloudAuthManagingUseCase()
+
 
     //
     // LiveData с объектом CloudAuth, который связан с текущим
@@ -53,10 +58,9 @@ class TaskEditViewModel2(application: Application) : TaskManagingViewModel(appli
 
     fun prepareForEdit(taskId: String) {
         viewModelScope.launch {
-            val syncTask = syncTaskManagingUseCase.getSyncTask(taskId)
-            _syncTaskMutableLiveData.value = syncTask
+            _syncTaskMutableLiveData.value = syncTaskManagingUseCase.getSyncTask(taskId)
 
-            loadCloudAuth(syncTask.cloudAuthId)
+            loadCloudAuth(currentTask?.cloudAuthId)
         }
     }
 
@@ -68,6 +72,10 @@ class TaskEditViewModel2(application: Application) : TaskManagingViewModel(appli
 
 
     private fun loadCloudAuth(cloudAuthId: String?) {
-
+        viewModelScope.launch {
+            cloudAuthId?.let {
+                _cloudAuthMutableLiveData.value = cloudAuthManagingUseCase.getCloudAuth(it)
+            }
+        }
     }
 }

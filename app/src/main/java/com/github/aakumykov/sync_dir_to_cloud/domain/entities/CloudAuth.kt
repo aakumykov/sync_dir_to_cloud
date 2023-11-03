@@ -21,8 +21,4 @@ class CloudAuth (
         UUID.randomUUID().toString(),
         name,
         authToken)
-
-    override fun toString(): String {
-        return name
-    }
 }

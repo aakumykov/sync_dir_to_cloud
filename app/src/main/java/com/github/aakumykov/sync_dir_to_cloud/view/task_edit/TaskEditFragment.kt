@@ -55,11 +55,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private fun prepareViewModels() {
         taskEditViewModel2.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
         taskEditViewModel2.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
+        taskEditViewModel2.cloudAuthLiveData.observe(viewLifecycleOwner, ::onCloudAuthChanged)
     }
 
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
         if (null != syncTask)
             fillForm(syncTask)
+    }
+
+    private fun onCloudAuthChanged(cloudAuth: CloudAuth?) {
+        if (null != cloudAuth)
+            displayCLoudAuthSelectionState(cloudAuth)
     }
 
     private fun prepareForCreationOfEdition() {

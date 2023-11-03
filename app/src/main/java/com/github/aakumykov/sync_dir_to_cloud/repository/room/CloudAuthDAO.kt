@@ -17,4 +17,7 @@ interface CloudAuthDAO {
 
     @Query("SELECT * FROM cloud_auth WHERE name = :name")
     fun hasName(name: String): Boolean
+
+    @Query("SELECT * FROM cloud_auth WHERE id = :id")
+    fun get(id: String): CloudAuth
 }

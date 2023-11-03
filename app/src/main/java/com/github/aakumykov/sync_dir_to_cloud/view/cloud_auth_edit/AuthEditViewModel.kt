@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class AuthEditViewModel(application: Application) : AndroidViewModel(application) {
 
+    // TODO: UseCase
     private val cloudAuthAdder = App.getAppComponent().getCloudAuthAdder()
     private val cloudAuthChecker = App.getAppComponent().getCloudAuthChecker()
 
