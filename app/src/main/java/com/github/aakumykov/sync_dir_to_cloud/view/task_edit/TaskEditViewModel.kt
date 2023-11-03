@@ -13,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import kotlinx.coroutines.launch
 
 class TaskEditViewModel(application: Application)
-    : TaskManagingViewModel(application), CloudAuthSetter
+    : TaskManagingViewModel(application)
 {
     private lateinit var currentTask: SyncTask
     private val currentTaskMutableLiveData: MutableLiveData<SyncTask> = MutableLiveData()
@@ -52,9 +52,5 @@ class TaskEditViewModel(application: Application)
             syncTaskManagingUseCase.createOrUpdateSyncTask(currentTask)
             setOpState(OpState.Success(TextMessage(R.string.task_saved)))
         }
-    }
-
-    override fun setCloudAuth(cloudAuth: CloudAuth) {
-//        currentTask.
     }
 }
