@@ -8,14 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
+import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.cloud_auth.CloudAuthManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
 import kotlinx.coroutines.launch
 
 class AuthEditViewModel(application: Application) : AndroidViewModel(application) {
 
-    // TODO: UseCase
-    private val cloudAuthAdder = App.getAppComponent().getCloudAuthAdder()
-    private val cloudAuthChecker = App.getAppComponent().getCloudAuthChecker()
+    private val cloudAuthManagingUseCase = App.getAppComponent().getCloudAuthManagingUseCase()
 
     private val _formState: MutableLiveData<FormState> = MutableLiveData()
     val formState: LiveData<FormState> get() = _formState
@@ -39,7 +38,7 @@ class AuthEditViewModel(application: Application) : AndroidViewModel(application
     }
 
     private suspend fun createCloudAuthReal(formState: FormState) {
-        cloudAuthAdder.addCloudAuth(CloudAuth(formState.name!!, formState.token!!))
+        cloudAuthManagingUseCase.addCloudAuth(CloudAuth(formState.name!!, formState.token!!))
         _formState.value = formState.copy(isFinished = true)
     }
 
@@ -54,7 +53,7 @@ class AuthEditViewModel(application: Application) : AndroidViewModel(application
         if (authName.isEmpty())
             return TextMessage(R.string.VALIDATION_cannot_be_empty)
 
-        return if (cloudAuthChecker.hasAuthWithName(authName))
+        return if (cloudAuthManagingUseCase.hasCloudAuth(authName))
             TextMessage(R.string.VALIDATION_name_already_used)
         else null
     }
