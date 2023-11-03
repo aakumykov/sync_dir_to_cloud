@@ -28,12 +28,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
 
-    private val taskEditViewModel2: TaskEditViewModel2 by viewModels()
+    private val taskEditViewModel: TaskEditViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
-    private val currentTask get(): SyncTask? = taskEditViewModel2.currentTask
+    private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
 
     private var authSelectionDialog: AuthSelectionDialog? = null
 
@@ -53,9 +53,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
     private fun prepareViewModels() {
-        taskEditViewModel2.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
-        taskEditViewModel2.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
-        taskEditViewModel2.cloudAuthLiveData.observe(viewLifecycleOwner, ::onCloudAuthChanged)
+        taskEditViewModel.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
+        taskEditViewModel.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
+        taskEditViewModel.cloudAuthLiveData.observe(viewLifecycleOwner, ::onCloudAuthChanged)
     }
 
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
@@ -74,10 +74,10 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             val taskId = arguments?.getString(TASK_ID)
 
             if (null != taskId) {
-                taskEditViewModel2.prepareForEdit(taskId)
+                taskEditViewModel.prepareForEdit(taskId)
                 pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_edition_title))
             } else {
-                taskEditViewModel2.prepareForCreate()
+                taskEditViewModel.prepareForCreate()
                 pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
             }
         }
@@ -184,7 +184,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun onSaveButtonClicked() {
-        taskEditViewModel2.saveSyncTask()
+        taskEditViewModel.saveSyncTask()
     }
 
     private fun onCancelButtonClicked() {
