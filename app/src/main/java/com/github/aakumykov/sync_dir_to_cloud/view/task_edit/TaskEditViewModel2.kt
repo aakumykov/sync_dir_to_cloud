@@ -13,15 +13,20 @@ import kotlinx.coroutines.launch
 
 class TaskEditViewModel2(application: Application) : TaskManagingViewModel(application) {
 
+    // LiveData для оповещения View о том, что можно отображать данные.
     private val _syncTaskMutableLiveData: MutableLiveData<SyncTask> = MutableLiveData()
     val syncTaskLiveData: LiveData<SyncTask> = _syncTaskMutableLiveData
 
-    val currentTaskLiveData get(): SyncTask? = _syncTaskMutableLiveData.value
+    // Объект из этого поля выступает в качестве временного хранилища редактируемых данных
+    // (чтобы при сохранении не передавать их через аргументы метода, а просто брать объект из этого поля).
+    val currentTask get(): SyncTask? = _syncTaskMutableLiveData.value
+
+
 
 
     fun saveSyncTask() {
         viewModelScope.launch {
-            currentTaskLiveData?.let {
+            currentTask?.let {
                 setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))
                 syncTaskManagingUseCase.createOrUpdateSyncTask(it)
                 setOpState(OpState.Success(TextMessage(R.string.task_saved)))

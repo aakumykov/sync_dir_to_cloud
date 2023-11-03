@@ -33,7 +33,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
-    private val currentTask get(): SyncTask? = taskEditViewModel2.currentTaskLiveData
+    private val currentTask get(): SyncTask? = taskEditViewModel2.currentTask
 
     private var authSelectionDialog: AuthSelectionDialog? = null
 
