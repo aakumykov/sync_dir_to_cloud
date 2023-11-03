@@ -12,8 +12,8 @@ import java.util.UUID
     tableName = "sync_tasks",
     foreignKeys = [
         ForeignKey(entity = CloudAuth::class,
-            parentColumns = ["cloud_auth_id"],
-            childColumns = ["id"],
+            parentColumns = ["id"],
+            childColumns = ["cloud_auth_id"],
             onDelete = NO_ACTION,
             onUpdate = NO_ACTION)
     ]
