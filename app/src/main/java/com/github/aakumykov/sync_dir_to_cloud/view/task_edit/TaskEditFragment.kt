@@ -41,6 +41,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        firstRun = (null == savedInstanceState)
+
         prepareLayout(view)
         prepareButtons()
         prepareViewModels()
@@ -62,17 +64,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private fun prepareForCreationOfEdition() {
 
-        val taskId = arguments?.getString(TASK_ID)
+        if (firstRun) {
+            val taskId = arguments?.getString(TASK_ID)
 
-        if (null != taskId) {
-            taskEditViewModel2.prepareForEdit(taskId)
-            pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_edition_title))
-        } else {
-            taskEditViewModel2.prepareForCreate()
-            pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
+            if (null != taskId) {
+                taskEditViewModel2.prepareForEdit(taskId)
+                pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_edition_title))
+            } else {
+                taskEditViewModel2.prepareForCreate()
+                pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
+            }
         }
-
-
     }
 
 
@@ -189,12 +191,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun fillForm(syncTask: SyncTask) {
-        if (firstRun) {
-            firstRun = false
-            fillPaths(syncTask)
-            fillPeriodView(syncTask)
-            fillAuthButton(syncTask)
-        }
+        fillPaths(syncTask)
+        fillPeriodView(syncTask)
+        fillAuthButton(syncTask)
     }
 
     private fun fillPaths(syncTask: SyncTask) {
