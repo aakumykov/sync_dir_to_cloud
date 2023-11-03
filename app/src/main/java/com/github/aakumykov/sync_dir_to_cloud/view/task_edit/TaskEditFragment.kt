@@ -33,7 +33,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
-    private val currentTask get(): SyncTask? = taskEditViewModel2.syncTask
+
+    private val currentTask: SyncTask
+        get() = taskEditViewModel2.syncTask
 
     private var authSelectionDialog: AuthSelectionDialog? = null
 
@@ -43,20 +45,20 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         prepareLayout(view)
         prepareButtons()
+        prepareViewModels()
+
         reconnectToChildDialog()
+        initialFillForm()
 
-        prepareForCreationOfEdition()
-    }
+        /*val taskId: String? = arguments?.getString(TASK_ID)
+        taskEditViewModel.prepare(taskId)*/
 
-
-    private fun prepareForCreationOfEdition() {
-        arguments?.getString(TASK_ID)?.let { taskId ->
-            taskEditViewModel2.prepareForEdit(taskId)
-            pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_edition_title))
-        } ?: {
-            taskEditViewModel2.prepareForCreate()
-            pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_EDIT_creation_title))
-        }
+        /*pageTitleViewModel.setPageTitle(getString(
+            when(taskId) {
+                null -> R.string.FRAGMENT_TASK_EDIT_creation_title
+                else -> R.string.FRAGMENT_TASK_EDIT_edition_title
+            }
+        ))*/
     }
 
 
@@ -80,25 +82,25 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         binding.sourcePathInput.addTextChangedListener(object: SimpleTextWatcher(){
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                currentTask?.task?.sourcePath = s.toString()
+                currentTask?.sourcePath = s.toString()
             }
         })
 
         binding.targetPathInput.addTextChangedListener(object: SimpleTextWatcher(){
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                currentTask?.task?.targetPath = s.toString()
+                currentTask?.targetPath = s.toString()
             }
         })
 
         binding.intervalHours.addTextChangedListener(object: SimpleTextWatcher(){
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                currentTask?.task?.intervalHours = s.toString().toInt()
+                currentTask?.intervalHours = s.toString().toInt()
             }
         })
 
         binding.intervalMinutes.addTextChangedListener(object: SimpleTextWatcher(){
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                currentTask?.task?.intervalMinutes = s.toString().toInt()
+                currentTask?.intervalMinutes = s.toString().toInt()
             }
         })
     }
@@ -116,14 +118,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.authSelectionButton.setOnClickListener { onAuthSelectionClicked() }
     }
 
-
-    private fun onSyncTaskChanged(syncTask: SyncTask?) {
-        if (firstRun) {
-            firstRun = false
-            syncTask?.let {
-                initialFillForm(syncTask)
-            }
-        }
+    private fun prepareViewModels() {
+//        taskEditViewModel.getOpState().observe(viewLifecycleOwner, this::onOpStateChanged)
     }
 
 
@@ -184,20 +180,25 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
 
-    private fun initialFillForm(syncTask: SyncTask) {
-        fillPaths(syncTask)
-        fillPeriodView(syncTask)
-        fillAuthButton(syncTask)
+    private fun initialFillForm() {
+        if (firstRun) {
+            firstRun = false;
+            currentTask.let {
+                fillPaths(it)
+                fillPeriodView(it)
+                fillAuthButton(it)
+            }
+        }
     }
 
     private fun fillPaths(syncTask: SyncTask) {
-        binding.sourcePathInput.setText(syncTask.task.sourcePath)
-        binding.targetPathInput.setText(syncTask.task.targetPath)
+        binding.sourcePathInput.setText(syncTask.sourcePath)
+        binding.targetPathInput.setText(syncTask.targetPath)
     }
 
     private fun fillPeriodView(syncTask: SyncTask) {
-        binding.intervalHours.setText(syncTask.task.intervalHours.toString())
-        binding.intervalMinutes.setText(syncTask.task.intervalMinutes.toString())
+        binding.intervalHours.setText(syncTask.intervalHours.toString())
+        binding.intervalMinutes.setText(syncTask.intervalMinutes.toString())
     }
 
     private fun fillAuthButton(syncTask: SyncTask) {
@@ -279,15 +280,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.errorMessage.visibility = View.GONE
     }
 
-    override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
-        currentTask?.cloudAuth = cloudAuth
-        displayCLoudAuthSelectionState(cloudAuth)
-    }
-
-    private fun displayCLoudAuthSelectionState(cloudAuth: CloudAuth) {
-        binding.authSelectionButton.text = cloudAuth.name
-    }
-
 
     companion object {
 
@@ -300,7 +292,16 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             createFragment(taskId)
 
         private fun createFragment(taskId: String?) = TaskEditFragment().apply {
-            arguments = bundleOf(TASK_ID to taskId)
+                arguments = bundleOf(TASK_ID to taskId)
         }
+    }
+
+    override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
+        currentTask.cloudAuthId = cloudAuth.id
+        updateAuthSelectionButton(cloudAuth)
+    }
+
+    private fun updateAuthSelectionButton(cloudAuth: CloudAuth) {
+        binding.authSelectionButton.text = cloudAuth.name
     }
 }

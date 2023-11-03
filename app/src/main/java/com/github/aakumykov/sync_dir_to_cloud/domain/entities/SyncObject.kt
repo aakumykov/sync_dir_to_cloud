@@ -7,7 +7,7 @@ import androidx.room.ForeignKey.Companion.CASCADE
     tableName = "sync_objects",
     foreignKeys = [
         ForeignKey(
-            entity = SyncTaskBase::class,
+            entity = SyncTask::class,
             parentColumns = ["id"],
             childColumns = ["task_id"],
             onDelete = CASCADE,

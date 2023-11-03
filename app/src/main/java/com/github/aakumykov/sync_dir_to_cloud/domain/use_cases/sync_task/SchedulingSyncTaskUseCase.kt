@@ -29,7 +29,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
             override fun onSyncTaskScheduleSuccess() {
-                syncTask.task.isEnabled = true
+                syncTask.isEnabled = true
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 
@@ -44,7 +44,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
 
             override fun onSyncTaskUnScheduleSuccess() {
-                syncTask.task.isEnabled = false
+                syncTask.isEnabled = false
                 syncTaskUpdater.updateSyncTask(syncTask)
             }
 
@@ -56,7 +56,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
 
     suspend fun toggleTaskScheduling(taskId: String) {
         val syncTask = syncTaskReader.getSyncTask(taskId)
-        if (syncTask.task.isEnabled)
+        if (syncTask.isEnabled)
             unScheduleSyncTask(syncTask)
         else
             scheduleSyncTask(syncTask)

@@ -10,7 +10,6 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTaskBase
 
 
 class TaskListViewHolder(private val itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
@@ -25,15 +24,15 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     private lateinit var currentTask: SyncTask
 
     init {
-        editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.task.id) }
+        editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
 
-        runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.task.id) }
+        runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
 
         moreButton.setOnClickListener { Toast.makeText(moreButton.context, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show() }
 
         // Переключается не прямо, а после изменения статуса SyncTask (в БД).
         enablingSwitch.setOnClickListener {
-            itemClickCallback.onTaskEnableSwitchClicked(currentTask.task.id)
+            itemClickCallback.onTaskEnableSwitchClicked(currentTask.id)
         }
     }
 
@@ -47,10 +46,10 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     private fun displayStartStopButton() {
 
-        val isEnabled = currentTask.task.isEnabled
+        val isEnabled = currentTask.isEnabled
         runButton.isEnabled = isEnabled
 
-        if (currentTask.task.state == SyncTaskBase.State.RUNNING)
+        if (currentTask.state == SyncTask.State.RUNNING)
             runButton.setImageResource(R.drawable.ic_task_stop)
         else
             runButton.setImageResource(R.drawable.ic_task_start)
@@ -68,21 +67,21 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     }
 
     private fun displayTitle() {
-        titleView.text = currentTask.task.getTitle()
+        titleView.text = currentTask.getTitle()
     }
 
     private fun displaySchedulingState() {
-        enablingSwitch.isChecked = currentTask.task.isEnabled
+        enablingSwitch.isChecked = currentTask.isEnabled
     }
 
     private fun displayOpState() {
-        if (currentTask.task.isEnabled) {
+        if (currentTask.isEnabled) {
             stateView.setImageResource(
-                when (currentTask.task.state) {
-                    SyncTaskBase.State.IDLE -> R.drawable.ic_task_state_scheduled // FIXME: не то
-                    SyncTaskBase.State.RUNNING -> R.drawable.ic_task_state_running
-                    SyncTaskBase.State.SUCCESS -> R.drawable.ic_task_state_success
-                    SyncTaskBase.State.ERROR -> R.drawable.ic_task_state_error
+                when (currentTask.state) {
+                    SyncTask.State.IDLE -> R.drawable.ic_task_state_scheduled // FIXME: не то
+                    SyncTask.State.RUNNING -> R.drawable.ic_task_state_running
+                    SyncTask.State.SUCCESS -> R.drawable.ic_task_state_success
+                    SyncTask.State.ERROR -> R.drawable.ic_task_state_error
                 }
             )
         }
