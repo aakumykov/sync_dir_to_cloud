@@ -18,7 +18,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleV
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
-import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.TextMessage
+import com.github.aakumykov.sync_dir_to_cloud.view.utils.SimpleTextWatcher
+import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 

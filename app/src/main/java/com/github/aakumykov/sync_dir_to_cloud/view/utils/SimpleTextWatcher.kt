@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
+package com.github.aakumykov.sync_dir_to_cloud.view.utils
 
 import android.text.Editable
 import android.text.TextWatcher
