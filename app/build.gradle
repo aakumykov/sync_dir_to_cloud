@@ -73,6 +73,8 @@ dependencies {
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation 'com.github.aakumykov:single_live_event:0.0.1'
+    implementation project(path: ':yandex_disk_file_selector')
+    implementation project(path: ':file_selector')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 
@@ -113,5 +115,5 @@ dependencies {
 
     implementation "com.github.permissions-dispatcher:ktx:1.1.4"
 
-    implementation 'com.github.aakumykov:yandex_disk_file_selector:0.0.1-local'
+//    implementation 'com.github.aakumykov:yandex_disk_file_selector:0.0.3-local'
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="DIALOG_title">Выбор файла</string>
+    <string name="BUTTON_confirm_selection">Выбрать отмеченное</string>
+</resources>

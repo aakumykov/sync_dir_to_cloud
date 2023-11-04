@@ -16,3 +16,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "sync_dir_to_cloud"
 include ':app'
+include ':file_selector'
+include ':yandex_disk_file_selector'
