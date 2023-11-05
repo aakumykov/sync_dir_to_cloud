@@ -8,6 +8,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.github.aakumykov.file_lister.FSItem
+import com.github.aakumykov.file_selector.FileSelectionDialog
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -18,13 +20,15 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleV
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
+import com.github.aakumykov.yandex_disk_file_selector.YandexDiskFileSelector
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
-    AuthSelectionDialog.Callback {
+    AuthSelectionDialog.Callback, FileSelectionDialog.Callback {
 
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
@@ -38,6 +42,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private var authSelectionDialog: AuthSelectionDialog? = null
 
+    private var currentCloudAuth: CloudAuth? = null
+    private var yandexDiskFileSelector: FileSelectionDialog? = null
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,7 +55,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         prepareButtons()
         prepareViewModels()
 
-        reconnectToChildDialog()
+        reconnectToChildDialogs()
         prepareForCreationOfEdition()
     }
 
@@ -65,8 +72,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun onCloudAuthChanged(cloudAuth: CloudAuth?) {
-        if (null != cloudAuth)
-            displayCLoudAuthSelectionState(cloudAuth)
+        cloudAuth?.let { onCloudAuthSelected(cloudAuth) }
     }
 
     private fun prepareForCreationOfEdition() {
@@ -85,12 +91,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
 
-    private fun reconnectToChildDialog() {
+    private fun reconnectToChildDialogs() {
         childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let { fragment ->
             if (fragment is AuthSelectionDialog) {
                 authSelectionDialog = fragment
                 authSelectionDialog?.setCallback(this)
             }
+        }
+
+        FileSelectionDialog.find(parentFragmentManager)?.let {
+            if (it is YandexDiskFileSelector)
+                it.setCallback(this)
         }
     }
 
@@ -129,9 +140,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun prepareButtons() {
-        binding.saveButton.setOnClickListener {
-            onSaveButtonClicked()
-        }
+        binding.sourcePathSelectionButton.setOnClickListener { onSourcePathSelectionClicked() }
+
+        binding.saveButton.setOnClickListener { onSaveButtonClicked() }
         binding.cancelButton.setOnClickListener { onCancelButtonClicked() }
 
         binding.intervalHours.setOnClickListener { onSelectTimeClicked() }
@@ -139,6 +150,26 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.periodSelectionButton.setOnClickListener { onSelectTimeClicked() }
 
         binding.authSelectionButton.setOnClickListener { onAuthSelectionClicked() }
+    }
+
+
+    private fun onSourcePathSelectionClicked() {
+        if (null == currentCloudAuth) {
+            showToast(R.string.TOAST_select_cloud_auth_first)
+            // TODO: помигать соответствующей кнопкой
+            return
+        }
+
+        currentCloudAuth?.authToken?.let { token ->
+            // TODO: режим выбора каталога, а не файла
+            yandexDiskFileSelector = YandexDiskFileSelector.create(token)
+            yandexDiskFileSelector?.setCallback(this)
+            yandexDiskFileSelector?.show(parentFragmentManager)
+        }
+    }
+
+    override fun onConfirmSelectionClicked(selectedItemsList: List<FSItem>) {
+        currentTask?.sourcePath = selectedItemsList[0].path
     }
 
 
@@ -294,6 +325,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
         currentTask?.cloudAuthId = cloudAuth.id
+        currentCloudAuth = cloudAuth
         displayCLoudAuthSelectionState(cloudAuth)
     }
 

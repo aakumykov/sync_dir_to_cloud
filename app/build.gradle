@@ -23,7 +23,7 @@ android {
             }
         }
 
-        manifestPlaceholders = [YANDEX_CLIENT_ID:"572b4663be414854ac5542bc72e93011"]
+        manifestPlaceholders = [YANDEX_CLIENT_ID:"87e03664d7e24970ba8b7661d25c7dcc"]
     }
 
     buildFeatures {
@@ -74,7 +74,7 @@ dependencies {
 
     implementation 'com.github.aakumykov:single_live_event:0.0.1'
     implementation project(path: ':yandex_disk_file_selector')
-    implementation project(path: ':file_selector')
+    implementation project(path: ':yandex_disk_file_lister')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 

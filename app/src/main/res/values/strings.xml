@@ -46,4 +46,5 @@
     <string name="auth_error">Ошибка авторизации</string>
     <string name="VALIDATION_cannot_be_empty">Не может быть пустым</string>
     <string name="DIALOG_AUTH_LIST_title">Облачные авторизации</string>
+    <string name="TOAST_select_cloud_auth_first">Сначала выберите облачную авторизацию</string>
 </resources>

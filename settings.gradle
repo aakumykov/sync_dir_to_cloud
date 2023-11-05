@@ -15,6 +15,14 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "sync_dir_to_cloud"
-include ':app'
-include ':file_selector'
-include ':yandex_disk_file_selector'
+include ':app',
+        ':file_lister',
+        ':yandex_disk_file_lister', 
+        ':file_selector',
+        ':yandex_disk_file_selector'
+
+project(':file_lister').projectDir = new File("../file_lister_selector/file_lister")
+project(':yandex_disk_file_lister').projectDir = new File("../file_lister_selector/yandex_disk_file_lister")
+
+project(':file_selector').projectDir = new File("../file_lister_selector/file_selector")
+project(':yandex_disk_file_selector').projectDir = new File("../file_lister_selector/yandex_disk_file_selector")
