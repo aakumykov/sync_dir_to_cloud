@@ -162,14 +162,20 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         currentCloudAuth?.authToken?.let { token ->
             // TODO: режим выбора каталога, а не файла
-            yandexDiskFileSelector = YandexDiskFileSelector.create(token)
+            yandexDiskFileSelector = YandexDiskFileSelector.create(
+                token,
+                isMultipleSelectionMode = false,
+                isDirMode = true
+            )
             yandexDiskFileSelector?.setCallback(this)
             yandexDiskFileSelector?.show(parentFragmentManager)
         }
     }
 
     override fun onConfirmSelectionClicked(selectedItemsList: List<FSItem>) {
-        currentTask?.sourcePath = selectedItemsList[0].path
+        val path = selectedItemsList[0].path
+        currentTask?.sourcePath = path
+        binding.sourcePathInput.setText(path)
     }
 
 
