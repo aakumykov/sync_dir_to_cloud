@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.file_lister.FSItem
-import com.github.aakumykov.file_selector.FileSelectionDialog
+import com.github.aakumykov.file_selector.FileSelector
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -28,7 +28,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
-    AuthSelectionDialog.Callback, FileSelectionDialog.Callback {
+    AuthSelectionDialog.Callback, FileSelector.Callback {
 
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
@@ -43,7 +43,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private var authSelectionDialog: AuthSelectionDialog? = null
 
     private var currentCloudAuth: CloudAuth? = null
-    private var yandexDiskFileSelector: FileSelectionDialog? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,7 +98,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             }
         }
 
-        FileSelectionDialog.find(parentFragmentManager)?.let {
+        FileSelector.find(childFragmentManager)?.let {
             if (it is YandexDiskFileSelector)
                 it.setCallback(this)
         }
@@ -162,18 +161,18 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         currentCloudAuth?.authToken?.let { token ->
             // TODO: режим выбора каталога, а не файла
-            yandexDiskFileSelector = YandexDiskFileSelector.create(
+            val fileSelector = YandexDiskFileSelector.create(
                 token,
                 isMultipleSelectionMode = false,
                 isDirMode = true
             )
-            yandexDiskFileSelector?.setCallback(this)
-            yandexDiskFileSelector?.show(parentFragmentManager)
+            fileSelector.setCallback(this)
+            fileSelector.show(childFragmentManager)
         }
     }
 
-    override fun onConfirmSelectionClicked(selectedItemsList: List<FSItem>) {
-        val path = selectedItemsList[0].path
+    override fun onFilesSelected(selectedItemsList: List<FSItem>) {
+        val path = selectedItemsList[0].absolutePath
         currentTask?.sourcePath = path
         binding.sourcePathInput.setText(path)
     }
