@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
+import android.Manifest
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.file_lister.FSItem
 import com.github.aakumykov.file_selector.FileSelector
+import com.github.aakumykov.local_file_selector.LocalFileSelector
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -26,10 +28,12 @@ import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
 import com.github.aakumykov.yandex_disk_file_selector.YandexDiskFileSelector
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import permissions.dispatcher.ktx.PermissionsRequester
+import permissions.dispatcher.ktx.constructPermissionsRequest
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
-    AuthSelectionDialog.Callback, FileSelector.Callback {
-
+    AuthSelectionDialog.Callback {
+    
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
 
@@ -44,11 +48,32 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private var currentCloudAuth: CloudAuth? = null
 
+    private lateinit var storagePermissionsRequester: PermissionsRequester
+
+
+    private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
+        override fun onFilesSelected(selectedItemsList: List<FSItem>) {
+            val path = selectedItemsList[0].absolutePath
+            currentTask?.sourcePath = path
+            binding.sourcePathInput.setText(path)
+        }
+    }
+
+    private val targetPathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
+        override fun onFilesSelected(selectedItemsList: List<FSItem>) {
+            val path = selectedItemsList[0].absolutePath
+            currentTask?.targetPath = path
+            binding.targetPathInput.setText(path)
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         firstRun = (null == savedInstanceState)
+
+        preparePermissionsDispatcher()
 
         prepareLayout(view)
         prepareButtons()
@@ -56,6 +81,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         reconnectToChildDialogs()
         prepareForCreationOfEdition()
+    }
+
+
+    private fun preparePermissionsDispatcher() {
+        storagePermissionsRequester = constructPermissionsRequest(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            requiresPermission = ::selectTargetPath,
+            onShowRationale = {},
+            onPermissionDenied = {},
+            onNeverAskAgain = {}
+        )
     }
 
 
@@ -91,6 +127,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
     private fun reconnectToChildDialogs() {
+
         childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let { fragment ->
             if (fragment is AuthSelectionDialog) {
                 authSelectionDialog = fragment
@@ -98,10 +135,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             }
         }
 
-        FileSelector.find(childFragmentManager)?.let {
-            if (it is YandexDiskFileSelector)
-                it.setCallback(this)
-        }
+        FileSelector.find(YandexDiskFileSelector.TAG, childFragmentManager)
+            ?.setCallback(sourcePathSelectionCallback)
+
+        FileSelector.find(LocalFileSelector.TAG, childFragmentManager)
+            ?.setCallback(targetPathSelectionCallback)
     }
 
     override fun onDestroyView() {
@@ -139,7 +177,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun prepareButtons() {
-        binding.sourcePathSelectionButton.setOnClickListener { onSourcePathSelectionClicked() }
+        binding.sourcePathSelectionButton.setOnClickListener { selectSourcePath() }
+        binding.targetPathSelectionButton.setOnClickListener { storagePermissionsRequester.launch() }
 
         binding.saveButton.setOnClickListener { onSaveButtonClicked() }
         binding.cancelButton.setOnClickListener { onCancelButtonClicked() }
@@ -152,7 +191,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
 
-    private fun onSourcePathSelectionClicked() {
+    private fun selectSourcePath() {
+        
         if (null == currentCloudAuth) {
             showToast(R.string.TOAST_select_cloud_auth_first)
             // TODO: помигать соответствующей кнопкой
@@ -166,17 +206,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                 isMultipleSelectionMode = false,
                 isDirMode = true
             )
-            fileSelector.setCallback(this)
+            fileSelector.setCallback(sourcePathSelectionCallback)
             fileSelector.show(childFragmentManager)
         }
     }
 
-    override fun onFilesSelected(selectedItemsList: List<FSItem>) {
-        val path = selectedItemsList[0].absolutePath
-        currentTask?.sourcePath = path
-        binding.sourcePathInput.setText(path)
+    private fun selectTargetPath() {
+        val targetPathSelector = LocalFileSelector.create()
+        targetPathSelector.setCallback(targetPathSelectionCallback)
+        targetPathSelector.show(childFragmentManager)
     }
-
+    
 
     private fun onOpStateChanged(opState: OpState) {
         when (opState) {
