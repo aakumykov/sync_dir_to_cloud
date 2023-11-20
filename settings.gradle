@@ -17,12 +17,25 @@ dependencyResolutionManagement {
 rootProject.name = "sync_dir_to_cloud"
 include ':app',
         ':file_lister',
-        ':yandex_disk_file_lister', 
+        ':file_explorer',
         ':file_selector',
+
+        ':local_file_lister',
+        ':local_file_explorer',
+        ':local_file_selector',
+
+        ':yandex_disk_file_lister',
+        ':yandex_disk_file_explorer',
         ':yandex_disk_file_selector'
 
-project(':file_lister').projectDir = new File("../file_lister_selector/file_lister")
-project(':yandex_disk_file_lister').projectDir = new File("../file_lister_selector/yandex_disk_file_lister")
+project(':file_lister').projectDir = new File("../kotlin_playground/file_lister")
+project(':file_explorer').projectDir = new File("../kotlin_playground/file_explorer")
+project(':file_selector').projectDir = new File("../kotlin_playground/file_selector")
 
-project(':file_selector').projectDir = new File("../file_lister_selector/file_selector")
-project(':yandex_disk_file_selector').projectDir = new File("../file_lister_selector/yandex_disk_file_selector")
+project(':local_file_lister').projectDir = new File("../kotlin_playground/local_file_lister")
+project(':local_file_explorer').projectDir = new File("../kotlin_playground/local_file_explorer")
+project(':local_file_selector').projectDir = new File("../kotlin_playground/local_file_selector")
+
+project(':yandex_disk_file_lister').projectDir = new File("../kotlin_playground/yandex_disk_file_lister")
+project(':yandex_disk_file_explorer').projectDir = new File("../kotlin_playground/yandex_disk_file_explorer")
+project(':yandex_disk_file_selector').projectDir = new File("../kotlin_playground/yandex_disk_file_selector")
