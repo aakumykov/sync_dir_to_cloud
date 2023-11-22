@@ -8,14 +8,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListBinding
+import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListRelativeBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
-class AuthListDialog : DialogFragment(R.layout.fragment_auth_list), AuthSelectionDialog {
+typealias Layout = FragmentAuthListRelativeBinding
 
-    private var _binding: FragmentAuthListBinding? = null
+class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), AuthSelectionDialog {
+
+    private var _binding: Layout? = null
     private val binding get() = _binding!!
 
     private lateinit var listAdapter: ListViewAdapter<CloudAuth>
@@ -41,7 +44,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list), AuthSelectio
 
 
     private fun prepareLayout(view: View) {
-        _binding = FragmentAuthListBinding.bind(view)
+        _binding = Layout.bind(view)
     }
 
 
