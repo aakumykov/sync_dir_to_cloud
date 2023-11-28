@@ -24,6 +24,8 @@ class SyncObject (
     val name: String,
     val path: String,
     val state: State,
+    @ColumnInfo(name = "is_dir") val isDir: Boolean,
+    @ColumnInfo(name = "is_listed") val isListed: Boolean,
     @ColumnInfo(name = "is_progress") val isProgress: Boolean,
     @ColumnInfo(name = "is_success") val isSuccess: Boolean,
     @ColumnInfo(name = "element_date") val elementDate: Long,
