@@ -9,8 +9,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.github.aakumykov.file_lister.FSItem
 import com.github.aakumykov.file_selector.FileSelector
+import com.github.aakumykov.fs_item.FSItem
 import com.github.aakumykov.local_file_selector.LocalFileSelector
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding

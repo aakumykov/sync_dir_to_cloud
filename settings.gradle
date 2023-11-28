@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "sync_dir_to_cloud"
 include ':app',
+        ':fs_item',
         ':file_lister',
         ':file_explorer',
         ':file_selector',
@@ -28,6 +29,7 @@ include ':app',
         ':yandex_disk_file_explorer',
         ':yandex_disk_file_selector'
 
+project(':fs_item').projectDir = new File("../kotlin_playground/fs_item")
 project(':file_lister').projectDir = new File("../kotlin_playground/file_lister")
 project(':file_explorer').projectDir = new File("../kotlin_playground/file_explorer")
 project(':file_selector').projectDir = new File("../kotlin_playground/file_selector")
