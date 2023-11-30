@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.DaggerAppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 
 class App : Application() {
@@ -37,7 +37,7 @@ class App : Application() {
             _appComponent = DaggerAppComponent.builder()
                 .contextModule(ContextModule(appContext))
                 .applicationModule(ApplicationModule(application))
-                .roomModule(RoomModule(prepareAndGetAppDatabase(appContext)))
+                .roomDAOModule(RoomDAOModule(prepareAndGetAppDatabase(appContext)))
                 .build()
         }
 

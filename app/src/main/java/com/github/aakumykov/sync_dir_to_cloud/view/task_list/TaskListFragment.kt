@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
@@ -19,6 +20,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
+import com.github.aakumykov.yandex_disk_file_lister.YandexDiskFileLister
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment(), ItemClickCallback {
@@ -59,10 +62,18 @@ class TaskListFragment : Fragment(), ItemClickCallback {
 
     override fun onProbeRunClicked(taskId: String) {
 
-        val syncTaskFilesPreparer = App.getAppComponent().getSyncTaskFilesPreparer()
-
-        lifecycleScope.launch {
+        lifecycleScope.launch (Dispatchers.IO) {
             val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
+
+            val cloudAuthAuthReader = App.getAppComponent().getCloudAuthReader()
+            val cloudAuth = cloudAuthAuthReader.getCloudAuth(syncTask.cloudAuthId!!)
+
+            val fileLister = YandexDiskFileLister(cloudAuth.authToken)
+
+            val recursiveDirReader = RecursiveDirReader(fileLister)
+
+            val syncTaskFilesPreparer = App.getAppComponent().getSyncTaskFilesPreparerAssistedFactory()
+                .create(recursiveDirReader)
 
             syncTaskFilesPreparer.prepareSyncTask(syncTask)
         }

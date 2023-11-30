@@ -2,12 +2,12 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
+import com.github.aakumykov.sync_dir_to_cloud.di.factories.SyncTaskFilesPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.DirListerModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
@@ -21,7 +21,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAut
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_preparer.SyncTaskFilesPreparer
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -29,7 +28,7 @@ import dagger.Component
     modules = [
         ApplicationModule::class,
         ContextModule::class,
-        RoomModule::class,
+        RoomDAOModule::class,
         SyncTaskRepositoryInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
         SyncObjectRepositoryInterfacesModule::class,
@@ -37,7 +36,6 @@ import dagger.Component
         WorkerModule::class,
         CoroutineModule::class,
         ViewModelsModule::class,
-        DirListerModule::class
     ]
 )
 @AppScope
@@ -60,6 +58,9 @@ interface AppComponent {
     fun getCloudAuthLister(): CloudAuthReader
     fun getCloudAuthChecker(): CloudAuthChecker
 
-    fun getSyncTaskFilesPreparer(): SyncTaskFilesPreparer
     fun getSyncTaskReader(): SyncTaskReader
+
+    fun getSyncTaskFilesPreparerAssistedFactory(): SyncTaskFilesPreparerAssistedFactory
+
+    fun getCloudAuthReader(): CloudAuthReader
 }

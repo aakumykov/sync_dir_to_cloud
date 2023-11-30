@@ -31,7 +31,7 @@ class SyncTask {
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
 
-    @ColumnInfo(name = "cloud_auth_id") var cloudAuthId: String? = null
+    @ColumnInfo(name = "cloud_auth_id") var cloudAuthId: String? = null  // FIXME: не-null
 
     @Ignore
     constructor() {

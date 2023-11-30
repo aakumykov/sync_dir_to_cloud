@@ -14,6 +14,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 class TaskListViewHolder(private val itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
 
+    private val probeRunButton: ImageButton = itemView.findViewById(R.id.probeRunButton)
+
     private val titleView: TextView = itemView.findViewById(R.id.titleView)
     private val stateView: ImageView = itemView.findViewById(R.id.taskStateView)
     private val editButton: View = itemView.findViewById(R.id.editButton)
@@ -24,6 +26,8 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     private lateinit var currentTask: SyncTask
 
     init {
+        probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
+
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
 
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
