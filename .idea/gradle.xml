@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/../kotlin_playground/local_file_explorer" />
             <option value="$PROJECT_DIR$/../kotlin_playground/local_file_lister" />
             <option value="$PROJECT_DIR$/../kotlin_playground/local_file_selector" />
+            <option value="$PROJECT_DIR$/../kotlin_playground/recursive_dir_reader" />
             <option value="$PROJECT_DIR$/../kotlin_playground/yandex_disk_file_explorer" />
             <option value="$PROJECT_DIR$/../kotlin_playground/yandex_disk_file_lister" />
             <option value="$PROJECT_DIR$/../kotlin_playground/yandex_disk_file_selector" />

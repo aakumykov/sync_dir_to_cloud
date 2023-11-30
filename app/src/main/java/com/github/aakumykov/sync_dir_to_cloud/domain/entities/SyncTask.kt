@@ -26,8 +26,8 @@ class SyncTask {
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
 
-    @ColumnInfo(name = "source_path") var sourcePath: String?
-    @ColumnInfo(name = "target_path") var targetPath: String?
+    @ColumnInfo(name = "source_path") var sourcePath: String? // FIXME: не-null
+    @ColumnInfo(name = "target_path") var targetPath: String? // FIXME: не-null
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
 

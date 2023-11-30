@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -54,6 +55,17 @@ class TaskListFragment : Fragment(), ItemClickCallback {
         taskListAdapter = null
         _binding = null
         super.onDestroyView()
+    }
+
+    override fun onProbeRunClicked(taskId: String) {
+
+        val syncTaskFilesPreparer = App.getAppComponent().getSyncTaskFilesPreparer()
+
+        lifecycleScope.launch {
+            val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
+
+            syncTaskFilesPreparer.prepareSyncTask(syncTask)
+        }
     }
 
 

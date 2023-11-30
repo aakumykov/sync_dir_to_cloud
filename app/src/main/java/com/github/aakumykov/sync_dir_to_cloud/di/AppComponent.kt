@@ -6,7 +6,9 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.DirListerModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
@@ -18,6 +20,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_preparer.SyncTaskFilesPreparer
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -28,10 +32,12 @@ import dagger.Component
         RoomModule::class,
         SyncTaskRepositoryInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
+        SyncObjectRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,
         WorkerModule::class,
         CoroutineModule::class,
-        ViewModelsModule::class
+        ViewModelsModule::class,
+        DirListerModule::class
     ]
 )
 @AppScope
@@ -53,4 +59,7 @@ interface AppComponent {
     fun getCloudAuthAdder(): CloudAuthAdder
     fun getCloudAuthLister(): CloudAuthReader
     fun getCloudAuthChecker(): CloudAuthChecker
+
+    fun getSyncTaskFilesPreparer(): SyncTaskFilesPreparer
+    fun getSyncTaskReader(): SyncTaskReader
 }
