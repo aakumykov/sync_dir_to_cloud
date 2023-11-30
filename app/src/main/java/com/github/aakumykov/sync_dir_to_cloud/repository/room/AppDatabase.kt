@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Database(
     entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 13,
+    version = 14,
     autoMigrations = []
 )
 abstract class AppDatabase : RoomDatabase() {
