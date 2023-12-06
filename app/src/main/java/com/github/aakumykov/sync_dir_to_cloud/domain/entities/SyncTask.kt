@@ -7,6 +7,7 @@ import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.github.aakumykov.sync_dir_to_cloud.StorageType
 import java.util.UUID
 
 @Entity(
@@ -26,6 +27,8 @@ class SyncTask {
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
 
+    @ColumnInfo(name = "target_type") var targetType: StorageType?
+
     @ColumnInfo(name = "source_path") var sourcePath: String? // FIXME: не-null
     @ColumnInfo(name = "target_path") var targetPath: String? // FIXME: не-null
     @ColumnInfo(name = "interval_h") var intervalHours: Int
@@ -36,13 +39,20 @@ class SyncTask {
     @Ignore
     constructor() {
         this.sourcePath = null
+        this.targetType = null
         this.targetPath = null
         this.intervalHours = 0
         this.intervalMinutes = 0
     }
 
-    constructor(sourcePath: String, targetPath: String, intervalHours: Int, intervalMinutes: Int) : this() {
+    constructor(sourcePath: String,
+                targetType: StorageType,
+                targetPath: String,
+                intervalHours: Int,
+                intervalMinutes: Int
+    ) : this() {
         this.sourcePath = sourcePath
+        this.targetType = targetType
         this.targetPath = targetPath
         this.intervalHours = intervalHours
         this.intervalMinutes = intervalMinutes
@@ -50,7 +60,7 @@ class SyncTask {
 
 
     fun getTitle(): String {
-        return "$sourcePath -> $targetPath"
+        return "$sourcePath -> ${targetType}:${targetPath}"
     }
 
 
@@ -61,7 +71,8 @@ class SyncTask {
 
 
     override fun toString(): String {
-        return SyncTask::class.simpleName + " { enabled: " + isEnabled + ", " + sourcePath + " -> " + targetPath + " }"
+        return SyncTask::class.simpleName +
+                " { enabled: $isEnabled, $sourcePath -> $targetType:$targetPath }"
     }
 
     enum class State {
