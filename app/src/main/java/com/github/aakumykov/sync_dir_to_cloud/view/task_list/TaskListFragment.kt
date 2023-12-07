@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.rdr_factory.RecursiveDirReaderFactory
@@ -68,7 +69,9 @@ class TaskListFragment : Fragment(), ItemClickCallback {
 
             val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
             val cloudAuth = appComponent.getCloudAuthReader().getCloudAuth(syncTask.cloudAuthId!!)
-            val storageType = syncTask.targetType!!
+
+//            val storageType = syncTask.targetType!!
+            val storageType = StorageType.QWERTY
 
             val recursiveDirReader = appComponent.getRecursiveDirReaderFactory().create(storageType, cloudAuth)
 

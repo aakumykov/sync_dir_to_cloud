@@ -8,11 +8,11 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileListerFactory
 import javax.inject.Inject
 
 class RecursiveDirReaderFactory @Inject constructor(
-    private val fileListerFactoriesMap: Map<StorageType, FileListerFactory>
+    private val fileListerFactoriesMap: Map<StorageType, @JvmSuppressWildcards FileListerFactory>
 ) {
 
     fun create(storageType: StorageType, cloudAuth: CloudAuth): RecursiveDirReader? {
-        return fileListerFactoriesMap[storageType]?.create(cloudAuth)?.let {
+        return fileListerFactoriesMap[storageType]?.create(cloudAuth.authToken)?.let {
             RecursiveDirReader(it)
         }
     }
