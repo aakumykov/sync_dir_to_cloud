@@ -2,11 +2,12 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.di.factories.SyncTaskFilesPreparerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.di.assisted_factories.SyncTaskFilesPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
@@ -21,6 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAut
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.rdr_factory.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -36,6 +38,7 @@ import dagger.Component
         WorkerModule::class,
         CoroutineModule::class,
         ViewModelsModule::class,
+        FileListerAssistedFactoriesModule::class
     ]
 )
 @AppScope
@@ -63,4 +66,6 @@ interface AppComponent {
     fun getSyncTaskFilesPreparerAssistedFactory(): SyncTaskFilesPreparerAssistedFactory
 
     fun getCloudAuthReader(): CloudAuthReader
+
+    fun getRecursiveDirReaderFactory(): RecursiveDirReaderFactory
 }
