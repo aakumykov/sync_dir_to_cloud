@@ -70,8 +70,6 @@ class TaskListFragment : Fragment(), ItemClickCallback {
             val cloudAuthAuthReader = appComponent.getCloudAuthReader()
             val cloudAuth = cloudAuthAuthReader.getCloudAuth(syncTask.cloudAuthId!!)
 
-            val fileLister = YandexDiskFileLister(cloudAuth.authToken)
-
             val recursiveDirReaderFactory = appComponent.getRecursiveDirReaderFactory()
 
             // FIXME: убрать "!!"
@@ -80,11 +78,13 @@ class TaskListFragment : Fragment(), ItemClickCallback {
                 cloudAuth.authToken
             )
 
-            // FIXME: убрать "!!"
-            val syncTaskFilesPreparer = appComponent.getSyncTaskFilesPreparerAssistedFactory()
-                .create(recursiveDirReader!!)
+            recursiveDirReader?.let {
+                val syncTaskFilesPreparer = appComponent
+                    .getSyncTaskFilesPreparerAssistedFactory()
+                    .create(recursiveDirReader)
 
-            syncTaskFilesPreparer.prepareSyncTask(syncTask)
+                syncTaskFilesPreparer.prepareSyncTask(syncTask)
+            }
         }
     }
 
