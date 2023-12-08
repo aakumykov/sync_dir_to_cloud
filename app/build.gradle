@@ -77,7 +77,6 @@ dependencies {
     implementation project(path: ':local_file_selector')
     implementation project(path: ':recursive_dir_reader')
     implementation project(path: ':yandex_disk_file_lister')
-    implementation project(path: ':local_file_lister')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 

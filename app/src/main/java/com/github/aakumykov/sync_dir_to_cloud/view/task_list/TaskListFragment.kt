@@ -15,7 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.rdr_factory.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -64,16 +63,17 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     override fun onProbeRunClicked(taskId: String) {
 
         lifecycleScope.launch (Dispatchers.IO) {
-            val appComponent = App.getAppComponent();
+            val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
-            val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
-            val cloudAuth = appComponent.getCloudAuthReader().getCloudAuth(syncTask.cloudAuthId!!)
-            val storageType = syncTask.targetType!!
+            val cloudAuthAuthReader = App.getAppComponent().getCloudAuthReader()
+            val cloudAuth = cloudAuthAuthReader.getCloudAuth(syncTask.cloudAuthId!!)
 
-            val recursiveDirReader = appComponent.getRecursiveDirReaderFactory().create(storageType, cloudAuth)
+            val fileLister = YandexDiskFileLister(cloudAuth.authToken)
 
-            val syncTaskFilesPreparer = appComponent.getSyncTaskFilesPreparerAssistedFactory()
-                .create(recursiveDirReader!!)
+            val recursiveDirReader = RecursiveDirReader(fileLister)
+
+            val syncTaskFilesPreparer = App.getAppComponent().getSyncTaskFilesPreparerAssistedFactory()
+                .create(recursiveDirReader)
 
             syncTaskFilesPreparer.prepareSyncTask(syncTask)
         }
