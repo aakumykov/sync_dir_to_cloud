@@ -8,7 +8,7 @@ import dagger.assisted.AssistedFactory
 
 @AssistedFactory
 interface YandexDiskFileListerAssistedFactory : FileListerFactory {
-    override fun create(authToken: String): YandexDiskFileLister {
-        return YandexDiskFileLister(authToken)
+    override fun create(cloudAuth: CloudAuth): FileLister {
+        return YandexDiskFileLister(authToken = cloudAuth.authToken)
     }
 }

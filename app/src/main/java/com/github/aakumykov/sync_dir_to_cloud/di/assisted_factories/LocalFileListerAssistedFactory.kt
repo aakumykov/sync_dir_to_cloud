@@ -8,7 +8,7 @@ import dagger.assisted.AssistedFactory
 
 @AssistedFactory
 interface LocalFileListerAssistedFactory : FileListerFactory {
-    override fun create(authToken: String): LocalFileLister {
-        return LocalFileLister(authToken)
+    override fun create(cloudAuth: CloudAuth): FileLister {
+        return LocalFileLister()
     }
 }
