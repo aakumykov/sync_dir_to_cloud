@@ -63,17 +63,26 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     override fun onProbeRunClicked(taskId: String) {
 
         lifecycleScope.launch (Dispatchers.IO) {
-            val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
+            val appComponent = App.getAppComponent();
 
-            val cloudAuthAuthReader = App.getAppComponent().getCloudAuthReader()
+            val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
+
+            val cloudAuthAuthReader = appComponent.getCloudAuthReader()
             val cloudAuth = cloudAuthAuthReader.getCloudAuth(syncTask.cloudAuthId!!)
 
             val fileLister = YandexDiskFileLister(cloudAuth.authToken)
 
-            val recursiveDirReader = RecursiveDirReader(fileLister)
+            val recursiveDirReaderFactory = appComponent.getRecursiveDirReaderFactory()
 
-            val syncTaskFilesPreparer = App.getAppComponent().getSyncTaskFilesPreparerAssistedFactory()
-                .create(recursiveDirReader)
+            // FIXME: убрать "!!"
+            val recursiveDirReader = recursiveDirReaderFactory.create(
+                syncTask.targetType!!,
+                cloudAuth.authToken
+            )
+
+            // FIXME: убрать "!!"
+            val syncTaskFilesPreparer = appComponent.getSyncTaskFilesPreparerAssistedFactory()
+                .create(recursiveDirReader!!)
 
             syncTaskFilesPreparer.prepareSyncTask(syncTask)
         }
