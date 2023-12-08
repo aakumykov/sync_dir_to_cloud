@@ -24,7 +24,7 @@ import com.github.aakumykov.yandex_disk_file_lister.YandexDiskFileLister
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class TaskListFragment : Fragment(), ItemClickCallback {
+class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallback {
 
     companion object {
         fun create() : TaskListFragment = TaskListFragment()
@@ -43,16 +43,15 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        prepareLayout(inflater, container)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareLayout(view)
         prepareAdapter()
         prepareRecyclerView()
         prepareButtons()
         prepareViewModels()
         setPageTitle()
-        return binding.root
     }
-
 
     override fun onDestroyView() {
         taskListAdapter = null
@@ -110,8 +109,8 @@ class TaskListFragment : Fragment(), ItemClickCallback {
     }
 
 
-    private fun prepareLayout(inflater: LayoutInflater, container: ViewGroup?) {
-        _binding = FragmentTaskListBinding.inflate(inflater, container, false)
+    private fun prepareLayout(view: View) {
+        _binding = FragmentTaskListBinding.bind(view)
     }
 
 
