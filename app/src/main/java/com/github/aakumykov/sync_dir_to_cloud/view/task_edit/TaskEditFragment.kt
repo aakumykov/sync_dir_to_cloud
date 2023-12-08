@@ -49,7 +49,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private var currentCloudAuth: CloudAuth? = null
 
-    private lateinit var storagePermissionsRequester: PermissionsRequester
+    private lateinit var sourcePathSelectorPermissionsRequester: PermissionsRequester
 
 
     private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
@@ -86,9 +86,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
     private fun preparePermissionsDispatcher() {
-        storagePermissionsRequester = constructPermissionsRequest(
+        sourcePathSelectorPermissionsRequester = constructPermissionsRequest(
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            requiresPermission = ::selectTargetPath,
+            requiresPermission = ::selectSourcePath,
             onShowRationale = {},
             onPermissionDenied = {},
             onNeverAskAgain = {}
@@ -178,8 +178,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun prepareButtons() {
-        binding.sourcePathSelectionButton.setOnClickListener { selectSourcePath() }
-        binding.targetPathSelectionButton.setOnClickListener { storagePermissionsRequester.launch() }
+        binding.sourcePathSelectionButton.setOnClickListener { sourcePathSelectorPermissionsRequester.launch() }
+        binding.targetPathSelectionButton.setOnClickListener { selectTargetPath() }
 
         binding.saveButton.setOnClickListener { onSaveButtonClicked() }
         binding.cancelButton.setOnClickListener { onCancelButtonClicked() }
@@ -193,7 +193,13 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
     private fun selectSourcePath() {
-        
+        val targetPathSelector = LocalFileSelector.create()
+        targetPathSelector.setCallback(sourcePathSelectionCallback)
+        targetPathSelector.show(childFragmentManager)
+    }
+
+    private fun selectTargetPath() {
+
         if (null == currentCloudAuth) {
             showToast(R.string.TOAST_select_cloud_auth_first)
             // TODO: помигать соответствующей кнопкой
@@ -207,17 +213,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                 isMultipleSelectionMode = false,
                 isDirMode = true
             )
-            fileSelector.setCallback(sourcePathSelectionCallback)
+            fileSelector.setCallback(targetPathSelectionCallback)
             fileSelector.show(childFragmentManager)
         }
     }
 
-    private fun selectTargetPath() {
-        val targetPathSelector = LocalFileSelector.create()
-        targetPathSelector.setCallback(targetPathSelectionCallback)
-        targetPathSelector.show(childFragmentManager)
-    }
-    
 
     private fun onOpStateChanged(opState: OpState) {
         when (opState) {
