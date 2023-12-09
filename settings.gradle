@@ -47,3 +47,6 @@ project(':yandex_disk_file_explorer').projectDir = new File("../file_lister_navi
 project(':yandex_disk_file_selector').projectDir = new File("../file_lister_navigator_selector/yandex_disk_file_selector")
 
 project(':recursive_dir_reader').projectDir = new File("../file_lister_navigator_selector/recursive_dir_reader")
+
+include ':entities'
+include ':interfaces'
