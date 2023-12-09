@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.data_sources
 
 import androidx.lifecycle.LiveData
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
+import com.github.aakumykov.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.CloudAuthDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

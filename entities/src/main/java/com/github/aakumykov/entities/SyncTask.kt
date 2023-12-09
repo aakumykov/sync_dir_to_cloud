@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.domain.entities
+package com.github.aakumykov.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -7,7 +7,7 @@ import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.github.aakumykov.sync_dir_to_cloud.StorageType
+import com.github.aakumykov.interfaces.StorageType
 import java.util.UUID
 
 @Entity(

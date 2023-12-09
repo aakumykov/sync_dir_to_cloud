@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel

@@ -5,7 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime

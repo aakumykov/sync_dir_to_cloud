@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.data_sources
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

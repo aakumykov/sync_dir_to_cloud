@@ -2,9 +2,9 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.entities.CloudAuth
+import com.github.aakumykov.entities.SyncObject
+import com.github.aakumykov.entities.SyncTask
 
 
 @Database(

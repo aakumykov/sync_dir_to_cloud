@@ -1,26 +1,22 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
-import com.github.aakumykov.yandex_disk_file_lister.YandexDiskFileLister
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

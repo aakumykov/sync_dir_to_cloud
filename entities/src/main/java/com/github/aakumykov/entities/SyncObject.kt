@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.domain.entities
+package com.github.aakumykov.entities
 
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE

@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.file_lister.annotations
 
-import com.github.aakumykov.sync_dir_to_cloud.StorageType
+import com.github.aakumykov.interfaces.StorageType
 import dagger.MapKey
 
 @MapKey

@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.entities.SyncTask
 
 @Dao
 interface SyncTaskDAO {

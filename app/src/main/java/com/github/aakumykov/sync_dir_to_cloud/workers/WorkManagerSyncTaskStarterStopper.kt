@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import androidx.work.*
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
 import javax.inject.Inject
 
