@@ -27,6 +27,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.notificator.Notificator
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
+import dagger.Lazy
 
 @Component(
     modules = [
@@ -72,5 +73,5 @@ interface AppComponent {
 
     fun getRecursiveDirReaderFactory(): RecursiveDirReaderFactory
 
-    fun getNotificator(): Notificator
+    fun getNotificator(): Lazy<Notificator>
 }

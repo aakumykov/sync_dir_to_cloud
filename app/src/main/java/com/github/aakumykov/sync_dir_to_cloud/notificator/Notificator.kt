@@ -17,10 +17,10 @@ class Notificator @Inject constructor(
     : SyncTaskNotificator
 {
     init {
-        prepareNotificationChannel()
+//        prepareNotificationChannel()
     }
 
-    private fun prepareNotificationChannel() {
+    fun prepareNotificationChannel() {
         val notificationChannelCompat = NotificationChannelCompat
             .Builder(
                 NotificationsConfig.WORK_CHANNEL_ID,

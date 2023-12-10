@@ -59,7 +59,17 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
         super.onDestroyView()
     }
 
+
     override fun onProbeRunClicked(taskId: String) {
+//        probeRunPreparation(taskId)
+        probeCreateNotificationChannel()
+    }
+
+    fun probeCreateNotificationChannel() {
+        App.getAppComponent().getNotificator().get().prepareNotificationChannel()
+    }
+
+    fun probeRunPreparation(taskId: String) {
 
         lifecycleScope.launch (Dispatchers.IO) {
             val appComponent = App.getAppComponent();
