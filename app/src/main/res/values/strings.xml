@@ -47,4 +47,6 @@
     <string name="VALIDATION_cannot_be_empty">Не может быть пустым</string>
     <string name="DIALOG_AUTH_LIST_title">Облачные авторизации</string>
     <string name="TOAST_select_cloud_auth_first">Сначала выберите облачную авторизацию</string>
+    <string name="NOTIFICATION_CHANNEL_work_channel_name">Работа приложения</string>
+    <string name="NOTIFICATION_CHANNEL_work_channel_description">Уведомления о работе приложения</string>
 </resources>

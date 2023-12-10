@@ -2,12 +2,14 @@ package com.github.aakumykov.sync_dir_to_cloud
 
 import android.app.Application
 import android.content.Context
+import androidx.core.app.NotificationManagerCompat
 import androidx.room.Room
 import com.github.aakumykov.sync_dir_to_cloud.config.DbConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.DaggerAppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationManagerModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 
@@ -37,6 +39,7 @@ class App : Application() {
             _appComponent = DaggerAppComponent.builder()
                 .contextModule(ContextModule(appContext))
                 .applicationModule(ApplicationModule(application))
+                .notificationManagerModule(NotificationManagerModule(application))
                 .roomDAOModule(RoomDAOModule(prepareAndGetAppDatabase(appContext)))
                 .build()
         }
