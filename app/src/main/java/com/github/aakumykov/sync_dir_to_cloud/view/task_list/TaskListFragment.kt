@@ -66,7 +66,8 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
     }
 
     fun probeCreateNotificationChannel() {
-        App.getAppComponent().getNotificator().get().prepareNotificationChannel()
+        App.getAppComponent().getNotificator().get()
+            .showNotification(SyncTask())
     }
 
     fun probeRunPreparation(taskId: String) {
