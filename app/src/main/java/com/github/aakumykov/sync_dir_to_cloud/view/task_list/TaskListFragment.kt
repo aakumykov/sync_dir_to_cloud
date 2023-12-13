@@ -10,17 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.eum
-import com.github.aakumykov.sync_dir_to_cloud.notificator.ServiceStartingWorker
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -68,27 +62,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
     override fun onProbeRunClicked(taskId: String) {
 //        probeRunPreparation(taskId)
-//        probeCreateNotificationChannel()
-        probeRunServiceStartingWorker()
-    }
-
-    private fun probeRunServiceStartingWorker() {
-
-        val taskId = "task1"
-
-        val oneTimeWorkRequest = OneTimeWorkRequest.Builder(ServiceStartingWorker::class.java).apply {
-            setInputData(
-                Data.Builder().apply {
-                    putString(ServiceStartingWorker.TASK_ID, taskId)
-                }.build()
-            )
-        }.build()
-
-        WorkManager.getInstance(requireContext()).beginUniqueWork(
-            taskId,
-            ExistingWorkPolicy.KEEP,
-            oneTimeWorkRequest
-        ).enqueue()
+        probeCreateNotificationChannel()
     }
 
     fun probeCreateNotificationChannel() {
