@@ -1,12 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.notificator
 
 import android.Manifest
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_CANCEL_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.drawable.Drawable
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationChannelCompat
@@ -45,26 +45,13 @@ class Notificator @Inject constructor(
 
     override fun showNotification(syncTask: SyncTask) {
 
-        val startActionPendingIntent = PendingIntentCompat.getService(
-            appContext,
-            1,
-            Intent(),
-            0,
-            false
-        )
-
-        val startAction: NotificationCompat.Action = NotificationCompat.Action.Builder(
-            R.drawable.ic_start,
-            string(R.string.NOTIFICATION_ACTION_start),
-            startActionPendingIntent)
-            .build()
-
+        prepareNotificationChannel()
 
         val notification = NotificationCompat.Builder(appContext, NotificationsConfig.WORK_CHANNEL_ID)
             .setContentTitle("Запустить подготовку")
             .setContentText("пробно")
             .setSmallIcon(R.drawable.ic_start)
-            .addAction(startAction)
+            .addAction(startAction())
             .build()
 
         if (ActivityCompat.checkSelfPermission(
@@ -83,6 +70,26 @@ class Notificator @Inject constructor(
         }
 
         notificationManagerCompat.notify(1, notification)
+    }
+
+    private fun startAction(): NotificationCompat.Action {
+        return NotificationCompat.Action.Builder(
+            R.drawable.ic_start,
+            string(R.string.NOTIFICATION_ACTION_start),
+            startActionPendingIntent())
+            .build()
+    }
+
+    private fun startActionPendingIntent(): PendingIntent? {
+        return PendingIntentCompat.getService(
+            appContext,
+            SyncTaskExecutionService.CODE_START_WORK,
+            Intent(appContext, SyncTaskExecutionService::class.java).apply {
+                action = SyncTaskExecutionService.ACTION_START_WORK
+            },
+            FLAG_CANCEL_CURRENT,
+            false
+        )
     }
 
     override fun hideNotification(syncTask: SyncTask) {
