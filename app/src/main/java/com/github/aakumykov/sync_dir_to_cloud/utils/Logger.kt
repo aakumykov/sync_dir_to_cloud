@@ -18,11 +18,15 @@ object Logger {
         postNewList()
     }
 
+    fun e(tag: String, errorMsg: String) {
+        Log.e(tag, errorMsg)
+        messageList.add("$tag: ОШИБКА: $errorMsg")
+        postNewList()
+    }
+
     fun e(tag: String, e: Exception) {
         val message = ExceptionUtils.getErrorMessage(e)
-        Log.e(tag, message)
-        messageList.add("$tag: ОШИБКА: $message")
-        postNewList()
+        e(tag, message)
     }
 
     fun clear() {
