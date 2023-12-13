@@ -1,14 +1,12 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_preparer
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncObjectAdder
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.UUID
-import javax.inject.Inject
 
 class SyncTaskFilesPreparer @AssistedInject constructor (
     @Assisted private val recursiveDirReader: RecursiveDirReader,
