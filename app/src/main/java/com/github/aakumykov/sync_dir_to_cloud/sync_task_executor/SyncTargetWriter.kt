@@ -8,10 +8,11 @@ import dagger.assisted.AssistedInject
 
 class SyncTargetWriter @AssistedInject constructor(
     @Assisted private val targetStorageType: StorageType,
-    @Assisted private val targetAuthToken: String
+    @Assisted private val targetAuthToken: String,
+    private val syncTaskNotificator: SyncTaskNotificator
 ){
     fun writeToTarget(syncTask: SyncTask) {
-        TODO("Not yet implemented")
+
     }
 
 

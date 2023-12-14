@@ -1,9 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
-import com.github.aakumykov.sync_dir_to_cloud.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.di.factories.SyncTaskFilesPreparerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.file_lister.modules.FileListerAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
@@ -24,6 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAut
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskFilesPreparer
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -65,7 +65,7 @@ interface AppComponent {
 
     fun getSyncTaskReader(): SyncTaskReader
 
-    fun getSyncTaskFilesPreparerAssistedFactory(): SyncTaskFilesPreparerAssistedFactory
+    fun getSyncTaskFilesPreparerAssistedFactory(): SyncTaskFilesPreparer.Factory
 
     fun getCloudAuthReader(): CloudAuthReader
 

@@ -6,12 +6,12 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAut
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
-    private val sourceReaderFactory: SyncSourceReader.Factory,
+    private val sourceProcessorFactory: SyncSourceProcessor.Factory,
     private val targetWriterFactory: SyncTargetWriter.Factory,
-    private val notificator: SyncTaskNotificator,
-    private val cloudAuthReader: CloudAuthReader
+    private val cloudAuthReader: CloudAuthReader,
+    private val notificator: SyncTaskNotificator
 ) {
-    private var sourceReader: SyncSourceReader? = null
+    private var sourceProcessor: SyncSourceProcessor? = null
     private var targetWriter: SyncTargetWriter? = null
 
     suspend fun executeSyncTask(syncTask: SyncTask) {
@@ -19,15 +19,16 @@ class SyncTaskExecutor @Inject constructor(
         createObjectsFromFactories(syncTask)
 
         notificator.showNotification(syncTask)
-         sourceReader?.readSource(syncTask)
+         sourceProcessor?.processSource(syncTask)
          targetWriter?.writeToTarget(syncTask)
         notificator.hideNotification(syncTask)
     }
 
+    // FIXME: нужен target auth token!
     // FIXME: убрать !!
     private suspend fun createObjectsFromFactories(syncTask: SyncTask) {
         val authToken = cloudAuthReader.getCloudAuth(syncTask.id).authToken
-        sourceReader = sourceReaderFactory.create(StorageType.LOCAL, "")
+        sourceProcessor = sourceProcessorFactory.create(StorageType.LOCAL, "")
         targetWriter = targetWriterFactory.create(syncTask.targetType!!, authToken)
     }
 }
