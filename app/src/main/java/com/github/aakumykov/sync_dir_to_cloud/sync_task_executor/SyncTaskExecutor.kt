@@ -27,8 +27,13 @@ class SyncTaskExecutor @Inject constructor(
     // FIXME: нужен target auth token!
     // FIXME: убрать !!
     private suspend fun createObjectsFromFactories(syncTask: SyncTask) {
-        val authToken = cloudAuthReader.getCloudAuth(syncTask.id).authToken
-        sourceProcessor = sourceProcessorFactory.create(StorageType.LOCAL, "")
-        targetWriter = targetWriterFactory.create(syncTask.targetType!!, authToken)
+        syncTask.cloudAuthId?.let { cloudAuthId ->
+            val cloudAuth = cloudAuthReader.getCloudAuth(cloudAuthId)
+            val authToken: String? = cloudAuth?.authToken
+            if (null != authToken) {
+                sourceProcessor = sourceProcessorFactory.create(StorageType.LOCAL, "")
+                targetWriter = targetWriterFactory.create(syncTask.targetType!!, authToken)
+            }
+        }
     }
 }

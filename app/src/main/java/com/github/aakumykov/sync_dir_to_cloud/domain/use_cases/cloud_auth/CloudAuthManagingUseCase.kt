@@ -15,7 +15,7 @@ class CloudAuthManagingUseCase @Inject constructor(
         cloudAuthAdder.addCloudAuth(cloudAuth)
     }
 
-    suspend fun getCloudAuth(id: String): CloudAuth {
+    suspend fun getCloudAuth(id: String): CloudAuth? {
         return cloudAuthReader.getCloudAuth(id)
     }
 
