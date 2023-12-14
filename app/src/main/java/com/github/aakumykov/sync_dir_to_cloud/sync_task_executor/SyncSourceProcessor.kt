@@ -20,6 +20,7 @@ class SyncSourceProcessor @AssistedInject constructor(
         }
     }
 
+    // TODO: функционал SyncTaskPreparer можно перенести сюда
     suspend fun processSource(syncTask: SyncTask) {
         syncTaskFilesPreparer?.prepareSyncTask(syncTask)
     }

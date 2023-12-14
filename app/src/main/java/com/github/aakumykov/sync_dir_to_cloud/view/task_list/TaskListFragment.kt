@@ -62,11 +62,10 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
     override fun onProbeRunClicked(taskId: String) {
 
         lifecycleScope.launch (Dispatchers.IO) {
+
             val appComponent = App.getAppComponent();
 
-            val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
-
-            val cloudAuthAuthReader = appComponent.getCloudAuthReader()
+            /*val cloudAuthAuthReader = appComponent.getCloudAuthReader()
             val cloudAuth = cloudAuthAuthReader.getCloudAuth(syncTask.cloudAuthId!!)
 
             val recursiveDirReaderFactory = appComponent.getRecursiveDirReaderFactory()
@@ -83,7 +82,11 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                     .create(recursiveDirReader)
 
                 syncTaskFilesPreparer.prepareSyncTask(syncTask)
-            }
+            }*/
+
+            val syncTaskExecutor = appComponent.getSyncTaskExecutor()
+            val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
+            syncTaskExecutor.executeSyncTask(syncTask)
         }
     }
 
