@@ -11,13 +11,16 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import javax.inject.Inject
 
 class SyncTaskNotificator @Inject constructor(
     @AppContext private val appContext: Context,
     private val notificationManagerCompat: NotificationManagerCompat,
     private val notificationChannelHelper: NotificationChannelHelper,
+    private val syncTaskReader: SyncTaskReader
 ) {
+    // TODO: переделать на taskId
     fun showNotification(syncTask: SyncTask) {
 
         prepareNotificationChannel()
@@ -32,6 +35,11 @@ class SyncTaskNotificator @Inject constructor(
             SyncTask.State.SEMI_SUCCESS -> showNotificationReal(id, R.string.NOTIFICATION_semi_success)
             SyncTask.State.ERROR -> showNotificationReal(id, R.string.NOTIFICATION_error)
         }
+    }
+
+    suspend fun updateNotification(taskId: String) {
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+        showNotification(syncTask)
     }
 
     fun hideNotification(syncTask: SyncTask) {

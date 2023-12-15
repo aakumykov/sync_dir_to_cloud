@@ -19,10 +19,8 @@ class SyncTaskExecutor @Inject constructor(
         createObjectsFromFactories(syncTask)
 
         notificator.showNotification(syncTask)
-        sourceProcessor?.processSource(syncTask)
-
-        targetWriter?.writeToTarget(syncTask)
-
+         sourceProcessor?.processSource(syncTask)
+         targetWriter?.writeToTarget(syncTask)
         notificator.hideNotification(syncTask)
     }
 

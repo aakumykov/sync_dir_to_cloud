@@ -13,11 +13,13 @@ import java.util.UUID
 class SyncTaskFilesPreparer @AssistedInject constructor (
     @Assisted private val recursiveDirReader: RecursiveDirReader,
     private val syncObjectAdder: SyncObjectAdder,
-    private val syncTaskStateChanger: SyncTaskStateChanger
+    private val syncTaskStateChanger: SyncTaskStateChanger,
+    private val notificator: SyncTaskNotificator,
 ) {
     suspend fun prepareSyncTask(syncTask: SyncTask) {
 
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
+        notificator.updateNotification(syncTask.id)
 
 //        try {
             recursiveDirReader.getRecursiveList(syncTask.sourcePath!!).forEach { fileListItem ->
