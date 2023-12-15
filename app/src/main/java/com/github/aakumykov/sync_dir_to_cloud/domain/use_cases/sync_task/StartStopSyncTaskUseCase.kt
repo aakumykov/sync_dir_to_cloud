@@ -16,7 +16,7 @@ class StartStopSyncTaskUseCase @Inject constructor(
         // TODO: кинуть исключение просто так
         val syncTask = syncTaskReader.getSyncTask(taskId)
 
-        if (syncTask.state == SyncTask.State.RUNNING) {
+        if (syncTask.state == SyncTask.State.WRITING_TARGET) {
             syncTaskStarterStopper.stopSyncTask(syncTask, object:SyncTaskStarterStopper.StopCallback {
                 override fun onSyncTaskStopped(taskId: String) {
                     // FIXME: устанавливать более специфичное состояние?

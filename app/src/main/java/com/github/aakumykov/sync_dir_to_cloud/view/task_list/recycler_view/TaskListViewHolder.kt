@@ -53,7 +53,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
         val isEnabled = currentTask.isEnabled
         runButton.isEnabled = isEnabled
 
-        if (currentTask.state == SyncTask.State.RUNNING)
+        if (currentTask.state == SyncTask.State.WRITING_TARGET)
             runButton.setImageResource(R.drawable.ic_task_stop)
         else
             runButton.setImageResource(R.drawable.ic_task_start)
@@ -83,8 +83,10 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
             stateView.setImageResource(
                 when (currentTask.state) {
                     SyncTask.State.IDLE -> R.drawable.ic_task_state_scheduled // FIXME: не то
-                    SyncTask.State.RUNNING -> R.drawable.ic_task_state_running
+                    SyncTask.State.READING_SOURCE -> R.drawable.ic_task_state_running
+                    SyncTask.State.WRITING_TARGET -> R.drawable.ic_task_state_running
                     SyncTask.State.SUCCESS -> R.drawable.ic_task_state_success
+                    SyncTask.State.SEMI_SUCCESS -> R.drawable.ic_task_state_semi_success
                     SyncTask.State.ERROR -> R.drawable.ic_task_state_error
                 }
             )

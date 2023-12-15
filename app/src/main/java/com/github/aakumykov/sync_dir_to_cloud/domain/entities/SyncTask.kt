@@ -77,9 +77,11 @@ class SyncTask {
 
     enum class State {
         IDLE,
-        RUNNING,
+        READING_SOURCE,
+        WRITING_TARGET,
         SUCCESS,
         ERROR,
+        SEMI_SUCCESS
     }
 
     companion object {

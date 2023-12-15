@@ -36,10 +36,10 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         currentTask = syncTaskReader.getSyncTask(taskId)
 
-        if (currentTask.state == SyncTask.State.RUNNING)
+        if (currentTask.state == SyncTask.State.WRITING_TARGET)
             return Result.retry()
 
-        changeTaskState(SyncTask.State.RUNNING)
+        changeTaskState(SyncTask.State.WRITING_TARGET)
         delay(10000)
         changeTaskState(SyncTask.State.SUCCESS)
 
