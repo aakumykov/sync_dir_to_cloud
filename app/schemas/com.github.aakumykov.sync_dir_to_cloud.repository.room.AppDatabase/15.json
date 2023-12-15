@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "8fdd43623ce0206fa10ff0b34acf9104",
+    "identityHash": "5295bfdb2ed6e6a4887e8f7aeb22122d",
     "entities": [
       {
         "tableName": "sync_tasks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `state` TEXT NOT NULL, `is_enabled` INTEGER NOT NULL, `target_type` TEXT, `source_path` TEXT, `target_path` TEXT, `interval_h` INTEGER NOT NULL, `interval_m` INTEGER NOT NULL, `cloud_auth_id` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`cloud_auth_id`) REFERENCES `cloud_auth`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `state` TEXT NOT NULL, `is_enabled` INTEGER NOT NULL, `target_type` TEXT, `source_path` TEXT, `target_path` TEXT, `interval_h` INTEGER NOT NULL, `interval_m` INTEGER NOT NULL, `cloud_auth_id` TEXT, `c_time` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`cloud_auth_id`) REFERENCES `cloud_auth`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -61,6 +61,12 @@
             "columnName": "cloud_auth_id",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "cTime",
+            "columnName": "c_time",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -242,7 +248,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8fdd43623ce0206fa10ff0b34acf9104')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5295bfdb2ed6e6a4887e8f7aeb22122d')"
     ]
   }
 }

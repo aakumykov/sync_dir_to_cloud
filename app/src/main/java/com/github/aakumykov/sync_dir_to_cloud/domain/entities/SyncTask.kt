@@ -8,6 +8,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.StorageType
+import java.util.Date
 import java.util.UUID
 
 @Entity(
@@ -35,6 +36,9 @@ class SyncTask {
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
 
     @ColumnInfo(name = "cloud_auth_id") var cloudAuthId: String? = null  // FIXME: не-null
+
+    @ColumnInfo(name = "c_time") var cTime: Long = Date().time
+
 
     @Ignore
     constructor() {
