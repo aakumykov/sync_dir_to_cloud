@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
+    abstract fun getSyncTaskStateDAO(): SyncTaskStateDAO
     abstract fun getSyncObjectDAO(): SyncObjectDAO
     abstract fun getCloudAuthDAO(): CloudAuthDAO
 }

@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
 import javax.inject.Inject
 

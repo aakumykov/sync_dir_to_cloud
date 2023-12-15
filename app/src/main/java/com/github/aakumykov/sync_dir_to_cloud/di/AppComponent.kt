@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.file_lister.modules.FileListerAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
@@ -19,10 +18,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.cloud_auth.CloudA
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthChecker
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskFilesPreparer
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker

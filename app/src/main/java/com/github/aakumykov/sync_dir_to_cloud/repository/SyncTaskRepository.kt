@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskCreatorDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +19,8 @@ class SyncTaskRepository @Inject constructor(
     private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
-) : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater
+)
+    : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater, SyncTaskStateChanger
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return syncTaskLocalDataSource.listSyncTasks()
@@ -39,6 +41,12 @@ class SyncTaskRepository @Inject constructor(
     override fun updateSyncTask(syncTask: SyncTask) {
         coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.update(syncTask)
+        }
+    }
+
+    override fun changeState(taskId: String, newState: SyncTask.State) {
+        coroutineScope.launch(coroutineDispatcher) {
+            syncTaskLocalDataSource.setState(taskId, newState)
         }
     }
 }

@@ -15,8 +15,8 @@ class SyncSourceProcessor @AssistedInject constructor(
 ) {
 
     private val syncTaskFilesPreparer: SyncTaskFilesPreparer? by lazy {
-        recursiveDirReaderFactory.create(sourceStorageType, sourceAuthToken)?.let { rdr ->
-            syncTaskFilesPreparerFactory.create(rdr)
+        recursiveDirReaderFactory.create(sourceStorageType, sourceAuthToken)?.let { recursiveDirReader ->
+            syncTaskFilesPreparerFactory.create(recursiveDirReader)
         }
     }
 

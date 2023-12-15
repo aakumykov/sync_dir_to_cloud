@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
@@ -19,8 +19,10 @@ class SyncTaskExecutor @Inject constructor(
         createObjectsFromFactories(syncTask)
 
         notificator.showNotification(syncTask)
-         sourceProcessor?.processSource(syncTask)
-         targetWriter?.writeToTarget(syncTask)
+        sourceProcessor?.processSource(syncTask)
+
+        targetWriter?.writeToTarget(syncTask)
+
         notificator.hideNotification(syncTask)
     }
 

@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.SyncObjectAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
 import dagger.Module
 import dagger.Provides
 
@@ -11,5 +13,10 @@ class SyncObjectRepositoryInterfacesModule {
     @Provides
     fun provideSyncObjectAdder(syncObjectRepository: SyncObjectRepository): SyncObjectAdder {
         return syncObjectRepository
+    }
+
+    @Provides
+    fun provideSyncTaskStateChanger(syncTaskRepository: SyncTaskRepository): SyncTaskStateChanger {
+        return syncTaskRepository
     }
 }
