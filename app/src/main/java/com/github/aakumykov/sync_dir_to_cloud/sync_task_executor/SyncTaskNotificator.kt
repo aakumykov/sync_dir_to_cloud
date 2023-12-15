@@ -18,24 +18,24 @@ class SyncTaskNotificator @Inject constructor(
     private val notificationManagerCompat: NotificationManagerCompat,
     private val notificationChannelHelper: NotificationChannelHelper,
 ) {
-    // TODO: id для уведомлений в SyncTask
-
     fun showNotification(syncTask: SyncTask) {
 
         prepareNotificationChannel()
 
+        val id = syncTask.notificationId
+
         when (syncTask.state) {
-            SyncTask.State.IDLE -> showNotificationReal(5, R.string.NOTIFICATION_idle)
-            SyncTask.State.READING_SOURCE -> showNotificationReal(5, R.string.NOTIFICATION_reading_source)
-            SyncTask.State.WRITING_TARGET -> showNotificationReal(5, R.string.NOTIFICATION_writing_target)
-            SyncTask.State.SUCCESS -> showNotificationReal(5, R.string.NOTIFICATION_success)
-            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(5, R.string.NOTIFICATION_semi_success)
-            SyncTask.State.ERROR -> showNotificationReal(5, R.string.NOTIFICATION_error)
+            SyncTask.State.IDLE -> showNotificationReal(id, R.string.NOTIFICATION_idle)
+            SyncTask.State.READING_SOURCE -> showNotificationReal(id, R.string.NOTIFICATION_reading_source)
+            SyncTask.State.WRITING_TARGET -> showNotificationReal(id, R.string.NOTIFICATION_writing_target)
+            SyncTask.State.SUCCESS -> showNotificationReal(id, R.string.NOTIFICATION_success)
+            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(id, R.string.NOTIFICATION_semi_success)
+            SyncTask.State.ERROR -> showNotificationReal(id, R.string.NOTIFICATION_error)
         }
     }
 
     fun hideNotification(syncTask: SyncTask) {
-        notificationManagerCompat.cancel(5)
+        notificationManagerCompat.cancel(syncTask.notificationId)
     }
 
 

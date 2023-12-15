@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
+import android.view.View
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -25,6 +26,8 @@ import java.util.UUID
 class SyncTask {
 
     @PrimaryKey var id: String = UUID.randomUUID().toString()
+    @ColumnInfo(name = "notification_id") var notificationId: Int = View.generateViewId()
+
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
 
