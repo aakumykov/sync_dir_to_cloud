@@ -37,28 +37,6 @@ class SyncTaskNotificator @Inject constructor(
         }
     }
 
-    suspend fun updateNotification(taskId: String) {
-        val syncTask = syncTaskReader.getSyncTask(taskId)
-        showNotification(syncTask)
-    }
-
-    fun hideNotification(syncTask: SyncTask) {
-        notificationManagerCompat.cancel(syncTask.notificationId)
-    }
-
-
-    private fun prepareNotificationChannel() {
-        if (!notificationChannelHelper.channelExists(NotificationsConfig.CHANNEL_ID)) {
-            notificationChannelHelper.createNotificationChannel(
-                NotificationsConfig.CHANNEL_ID,
-                NotificationsConfig.CHANNEL_IMPORTANCE,
-                string(NotificationsConfig.CHANNEL_NAME_RES),
-                string(NotificationsConfig.CHANNEL_DESCRIPTION_RES)
-            )
-        }
-    }
-
-
     private fun showNotificationReal(notificationId: Int, @StringRes textRes: Int) {
 
         val notificationCompat = NotificationCompat.Builder(appContext, NotificationsConfig.CHANNEL_ID).apply {
@@ -88,6 +66,31 @@ class SyncTaskNotificator @Inject constructor(
             notificationId,
             notificationCompat
         )
+    }
+
+    suspend fun updateNotification(taskId: String) {
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+        showNotification(syncTask)
+    }
+
+
+    fun hideNotification(syncTask: SyncTask) {
+        notificationManagerCompat.cancel(
+            NotificationsConfig.TAG,
+            syncTask.notificationId
+        )
+    }
+
+
+    private fun prepareNotificationChannel() {
+        if (!notificationChannelHelper.channelExists(NotificationsConfig.CHANNEL_ID)) {
+            notificationChannelHelper.createNotificationChannel(
+                NotificationsConfig.CHANNEL_ID,
+                NotificationsConfig.CHANNEL_IMPORTANCE,
+                string(NotificationsConfig.CHANNEL_NAME_RES),
+                string(NotificationsConfig.CHANNEL_DESCRIPTION_RES)
+            )
+        }
     }
 
 
