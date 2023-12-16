@@ -18,14 +18,14 @@ class NotificationModule {
     fun provideNotificationManager(@AppContext context: Context): NotificationManagerCompat
         = NotificationManagerCompat.from(context)
 
+
     @Provides
-    @AppScope
     fun provideSyncTaskNotificationShower(syncTaskNotificator: SyncTaskNotificator): SyncTaskNotificationShower {
         return syncTaskNotificator
     }
 
+
     @Provides
-    @AppScope
     fun provideSyncTaskNotificationHider(syncTaskNotificator: SyncTaskNotificator): SyncTaskNotificationHider {
         return syncTaskNotificator
     }
