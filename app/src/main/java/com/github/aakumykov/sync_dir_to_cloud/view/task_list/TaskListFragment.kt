@@ -10,6 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -20,6 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
+import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker2
 import com.github.aakumykov.yandex_disk_file_lister.YandexDiskFileLister
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,9 +89,17 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                 syncTaskFilesPreparer.prepareSyncTask(syncTask)
             }*/
 
-            val syncTaskExecutor = appComponent.getSyncTaskExecutor()
+            /*val syncTaskExecutor = appComponent.getSyncTaskExecutor()
             val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
-            syncTaskExecutor.executeSyncTask(syncTask)
+            syncTaskExecutor.executeSyncTask(syncTask)*/
+
+            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(SyncTaskWorker2::class.java)
+                .setInputData(Data.Builder().putString(SyncTaskWorker2.TASK_ID, taskId).build())
+                .build()
+
+            WorkManager.getInstance(requireContext())
+                .beginUniqueWork(taskId, ExistingWorkPolicy.KEEP, oneTimeWorkRequest)
+                .enqueue()
         }
     }
 
