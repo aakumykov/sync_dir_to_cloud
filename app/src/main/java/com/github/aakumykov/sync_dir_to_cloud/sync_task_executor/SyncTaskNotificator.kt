@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -11,6 +12,8 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationHider
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationShower
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import javax.inject.Inject
 
@@ -19,21 +22,26 @@ class SyncTaskNotificator @Inject constructor(
     private val notificationManagerCompat: NotificationManagerCompat,
     private val notificationChannelHelper: NotificationChannelHelper,
     private val syncTaskReader: SyncTaskReader
-) {
-    // TODO: переделать на taskId
-    fun showNotification(syncTask: SyncTask) {
+)
+    : SyncTaskNotificationShower, SyncTaskNotificationHider
+{
+    override suspend fun showNotification(taskId: String) {
 
         prepareNotificationChannel()
 
-        val id = syncTask.notificationId
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+
+        val notificationId = syncTask.notificationId
+
+        Log.d(TAG, "showNotification(${syncTask.state})")
 
         when (syncTask.state) {
-            SyncTask.State.IDLE -> showNotificationReal(id, R.string.NOTIFICATION_idle)
-            SyncTask.State.READING_SOURCE -> showNotificationReal(id, R.string.NOTIFICATION_reading_source)
-            SyncTask.State.WRITING_TARGET -> showNotificationReal(id, R.string.NOTIFICATION_writing_target)
-            SyncTask.State.SUCCESS -> showNotificationReal(id, R.string.NOTIFICATION_success)
-            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(id, R.string.NOTIFICATION_semi_success)
-            SyncTask.State.ERROR -> showNotificationReal(id, R.string.NOTIFICATION_error)
+            SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
+            SyncTask.State.READING_SOURCE -> showNotificationReal(notificationId, R.string.NOTIFICATION_reading_source)
+            SyncTask.State.WRITING_TARGET -> showNotificationReal(notificationId, R.string.NOTIFICATION_writing_target)
+            SyncTask.State.SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_success)
+            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_semi_success)
+            SyncTask.State.ERROR -> showNotificationReal(notificationId, R.string.NOTIFICATION_error)
         }
     }
 
@@ -68,17 +76,9 @@ class SyncTaskNotificator @Inject constructor(
         )
     }
 
-    suspend fun updateNotification(taskId: String) {
-        val syncTask = syncTaskReader.getSyncTask(taskId)
-        showNotification(syncTask)
-    }
 
-
-    fun hideNotification(syncTask: SyncTask) {
-        notificationManagerCompat.cancel(
-            NotificationsConfig.TAG,
-            syncTask.notificationId
-        )
+    override fun hideNotification(notificationId: Int) {
+        notificationManagerCompat.cancel(NotificationsConfig.TAG, notificationId)
     }
 
 
@@ -95,4 +95,9 @@ class SyncTaskNotificator @Inject constructor(
 
 
     private fun string(@StringRes strRes: Int): String = appContext.resources.getString(strRes)
+
+
+    companion object {
+        val TAG: String = SyncTaskNotificator::class.java.simpleName
+    }
 }

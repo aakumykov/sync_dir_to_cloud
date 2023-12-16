@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationManagerModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
@@ -31,7 +31,7 @@ import dagger.Component
     modules = [
         ApplicationModule::class,
         ContextModule::class,
-        NotificationManagerModule::class,
+        NotificationModule::class,
         RoomDAOModule::class,
         SyncTaskRepositoryInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
