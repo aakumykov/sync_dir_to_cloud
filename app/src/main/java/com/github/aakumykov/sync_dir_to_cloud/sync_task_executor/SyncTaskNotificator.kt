@@ -25,8 +25,11 @@ class SyncTaskNotificator @Inject constructor(
 )
     : SyncTaskNotificationShower, SyncTaskNotificationHider
 {
+    private var notificationBuilder: NotificationCompat.Builder? = null
+
     override suspend fun showNotification(taskId: String) {
 
+        deleteNotificationsChannel() // FIXME: временно!
         prepareNotificationChannel()
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
@@ -45,14 +48,20 @@ class SyncTaskNotificator @Inject constructor(
         }
     }
 
+    private fun deleteNotificationsChannel() {
+        notificationManagerCompat.deleteNotificationChannel(NotificationsConfig.CHANNEL_ID)
+    }
+
     private fun showNotificationReal(notificationId: Int, @StringRes textRes: Int) {
 
-        val notificationCompat = NotificationCompat.Builder(appContext, NotificationsConfig.CHANNEL_ID).apply {
-            setSmallIcon(NotificationsConfig.SMALL_ICON)
-            setContentTitle(string(textRes))
-            setOngoing(true)
-            setProgress(0,0,true)
-        }.build()
+        if (null == notificationBuilder) {
+            notificationBuilder = NotificationCompat.Builder(appContext, NotificationsConfig.CHANNEL_ID).apply {
+                setSmallIcon(NotificationsConfig.SMALL_ICON)
+                setContentTitle(string(textRes))
+                setOngoing(true)
+                setProgress(0,0,true)
+            }
+        }
 
         if (ActivityCompat.checkSelfPermission(
                 appContext,
@@ -69,11 +78,13 @@ class SyncTaskNotificator @Inject constructor(
             return
         }
 
-        notificationManagerCompat.notify(
-            NotificationsConfig.TAG,
-            notificationId,
-            notificationCompat
-        )
+        notificationBuilder?.let {
+            notificationManagerCompat.notify(
+                NotificationsConfig.TAG,
+                notificationId,
+                it.build()
+            )
+        }
     }
 
 
