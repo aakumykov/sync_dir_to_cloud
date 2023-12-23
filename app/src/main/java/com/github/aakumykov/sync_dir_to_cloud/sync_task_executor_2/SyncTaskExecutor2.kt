@@ -1,23 +1,21 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2
 
-import com.github.aakumykov.kotlin_playground.target_writers.TargetWriter
+import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.interfaces.TargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.SourceReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.SourceReaderFactory
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.TargetWriterFactory
-import kotlinx.coroutines.withContext
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.creator.SourceReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.creator.TargetWriterCreator
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 
 class SyncTaskExecutor2 @Inject constructor(
-    private val sourceReaderFactory: SourceReaderFactory,
-    private val targetWriterFactory: TargetWriterFactory,
+    private val sourceReaderCreator: SourceReaderCreator,
+    private val targetWriterCreator: TargetWriterCreator,
     private val cloudAuthReader: CloudAuthReader,
-    private val syncTaskStateChanger: SyncTaskStateChanger
+    private val stateChanger: SyncTaskStateChanger
 ) {
     private var sourceReader: SourceReader? = null
     private var targetWriter: TargetWriter? = null
@@ -27,8 +25,29 @@ class SyncTaskExecutor2 @Inject constructor(
     }
 
     private suspend fun prepareReaderAndWriter(syncTask: SyncTask) {
-        val cloudAuth = cloudAuthReader.getCloudAuth(syncTask.id)
-//        sourceReader = sourceReaderFactory.create(StorageType.LOCAL, cloudAuth)
-//        targetWriter = targetWriterFactory.create(syncTask.targetType, )
+
+        val taskId = syncTask.id
+
+        val sourceAuthToken = "" // TODO: реализовать
+        val targetAuthToken = cloudAuthReader.getCloudAuth(taskId)?.authToken
+
+        sourceReader = sourceReaderCreator.create(syncTask.sourceType, sourceAuthToken)
+        targetWriter = targetWriterCreator.create(syncTask.targetType, targetAuthToken)
+
+        try {
+            stateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
+             sourceReader?.read()
+            stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
+             targetWriter?.write()
+            stateChanger.changeState(taskId, SyncTask.State.SUCCESS)
+        }
+        catch (t: Throwable) {
+            stateChanger.changeState(taskId, SyncTask.State.ERROR)
+            Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
+        }
+    }
+
+    companion object {
+        val TAG: String = SyncTaskExecutor2::class.java.simpleName
     }
 }

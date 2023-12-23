@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.kotlin_playground.target_writers.LocalTargetWriter
-import com.github.aakumykov.kotlin_playground.target_writers.TargetWriterAssistedFactory
-import com.github.aakumykov.kotlin_playground.target_writers.YandexTargetWriter
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.LocalTargetWriter
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.interfaces.TargetWriterAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.YandexTargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.KeyStorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.Binds

@@ -1,14 +1,14 @@
-package com.github.aakumykov.sync_dir_to_cloud.target_witers
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer
 
-import com.github.aakumykov.kotlin_playground.target_writers.TargetWriter
-import com.github.aakumykov.kotlin_playground.target_writers.TargetWriterAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.interfaces.TargetWriter
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer.interfaces.TargetWriterAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class GoogleTargetWriter @AssistedInject constructor(@Assisted authToken: String) : TargetWriter {
 
-    override fun writeToTarget() {
+    override fun write() {
         
     }
 
