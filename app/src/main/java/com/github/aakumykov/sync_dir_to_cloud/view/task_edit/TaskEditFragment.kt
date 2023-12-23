@@ -13,7 +13,7 @@ import com.github.aakumykov.file_selector.FileSelector
 import com.github.aakumykov.fs_item.FSItem
 import com.github.aakumykov.local_file_selector.LocalFileSelector
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask

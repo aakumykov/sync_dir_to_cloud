@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import com.github.aakumykov.sync_dir_to_cloud.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import dagger.assisted.Assisted

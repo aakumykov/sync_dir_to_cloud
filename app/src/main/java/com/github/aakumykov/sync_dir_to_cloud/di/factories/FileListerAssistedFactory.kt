@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.di.file_lister.assisted_factories
+package com.github.aakumykov.sync_dir_to_cloud.di.factories
 
 import com.github.aakumykov.file_lister.FileLister
 import com.github.aakumykov.local_file_lister.LocalFileLister

@@ -8,7 +8,7 @@ import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.github.aakumykov.sync_dir_to_cloud.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import java.util.Date
 import java.util.UUID
 

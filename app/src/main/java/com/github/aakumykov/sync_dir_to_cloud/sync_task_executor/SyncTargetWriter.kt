@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationShower
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
