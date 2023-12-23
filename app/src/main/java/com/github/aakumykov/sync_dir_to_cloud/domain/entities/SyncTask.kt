@@ -31,10 +31,12 @@ class SyncTask {
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
 
+    @ColumnInfo(name = "source_type") var sourceType: StorageType?
     @ColumnInfo(name = "target_type") var targetType: StorageType?
 
     @ColumnInfo(name = "source_path") var sourcePath: String? // FIXME: не-null
     @ColumnInfo(name = "target_path") var targetPath: String? // FIXME: не-null
+
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
 
@@ -45,21 +47,26 @@ class SyncTask {
 
     @Ignore
     constructor() {
-        this.sourcePath = null
+        this.sourceType = StorageType.LOCAL
         this.targetType = null
+
+        this.sourcePath = null
         this.targetPath = null
+
         this.intervalHours = 0
         this.intervalMinutes = 0
     }
 
     constructor(sourcePath: String,
                 targetType: StorageType,
+                sourceType: StorageType,
                 targetPath: String,
                 intervalHours: Int,
                 intervalMinutes: Int
     ) : this() {
         this.sourcePath = sourcePath
         this.targetType = targetType
+        this.sourceType = sourceType
         this.targetPath = targetPath
         this.intervalHours = intervalHours
         this.intervalMinutes = intervalMinutes
