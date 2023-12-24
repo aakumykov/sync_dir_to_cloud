@@ -14,7 +14,9 @@ class SyncTaskWorker2(context: Context, workerParameters: WorkerParameters) : Co
             ?: return Result.failure(errorData(ERROR_MSG, "Task id not found in input data"))
 
         val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
-        App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
+
+//        App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
+        App.getAppComponent().getSyncTaskExecutor2().executeSyncTask(syncTask)
 
         return Result.success()
     }

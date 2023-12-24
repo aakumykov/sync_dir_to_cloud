@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.LocalSourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.YandexSourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReaderAssistedFactory
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -15,10 +16,10 @@ interface SourceReaderAssistedFactoriesModule {
     @Binds
     @IntoMap
     @KeyStorageType(StorageType.LOCAL)
-    fun bindLocalSourceReader(localSourceReader: LocalSourceReader): SourceReader
+    fun bindLocalSourceReader(factory: LocalSourceReader.Factory): SourceReaderAssistedFactory
     
     @Binds
     @IntoMap
     @KeyStorageType(StorageType.YANDEX_DISK)
-    fun bindYandexSourceReader(yandexSourceReader: YandexSourceReader): SourceReader
+    fun bindYandexSourceReader(factory: YandexSourceReader.Factory): SourceReaderAssistedFactory
 }

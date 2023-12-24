@@ -31,14 +31,18 @@ class SyncTaskExecutor2 @Inject constructor(
         val sourceAuthToken = "" // TODO: реализовать
         val targetAuthToken = cloudAuthReader.getCloudAuth(taskId)?.authToken
 
-        sourceReader = sourceReaderCreator.create(syncTask.sourceType, sourceAuthToken)
+        sourceReader = sourceReaderCreator.create(syncTask.sourceType, taskId, sourceAuthToken)
         targetWriter = targetWriterCreator.create(syncTask.targetType, targetAuthToken)
 
         try {
             stateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
-             sourceReader?.read()
+
+             sourceReader?.read(syncTask.sourcePath!!) // FIXME: sourcePath!!
+
             stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
+
              targetWriter?.write()
+
             stateChanger.changeState(taskId, SyncTask.State.SUCCESS)
         }
         catch (t: Throwable) {

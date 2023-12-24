@@ -38,4 +38,8 @@ class SyncObject (
         SUCCESS,
         ERROR
     }
+
+    override fun toString(): String {
+        return SyncObject::class.simpleName + " { ($state) $name, $path }"
+    }
 }

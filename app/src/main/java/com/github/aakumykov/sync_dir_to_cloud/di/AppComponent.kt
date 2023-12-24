@@ -9,8 +9,10 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.TargetWriterAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
@@ -21,9 +23,11 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskFilesPreparer
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.SyncTaskExecutor2
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
 
@@ -40,7 +44,9 @@ import dagger.Component
         WorkerModule::class,
         CoroutineModule::class,
         ViewModelsModule::class,
-        FileListerAssistedFactoriesModule::class
+        FileListerAssistedFactoriesModule::class,
+        SourceReaderAssistedFactoriesModule::class,
+        TargetWriterAssistedFactoriesModule::class
     ]
 )
 @AppScope
@@ -70,4 +76,5 @@ interface AppComponent {
     fun getCloudAuthReader(): CloudAuthReader
 
     fun getSyncTaskExecutor(): SyncTaskExecutor
+    fun getSyncTaskExecutor2(): SyncTaskExecutor2
 }
