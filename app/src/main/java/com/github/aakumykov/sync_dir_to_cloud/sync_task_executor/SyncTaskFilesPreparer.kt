@@ -11,7 +11,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
-import java.util.UUID
 
 class SyncTaskFilesPreparer @AssistedInject constructor (
     @Assisted private val recursiveDirReader: RecursiveDirReader,
@@ -31,7 +30,7 @@ class SyncTaskFilesPreparer @AssistedInject constructor (
 //        try {
             recursiveDirReader.getRecursiveList(syncTask.sourcePath!!).forEach { fileListItem ->
                 val syncObject = SyncObject(
-                    id = UUID.randomUUID().toString(),
+                    id = SyncObject.id(fileListItem),
                     taskId = syncTask.id,
                     name = fileListItem.name,
                     path = fileListItem.absolutePath,

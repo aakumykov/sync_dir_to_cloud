@@ -40,7 +40,7 @@ class LocalSourceReader @AssistedInject constructor(
         recursiveDirReader?.getRecursiveList(path)?.forEach { fileListItem ->
 
             val syncObject = SyncObject(
-                id = UUID.randomUUID().toString(),
+                id = SyncObject.id(fileListItem),
                 taskId = taskId,
                 name = fileListItem.name,
                 path = fileListItem.absolutePath,
