@@ -29,21 +29,9 @@ class SyncTaskFilesPreparer @AssistedInject constructor (
 
 //        try {
             recursiveDirReader.getRecursiveList(syncTask.sourcePath!!).forEach { fileListItem ->
-                val syncObject = SyncObject(
-                    id = SyncObject.id(fileListItem),
-                    taskId = syncTask.id,
-                    name = fileListItem.name,
-                    path = fileListItem.absolutePath,
-                    state = SyncObject.State.IDLE,
-                    isDir = fileListItem.isDir,
-                    isProgress = false,
-                    isSuccess = false,
-                    errorMsg = null,
-                    elementDate = fileListItem.cTime,
-                    syncDate = null,
+                syncObjectAdder.addSyncObject(
+                    SyncObject.create(syncTask.id, fileListItem)
                 )
-
-                syncObjectAdder.addSyncObject(syncObject)
             }
         /*}
         catch (t: Throwable) {

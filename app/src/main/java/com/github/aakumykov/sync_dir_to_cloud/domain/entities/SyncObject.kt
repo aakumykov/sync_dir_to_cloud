@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
 import com.github.aakumykov.fs_item.FSItem
+import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 @Entity(
@@ -46,6 +47,23 @@ class SyncObject (
     }
 
     companion object {
+
         fun id(fsItem: FSItem): String = sha256(fsItem.absolutePath)
+
+        fun create(taskId: String, fsItem: FSItem): SyncObject {
+            return SyncObject(
+                id = id(fsItem),
+                taskId = taskId,
+                name = fsItem.name,
+                path = fsItem.absolutePath,
+                state = State.IDLE,
+                isDir = fsItem.isDir,
+                isProgress = false,
+                isSuccess = false,
+                errorMsg = null,
+                elementDate = fsItem.cTime,
+                syncDate = null,
+            )
+        }
     }
 }
