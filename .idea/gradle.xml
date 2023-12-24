@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/../file_lister_navigator_selector/yandex_disk_file_selector" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/file_uploader" />
           </set>
         </option>
       </GradleProjectSettings>
