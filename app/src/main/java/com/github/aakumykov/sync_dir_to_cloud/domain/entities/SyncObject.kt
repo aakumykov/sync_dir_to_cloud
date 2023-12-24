@@ -2,6 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
+import com.github.aakumykov.fs_item.FSItem
+import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 @Entity(
     tableName = "sync_objects",
@@ -41,5 +43,9 @@ class SyncObject (
 
     override fun toString(): String {
         return SyncObject::class.simpleName + " { ($state) $name, $path }"
+    }
+
+    companion object {
+        fun id(fsItem: FSItem): String = sha256(fsItem.absolutePath)
     }
 }
