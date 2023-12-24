@@ -9,7 +9,7 @@ import dagger.assisted.AssistedInject
 
 class YandexTargetWriter @AssistedInject constructor(@Assisted authToken: String) : TargetWriter {
 
-    override fun write() {
+    override suspend fun write() {
         
     }
 

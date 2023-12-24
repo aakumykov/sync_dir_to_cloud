@@ -9,8 +9,8 @@ import dagger.assisted.AssistedInject
 
 class LocalTargetWriter @AssistedInject constructor(@Assisted authToken: String) : TargetWriter {
 
-    override fun write() {
-        
+    override suspend fun write() {
+        TODO("Не реализовано")
     }
 
     @AssistedFactory
