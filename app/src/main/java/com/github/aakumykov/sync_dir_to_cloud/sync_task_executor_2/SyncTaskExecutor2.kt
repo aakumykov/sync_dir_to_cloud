@@ -22,26 +22,15 @@ class SyncTaskExecutor2 @Inject constructor(
 
     suspend fun executeSyncTask(syncTask: SyncTask) {
         prepareReaderAndWriter(syncTask)
-    }
-
-    private suspend fun prepareReaderAndWriter(syncTask: SyncTask) {
 
         val taskId = syncTask.id
 
-        val sourceAuthToken = "" // TODO: реализовать
-        val targetAuthToken = cloudAuthReader.getCloudAuth(taskId)?.authToken
-
-        sourceReader = sourceReaderCreator.create(syncTask.sourceType, taskId, sourceAuthToken)
-        targetWriter = targetWriterCreator.create(syncTask.targetType, targetAuthToken)
-
         try {
-            stateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
-
-             sourceReader?.read(syncTask.sourcePath!!) // FIXME: sourcePath!!
+            stateChanger.changeState(taskId, SyncTask.State.READING_SOURCE)
+            sourceReader?.read(syncTask.sourcePath!!) // FIXME: sourcePath!!
 
             stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
-
-             targetWriter?.write()
+            targetWriter?.write()
 
             stateChanger.changeState(taskId, SyncTask.State.SUCCESS)
         }
@@ -49,6 +38,16 @@ class SyncTaskExecutor2 @Inject constructor(
             stateChanger.changeState(taskId, SyncTask.State.ERROR)
             Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
         }
+    }
+
+
+    private suspend fun prepareReaderAndWriter(syncTask: SyncTask) {
+
+        val sourceAuthToken = "" // TODO: реализовать
+        val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.id)?.authToken
+
+        sourceReader = sourceReaderCreator.create(syncTask.sourceType, syncTask.id, sourceAuthToken)
+        targetWriter = targetWriterCreator.create(syncTask.targetType, targetAuthToken)
     }
 
     companion object {
