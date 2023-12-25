@@ -10,12 +10,13 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
 import java.io.File
 import java.io.IOException
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 // TODO: внедрение зависимостей?
-class OkhttpFileUploader {
+class OkhttpFileUploader @Inject constructor() {
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder().build()
