@@ -8,9 +8,9 @@ import javax.inject.Inject
 class TargetWriterCreator @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards TargetWriterAssistedFactory>
 ) {
-    fun create(storageType: StorageType?, authToken: String?): TargetWriter? {
+    fun create(storageType: StorageType?, taskId: String, authToken: String?): TargetWriter? {
         return authToken?.let {
-            map[storageType]?.create(authToken)
+            map[storageType]?.create(authToken, taskId)
         }
     }
 }

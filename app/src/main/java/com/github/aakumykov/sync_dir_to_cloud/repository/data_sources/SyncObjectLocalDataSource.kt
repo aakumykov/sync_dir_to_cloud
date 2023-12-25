@@ -13,4 +13,10 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
             syncObjectDAO.add(syncObject)
         }
     }
+
+    suspend fun getSyncObjectsForTask(taskId: String): List<SyncObject> {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.getSyncObjectsForTask(taskId)
+        }
+    }
 }

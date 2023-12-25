@@ -47,7 +47,7 @@ class SyncTaskExecutor2 @Inject constructor(
         val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.id)?.authToken
 
         sourceReader = sourceReaderCreator.create(syncTask.sourceType, syncTask.id, sourceAuthToken)
-        targetWriter = targetWriterCreator.create(syncTask.targetType, targetAuthToken)
+        targetWriter = targetWriterCreator.create(syncTask.targetType, syncTask.id, targetAuthToken)
     }
 
     companion object {
