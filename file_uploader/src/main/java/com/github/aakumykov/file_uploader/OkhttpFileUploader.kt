@@ -16,14 +16,9 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 // TODO: внедрение зависимостей?
-class OkhttpFileUploader @Inject constructor() {
-
-    private val okHttpClient: OkHttpClient by lazy {
-        OkHttpClient.Builder().build()
-    }
+class OkhttpFileUploader @Inject constructor(private val okHttpClient: OkHttpClient) {
 
     private var currentCall: Call? = null
-
 
     /**
      * Асинхронно отправляет файл по назначению методом POST, для обратной связи использует коллбеки.

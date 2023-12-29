@@ -17,7 +17,7 @@ class SyncTaskExecutor2 @Inject constructor(
     private val cloudAuthReader: CloudAuthReader,
     private val stateChanger: SyncTaskStateChanger
 ) {
-    private var sourceReader: SourceReader? = null
+    private var sourceReader: SourceR eader? = null
     private var targetWriter: TargetWriter? = null
 
     suspend fun executeSyncTask(syncTask: SyncTask) {

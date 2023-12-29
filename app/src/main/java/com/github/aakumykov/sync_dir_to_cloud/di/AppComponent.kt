@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInte
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
@@ -23,7 +24,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskFilesPreparer
@@ -46,7 +46,8 @@ import dagger.Component
         ViewModelsModule::class,
         FileListerAssistedFactoriesModule::class,
         SourceReaderAssistedFactoriesModule::class,
-        TargetWriterAssistedFactoriesModule::class
+        TargetWriterAssistedFactoriesModule::class,
+        CloudModule::class
     ]
 )
 @AppScope
