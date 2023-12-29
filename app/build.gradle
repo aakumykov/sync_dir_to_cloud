@@ -79,6 +79,7 @@ dependencies {
     implementation project(path: ':yandex_disk_file_lister')
     implementation project(path: ':local_file_lister')
     implementation project(path: ':file_uploader')
+    implementation project(path: ':cloud_writer')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 
