@@ -3,8 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_write
 import com.github.aakumykov.file_uploader.OkhttpFileUploader
 import com.github.aakumykov.fs_item.FSItem
 import com.github.aakumykov.sync_dir_to_cloud.yandex_disk_upload_client.YandexDiskUploadClient
-import com.github.aakumykov.yandex_disk_client.YandexDiskClient
-import com.github.aakumykov.yandex_disk_file_lister.FileListerYandexDiskClient
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.io.File
