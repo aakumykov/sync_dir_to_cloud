@@ -33,7 +33,7 @@ class SyncTaskExecutor2 @Inject constructor(
             sourceReader?.read(syncTask.sourcePath!!)
 
             stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
-//            cloudWriter?
+            targetWriter3?.writeToTarget()
 
             stateChanger.changeState(taskId, SyncTask.State.SUCCESS)
         }
@@ -65,7 +65,6 @@ class SyncTaskExecutor2 @Inject constructor(
 
 
         sourceReader = sourceReaderCreator.create(sourceType, sourceAuthToken, taskId)
-//        targetWriter = targetWriterCreator.create(syncTask.targetType, taskId, targetAuthToken)
         targetWriter3 = targetWriterCreator3.create(targetType, targetAuthToken, taskId)
     }
 
