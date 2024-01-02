@@ -28,7 +28,8 @@ class YandexTargetWriter3 @AssistedInject constructor(
 
         syncObjectReader.getSyncObjectsForTask(taskId).filter {it.isDir }
             .forEach { syncObject ->
-                yandexCloudWriter?.createDir(syncObject.path)
+                // FIXME: как быть с вложенными каталогами?
+                yandexCloudWriter?.createDir(syncObject.name)
             }
     }
 

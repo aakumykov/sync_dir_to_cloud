@@ -25,7 +25,7 @@ class LocalTargetWriter3 @AssistedInject constructor(
 
         syncObjectReader.getSyncObjectsForTask(taskId).filter {it.isDir }
             .forEach { syncObject ->
-                localCloudWriter?.createDir(syncObject.path)
+                localCloudWriter?.createDir(syncObject.sourcePath)
             }
     }
 

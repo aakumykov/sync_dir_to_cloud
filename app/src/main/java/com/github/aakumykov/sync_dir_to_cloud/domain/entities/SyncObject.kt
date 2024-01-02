@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
 import com.github.aakumykov.fs_item.FSItem
-import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 @Entity(
@@ -25,7 +24,7 @@ class SyncObject (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     val name: String,
-    val path: String,
+    @ColumnInfo(name = "source_path") val sourcePath: String,
     val state: State,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
     @ColumnInfo(name = "is_progress") val isProgress: Boolean,
@@ -43,7 +42,7 @@ class SyncObject (
     }
 
     override fun toString(): String {
-        return SyncObject::class.simpleName + " { ($state) $name, $path }"
+        return SyncObject::class.simpleName + " { ($state) $name, $sourcePath }"
     }
 
     companion object {
@@ -55,7 +54,7 @@ class SyncObject (
                 id = id(fsItem),
                 taskId = taskId,
                 name = fsItem.name,
-                path = fsItem.absolutePath,
+                sourcePath = fsItem.absolutePath,
                 state = State.IDLE,
                 isDir = fsItem.isDir,
                 isProgress = false,
