@@ -15,7 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.TargetWriterAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TargetWriterAssistedFactoriesModule3
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
@@ -49,9 +48,8 @@ import dagger.Component
         ViewModelsModule::class,
         FileListerAssistedFactoriesModule::class,
         SourceReaderAssistedFactoriesModule::class,
-        TargetWriterAssistedFactoriesModule::class,
-        TargetWriterAssistedFactoriesModule3::class,
         CloudWriterAssistedFactoriesModule::class,
+        TargetWriterAssistedFactoriesModule3::class,
         OkhttpModule::class,
         GsonModule::class
     ]
