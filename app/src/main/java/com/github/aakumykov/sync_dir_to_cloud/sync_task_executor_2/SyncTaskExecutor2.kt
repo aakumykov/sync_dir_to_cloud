@@ -21,26 +21,21 @@ class SyncTaskExecutor2 @Inject constructor(
     private var sourceReader: SourceReader? = null
     private var targetWriter3: TargetWriter3? = null
 
+    // Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker2
     suspend fun executeSyncTask(syncTask: SyncTask) {
 
         prepareReaderAndWriter(syncTask)
 
         val taskId = syncTask.id
 
-        try {
-            stateChanger.changeState(taskId, SyncTask.State.READING_SOURCE)
-            // FIXME: sourcePath!!
-            sourceReader?.read(syncTask.sourcePath!!)
+        stateChanger.changeState(taskId, SyncTask.State.READING_SOURCE)
+        // FIXME: sourcePath!!
+        sourceReader?.read(syncTask.sourcePath!!)
 
-            stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
-            targetWriter3?.writeToTarget()
+        stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
+        targetWriter3?.writeToTarget()
 
-            stateChanger.changeState(taskId, SyncTask.State.SUCCESS)
-        }
-        catch (t: Throwable) {
-            stateChanger.changeState(taskId, SyncTask.State.ERROR)
-            Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
-        }
+        stateChanger.changeState(taskId, SyncTask.State.SUCCESS)
     }
 
 
