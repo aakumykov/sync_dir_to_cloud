@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
@@ -8,8 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3.TargetWriter3
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3.TargetWriterCreator3
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3.factory_and_creator.TargetWriterCreator3
 import javax.inject.Inject
 
 class SyncTaskExecutor2 @Inject constructor(
