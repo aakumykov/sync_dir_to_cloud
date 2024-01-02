@@ -5,15 +5,18 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TargetWriterAssistedFactoriesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.TargetWriterAssistedFactoriesModule3
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
@@ -47,7 +50,10 @@ import dagger.Component
         FileListerAssistedFactoriesModule::class,
         SourceReaderAssistedFactoriesModule::class,
         TargetWriterAssistedFactoriesModule::class,
-        CloudModule::class
+        TargetWriterAssistedFactoriesModule3::class,
+        CloudWriterAssistedFactoriesModule::class,
+        OkhttpModule::class,
+        GsonModule::class
     ]
 )
 @AppScope

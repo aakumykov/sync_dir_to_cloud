@@ -193,8 +193,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
     private fun selectSourcePath() {
-        val targetPathSelector = LocalFileSelector.create()
-        targetPathSelector.setCallback(sourcePathSelectionCallback)
+        val targetPathSelector = LocalFileSelector.create(sourcePathSelectionCallback)
         targetPathSelector.show(childFragmentManager)
     }
 

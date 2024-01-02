@@ -8,13 +8,18 @@ interface CloudWriter {
     @Throws(IOException::class, UnsuccessfulResponseException::class)
     fun createDir(path: String)
 
+
     @Throws(IOException::class, UnsuccessfulResponseException::class)
     fun putFile(file: File, targetDirPath: String, overwriteIfExists: Boolean = false)
+
 
 
     sealed class CloudWriterException(responseCode: Int, responseMessage: String)
         : Exception("${responseCode}: $responseMessage")
 
+
     class UnsuccessfulResponseException(responseCode: Int, responseMessage: String)
         : CloudWriterException(responseCode, responseMessage)
+
+
 }

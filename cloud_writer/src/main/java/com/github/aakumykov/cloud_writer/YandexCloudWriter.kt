@@ -2,6 +2,8 @@ package com.github.aakumykov.cloud_writer
 
 import com.google.gson.Gson
 import com.yandex.disk.rest.json.Link
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -12,12 +14,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.File
 import java.io.IOException
-import javax.inject.Inject
 
-class YandexCloudWriter @Inject constructor(
+class YandexCloudWriter @AssistedInject constructor(
     private val okHttpClient: OkHttpClient,
     private val gson: Gson,
-    private val authToken: String
+    @Assisted private val authToken: String
 ) : CloudWriter
 {
     @Throws(IOException::class, CloudWriter.UnsuccessfulResponseException::class)
@@ -102,4 +103,6 @@ class YandexCloudWriter @Inject constructor(
         private const val BASE_URL = "https://cloud-api.yandex.net/v1/disk/resources"
         private const val DEFAULT_MEDIA_TYPE = "application/octet-stream"
     }
+
+
 }
