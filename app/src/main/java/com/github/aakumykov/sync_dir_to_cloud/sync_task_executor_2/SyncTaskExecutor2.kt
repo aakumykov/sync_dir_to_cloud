@@ -1,8 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2
 
 import android.util.Log
-import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.cloud_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
@@ -16,13 +14,11 @@ import javax.inject.Inject
 
 class SyncTaskExecutor2 @Inject constructor(
     private val sourceReaderCreator: SourceReaderCreator,
-    private val cloudWriterCreator: CloudWriterCreator,
     private val targetWriterCreator3: TargetWriterCreator3,
     private val cloudAuthReader: CloudAuthReader,
     private val stateChanger: SyncTaskStateChanger
 ) {
     private var sourceReader: SourceReader? = null
-    private var cloudWriter: CloudWriter? = null
     private var targetWriter3: TargetWriter3? = null
 
     suspend fun executeSyncTask(syncTask: SyncTask) {
@@ -33,7 +29,8 @@ class SyncTaskExecutor2 @Inject constructor(
 
         try {
             stateChanger.changeState(taskId, SyncTask.State.READING_SOURCE)
-            sourceReader?.read(syncTask.sourcePath!!) // FIXME: sourcePath!!
+            // FIXME: sourcePath!!
+            sourceReader?.read(syncTask.sourcePath!!)
 
             stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
 //            cloudWriter?
@@ -49,16 +46,27 @@ class SyncTaskExecutor2 @Inject constructor(
 
     private suspend fun prepareReaderAndWriter(syncTask: SyncTask) {
 
+        val taskId = syncTask.id
+        // TODO: --> targetAuthId
+        val authId: String? = syncTask.cloudAuthId
+
         val sourceAuthToken = "" // TODO: реализовать
-        val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.id)?.authToken
+
+        // FIXME: убрать !!
+        val targetAuthToken = cloudAuthReader.getCloudAuth(authId!!)?.authToken
             ?: throw IllegalStateException("Target auth token cannot be null")
+
+
+        val sourceType: StorageType = syncTask.sourceType
+            ?: throw IllegalStateException("Source type cannot be null")
 
         val targetType: StorageType = syncTask.targetType
             ?: throw IllegalStateException("Target type cannot be null")
 
-        sourceReader = sourceReaderCreator.create(syncTask.sourceType, syncTask.id, sourceAuthToken)
-//        targetWriter = targetWriterCreator.create(syncTask.targetType, syncTask.id, targetAuthToken)
-        targetWriter3 = targetWriterCreator3.create(targetType, targetAuthToken, syncTask.id)
+
+        sourceReader = sourceReaderCreator.create(sourceType, sourceAuthToken, taskId)
+//        targetWriter = targetWriterCreator.create(syncTask.targetType, taskId, targetAuthToken)
+        targetWriter3 = targetWriterCreator3.create(targetType, targetAuthToken, taskId)
     }
 
     companion object {
