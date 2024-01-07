@@ -27,11 +27,13 @@ class SyncTaskFilesPreparer @AssistedInject constructor (
 
         delay(3000)
 
+        var currentSyncObject: SyncObject? = null
+
 //        try {
             recursiveDirReader.getRecursiveList(syncTask.sourcePath!!).forEach { fileListItem ->
-                syncObjectAdder.addSyncObject(
-                    SyncObject.create(syncTask.id, fileListItem)
-                )
+                val parentId = if (null == currentSyncObject) "" else currentSyncObject?.id
+                currentSyncObject = SyncObject.create(syncTask.id, parentId!!, fileListItem)
+                syncObjectAdder.addSyncObject(currentSyncObject!!)
             }
         /*}
         catch (t: Throwable) {
