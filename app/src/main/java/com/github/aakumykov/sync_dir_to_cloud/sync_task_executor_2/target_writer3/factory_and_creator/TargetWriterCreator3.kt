@@ -7,7 +7,12 @@ import javax.inject.Inject
 class TargetWriterCreator3 @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards TargetWriterFactory3>
 ) {
-    fun create(storageType: StorageType, authToken: String, taskId: String): TargetWriter3? {
-        return map[storageType]?.create(authToken, taskId)
+    fun create(storageType: StorageType,
+               authToken: String,
+               taskId: String,
+               targetDirPath: String
+    ): TargetWriter3?
+    {
+        return map[storageType]?.create(authToken, taskId, targetDirPath)
     }
 }

@@ -4,5 +4,6 @@ class AssistedArgName {
     companion object {
         const val AUTH_TOKEN = "AUTH_TOKEN"
         const val TASK_ID = "TASK_ID"
+        const val TARGET_DIR_PATH = "BASE_DIR"
     }
 }

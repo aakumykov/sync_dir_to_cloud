@@ -58,7 +58,9 @@ class SyncTaskExecutor2 @Inject constructor(
 
 
         sourceReader = sourceReaderCreator.create(sourceType, sourceAuthToken, taskId)
-        targetWriter3 = targetWriterCreator3.create(targetType, targetAuthToken, taskId)
+
+        // FIXME: убрать targetPath!!
+        targetWriter3 = targetWriterCreator3.create(targetType, targetAuthToken, taskId, syncTask.targetPath!!)
     }
 
     companion object {

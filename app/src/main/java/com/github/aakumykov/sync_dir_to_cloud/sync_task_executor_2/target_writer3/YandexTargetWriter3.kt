@@ -18,7 +18,9 @@ class YandexTargetWriter3 @AssistedInject constructor(
     private val cloudWriterCreator: CloudWriterCreator,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     @Assisted(AssistedArgName.AUTH_TOKEN)  private val authToken: String,
-    @Assisted(AssistedArgName.TASK_ID)  private val taskId: String
+    // TODO: вместо этого SyncTask или его часть через интерфейс
+    @Assisted(AssistedArgName.TASK_ID)  private val taskId: String,
+    @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String
 ) : TargetWriter3 {
 
     private val yandexCloudWriter: CloudWriter? by lazy {
@@ -36,7 +38,7 @@ class YandexTargetWriter3 @AssistedInject constructor(
             .forEach { syncObject ->
                 try {
                     syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.RUNNING)
-                    yandexCloudWriter?.createDir(syncObject.name)
+                    yandexCloudWriter?.createDir(targetDirPath, syncObject.name)
                     syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.SUCCESS)
                 }
                 catch (t: Throwable) {
@@ -48,7 +50,10 @@ class YandexTargetWriter3 @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory : TargetWriterFactory3 {
-        override fun create(@Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
-                            @Assisted(AssistedArgName.TASK_ID) taskId: String): YandexTargetWriter3
+        override fun create(
+            @Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
+            @Assisted(AssistedArgName.TASK_ID) taskId: String,
+            @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String
+        ): YandexTargetWriter3
     }
 }
