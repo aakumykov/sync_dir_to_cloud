@@ -14,4 +14,10 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
     fun getSyncObjectsForTask(taskId: String): List<SyncObject>
+
+    @Query("UPDATE sync_objects SET state = :state WHERE id = :syncObjectId")
+    fun setState(syncObjectId: String, state: SyncObject.State)
+
+    @Query("UPDATE sync_objects SET error_msg = :errorMsg WHERE id = :syncObjectId")
+    fun setErrorMsg(syncObjectId: String, errorMsg: String)
 }

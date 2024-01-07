@@ -1,9 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -14,7 +12,6 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
@@ -25,7 +22,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker2
-import com.github.aakumykov.yandex_disk_file_lister.YandexDiskFileLister
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -68,7 +64,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
         lifecycleScope.launch (Dispatchers.IO) {
 
-            val appComponent = App.getAppComponent();
+            val appComponent = App.getAppComponent()
 
             /*val cloudAuthAuthReader = appComponent.getCloudAuthReader()
             val cloudAuth = cloudAuthAuthReader.getCloudAuth(syncTask.cloudAuthId!!)

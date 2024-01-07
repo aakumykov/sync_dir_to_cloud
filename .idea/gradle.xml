@@ -10,17 +10,7 @@
         <option name="gradleJvm" value="11" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/file_explorer" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/file_lister" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/file_selector" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/fs_item" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/local_file_explorer" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/local_file_lister" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/local_file_selector" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/recursive_dir_reader" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/yandex_disk_file_explorer" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/yandex_disk_file_lister" />
-            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/yandex_disk_file_selector" />
+            <option value="$PROJECT_DIR$/../file_lister_navigator_selector/lib" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/cloud_writer" />

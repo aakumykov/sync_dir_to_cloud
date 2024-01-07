@@ -15,37 +15,11 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "sync_dir_to_cloud"
-include ':app',
-        ':fs_item',
-
-        ':file_lister',
-        ':file_explorer',
-        ':file_selector',
-
-        ':local_file_lister',
-        ':local_file_explorer',
-        ':local_file_selector',
-
-        ':yandex_disk_file_lister',
-        ':yandex_disk_file_explorer',
-        ':yandex_disk_file_selector',
-
-        ':recursive_dir_reader'
-
-project(':fs_item').projectDir = new File("../file_lister_navigator_selector/fs_item")
-project(':file_lister').projectDir = new File("../file_lister_navigator_selector/file_lister")
-
-project(':file_explorer').projectDir = new File("../file_lister_navigator_selector/file_explorer")
-project(':file_selector').projectDir = new File("../file_lister_navigator_selector/file_selector")
-
-project(':local_file_lister').projectDir = new File("../file_lister_navigator_selector/local_file_lister")
-project(':local_file_explorer').projectDir = new File("../file_lister_navigator_selector/local_file_explorer")
-project(':local_file_selector').projectDir = new File("../file_lister_navigator_selector/local_file_selector")
-
-project(':yandex_disk_file_lister').projectDir = new File("../file_lister_navigator_selector/yandex_disk_file_lister")
-project(':yandex_disk_file_explorer').projectDir = new File("../file_lister_navigator_selector/yandex_disk_file_explorer")
-project(':yandex_disk_file_selector').projectDir = new File("../file_lister_navigator_selector/yandex_disk_file_selector")
-
-project(':recursive_dir_reader').projectDir = new File("../file_lister_navigator_selector/recursive_dir_reader")
+include ':app'
 include ':file_uploader'
 include ':cloud_writer'
+
+include ':file_lister_navigator_selector'
+project(':file_lister_navigator_selector').projectDir = new File("../file_lister_navigator_selector/lib")
+
+

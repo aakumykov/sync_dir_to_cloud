@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader
 
-import com.github.aakumykov.file_lister.FileLister
+import com.github.aakumykov.file_lister_navigator_selector.file_lister.FileLister
+import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -27,14 +28,13 @@ class LocalSourceReader @AssistedInject constructor(
     }
 
     // TODO: в базовый класс...
-    private val recursiveDirReader by lazy {
+    private val recursiveDirReader: RecursiveDirReader? by lazy {
         recursiveDirReaderFactory.create(StorageType.LOCAL, authToken)
     }
 
     // TODO: в базовый класс...
     @Throws(FileLister.NotADirException::class)
     override suspend fun read(path: String) {
-
         recursiveDirReader?.getRecursiveList(path)?.forEach { fileListItem ->
             syncObjectAdder.addSyncObject(SyncObject.create(taskId, fileListItem))
         }

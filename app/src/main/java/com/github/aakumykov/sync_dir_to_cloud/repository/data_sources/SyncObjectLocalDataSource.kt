@@ -19,4 +19,16 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
             syncObjectDAO.getSyncObjectsForTask(taskId)
         }
     }
+
+    suspend fun setState(syncObjectId: String, state: SyncObject.State) {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.setState(syncObjectId, state)
+        }
+    }
+
+    suspend fun setErrorMsg(syncObjectId: String, errorMsg: String) {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.setErrorMsg(syncObjectId, errorMsg)
+        }
+    }
 }

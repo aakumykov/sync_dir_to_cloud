@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.util.Log
-import com.github.aakumykov.recursive_dir_reader.RecursiveDirReader
+import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationShower

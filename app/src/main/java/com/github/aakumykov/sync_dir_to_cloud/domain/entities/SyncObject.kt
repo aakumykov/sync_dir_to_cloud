@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
-import com.github.aakumykov.fs_item.FSItem
+import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 @Entity(
