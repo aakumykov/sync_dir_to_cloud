@@ -12,13 +12,14 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.io.File
 
+// TODO: базовый класс
 class YandexTargetWriter3 @AssistedInject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val cloudWriterCreator: CloudWriterCreator,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     @Assisted(AssistedArgName.AUTH_TOKEN)  private val authToken: String,
-    // TODO: вместо этого SyncTask или его часть через интерфейс
     @Assisted(AssistedArgName.TASK_ID)  private val taskId: String,
     @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String
 ) : TargetWriter3 {
@@ -28,24 +29,41 @@ class YandexTargetWriter3 @AssistedInject constructor(
     }
 
     @Throws(IllegalStateException::class)
-    override suspend fun writeToTarget() {
+    override suspend fun writeToTarget(overwriteIfExists: Boolean) {
 
         if (null == yandexCloudWriter)
             throw IllegalStateException("Cloud writer is null.")
 
-        // FIXME: как быть с вложенными каталогами?
-        syncObjectReader.getSyncObjectsForTask(taskId).filter {it.isDir }
+        syncObjectReader.getSyncObjectsForTask(taskId).filter { it.isDir }
             .forEach { syncObject ->
-                try {
-                    syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.RUNNING)
+                writeSyncObjectToTarget(syncObject) {
                     yandexCloudWriter?.createDir(targetDirPath, syncObject.name)
-                    syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.SUCCESS)
-                }
-                catch (t: Throwable) {
-                    syncObjectStateChanger.setErrorState(syncObject.id, ExceptionUtils.getErrorMessage(t))
-                    throw t
                 }
             }
+
+        syncObjectReader.getSyncObjectsForTask(taskId).filter { !it.isDir }
+            .forEach { syncObject ->
+                writeSyncObjectToTarget(syncObject) {
+                    yandexCloudWriter?.putFile(
+                        File(syncObject.sourcePath),
+                        targetDirPath,
+                        overwriteIfExists
+                    )
+                }
+            }
+    }
+
+    // TODO: в базовый класс
+    private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
+        try {
+            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.RUNNING)
+            writeAction.run()
+            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.SUCCESS)
+        }
+        catch (t: Throwable) {
+            syncObjectStateChanger.setErrorState(syncObject.id, ExceptionUtils.getErrorMessage(t))
+            throw t
+        }
     }
 
     @AssistedFactory

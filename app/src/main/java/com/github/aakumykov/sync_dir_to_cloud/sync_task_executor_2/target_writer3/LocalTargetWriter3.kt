@@ -18,7 +18,6 @@ class LocalTargetWriter3 @AssistedInject constructor(
     private val cloudWriterCreator: CloudWriterCreator,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     @Assisted(AssistedArgName.AUTH_TOKEN) private val authToken: String, // не используется
-    // TODO: вместо этого SyncTask или его часть через интерфейс
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
     @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String
 ) : TargetWriter3 {
@@ -28,7 +27,7 @@ class LocalTargetWriter3 @AssistedInject constructor(
     }
 
     @Throws(IllegalStateException::class)
-    override suspend fun writeToTarget() {
+    override suspend fun writeToTarget(overwriteIfExists: Boolean) {
 
         if (null == localCloudWriter)
             throw IllegalStateException("Cloud writer is null.")
@@ -37,6 +36,8 @@ class LocalTargetWriter3 @AssistedInject constructor(
             .forEach { syncObject ->
                 localCloudWriter?.createDir(targetDirPath, syncObject.sourcePath)
             }
+
+
     }
 
 
