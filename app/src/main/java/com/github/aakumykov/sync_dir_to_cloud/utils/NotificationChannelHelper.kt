@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
+package com.github.aakumykov.sync_dir_to_cloud.utils
 
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2
 
 import android.Manifest
 import android.content.Context
@@ -15,6 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationHider
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationShower
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import javax.inject.Inject
 
 class SyncTaskNotificator @Inject constructor(
