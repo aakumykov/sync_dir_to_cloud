@@ -27,8 +27,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskFilesPreparer
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.SyncTaskExecutor2
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import dagger.Component
@@ -76,10 +74,7 @@ interface AppComponent {
 
     fun getSyncTaskReader(): SyncTaskReader
 
-    fun getSyncTaskFilesPreparerAssistedFactory(): SyncTaskFilesPreparer.Factory
-
     fun getCloudAuthReader(): CloudAuthReader
 
-    fun getSyncTaskExecutor(): SyncTaskExecutor
     fun getSyncTaskExecutor2(): SyncTaskExecutor2
 }
