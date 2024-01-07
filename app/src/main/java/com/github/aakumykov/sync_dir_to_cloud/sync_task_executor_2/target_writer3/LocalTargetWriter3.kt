@@ -11,35 +11,26 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-// TODO: базовый класс, который будет менять состояние и прочее
-
 class LocalTargetWriter3 @AssistedInject constructor(
-    private val syncObjectReader: SyncObjectReader,
+    syncObjectReader: SyncObjectReader,
+    syncObjectStateChanger: SyncObjectStateChanger,
     private val cloudWriterCreator: CloudWriterCreator,
-    private val syncObjectStateChanger: SyncObjectStateChanger,
     @Assisted(AssistedArgName.AUTH_TOKEN) private val authToken: String, // не используется
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
     @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String
-) : TargetWriter3 {
-
+)
+    : BasicTargetWriter3(
+        taskId = taskId,
+        syncObjectStateChanger = syncObjectStateChanger,
+        syncObjectReader = syncObjectReader,
+        targetDirPath = targetDirPath
+    )
+{
     private val localCloudWriter: CloudWriter?  by lazy {
         cloudWriterCreator.createCloudWriter(StorageType.LOCAL, taskId)
     }
 
-    @Throws(IllegalStateException::class)
-    override suspend fun writeToTarget(overwriteIfExists: Boolean) {
-
-        if (null == localCloudWriter)
-            throw IllegalStateException("Cloud writer is null.")
-
-        syncObjectReader.getSyncObjectsForTask(taskId).filter {it.isDir }
-            .forEach { syncObject ->
-                localCloudWriter?.createDir(targetDirPath, syncObject.sourcePath)
-            }
-
-
-    }
-
+    override fun cloudWriter(): CloudWriter? = localCloudWriter
 
     @AssistedFactory
     interface Factory : TargetWriterFactory3 {
