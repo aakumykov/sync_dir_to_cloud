@@ -17,9 +17,9 @@ dependencyResolutionManagement {
 rootProject.name = "sync_dir_to_cloud"
 include ':app'
 include ':file_uploader'
-include ':cloud_writer'
 
 include ':file_lister_navigator_selector'
 project(':file_lister_navigator_selector').projectDir = new File("../file_lister_navigator_selector/lib")
 
-
+include ':cloud_writer'
+project(':cloud_writer').projectDir = new File("../cloud_reader_writer/cloud_writer")
