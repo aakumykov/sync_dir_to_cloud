@@ -32,7 +32,7 @@ abstract class BasicTargetWriter3 constructor(
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
                     cloudWriter()?.putFile(
-                        File(syncObject.sourcePath),
+                        File(syncObject.path),
                         targetDirPath,
                         overwriteIfExists
                     )

@@ -25,9 +25,9 @@ class SyncObject (
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "parent_id") val parentId: String,
     val name: String,
-    @ColumnInfo(name = "source_path") val sourcePath: String,
-    val state: State,
+    val path: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
+    val state: State,
     @ColumnInfo(name = "is_progress") val isProgress: Boolean,
     @ColumnInfo(name = "is_success") val isSuccess: Boolean,
     @ColumnInfo(name = "element_date") val elementDate: Long,
@@ -43,7 +43,7 @@ class SyncObject (
     }
 
     override fun toString(): String {
-        return SyncObject::class.simpleName + " { ($state) $name, $sourcePath }"
+        return SyncObject::class.simpleName + " { ($state) $name, $path }"
     }
 
     companion object {
@@ -61,9 +61,9 @@ class SyncObject (
                 taskId = taskId,
                 parentId = parentId,
                 name = fsItem.name,
-                sourcePath = fsItem.absolutePath,
-                state = State.IDLE,
+                path = fsItem.absolutePath,
                 isDir = fsItem.isDir,
+                state = State.IDLE,
                 isProgress = false,
                 isSuccess = false,
                 errorMsg = null,
