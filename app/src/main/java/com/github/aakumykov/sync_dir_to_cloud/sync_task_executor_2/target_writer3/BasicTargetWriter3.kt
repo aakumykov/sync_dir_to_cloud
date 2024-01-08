@@ -17,13 +17,21 @@ abstract class BasicTargetWriter3 constructor(
 )
     : TargetWriter3
 {
+    private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
+        try {
+            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.RUNNING)
+            writeAction.run()
+            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.SUCCESS)
+        }
+        catch (t: Throwable) {
+            syncObjectStateChanger.setErrorState(syncObject.id, ExceptionUtils.getErrorMessage(t))
+        }
+    }
+
+
     @Throws(IllegalStateException::class)
     override suspend fun writeToTarget(overwriteIfExists: Boolean) {
 
-        if (null == cloudWriter())
-            throw IllegalStateException("Cloud writer is null.")
-
-        // FIXME: при ошибке создания одного каталога весь процесс прекращается, это неверно.
         syncObjectReader.getSyncObjectsForTask(taskId).filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
@@ -56,18 +64,6 @@ abstract class BasicTargetWriter3 constructor(
                     )
                 }
             }
-    }
-
-    private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
-        try {
-            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.RUNNING)
-            writeAction.run()
-            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.SUCCESS)
-        }
-        catch (t: Throwable) {
-            syncObjectStateChanger.setErrorState(syncObject.id, ExceptionUtils.getErrorMessage(t))
-//            throw t
-        }
     }
 
     protected abstract fun cloudWriter(): CloudWriter?

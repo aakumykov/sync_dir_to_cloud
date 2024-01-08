@@ -14,7 +14,7 @@ class SyncTaskExecutor2 @Inject constructor(
     private val sourceReaderCreator: SourceReaderCreator,
     private val targetWriterCreator3: TargetWriterCreator3,
     private val cloudAuthReader: CloudAuthReader,
-    private val stateChanger: SyncTaskStateChanger
+    private val syncTaskStateChanger: SyncTaskStateChanger
 ) {
     private var sourceReader: SourceReader? = null
     private var targetWriter3: TargetWriter3? = null
@@ -26,14 +26,14 @@ class SyncTaskExecutor2 @Inject constructor(
 
         val taskId = syncTask.id
 
-        stateChanger.changeState(taskId, SyncTask.State.READING_SOURCE)
+        syncTaskStateChanger.changeState(taskId, SyncTask.State.READING_SOURCE)
         // FIXME: sourcePath!!
         sourceReader?.read(syncTask.sourcePath!!)
 
-        stateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
+        syncTaskStateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
         targetWriter3?.writeToTarget()
 
-        stateChanger.changeState(taskId, SyncTask.State.SUCCESS)
+        syncTaskStateChanger.changeState(taskId, SyncTask.State.SUCCESS)
     }
 
 
