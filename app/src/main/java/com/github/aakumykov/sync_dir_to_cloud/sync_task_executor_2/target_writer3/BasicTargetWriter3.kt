@@ -11,6 +11,7 @@ abstract class BasicTargetWriter3 constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val taskId: String,
+    private val sourceDirPath: String,
     private val targetDirPath: String
 )
     : TargetWriter3
@@ -24,17 +25,26 @@ abstract class BasicTargetWriter3 constructor(
         syncObjectReader.getSyncObjectsForTask(taskId).filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
-                    cloudWriter()?.createDir(targetDirPath, syncObject.name)
+
+                    val pathInTarget = syncObject.relativeParentDirPath + syncObject.name
+
+                    cloudWriter()?.createDir(
+                        parentDirName = targetDirPath,
+                        childDirName = pathInTarget)
                 }
             }
 
         syncObjectReader.getSyncObjectsForTask(taskId).filter { !it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
+
+                    val pathInSource = sourceDirPath + syncObject.relativeParentDirPath + syncObject.name
+                    val pathInTarget = syncObject.relativeParentDirPath + syncObject.name
+
                     cloudWriter()?.putFile(
-                        File(syncObject.path),
-                        targetDirPath,
-                        overwriteIfExists
+                        file = File(pathInSource),
+                        targetPath = pathInTarget,
+                        overwriteIfExists = overwriteIfExists
                     )
                 }
             }

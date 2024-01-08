@@ -17,12 +17,14 @@ class YandexTargetWriter3 @AssistedInject constructor(
     private val cloudWriterCreator: CloudWriterCreator,
     @Assisted(AssistedArgName.AUTH_TOKEN)  private val authToken: String,
     @Assisted(AssistedArgName.TASK_ID)  private val taskId: String,
-    @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String
+    @Assisted(AssistedArgName.SOURCE_DIR_PATH) private val sourceDirPath: String,
+    @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String,
 )
     : BasicTargetWriter3(
         syncObjectReader = syncObjectReader,
         syncObjectStateChanger = syncObjectStateChanger,
         taskId = taskId,
+        sourceDirPath = sourceDirPath,
         targetDirPath = targetDirPath
     )
 {
@@ -37,7 +39,8 @@ class YandexTargetWriter3 @AssistedInject constructor(
         override fun create(
             @Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
             @Assisted(AssistedArgName.TASK_ID) taskId: String,
-            @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String
+            @Assisted(AssistedArgName.SOURCE_DIR_PATH) sourceDirPath: String,
+            @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
         ): YandexTargetWriter3
     }
 }

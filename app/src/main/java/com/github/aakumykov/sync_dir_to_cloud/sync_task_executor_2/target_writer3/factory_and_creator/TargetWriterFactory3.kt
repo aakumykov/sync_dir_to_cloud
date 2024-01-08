@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer
 interface TargetWriterFactory3 {
     fun create(authToken: String,
                taskId: String,
-               targetDirPath: String
+               sourceDirPath: String,
+               targetDirPath: String,
     ): TargetWriter3
 }

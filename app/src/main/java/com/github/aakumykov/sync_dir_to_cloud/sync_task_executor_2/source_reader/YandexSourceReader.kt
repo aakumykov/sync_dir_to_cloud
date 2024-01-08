@@ -29,7 +29,7 @@ class YandexSourceReader @AssistedInject constructor(
         recursiveDirReaderFactory.create(StorageType.LOCAL, authToken)
     }
 
-    override suspend fun read(path: String) {
+    override suspend fun read(sourcePath: String) {
 
     }
 }

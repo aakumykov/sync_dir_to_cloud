@@ -10,9 +10,14 @@ class TargetWriterCreator3 @Inject constructor(
     fun create(storageType: StorageType,
                authToken: String,
                taskId: String,
+               sourceDirPath: String,
                targetDirPath: String
     ): TargetWriter3?
     {
-        return map[storageType]?.create(authToken, taskId, targetDirPath)
+        return map[storageType]?.create(
+            authToken,
+            taskId,
+            sourceDirPath,
+            targetDirPath)
     }
 }

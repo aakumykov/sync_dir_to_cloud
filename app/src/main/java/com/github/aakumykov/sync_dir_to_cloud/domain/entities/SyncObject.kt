@@ -24,7 +24,7 @@ class SyncObject (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     val name: String,
-    val path: String,
+    @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
     val state: State,
     @ColumnInfo(name = "is_progress") val isProgress: Boolean,
@@ -42,7 +42,7 @@ class SyncObject (
     }
 
     override fun toString(): String {
-        return SyncObject::class.simpleName + " { ($state) $name, $path }"
+        return SyncObject::class.simpleName + " { $relativeParentDirPath/$name ($state) }"
     }
 
     companion object {
@@ -51,14 +51,15 @@ class SyncObject (
 
         fun create(
             taskId: String,
-            fsItem: FSItem
+            fsItem: FSItem,
+            relativeParentDirPath: String
         ): SyncObject {
 
             return SyncObject(
                 id = id(fsItem),
                 taskId = taskId,
                 name = fsItem.name,
-                path = fsItem.absolutePath,
+                relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
                 state = State.IDLE,
                 isProgress = false,
