@@ -43,4 +43,6 @@ class YandexTargetWriter3 @AssistedInject constructor(
             @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
         ): YandexTargetWriter3
     }
+
+    override fun tag(): String = YandexTargetWriter3::class.java.simpleName
 }

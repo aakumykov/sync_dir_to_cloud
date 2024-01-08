@@ -43,4 +43,6 @@ class LocalTargetWriter3 @AssistedInject constructor(
             @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
         ): LocalTargetWriter3
     }
+
+    override fun tag(): String = LocalTargetWriter3::class.java.simpleName
 }

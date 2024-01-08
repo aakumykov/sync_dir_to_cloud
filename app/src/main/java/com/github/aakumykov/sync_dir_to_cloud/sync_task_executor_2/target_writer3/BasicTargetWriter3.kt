@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3
 
+import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -22,15 +23,22 @@ abstract class BasicTargetWriter3 constructor(
         if (null == cloudWriter())
             throw IllegalStateException("Cloud writer is null.")
 
+        // FIXME: при ошибке создания одного каталога весь процесс прекращается, это неверно.
         syncObjectReader.getSyncObjectsForTask(taskId).filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
 
-                    val pathInTarget = syncObject.relativeParentDirPath + syncObject.name
+                    val parentDirName = targetDirPath
+                    val childDirName = syncObject.relativeParentDirPath + syncObject.name
 
-                    cloudWriter()?.createDir(
-                        parentDirName = targetDirPath,
-                        childDirName = pathInTarget)
+                    try {
+                        cloudWriter()?.createDir(
+                            parentDirName = parentDirName,
+                            childDirName = childDirName
+                        )
+                    } catch (e: CloudWriter.AlreadyExistsException) {
+                        Log.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
+                    }
                 }
             }
 
@@ -38,8 +46,8 @@ abstract class BasicTargetWriter3 constructor(
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
 
-                    val pathInSource = sourceDirPath + syncObject.relativeParentDirPath + syncObject.name
-                    val pathInTarget = syncObject.relativeParentDirPath + syncObject.name
+                    val pathInSource = sourceDirPath + CloudWriter.DS + syncObject.relativeParentDirPath + CloudWriter.DS + syncObject.name
+                    val pathInTarget = targetDirPath + CloudWriter.DS + syncObject.relativeParentDirPath + CloudWriter.DS + syncObject.name
 
                     cloudWriter()?.putFile(
                         file = File(pathInSource),
@@ -58,9 +66,11 @@ abstract class BasicTargetWriter3 constructor(
         }
         catch (t: Throwable) {
             syncObjectStateChanger.setErrorState(syncObject.id, ExceptionUtils.getErrorMessage(t))
-            throw t
+//            throw t
         }
     }
 
     protected abstract fun cloudWriter(): CloudWriter?
+
+    protected abstract fun tag(): String
 }
