@@ -23,7 +23,6 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 class SyncObject (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
-    @ColumnInfo(name = "parent_id") val parentId: String,
     val name: String,
     val path: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
@@ -52,14 +51,12 @@ class SyncObject (
 
         fun create(
             taskId: String,
-            parentId: String,
             fsItem: FSItem
         ): SyncObject {
 
             return SyncObject(
                 id = id(fsItem),
                 taskId = taskId,
-                parentId = parentId,
                 name = fsItem.name,
                 path = fsItem.absolutePath,
                 isDir = fsItem.isDir,

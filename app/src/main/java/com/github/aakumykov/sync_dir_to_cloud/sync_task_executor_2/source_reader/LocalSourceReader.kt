@@ -36,12 +36,8 @@ class LocalSourceReader @AssistedInject constructor(
     @Throws(FileLister.NotADirException::class)
     override suspend fun read(path: String) {
 
-        var currentSyncObject: SyncObject? = null
-
         recursiveDirReader?.getRecursiveList(path)?.forEach { fileListItem ->
-            val parentId = if (null == currentSyncObject) "" else currentSyncObject?.id
-            currentSyncObject = SyncObject.create(taskId, parentId!!, fileListItem)
-            syncObjectAdder.addSyncObject(currentSyncObject!!)
+            syncObjectAdder.addSyncObject(SyncObject.create(taskId, fileListItem))
         }
     }
 }
