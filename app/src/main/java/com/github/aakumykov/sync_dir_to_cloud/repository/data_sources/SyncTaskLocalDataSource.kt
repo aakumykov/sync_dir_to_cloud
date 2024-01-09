@@ -50,4 +50,10 @@ class SyncTaskLocalDataSource @Inject constructor(
             syncTaskStateDAO.setState(taskId, state)
         }
     }
+
+    fun getTaskState(taskId: String): LiveData<SyncTask.State> {
+//        return withContext(Dispatchers.IO) {
+            return syncTaskStateDAO.getState(taskId)
+//        }
+    }
 }
