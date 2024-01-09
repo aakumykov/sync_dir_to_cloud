@@ -25,14 +25,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
 
-//        val syncTaskStateReader = App.getAppComponent().getSyncTaskStateReader(taskId)
-//        syncTaskStateReader.getSyncTaskState(taskId).observeForever(::onTaskStateCahnged)
-
-
         try {
             syncTaskNotificator.showNotification(taskId)
-//        App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
-            App.getAppComponent().getSyncTaskExecutor2().executeSyncTask(syncTask)
+            App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
         }
         catch (t: Throwable) {
             Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
@@ -45,10 +40,6 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         return Result.success()
     }
-
-    /*private fun onTaskStateCahnged(state: SyncTask.State) {
-        syncTaskNotificator.showNotification(taskId)
-    }*/
 
 
     // FIXME: арогумент key подразумевается один

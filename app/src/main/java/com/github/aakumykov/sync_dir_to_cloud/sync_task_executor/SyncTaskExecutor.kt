@@ -19,10 +19,15 @@ class SyncTaskExecutor @Inject constructor(
     private var sourceReader: SourceReader? = null
     private var mTargetWriter: TargetWriter? = null
 
-    // Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker2
-    suspend fun executeSyncTask(syncTask: SyncTask) {
 
+    // Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker (а как устойчивость к ошибкам?)
+    suspend fun executeSyncTask(syncTask: SyncTask) {
         prepareReaderAndWriter(syncTask)
+        doWork(syncTask)
+    }
+
+
+    private suspend fun doWork(syncTask: SyncTask) {
 
         val taskId = syncTask.id
 

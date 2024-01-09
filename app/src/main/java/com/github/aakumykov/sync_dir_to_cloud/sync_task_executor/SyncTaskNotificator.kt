@@ -18,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import javax.inject.Inject
 
+// TODO: передавать сюда CoroutineScope, в котором показывать уведомления...
 class SyncTaskNotificator @Inject constructor(
     @AppContext private val appContext: Context,
     private val notificationManagerCompat: NotificationManagerCompat,
@@ -36,8 +37,6 @@ class SyncTaskNotificator @Inject constructor(
         val syncTask = syncTaskReader.getSyncTask(taskId)
 
         val notificationId = syncTask.notificationId
-
-        Log.d(TAG, "showNotification(${syncTask.state})")
 
         when (syncTask.state) {
             SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
