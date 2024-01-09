@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.Manifest
 import android.content.Context

@@ -2,10 +2,9 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.KeyStorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.LocalSourceReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.YandexSourceReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReaderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.LocalSourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.YandexSourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReaderAssistedFactory
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

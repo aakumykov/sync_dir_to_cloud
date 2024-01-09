@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 
 import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
@@ -8,14 +8,14 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import java.io.File
 
-abstract class BasicTargetWriter3 constructor(
+abstract class BasicTargetWriter constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val taskId: String,
     private val sourceDirPath: String,
     private val targetDirPath: String
 )
-    : TargetWriter3
+    : TargetWriter
 {
     private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
         try {

@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationHider
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationShower
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import dagger.Module
 import dagger.Provides
 

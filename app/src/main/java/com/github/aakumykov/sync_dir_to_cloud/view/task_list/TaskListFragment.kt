@@ -21,7 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
-import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker2
+import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -89,8 +89,8 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
             val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
             syncTaskExecutor.executeSyncTask(syncTask)*/
 
-            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(SyncTaskWorker2::class.java)
-                .setInputData(Data.Builder().putString(SyncTaskWorker2.TASK_ID, taskId).build())
+            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
+                .setInputData(Data.Builder().putString(SyncTaskWorker.TASK_ID, taskId).build())
                 .build()
 
             WorkManager.getInstance(requireContext())

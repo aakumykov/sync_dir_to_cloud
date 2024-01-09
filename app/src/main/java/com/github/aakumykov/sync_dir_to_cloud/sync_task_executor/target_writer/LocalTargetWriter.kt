@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
@@ -6,12 +6,12 @@ import com.github.aakumykov.sync_dir_to_cloud.cloud_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3.factory_and_creator.TargetWriterFactory3
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class LocalTargetWriter3 @AssistedInject constructor(
+class LocalTargetWriter @AssistedInject constructor(
     syncObjectReader: SyncObjectReader,
     syncObjectStateChanger: SyncObjectStateChanger,
     private val cloudWriterCreator: CloudWriterCreator,
@@ -20,7 +20,7 @@ class LocalTargetWriter3 @AssistedInject constructor(
     @Assisted(AssistedArgName.SOURCE_DIR_PATH) private val sourceDirPath: String,
     @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String,
 )
-    : BasicTargetWriter3(
+    : BasicTargetWriter(
         taskId = taskId,
         syncObjectStateChanger = syncObjectStateChanger,
         syncObjectReader = syncObjectReader,
@@ -35,14 +35,14 @@ class LocalTargetWriter3 @AssistedInject constructor(
     override fun cloudWriter(): CloudWriter? = localCloudWriter
 
     @AssistedFactory
-    interface Factory : TargetWriterFactory3 {
+    interface Factory : TargetWriterFactory {
         override fun create(
             @Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
             @Assisted(AssistedArgName.TASK_ID) taskId: String,
             @Assisted(AssistedArgName.SOURCE_DIR_PATH) sourceDirPath: String,
             @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
-        ): LocalTargetWriter3
+        ): LocalTargetWriter
     }
 
-    override fun tag(): String = LocalTargetWriter3::class.java.simpleName
+    override fun tag(): String = LocalTargetWriter::class.java.simpleName
 }

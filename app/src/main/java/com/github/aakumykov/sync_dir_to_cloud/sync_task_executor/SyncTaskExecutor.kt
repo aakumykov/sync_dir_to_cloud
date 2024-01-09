@@ -1,23 +1,23 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.creator.SourceReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3.TargetWriter3
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.target_writer3.factory_and_creator.TargetWriterCreator3
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import javax.inject.Inject
 
-class SyncTaskExecutor2 @Inject constructor(
+class SyncTaskExecutor @Inject constructor(
     private val sourceReaderCreator: SourceReaderCreator,
-    private val targetWriterCreator3: TargetWriterCreator3,
+    private val targetWriterCreator: TargetWriterCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskStateChanger: SyncTaskStateChanger
 ) {
     private var sourceReader: SourceReader? = null
-    private var targetWriter3: TargetWriter3? = null
+    private var mTargetWriter: TargetWriter? = null
 
     // Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker2
     suspend fun executeSyncTask(syncTask: SyncTask) {
@@ -31,7 +31,7 @@ class SyncTaskExecutor2 @Inject constructor(
         sourceReader?.read(syncTask.sourcePath!!)
 
         syncTaskStateChanger.changeState(taskId, SyncTask.State.WRITING_TARGET)
-        targetWriter3?.writeToTarget()
+        mTargetWriter?.writeToTarget()
 
         syncTaskStateChanger.changeState(taskId, SyncTask.State.SUCCESS)
     }
@@ -60,7 +60,7 @@ class SyncTaskExecutor2 @Inject constructor(
         sourceReader = sourceReaderCreator.create(sourceType, sourceAuthToken, taskId)
 
         // FIXME: убрать targetPath!!
-        targetWriter3 = targetWriterCreator3.create(
+        mTargetWriter = targetWriterCreator.create(
             targetType,
             targetAuthToken,
             taskId,
@@ -70,6 +70,6 @@ class SyncTaskExecutor2 @Inject constructor(
     }
 
     companion object {
-        val TAG: String = SyncTaskExecutor2::class.java.simpleName
+        val TAG: String = SyncTaskExecutor::class.java.simpleName
     }
 }

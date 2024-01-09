@@ -1,8 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.creator
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator
 
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor_2.source_reader.interfaces.SourceReaderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReaderAssistedFactory
 import javax.inject.Inject
 
 class SourceReaderCreator @Inject constructor(
