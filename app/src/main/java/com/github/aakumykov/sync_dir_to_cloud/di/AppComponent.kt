@@ -64,9 +64,6 @@ interface AppComponent {
 
     fun getCloudAuthManagingUseCase(): CloudAuthManagingUseCase
 
-    fun injectSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
-    fun injectWorker2(syncTaskWorker: SyncTaskWorker)
-
     // FIXME: временное
     fun getCloudAuthAdder(): CloudAuthAdder
     fun getCloudAuthLister(): CloudAuthReader
