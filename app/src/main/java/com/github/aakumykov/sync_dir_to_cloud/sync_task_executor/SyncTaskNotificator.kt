@@ -11,16 +11,20 @@ import androidx.core.app.NotificationManagerCompat
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineMainScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationHider
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_notifications.SyncTaskNotificationShower
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 // TODO: передавать сюда CoroutineScope, в котором показывать уведомления...
 class SyncTaskNotificator @Inject constructor(
     @AppContext private val appContext: Context,
+    @CoroutineMainScope private val coroutineScope: CoroutineScope,
     private val notificationManagerCompat: NotificationManagerCompat,
     private val notificationChannelHelper: NotificationChannelHelper,
     private val syncTaskReader: SyncTaskReader
@@ -29,28 +33,27 @@ class SyncTaskNotificator @Inject constructor(
 {
     private var notificationBuilder: NotificationCompat.Builder? = null
 
-    override suspend fun showNotification(taskId: String) {
 
-        deleteNotificationsChannel() // FIXME: временно!
+    override fun showNotification(taskId: String) {
+
         prepareNotificationChannel()
 
-        val syncTask = syncTaskReader.getSyncTask(taskId)
+        coroutineScope.launch {
+            val syncTask = syncTaskReader.getSyncTask(taskId)
 
-        val notificationId = syncTask.notificationId
+            val notificationId = syncTask.notificationId
 
-        when (syncTask.state) {
-            SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
-            SyncTask.State.READING_SOURCE -> showNotificationReal(notificationId, R.string.NOTIFICATION_reading_source)
-            SyncTask.State.WRITING_TARGET -> showNotificationReal(notificationId, R.string.NOTIFICATION_writing_target)
-            SyncTask.State.SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_success)
-            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_semi_success)
-            SyncTask.State.ERROR -> showNotificationReal(notificationId, R.string.NOTIFICATION_error)
+            when (syncTask.state) {
+                SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
+                SyncTask.State.READING_SOURCE -> showNotificationReal(notificationId, R.string.NOTIFICATION_reading_source)
+                SyncTask.State.WRITING_TARGET -> showNotificationReal(notificationId, R.string.NOTIFICATION_writing_target)
+                SyncTask.State.SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_success)
+                SyncTask.State.SEMI_SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_semi_success)
+                SyncTask.State.ERROR -> showNotificationReal(notificationId, R.string.NOTIFICATION_error)
+            }
         }
     }
 
-    private fun deleteNotificationsChannel() {
-        notificationManagerCompat.deleteNotificationChannel(NotificationsConfig.CHANNEL_ID)
-    }
 
     private fun showNotificationReal(notificationId: Int, @StringRes textRes: Int) {
 
@@ -103,6 +106,11 @@ class SyncTaskNotificator @Inject constructor(
             )
         }
     }
+
+
+    /*private fun deleteNotificationsChannel() {
+        notificationManagerCompat.deleteNotificationChannel(NotificationsConfig.CHANNEL_ID)
+    }*/
 
 
     private fun string(@StringRes strRes: Int): String = appContext.resources.getString(strRes)

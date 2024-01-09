@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -53,5 +54,9 @@ class SyncTaskRepository @Inject constructor(
 
     override suspend fun getSyncTaskState(taskId: String): LiveData<SyncTask.State> {
         return syncTaskLocalDataSource.getTaskState(taskId)
+    }
+
+    override suspend fun getSyncTaskStateAsFlow(taskId: String): Flow<SyncTask.State> {
+        return syncTaskLocalDataSource.getTaskStateAsFlow(taskId)
     }
 }

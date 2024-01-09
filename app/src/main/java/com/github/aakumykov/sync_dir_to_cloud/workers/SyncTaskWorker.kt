@@ -2,6 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -10,6 +12,12 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
@@ -24,9 +32,11 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
+        App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsFlow(taskId).collect {
+            syncTaskNotificator.showNotification(taskId)
+        }
 
         try {
-            syncTaskNotificator.showNotification(taskId)
             App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
         }
         catch (t: Throwable) {
@@ -34,9 +44,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             return Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
         }
         finally {
+            // TODO: унифицировать по аргументу с методом show()
             syncTaskNotificator.hideNotification(syncTask.notificationId)
         }
-
 
         return Result.success()
     }
