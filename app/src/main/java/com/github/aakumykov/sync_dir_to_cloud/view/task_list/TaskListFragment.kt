@@ -89,14 +89,21 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
             val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
             syncTaskExecutor.executeSyncTask(syncTask)*/
 
-            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
-                .setInputData(Data.Builder().putString(SyncTaskWorker.TASK_ID, taskId).build())
-                .build()
-
             WorkManager.getInstance(requireContext())
-                .beginUniqueWork(taskId, ExistingWorkPolicy.KEEP, oneTimeWorkRequest)
+                .beginUniqueWork(taskId, ExistingWorkPolicy.KEEP, oneTimeWorkRequest(taskId))
                 .enqueue()
         }
+    }
+
+    override fun onProbeRunLongClicked(taskId: String) {
+        WorkManager.getInstance(requireContext())
+            .cancelUniqueWork(taskId)
+    }
+
+    private fun oneTimeWorkRequest(taskId: String): OneTimeWorkRequest {
+        return OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
+            .setInputData(Data.Builder().putString(SyncTaskWorker.TASK_ID, taskId).build())
+            .build()
     }
 
 

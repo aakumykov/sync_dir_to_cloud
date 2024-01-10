@@ -27,6 +27,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     init {
         probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
+        probeRunButton.setOnLongClickListener { itemClickCallback.onProbeRunLongClicked(currentTask.id); return@setOnLongClickListener true }
 
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
 
