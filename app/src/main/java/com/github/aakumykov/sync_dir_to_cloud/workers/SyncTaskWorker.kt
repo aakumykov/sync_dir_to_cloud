@@ -32,8 +32,10 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
-        App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsFlow(taskId).collect {
-            syncTaskNotificator.showNotification(taskId)
+        MainScope().launch {
+            App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsFlow(taskId).collect {
+                syncTaskNotificator.showNotification(taskId)
+            }
         }
 
         try {
