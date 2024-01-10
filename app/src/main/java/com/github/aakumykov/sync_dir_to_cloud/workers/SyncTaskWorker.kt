@@ -7,6 +7,7 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import kotlinx.coroutines.flow.collect
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
@@ -17,6 +18,11 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
+        val syncTaskNotificator = App.getAppComponent().getSyncTaskNotificator()
+
+        App.getAppComponent().getTaskStateReader().getSyncTaskState(taskId)
+            .collect { syncTaskNotificator.showNotification(taskId) }
+
         try {
 //        App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
             App.getAppComponent().getSyncTaskExecutor2().executeSyncTask(syncTask)
@@ -24,6 +30,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         catch (t: Throwable) {
             Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
             return Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
+        }
+        finally {
+            syncTaskNotificator.hideNotification(syncTask.notificationId)
         }
 
         return Result.success()

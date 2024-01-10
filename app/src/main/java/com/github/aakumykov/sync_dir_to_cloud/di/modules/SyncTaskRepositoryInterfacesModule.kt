@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
 import dagger.Module
@@ -25,5 +26,7 @@ class SyncTaskRepositoryInterfacesModule {
         return syncTaskRepository
     }
 
-
+    @Provides
+    fun provideSyncTaskStateReader(syncTaskRepository: SyncTaskRepository): SyncTaskStateReader
+        = syncTaskRepository
 }
