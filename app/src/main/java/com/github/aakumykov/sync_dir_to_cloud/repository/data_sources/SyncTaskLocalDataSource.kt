@@ -47,12 +47,10 @@ class SyncTaskLocalDataSource @Inject constructor(
     }
 
     suspend fun setState(taskId: String, state: SyncTask.State) {
-        return withContext(Dispatchers.IO) {
-            syncTaskStateDAO.setState(taskId, state)
-        }
+        syncTaskStateDAO.setState(taskId, state)
     }
 
-    fun getSyncTaskState(taskId: String): Flow<SyncTask.State> {
+    suspend fun getSyncTaskState(taskId: String): Flow<SyncTask.State> {
         return syncTaskStateDAO.getSyncTaskStateFlow(taskId)
     }
 }

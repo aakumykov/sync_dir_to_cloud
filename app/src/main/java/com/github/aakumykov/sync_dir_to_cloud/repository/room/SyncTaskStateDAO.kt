@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 interface SyncTaskStateDAO {
 
     @Query("UPDATE sync_tasks SET state = :state WHERE id = :taskId")
-    fun setState(taskId: String, state: SyncTask.State)
+    suspend fun setState(taskId: String, state: SyncTask.State)
 
     @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
-    fun getSyncTaskStateFlow(taskId: String): Flow<SyncTask.State>
+    suspend fun getSyncTaskStateFlow(taskId: String): Flow<SyncTask.State>
 }
