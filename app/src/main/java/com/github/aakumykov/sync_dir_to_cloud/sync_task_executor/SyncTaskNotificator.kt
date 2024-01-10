@@ -43,7 +43,10 @@ class SyncTaskNotificator @Inject constructor(
 
             val notificationId = syncTask.notificationId
 
-            when (syncTask.state) {
+            val state = syncTask.state
+            Log.d(TAG, "state: $state, notificationId: $notificationId")
+
+            when (state) {
                 SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
                 SyncTask.State.READING_SOURCE -> showNotificationReal(notificationId, R.string.NOTIFICATION_reading_source)
                 SyncTask.State.WRITING_TARGET -> showNotificationReal(notificationId, R.string.NOTIFICATION_writing_target)
