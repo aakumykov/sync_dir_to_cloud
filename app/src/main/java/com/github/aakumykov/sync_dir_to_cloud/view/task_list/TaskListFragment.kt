@@ -90,7 +90,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
             syncTaskExecutor.executeSyncTask(syncTask)*/
 
             WorkManager.getInstance(requireContext())
-                .beginUniqueWork(taskId, ExistingWorkPolicy.KEEP, oneTimeWorkRequest(taskId))
+                .beginUniqueWork(taskId, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest(taskId))
                 .enqueue()
         }
     }
