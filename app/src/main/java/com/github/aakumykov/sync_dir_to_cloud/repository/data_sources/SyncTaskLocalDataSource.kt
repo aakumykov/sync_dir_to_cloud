@@ -56,7 +56,7 @@ class SyncTaskLocalDataSource @Inject constructor(
         return syncTaskStateDAO.getState(taskId)
     }
 
-    suspend fun getTaskStateAsFlow(taskId: String): Flow<SyncTask.State> {
+    fun getTaskStateAsFlow(taskId: String): Flow<SyncTask.State> {
         return syncTaskStateDAO.getStateAsFlow(taskId)
     }
 }
