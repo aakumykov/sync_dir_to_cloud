@@ -34,7 +34,7 @@ class SyncTaskNotificator @Inject constructor(
     private var notificationBuilder: NotificationCompat.Builder? = null
 
 
-    override /*suspend*/ fun showNotification(taskId: String) {
+    override suspend fun showNotification(taskId: String) {
 
         prepareNotificationChannel()
 

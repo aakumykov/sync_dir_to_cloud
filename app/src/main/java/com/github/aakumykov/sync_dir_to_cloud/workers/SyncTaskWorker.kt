@@ -11,6 +11,11 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.suspendCoroutine
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
@@ -31,25 +36,28 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             }
         }*/
 
-        val processLifecycleOwner = ProcessLifecycleOwner.get()
-        App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsLiveData(taskId)
-            .observe(processLifecycleOwner) {
-                syncTaskNotificator.showNotification(taskId)
+        withContext(Dispatchers.Unconfined) {
+            App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsFlow(taskId)
+                .collect { syncTaskNotificator.showNotification(taskId) }
+        }
+
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d(TAG, "executeSyncTask()")
+                App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
+            }
+            catch (t: Throwable) {
+                Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
+                Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
+            }
+            finally {
+                // TODO: унифицировать по аргументу с методом show()
+                Log.d(TAG, "finally()")
+                syncTaskNotificator.hideNotification(syncTask.notificationId)
             }
 
-        try {
-            App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
+            Result.success()
         }
-        catch (t: Throwable) {
-            Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
-            return Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
-        }
-        finally {
-            // TODO: унифицировать по аргументу с методом show()
-            syncTaskNotificator.hideNotification(syncTask.notificationId)
-        }
-
-        return Result.success()
     }
 
 
