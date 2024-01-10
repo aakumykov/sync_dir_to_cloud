@@ -52,7 +52,7 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
-    override suspend fun getSyncTaskState(taskId: String): LiveData<SyncTask.State> {
+    override suspend fun getSyncTaskStateAsLiveData(taskId: String): LiveData<SyncTask.State> {
         return syncTaskLocalDataSource.getTaskState(taskId)
     }
 
