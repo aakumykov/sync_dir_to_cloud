@@ -12,7 +12,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.suspendCoroutine
@@ -30,34 +33,23 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
-        /*MainScope().launch {
-            App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsFlow(taskId).collect {
-                syncTaskNotificator.showNotification(taskId)
-            }
-        }*/
-
-        withContext(Dispatchers.Unconfined) {
-            App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsFlow(taskId)
+        MainScope().launch {
+            App.getAppComponent().getSyncTaskStateReader()
+                .getSyncTaskStateAsFlow(taskId)
+                .distinctUntilChanged()
                 .collect { syncTaskNotificator.showNotification(taskId) }
         }
 
-        return withContext(Dispatchers.IO) {
-            try {
-                Log.d(TAG, "executeSyncTask()")
-                App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
-            }
-            catch (t: Throwable) {
-                Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
-                Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
-            }
-            finally {
-                // TODO: унифицировать по аргументу с методом show()
-                Log.d(TAG, "finally()")
-                syncTaskNotificator.hideNotification(syncTask.notificationId)
-            }
-
-            Result.success()
+        try {
+            Log.d(TAG, "executeSyncTask()")
+            App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
         }
+        catch (t: Throwable) {
+            Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
+            Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
+        }
+
+        return Result.success()
     }
 
 

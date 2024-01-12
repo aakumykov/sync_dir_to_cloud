@@ -47,10 +47,10 @@ class SyncTaskNotificator @Inject constructor(
             Log.d(TAG, "state: $state, notificationId: $notificationId")
 
             when (state) {
+                SyncTask.State.SUCCESS -> hideNotification(syncTask.notificationId)
                 SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
                 SyncTask.State.READING_SOURCE -> showNotificationReal(notificationId, R.string.NOTIFICATION_reading_source)
                 SyncTask.State.WRITING_TARGET -> showNotificationReal(notificationId, R.string.NOTIFICATION_writing_target)
-                SyncTask.State.SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_success)
                 SyncTask.State.SEMI_SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_semi_success)
                 SyncTask.State.ERROR -> showNotificationReal(notificationId, R.string.NOTIFICATION_error)
             }
