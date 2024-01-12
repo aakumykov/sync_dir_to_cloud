@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -47,6 +48,7 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override fun changeState(taskId: String, newState: SyncTask.State) {
+        Log.d(TAG, "changeState($taskId, $newState")
         coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.setState(taskId, newState)
         }
@@ -58,5 +60,9 @@ class SyncTaskRepository @Inject constructor(
 
     override suspend fun getSyncTaskStateAsFlow(taskId: String): Flow<SyncTask.State> {
         return syncTaskLocalDataSource.getTaskStateAsFlow(taskId)
+    }
+
+    companion object {
+        val TAG: String = SyncTaskRepository::class.java.simpleName
     }
 }
