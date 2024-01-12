@@ -48,17 +48,19 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override fun changeState(taskId: String, newState: SyncTask.State) {
-        Log.d(TAG, "changeState($taskId, $newState")
+//        Log.d(TAG, "changeState($taskId, $newState")
         coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.setState(taskId, newState)
         }
     }
 
     override suspend fun getSyncTaskStateAsLiveData(taskId: String): LiveData<SyncTask.State> {
+        Log.d(TAG, "getSyncTaskStateAsLiveData($taskId)")
         return syncTaskLocalDataSource.getTaskState(taskId)
     }
 
     override suspend fun getSyncTaskStateAsFlow(taskId: String): Flow<SyncTask.State> {
+        Log.d(TAG, "getSyncTaskStateAsFlow($taskId)")
         return syncTaskLocalDataSource.getTaskStateAsFlow(taskId)
     }
 
