@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskState
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -12,12 +13,6 @@ interface SyncTaskStateDAO {
     @Query("UPDATE sync_tasks SET state = :state WHERE id = :taskId")
     fun setState(taskId: String, state: SyncTask.State)
 
-    @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
-    fun getState(taskId: String): LiveData<SyncTask.State>
-
-    @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
-    fun getStateAsFlow(taskId: String): Flow<SyncTask.State>
-
-    @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
-    fun getStateAsLiveData(taskId: String): LiveData<SyncTask.State>
+    @Query("SELECT id AS taskId, state, notification_id as notificationId FROM sync_tasks WHERE id = :taskId")
+    fun getState(taskId: String): LiveData<TaskState>
 }

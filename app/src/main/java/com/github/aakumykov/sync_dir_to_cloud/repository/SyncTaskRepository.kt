@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskState
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -48,20 +49,14 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override fun changeState(taskId: String, newState: SyncTask.State) {
-//        Log.d(TAG, "changeState($taskId, $newState")
+        Log.d(TAG, "changeState($taskId, $newState")
         coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.setState(taskId, newState)
         }
     }
 
-    override fun getSyncTaskStateAsLiveData(taskId: String): LiveData<SyncTask.State> {
-        Log.d(TAG, "getSyncTaskStateAsLiveData($taskId)")
+    override fun getSyncTaskStateAsLiveData(taskId: String): LiveData<TaskState> {
         return syncTaskLocalDataSource.getTaskState(taskId)
-    }
-
-    override suspend fun getSyncTaskStateAsFlow(taskId: String): Flow<SyncTask.State> {
-        Log.d(TAG, "getSyncTaskStateAsFlow($taskId)")
-        return syncTaskLocalDataSource.getTaskStateAsFlow(taskId)
     }
 
     companion object {
