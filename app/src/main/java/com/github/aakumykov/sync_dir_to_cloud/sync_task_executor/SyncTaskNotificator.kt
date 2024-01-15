@@ -30,28 +30,29 @@ class SyncTaskNotificator @Inject constructor(
     }
 
 
-    fun showNotification(notificationId: Int, state: SyncTask.State) {
+    fun showNotification(taskId: String, notificationId: Int, state: SyncTask.State) {
 
-        Log.d(tagWithHashCode(), "showNotification($notificationId, $state)")
+        Log.d(tagWithHashCode(), "showNotification($taskId, $notificationId, $state)")
 
         prepareNotificationChannel()
 
         when (state) {
-            SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
-            SyncTask.State.READING_SOURCE -> showNotificationReal(notificationId, R.string.NOTIFICATION_reading_source)
-            SyncTask.State.WRITING_TARGET -> showNotificationReal(notificationId, R.string.NOTIFICATION_writing_target)
-            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_semi_success)
+            SyncTask.State.IDLE -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_idle)
+            SyncTask.State.READING_SOURCE -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_reading_source)
+            SyncTask.State.WRITING_TARGET -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_writing_target)
+            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_semi_success)
             // FIXME: ошибочное уведомление должно быть скрываемым
-            SyncTask.State.ERROR -> showNotificationReal(notificationId, R.string.NOTIFICATION_error)
-            SyncTask.State.SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_success)
+            SyncTask.State.ERROR -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_error)
+            SyncTask.State.SUCCESS -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_success)
         }
     }
 
-    fun hideNotification(notificationId: Int) {
-        notificationManagerCompat.cancel(notificationId)
+    fun hideNotification(taskId: String, notificationId: Int) {
+        Log.d(tagWithHashCode(), "hideNotification($taskId, $notificationId)")
+        notificationManagerCompat.cancel(taskId, notificationId)
     }
 
-    private fun showNotificationReal(notificationId: Int, @StringRes textRes: Int) {
+    private fun showNotificationReal(taskId: String ,notificationId: Int, @StringRes textRes: Int) {
 
         // Проверка наличия разрешения на уведомления
         if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -69,7 +70,7 @@ class SyncTaskNotificator @Inject constructor(
             setContentTitle(string(textRes))
         }.also { notificationBuilder ->
             notificationManagerCompat.notify(
-                ProgressNotificationsConfig.TAG,
+                taskId,
                 notificationId,
                 notificationBuilder.build()
             )

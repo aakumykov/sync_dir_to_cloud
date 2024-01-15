@@ -10,6 +10,5 @@ class ProgressNotificationsConfig {
         val CHANNEL_NAME_RES: Int = R.string.notifications_channel_name
         val CHANNEL_DESCRIPTION_RES: Int = R.string.notifications_channel_description
         val SMALL_ICON: Int = R.drawable.ic_notification
-        val TAG: String = "NOTIFICATIONS_TAG"
     }
 }

@@ -30,18 +30,21 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun doWork(syncTask: SyncTask) {
 
+        val taskId = syncTask.id
+        val notificationId = syncTask.notificationId
+
         // FIXME: !! в sourcePath
 
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
-        syncTaskNotificator.showNotification(syncTask.notificationId, SyncTask.State.READING_SOURCE)
+        syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
         sourceReader?.read(syncTask.sourcePath!!)
 
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.WRITING_TARGET)
-        syncTaskNotificator.showNotification(syncTask.notificationId, SyncTask.State.WRITING_TARGET)
+        syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
         mTargetWriter?.writeToTarget()
 
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.SUCCESS)
-        syncTaskNotificator.hideNotification(syncTask.notificationId)
+        syncTaskNotificator.hideNotification(taskId, notificationId)
     }
 
 
