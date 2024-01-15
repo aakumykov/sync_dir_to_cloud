@@ -6,7 +6,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.NotificationService
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
@@ -27,7 +26,6 @@ class SyncTaskWorker(private val context: Context, workerParameters: WorkerParam
 
         try {
             Log.d(TAG, "executeSyncTask()")
-            NotificationService.start(context, taskId)
             App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
         }
         catch (t: Throwable) {

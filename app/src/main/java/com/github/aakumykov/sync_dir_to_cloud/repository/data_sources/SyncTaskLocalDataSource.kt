@@ -2,11 +2,9 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.data_sources
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -51,9 +49,5 @@ class SyncTaskLocalDataSource @Inject constructor(
         return withContext(Dispatchers.IO) {
             syncTaskStateDAO.setState(taskId, state)
         }
-    }
-
-    fun getTaskState(taskId: String): LiveData<TaskState> {
-        return syncTaskStateDAO.getState(taskId)
     }
 }

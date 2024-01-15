@@ -5,16 +5,13 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskState
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +21,7 @@ class SyncTaskRepository @Inject constructor(
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
 )
-    : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater, SyncTaskStateChanger, SyncTaskStateReader
+    : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater, SyncTaskStateChanger
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return syncTaskLocalDataSource.listSyncTasks()
@@ -55,9 +52,6 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
-    override fun getSyncTaskStateAsLiveData(taskId: String): LiveData<TaskState> {
-        return syncTaskLocalDataSource.getTaskState(taskId)
-    }
 
     companion object {
         val TAG: String = SyncTaskRepository::class.java.simpleName

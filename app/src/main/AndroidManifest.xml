@@ -31,7 +31,6 @@
                 android:value="" />
         </activity>
 
-        <service android:name="com.github.aakumykov.sync_dir_to_cloud.NotificationService" />
     </application>
 
 </manifest>

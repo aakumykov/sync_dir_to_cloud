@@ -12,7 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskState
+import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import javax.inject.Inject
 
@@ -24,19 +24,20 @@ class SyncTaskNotificator @Inject constructor(
     private var notificationBuilder: NotificationCompat.Builder? = null
 
 
-    fun showNotification(taskState: TaskState) {
-        Log.d(TAG, "showNotification(hc: ${hashCode()}), $taskState")
+    fun showNotification(notificationId: Int, state: SyncTask.State) {
+
+        Log.d(tagWithHashCode(), "showNotification($notificationId, $state)")
 
         prepareNotificationChannel()
 
-        when (taskState.state) {
-            SyncTask.State.IDLE -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_idle)
-            SyncTask.State.READING_SOURCE -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_reading_source)
-            SyncTask.State.WRITING_TARGET -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_writing_target)
-            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_semi_success)
+        when (state) {
+            SyncTask.State.IDLE -> showNotificationReal(notificationId, R.string.NOTIFICATION_idle)
+            SyncTask.State.READING_SOURCE -> showNotificationReal(notificationId, R.string.NOTIFICATION_reading_source)
+            SyncTask.State.WRITING_TARGET -> showNotificationReal(notificationId, R.string.NOTIFICATION_writing_target)
+            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_semi_success)
             // FIXME: ошибочное уведомление должно быть скрываемым
-            SyncTask.State.ERROR -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_error)
-            SyncTask.State.SUCCESS -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_success)
+            SyncTask.State.ERROR -> showNotificationReal(notificationId, R.string.NOTIFICATION_error)
+            SyncTask.State.SUCCESS -> showNotificationReal(notificationId, R.string.NOTIFICATION_success)
         }
     }
 

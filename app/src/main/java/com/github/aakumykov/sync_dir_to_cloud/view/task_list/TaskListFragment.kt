@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
+import androidx.work.Operation
 import androidx.work.WorkManager
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -19,6 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
@@ -100,8 +102,14 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
     }
 
     override fun onProbeRunLongClicked(taskId: String) {
-        WorkManager.getInstance(requireContext())
-            .cancelUniqueWork(taskId)
+        WorkManager.getInstance(requireContext()).cancelUniqueWork(taskId)
+            .state.observe(viewLifecycleOwner) { operationState ->
+                when (operationState) {
+                    is Operation.State.SUCCESS -> showToast("Задача отменена")
+                    is Operation.State.FAILURE -> showToast("Ошибка отмены задачи")
+                    else -> {}
+                }
+            }
     }
 
     private fun oneTimeWorkRequest(taskId: String): OneTimeWorkRequest {
