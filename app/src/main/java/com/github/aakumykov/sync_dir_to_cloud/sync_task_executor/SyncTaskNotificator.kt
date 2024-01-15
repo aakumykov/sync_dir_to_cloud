@@ -9,7 +9,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.config.NotificationsConfig
+import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
@@ -21,7 +21,13 @@ class SyncTaskNotificator @Inject constructor(
     private val notificationManagerCompat: NotificationManagerCompat,
     private val notificationChannelHelper: NotificationChannelHelper
 ) {
-    private var notificationBuilder: NotificationCompat.Builder? = null
+    private val notificationBuilder: NotificationCompat.Builder by lazy {
+        NotificationCompat.Builder(appContext, ProgressNotificationsConfig.CHANNEL_ID).apply {
+            setSmallIcon(ProgressNotificationsConfig.SMALL_ICON)
+            setOngoing(true)
+            setProgress(0,0,true)
+        }
+    }
 
 
     fun showNotification(notificationId: Int, state: SyncTask.State) {
@@ -47,20 +53,8 @@ class SyncTaskNotificator @Inject constructor(
 
     private fun showNotificationReal(notificationId: Int, @StringRes textRes: Int) {
 
-        if (null == notificationBuilder) {
-            notificationBuilder = NotificationCompat.Builder(appContext, NotificationsConfig.CHANNEL_ID).apply {
-                setSmallIcon(NotificationsConfig.SMALL_ICON)
-                setContentTitle(string(textRes))
-                setOngoing(true)
-                setProgress(0,0,true)
-            }
-        }
-
-        if (ActivityCompat.checkSelfPermission(
-                appContext,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        // Проверка наличия разрешения на уведомления
+        if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -71,11 +65,13 @@ class SyncTaskNotificator @Inject constructor(
             return
         }
 
-        notificationBuilder?.let {
+        notificationBuilder.apply {
+            setContentTitle(string(textRes))
+        }.also { notificationBuilder ->
             notificationManagerCompat.notify(
-                NotificationsConfig.TAG,
+                ProgressNotificationsConfig.TAG,
                 notificationId,
-                it.build()
+                notificationBuilder.build()
             )
         }
     }
@@ -84,19 +80,19 @@ class SyncTaskNotificator @Inject constructor(
     private fun prepareNotificationChannel() {
         deleteNotificationsChannel()
 
-        if (!notificationChannelHelper.channelExists(NotificationsConfig.CHANNEL_ID)) {
+        if (!notificationChannelHelper.channelExists(ProgressNotificationsConfig.CHANNEL_ID)) {
             notificationChannelHelper.createNotificationChannel(
-                NotificationsConfig.CHANNEL_ID,
-                NotificationsConfig.CHANNEL_IMPORTANCE,
-                string(NotificationsConfig.CHANNEL_NAME_RES),
-                string(NotificationsConfig.CHANNEL_DESCRIPTION_RES)
+                ProgressNotificationsConfig.CHANNEL_ID,
+                ProgressNotificationsConfig.CHANNEL_IMPORTANCE,
+                string(ProgressNotificationsConfig.CHANNEL_NAME_RES),
+                string(ProgressNotificationsConfig.CHANNEL_DESCRIPTION_RES)
             )
         }
     }
 
 
     private fun deleteNotificationsChannel() {
-        notificationManagerCompat.deleteNotificationChannel(NotificationsConfig.CHANNEL_ID)
+        notificationManagerCompat.deleteNotificationChannel(ProgressNotificationsConfig.CHANNEL_ID)
     }
 
 
