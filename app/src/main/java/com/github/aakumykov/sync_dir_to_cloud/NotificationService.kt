@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskState
+import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 
 class NotificationService : Service() {
@@ -19,6 +20,7 @@ class NotificationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(tagWithHashCode(), "onStartCommand()")
 
         intent?.getStringExtra(TASK_ID)?.also { taskId ->
             preparePublisherAndObserver(taskId)
@@ -30,22 +32,29 @@ class NotificationService : Service() {
     }
 
     private fun preparePublisherAndObserver(taskId: String) {
-        Log.d(TAG, "preparePublisherAndObserver() called with: taskId = $taskId")
+        Log.d(tagWithHashCode(), "preparePublisherAndObserver() called with: taskId = $taskId")
+
         syncTaskStateLiveData = App.getAppComponent().getSyncTaskStateReader().getSyncTaskStateAsLiveData(taskId)
+
         syncTaskStateObserver = Observer { taskState ->
-            Log.d(TAG, "(service hc: ${serviceHashCode()}) $taskState")
+            Log.d(tagWithHashCode(), taskState.toString())
             syncTaskNotificator.showNotification(taskState)
         }
     }
 
     private fun startWatchingToState() {
-//        Log.d(TAG, "startWatchingToState() called")
+        Log.d(tagWithHashCode(), "startWatchingToState()")
         syncTaskStateLiveData!!.observeForever(syncTaskStateObserver!!)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(tagWithHashCode(), "onCreate()")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy() called")
+        Log.d(tagWithHashCode(), "onDestroy() called")
 
         if (null != syncTaskStateLiveData && null != syncTaskStateObserver)
             syncTaskStateLiveData!!.removeObserver(syncTaskStateObserver!!)

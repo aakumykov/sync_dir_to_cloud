@@ -17,6 +17,7 @@ class SyncTaskWorker(private val context: Context, workerParameters: WorkerParam
     }
 
     override suspend fun doWork(): Result {
+        Log.d(TAG, "doWork(${hashCode()})")
 
         val taskId: String = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("Task id not found in input data"))

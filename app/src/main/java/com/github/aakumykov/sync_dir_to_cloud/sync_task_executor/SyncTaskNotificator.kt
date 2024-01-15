@@ -34,17 +34,15 @@ class SyncTaskNotificator @Inject constructor(
             SyncTask.State.READING_SOURCE -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_reading_source)
             SyncTask.State.WRITING_TARGET -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_writing_target)
             SyncTask.State.SEMI_SUCCESS -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_semi_success)
-            // FIXME: это уведомление должно быть скрываемым
+            // FIXME: ошибочное уведомление должно быть скрываемым
             SyncTask.State.ERROR -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_error)
-            SyncTask.State.SUCCESS -> hideNotification(taskState.notificationId)
+            SyncTask.State.SUCCESS -> showNotificationReal(taskState.notificationId, R.string.NOTIFICATION_success)
         }
     }
 
-
     fun hideNotification(notificationId: Int) {
-        notificationManagerCompat.cancel(NotificationsConfig.TAG, notificationId)
+        notificationManagerCompat.cancel(notificationId)
     }
-
 
     private fun showNotificationReal(notificationId: Int, @StringRes textRes: Int) {
 
