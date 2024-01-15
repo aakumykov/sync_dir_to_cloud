@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
@@ -14,6 +15,7 @@ class SyncTaskExecutor @Inject constructor(
     private val sourceReaderCreator: SourceReaderCreator,
     private val targetWriterCreator: TargetWriterCreator,
     private val cloudAuthReader: CloudAuthReader,
+    private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator
 ) {
@@ -21,12 +23,37 @@ class SyncTaskExecutor @Inject constructor(
     private var mTargetWriter: TargetWriter? = null
 
 
-    // Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker (а как устойчивость к ошибкам?)
-    suspend fun executeSyncTask(syncTask: SyncTask) {
-        prepareReaderAndWriter(syncTask)
-        doWork(syncTask)
+    // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. А как устойчивость к ошибкам?
+    suspend fun executeSyncTask(taskId: String) {
+        syncTaskReader.getSyncTask(taskId).also {  syncTask ->
+            prepareReader(syncTask)
+            prepareWriter(syncTask)
+            doWork(syncTask)
+        }
     }
 
+
+    private fun prepareReader(syncTask: SyncTask) {
+        // TODO: реализовать sourceAuthToken
+        sourceReader = sourceReaderCreator.create(syncTask.sourceType, "", syncTask.id)
+    }
+
+
+    private suspend fun prepareWriter(syncTask: SyncTask) {
+
+        // FIXME: убрать двойное !!
+
+        val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.cloudAuthId!!)?.authToken
+            ?: throw IllegalStateException("Target auth token cannot be null")
+
+        mTargetWriter = targetWriterCreator.create(
+            syncTask.targetType!!,
+            targetAuthToken,
+            syncTask.id,
+            syncTask.sourcePath!!,
+            syncTask.targetPath!!
+        )
+    }
 
     private suspend fun doWork(syncTask: SyncTask) {
 
@@ -45,39 +72,6 @@ class SyncTaskExecutor @Inject constructor(
 
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.SUCCESS)
         syncTaskNotificator.hideNotification(taskId, notificationId)
-    }
-
-
-    private suspend fun prepareReaderAndWriter(syncTask: SyncTask) {
-
-        val taskId = syncTask.id
-        // TODO: --> targetAuthId
-        val authId: String? = syncTask.cloudAuthId
-
-        val sourceAuthToken = "" // TODO: реализовать
-
-        // FIXME: убрать !!
-        val targetAuthToken = cloudAuthReader.getCloudAuth(authId!!)?.authToken
-            ?: throw IllegalStateException("Target auth token cannot be null")
-
-
-        val sourceType: StorageType = syncTask.sourceType
-            ?: throw IllegalStateException("Source type cannot be null")
-
-        val targetType: StorageType = syncTask.targetType
-            ?: throw IllegalStateException("Target type cannot be null")
-
-
-        sourceReader = sourceReaderCreator.create(sourceType, sourceAuthToken, taskId)
-
-        // FIXME: убрать targetPath!!
-        mTargetWriter = targetWriterCreator.create(
-            targetType,
-            targetAuthToken,
-            taskId,
-            syncTask.sourcePath!!,
-            syncTask.targetPath!!
-        )
     }
 
     companion object {

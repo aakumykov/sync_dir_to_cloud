@@ -21,12 +21,10 @@ class SyncTaskWorker(private val context: Context, workerParameters: WorkerParam
         val taskId: String = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("Task id not found in input data"))
 
-        // TODO: передавать в SyncTaskExecutor taskId
-        val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
         try {
             Log.d(TAG, "executeSyncTask()")
-            App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
+            App.getAppComponent().getSyncTaskExecutor().executeSyncTask(taskId)
         }
         catch (t: Throwable) {
             Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
