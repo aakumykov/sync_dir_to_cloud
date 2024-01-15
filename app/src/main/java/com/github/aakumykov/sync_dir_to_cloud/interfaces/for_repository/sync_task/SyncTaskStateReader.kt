@@ -5,6 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import kotlinx.coroutines.flow.Flow
 
 interface SyncTaskStateReader {
-    suspend fun getSyncTaskStateAsLiveData(taskId: String): LiveData<SyncTask.State>
-    suspend fun getSyncTaskStateAsFlow(taskId: String): Flow<SyncTask.State>
+    fun getSyncTaskStateAsLiveData(taskId: String): LiveData<SyncTask.State>
+    @Deprecated("Используй LiveData") suspend fun getSyncTaskStateAsFlow(taskId: String): Flow<SyncTask.State>
 }

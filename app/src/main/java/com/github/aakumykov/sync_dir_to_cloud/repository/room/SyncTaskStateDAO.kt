@@ -17,4 +17,7 @@ interface SyncTaskStateDAO {
 
     @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
     fun getStateAsFlow(taskId: String): Flow<SyncTask.State>
+
+    @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
+    fun getStateAsLiveData(taskId: String): LiveData<SyncTask.State>
 }

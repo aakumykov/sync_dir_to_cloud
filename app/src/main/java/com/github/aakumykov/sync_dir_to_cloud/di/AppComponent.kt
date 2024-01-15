@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
+import com.github.aakumykov.sync_dir_to_cloud.SyncTaskNotificator2
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerAssistedFactoriesModule
@@ -79,4 +80,6 @@ interface AppComponent {
     fun getSyncTaskStateReader(): SyncTaskStateReader
 
     fun getSyncTaskNotificator(): SyncTaskNotificator
+
+    fun getSyncTaskNotificator2(): SyncTaskNotificator2
 }

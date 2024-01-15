@@ -2,25 +2,15 @@ package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.NotificationService
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.suspendCoroutine
 
-class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
+class SyncTaskWorker(private val context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
     private val syncTaskNotificator: SyncTaskNotificator by lazy {
         App.getAppComponent().getSyncTaskNotificator()
@@ -33,15 +23,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         val syncTask = App.getAppComponent().getSyncTaskReader().getSyncTask(taskId)
 
-        MainScope().launch {
-            App.getAppComponent().getSyncTaskStateReader()
-                .getSyncTaskStateAsFlow(taskId)
-                .distinctUntilChanged()
-                .collect { syncTaskNotificator.showNotification(taskId) }
-        }
-
         try {
             Log.d(TAG, "executeSyncTask()")
+            NotificationService.start(context, taskId)
             App.getAppComponent().getSyncTaskExecutor().executeSyncTask(syncTask)
         }
         catch (t: Throwable) {

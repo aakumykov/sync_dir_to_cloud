@@ -34,6 +34,7 @@ class SyncTaskNotificator @Inject constructor(
     private var notificationBuilder: NotificationCompat.Builder? = null
 
 
+    // FIXME: функция не отвечает названию: он не только показывает уведомления, но и подписывается/отписывается
     override suspend fun showNotification(taskId: String) {
 
         prepareNotificationChannel()
