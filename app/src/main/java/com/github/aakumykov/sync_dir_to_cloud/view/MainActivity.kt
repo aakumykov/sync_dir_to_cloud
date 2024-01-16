@@ -1,6 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.view
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -33,6 +36,11 @@ class MainActivity : AppCompatActivity() {
         pageTitleViewModel.getPageTitle().observe(this, this::onPageTitleChanged)
 
         fragmentManager = supportFragmentManager
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d(TAG, "onNewIntent()")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -87,6 +95,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        val TAG: String = MainActivity::class.java.simpleName
+
+        fun simpleLaunchingIntent(context: Context) = Intent(context, MainActivity::class.java)
+
+        const val CODE_SHOW_TASK_STATE: Int = 10
+
         private const val DEFAULT_BACK_STACK_NAME = "default_back_stack"
     }
 }

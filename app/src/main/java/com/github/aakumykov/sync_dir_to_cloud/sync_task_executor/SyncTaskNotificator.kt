@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.annotation.StringRes
@@ -14,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
+import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import javax.inject.Inject
 
 class SyncTaskNotificator @Inject constructor(
@@ -22,10 +25,14 @@ class SyncTaskNotificator @Inject constructor(
     private val notificationChannelHelper: NotificationChannelHelper
 ) {
     private val notificationBuilder: NotificationCompat.Builder by lazy {
+
         NotificationCompat.Builder(appContext, ProgressNotificationsConfig.CHANNEL_ID).apply {
             setSmallIcon(ProgressNotificationsConfig.SMALL_ICON)
             setOngoing(true)
             setProgress(0,0,true)
+            setContentInfo(":-) - content info")
+            setSubText(";-) sub text")
+            setContentIntent(contentPendingIntent())
         }
     }
 
@@ -100,8 +107,18 @@ class SyncTaskNotificator @Inject constructor(
     private fun string(@StringRes strRes: Int): String = appContext.resources.getString(strRes)
 
 
+    // FIXME: для запуска Activity нежелательно использовать ApplicationContext ...
+    private fun contentPendingIntent(): PendingIntent {
+        return PendingIntent.getActivity(
+            appContext,
+            MainActivity.CODE_SHOW_TASK_STATE,
+            MainActivity.simpleLaunchingIntent(appContext),
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+
     companion object {
         val TAG: String = SyncTaskNotificator::class.java.simpleName
     }
-
 }
