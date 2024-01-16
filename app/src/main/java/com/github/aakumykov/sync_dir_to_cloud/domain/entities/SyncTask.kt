@@ -44,6 +44,9 @@ class SyncTask {
 
     @ColumnInfo(name = "c_time") var cTime: Long = Date().time
 
+    @ColumnInfo(name = "total_objects_count", defaultValue = "0") var totalObjectsCount: Int = 0
+    @ColumnInfo(name = "synced_objects_count", defaultValue = "0") var syncedObjectsCount: Int = 0
+
 
     @Ignore
     constructor() {
