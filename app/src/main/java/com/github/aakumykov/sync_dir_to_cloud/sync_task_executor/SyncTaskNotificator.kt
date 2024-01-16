@@ -17,6 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
+import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
 import javax.inject.Inject
 
 class SyncTaskNotificator @Inject constructor(
@@ -32,7 +33,6 @@ class SyncTaskNotificator @Inject constructor(
             setProgress(0,0,true)
             setContentInfo(":-) - content info")
             setSubText(";-) sub text")
-            setContentIntent(contentPendingIntent())
         }
     }
 
@@ -73,15 +73,18 @@ class SyncTaskNotificator @Inject constructor(
             return
         }
 
-        notificationBuilder.apply {
-            setContentTitle(string(textRes))
-        }.also { notificationBuilder ->
-            notificationManagerCompat.notify(
-                taskId,
-                notificationId,
-                notificationBuilder.build()
-            )
-        }
+        notificationBuilder
+            .apply {
+                setContentTitle(string(textRes))
+                setContentIntent(contentPendingIntent(taskId))
+            }
+            .also { notificationBuilder ->
+                notificationManagerCompat.notify(
+                    taskId,
+                    notificationId,
+                    notificationBuilder.build()
+                )
+            }
     }
 
 
@@ -108,17 +111,27 @@ class SyncTaskNotificator @Inject constructor(
 
 
     // FIXME: для запуска Activity нежелательно использовать ApplicationContext ...
-    private fun contentPendingIntent(): PendingIntent {
+    private fun contentPendingIntent(taskId: String): PendingIntent {
         return PendingIntent.getActivity(
             appContext,
-            MainActivity.CODE_SHOW_TASK_STATE,
-            MainActivity.simpleLaunchingIntent(appContext),
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            CODE_SHOW_TASK_STATE,
+            intent(taskId),
+            flags()
         )
     }
+
+    private fun intent(taskId: String): Intent {
+        return Intent(appContext, MainActivity::class.java).apply {
+            action = MainActivity.ACTION_SHOW_TASK_STATE
+            putExtra(TaskStateFragment.KEY_TASK_ID, taskId)
+        }
+    }
+
+    private fun flags(): Int = PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
 
     companion object {
         val TAG: String = SyncTaskNotificator::class.java.simpleName
+        const val CODE_SHOW_TASK_STATE: Int = 10
     }
 }

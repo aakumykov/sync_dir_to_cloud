@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,9 +39,17 @@ class MainActivity : AppCompatActivity() {
         fragmentManager = supportFragmentManager
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.d(TAG, "onNewIntent()")
+
+        when(val action = intent?.action) {
+            ACTION_SHOW_TASK_STATE -> {
+                val taskId = intent.getStringExtra(TaskStateFragment.KEY_TASK_ID)
+                loadFragment(TaskStateFragment.create(taskId))
+            }
+            else -> Log.w(TAG, "Неизвестный action: $action")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -97,9 +106,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val TAG: String = MainActivity::class.java.simpleName
 
-        fun simpleLaunchingIntent(context: Context) = Intent(context, MainActivity::class.java)
-
-        const val CODE_SHOW_TASK_STATE: Int = 10
+        const val ACTION_SHOW_TASK_STATE: String = "SHOW_TASK_STATE"
 
         private const val DEFAULT_BACK_STACK_NAME = "default_back_stack"
     }
