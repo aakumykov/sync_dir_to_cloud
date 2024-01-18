@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -8,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncObject
 import javax.inject.Inject
 
 // TODO: LocalDataSource --> DataSource
+// TODO: передавать диспетчер сопрограммы
 class SyncObjectRepository @Inject constructor(private val syncObjectLocalDataSource: SyncObjectLocalDataSource)
     : SyncObjectAdder, SyncObjectReader, SyncObjectStateChanger
 {
@@ -21,7 +23,10 @@ class SyncObjectRepository @Inject constructor(private val syncObjectLocalDataSo
     override suspend fun changeState(syncObjectId: String, state: SyncObject.State)
         = syncObjectLocalDataSource.setState(syncObjectId, state)
 
-    // TIFME: транзакция
+    override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
+        = syncObjectLocalDataSource.getSyncObjectList(taskId)
+
+    // FIXME: выполнять как транзакцию
     override suspend fun setErrorState(syncObjectId: String, errorMsg: String) {
         syncObjectLocalDataSource.setState(syncObjectId, SyncObject.State.ERROR)
         syncObjectLocalDataSource.setErrorMsg(syncObjectId, errorMsg)

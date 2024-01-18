@@ -29,8 +29,8 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
         probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
         probeRunButton.setOnLongClickListener { itemClickCallback.onProbeRunLongClicked(currentTask.id); return@setOnLongClickListener true }
 
+        stateView.setOnClickListener { itemClickCallback.onTaskInfoClicked(currentTask.id) }
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
-
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
 
         moreButton.setOnClickListener { Toast.makeText(moreButton.context, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show() }

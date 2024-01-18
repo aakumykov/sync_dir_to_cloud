@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -20,4 +21,7 @@ interface SyncObjectDAO {
 
     @Query("UPDATE sync_objects SET error_msg = :errorMsg WHERE id = :syncObjectId")
     fun setErrorMsg(syncObjectId: String, errorMsg: String)
+
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
+    fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>>
 }

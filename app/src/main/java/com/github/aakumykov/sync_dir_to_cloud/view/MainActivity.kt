@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             is NavTarget.Add -> loadFragment(TaskEditFragment.create())
             is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
+            is NavTarget.TaskInfo -> loadFragment(TaskStateFragment.create(navTarget.id))
             else -> setFragment(TaskListFragment.create())
         }
     }

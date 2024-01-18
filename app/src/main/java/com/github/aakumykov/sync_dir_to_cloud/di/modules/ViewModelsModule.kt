@@ -3,8 +3,11 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ViewModelKey
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -24,5 +27,12 @@ class ViewModelsModule {
     @ViewModelKey(AuthEditViewModel::class)
     fun provideAuthEditViewModel(application: Application): ViewModel {
         return AuthEditViewModel(application)
+    }
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TaskStateViewModel::class)
+    fun provideTaskStateViewModel(syncObjectReader: SyncObjectReader): ViewModel {
+        return TaskStateViewModel(syncObjectReader)
     }
 }

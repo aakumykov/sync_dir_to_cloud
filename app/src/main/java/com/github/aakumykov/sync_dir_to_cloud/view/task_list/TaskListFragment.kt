@@ -132,7 +132,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
     }
 
     override fun onTaskInfoClicked(taskId: String) {
-        TODO("Not yet implemented")
+        navigationViewModel.navigateTo(NavTarget.TaskInfo(taskId))
     }
 
     override fun onTaskEnableSwitchClicked(taskId: String) {
