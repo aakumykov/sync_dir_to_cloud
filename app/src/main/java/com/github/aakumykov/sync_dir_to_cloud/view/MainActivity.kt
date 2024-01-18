@@ -9,9 +9,12 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
+import androidx.fragment.app.FragmentOnAttachListener
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
+import com.github.aakumykov.sync_dir_to_cloud.view.annotations.HasBackButton
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -25,19 +28,28 @@ class MainActivity : AppCompatActivity() {
     private val navigationViewModel: NavigationViewModel by viewModels()
     private val pageTitleViewModel: PageTitleViewModel by viewModels()
     private lateinit var fragmentManager: androidx.fragment.app.FragmentManager
+    private lateinit var onBackStackChangedListener: OnBackStackChangedListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-
-        navigationViewModel.getNavigationTargetEvents().observe(this, this::onNewNavTarget)
-        pageTitleViewModel.getPageTitle().observe(this, this::onPageTitleChanged)
-
-        fragmentManager = supportFragmentManager
+        prepareView()
+        prepareViewModels()
+        prepareFragmentManager()
     }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseFragmentManager()
+    }
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        navigationViewModel.navigateBack()
+        return true
+    }
+
 
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
@@ -66,6 +78,43 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+
+    private fun prepareView() {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+    }
+
+    private fun prepareViewModels() {
+        navigationViewModel.getNavigationTargetEvents().observe(this, this::onNewNavTarget)
+        pageTitleViewModel.getPageTitle().observe(this, this::onPageTitleChanged)
+    }
+
+    private fun prepareFragmentManager() {
+
+        fragmentManager = supportFragmentManager
+
+        onBackStackChangedListener = OnBackStackChangedListener {
+            if (0 == fragmentManager.backStackEntryCount) {
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
+            else {
+                supportActionBar?.apply {
+                    setDisplayHomeAsUpEnabled(true)
+                    setHomeAsUpIndicator(R.drawable.ic_page_back)
+                }
+            }
+        }
+
+        fragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
+    }
+
+    private fun releaseFragmentManager() {
+        fragmentManager.removeOnBackStackChangedListener(onBackStackChangedListener)
+    }
+
+
 
     private fun onPageTitleChanged(title: String) {
         setTitle(title)

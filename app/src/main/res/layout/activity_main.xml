@@ -7,13 +7,15 @@
     android:orientation="vertical"
     tools:context=".view.MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:background="@color/primary"
         app:titleTextColor="@color/onPrimary"
+        app:navigationIconTint="@color/onPrimary"
+        tools:navigationIcon="@drawable/ic_page_back"
         tools:title="MainActivity"/>
 
     <androidx.fragment.app.FragmentContainerView

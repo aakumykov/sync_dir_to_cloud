@@ -57,4 +57,5 @@
     <string name="NOTIFICATION_error">Ошибка синхронизации</string>
     <string name="MENU_ITEM_app_properties">Свойства приложения</string>
     <string name="there_is_no_task_id">Отсутствует taskId</string>
+    <string name="FRAGMENT_TASK_INFO_title">Сведения о задаче</string>
 </resources>

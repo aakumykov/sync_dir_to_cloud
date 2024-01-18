@@ -1,9 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_state
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,11 +9,14 @@ import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.view.annotations.HasBackButton
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
+@HasBackButton
 class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private var _binding: FragmentTaskStateBinding? = null
@@ -23,6 +24,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private lateinit var taskStateViewModel: TaskStateViewModel
     private val navigationViewModel: NavigationViewModel by viewModels()
+    private val pageTitleViewModel: PageTitleViewModel by viewModels()
 
     private lateinit var listAdapter: ListViewAdapter<SyncObject>
     private val syncObjectList: MutableList<SyncObject> = mutableListOf()
@@ -30,6 +32,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_INFO_title))
 
         val taskId: String? = arguments?.getString(KEY_TASK_ID)
         if (null == taskId) {
