@@ -73,7 +73,6 @@ dependencies {
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation 'com.github.aakumykov:single_live_event:0.0.1'
-    implementation project(path: ':file_lister_navigator_selector')
     implementation project(path: ':file_uploader')
     implementation project(path: ':cloud_writer')
 
@@ -120,5 +119,9 @@ dependencies {
 
     implementation "com.github.aakumykov:yandex_disk_client:0.0.12"
 
+    // TODO: убрать
     implementation "androidx.lifecycle:lifecycle-process:2.6.2"
+
+    implementation 'com.github.aakumykov:file_lister_navigator_selector:0.0.4'
+    implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.4'
 }

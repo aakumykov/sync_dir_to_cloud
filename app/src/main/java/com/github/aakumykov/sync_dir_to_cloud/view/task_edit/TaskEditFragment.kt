@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelector
-import com.github.aakumykov.file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
@@ -27,6 +26,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.O
 import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
+import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import permissions.dispatcher.ktx.PermissionsRequester
