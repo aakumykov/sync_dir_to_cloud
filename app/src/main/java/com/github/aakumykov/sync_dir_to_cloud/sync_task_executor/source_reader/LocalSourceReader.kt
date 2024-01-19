@@ -1,7 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader
 
+import android.net.Uri
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.FileLister
-import com.github.aakumykov.file_lister_navigator_selector.fs_item.utils.calculateRelativeDirPath
+import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
@@ -10,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReaderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -39,7 +41,7 @@ class LocalSourceReader @AssistedInject constructor(
 
         recursiveDirReader?.getRecursiveList(sourcePath)?.forEach { fileListItem: RecursiveDirReader.FileListItem ->
 
-            val relativeParentDirPath = calculateRelativeDirPath(fileListItem, sourcePath)
+            val relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath)
 
             val syncObject = SyncObject.create(
                 taskId = taskId,
