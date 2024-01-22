@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.github.aakumykov:single_live_event:0.0.1'
     implementation project(path: ':file_uploader')
     implementation project(path: ':cloud_writer')
+    implementation project(path: ':storage_access_helper')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 
