@@ -1,9 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
+import android.util.AttributeSet
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -12,6 +18,7 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelector
+import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
@@ -50,6 +57,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private var currentCloudAuth: CloudAuth? = null
 
     private lateinit var sourcePathSelectorPermissionsRequester: PermissionsRequester
+    private lateinit var storageAccessHelper: StorageAccessHelper
 
 
     private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
@@ -68,7 +76,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -82,6 +89,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         reconnectToChildDialogs()
         prepareForCreationOfEdition()
+    }
+
+
+    private fun prepareStorageAccessHelper() {
+        storageAccessHelper = StorageAccessHelper.create(requireActivity())
     }
 
 
@@ -178,7 +190,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun prepareButtons() {
-        binding.sourcePathSelectionButton.setOnClickListener { sourcePathSelectorPermissionsRequester.launch() }
+
+        binding.sourcePathSelectionButton.setOnClickListener {
+            storageAccessHelper.requestStorageAccess { selectSourcePath() }
+        }
+
         binding.targetPathSelectionButton.setOnClickListener { selectTargetPath() }
 
         binding.saveButton.setOnClickListener { onSaveButtonClicked() }
