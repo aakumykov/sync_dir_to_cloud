@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
@@ -37,7 +38,7 @@ abstract class BasicTargetWriter constructor(
                 writeSyncObjectToTarget(syncObject) {
 
                     val parentDirName = targetDirPath
-                    val childDirName = syncObject.relativeParentDirPath + syncObject.name
+                    val childDirName = (syncObject.relativeParentDirPath + syncObject.name).stripMultiSlash()
 
                     try {
                         cloudWriter()?.createDir(
@@ -54,8 +55,19 @@ abstract class BasicTargetWriter constructor(
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
 
-                    val pathInSource = sourceDirPath + CloudWriter.DS + syncObject.relativeParentDirPath + CloudWriter.DS + syncObject.name
-                    val pathInTarget = targetDirPath + CloudWriter.DS + syncObject.relativeParentDirPath + CloudWriter.DS + syncObject.name
+                    val pathInSource = (sourceDirPath +
+                            CloudWriter.DS +
+                            syncObject.relativeParentDirPath +
+                            CloudWriter.DS +
+                            syncObject.name)
+                        .stripMultiSlash()
+
+                    val pathInTarget = (targetDirPath +
+                            CloudWriter.DS +
+                            syncObject.relativeParentDirPath +
+                            CloudWriter.DS +
+                            syncObject.name)
+                        .stripMultiSlash()
 
                     cloudWriter()?.putFile(
                         file = File(pathInSource),
