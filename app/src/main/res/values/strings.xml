@@ -58,4 +58,6 @@
     <string name="MENU_ITEM_app_properties">Свойства приложения</string>
     <string name="there_is_no_task_id">Отсутствует taskId</string>
     <string name="FRAGMENT_TASK_INFO_title">Сведения о задаче</string>
+    <string name="ERROR_storage_access_required">Нужен доступ к хранилищу</string>
+    <string name="MENU_ITEM_manage_external_storage">Управление всеми файлами</string>
 </resources>

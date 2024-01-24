@@ -1,15 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
-import android.util.AttributeSet
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -18,12 +11,12 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelector
-import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.view.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -36,8 +29,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
 import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import permissions.dispatcher.ktx.PermissionsRequester
-import permissions.dispatcher.ktx.constructPermissionsRequest
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     AuthSelectionDialog.Callback {
@@ -48,6 +39,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private val taskEditViewModel: TaskEditViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
+    private val storageAccessViewModel: StorageAccessViewModel by activityViewModels()
 
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
@@ -55,9 +47,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private var authSelectionDialog: AuthSelectionDialog? = null
 
     private var currentCloudAuth: CloudAuth? = null
-
-    private lateinit var sourcePathSelectorPermissionsRequester: PermissionsRequester
-    private lateinit var storageAccessHelper: StorageAccessHelper
 
 
     private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
@@ -81,8 +70,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         firstRun = (null == savedInstanceState)
 
-        preparePermissionsDispatcher()
-
         prepareLayout(view)
         prepareButtons()
         prepareViewModels()
@@ -92,26 +79,19 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
 
-    private fun prepareStorageAccessHelper() {
-        storageAccessHelper = StorageAccessHelper.create(requireActivity())
-    }
-
-
-    private fun preparePermissionsDispatcher() {
-        sourcePathSelectorPermissionsRequester = constructPermissionsRequest(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            requiresPermission = ::selectSourcePath,
-            onShowRationale = {},
-            onPermissionDenied = {},
-            onNeverAskAgain = {}
-        )
-    }
-
-
     private fun prepareViewModels() {
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
         taskEditViewModel.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
         taskEditViewModel.cloudAuthLiveData.observe(viewLifecycleOwner, ::onCloudAuthChanged)
+        storageAccessViewModel.storageAccessResult.observe(viewLifecycleOwner, ::onStorageAccessResult)
+    }
+
+
+    private fun onStorageAccessResult(isGranted: Boolean?) {
+        isGranted?.also { granted ->
+            if (granted) selectSourcePath()
+            else showToast(R.string.ERROR_storage_access_required)
+        }
     }
 
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
@@ -192,7 +172,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private fun prepareButtons() {
 
         binding.sourcePathSelectionButton.setOnClickListener {
-            storageAccessHelper.requestStorageAccess { selectSourcePath() }
+            storageAccessViewModel.requestStorageAccess()
         }
 
         binding.targetPathSelectionButton.setOnClickListener { selectTargetPath() }

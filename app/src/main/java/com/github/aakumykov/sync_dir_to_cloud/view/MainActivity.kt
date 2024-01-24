@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
+import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
@@ -23,14 +24,26 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
     private val navigationViewModel: NavigationViewModel by viewModels()
     private val pageTitleViewModel: PageTitleViewModel by viewModels()
+
     private lateinit var fragmentManager: androidx.fragment.app.FragmentManager
     private lateinit var onBackStackChangedListener: OnBackStackChangedListener
 
+    private lateinit var storageAccessHelper: StorageAccessHelper
+    private val storageAccessViewModel: StorageAccessViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        storageAccessHelper = StorageAccessHelper.create(this)
+        storageAccessViewModel.storageAccessRequest.observe(this) {
+            storageAccessHelper.requestStorageAccess {
+                storageAccessViewModel.setStorageAccessResult(it)
+            }
+        }
+
         prepareView()
         prepareViewModels()
         prepareFragmentManager()
@@ -71,6 +84,10 @@ class MainActivity : AppCompatActivity() {
         return when(item.itemId) {
             R.id.actionAppProperties -> {
                 openAppProperties()
+                true
+            }
+            R.id.actionManageExternalStorage -> {
+                storageAccessHelper.openStorageAccessSettings()
                 true
             }
             else -> super.onOptionsItemSelected(item)
