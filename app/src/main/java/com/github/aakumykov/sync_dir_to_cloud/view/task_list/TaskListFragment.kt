@@ -73,31 +73,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
         lifecycleScope.launch (Dispatchers.IO) {
 
-            val appComponent = App.getAppComponent()
-
-            /*val cloudAuthAuthReader = appComponent.getCloudAuthReader()
-            val cloudAuth = cloudAuthAuthReader.getCloudAuth(syncTask.cloudAuthId!!)
-
-            val recursiveDirReaderFactory = appComponent.getRecursiveDirReaderFactory()
-
-            // FIXME: убрать "!!"
-            val recursiveDirReader = recursiveDirReaderFactory.create(
-                syncTask.targetType!!,
-                cloudAuth.authToken
-            )
-
-            recursiveDirReader?.let {
-                val syncTaskFilesPreparer = appComponent
-                    .getSyncTaskFilesPreparerAssistedFactory()
-                    .create(recursiveDirReader)
-
-                syncTaskFilesPreparer.prepareSyncTask(syncTask)
-            }*/
-
-            /*val syncTaskExecutor = appComponent.getSyncTaskExecutor()
-            val syncTask = appComponent.getSyncTaskReader().getSyncTask(taskId)
-            syncTaskExecutor.executeSyncTask(syncTask)*/
-
             WorkManager.getInstance(requireContext())
                 .beginUniqueWork(
                     taskId,

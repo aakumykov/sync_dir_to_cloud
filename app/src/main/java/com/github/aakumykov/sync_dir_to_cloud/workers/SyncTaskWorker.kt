@@ -6,14 +6,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
-class SyncTaskWorker(private val context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
-
-    private val syncTaskNotificator: SyncTaskNotificator by lazy {
-        App.getAppComponent().getSyncTaskNotificator()
-    }
+class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
         Log.d(TAG, "doWork(${hashCode()})")
