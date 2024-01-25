@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectClearer
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
@@ -17,7 +17,8 @@ class SyncTaskExecutor @Inject constructor(
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
-    private val syncTaskNotificator: SyncTaskNotificator
+    private val syncTaskNotificator: SyncTaskNotificator,
+    private val syncObjectClearer: SyncObjectClearer
 ) {
     private var sourceReader: SourceReader? = null
     private var mTargetWriter: TargetWriter? = null
@@ -55,12 +56,13 @@ class SyncTaskExecutor @Inject constructor(
         )
     }
 
+    // FIXME: убрать!! в sourcePath
     private suspend fun doWork(syncTask: SyncTask) {
 
         val taskId = syncTask.id
         val notificationId = syncTask.notificationId
 
-        // FIXME: !! в sourcePath
+        syncObjectClearer.clearSyncObjectsOfTask(taskId)
 
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
         syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)

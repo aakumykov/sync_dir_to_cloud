@@ -24,4 +24,7 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
     fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>>
+
+    @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
+    fun deleteObjectsForTask(taskId: String)
 }

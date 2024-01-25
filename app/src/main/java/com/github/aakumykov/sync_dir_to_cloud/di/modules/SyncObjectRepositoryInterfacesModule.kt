@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectClearer
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -29,6 +30,11 @@ class SyncObjectRepositoryInterfacesModule {
 
     @Provides
     fun provideSyncObjectStateChanger(syncObjectRepository: SyncObjectRepository): SyncObjectStateChanger {
+        return syncObjectRepository
+    }
+
+    @Provides
+    fun provideSyncObjectClearer(syncObjectRepository: SyncObjectRepository): SyncObjectClearer {
         return syncObjectRepository
     }
 }

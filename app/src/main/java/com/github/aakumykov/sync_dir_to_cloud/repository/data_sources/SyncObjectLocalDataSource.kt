@@ -38,4 +38,10 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
             syncObjectDAO.getSyncObjectList(taskId)
         }
     }
+
+    suspend fun deleteSyncObjectOfTask(taskId: String) {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.deleteObjectsForTask(taskId)
+        }
+    }
 }
