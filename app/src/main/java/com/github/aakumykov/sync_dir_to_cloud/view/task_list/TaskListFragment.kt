@@ -1,7 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
+import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -17,6 +21,8 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidROrLater
+import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -26,6 +32,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskL
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import permissions.dispatcher.ktx.constructPermissionsRequest
 
 class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallback {
 
@@ -171,8 +178,32 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
     private fun prepareButtons() {
         binding.addButton.setOnClickListener {
-            navigationViewModel.navigateTo(NavTarget.Add)
+            requestNotificationPermission()
         }
+    }
+
+    private fun requestNotificationPermission() {
+        if (isAndroidTiramisuOrLater()) {
+            constructPermissionsRequest(
+                android.Manifest.permission.POST_NOTIFICATIONS,
+                requiresPermission = { goToAddNewTask() },
+                onShowRationale = {
+                    AlertDialog.Builder(requireContext()).apply{
+                        setTitle("Показ уведомлений")
+                        setMessage("Разрешить программе отображать ход синхронизации?")
+                        setPositiveButton("Конечно!") { _, _ -> it.proceed() }
+                        setNegativeButton("Ни-за-что!") { _, _ -> it.cancel() }
+                    }
+                }
+            ).launch()
+        }
+        else {
+            goToAddNewTask()
+        }
+    }
+
+    private fun goToAddNewTask() {
+        navigationViewModel.navigateTo(NavTarget.Add)
     }
 
 
