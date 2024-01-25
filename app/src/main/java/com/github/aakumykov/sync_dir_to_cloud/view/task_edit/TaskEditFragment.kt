@@ -263,7 +263,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun onCancelButtonClicked() {
-        navigationViewModel.navigateTo(NavTarget.Back)
+        navigationViewModel.navigateBack()
     }
 
     private fun finishWork(successOpState: OpState.Success) {
