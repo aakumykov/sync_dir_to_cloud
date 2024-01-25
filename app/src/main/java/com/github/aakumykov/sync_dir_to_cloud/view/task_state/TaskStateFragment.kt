@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_state
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -21,8 +21,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private val binding get() = _binding!!
 
     private lateinit var taskStateViewModel: TaskStateViewModel
-    private val navigationViewModel: NavigationViewModel by viewModels()
-    private val pageTitleViewModel: PageTitleViewModel by viewModels()
+    private val navigationViewModel: NavigationViewModel by activityViewModels()
+    private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
     private lateinit var listAdapter: ListViewAdapter<SyncObject>
     private val syncObjectList: MutableList<SyncObject> = mutableListOf()
