@@ -20,7 +20,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
@@ -230,19 +229,19 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         val isSystem24Hour = is24HourFormat(requireContext())
         val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
 
-        val picker = MaterialTimePicker.Builder()
+        val timePicker = MaterialTimePicker.Builder()
             .setTimeFormat(clockFormat)
-            .setHour(12)
-            .setMinute(10)
+            .setHour(currentTask?.intervalHours ?: 0)
+            .setMinute(currentTask?.intervalMinutes ?: 0)
             .setTitleText(R.string.sync_task_regulatiry_picker_title)
             .build()
 
-        picker.addOnPositiveButtonClickListener {
-            binding.intervalHours.setText(picker.hour.toString())
-            binding.intervalMinutes.setText(picker.minute.toString())
+        timePicker.addOnPositiveButtonClickListener {
+            binding.intervalHours.setText(timePicker.hour.toString())
+            binding.intervalMinutes.setText(timePicker.minute.toString())
         }
 
-        picker.showNow(childFragmentManager, "")
+        timePicker.showNow(childFragmentManager, "")
     }
 
     private fun onAuthSelectionClicked() {
