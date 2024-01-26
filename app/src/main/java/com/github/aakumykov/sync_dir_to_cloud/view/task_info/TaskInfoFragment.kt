@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskInfoBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
@@ -21,7 +22,7 @@ class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
     private val binding get() = _binding!!
 
     // TODO: внудрять ViewModel-и Dagger-ом?
-    private lateinit var mTaskInfoViewModel: TaskInfoViewModel
+    private lateinit var mTaskInfoViewModel: TaskInfoViewModel // эту получаю от Dagger-а
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
@@ -42,7 +43,6 @@ class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
         }
 
         _binding = FragmentTaskInfoBinding.bind(view)
-        binding.taskIdView.text = taskId
 
         listAdapter = ListViewAdapter(requireContext(), R.layout.sync_object_list_item, R.id.title, syncObjectList)
         binding.listView.adapter = listAdapter
@@ -55,7 +55,18 @@ class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
                 syncObjectList.addAll(list)
                 listAdapter.notifyDataSetChanged()
             }
+
+            mTaskInfoViewModel.getSyncTask(taskId).observe(viewLifecycleOwner, ::displaySyncTask)
         }
+    }
+
+    private fun displaySyncTask(syncTask: SyncTask?) {
+        if (null == syncTask)
+            return
+
+        binding.titleView.text = "${syncTask.sourcePath} --> ${syncTask.targetPath}"
+        binding.idView.text = "(${syncTask.id})"
+        binding.stateView.text = syncTask.state.name
     }
 
     override fun onDestroyView() {

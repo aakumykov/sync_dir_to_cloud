@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ViewModelKey
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskInfoViewModel
@@ -31,7 +32,9 @@ class ViewModelsModule {
     @Provides
     @IntoMap
     @ViewModelKey(TaskInfoViewModel::class)
-    fun provideTaskStateViewModel(syncObjectReader: SyncObjectReader): ViewModel {
-        return TaskInfoViewModel(syncObjectReader)
+    fun provideTaskInfoViewModel(syncTaskReader: SyncTaskReader,
+                                 syncObjectReader: SyncObjectReader): ViewModel
+    {
+        return TaskInfoViewModel(syncTaskReader, syncObjectReader)
     }
 }

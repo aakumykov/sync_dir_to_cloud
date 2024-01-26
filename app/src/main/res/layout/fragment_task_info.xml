@@ -3,19 +3,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingVertical="4dp"
+    android:paddingHorizontal="6dp">
 
     <TextView
-        android:id="@+id/taskIdView"
+        android:id="@+id/titleView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        tools:text="task id"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:ellipsize="end"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
+        tools:text="Название задачи"
         android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/idView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:textAlignment="center"
+        android:paddingVertical="6dp"
+        tools:text="task id" />
+
+    <TextView
+        android:id="@+id/stateView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:textStyle="italic|bold"
+        tools:text="СОСТОЯНИЕ" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="8dp"/>
 
     <ListView
         android:id="@+id/listView"
