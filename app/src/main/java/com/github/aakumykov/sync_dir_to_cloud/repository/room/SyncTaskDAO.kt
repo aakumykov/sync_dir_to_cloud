@@ -16,6 +16,9 @@ interface SyncTaskDAO {
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
     fun get(id: String): SyncTask
 
+    @Query("SELECT * FROM sync_tasks WHERE id = :taskId")
+    fun getAsLiveData(taskId: String): LiveData<SyncTask>
+
     @Delete
     fun delete(syncTask: SyncTask)
 

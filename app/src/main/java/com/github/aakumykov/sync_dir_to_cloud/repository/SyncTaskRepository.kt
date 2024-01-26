@@ -31,6 +31,10 @@ class SyncTaskRepository @Inject constructor(
         return syncTaskLocalDataSource.getTask(id)
     }
 
+    override suspend fun getSyncTaskAsLiveData(taskId: String): LiveData<SyncTask> {
+        return syncTaskLocalDataSource.getTaskAsLiveData(taskId)
+    }
+
     override suspend fun createSyncTask(syncTask: SyncTask) {
         syncTaskLocalDataSource.addTask(syncTask)
     }

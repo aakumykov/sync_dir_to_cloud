@@ -5,5 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 interface SyncTaskReader {
     suspend fun getSyncTask(id: String): SyncTask
+    suspend fun getSyncTaskAsLiveData(taskId: String): LiveData<SyncTask>
     suspend fun listSyncTasks(): LiveData<List<SyncTask>>
 }
