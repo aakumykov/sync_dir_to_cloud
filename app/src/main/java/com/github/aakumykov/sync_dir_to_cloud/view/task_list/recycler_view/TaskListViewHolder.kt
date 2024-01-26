@@ -84,11 +84,12 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
             stateView.setImageResource(
                 when (currentTask.state) {
                     SyncTask.State.IDLE -> R.drawable.ic_task_state_scheduled // FIXME: не то
+                    SyncTask.State.SCHEDULING_ERROR -> R.drawable.ic_task_state_scheduling_error
                     SyncTask.State.READING_SOURCE -> R.drawable.ic_task_state_running
                     SyncTask.State.WRITING_TARGET -> R.drawable.ic_task_state_running
                     SyncTask.State.SUCCESS -> R.drawable.ic_task_state_success
                     SyncTask.State.SEMI_SUCCESS -> R.drawable.ic_task_state_semi_success
-                    SyncTask.State.ERROR -> R.drawable.ic_task_state_error
+                    SyncTask.State.EXECUTION_ERROR -> R.drawable.ic_task_state_error
                 }
             )
         }

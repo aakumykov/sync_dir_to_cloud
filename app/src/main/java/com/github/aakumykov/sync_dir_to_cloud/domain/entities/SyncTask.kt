@@ -99,8 +99,9 @@ class SyncTask {
         IDLE,
         READING_SOURCE,
         WRITING_TARGET,
-        SUCCESS,
-        ERROR,
+        @Deprecated("Нужно использовать 'запланировано'") SUCCESS,
+        EXECUTION_ERROR,
+        SCHEDULING_ERROR,
         SEMI_SUCCESS
     }
 

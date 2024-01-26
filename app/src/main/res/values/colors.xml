@@ -18,4 +18,6 @@
 
     <color name="grey">#808080</color>
     <color name="list_divider">#CCCCCC</color>
+
+    <color name="task_state">@color/grey</color>
 </resources>

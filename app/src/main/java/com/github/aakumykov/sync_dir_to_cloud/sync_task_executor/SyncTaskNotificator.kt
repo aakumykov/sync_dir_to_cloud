@@ -49,8 +49,10 @@ class SyncTaskNotificator @Inject constructor(
             SyncTask.State.WRITING_TARGET -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_writing_target)
             SyncTask.State.SEMI_SUCCESS -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_semi_success)
             // FIXME: ошибочное уведомление должно быть скрываемым
-            SyncTask.State.ERROR -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_error)
+            SyncTask.State.EXECUTION_ERROR -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_error)
             SyncTask.State.SUCCESS -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_success)
+            // В этом состоянии уведомления быть не должно.
+            SyncTask.State.SCHEDULING_ERROR -> {}
         }
     }
 
