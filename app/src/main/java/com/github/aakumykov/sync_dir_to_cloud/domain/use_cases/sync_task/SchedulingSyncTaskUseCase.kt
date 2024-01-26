@@ -17,14 +17,6 @@ class SchedulingSyncTaskUseCase @Inject constructor(
 ) {
     // TODO: испытать поведение при ошибках
 
-    suspend fun scheduleSyncTask(taskId: String) {
-        scheduleSyncTask(syncTaskReader.getSyncTask(taskId))
-    }
-
-    suspend fun unScheduleSyncTask(taskId: String) {
-        unScheduleSyncTask(syncTaskReader.getSyncTask(taskId))
-    }
-
     private fun scheduleSyncTask(syncTask: SyncTask) {
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
