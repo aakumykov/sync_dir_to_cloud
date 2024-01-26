@@ -25,11 +25,14 @@ import java.util.UUID
 )
 class SyncTask {
 
+    // FIXME: var|val
+
     @PrimaryKey var id: String = UUID.randomUUID().toString()
     @ColumnInfo(name = "notification_id") var notificationId: Int = View.generateViewId()
 
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
+    @ColumnInfo(name = "scheduling_error") var schedulingError: String? = null
 
     @ColumnInfo(name = "source_type") var sourceType: StorageType?
     @ColumnInfo(name = "target_type") var targetType: StorageType?
