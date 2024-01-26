@@ -57,11 +57,10 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     }
 
     suspend fun toggleTaskScheduling(taskId: String) {
-        val syncTask = syncTaskReader.getSyncTask(taskId)
-        if (syncTask.isEnabled)
-            unScheduleSyncTask(syncTask)
-        else
-            scheduleSyncTask(syncTask)
+        syncTaskReader.getSyncTask(taskId).also {
+            if (it.isEnabled) unScheduleSyncTask(it)
+            else scheduleSyncTask(it)
+        }
     }
 
     companion object {
