@@ -21,12 +21,11 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
             override fun onSyncTaskScheduleSuccess() {
-                syncTask.isEnabled = true
-                syncTaskUpdater.updateSyncTask(syncTask)
+                setSyncTaskEnabledState(syncTask, true)
             }
 
             override fun onSyncTaskScheduleError(error: Throwable) {
-                Log.e(TAG, ExceptionUtils.getErrorMessage(error), error)
+                setSyncTaskErrorState(syncTask, error)
             }
         })
     }
@@ -36,14 +35,25 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
 
             override fun onSyncTaskUnScheduleSuccess() {
-                syncTask.isEnabled = false
-                syncTaskUpdater.updateSyncTask(syncTask)
+                setSyncTaskEnabledState(syncTask, false)
             }
 
             override fun onSyncTaskUnScheduleError(error: Throwable) {
-                Log.e(TAG, ExceptionUtils.getErrorMessage(error), error)
+                setSyncTaskErrorState(syncTask, error)
             }
         })
+    }
+
+    private fun setSyncTaskEnabledState(syncTask: SyncTask, isEnabled: Boolean) {
+        syncTask.isEnabled = isEnabled
+        syncTask.schedulingError = null
+        syncTaskUpdater.updateSyncTask(syncTask)
+    }
+
+    private fun setSyncTaskErrorState(syncTask: SyncTask, error: Throwable) {
+        Log.e(TAG, ExceptionUtils.getErrorMessage(error), error)
+        syncTask.schedulingError = ExceptionUtils.getErrorMessage(error)
+        syncTaskUpdater.updateSyncTask(syncTask)
     }
 
     suspend fun toggleTaskScheduling(taskId: String) {
