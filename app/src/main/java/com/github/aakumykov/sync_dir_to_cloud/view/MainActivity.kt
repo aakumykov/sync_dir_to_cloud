@@ -19,7 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
-import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskInfoFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,8 +68,8 @@ class MainActivity : AppCompatActivity() {
 
         when(val action = intent?.action) {
             ACTION_SHOW_TASK_STATE -> {
-                val taskId = intent.getStringExtra(TaskStateFragment.KEY_TASK_ID)
-                loadFragment(TaskStateFragment.create(taskId))
+                val taskId = intent.getStringExtra(TaskInfoFragment.KEY_TASK_ID)
+                loadFragment(TaskInfoFragment.create(taskId))
             }
             else -> Log.w(TAG, "Неизвестный action: $action")
         }
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             is NavTarget.Add -> loadFragment(TaskEditFragment.create())
             is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
-            is NavTarget.TaskInfo -> loadFragment(TaskStateFragment.create(navTarget.id))
+            is NavTarget.TaskInfo -> loadFragment(TaskInfoFragment.create(navTarget.id))
             else -> setFragment(TaskListFragment.create())
         }
     }

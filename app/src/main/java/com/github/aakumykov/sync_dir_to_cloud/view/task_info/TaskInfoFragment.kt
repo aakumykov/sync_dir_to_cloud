@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_state
+package com.github.aakumykov.sync_dir_to_cloud.view.task_info
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
+import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskInfoBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -15,12 +15,13 @@ import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
-class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
+class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
 
-    private var _binding: FragmentTaskStateBinding? = null
+    private var _binding: FragmentTaskInfoBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var taskStateViewModel: TaskStateViewModel
+    // TODO: внудрять ViewModel-и Dagger-ом?
+    private lateinit var mTaskInfoViewModel: TaskInfoViewModel
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
@@ -40,16 +41,16 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             return
         }
 
-        _binding = FragmentTaskStateBinding.bind(view)
+        _binding = FragmentTaskInfoBinding.bind(view)
         binding.taskIdView.text = taskId
 
         listAdapter = ListViewAdapter(requireContext(), R.layout.sync_object_list_item, R.id.title, syncObjectList)
         binding.listView.adapter = listAdapter
 
-        taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
+        mTaskInfoViewModel = DaggerViewModelHelper.get(this, TaskInfoViewModel::class.java)
 
         lifecycleScope.launch {
-            taskStateViewModel.getSyncObjectList(taskId).observe(viewLifecycleOwner) { list ->
+            mTaskInfoViewModel.getSyncObjectList(taskId).observe(viewLifecycleOwner) { list ->
                 syncObjectList.clear()
                 syncObjectList.addAll(list)
                 listAdapter.notifyDataSetChanged()
@@ -67,8 +68,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
         const val KEY_TASK_ID = "TASK_ID"
 
-        fun create(taskId: String?): TaskStateFragment {
-            return TaskStateFragment().apply {
+        fun create(taskId: String?): TaskInfoFragment {
+            return TaskInfoFragment().apply {
                 arguments = Bundle().apply { putString(KEY_TASK_ID, taskId) }
             }
         }

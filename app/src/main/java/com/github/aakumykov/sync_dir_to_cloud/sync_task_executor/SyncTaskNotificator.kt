@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
-import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskInfoFragment
 import javax.inject.Inject
 
 class SyncTaskNotificator @Inject constructor(
@@ -123,7 +123,7 @@ class SyncTaskNotificator @Inject constructor(
     private fun intent(taskId: String): Intent {
         return Intent(appContext, MainActivity::class.java).apply {
             action = MainActivity.ACTION_SHOW_TASK_STATE
-            putExtra(TaskStateFragment.KEY_TASK_ID, taskId)
+            putExtra(TaskInfoFragment.KEY_TASK_ID, taskId)
         }
     }
 
