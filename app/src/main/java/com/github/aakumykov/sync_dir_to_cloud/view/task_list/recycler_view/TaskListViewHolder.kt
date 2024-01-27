@@ -54,6 +54,8 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
         val isEnabled = currentTask.isEnabled
         runButton.isEnabled = isEnabled
 
+        // FIXME: "executionState"
+
         if (currentTask.state == SyncTask.State.WRITING_TARGET)
             runButton.setImageResource(R.drawable.ic_task_stop)
         else
