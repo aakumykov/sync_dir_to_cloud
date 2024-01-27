@@ -1,10 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
-import android.content.DialogInterface
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,7 +18,6 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidROrLater
 import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
@@ -75,7 +71,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
             WorkManager.getInstance(requireContext())
                 .beginUniqueWork(
-                    taskId,
+                    probeTaskId(taskId),
                     ExistingWorkPolicy.KEEP,
                     oneTimeWorkRequest(taskId)
                 )
@@ -84,14 +80,23 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
     }
 
     override fun onProbeRunLongClicked(taskId: String) {
-        WorkManager.getInstance(requireContext()).cancelUniqueWork(taskId)
-            .state.observe(viewLifecycleOwner) { operationState ->
-                when (operationState) {
-                    is Operation.State.SUCCESS -> showToast("Задача отменена")
-                    is Operation.State.FAILURE -> showToast("Ошибка отмены задачи")
-                    else -> {}
+        WorkManager.getInstance(requireContext())
+                .cancelUniqueWork(probeTaskId(taskId))
+                .state.observe(viewLifecycleOwner) { operationState ->
+
+                    when (operationState) {
+                        is Operation.State.SUCCESS -> showToast("Задача отменена")
+                        is Operation.State.FAILURE -> showToast("Ошибка отмены задачи")
+                        else -> {}
+                    }
+
+                    App.getAppComponent().also { appComponent ->
+                        lifecycleScope.launch {
+                            val task = appComponent.getSyncTaskReader().getSyncTask(taskId)
+                            appComponent.getSyncTaskNotificator().hideNotification(taskId, task.notificationId)
+                        }
+                    }
                 }
-            }
     }
 
     private fun oneTimeWorkRequest(taskId: String): OneTimeWorkRequest {
@@ -99,6 +104,8 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
             .setInputData(Data.Builder().putString(SyncTaskWorker.TASK_ID, taskId).build())
             .build()
     }
+
+    private fun probeTaskId(taskId: String) = taskId + "_probe"
 
 
     override fun onTaskEditClicked(taskId: String) {
