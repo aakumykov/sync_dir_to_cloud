@@ -16,6 +16,7 @@ import androidx.work.Operation
 import androidx.work.WorkManager
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
@@ -100,12 +101,15 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
     }
 
     private fun oneTimeWorkRequest(taskId: String): OneTimeWorkRequest {
-        return OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
-            .setInputData(Data.Builder().putString(SyncTaskWorker.TASK_ID, taskId).build())
+        return OneTimeWorkRequest.Builder(
+            SyncTaskWorker::class.java
+        )
+            .addTag(SyncTask.TAG)
+            .setInputData(SyncTaskWorker.dataWithTaskId(taskId))
             .build()
     }
 
-    private fun probeTaskId(taskId: String) = taskId + "_probe"
+    private fun probeTaskId(taskId: String) = WorkManagerConfig.Companion.PROBE_WORK_ID_PREFIX + taskId
 
 
     override fun onTaskEditClicked(taskId: String) {

@@ -10,6 +10,8 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
+    // TODO: OutputData: краткая сводка о выполненной работе
+
     override suspend fun doWork(): Result {
         Log.d(TAG, "doWork(${hashCode()})")
 
@@ -38,7 +40,11 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
     companion object {
+        fun dataWithTaskId(taskId: String): Data
+            = Data.Builder().putString(TASK_ID, taskId).build()
+
         val TAG: String = SyncTaskWorker::class.java.simpleName
+
         const val TASK_ID: String = "TASK_ID"
         const val ERROR_MSG: String = "ERROR_MSG"
     }

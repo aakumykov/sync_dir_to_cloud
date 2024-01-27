@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import androidx.work.*
+import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
 import java.util.concurrent.TimeUnit
@@ -14,25 +15,10 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
         syncTask: SyncTask,
         callbacks: SyncTaskScheduler.ScheduleCallbacks
     ) {
-        val batteryNotLowConstraints = Constraints.Builder()
-            .setRequiresBatteryNotLow(true)
-            .build()
-
-        val periodicWorkRequest = PeriodicWorkRequest.Builder(
-            SyncTaskWorker::class.java,
-            syncTask.getExecutionIntervalMinutes(),
-            TimeUnit.MINUTES,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-            TimeUnit.MILLISECONDS
-        )
-            .addTag(SyncTask.TAG)
-            .setConstraints(batteryNotLowConstraints)
-            .build()
-
         workManager.enqueueUniquePeriodicWork(
-            syncTask.id,
+            workId(syncTask),
             ExistingPeriodicWorkPolicy.UPDATE,
-            periodicWorkRequest
+            periodicWorkRequest(syncTask)
         ).state.observeForever {
             when(it) {
                 is Operation.State.SUCCESS -> callbacks.onSyncTaskScheduleSuccess()
@@ -42,11 +28,17 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
         }
     }
 
+    private fun workId(syncTask: SyncTask): String {
+        return WorkManagerConfig.PERIODIC_WORK_ID_PREFIX + syncTask.id
+    }
+
     override fun unScheduleSyncTask(
         syncTask: SyncTask,
         callbacks: SyncTaskScheduler.UnScheduleCallbacks
     ) {
-        workManager.cancelUniqueWork(syncTask.id).state.observeForever {
+        workManager
+            .cancelUniqueWork(workId(syncTask))
+            .state.observeForever {
             when(it) {
                 is Operation.State.SUCCESS -> callbacks.onSyncTaskUnScheduleSuccess()
                 is Operation.State.IN_PROGRESS -> {}
@@ -55,10 +47,25 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
         }
     }
 
-    private fun workName(taskId: String) = PERIODIC_WORK_NAME_PREFIX + taskId
 
-    companion object {
-        const val PERIODIC_WORK_NAME_PREFIX = "PERIODIC-"
+    private fun periodicWorkRequest(syncTask: SyncTask): PeriodicWorkRequest {
+        return PeriodicWorkRequest.Builder(
+            SyncTaskWorker::class.java,
+            syncTask.getExecutionIntervalMinutes(),
+            TimeUnit.MINUTES,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
+            .addTag(SyncTask.TAG)
+            .setInputData(SyncTaskWorker.dataWithTaskId(syncTask.id))
+            .setConstraints(batteryConstraints())
+            .build()
+    }
+
+    private fun batteryConstraints(): Constraints {
+        return Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .build()
     }
 }
 
