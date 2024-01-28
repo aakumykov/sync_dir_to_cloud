@@ -7,12 +7,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 
-class TaskListViewHolder(private val itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
+class TaskListViewHolder(fragment: Fragment,
+                         private val itemView: View,
+                         private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
 
     private val probeRunButton: ImageButton = itemView.findViewById(R.id.probeRunButton)
 
@@ -33,7 +36,9 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
 
-        moreButton.setOnClickListener { Toast.makeText(moreButton.context, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show() }
+//        moreButton.setOnClickListener { itemClickCallback.onTaskMoreButtonClicked(moreButton, currentTask) }
+
+        fragment.registerForContextMenu(moreButton)
 
         // Переключается не прямо, а после изменения статуса SyncTask (в БД).
         enablingSwitch.setOnClickListener {

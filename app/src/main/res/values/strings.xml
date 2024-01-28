@@ -60,4 +60,5 @@
     <string name="FRAGMENT_TASK_INFO_title">Сведения о задаче</string>
     <string name="ERROR_storage_access_required">Нужен доступ к хранилищу</string>
     <string name="MENU_ITEM_manage_external_storage">Управление всеми файлами</string>
+    <string name="MENU_ITEM_delete">Удалить</string>
 </resources>

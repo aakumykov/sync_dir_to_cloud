@@ -2,12 +2,14 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 
-class TaskListAdapter(private val itemClickCallback: ItemClickCallback) : RecyclerView.Adapter<TaskListViewHolder>() {
+class TaskListAdapter(private val fragment: Fragment,
+                      private val itemClickCallback: ItemClickCallback) : RecyclerView.Adapter<TaskListViewHolder>() {
 
     private val list: MutableList<SyncTask> = mutableListOf()
 
@@ -19,7 +21,7 @@ class TaskListAdapter(private val itemClickCallback: ItemClickCallback) : Recycl
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.task_list_item, parent,false)
-        return TaskListViewHolder(view, itemClickCallback)
+        return TaskListViewHolder(fragment, view, itemClickCallback)
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
