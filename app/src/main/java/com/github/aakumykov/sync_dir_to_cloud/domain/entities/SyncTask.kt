@@ -86,7 +86,7 @@ class SyncTask {
 
     @Ignore
     fun getExecutionIntervalMinutes(): Long {
-        return (intervalHours * 60 + intervalMinutes) * 60L
+        return intervalHours * 60L + intervalMinutes
     }
 
 
