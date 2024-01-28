@@ -33,6 +33,12 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+    // TODO: перенести в отдельный класс?
+    suspend fun taskSummary(taskId: String): String {
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+        return "SyncTask: ${syncTask.sourcePath} --> ${syncTask.targetPath}"
+    }
+
 
     private fun prepareReader(syncTask: SyncTask) {
         // TODO: реализовать sourceAuthToken
