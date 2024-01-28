@@ -13,29 +13,33 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     // TODO: OutputData: краткая сводка о выполненной работе
 
     override suspend fun doWork(): Result {
-        MyLogger.d(TAG, "doWork(${hashCode()})")
+        MyLogger.d(TAG, "doWork() [${hashCode()}] начался.")
 
         val taskId: String = inputData.getString(TASK_ID)
-            ?: return Result.failure(errorData("Task id not found in input data"))
+            ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
+
+        val syncTaskExecutor = App.getAppComponent().getSyncTaskExecutor()
 
         try {
-            MyLogger.d(TAG, "executeSyncTask()")
-            App.getAppComponent().getSyncTaskExecutor().executeSyncTask(taskId)
+            syncTaskExecutor.executeSyncTask(taskId)
         }
         catch (t: Throwable) {
             MyLogger.e(TAG, ExceptionUtils.getErrorMessage(t), t)
             Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
         }
 
-        return Result.success()
+        val summary = syncTaskExecutor.taskSummary(taskId)
+        MyLogger.d(TAG, "doWork() [${hashCode()}] завершился ($summary).")
+        return Result.success(successData(summary))
     }
 
 
-    // FIXME: арогумент key подразумевается один
+    private fun successData(value: String): Data {
+        return Data.Builder().apply { putString(SUMMARY, value) }.build()
+    }
+
     private fun errorData(value: String): Data {
-        return Data.Builder().apply {
-            putString(ERROR_MSG, value)
-        }.build()
+        return Data.Builder().apply { putString(ERROR_MSG, value) }.build()
     }
 
     companion object {
@@ -46,5 +50,6 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         const val TASK_ID: String = "TASK_ID"
         const val ERROR_MSG: String = "ERROR_MSG"
+        const val SUMMARY: String = "SUMMARY"
     }
 }
