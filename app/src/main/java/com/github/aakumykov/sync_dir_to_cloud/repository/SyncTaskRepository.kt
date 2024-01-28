@@ -57,6 +57,13 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteSyncTask(taskId: String) {
+        MyLogger.d(TAG, "deleteSyncTask($taskId)")
+        coroutineScope.launch(coroutineDispatcher) {
+            syncTaskLocalDataSource.delete(taskId)
+        }
+    }
+
 
     companion object {
         val TAG: String = SyncTaskRepository::class.java.simpleName

@@ -22,6 +22,9 @@ interface SyncTaskDAO {
     @Delete
     fun delete(syncTask: SyncTask)
 
+    @Query("DELETE FROM sync_tasks WHERE id = :taskId")
+    fun delete(taskId: String)
+
     @Update
     fun update(syncTask: SyncTask)
 }
