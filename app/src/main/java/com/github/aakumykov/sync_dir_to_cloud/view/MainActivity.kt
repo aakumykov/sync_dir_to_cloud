@@ -50,6 +50,13 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("MissingSuperCall")
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        loadInitialFragment(intent)
+    }
+
+
     override fun onDestroy() {
         super.onDestroy()
         releaseFragmentManager()
@@ -61,17 +68,14 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
-    @SuppressLint("MissingSuperCall")
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        when(val action = intent?.action) {
+    private fun loadInitialFragment(intent: Intent?) {
+        when(intent?.action) {
             ACTION_SHOW_TASK_STATE -> {
+                // TODO: переместить получение этого параметра из Intent в метод create()
                 val taskId = intent.getStringExtra(TaskInfoFragment.KEY_TASK_ID)
-                loadFragment(TaskInfoFragment.create(taskId))
+                setFragment(TaskInfoFragment.create(taskId))
             }
-            else -> MyLogger.w(TAG, "Неизвестный action: $action")
+            else -> setFragment(TaskListFragment.create())
         }
     }
 
@@ -137,12 +141,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun onNewNavTarget(navTarget: NavTarget) {
         when (navTarget) {
-//            is NavTarget.Start, NavTarget.List -> setFragment(TaskListFragment.create())
             is NavTarget.Add -> loadFragment(TaskEditFragment.create())
             is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
             is NavTarget.TaskInfo -> loadFragment(TaskInfoFragment.create(navTarget.id))
-            else -> setFragment(TaskListFragment.create())
+            else -> loadInitialFragment(intent)
         }
     }
 
