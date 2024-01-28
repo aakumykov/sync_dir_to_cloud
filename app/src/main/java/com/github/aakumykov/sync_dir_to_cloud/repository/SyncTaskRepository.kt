@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override fun changeState(taskId: String, newState: SyncTask.State) {
-        Log.d(TAG, "changeState($taskId, $newState")
+        MyLogger.d(TAG, "changeState($taskId, $newState")
         coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.setState(taskId, newState)
         }

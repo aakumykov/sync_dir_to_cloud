@@ -1,11 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
@@ -13,18 +13,17 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     // TODO: OutputData: краткая сводка о выполненной работе
 
     override suspend fun doWork(): Result {
-        Log.d(TAG, "doWork(${hashCode()})")
+        MyLogger.d(TAG, "doWork(${hashCode()})")
 
         val taskId: String = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("Task id not found in input data"))
 
-
         try {
-            Log.d(TAG, "executeSyncTask()")
+            MyLogger.d(TAG, "executeSyncTask()")
             App.getAppComponent().getSyncTaskExecutor().executeSyncTask(taskId)
         }
         catch (t: Throwable) {
-            Log.e(TAG, ExceptionUtils.getErrorMessage(t), t)
+            MyLogger.e(TAG, ExceptionUtils.getErrorMessage(t), t)
             Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
         }
 

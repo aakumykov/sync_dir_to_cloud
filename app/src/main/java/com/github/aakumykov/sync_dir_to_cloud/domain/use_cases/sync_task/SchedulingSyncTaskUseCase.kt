@@ -1,12 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler.ScheduleCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler.UnScheduleCallbacks
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
@@ -51,7 +51,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     }
 
     private fun setSyncTaskErrorState(syncTask: SyncTask, error: Throwable) {
-        Log.e(TAG, ExceptionUtils.getErrorMessage(error), error)
+        MyLogger.e(TAG, ExceptionUtils.getErrorMessage(error), error)
         syncTask.schedulingError = ExceptionUtils.getErrorMessage(error)
         syncTaskUpdater.updateSyncTask(syncTask)
     }

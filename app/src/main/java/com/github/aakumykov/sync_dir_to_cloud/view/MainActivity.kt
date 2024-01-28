@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.view
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -14,6 +13,7 @@ import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                 val taskId = intent.getStringExtra(TaskInfoFragment.KEY_TASK_ID)
                 loadFragment(TaskInfoFragment.create(taskId))
             }
-            else -> Log.w(TAG, "Неизвестный action: $action")
+            else -> MyLogger.w(TAG, "Неизвестный action: $action")
         }
     }
 

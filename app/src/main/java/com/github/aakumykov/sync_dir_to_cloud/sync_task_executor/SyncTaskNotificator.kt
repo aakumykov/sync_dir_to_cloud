@@ -15,6 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskInfoFragment
@@ -39,7 +40,7 @@ class SyncTaskNotificator @Inject constructor(
 
     fun showNotification(taskId: String, notificationId: Int, state: SyncTask.State) {
 
-        Log.d(tagWithHashCode(), "showNotification($taskId, $notificationId, $state)")
+        MyLogger.d(tagWithHashCode(), "showNotification($taskId, $notificationId, $state)")
 
         prepareNotificationChannel()
 
@@ -57,7 +58,7 @@ class SyncTaskNotificator @Inject constructor(
     }
 
     fun hideNotification(taskId: String, notificationId: Int) {
-        Log.d(tagWithHashCode(), "hideNotification($taskId, $notificationId)")
+        MyLogger.d(tagWithHashCode(), "hideNotification($taskId, $notificationId)")
         notificationManagerCompat.cancel(taskId, notificationId)
     }
 

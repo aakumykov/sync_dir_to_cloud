@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import java.io.File
 
@@ -46,7 +47,7 @@ abstract class BasicTargetWriter constructor(
                             childDirName = childDirName
                         )
                     } catch (e: CloudWriter.AlreadyExistsException) {
-                        Log.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
+                        MyLogger.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
                     }
                 }
             }
