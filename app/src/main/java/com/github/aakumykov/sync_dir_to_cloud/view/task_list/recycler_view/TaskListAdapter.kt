@@ -14,7 +14,7 @@ class TaskListAdapter(private val itemClickCallback: ItemClickCallback) : Recycl
     fun setList(newList: List<SyncTask>) {
         list.clear()
         list.addAll(newList)
-        notifyItemRangeChanged(0, newList.size)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
