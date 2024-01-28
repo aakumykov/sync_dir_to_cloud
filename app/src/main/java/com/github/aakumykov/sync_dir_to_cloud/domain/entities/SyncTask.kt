@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import java.util.Date
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 @Entity(
     tableName = "sync_tasks",
@@ -85,8 +86,8 @@ class SyncTask {
 
 
     @Ignore
-    fun getExecutionIntervalMinutes(): Long {
-        return intervalHours * 60L + intervalMinutes
+    fun getExecutionInterval(): Pair<Long, TimeUnit> {
+        return Pair(intervalHours * 60L + intervalMinutes, TimeUnit.MINUTES)
     }
 
 
