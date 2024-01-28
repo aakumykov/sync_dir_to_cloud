@@ -96,6 +96,9 @@ class SyncTask {
                 " { enabled: $isEnabled, $sourcePath -> $targetType:$targetPath }"
     }
 
+    @Ignore
+    fun summary() = "SyncTask: $sourcePath --> $targetPath"
+
     enum class State {
         IDLE,
         READING_SOURCE,
