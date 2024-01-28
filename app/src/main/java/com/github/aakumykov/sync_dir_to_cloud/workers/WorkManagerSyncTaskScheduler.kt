@@ -28,9 +28,6 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
         }
     }
 
-    private fun workId(syncTask: SyncTask): String {
-        return WorkManagerConfig.PERIODIC_WORK_ID_PREFIX + syncTask.id
-    }
 
     override fun unScheduleSyncTask(
         syncTask: SyncTask,
@@ -48,19 +45,25 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
     }
 
 
+    private fun workId(syncTask: SyncTask): String {
+        return WorkManagerConfig.PERIODIC_WORK_ID_PREFIX + syncTask.id
+    }
+
+
     private fun periodicWorkRequest(syncTask: SyncTask): PeriodicWorkRequest {
         return PeriodicWorkRequest.Builder(
             SyncTaskWorker::class.java,
-            syncTask.getExecutionIntervalMinutes(),
-            TimeUnit.MINUTES,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-            TimeUnit.MILLISECONDS
+            syncTask.getExecutionInterval().first,
+            syncTask.getExecutionInterval().second,
+            WorkManagerConfig.PERIODIC_FLEX_INTERVAL,
+            WorkManagerConfig.PERIODIC_FLEX_UNITS
         )
             .addTag(SyncTask.TAG)
             .setInputData(SyncTaskWorker.dataWithTaskId(syncTask.id))
             .setConstraints(batteryConstraints())
             .build()
     }
+
 
     private fun batteryConstraints(): Constraints {
         return Constraints.Builder()
