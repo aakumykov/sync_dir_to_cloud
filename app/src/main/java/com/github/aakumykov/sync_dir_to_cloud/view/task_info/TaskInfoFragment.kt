@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_info
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -83,6 +84,10 @@ class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
             return TaskInfoFragment().apply {
                 arguments = Bundle().apply { putString(KEY_TASK_ID, taskId) }
             }
+        }
+
+        fun create(intent: Intent): TaskInfoFragment {
+            return create(intent.getStringExtra(KEY_TASK_ID))
         }
     }
 }

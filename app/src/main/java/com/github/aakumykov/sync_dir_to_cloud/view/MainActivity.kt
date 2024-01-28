@@ -69,14 +69,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadInitialFragment(intent: Intent?) {
-        when(intent?.action) {
-            ACTION_SHOW_TASK_STATE -> {
-                // TODO: переместить получение этого параметра из Intent в метод create()
-                val taskId = intent.getStringExtra(TaskInfoFragment.KEY_TASK_ID)
-                setFragment(TaskInfoFragment.create(taskId))
+        setFragment(
+            when(intent?.action) {
+                ACTION_SHOW_TASK_STATE -> TaskInfoFragment.create(intent)
+                else -> TaskListFragment.create()
             }
-            else -> setFragment(TaskListFragment.create())
-        }
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
