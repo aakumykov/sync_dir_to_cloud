@@ -31,4 +31,10 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
             taskSchedulingUseCase.toggleTaskScheduling(taskId)
         }
     }
+
+    fun deleteTask(taskId: String) {
+        viewModelScope.launch {
+            syncTaskManagingUseCase.deleteSyncTask(taskId)
+        }
+    }
 }

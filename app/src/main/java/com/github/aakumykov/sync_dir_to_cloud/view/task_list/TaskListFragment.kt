@@ -1,8 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
+import android.content.DialogInterface
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.widget.PopupMenuCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -31,11 +35,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import permissions.dispatcher.ktx.constructPermissionsRequest
 
-class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallback {
+class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallback,
+    PopupMenu.OnMenuItemClickListener {
 
     companion object {
         fun create() : TaskListFragment = TaskListFragment()
     }
+
+    private var clickedTask: SyncTask? = null
 
     // View binding
     private var _binding: FragmentTaskListBinding? = null
@@ -122,6 +129,41 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
     override fun onTaskDeleteClicked(taskId: String) {
         TODO("Not yet implemented")
+    }
+
+    override fun onTaskMoreButtonClicked(itemView: View, anchorView: View, syncTask: SyncTask) {
+
+        clickedTask = syncTask
+
+        PopupMenu(requireContext(), anchorView).apply {
+            menuInflater.inflate(R.menu.task_list_item_popup_menu, menu)
+            setOnMenuItemClickListener(this@TaskListFragment)
+            setOnDismissListener { clickedTask = null }
+        }.show()
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        return when(item?.itemId) {
+            R.id.actionDelete -> {
+                showDeleteTaskDialog()
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun showDeleteTaskDialog() {
+        clickedTask?.also { task ->
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.DELETE_DIALOG_title)
+                .setMessage(task.summary())
+                .setPositiveButton(R.string.DIALOG_BUTTON_yes, DialogInterface.OnClickListener { dialog, which ->
+                    taskListViewModel.deleteTask(task.id)
+                })
+                .setNegativeButton(R.string.DIALOG_BUTTON_no, DialogInterface.OnClickListener { _, _ -> })
+                .create()
+                .show()
+        }
     }
 
     override fun onTaskInfoClicked(taskId: String) {

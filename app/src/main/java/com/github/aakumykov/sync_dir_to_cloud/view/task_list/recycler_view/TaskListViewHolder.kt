@@ -33,7 +33,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
 
-        moreButton.setOnClickListener { Toast.makeText(moreButton.context, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show() }
+        moreButton.setOnClickListener { itemClickCallback.onTaskMoreButtonClicked(itemView, moreButton, currentTask) }
 
         // Переключается не прямо, а после изменения статуса SyncTask (в БД).
         enablingSwitch.setOnClickListener {
