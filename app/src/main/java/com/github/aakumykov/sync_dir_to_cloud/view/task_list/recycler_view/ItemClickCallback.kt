@@ -1,8 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view
 
-import android.view.View
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-
 interface ItemClickCallback {
     fun onProbeRunClicked(taskId: String)
     fun onProbeRunLongClicked(taskId: String)
@@ -12,6 +9,4 @@ interface ItemClickCallback {
     fun onTaskDeleteClicked(taskId: String)
     fun onTaskInfoClicked(taskId: String)
     fun onTaskEnableSwitchClicked(taskId: String)
-
-    fun onTaskMoreButtonClicked(buttonView: View, syncTask: SyncTask)
 }

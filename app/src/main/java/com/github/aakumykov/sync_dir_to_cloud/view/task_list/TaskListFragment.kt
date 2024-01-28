@@ -1,8 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.os.Bundle
-import android.view.ContextMenu
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -11,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.Operation
@@ -20,7 +19,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
@@ -36,7 +34,6 @@ import permissions.dispatcher.ktx.constructPermissionsRequest
 class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallback {
 
     companion object {
-        val TAG: String = TaskListFragment::class.java.simpleName
         fun create() : TaskListFragment = TaskListFragment()
     }
 
@@ -127,33 +124,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
         TODO("Not yet implemented")
     }
 
-    override fun onTaskMoreButtonClicked(buttonView: View, syncTask: SyncTask) {
-
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        requireActivity().menuInflater.inflate(R.menu.task_list_item_context_menu, menu)
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.actionDelete -> deleteTaskQuestion()
-            else -> { MyLogger.i(TAG, "Неизвестное действие: '${item.title}'") }
-        }
-        return super.onContextItemSelected(item)
-    }
-
-
-    private fun deleteTaskQuestion() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Удалить?"/*R.string.DIALOG_delete_task_title*/)
-//            .setMessage()
-            .create()
-            .show()
-    }
-
-
     override fun onTaskInfoClicked(taskId: String) {
         navigationViewModel.navigateTo(NavTarget.TaskInfo(taskId))
     }
@@ -169,7 +139,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
 
     private fun prepareAdapter() {
-        taskListAdapter = TaskListAdapter(this, this)
+        taskListAdapter = TaskListAdapter(this)
     }
 
 
@@ -226,5 +196,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
     private fun onListChanged(list: List<SyncTask>) {
         taskListAdapter?.setList(list)
     }
+
 }
 
