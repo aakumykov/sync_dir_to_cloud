@@ -85,7 +85,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                 )
                 .enqueue()
         }*/
-        
+
         taskListViewModel.startTask(taskId)
     }
 
@@ -109,6 +109,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                 }*/
 
         taskListViewModel.stopTask(taskId)
+        showToast("Выполнение задачи остановлено")
     }
 
     private fun oneTimeWorkRequest(taskId: String): OneTimeWorkRequest {

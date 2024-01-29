@@ -10,7 +10,7 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
     private val workManager: WorkManager
 ) : SyncTaskStarterStopper
 {
-    override fun startSyncTask(syncTask: SyncTask) {
+    override suspend fun startSyncTask(syncTask: SyncTask): Operation.State.SUCCESS {
 
         val workName = workName(syncTask.id)
 
@@ -34,23 +34,27 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
 //            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
 
-        workManager
+        return workManager
             .beginUniqueWork(
                 workName,
                 ExistingWorkPolicy.KEEP,
                 manualSyncStartWorkRequest
             )
             .enqueue()
+            .await()
     }
 
     private fun workName(taskId: String): String = MANUAL_WORK_ID_PREFIX + taskId
 
-    override fun stopSyncTask(syncTask: SyncTask, callback: SyncTaskStarterStopper.StopCallback) {
-        workManager.cancelUniqueWork(workName(syncTask.id)).state.observeForever {
+    override suspend fun stopSyncTask(syncTask: SyncTask): Operation.State.SUCCESS {
+        /*workManager.cancelUniqueWork(workName(syncTask.id)).state.observeForever {
             when (it) {
-                is Operation.State.SUCCESS -> callback.onSyncTaskStopped(syncTask.id)
+                is Operation.State.SUCCESS -> true
+                is Operation.State.FAILURE -> false
             }
-        }
+        }*/
+
+        return workManager.cancelUniqueWork(workName(syncTask.id)).await()
     }
 
     companion object {

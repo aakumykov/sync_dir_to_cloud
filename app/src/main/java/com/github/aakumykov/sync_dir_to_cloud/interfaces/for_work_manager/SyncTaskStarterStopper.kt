@@ -1,12 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager
 
+import androidx.work.Operation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 interface SyncTaskStarterStopper {
-    fun startSyncTask(syncTask: SyncTask)
-    fun stopSyncTask(syncTask: SyncTask, callback: StopCallback)
+    // TODO: как сообщать об ошибке? Исключения, наверное...
 
-    interface StopCallback {
-        fun onSyncTaskStopped(taskId: String)
-    }
+    suspend fun startSyncTask(syncTask: SyncTask): Operation.State.SUCCESS
+
+    suspend fun stopSyncTask(syncTask: SyncTask): Operation.State.SUCCESS
 }

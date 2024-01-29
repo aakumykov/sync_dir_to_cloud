@@ -32,17 +32,12 @@ class StartStopSyncTaskUseCase @Inject constructor(
         syncTaskReader.getSyncTask(taskId).also { stopSyncTask(it) }
     }
 
-    // TODO: устанавливать более специфичное состояние?
-    // FIXME: почему здесь не лямбда за пределами скобок?
-    private fun stopSyncTask(syncTask: SyncTask) {
-        syncTaskStarterStopper.stopSyncTask(syncTask, object:SyncTaskStarterStopper.StopCallback {
-            override fun onSyncTaskStopped(taskId: String) {
-                syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.IDLE)
-            }
-        })
+    private suspend fun startSyncTask(syncTask: SyncTask) {
+        val isStarted = syncTaskStarterStopper.startSyncTask(syncTask)
     }
 
-    private fun startSyncTask(syncTask: SyncTask) {
-        syncTaskStarterStopper.startSyncTask(syncTask)
+    // TODO: устанавливать более специфичное состояние?
+    private suspend fun stopSyncTask(syncTask: SyncTask) {
+        syncTaskStarterStopper.stopSyncTask(syncTask)
     }
 }
