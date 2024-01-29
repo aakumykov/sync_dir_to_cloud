@@ -24,6 +24,11 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         }
     }
 
+    suspend fun unScheduleSyncTask(taskId: String) {
+        syncTaskReader.getSyncTask(taskId).also { unScheduleSyncTask(it) }
+    }
+
+
 
     private fun scheduleSyncTask(syncTask: SyncTask) {
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
