@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.utils
 
+import android.os.Build
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.BuildConfig
 
@@ -32,5 +33,7 @@ object MyLogger {
         t.printStackTrace()
     }
 
-    private fun fullTag(tag: String): String = "$TAG_PREFIX, $tag"
+    private fun fullTag(tag: String): String {
+        return if (isEmulator()) "$TAG_PREFIX, $tag" else tag
+    }
 }
