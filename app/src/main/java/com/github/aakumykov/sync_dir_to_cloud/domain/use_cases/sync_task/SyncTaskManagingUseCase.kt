@@ -11,8 +11,8 @@ import javax.inject.Inject
 @AppScope
 class SyncTaskManagingUseCase @Inject constructor(
     val syncTaskReader: SyncTaskReader,
-    val syncTaskCreatorDeleter: SyncTaskCreatorDeleter,
-    val syncTaskUpdater: SyncTaskUpdater
+    private val syncTaskCreatorDeleter: SyncTaskCreatorDeleter,
+    private val syncTaskUpdater: SyncTaskUpdater
 ) {
 
     suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
