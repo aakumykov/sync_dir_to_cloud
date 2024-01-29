@@ -10,10 +10,11 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartSt
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import kotlinx.coroutines.launch
 
+// TODO: поля в конструктор, LAZY
 class TaskListViewModel(application: Application) : TaskManagingViewModel(application) {
 
     private val startStopUseCase: StartStopSyncTaskUseCase = App.getAppComponent().getStartStopSyncTaskUseCase()
-    private val taskSchedulingUseCase: SchedulingSyncTaskUseCase = App.getAppComponent().getTaskSchedulingUseCase()
+    private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase = App.getAppComponent().getTaskSchedulingUseCase()
 
 
     suspend fun getTaskList(): LiveData<List<SyncTask>> =
@@ -28,12 +29,13 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
 
     fun changeTaskEnabled(taskId: String) {
         viewModelScope.launch {
-            taskSchedulingUseCase.toggleTaskScheduling(taskId)
+            syncTaskSchedulingUseCase.toggleTaskScheduling(taskId)
         }
     }
 
     fun deleteTask(taskId: String) {
         viewModelScope.launch {
+            syncTaskSchedulingUseCase.unScheduleSyncTask(taskId)
             syncTaskManagingUseCase.deleteSyncTask(taskId)
         }
     }
