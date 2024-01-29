@@ -18,10 +18,6 @@ class AuthListViewModel(application: Application) : OpStateViewModel(application
     val authList: LiveData<AuthList> get() = _authListMediatorLiveData
 
     suspend fun startLoadingList() {
-
-        if (BuildConfig.DEBUG)
-            delay(1000)
-
         _authListMediatorLiveData.addSource(cloudAuthLister.listCloudAuth()) {
             _authListMediatorLiveData.setValue(it)
         }
