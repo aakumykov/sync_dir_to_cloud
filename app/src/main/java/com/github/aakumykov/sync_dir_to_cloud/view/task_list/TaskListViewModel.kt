@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 // TODO: поля в конструктор, LAZY
 class TaskListViewModel(application: Application) : TaskManagingViewModel(application) {
 
-    private val startStopUseCase: StartStopSyncTaskUseCase = App.getAppComponent().getStartStopSyncTaskUseCase()
+    private val syncTaskStartStopUseCase: StartStopSyncTaskUseCase = App.getAppComponent().getStartStopSyncTaskUseCase()
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase = App.getAppComponent().getTaskSchedulingUseCase()
 
 
@@ -23,7 +23,7 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
 
     fun startStopTask(taskId: String) {
         viewModelScope.launch {
-            startStopUseCase.startStopSyncTask(taskId)
+            syncTaskStartStopUseCase.startStopSyncTask(taskId)
         }
     }
 
@@ -35,8 +35,23 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
 
     fun deleteTask(taskId: String) {
         viewModelScope.launch {
+            syncTaskStartStopUseCase.stopSyncTask(taskId)
             syncTaskSchedulingUseCase.unScheduleSyncTask(taskId)
             syncTaskManagingUseCase.deleteSyncTask(taskId)
+        }
+    }
+
+    @Deprecated("Временный")
+    fun startTask(taskId: String) {
+        viewModelScope.launch {
+            syncTaskStartStopUseCase.startSyncTask(taskId)
+        }
+    }
+
+    @Deprecated("Временный")
+    fun stopTask(taskId: String) {
+        viewModelScope.launch {
+            syncTaskStartStopUseCase.stopSyncTask(taskId)
         }
     }
 }

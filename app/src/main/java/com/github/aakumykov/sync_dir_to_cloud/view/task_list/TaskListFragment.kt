@@ -75,7 +75,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
 
     override fun onProbeRunClicked(taskId: String) {
 
-        lifecycleScope.launch (Dispatchers.IO) {
+        /*lifecycleScope.launch (Dispatchers.IO) {
 
             WorkManager.getInstance(requireContext())
                 .beginUniqueWork(
@@ -84,11 +84,13 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                     oneTimeWorkRequest(taskId)
                 )
                 .enqueue()
-        }
+        }*/
+        
+        taskListViewModel.startTask(taskId)
     }
 
     override fun onProbeRunLongClicked(taskId: String) {
-        WorkManager.getInstance(requireContext())
+        /*WorkManager.getInstance(requireContext())
                 .cancelUniqueWork(probeTaskId(taskId))
                 .state.observe(viewLifecycleOwner) { operationState ->
 
@@ -104,7 +106,9 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                             appComponent.getSyncTaskNotificator().hideNotification(taskId, task.notificationId)
                         }
                     }
-                }
+                }*/
+
+        taskListViewModel.stopTask(taskId)
     }
 
     private fun oneTimeWorkRequest(taskId: String): OneTimeWorkRequest {
@@ -127,6 +131,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
         taskListViewModel.startStopTask(taskId)
     }
 
+    @Deprecated("Удалить метод")
     override fun onTaskDeleteClicked(taskId: String) {
         TODO("Not yet implemented")
     }
@@ -152,12 +157,13 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
         }
     }
 
+    // TODO: если задача выполняется?
     private fun showDeleteTaskDialog() {
         clickedTask?.also { task ->
             AlertDialog.Builder(requireContext())
                 .setTitle(R.string.DELETE_DIALOG_title)
                 .setMessage(task.summary())
-                .setPositiveButton(R.string.DIALOG_BUTTON_yes, DialogInterface.OnClickListener { dialog, which ->
+                .setPositiveButton(R.string.DIALOG_BUTTON_yes, DialogInterface.OnClickListener { _, _ ->
                     taskListViewModel.deleteTask(task.id)
                 })
                 .setNegativeButton(R.string.DIALOG_BUTTON_no, DialogInterface.OnClickListener { _, _ -> })

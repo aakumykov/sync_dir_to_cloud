@@ -35,7 +35,11 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
                 .build()
 
         workManager
-            .beginUniqueWork(workName, ExistingWorkPolicy.KEEP, manualSyncStartWorkRequest)
+            .beginUniqueWork(
+                workName,
+                ExistingWorkPolicy.KEEP,
+                manualSyncStartWorkRequest
+            )
             .enqueue()
     }
 
