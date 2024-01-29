@@ -10,7 +10,7 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
     private val workManager: WorkManager
 ) : SyncTaskStarterStopper
 {
-    override fun startSyncTask(syncTask: SyncTask) {
+    override suspend fun startSyncTask(syncTask: SyncTask) {
 
         val workName = workName(syncTask.id)
 
@@ -37,16 +37,13 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
         workManager
             .beginUniqueWork(workName, ExistingWorkPolicy.KEEP, manualSyncStartWorkRequest)
             .enqueue()
+            .await()
     }
 
     private fun workName(taskId: String): String = MANUAL_WORK_ID_PREFIX + taskId
 
-    override fun stopSyncTask(syncTask: SyncTask, callback: SyncTaskStarterStopper.StopCallback) {
-        workManager.cancelUniqueWork(workName(syncTask.id)).state.observeForever {
-            when (it) {
-                is Operation.State.SUCCESS -> callback.onSyncTaskStopped(syncTask.id)
-            }
-        }
+    override suspend fun stopSyncTask(syncTask: SyncTask) {
+        workManager.cancelUniqueWork(workName(syncTask.id)).await()
     }
 
     companion object {

@@ -158,7 +158,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                 .setTitle(R.string.DELETE_DIALOG_title)
                 .setMessage(task.summary())
                 .setPositiveButton(R.string.DIALOG_BUTTON_yes, DialogInterface.OnClickListener { dialog, which ->
-                    taskListViewModel.deleteTask(task.id)
+                    taskListViewModel.deleteTask(task)
                 })
                 .setNegativeButton(R.string.DIALOG_BUTTON_no, DialogInterface.OnClickListener { _, _ -> })
                 .create()
