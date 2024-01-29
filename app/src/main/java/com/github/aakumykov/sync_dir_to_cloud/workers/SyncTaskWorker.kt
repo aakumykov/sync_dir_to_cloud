@@ -19,7 +19,10 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         val taskId: String = inputData.getString(TASK_ID) ?: return failure("Входящие данные не содержат ключа '$TASK_ID'")
         val commandString: String = inputData.getString(COMMAND) ?: return failure("Входящие данные не содержат ключа '$COMMAND'")
 
-        when (Command.valueOf(commandString)) {
+        val command = Command.valueOf(commandString)
+        MyLogger.d(TAG, "команда: $command")
+
+        when (command) {
             Command.START -> { syncTaskExecutor.startExecutingTask(taskId) }
             Command.STOP -> { syncTaskExecutor.stopExecutingTask(taskId) }
         }
