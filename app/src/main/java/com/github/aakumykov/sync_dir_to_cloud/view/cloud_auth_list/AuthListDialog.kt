@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.util.Function
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -74,7 +75,8 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
             requireContext(),
             R.layout.auth_list_item,
             R.id.cloudAuthNameView,
-            ArrayList()
+            ArrayList(),
+            Function { return@Function it.name }
         )
 
         binding.listView.adapter = listAdapter
