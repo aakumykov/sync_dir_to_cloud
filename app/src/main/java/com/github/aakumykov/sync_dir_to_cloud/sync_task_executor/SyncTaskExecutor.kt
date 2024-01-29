@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.c
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
@@ -21,17 +22,26 @@ class SyncTaskExecutor @Inject constructor(
     private val syncObjectClearer: SyncObjectClearer
 ) {
     private var sourceReader: SourceReader? = null
-    private var mTargetWriter: TargetWriter? = null
+    private var targetWriter: TargetWriter? = null
 
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. А как устойчивость к ошибкам?
-    suspend fun executeSyncTask(taskId: String) {
+    suspend fun startExecutingTask(taskId: String) {
+        MyLogger.d(TAG, "startExecutingTask($taskId)")
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             prepareReader(syncTask)
             prepareWriter(syncTask)
             doWork(syncTask)
         }
     }
+
+
+    fun stopExecutingTask(taskId: String) {
+        MyLogger.d(TAG, "startExecutingTask($taskId)")
+        sourceReader?.stopReading()
+        targetWriter?.stopWriting()
+    }
+
 
     // TODO: перенести в отдельный класс?
     suspend fun taskSummary(taskId: String): String = syncTaskReader.getSyncTask(taskId).summary()
@@ -50,7 +60,7 @@ class SyncTaskExecutor @Inject constructor(
         val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.cloudAuthId!!)?.authToken
             ?: throw IllegalStateException("Target auth token cannot be null")
 
-        mTargetWriter = targetWriterCreator.create(
+        targetWriter = targetWriterCreator.create(
             syncTask.targetType!!,
             targetAuthToken,
             syncTask.id,
@@ -67,13 +77,15 @@ class SyncTaskExecutor @Inject constructor(
 
         syncObjectClearer.clearSyncObjectsOfTask(taskId)
 
+        MyLogger.d(TAG, "Чтение источника")
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
         syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
         sourceReader?.read(syncTask.sourcePath!!)
 
+        MyLogger.d(TAG, "Отправка по назначению")
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.WRITING_TARGET)
         syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
-        mTargetWriter?.writeToTarget()
+        targetWriter?.writeToTarget()
 
         syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.SUCCESS)
         syncTaskNotificator.hideNotification(taskId, notificationId)

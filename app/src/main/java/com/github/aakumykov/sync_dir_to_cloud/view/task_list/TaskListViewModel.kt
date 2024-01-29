@@ -41,14 +41,14 @@ class TaskListViewModel(application: Application) : TaskManagingViewModel(applic
         }
     }
 
-    @Deprecated("Временный")
+    @Deprecated("Временный, затем перейти на startStopTask()...")
     fun startTask(taskId: String) {
         viewModelScope.launch {
             syncTaskStartStopUseCase.startSyncTask(taskId)
         }
     }
 
-    @Deprecated("Временный")
+    @Deprecated("Временный, затем перейти на startStopTask()...")
     fun stopTask(taskId: String) {
         viewModelScope.launch {
             syncTaskStartStopUseCase.stopSyncTask(taskId)

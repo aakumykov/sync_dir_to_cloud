@@ -16,9 +16,82 @@ abstract class BasicTargetWriter constructor(
     private val taskId: String,
     private val sourceDirPath: String,
     private val targetDirPath: String
-)
-    : TargetWriter
+) : TargetWriter
 {
+    private var stopFlag: Boolean = false
+
+
+    @Throws(IllegalStateException::class)
+    override suspend fun writeToTarget(overwriteIfExists: Boolean) {
+
+        stopFlag = false
+
+        run dirsLoop@ {
+            syncObjectReader.getSyncObjectsForTask(taskId)
+                .filter { it.isDir }
+                .forEach { syncObject ->
+
+                    if (stopFlag) return@dirsLoop
+
+                    writeSyncObjectToTarget(syncObject) {
+
+                        val parentDirName = targetDirPath
+                        val childDirName = (syncObject.relativeParentDirPath + syncObject.name).stripMultiSlash()
+
+                        try {
+                            cloudWriter()?.createDir(
+                                parentDirName = parentDirName,
+                                childDirName = childDirName
+                            )
+                        } catch (e: CloudWriter.AlreadyExistsException) {
+                            MyLogger.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
+                        }
+                    }
+                }
+        }
+
+        run filesLoop@ {
+            syncObjectReader.getSyncObjectsForTask(taskId).filter { !it.isDir }
+                .forEach { syncObject ->
+
+                    if (stopFlag) return@filesLoop
+
+                    writeSyncObjectToTarget(syncObject) {
+
+                        val pathInSource = (sourceDirPath +
+                                CloudWriter.DS +
+                                syncObject.relativeParentDirPath +
+                                CloudWriter.DS +
+                                syncObject.name)
+                            .stripMultiSlash()
+
+                        val pathInTarget = (targetDirPath +
+                                CloudWriter.DS +
+                                syncObject.relativeParentDirPath +
+                                CloudWriter.DS +
+                                syncObject.name)
+                            .stripMultiSlash()
+
+                        cloudWriter()?.putFile(
+                            file = File(pathInSource),
+                            targetPath = pathInTarget,
+                            overwriteIfExists = overwriteIfExists
+                        )
+                    }
+                }
+        }
+    }
+
+    override fun stopWriting() {
+        stopFlag = true
+    }
+
+
+    protected abstract fun cloudWriter(): CloudWriter?
+
+    protected abstract fun tag(): String
+
+
     private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
         try {
             syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.RUNNING)
@@ -29,57 +102,4 @@ abstract class BasicTargetWriter constructor(
             syncObjectStateChanger.setErrorState(syncObject.id, ExceptionUtils.getErrorMessage(t))
         }
     }
-
-
-    @Throws(IllegalStateException::class)
-    override suspend fun writeToTarget(overwriteIfExists: Boolean) {
-
-        syncObjectReader.getSyncObjectsForTask(taskId).filter { it.isDir }
-            .forEach { syncObject ->
-                writeSyncObjectToTarget(syncObject) {
-
-                    val parentDirName = targetDirPath
-                    val childDirName = (syncObject.relativeParentDirPath + syncObject.name).stripMultiSlash()
-
-                    try {
-                        cloudWriter()?.createDir(
-                            parentDirName = parentDirName,
-                            childDirName = childDirName
-                        )
-                    } catch (e: CloudWriter.AlreadyExistsException) {
-                        MyLogger.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
-                    }
-                }
-            }
-
-        syncObjectReader.getSyncObjectsForTask(taskId).filter { !it.isDir }
-            .forEach { syncObject ->
-                writeSyncObjectToTarget(syncObject) {
-
-                    val pathInSource = (sourceDirPath +
-                            CloudWriter.DS +
-                            syncObject.relativeParentDirPath +
-                            CloudWriter.DS +
-                            syncObject.name)
-                        .stripMultiSlash()
-
-                    val pathInTarget = (targetDirPath +
-                            CloudWriter.DS +
-                            syncObject.relativeParentDirPath +
-                            CloudWriter.DS +
-                            syncObject.name)
-                        .stripMultiSlash()
-
-                    cloudWriter()?.putFile(
-                        file = File(pathInSource),
-                        targetPath = pathInTarget,
-                        overwriteIfExists = overwriteIfExists
-                    )
-                }
-            }
-    }
-
-    protected abstract fun cloudWriter(): CloudWriter?
-
-    protected abstract fun tag(): String
 }

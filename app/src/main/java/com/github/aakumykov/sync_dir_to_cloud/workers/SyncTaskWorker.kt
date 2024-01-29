@@ -11,17 +11,21 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
 
     // TODO: OutputData: краткая сводка о выполненной работе
+    private val syncTaskExecutor by lazy { App.getAppComponent().getSyncTaskExecutor() }
 
     override suspend fun doWork(): Result {
         MyLogger.d(TAG, "doWork() [${hashCode()}] начался.")
 
-        val taskId: String = inputData.getString(TASK_ID)
-            ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
+        val taskId: String = inputData.getString(TASK_ID) ?: return failure("Входящие данные не содержат ключа '$TASK_ID'")
+        val commandString: String = inputData.getString(COMMAND) ?: return failure("Входящие данные не содержат ключа '$COMMAND'")
 
-        val syncTaskExecutor = App.getAppComponent().getSyncTaskExecutor()
+        when (Command.valueOf(commandString)) {
+            Command.START -> { syncTaskExecutor.startExecutingTask(taskId) }
+            Command.STOP -> { syncTaskExecutor.stopExecutingTask(taskId) }
+        }
 
         try {
-            syncTaskExecutor.executeSyncTask(taskId)
+            syncTaskExecutor.startExecutingTask(taskId)
         }
         catch (t: Throwable) {
             MyLogger.e(TAG, ExceptionUtils.getErrorMessage(t), t)
@@ -42,14 +46,35 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         return Data.Builder().apply { putString(ERROR_MSG, value) }.build()
     }
 
+    private fun failure(errorMessage: String): Result = Result.failure(errorData(errorMessage))
+
+
     companion object {
-        fun dataWithTaskId(taskId: String): Data
-            = Data.Builder().putString(TASK_ID, taskId).build()
+
+        fun startCommandData(taskId: String): Data {
+            return Data.Builder().apply {
+                putString(TASK_ID, taskId)
+                putString(COMMAND, Command.START.name)
+            }.build()
+        }
+
+        fun stopCommandData(taskId: String): Data {
+            return Data.Builder().apply {
+                putString(TASK_ID, taskId)
+                putString(COMMAND, Command.STOP.name)
+            }.build()
+        }
+
+        @Deprecated("Используй startCommandData(taskId), stopCommandData(taskId)")
+        fun dataWithTaskId(taskId: String): Data = Data.Builder().putString(TASK_ID, taskId).build()
 
         val TAG: String = SyncTaskWorker::class.java.simpleName
 
+        const val COMMAND: String = "COMMAND"
         const val TASK_ID: String = "TASK_ID"
         const val ERROR_MSG: String = "ERROR_MSG"
         const val SUMMARY: String = "SUMMARY"
+
+        enum class Command { START, STOP }
     }
 }

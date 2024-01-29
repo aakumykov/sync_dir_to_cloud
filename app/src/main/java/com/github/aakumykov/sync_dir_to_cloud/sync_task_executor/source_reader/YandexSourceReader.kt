@@ -30,6 +30,10 @@ class YandexSourceReader @AssistedInject constructor(
     }
 
     override suspend fun read(sourcePath: String) {
+        TODO("Not yet implemented")
+    }
 
+    override fun stopReading() {
+        TODO("Not yet implemented")
     }
 }

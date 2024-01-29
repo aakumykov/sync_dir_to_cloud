@@ -10,55 +10,49 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
     private val workManager: WorkManager
 ) : SyncTaskStarterStopper
 {
-    override suspend fun startSyncTask(syncTask: SyncTask): Operation.State.SUCCESS {
+    override suspend fun startSyncTask(syncTask: SyncTask) {
+        runWorkerWithData(syncTask.id, SyncTaskWorker.startCommandData(syncTask.id))
+    }
 
-        val workName = workName(syncTask.id)
+    override suspend fun stopSyncTask(syncTask: SyncTask) {
+        runWorkerWithData(syncTask.id, SyncTaskWorker.stopCommandData(syncTask.id))
+    }
 
-        val inputData = Data.Builder().apply {
-            putString(TASK_ID, syncTask.id)
-        }.build()
-
-        val networkConstraints = Constraints.Builder().apply {
-            setRequiredNetworkType(NetworkType.CONNECTED)
-        }.build()
-
-        /*val batteryConstraints = Constraints.Builder().apply {
-            setRequiresBatteryNotLow(true)
-        }.build()*/
-
-        val manualSyncStartWorkRequest: OneTimeWorkRequest =
-            OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
-                .setInputData(inputData)
-                .setConstraints(networkConstraints)
-//            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно
-//            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-
-        return workManager
+    // TODO: разобраться с возвращаемым значением
+    private fun runWorkerWithData(taskId: String, inputData: Data) {
+        workManager
             .beginUniqueWork(
-                workName,
+                workName(taskId),
                 ExistingWorkPolicy.KEEP,
-                manualSyncStartWorkRequest
+                oneTimeWorkRequest(inputData)
             )
             .enqueue()
-            .await()
     }
+
+    private fun oneTimeWorkRequest(inputData: Data): OneTimeWorkRequest {
+        return OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
+                .setInputData(inputData)
+                .setConstraints(networkConstraints())
+//            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .build()
+    }
+
+    private fun networkConstraints(): Constraints {
+        return Constraints.Builder().apply {
+            setRequiredNetworkType(NetworkType.CONNECTED)
+        }.build()
+    }
+
+    /*// Не нужны при ручном запуске задачи.
+    private fun batteryConstraints(): Constraints {
+        return Constraints.Builder().apply {
+            setRequiresBatteryNotLow(true)
+        }.build()
+    }*/
 
     private fun workName(taskId: String): String = MANUAL_WORK_ID_PREFIX + taskId
 
-    override suspend fun stopSyncTask(syncTask: SyncTask): Operation.State.SUCCESS {
-        /*workManager.cancelUniqueWork(workName(syncTask.id)).state.observeForever {
-            when (it) {
-                is Operation.State.SUCCESS -> true
-                is Operation.State.FAILURE -> false
-            }
-        }*/
-
-        return workManager.cancelUniqueWork(workName(syncTask.id)).await()
-    }
-
     companion object {
-        const val TASK_ID = "TASK_ID"
         const val MANUAL_WORK_ID_PREFIX = "MANUAL-"
     }
 }

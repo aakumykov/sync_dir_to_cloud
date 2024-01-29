@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -33,11 +34,16 @@ class StartStopSyncTaskUseCase @Inject constructor(
     }
 
     private suspend fun startSyncTask(syncTask: SyncTask) {
-        val isStarted = syncTaskStarterStopper.startSyncTask(syncTask)
+        Log.d(TAG, "startSyncTask(${syncTask.id})")
+        syncTaskStarterStopper.startSyncTask(syncTask)
     }
 
     // TODO: устанавливать более специфичное состояние?
     private suspend fun stopSyncTask(syncTask: SyncTask) {
         syncTaskStarterStopper.stopSyncTask(syncTask)
+    }
+
+    companion object {
+        val TAG: String = StartStopSyncTaskUseCase::class.java.simpleName
     }
 }
