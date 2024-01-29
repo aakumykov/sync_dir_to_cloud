@@ -10,26 +10,48 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Function;
 
 import java.util.List;
 
 public class ListViewAdapter<T> extends ArrayAdapter<T> {
 
-    private final LayoutInflater inflater;
-    @LayoutRes private final int layoutRes;
-    @IdRes private final int titleId;
-    private final List<T> mList;
+    private LayoutInflater inflater;
+    @LayoutRes private int layoutRes;
+    @IdRes private int titleId;
+    private List<T> mList;
+    @Nullable private Function<T,String> mTitleGetter;
 
     public ListViewAdapter(Context context,
-                           @LayoutRes int resource,
+                           @LayoutRes int layoutResource,
                            @IdRes int titleId,
                            List<T> list
     ) {
-        super(context, resource, list);
+        super(context, layoutResource, titleId, list);
+        init(context, layoutResource, titleId, list, null);
+    }
 
-        this.layoutRes = resource;
+    public ListViewAdapter(Context context,
+                           @LayoutRes int layoutResource,
+                           @IdRes int titleId,
+                           List<T> list,
+                           @Nullable Function<T,String> titleGetter
+    ) {
+        super(context, layoutResource, list);
+        init(context, layoutResource, titleId, list, titleGetter);
+    }
+
+    private void init(Context context,
+                      @LayoutRes int layoutResource,
+                      @IdRes int titleId,
+                      List<T> list,
+                      @Nullable Function<T,String> titleGetter
+    ) {
+        this.layoutRes = layoutResource;
         this.titleId = titleId;
         this.mList = list;
+        this.mTitleGetter = titleGetter;
 
         this.inflater = LayoutInflater.from(context);
     }
@@ -48,7 +70,9 @@ public class ListViewAdapter<T> extends ArrayAdapter<T> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.titleView.setText(mList.get(position).toString());
+        viewHolder.titleView.setText(
+                (null != mTitleGetter) ? mTitleGetter.apply(mList.get(position)) : mList.get(position).toString()
+        );
 
         return convertView;
     }
