@@ -17,6 +17,14 @@ class SchedulingSyncTaskUseCase @Inject constructor(
 ) {
     // TODO: испытать поведение при ошибках
 
+    suspend fun toggleTaskScheduling(taskId: String) {
+        syncTaskReader.getSyncTask(taskId).also {
+            if (it.isEnabled) unScheduleSyncTask(it)
+            else scheduleSyncTask(it)
+        }
+    }
+
+
     private fun scheduleSyncTask(syncTask: SyncTask) {
         syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
@@ -56,12 +64,6 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskUpdater.updateSyncTask(syncTask)
     }
 
-    suspend fun toggleTaskScheduling(taskId: String) {
-        syncTaskReader.getSyncTask(taskId).also {
-            if (it.isEnabled) unScheduleSyncTask(it)
-            else scheduleSyncTask(it)
-        }
-    }
 
     companion object {
         private val TAG = SchedulingSyncTaskUseCase::class.java.simpleName
