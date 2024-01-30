@@ -11,20 +11,20 @@ interface SyncTaskDAO {
     fun list(): LiveData<List<SyncTask>>
 
     @Insert
-    fun add(syncTask: SyncTask)
+    suspend fun add(syncTask: SyncTask)
 
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
-    fun get(id: String): SyncTask
+    suspend fun get(id: String): SyncTask
 
     @Query("SELECT * FROM sync_tasks WHERE id = :taskId")
-    fun getAsLiveData(taskId: String): LiveData<SyncTask>
+    suspend fun getAsLiveData(taskId: String): LiveData<SyncTask>
 
     @Delete
-    fun delete(syncTask: SyncTask)
+    suspend fun delete(syncTask: SyncTask)
 
     @Query("DELETE FROM sync_tasks WHERE id = :taskId")
-    fun delete(taskId: String)
+    suspend fun delete(taskId: String)
 
     @Update
-    fun update(syncTask: SyncTask)
+    suspend fun update(syncTask: SyncTask)
 }
