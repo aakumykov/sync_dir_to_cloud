@@ -48,7 +48,7 @@ class SyncTaskRepository @Inject constructor(
 
     override fun updateSyncTask(syncTask: SyncTask) {
         coroutineScope.launch(coroutineDispatcher) {
-            syncTaskLocalDataSource.update(syncTask)
+            syncTaskDAO.update(syncTask)
         }
     }
 

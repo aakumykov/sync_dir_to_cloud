@@ -30,4 +30,8 @@ interface SyncTaskDAO {
 
     @Update
     fun update(syncTask: SyncTask)
+
+    @Deprecated("Чтобы задействовать, нужно разобраться с ошибками в suspend-функциях")
+    @Update
+    suspend fun updateSuspend(syncTask: SyncTask)
 }
