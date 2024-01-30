@@ -49,7 +49,8 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override suspend fun deleteSyncTask(syncTask: SyncTask) {
-        syncTaskLocalDataSource.delete(syncTask)
+//        syncTaskLocalDataSource.delete(syncTask)
+        syncTaskDAO.deleteSuspend(syncTask)
     }
 
     override fun updateSyncTask(syncTask: SyncTask) {
