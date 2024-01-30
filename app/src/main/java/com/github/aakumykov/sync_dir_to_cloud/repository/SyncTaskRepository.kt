@@ -2,79 +2,75 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AppScope
 class SyncTaskRepository @Inject constructor(
-    private val syncTaskDAO: SyncTaskDAO,
-    private val syncTaskStateDAO: SyncTaskStateDAO,
-    private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO
+    private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
+    private val coroutineScope: CoroutineScope,
+    @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
 )
     : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater, SyncTaskStateChanger
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
-//        return syncTaskLocalDataSource.listSyncTasks()
-        return syncTaskDAO.list()
+        return syncTaskLocalDataSource.listSyncTasks()
     }
 
     override suspend fun getSyncTask(id: String): SyncTask {
-//        return syncTaskLocalDataSource.getTask(id)
-        return syncTaskDAO.get(id)
+        return syncTaskLocalDataSource.getTask(id)
     }
 
     override suspend fun getSyncTaskAsLiveData(taskId: String): LiveData<SyncTask> {
-//        return syncTaskLocalDataSource.getTaskAsLiveData(taskId)
-        return syncTaskDAO.getAsLiveData(taskId)
+        return syncTaskLocalDataSource.getTaskAsLiveData(taskId)
     }
 
     override suspend fun createSyncTask(syncTask: SyncTask) {
-//        syncTaskLocalDataSource.addTask(syncTask)
-        syncTaskDAO.add(syncTask)
+        syncTaskLocalDataSource.addTask(syncTask)
     }
 
     override suspend fun deleteSyncTask(syncTask: SyncTask) {
-//        syncTaskLocalDataSource.delete(syncTask)
-        return syncTaskDAO.delete(syncTask)
+        syncTaskLocalDataSource.delete(syncTask)
     }
 
-    override suspend fun updateSyncTask(syncTask: SyncTask) {
-        /*coroutineScope.launch(coroutineDispatcher) {
+    override fun updateSyncTask(syncTask: SyncTask) {
+        coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.update(syncTask)
-        }*/
-        syncTaskDAO.update(syncTask)
+        }
     }
 
-    override suspend fun changeState(taskId: String, newState: SyncTask.State) {
-        /*coroutineScope.launch(coroutineDispatcher) {
+    override fun changeState(taskId: String, newState: SyncTask.State) {
+        MyLogger.d(TAG, "changeState($taskId, $newState")
+        coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.setState(taskId, newState)
-        }*/
-        syncTaskStateDAO.setState(taskId, newState)
+        }
     }
 
-    override suspend fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
-        /*coroutineScope.launch(coroutineDispatcher) {
+    override fun changeSchedulingState(
+        taskId: String,
+        newSate: SyncTask.SimpleState,
+        errorMsg: String
+    ) {
+        coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.syncTaskSchedulingState(taskId, newSate, errorMsg)
-        }*/
-        when(newSate) {
-            SyncTask.SimpleState.IDLE -> syncTaskSchedulingStateDAO.setIdleState(taskId)
-            SyncTask.SimpleState.BUSY -> syncTaskSchedulingStateDAO.setBusyState(taskId)
-            SyncTask.SimpleState.ERROR -> syncTaskSchedulingStateDAO.setErrorState(taskId, errorMsg)
         }
     }
 
     override suspend fun deleteSyncTask(taskId: String) {
-        /*coroutineScope.launch(coroutineDispatcher) {
+        MyLogger.d(TAG, "deleteSyncTask($taskId)")
+        coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.delete(taskId)
-        }*/
-        syncTaskDAO.delete(taskId)
+        }
     }
 
 
