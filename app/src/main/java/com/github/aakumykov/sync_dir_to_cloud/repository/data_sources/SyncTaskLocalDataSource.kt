@@ -64,14 +64,4 @@ class SyncTaskLocalDataSource @Inject constructor(
             syncTaskDAO.getAsLiveData(taskId)
         }
     }
-
-    suspend fun setSyncTaskSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
-        return withContext(Dispatchers.IO) {
-            when(newSate) {
-                SyncTask.SimpleState.IDLE -> syncTaskSchedulingStateDAO.setIdleState(taskId)
-                SyncTask.SimpleState.BUSY -> syncTaskSchedulingStateDAO.setBusyState(taskId)
-                SyncTask.SimpleState.ERROR -> syncTaskSchedulingStateDAO.setErrorState(taskId, errorMsg)
-            }
-        }
-    }
 }

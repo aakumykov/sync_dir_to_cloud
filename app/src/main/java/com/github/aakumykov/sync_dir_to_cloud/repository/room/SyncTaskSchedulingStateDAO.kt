@@ -10,27 +10,27 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 abstract class SyncTaskSchedulingStateDAO {
 
     @Transaction @Update
-    fun setIdleState(taskId: String) {
+    suspend fun setIdleState(taskId: String) {
         setErrorMsgNotUseDirectly(taskId, "")
         setStateNotUseDirectly(taskId, SyncTask.SimpleState.IDLE)
     }
 
     @Transaction @Update
-    fun setBusyState(taskId: String) {
+    suspend fun setBusyState(taskId: String) {
         setErrorMsgNotUseDirectly(taskId, "")
         setStateNotUseDirectly(taskId, SyncTask.SimpleState.BUSY)
     }
 
     @Transaction @Update
-    fun setErrorState(taskId: String, errorMsg: String) {
+    suspend fun setErrorState(taskId: String, errorMsg: String) {
         setErrorMsgNotUseDirectly(taskId, errorMsg)
         setStateNotUseDirectly(taskId, SyncTask.SimpleState.ERROR)
     }
 
 
     @Query("UPDATE sync_tasks SET scheduling_error = :errorMsg WHERE id = :taskId")
-    protected abstract fun setErrorMsgNotUseDirectly(taskId: String, errorMsg: String)
+    protected abstract suspend fun setErrorMsgNotUseDirectly(taskId: String, errorMsg: String)
 
     @Query("UPDATE sync_tasks SET scheduling_state = :state WHERE id = :taskId")
-    protected abstract fun setStateNotUseDirectly(taskId: String, state: SyncTask.SimpleState)
+    protected abstract suspend fun setStateNotUseDirectly(taskId: String, state: SyncTask.SimpleState)
 }

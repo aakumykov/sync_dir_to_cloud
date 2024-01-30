@@ -4,6 +4,5 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 interface SyncTaskStateChanger {
     suspend fun changeState(taskId: String, newSate: SyncTask.State)
-
-    fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String = "")
+    suspend fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String = "")
 }

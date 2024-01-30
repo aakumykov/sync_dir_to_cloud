@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,6 +22,8 @@ import javax.inject.Inject
 class SyncTaskRepository @Inject constructor(
     private val syncTaskDAO: SyncTaskDAO,
     private val syncTaskStateDAO: SyncTaskStateDAO,
+    private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO,
+
     private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
@@ -58,13 +61,11 @@ class SyncTaskRepository @Inject constructor(
         syncTaskStateDAO.setStateSuspend(taskId, newSate)
     }
 
-    override fun changeSchedulingState(
-        taskId: String,
-        newSate: SyncTask.SimpleState,
-        errorMsg: String
-    ) {
-        coroutineScope.launch(coroutineDispatcher) {
-            syncTaskLocalDataSource.setSyncTaskSchedulingState(taskId, newSate, errorMsg)
+    override suspend fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
+        when(newSate) {
+            SyncTask.SimpleState.IDLE -> syncTaskSchedulingStateDAO.setIdleState(taskId)
+            SyncTask.SimpleState.BUSY -> syncTaskSchedulingStateDAO.setBusyState(taskId)
+            SyncTask.SimpleState.ERROR -> syncTaskSchedulingStateDAO.setErrorState(taskId, errorMsg)
         }
     }
 
