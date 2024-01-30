@@ -22,14 +22,12 @@ interface SyncTaskDAO {
     @Query("SELECT * FROM sync_tasks WHERE id = :taskId")
     fun getAsLiveData(taskId: String): LiveData<SyncTask>
 
+    @Deprecated("Используй suspend-вариант")
     @Delete
     fun delete(syncTask: SyncTask)
 
     @Delete
     suspend fun deleteSuspend(syncTask: SyncTask)
-
-    @Query("DELETE FROM sync_tasks WHERE id = :taskId")
-    fun delete(taskId: String)
 
     @Update
     fun update(syncTask: SyncTask)

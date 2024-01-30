@@ -41,12 +41,6 @@ class SyncTaskLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun delete(taskId: String) {
-        return withContext(Dispatchers.IO) {
-            syncTaskDAO.delete(taskId)
-        }
-    }
-
     suspend fun update(syncTask: SyncTask) {
         return withContext(Dispatchers.IO) {
             syncTaskDAO.update(syncTask)
