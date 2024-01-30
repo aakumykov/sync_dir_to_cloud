@@ -24,30 +24,10 @@ class SchedulingSyncTaskUseCase @Inject constructor(
 
 
     private suspend fun scheduleSyncTask(syncTask: SyncTask) {
-        /*syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
-
-            override fun onSyncTaskScheduleSuccess() {
-                setSyncTaskEnabledState(syncTask, true)
-            }
-
-            override fun onSyncTaskScheduleError(error: Throwable) {
-                setSyncTaskErrorState(syncTask, error)
-            }
-        })*/
         syncTaskScheduler.scheduleSyncTask(syncTask)
     }
 
     suspend fun unScheduleSyncTask(syncTask: SyncTask) {
-        /*syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
-
-            override fun onSyncTaskUnScheduleSuccess() {
-                setSyncTaskEnabledState(syncTask, false)
-            }
-
-            override fun onSyncTaskUnScheduleError(error: Throwable) {
-                setSyncTaskErrorState(syncTask, error)
-            }
-        })*/
         syncTaskScheduler.unScheduleSyncTask(syncTask)
     }
 
