@@ -54,15 +54,7 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
-    @Deprecated("Используй suspend-вариант")
-    override fun changeState(taskId: String, newState: SyncTask.State) {
-        MyLogger.d(TAG, "changeState($taskId, $newState")
-        coroutineScope.launch(coroutineDispatcher) {
-            syncTaskLocalDataSource.setState(taskId, newState)
-        }
-    }
-
-    override suspend fun changeStateSuspend(taskId: String, newSate: SyncTask.State) {
+    override suspend fun changeState(taskId: String, newSate: SyncTask.State) {
         syncTaskStateDAO.setStateSuspend(taskId, newSate)
     }
 
