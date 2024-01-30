@@ -13,6 +13,9 @@ interface SyncTaskDAO {
     @Insert
     fun add(syncTask: SyncTask)
 
+    @Insert
+    suspend fun addSuspend(syncTask: SyncTask)
+
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
     fun get(id: String): SyncTask
 

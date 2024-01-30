@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +18,7 @@ import javax.inject.Inject
 
 @AppScope
 class SyncTaskRepository @Inject constructor(
+    private val syncTaskDAO: SyncTaskDAO,
     private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
@@ -36,7 +38,8 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override suspend fun createSyncTask(syncTask: SyncTask) {
-        syncTaskLocalDataSource.addTask(syncTask)
+//        syncTaskLocalDataSource.addTask(syncTask)
+        syncTaskDAO.addSuspend(syncTask)
     }
 
     override suspend fun deleteSyncTask(syncTask: SyncTask) {
