@@ -17,7 +17,7 @@ interface SyncTaskDAO {
     suspend fun addSuspend(syncTask: SyncTask)
 
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
-    fun get(id: String): SyncTask
+    suspend fun get(id: String): SyncTask
 
     @Query("SELECT * FROM sync_tasks WHERE id = :taskId")
     fun getAsLiveData(taskId: String): LiveData<SyncTask>
