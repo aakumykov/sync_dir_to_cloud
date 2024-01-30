@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.data_sources
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 class SyncTaskLocalDataSource @Inject constructor(
     private val syncTaskDAO: SyncTaskDAO,
-    private val syncTaskStateDAO: SyncTaskStateDAO
+    private val syncTaskStateDAO: SyncTaskStateDAO,
+    private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO
 ) {
     suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
         return withContext(Dispatchers.IO) {
@@ -60,6 +62,16 @@ class SyncTaskLocalDataSource @Inject constructor(
     suspend fun getTaskAsLiveData(taskId: String): LiveData<SyncTask> {
         return withContext(Dispatchers.IO) {
             syncTaskDAO.getAsLiveData(taskId)
+        }
+    }
+
+    suspend fun syncTaskSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
+        return withContext(Dispatchers.IO) {
+            when(newSate) {
+                SyncTask.SimpleState.IDLE -> syncTaskSchedulingStateDAO.setIdleState(taskId)
+                SyncTask.SimpleState.BUSY -> syncTaskSchedulingStateDAO.setBusyState(taskId)
+                SyncTask.SimpleState.ERROR -> syncTaskSchedulingStateDAO.setErrorState(taskId, errorMsg)
+            }
         }
     }
 }

@@ -33,6 +33,8 @@ class SyncTask {
 
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
+
+    @ColumnInfo(name = "scheduling_state") var schedulingState: SimpleState = SimpleState.IDLE
     @ColumnInfo(name = "scheduling_error") var schedulingError: String? = null
 
     @ColumnInfo(name = "source_type") var sourceType: StorageType?
@@ -108,6 +110,8 @@ class SyncTask {
         SCHEDULING_ERROR,
         SEMI_SUCCESS
     }
+
+    enum class SimpleState { IDLE, BUSY, ERROR }
 
     companion object {
         val TAG = SyncTask::class.simpleName.toString()

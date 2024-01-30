@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -54,6 +53,16 @@ class SyncTaskRepository @Inject constructor(
         MyLogger.d(TAG, "changeState($taskId, $newState")
         coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.setState(taskId, newState)
+        }
+    }
+
+    override fun changeSchedulingState(
+        taskId: String,
+        newSate: SyncTask.SimpleState,
+        errorMsg: String
+    ) {
+        coroutineScope.launch(coroutineDispatcher) {
+            syncTaskLocalDataSource.syncTaskSchedulingState(taskId, newSate, errorMsg)
         }
     }
 
