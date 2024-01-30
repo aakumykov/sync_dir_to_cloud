@@ -67,15 +67,15 @@ class SyncTaskExecutor @Inject constructor(
 
         syncObjectClearer.clearSyncObjectsOfTask(taskId)
 
-        syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.READING_SOURCE)
+        syncTaskStateChanger.changeStateSuspend(syncTask.id, SyncTask.State.READING_SOURCE)
         syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
         sourceReader?.read(syncTask.sourcePath!!)
 
-        syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.WRITING_TARGET)
+        syncTaskStateChanger.changeStateSuspend(syncTask.id, SyncTask.State.WRITING_TARGET)
         syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
         mTargetWriter?.writeToTarget()
 
-        syncTaskStateChanger.changeState(syncTask.id, SyncTask.State.SUCCESS)
+        syncTaskStateChanger.changeStateSuspend(syncTask.id, SyncTask.State.SUCCESS)
         syncTaskNotificator.hideNotification(taskId, notificationId)
     }
 

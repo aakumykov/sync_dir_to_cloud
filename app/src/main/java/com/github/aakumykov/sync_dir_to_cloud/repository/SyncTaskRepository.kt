@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.SyncTaskLocalDataSource
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @AppScope
 class SyncTaskRepository @Inject constructor(
     private val syncTaskDAO: SyncTaskDAO,
+    private val syncTaskStateDAO: SyncTaskStateDAO,
     private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
@@ -52,11 +54,16 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
+    @Deprecated("Используй suspend-вариант")
     override fun changeState(taskId: String, newState: SyncTask.State) {
         MyLogger.d(TAG, "changeState($taskId, $newState")
         coroutineScope.launch(coroutineDispatcher) {
             syncTaskLocalDataSource.setState(taskId, newState)
         }
+    }
+
+    override suspend fun changeStateSuspend(taskId: String, newSate: SyncTask.State) {
+        syncTaskStateDAO.setStateSuspend(taskId, newSate)
     }
 
     override fun changeSchedulingState(
