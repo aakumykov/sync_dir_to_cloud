@@ -23,8 +23,6 @@ class SyncTaskRepository @Inject constructor(
     private val syncTaskDAO: SyncTaskDAO,
     private val syncTaskStateDAO: SyncTaskStateDAO,
     private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO,
-
-    private val syncTaskLocalDataSource: SyncTaskLocalDataSource,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
 )
