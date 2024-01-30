@@ -62,7 +62,7 @@ class SyncTaskRepository @Inject constructor(
         errorMsg: String
     ) {
         coroutineScope.launch(coroutineDispatcher) {
-            syncTaskLocalDataSource.syncTaskSchedulingState(taskId, newSate, errorMsg)
+            syncTaskLocalDataSource.setSyncTaskSchedulingState(taskId, newSate, errorMsg)
         }
     }
 

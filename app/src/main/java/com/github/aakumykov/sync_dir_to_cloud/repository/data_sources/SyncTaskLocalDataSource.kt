@@ -65,7 +65,7 @@ class SyncTaskLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun syncTaskSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
+    suspend fun setSyncTaskSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
         return withContext(Dispatchers.IO) {
             when(newSate) {
                 SyncTask.SimpleState.IDLE -> syncTaskSchedulingStateDAO.setIdleState(taskId)
