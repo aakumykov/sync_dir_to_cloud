@@ -4,8 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler.ScheduleCallbacks
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler.UnScheduleCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
@@ -25,8 +23,8 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     }
 
 
-    private fun scheduleSyncTask(syncTask: SyncTask) {
-        syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
+    private suspend fun scheduleSyncTask(syncTask: SyncTask) {
+        /*syncTaskScheduler.scheduleSyncTask(syncTask, object : ScheduleCallbacks {
 
             override fun onSyncTaskScheduleSuccess() {
                 setSyncTaskEnabledState(syncTask, true)
@@ -35,12 +33,12 @@ class SchedulingSyncTaskUseCase @Inject constructor(
             override fun onSyncTaskScheduleError(error: Throwable) {
                 setSyncTaskErrorState(syncTask, error)
             }
-        })
+        })*/
+        syncTaskScheduler.scheduleSyncTask(syncTask)
     }
 
-    fun unScheduleSyncTask(syncTask: SyncTask) {
-
-        syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
+    suspend fun unScheduleSyncTask(syncTask: SyncTask) {
+        /*syncTaskScheduler.unScheduleSyncTask(syncTask, object : UnScheduleCallbacks {
 
             override fun onSyncTaskUnScheduleSuccess() {
                 setSyncTaskEnabledState(syncTask, false)
@@ -49,8 +47,10 @@ class SchedulingSyncTaskUseCase @Inject constructor(
             override fun onSyncTaskUnScheduleError(error: Throwable) {
                 setSyncTaskErrorState(syncTask, error)
             }
-        })
+        })*/
+        syncTaskScheduler.unScheduleSyncTask(syncTask)
     }
+
 
     private fun setSyncTaskEnabledState(syncTask: SyncTask, isEnabled: Boolean) {
         syncTask.isEnabled = isEnabled

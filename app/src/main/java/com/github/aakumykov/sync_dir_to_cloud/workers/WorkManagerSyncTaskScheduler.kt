@@ -6,41 +6,43 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class WorkManagerSyncTaskScheduler @Inject constructor(
     private val workManager: WorkManager,
 ) : SyncTaskScheduler {
 
-    override fun scheduleSyncTask(
-        syncTask: SyncTask,
-        callbacks: SyncTaskScheduler.ScheduleCallbacks
-    ) {
-        workManager.enqueueUniquePeriodicWork(
-            workId(syncTask),
-            ExistingPeriodicWorkPolicy.UPDATE,
-            periodicWorkRequest(syncTask)
-        ).state.observeForever {
-            when(it) {
-                is Operation.State.SUCCESS -> callbacks.onSyncTaskScheduleSuccess()
-                is Operation.State.IN_PROGRESS -> {}
-                is Operation.State.FAILURE -> callbacks.onSyncTaskScheduleError(it.throwable)
+    override suspend fun scheduleSyncTask(syncTask: SyncTask) {
+        return suspendCoroutine { continuation ->
+            workManager.enqueueUniquePeriodicWork(
+                workId(syncTask),
+                ExistingPeriodicWorkPolicy.UPDATE,
+                periodicWorkRequest(syncTask)
+            )
+                .state
+                .observeForever {
+                when(it) {
+                    is Operation.State.SUCCESS -> continuation.resume(Unit)
+                    is Operation.State.IN_PROGRESS -> {}
+                    is Operation.State.FAILURE -> continuation.resumeWithException(it.throwable)
+                }
             }
         }
     }
 
-
-    override fun unScheduleSyncTask(
-        syncTask: SyncTask,
-        callbacks: SyncTaskScheduler.UnScheduleCallbacks
-    ) {
-        workManager
-            .cancelUniqueWork(workId(syncTask))
-            .state.observeForever {
-            when(it) {
-                is Operation.State.SUCCESS -> callbacks.onSyncTaskUnScheduleSuccess()
-                is Operation.State.IN_PROGRESS -> {}
-                is Operation.State.FAILURE -> callbacks.onSyncTaskUnScheduleError(it.throwable)
-            }
+    override suspend fun unScheduleSyncTask(syncTask: SyncTask) {
+        return suspendCoroutine { continuation ->
+            workManager
+                .cancelUniqueWork(workId(syncTask))
+                .state.observeForever {
+                    when(it) {
+                        is Operation.State.SUCCESS -> continuation.resume(Unit)
+                        is Operation.State.IN_PROGRESS -> {}
+                        is Operation.State.FAILURE -> continuation.resumeWithException(it.throwable)
+                    }
+                }
         }
     }
 
