@@ -45,32 +45,26 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
         currentTask = syncTask
         displayTitle()
         displaySchedulingState()
-        displayOpState()
+        displayExecutionState()
         displayStartStopButton()
     }
 
+
     private fun displayStartStopButton() {
 
-        val isEnabled = currentTask.isEnabled
-        runButton.isEnabled = isEnabled
+        runButton.setImageResource(
+            when(currentTask.executionState){
+                SyncTask.SimpleState.IDLE -> R.drawable.ic_task_start
+                SyncTask.SimpleState.ERROR -> R.drawable.ic_task_start
+                SyncTask.SimpleState.BUSY -> R.drawable.ic_task_stop
+            }
+        )
 
-        // FIXME: "executionState"
-
-        if (currentTask.state == SyncTask.State.WRITING_TARGET)
-            runButton.setImageResource(R.drawable.ic_task_stop)
-        else
-            runButton.setImageResource(R.drawable.ic_task_start)
-
-        /*runButton.setImageResource(when(currentTask.state) {
-            SyncTask.State.RUNNING -> R.drawable.ic_task_stop
-            else -> R.drawable.ic_task_start
-        })*/
-
-        val colorForFilter = itemView.context.resources.getColor(when(isEnabled){
+        /*val colorForFilter = itemView.context.resources.getColor(when(isEnabled){
             true -> R.color.button_icon_tint_active
             false -> R.color.button_icon_tint_inactive
         })
-        runButton.setColorFilter(colorForFilter, PorterDuff.Mode.MULTIPLY)
+        runButton.setColorFilter(colorForFilter, PorterDuff.Mode.MULTIPLY)*/
     }
 
     private fun displayTitle() {
@@ -92,6 +86,20 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
                     SyncTask.State.SUCCESS -> R.drawable.ic_task_state_success
                     SyncTask.State.SEMI_SUCCESS -> R.drawable.ic_task_state_semi_success
                     SyncTask.State.EXECUTION_ERROR -> R.drawable.ic_task_state_error
+                }
+            )
+        }
+        else
+            stateView.setImageResource(R.drawable.ic_task_state_disabled)
+    }
+
+    private fun displayExecutionState() {
+        if (currentTask.isEnabled) {
+            stateView.setImageResource(
+                when (currentTask.executionState) {
+                    SyncTask.SimpleState.IDLE -> R.drawable.ic_task_state_scheduled
+                    SyncTask.SimpleState.BUSY -> R.drawable.ic_task_state_running
+                    SyncTask.SimpleState.ERROR -> R.drawable.ic_task_state_error
                 }
             )
         }
