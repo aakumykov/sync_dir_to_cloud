@@ -13,4 +13,7 @@ interface SyncTaskStateDAO {
 
     @Query("UPDATE sync_tasks SET state = :state WHERE id = :taskId")
     suspend fun setStateSuspend(taskId: String, state: SyncTask.State)
+
+    @Query("UPDATE sync_tasks SET is_enabled = :isEnabled WHERE id = :taskId")
+    suspend fun setEnabled(taskId: String, isEnabled: Boolean)
 }

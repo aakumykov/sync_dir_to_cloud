@@ -68,6 +68,10 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean) {
+        syncTaskStateDAO.setEnabled(taskId, isEnabled)
+    }
+
 
     companion object {
         val TAG: String = SyncTaskRepository::class.java.simpleName
