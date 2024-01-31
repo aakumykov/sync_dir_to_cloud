@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -10,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Database(
     entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 27,
+    version = 28,
     autoMigrations = [
 //        AutoMigration(from = 24, to = 25),
 //        AutoMigration(from = 25, to = 26),
@@ -19,8 +18,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
-    abstract fun getSyncTaskStateDAO(): SyncTaskStateDAO
-    abstract fun getSyncTaskSchedulingStateDAO(): SyncTaskSchedulingStateDAO
     abstract fun getSyncObjectDAO(): SyncObjectDAO
     abstract fun getCloudAuthDAO(): CloudAuthDAO
+
+    abstract fun getSyncTaskStateDAO(): SyncTaskStateDAO
+    abstract fun getSyncTaskSchedulingStateDAO(): SyncTaskSchedulingStateDAO
+    abstract fun getSyncTaskExecutionStateDAO(): SyncTaskExecutionStateDAO
 }

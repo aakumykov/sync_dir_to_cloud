@@ -9,5 +9,7 @@ interface SyncTaskStateChanger {
 
     suspend fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String = "")
 
+    suspend fun changeExecutionState(taskId: String, newState: SyncTask.SimpleState, errorMsg: String = "")
+
     suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean)
 }

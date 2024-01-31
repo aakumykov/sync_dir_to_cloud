@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskExecutionStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,6 +22,7 @@ class SyncTaskRepository @Inject constructor(
     private val syncTaskDAO: SyncTaskDAO,
     private val syncTaskStateDAO: SyncTaskStateDAO,
     private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO,
+    private val syncTaskExecutionStateDAO: SyncTaskExecutionStateDAO,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
 )
@@ -70,6 +72,15 @@ class SyncTaskRepository @Inject constructor(
 
     override suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean) {
         syncTaskStateDAO.setEnabled(taskId, isEnabled)
+    }
+
+    // TODO: объединить в один метод, передавая ему SimpleStateChanger
+    override suspend fun changeExecutionState(taskId: String, newState: SyncTask.SimpleState, errorMsg: String) {
+        when(newState) {
+            SyncTask.SimpleState.IDLE -> syncTaskExecutionStateDAO.setIdleState(taskId)
+            SyncTask.SimpleState.BUSY -> syncTaskExecutionStateDAO.setBusyState(taskId)
+            SyncTask.SimpleState.ERROR -> syncTaskExecutionStateDAO.setErrorState(taskId, errorMsg)
+        }
     }
 
 
