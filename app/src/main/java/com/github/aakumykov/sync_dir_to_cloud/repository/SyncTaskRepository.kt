@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SimpleStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskExecutionStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
@@ -62,24 +63,27 @@ class SyncTaskRepository @Inject constructor(
         syncTaskStateDAO.setStateSuspend(taskId, newSate)
     }
 
-    override suspend fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
-        when(newSate) {
-            SyncTask.SimpleState.IDLE -> syncTaskSchedulingStateDAO.setIdleState(taskId)
-            SyncTask.SimpleState.BUSY -> syncTaskSchedulingStateDAO.setBusyState(taskId)
-            SyncTask.SimpleState.ERROR -> syncTaskSchedulingStateDAO.setErrorState(taskId, errorMsg)
-        }
-    }
-
     override suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean) {
         syncTaskStateDAO.setEnabled(taskId, isEnabled)
     }
 
-    // TODO: объединить в один метод, передавая ему SimpleStateChanger
+    override suspend fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String) {
+        changeSimpleState(syncTaskSchedulingStateDAO, taskId, newSate, errorMsg)
+    }
+
     override suspend fun changeExecutionState(taskId: String, newState: SyncTask.SimpleState, errorMsg: String) {
+        changeSimpleState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
+    }
+
+
+    private suspend fun changeSimpleState(simpleStateChanger: SimpleStateChanger,
+                                  taskId: String,
+                                  newState: SyncTask.SimpleState,
+                                  errorMsg: String = "") {
         when(newState) {
-            SyncTask.SimpleState.IDLE -> syncTaskExecutionStateDAO.setIdleState(taskId)
-            SyncTask.SimpleState.BUSY -> syncTaskExecutionStateDAO.setBusyState(taskId)
-            SyncTask.SimpleState.ERROR -> syncTaskExecutionStateDAO.setErrorState(taskId, errorMsg)
+            SyncTask.SimpleState.IDLE -> simpleStateChanger.setIdleState(taskId)
+            SyncTask.SimpleState.BUSY -> simpleStateChanger.setBusyState(taskId)
+            SyncTask.SimpleState.ERROR -> simpleStateChanger.setErrorState(taskId, errorMsg)
         }
     }
 
