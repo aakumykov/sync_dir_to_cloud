@@ -7,7 +7,7 @@ interface SyncTaskStateChanger {
     @Deprecated("Скоро будет заменено на набор специфичных методов")
     suspend fun changeState(taskId: String, newSate: SyncTask.State)
 
-    suspend fun changeSchedulingState(taskId: String, newSate: SyncTask.SimpleState, errorMsg: String = "")
+    suspend fun changeSchedulingState(taskId: String, newState: SyncTask.SimpleState, errorMsg: String = "")
 
     suspend fun changeExecutionState(taskId: String, newState: SyncTask.SimpleState, errorMsg: String = "")
 
