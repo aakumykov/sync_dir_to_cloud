@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.c
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
@@ -67,17 +68,31 @@ class SyncTaskExecutor @Inject constructor(
 
         syncObjectClearer.clearSyncObjectsOfTask(taskId)
 
+        try {
+            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.BUSY)
 
-        syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.BUSY)
+            syncTaskNotificator.showNotification(
+                taskId,
+                notificationId,
+                SyncTask.State.READING_SOURCE
+            )
+            sourceReader?.read(syncTask.sourcePath!!)
 
-        syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
-        sourceReader?.read(syncTask.sourcePath!!)
+            syncTaskNotificator.showNotification(
+                taskId,
+                notificationId,
+                SyncTask.State.WRITING_TARGET
+            )
+            mTargetWriter?.writeToTarget()
 
-        syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
-        mTargetWriter?.writeToTarget()
-
-        syncTaskNotificator.hideNotification(taskId, notificationId)
-        syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.IDLE)
+            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.IDLE)
+        }
+        catch (t: Throwable) {
+            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
+        }
+        finally {
+            syncTaskNotificator.hideNotification(taskId, notificationId)
+        }
     }
 
     companion object {
