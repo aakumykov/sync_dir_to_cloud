@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
 import javax.inject.Inject
 
+// FIXME: если Starter-Stopper является простой обёрткой над WorkManager-ом, то можно его убрать.
 class StartStopSyncTaskUseCase @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStarterStopper: SyncTaskStarterStopper
@@ -13,13 +14,10 @@ class StartStopSyncTaskUseCase @Inject constructor(
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
 
-        // TODO: поле в SyncTask "isRunning" ?..
-        when (syncTask.state) {
-            in arrayOf(
-                SyncTask.State.WRITING_TARGET,
-                SyncTask.State.READING_SOURCE
-            ) -> stopSyncTask(syncTask)
-            else -> startSyncTask(syncTask)
+        when (syncTask.executionState) {
+            SyncTask.SimpleState.BUSY -> stopSyncTask(syncTask)
+            SyncTask.SimpleState.IDLE -> startSyncTask(syncTask)
+            SyncTask.SimpleState.ERROR -> startSyncTask(syncTask)
         }
     }
 
