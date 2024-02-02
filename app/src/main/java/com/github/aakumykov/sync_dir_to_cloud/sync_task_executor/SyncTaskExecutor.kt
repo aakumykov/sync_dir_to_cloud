@@ -35,10 +35,6 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    // TODO: перенести в отдельный класс?
-    suspend fun taskSummary(taskId: String): String = syncTaskReader.getSyncTask(taskId).summary()
-
-
     // FIXME: убрать !! в sourcePath
     private suspend fun doWork(syncTask: SyncTask) {
 
