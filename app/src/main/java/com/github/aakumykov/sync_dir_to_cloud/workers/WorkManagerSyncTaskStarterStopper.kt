@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import androidx.work.*
+import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
 import javax.inject.Inject
@@ -10,6 +11,9 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
     private val workManager: WorkManager
 ) : SyncTaskStarterStopper
 {
+
+    // FIXME: метод workName(), единый для проекта
+
     override suspend fun startSyncTask(syncTask: SyncTask) {
 
         val workName = workName(syncTask.id)
@@ -40,7 +44,7 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
             .await()
     }
 
-    private fun workName(taskId: String): String = MANUAL_WORK_ID_PREFIX + taskId
+    private fun workName(taskId: String): String = WorkManagerConfig.MANUAL_WORK_ID_PREFIX + taskId
 
     override suspend fun stopSyncTask(syncTask: SyncTask) {
         workManager.cancelUniqueWork(workName(syncTask.id)).await()
@@ -48,6 +52,5 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
 
     companion object {
         const val TASK_ID = "TASK_ID"
-        const val MANUAL_WORK_ID_PREFIX = "MANUAL-"
     }
 }
