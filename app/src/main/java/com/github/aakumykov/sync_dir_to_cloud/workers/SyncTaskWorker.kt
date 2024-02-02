@@ -5,20 +5,21 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
-
     // TODO: OutputData: краткая сводка о выполненной работе
+
+    private val syncTaskExecutor: SyncTaskExecutor by lazy { App.getAppComponent().getSyncTaskExecutor() }
+
 
     override suspend fun doWork(): Result {
         MyLogger.d(TAG, "doWork() [${hashCode()}] начался.")
 
         val taskId: String = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
-
-        val syncTaskExecutor = App.getAppComponent().getSyncTaskExecutor()
 
         try {
             syncTaskExecutor.executeSyncTask(taskId)
