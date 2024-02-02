@@ -1,10 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.Operation
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -14,10 +17,12 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
     private val workManager: WorkManager,
 ) : SyncTaskScheduler {
 
+    // FIXME: сделать метод workName() единым для всего проекта
+
     override suspend fun scheduleSyncTask(syncTask: SyncTask) {
         return suspendCoroutine { continuation ->
             workManager.enqueueUniquePeriodicWork(
-                workId(syncTask),
+                workName(syncTask),
                 ExistingPeriodicWorkPolicy.UPDATE,
                 periodicWorkRequest(syncTask)
             )
@@ -35,7 +40,7 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
     override suspend fun unScheduleSyncTask(syncTask: SyncTask) {
         return suspendCoroutine { continuation ->
             workManager
-                .cancelUniqueWork(workId(syncTask))
+                .cancelUniqueWork(workName(syncTask))
                 .state.observeForever {
                     when(it) {
                         is Operation.State.SUCCESS -> continuation.resume(Unit)
@@ -47,7 +52,7 @@ class WorkManagerSyncTaskScheduler @Inject constructor(
     }
 
 
-    private fun workId(syncTask: SyncTask): String {
+    private fun workName(syncTask: SyncTask): String {
         return WorkManagerConfig.PERIODIC_WORK_ID_PREFIX + syncTask.id
     }
 
