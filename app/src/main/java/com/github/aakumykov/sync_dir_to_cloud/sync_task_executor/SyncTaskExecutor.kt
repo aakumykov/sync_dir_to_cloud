@@ -34,15 +34,42 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+
     // TODO: перенести в отдельный класс?
     suspend fun taskSummary(taskId: String): String = syncTaskReader.getSyncTask(taskId).summary()
 
+
+    // FIXME: убрать !! в sourcePath
+    private suspend fun doWork(syncTask: SyncTask) {
+
+        val taskId = syncTask.id
+        val notificationId = syncTask.notificationId
+
+        syncObjectClearer.clearSyncObjectsOfTask(taskId)
+
+        try {
+            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.BUSY)
+
+            syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
+            sourceReader?.read(syncTask.sourcePath!!)
+
+            syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
+            mTargetWriter?.writeToTarget()
+
+            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.IDLE)
+        }
+        catch (t: Throwable) {
+            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
+        }
+        finally {
+            syncTaskNotificator.hideNotification(taskId, notificationId)
+        }
+    }
 
     private fun prepareReader(syncTask: SyncTask) {
         // TODO: реализовать sourceAuthToken
         sourceReader = sourceReaderCreator.create(syncTask.sourceType, "", syncTask.id)
     }
-
 
     private suspend fun prepareWriter(syncTask: SyncTask) {
 
@@ -60,40 +87,6 @@ class SyncTaskExecutor @Inject constructor(
         )
     }
 
-    // FIXME: убрать!! в sourcePath
-    private suspend fun doWork(syncTask: SyncTask) {
-
-        val taskId = syncTask.id
-        val notificationId = syncTask.notificationId
-
-        syncObjectClearer.clearSyncObjectsOfTask(taskId)
-
-        try {
-            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.BUSY)
-
-            syncTaskNotificator.showNotification(
-                taskId,
-                notificationId,
-                SyncTask.State.READING_SOURCE
-            )
-            sourceReader?.read(syncTask.sourcePath!!)
-
-            syncTaskNotificator.showNotification(
-                taskId,
-                notificationId,
-                SyncTask.State.WRITING_TARGET
-            )
-            mTargetWriter?.writeToTarget()
-
-            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.IDLE)
-        }
-        catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
-        }
-        finally {
-            syncTaskNotificator.hideNotification(taskId, notificationId)
-        }
-    }
 
     companion object {
         val TAG: String = SyncTaskExecutor::class.java.simpleName
