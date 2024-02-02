@@ -11,33 +11,38 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.CancellationException
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
     // TODO: OutputData: краткая сводка о выполненной работе
 
     private val syncTaskExecutor: SyncTaskExecutor by lazy { App.getAppComponent().getSyncTaskExecutor() }
     private val syncTaskReader: SyncTaskReader by lazy { App.getAppComponent().getSyncTaskReader() }
-    private val coroutineScope: CoroutineScope by lazy { CoroutineScope(Dispatchers.IO) }
     private var taskSummary: String? = null
     private val hashCode: String = hashCode().toString()
+    private var scope: CoroutineScope? = null
+    private var taskId: String? = null
 
     override fun doWork(): Result {
-        MyLogger.d(TAG, "doWork() [${hashCode}] начался.")
+        MyLogger.d(TAG, "doWork() [${hashCode}] начался, executorHashCode: ${syncTaskExecutor.hashCode()}")
 
-        val taskId: String = inputData.getString(TASK_ID)
+        taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
 
         try {
-            coroutineScope.launch {
-                syncTaskExecutor.executeSyncTask(taskId)
-                fetchTaskSummary(taskId)
+            runBlocking {
+                scope = this
+                syncTaskExecutor.executeSyncTask(taskId!!)
+                fetchTaskSummary(taskId!!)
                 MyLogger.d(TAG, "doWork() [${hashCode}] завершился ($taskSummary).")
             }
         }
         catch (t: Throwable) {
-            coroutineScope.launch {
-                fetchTaskSummary(taskId)
+            runBlocking {
+                fetchTaskSummary(taskId!!)
                 MyLogger.e(TAG, ExceptionUtils.getErrorMessage(t), t)
                 Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
             }
@@ -48,8 +53,12 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
 
     override fun onStopped() {
         super.onStopped()
+        runBlocking {
+            syncTaskExecutor.stopExecutingTask(taskId!!)
+        }
+        scope?.cancel(CancellationException("ОСТАНОВЛЕНО [${hashCode}], executorHashCode: ${syncTaskExecutor.hashCode()}"))
         val taskId: String? = inputData.getString(TASK_ID)
-        MyLogger.d(TAG, "onStopped(), taskId: $taskId")
+        MyLogger.d(TAG, "onStopped() [${hashCode}], taskId: $taskId")
     }
 
 

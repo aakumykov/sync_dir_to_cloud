@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.c
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. А как устойчивость к ошибкам?
+    // TODO: переименовать в startExecutingTask()
     suspend fun executeSyncTask(taskId: String) {
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             prepareReader(syncTask)
@@ -34,6 +36,12 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+
+    suspend fun stopExecutingTask(taskId: String) {
+        // TODO: по-настоящему прерывать работу CloudWriter-а
+        MyLogger.d(TAG, "stopExecutingTask(), [${hashCode()}]")
+        syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.IDLE)
+    }
 
     // FIXME: убрать !! в sourcePath
     private suspend fun doWork(syncTask: SyncTask) {
