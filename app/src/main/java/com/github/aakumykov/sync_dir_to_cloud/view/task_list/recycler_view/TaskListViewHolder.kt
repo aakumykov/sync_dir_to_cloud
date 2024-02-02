@@ -1,15 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view
 
-import android.graphics.PorterDuff
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 
 
 class TaskListViewHolder(private val itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
@@ -52,11 +51,13 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     private fun displayStartStopButton() {
 
+        MyLogger.d(TAG, "displayStartStopButton(), executionState: ${currentTask.executionState}")
+
         runButton.setImageResource(
             when(currentTask.executionState){
                 SyncTask.SimpleState.IDLE -> R.drawable.ic_task_start
-                SyncTask.SimpleState.ERROR -> R.drawable.ic_task_start
                 SyncTask.SimpleState.BUSY -> R.drawable.ic_task_stop
+                SyncTask.SimpleState.ERROR -> R.drawable.ic_task_start
             }
         )
 
@@ -101,5 +102,9 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
                 SyncTask.SimpleState.ERROR -> R.drawable.ic_task_state_error
             }
         )
+    }
+
+    companion object {
+        val TAG: String = TaskListViewHolder::class.java.simpleName
     }
 }
