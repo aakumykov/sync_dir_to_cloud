@@ -71,5 +71,5 @@
     <string name="SCHEDULING_STATE_scheduled_long_form">Запланировано выполнение каждые %1$d %3$s %2$d %4$s</string>
     <string name="EXECUTION_STATE_error">Ошибка выполнения: %1$s</string>
     <string name="EXECUTION_STATE_running">Выполняется</string>
-    <string name="EXECUTION_STATE_idle">Ожидает выполнения</string>
+    <string name="EXECUTION_STATE_idle">Неактивно</string>
 </resources>

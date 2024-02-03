@@ -103,19 +103,13 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     }
 
     private fun displayExecutionState(syncTask: SyncTask) {
-        if (syncTask.isEnabled) {
-            binding.executionStateView.text = when (syncTask.executionState) {
-                SyncTask.SimpleState.IDLE -> getString(R.string.EXECUTION_STATE_idle)
-                SyncTask.SimpleState.BUSY -> getString(R.string.EXECUTION_STATE_running)
-                SyncTask.SimpleState.ERROR -> getString(
-                    R.string.EXECUTION_STATE_error,
-                    syncTask.executionError
-                )
-            }
-            binding.executionStateView.visibility = View.VISIBLE
-        }
-        else {
-            binding.executionStateView.visibility = View.GONE
+        binding.executionStateView.text = when (syncTask.executionState) {
+            SyncTask.SimpleState.IDLE -> getString(R.string.EXECUTION_STATE_idle)
+            SyncTask.SimpleState.BUSY -> getString(R.string.EXECUTION_STATE_running)
+            SyncTask.SimpleState.ERROR -> getString(
+                R.string.EXECUTION_STATE_error,
+                syncTask.executionError
+            )
         }
     }
 
