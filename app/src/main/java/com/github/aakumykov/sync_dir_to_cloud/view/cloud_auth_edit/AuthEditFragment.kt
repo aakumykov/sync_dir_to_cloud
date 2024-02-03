@@ -32,7 +32,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
         yandexAuthenticator = YandexAuthenticator(
             this,
-            LoginType.CHROME_TAB,
+            LoginType.NATIVE,
             this)
     }
 
