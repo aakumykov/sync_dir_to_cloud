@@ -13,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 
 class TaskListViewHolder(private val itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
 
-    private val probeRunButton: ImageButton = itemView.findViewById(R.id.probeRunButton)
+//    private val probeRunButton: ImageButton = itemView.findViewById(R.id.probeRunButton)
 
     private val titleView: TextView = itemView.findViewById(R.id.titleView)
     private val stateView: ImageView = itemView.findViewById(R.id.taskStateView)
@@ -25,8 +25,8 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     private lateinit var currentTask: SyncTask
 
     init {
-        probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
-        probeRunButton.setOnLongClickListener { itemClickCallback.onProbeRunLongClicked(currentTask.id); return@setOnLongClickListener true }
+//        probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
+//        probeRunButton.setOnLongClickListener { itemClickCallback.onProbeRunLongClicked(currentTask.id); return@setOnLongClickListener true }
 
         stateView.setOnClickListener { itemClickCallback.onTaskInfoClicked(currentTask.id) }
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }

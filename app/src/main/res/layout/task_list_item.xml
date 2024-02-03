@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:src="@drawable/ic_probe_run"
+        android:visibility="gone"
         tools:ignore="ContentDescription" />
 
     <TextView

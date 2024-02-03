@@ -73,6 +73,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
         super.onDestroyView()
     }
 
+/*
     override fun onProbeRunClicked(taskId: String) {
 
         lifecycleScope.launch (Dispatchers.IO) {
@@ -106,6 +107,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                     }
                 }
     }
+*/
 
     private fun oneTimeWorkRequest(taskId: String): OneTimeWorkRequest {
         return OneTimeWorkRequest.Builder(
