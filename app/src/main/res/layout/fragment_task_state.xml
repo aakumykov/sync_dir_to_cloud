@@ -29,14 +29,24 @@
         tools:text="task id" />
 
     <TextView
-        android:id="@+id/stateView"
+        android:id="@+id/schedulingStateView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:textStyle="italic"
+        tools:text="Статус планирования" />
+
+    <TextView
+        android:id="@+id/executionStateView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:textSize="18sp"
         android:textAlignment="center"
         android:textStyle="italic|bold"
-        tools:text="СОСТОЯНИЕ" />
+        tools:text="Статус выполнения" />
 
     <Space
         android:layout_width="match_parent"

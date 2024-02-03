@@ -67,7 +67,56 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
         binding.titleView.text = "${syncTask.sourcePath} --> ${syncTask.targetPath}"
         binding.idView.text = "(${syncTask.id})"
-        binding.stateView.text = syncTask.state.name
+
+        displaySchedulingState(syncTask)
+        displayExecutionState(syncTask)
+    }
+
+    private fun displaySchedulingState(syncTask: SyncTask) {
+        binding.schedulingStateView.text =
+            if (syncTask.isEnabled) {
+                when(syncTask.schedulingState) {
+                    SyncTask.SimpleState.IDLE -> detailedSchedulingState(syncTask)
+                    SyncTask.SimpleState.BUSY -> getString(R.string.SCHEDULING_STATE_scheduling_now)
+                    SyncTask.SimpleState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
+                }
+            }
+            else {
+                getString(R.string.SCHEDULING_STATE_disabled)
+            }
+    }
+
+    private fun detailedSchedulingState(syncTask: SyncTask): String {
+        return when (syncTask.intervalHours) {
+            0 -> getString(
+                R.string.SCHEDULING_STATE_scheduled_short_form,
+                syncTask.intervalMinutes,
+                resources.getQuantityString(R.plurals.minutes, syncTask.intervalMinutes))
+
+            else ->getString(
+                R.string.SCHEDULING_STATE_scheduled_long_form,
+                syncTask.intervalHours,
+                syncTask.intervalMinutes,
+                resources.getQuantityString(R.plurals.hours, syncTask.intervalHours),
+                resources.getQuantityString(R.plurals.minutes, syncTask.intervalMinutes))
+        }
+    }
+
+    private fun displayExecutionState(syncTask: SyncTask) {
+        if (syncTask.isEnabled) {
+            binding.executionStateView.text = when (syncTask.executionState) {
+                SyncTask.SimpleState.IDLE -> getString(R.string.EXECUTION_STATE_idle)
+                SyncTask.SimpleState.BUSY -> getString(R.string.EXECUTION_STATE_running)
+                SyncTask.SimpleState.ERROR -> getString(
+                    R.string.EXECUTION_STATE_error,
+                    syncTask.executionError
+                )
+            }
+            binding.executionStateView.visibility = View.VISIBLE
+        }
+        else {
+            binding.executionStateView.visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {

@@ -64,4 +64,12 @@
     <string name="DELETE_DIALOG_title">Удалить задачу?</string>
     <string name="DIALOG_BUTTON_yes">Да</string>
     <string name="DIALOG_BUTTON_no">Нет</string>
+    <string name="SCHEDULING_STATE_scheduling_now">Ставится в план сейчас</string>
+    <string name="SCHEDULING_STATE_scheduling_error">Ошибка планирования: %1$s</string>
+    <string name="SCHEDULING_STATE_disabled">Не запланировано</string>
+    <string name="SCHEDULING_STATE_scheduled_short_form">Запланировано выполнение каждые %1$d %2$s</string>
+    <string name="SCHEDULING_STATE_scheduled_long_form">Запланировано выполнение каждые %1$d %3$s %2$d %4$s</string>
+    <string name="EXECUTION_STATE_error">Ошибка выполнения: %1$s</string>
+    <string name="EXECUTION_STATE_running">Выполняется</string>
+    <string name="EXECUTION_STATE_idle">Ожидает выполнения</string>
 </resources>
