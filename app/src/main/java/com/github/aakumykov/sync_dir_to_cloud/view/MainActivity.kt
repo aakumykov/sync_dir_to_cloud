@@ -13,13 +13,12 @@ import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
-import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
-import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskInfoFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskStateFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -71,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadInitialFragment(intent: Intent?) {
         setFragment(
             when(intent?.action) {
-                ACTION_SHOW_TASK_STATE -> TaskInfoFragment.create(intent)
+                ACTION_SHOW_TASK_STATE -> TaskStateFragment.create(intent)
                 else -> TaskListFragment.create()
             }
         )
@@ -142,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             is NavTarget.Add -> loadFragment(TaskEditFragment.create())
             is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
-            is NavTarget.TaskInfo -> loadFragment(TaskInfoFragment.create(navTarget.id))
+            is NavTarget.TaskInfo -> loadFragment(TaskStateFragment.create(navTarget.id))
             else -> loadInitialFragment(intent)
         }
     }

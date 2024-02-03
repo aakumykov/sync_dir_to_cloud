@@ -8,7 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskInfoBinding
+import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -17,9 +17,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
-class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
+class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
-    private var _binding: FragmentTaskInfoBinding? = null
+    private var _binding: FragmentTaskStateBinding? = null
     private val binding get() = _binding!!
 
     // TODO: внудрять ViewModel-и Dagger-ом?
@@ -43,7 +43,7 @@ class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
             return
         }
 
-        _binding = FragmentTaskInfoBinding.bind(view)
+        _binding = FragmentTaskStateBinding.bind(view)
 
         listAdapter = ListViewAdapter(requireContext(), R.layout.sync_object_list_item, R.id.title, syncObjectList)
         binding.listView.adapter = listAdapter
@@ -80,13 +80,13 @@ class TaskInfoFragment : Fragment(R.layout.fragment_task_info) {
 
         const val KEY_TASK_ID = "TASK_ID"
 
-        fun create(taskId: String?): TaskInfoFragment {
-            return TaskInfoFragment().apply {
+        fun create(taskId: String?): TaskStateFragment {
+            return TaskStateFragment().apply {
                 arguments = Bundle().apply { putString(KEY_TASK_ID, taskId) }
             }
         }
 
-        fun create(intent: Intent): TaskInfoFragment {
+        fun create(intent: Intent): TaskStateFragment {
             return create(intent.getStringExtra(KEY_TASK_ID))
         }
     }

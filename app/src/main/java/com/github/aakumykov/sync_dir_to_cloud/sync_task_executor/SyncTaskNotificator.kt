@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -18,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
-import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskInfoFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskStateFragment
 import javax.inject.Inject
 
 class SyncTaskNotificator @Inject constructor(
@@ -126,7 +125,7 @@ class SyncTaskNotificator @Inject constructor(
     private fun intent(taskId: String): Intent {
         return Intent(appContext, MainActivity::class.java).apply {
             action = MainActivity.ACTION_SHOW_TASK_STATE
-            putExtra(TaskInfoFragment.KEY_TASK_ID, taskId)
+            putExtra(TaskStateFragment.KEY_TASK_ID, taskId)
         }
     }
 
