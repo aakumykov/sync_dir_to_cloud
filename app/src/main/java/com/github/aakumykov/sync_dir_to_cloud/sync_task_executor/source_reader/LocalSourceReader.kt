@@ -20,7 +20,7 @@ import dagger.assisted.AssistedInject
 class LocalSourceReader @AssistedInject constructor(
     @Assisted(AssistedArgName.AUTH_TOKEN) private val authToken: String,
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
-    private val changesDetectionStrategy: ChangesDetectionStrategy,
+    @Assisted private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
     private val syncObjectAdder: SyncObjectAdder,
 ): SourceReader {
