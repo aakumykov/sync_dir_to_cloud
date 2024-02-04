@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -9,11 +10,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Database(
     entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 28,
+    version = 29,
     autoMigrations = [
-//        AutoMigration(from = 24, to = 25),
-//        AutoMigration(from = 25, to = 26),
-//        AutoMigration(from = 26, to = 27),
+        AutoMigration(from = 28, to = 29),
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

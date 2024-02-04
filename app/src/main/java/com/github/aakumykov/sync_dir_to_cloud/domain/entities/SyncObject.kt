@@ -30,6 +30,7 @@ class SyncObject (
     @ColumnInfo(name = "is_progress") val isProgress: Boolean,
     @ColumnInfo(name = "is_success") val isSuccess: Boolean,
     @Deprecated("Переименовтаь в m_time") @ColumnInfo(name = "element_date") val elementDate: Long,
+    @ColumnInfo(defaultValue = "0") val size: Long,
     @ColumnInfo(name = "sync_date") val syncDate: Long?,
     @ColumnInfo(name = "error_msg") val errorMsg: String?
 ) {
@@ -44,6 +45,12 @@ class SyncObject (
     override fun toString(): String {
         return SyncObject::class.simpleName + " { $relativeParentDirPath/$name ($state) }"
     }
+
+    /*fun toFSItem(): FSItem {
+        return when(isDir) {
+            true ->
+        }
+    }*/
 
     companion object {
 
@@ -66,6 +73,7 @@ class SyncObject (
                 isSuccess = false,
                 errorMsg = null,
                 elementDate = fsItem.mTime,
+                size = fsItem.size,
                 syncDate = null,
             )
         }
