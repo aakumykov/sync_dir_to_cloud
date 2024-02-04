@@ -29,7 +29,7 @@ class SyncObject (
     val state: State,
     @ColumnInfo(name = "is_progress") val isProgress: Boolean,
     @ColumnInfo(name = "is_success") val isSuccess: Boolean,
-    @ColumnInfo(name = "element_date") val elementDate: Long,
+    @Deprecated("Переименовтаь в m_time") @ColumnInfo(name = "element_date") val elementDate: Long,
     @ColumnInfo(name = "sync_date") val syncDate: Long?,
     @ColumnInfo(name = "error_msg") val errorMsg: String?
 ) {
@@ -65,7 +65,7 @@ class SyncObject (
                 isProgress = false,
                 isSuccess = false,
                 errorMsg = null,
-                elementDate = fsItem.cTime,
+                elementDate = fsItem.mTime,
                 syncDate = null,
             )
         }
