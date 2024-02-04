@@ -152,7 +152,7 @@
       },
       {
         "tableName": "sync_objects",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `name` TEXT NOT NULL, `relative_parent_dir_path` TEXT NOT NULL, `is_dir` INTEGER NOT NULL, `state` TEXT NOT NULL, `is_progress` INTEGER NOT NULL, `is_success` INTEGER NOT NULL, `element_date` INTEGER NOT NULL, `size` INTEGER NOT NULL DEFAULT 0, `sync_date` INTEGER, `error_msg` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `name` TEXT NOT NULL, `relative_parent_dir_path` TEXT NOT NULL, `is_dir` INTEGER NOT NULL, `state` TEXT NOT NULL, `is_progress` INTEGER NOT NULL, `is_success` INTEGER NOT NULL, `m_time` INTEGER NOT NULL, `size` INTEGER NOT NULL DEFAULT 0, `sync_date` INTEGER, `error_msg` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -204,7 +204,7 @@
           },
           {
             "fieldPath": "elementDate",
-            "columnName": "element_date",
+            "columnName": "m_time",
             "affinity": "INTEGER",
             "notNull": true
           },
