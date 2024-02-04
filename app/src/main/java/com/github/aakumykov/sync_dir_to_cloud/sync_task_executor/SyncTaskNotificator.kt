@@ -70,17 +70,15 @@ class SyncTaskNotificator @Inject constructor(
             return
         }
 
+        val notification = notificationBuilder.build()
+
         notificationBuilder
             .apply {
                 setContentText(string(textRes))
                 setContentIntent(contentPendingIntent(taskId))
             }
-            .also { notificationBuilder ->
-                notificationManagerCompat.notify(
-                    taskId,
-                    notificationId,
-                    notificationBuilder.build()
-                )
+            .also {
+                notificationManagerCompat.notify(taskId, notificationId, notification)
             }
     }
 
