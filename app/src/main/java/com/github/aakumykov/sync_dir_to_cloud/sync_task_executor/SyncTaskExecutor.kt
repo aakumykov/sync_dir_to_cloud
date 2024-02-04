@@ -52,7 +52,7 @@ class SyncTaskExecutor @Inject constructor(
         syncObjectClearer.clearSyncObjectsOfTask(taskId)
 
         try {
-            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.BUSY)
+            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.RUNNING)
 
             syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
             sourceReader?.read(syncTask.sourcePath!!)

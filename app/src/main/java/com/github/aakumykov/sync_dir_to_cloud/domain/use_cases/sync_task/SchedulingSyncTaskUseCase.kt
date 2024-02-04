@@ -27,7 +27,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
 
     private suspend fun scheduleSyncTask(syncTask: SyncTask) {
         try {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.BUSY)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.RUNNING)
             syncTaskScheduler.scheduleSyncTask(syncTask)
             syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.IDLE)
             syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, true)
@@ -40,7 +40,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
 
     suspend fun unScheduleSyncTask(syncTask: SyncTask) {
         try {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.BUSY)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.RUNNING)
             syncTaskScheduler.unScheduleSyncTask(syncTask)
             syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.IDLE)
             syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, false)

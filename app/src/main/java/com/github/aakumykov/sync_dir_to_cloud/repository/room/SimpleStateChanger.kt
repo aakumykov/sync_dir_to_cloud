@@ -17,7 +17,7 @@ abstract class SimpleStateChanger {
     @Transaction @Update
     suspend fun setBusyState(taskId: String) {
         MyLogger.d(TAG, "setBusyState() called with: taskId = $taskId")
-        setStateNotUseDirectly(taskId, SyncTask.SimpleState.BUSY)
+        setStateNotUseDirectly(taskId, SyncTask.SimpleState.RUNNING)
         setErrorMsgNotUseDirectly(taskId, "")
     }
 

@@ -82,7 +82,7 @@ class SyncTaskRepository @Inject constructor(
                                   errorMsg: String = "") {
         when(newState) {
             SyncTask.SimpleState.IDLE -> simpleStateChanger.setIdleState(taskId)
-            SyncTask.SimpleState.BUSY -> simpleStateChanger.setBusyState(taskId)
+            SyncTask.SimpleState.RUNNING -> simpleStateChanger.setBusyState(taskId)
             SyncTask.SimpleState.ERROR -> simpleStateChanger.setErrorState(taskId, errorMsg)
         }
     }

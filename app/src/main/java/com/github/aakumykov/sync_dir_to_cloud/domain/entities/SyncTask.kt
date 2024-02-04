@@ -114,7 +114,7 @@ class SyncTask {
         SEMI_SUCCESS
     }
 
-    enum class SimpleState { IDLE, @Deprecated("Переименуй в RUNNING") BUSY, ERROR }
+    enum class SimpleState { IDLE, RUNNING, ERROR }
 
     companion object {
         val TAG = SyncTask::class.simpleName.toString()
