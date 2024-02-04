@@ -31,8 +31,9 @@ class SyncTaskNotificator @Inject constructor(
             setSmallIcon(ProgressNotificationsConfig.SMALL_ICON)
             setOngoing(true)
             setProgress(0,0,true)
-            setContentInfo(":-) - content info")
-            setSubText(";-) sub text")
+            setContentTitle(string(R.string.NOTIFICATION_title))
+//            setContentInfo(":-) - content info")
+//            setSubText(";-) sub text")
         }
     }
 
@@ -65,19 +66,13 @@ class SyncTaskNotificator @Inject constructor(
 
         // Проверка наличия разрешения на уведомления
         if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            MyLogger.e(TAG, "Нет разрешения на показ уведомлений.")
             return
         }
 
         notificationBuilder
             .apply {
-                setContentTitle(string(textRes))
+                setContentText(string(textRes))
                 setContentIntent(contentPendingIntent(taskId))
             }
             .also { notificationBuilder ->

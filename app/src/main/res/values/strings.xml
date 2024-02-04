@@ -50,6 +50,7 @@
     <string name="notifications_channel_name">Процесс синхронизации</string>
     <string name="notifications_channel_description">Уведомления о процессе выполнения задания синхронизации</string>
     <string name="NOTIFICATION_idle">Ожидание</string>
+    <string name="NOTIFICATION_title">Синхронизация</string>
     <string name="NOTIFICATION_reading_source">Чтение источника</string>
     <string name="NOTIFICATION_writing_target">Отправка по назначению</string>
     <string name="NOTIFICATION_success">Синхронизация успешна</string>
