@@ -44,6 +44,7 @@ class SyncTaskNotificator @Inject constructor(
 
         prepareNotificationChannel()
 
+        // FIXME: отдельный статус для этого процесса
         when (state) {
             SyncTask.State.IDLE -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_idle)
             SyncTask.State.READING_SOURCE -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_reading_source)
