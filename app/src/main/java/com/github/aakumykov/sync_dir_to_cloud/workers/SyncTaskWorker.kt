@@ -5,6 +5,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -21,6 +22,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
 
     private val syncTaskExecutor: SyncTaskExecutor by lazy { App.getAppComponent().getSyncTaskExecutor() }
     private val syncTaskReader: SyncTaskReader by lazy { App.getAppComponent().getSyncTaskReader() }
+    private val syncTaskStateChanger by lazy { App.getAppComponent().getSyncTaskStateChanger() }
     private var taskSummary: String? = null
     private val hashCode: String = hashCode().toString()
     private var scope: CoroutineScope? = null
@@ -42,8 +44,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
         }
         catch (t: Throwable) {
             runBlocking {
-                fetchTaskSummary(taskId!!)
-                MyLogger.e(TAG, ExceptionUtils.getErrorMessage(t), t)
+                val errorMsg = ExceptionUtils.getErrorMessage(t)
+                syncTaskStateChanger.changeExecutionState(taskId!!, SyncTask.SimpleState.ERROR, errorMsg)
+                MyLogger.e(TAG, errorMsg, t)
                 Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
             }
         }
