@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -72,7 +73,12 @@ class SyncTaskExecutor @Inject constructor(
 
     private fun prepareReader(syncTask: SyncTask) {
         // TODO: реализовать sourceAuthToken
-        sourceReader = sourceReaderCreator.create(syncTask.sourceType, "", syncTask.id)
+        sourceReader = sourceReaderCreator.create(
+            syncTask.sourceType,
+            "",
+            syncTask.id,
+            ChangesDetectionStrategy.SizeAndModificationTime()
+        )
     }
 
     private suspend fun prepareWriter(syncTask: SyncTask) {

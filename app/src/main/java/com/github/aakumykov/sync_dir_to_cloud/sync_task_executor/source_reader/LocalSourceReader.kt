@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReaderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,6 +20,7 @@ import dagger.assisted.AssistedInject
 class LocalSourceReader @AssistedInject constructor(
     @Assisted(AssistedArgName.AUTH_TOKEN) private val authToken: String,
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
+    private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
     private val syncObjectAdder: SyncObjectAdder,
 ): SourceReader {
@@ -26,7 +28,8 @@ class LocalSourceReader @AssistedInject constructor(
     @AssistedFactory
     interface Factory : SourceReaderAssistedFactory {
         override fun create(@Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
-                            @Assisted(AssistedArgName.TASK_ID) taskId: String
+                            @Assisted(AssistedArgName.TASK_ID) taskId: String,
+                            @Assisted changesDetectionStrategy: ChangesDetectionStrategy
         ): LocalSourceReader
     }
 
