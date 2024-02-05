@@ -57,7 +57,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
         runBlocking {
             syncTaskExecutor.stopExecutingTask(taskId!!)
         }
-        scope?.cancel(CancellationException("ОСТАНОВЛЕНО [${hashCode}], executorHashCode: ${syncTaskExecutor.hashCode()}"))
+        scope?.cancel(CancellationException("ОСТАНОВЛЕНО ВРУЧНУЮ [${hashCode}], executorHashCode: ${syncTaskExecutor.hashCode()}"))
         val taskId: String? = inputData.getString(TASK_ID)
         MyLogger.d(TAG, "onStopped() [${hashCode}], taskId: $taskId")
     }
