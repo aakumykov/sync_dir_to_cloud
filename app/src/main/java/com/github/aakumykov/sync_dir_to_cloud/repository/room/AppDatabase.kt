@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Database(
     entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 30,
+    version = 31,
     autoMigrations = [
 
     ]

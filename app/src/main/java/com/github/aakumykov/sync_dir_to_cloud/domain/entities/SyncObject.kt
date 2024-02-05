@@ -27,22 +27,11 @@ class SyncObject (
     @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
     @ColumnInfo(name = "execution_state") val executionState: SimpleState,
-    // TODO: executionError
-    @ColumnInfo(name = "is_progress") val isProgress: Boolean,
-    @ColumnInfo(name = "is_success") val isSuccess: Boolean,
+    @ColumnInfo(name = "execution_error") var executionError: String,
     @ColumnInfo(name = "m_time") val mTime: Long,
     @ColumnInfo(defaultValue = "0") val size: Long,
-    @ColumnInfo(name = "sync_date") val syncDate: Long?,
-    @ColumnInfo(name = "error_msg") val errorMsg: String?
+    @ColumnInfo(name = "sync_date") val syncDate: Long,
 ) {
-
-    enum class State {
-        IDLE,
-        RUNNING,
-        SUCCESS,
-        ERROR
-    }
-
     override fun toString(): String {
         return SyncObject::class.simpleName + " { $relativeParentDirPath/$name ($executionState) }"
     }
@@ -70,12 +59,10 @@ class SyncObject (
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
                 executionState = SimpleState.IDLE,
-                isProgress = false,
-                isSuccess = false,
-                errorMsg = null,
+                executionError = "",
                 mTime = fsItem.mTime,
                 size = fsItem.size,
-                syncDate = null,
+                syncDate = 0L,
             )
         }
     }

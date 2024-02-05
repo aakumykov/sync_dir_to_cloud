@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 
-import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -21,12 +21,24 @@ abstract class BasicTargetWriter constructor(
 {
     private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
         try {
-            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.RUNNING)
+            syncObjectStateChanger.changeExecutionState(
+                syncObject.id,
+                SimpleState.RUNNING,
+                ""
+            )
             writeAction.run()
-            syncObjectStateChanger.changeState(syncObject.id, SyncObject.State.SUCCESS)
+            syncObjectStateChanger.changeExecutionState(
+                syncObject.id,
+                SimpleState.IDLE,
+                ""
+            )
         }
         catch (t: Throwable) {
-            syncObjectStateChanger.setErrorState(syncObject.id, ExceptionUtils.getErrorMessage(t))
+            syncObjectStateChanger.changeExecutionState(
+                syncObject.id,
+                SimpleState.ERROR,
+                ExceptionUtils.getErrorMessage(t)
+            )
         }
     }
 

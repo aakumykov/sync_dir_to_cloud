@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.data_sources
 
 import androidx.lifecycle.LiveData
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import kotlinx.coroutines.Dispatchers
@@ -21,15 +22,9 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
         }
     }
 
-    suspend fun setState(syncObjectId: String, state: SyncObject.State) {
+    suspend fun setState(syncObjectId: String, state: SimpleState, errorMsg: String) {
         return withContext(Dispatchers.IO) {
-            syncObjectDAO.setExecutionState(syncObjectId, state)
-        }
-    }
-
-    suspend fun setErrorMsg(syncObjectId: String, errorMsg: String) {
-        return withContext(Dispatchers.IO) {
-            syncObjectDAO.setErrorMsg(syncObjectId, errorMsg)
+            syncObjectDAO.setExecutionState(syncObjectId, state, errorMsg)
         }
     }
 

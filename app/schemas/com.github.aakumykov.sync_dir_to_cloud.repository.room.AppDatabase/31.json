@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 30,
-    "identityHash": "2584a649044e6feb31eaade0f6cf170e",
+    "version": 31,
+    "identityHash": "96a762aa74551d81f637b0723371309a",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -152,7 +152,7 @@
       },
       {
         "tableName": "sync_objects",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `name` TEXT NOT NULL, `relative_parent_dir_path` TEXT NOT NULL, `is_dir` INTEGER NOT NULL, `execution_state` TEXT NOT NULL, `is_progress` INTEGER NOT NULL, `is_success` INTEGER NOT NULL, `m_time` INTEGER NOT NULL, `size` INTEGER NOT NULL DEFAULT 0, `sync_date` INTEGER, `error_msg` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `name` TEXT NOT NULL, `relative_parent_dir_path` TEXT NOT NULL, `is_dir` INTEGER NOT NULL, `execution_state` TEXT NOT NULL, `execution_error` TEXT NOT NULL, `m_time` INTEGER NOT NULL, `size` INTEGER NOT NULL DEFAULT 0, `sync_date` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -191,15 +191,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "isProgress",
-            "columnName": "is_progress",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isSuccess",
-            "columnName": "is_success",
-            "affinity": "INTEGER",
+            "fieldPath": "executionError",
+            "columnName": "execution_error",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -219,13 +213,7 @@
             "fieldPath": "syncDate",
             "columnName": "sync_date",
             "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "errorMsg",
-            "columnName": "error_msg",
-            "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -305,7 +293,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2584a649044e6feb31eaade0f6cf170e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '96a762aa74551d81f637b0723371309a')"
     ]
   }
 }
