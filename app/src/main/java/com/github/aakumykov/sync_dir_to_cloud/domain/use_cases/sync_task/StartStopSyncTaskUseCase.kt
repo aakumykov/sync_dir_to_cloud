@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
@@ -16,9 +16,9 @@ class StartStopSyncTaskUseCase @Inject constructor(
         val syncTask = syncTaskReader.getSyncTask(taskId)
 
         when (syncTask.executionState) {
-            SimpleState.RUNNING -> stopSyncTask(syncTask)
-            SimpleState.IDLE -> startSyncTask(syncTask)
-            SimpleState.ERROR -> startSyncTask(syncTask)
+            ExecutionState.RUNNING -> stopSyncTask(syncTask)
+            ExecutionState.IDLE -> startSyncTask(syncTask)
+            ExecutionState.ERROR -> startSyncTask(syncTask)
         }
     }
 

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 
@@ -56,9 +56,9 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
         runButton.setImageResource(
             when(currentTask.executionState){
-                SimpleState.IDLE -> R.drawable.ic_task_start
-                SimpleState.RUNNING -> R.drawable.ic_task_stop
-                SimpleState.ERROR -> R.drawable.ic_task_start
+                ExecutionState.IDLE -> R.drawable.ic_task_start
+                ExecutionState.RUNNING -> R.drawable.ic_task_stop
+                ExecutionState.ERROR -> R.drawable.ic_task_start
             }
         )
 
@@ -98,9 +98,9 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     private fun displayExecutionState() {
         stateView.setImageResource(
             when (currentTask.executionState) {
-                SimpleState.IDLE -> if (currentTask.isEnabled) R.drawable.ic_task_state_scheduled else R.drawable.ic_task_state_disabled
-                SimpleState.RUNNING -> R.drawable.ic_task_state_running
-                SimpleState.ERROR -> R.drawable.ic_task_state_error
+                ExecutionState.IDLE -> if (currentTask.isEnabled) R.drawable.ic_task_state_scheduled else R.drawable.ic_task_state_disabled
+                ExecutionState.RUNNING -> R.drawable.ic_task_state_running
+                ExecutionState.ERROR -> R.drawable.ic_task_state_error
             }
         )
     }

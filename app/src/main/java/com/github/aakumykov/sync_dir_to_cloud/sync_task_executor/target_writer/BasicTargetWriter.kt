@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -23,20 +23,20 @@ abstract class BasicTargetWriter constructor(
         try {
             syncObjectStateChanger.changeExecutionState(
                 syncObject.id,
-                SimpleState.RUNNING,
+                ExecutionState.RUNNING,
                 ""
             )
             writeAction.run()
             syncObjectStateChanger.changeExecutionState(
                 syncObject.id,
-                SimpleState.IDLE,
+                ExecutionState.IDLE,
                 ""
             )
         }
         catch (t: Throwable) {
             syncObjectStateChanger.changeExecutionState(
                 syncObject.id,
-                SimpleState.ERROR,
+                ExecutionState.ERROR,
                 ExceptionUtils.getErrorMessage(t)
             )
         }

@@ -1,10 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 
 interface SyncObjectStateChanger {
 
-    suspend fun changeExecutionState(syncObjectId: String, state: SimpleState, errorMsg: String = "")
+    suspend fun changeExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String = "")
 
     @Deprecated("Использовать changeExecutionState()")
     suspend fun setErrorState(syncObjectId: String, errorMsg: String)

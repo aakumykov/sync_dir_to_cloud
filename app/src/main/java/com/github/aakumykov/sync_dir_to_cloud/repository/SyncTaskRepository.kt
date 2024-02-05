@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
@@ -68,23 +68,23 @@ class SyncTaskRepository @Inject constructor(
         syncTaskStateDAO.setEnabled(taskId, isEnabled)
     }
 
-    override suspend fun changeSchedulingState(taskId: String, newState: SimpleState, errorMsg: String) {
+    override suspend fun changeSchedulingState(taskId: String, newState: ExecutionState, errorMsg: String) {
         changeSimpleState(syncTaskSchedulingStateDAO, taskId, newState, errorMsg)
     }
 
-    override suspend fun changeExecutionState(taskId: String, newState: SimpleState, errorMsg: String) {
+    override suspend fun changeExecutionState(taskId: String, newState: ExecutionState, errorMsg: String) {
         changeSimpleState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
     }
 
 
     private suspend fun changeSimpleState(simpleStateChanger: SimpleStateChanger,
                                           taskId: String,
-                                          newState: SimpleState,
+                                          newState: ExecutionState,
                                           errorMsg: String = "") {
         when(newState) {
-            SimpleState.IDLE -> simpleStateChanger.setIdleState(taskId)
-            SimpleState.RUNNING -> simpleStateChanger.setBusyState(taskId)
-            SimpleState.ERROR -> simpleStateChanger.setErrorState(taskId, errorMsg)
+            ExecutionState.IDLE -> simpleStateChanger.setIdleState(taskId)
+            ExecutionState.RUNNING -> simpleStateChanger.setBusyState(taskId)
+            ExecutionState.ERROR -> simpleStateChanger.setErrorState(taskId, errorMsg)
         }
     }
 
