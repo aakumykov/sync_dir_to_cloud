@@ -23,7 +23,7 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
 
     suspend fun setState(syncObjectId: String, state: SyncObject.State) {
         return withContext(Dispatchers.IO) {
-            syncObjectDAO.setState(syncObjectId, state)
+            syncObjectDAO.setExecutionState(syncObjectId, state)
         }
     }
 
