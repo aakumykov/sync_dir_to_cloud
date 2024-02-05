@@ -32,12 +32,8 @@ class SyncObjectRepository @Inject constructor(private val syncObjectLocalDataSo
     override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
         = syncObjectLocalDataSource.getSyncObjectList(taskId)
 
-    // FIXME: выполнять как транзакцию
-    override suspend fun setErrorState(syncObjectId: String, errorMsg: String) {
-        /*syncObjectLocalDataSource.setState(syncObjectId, SyncObject.State.ERROR)
-        syncObjectLocalDataSource.setErrorMsg(syncObjectId, errorMsg)*/
-        changeExecutionState(syncObjectId, ExecutionState.ERROR, errorMsg)
-    }
+    override suspend fun setSyncDate(id: String, date: Long)
+        = syncObjectLocalDataSource.setSyncDate(id, date)
 
     override suspend fun clearSyncObjectsOfTask(taskId: String) {
         syncObjectLocalDataSource.deleteSyncObjectOfTask(taskId)

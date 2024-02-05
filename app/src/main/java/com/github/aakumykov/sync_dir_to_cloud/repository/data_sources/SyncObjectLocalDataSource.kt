@@ -39,4 +39,10 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
             syncObjectDAO.deleteObjectsForTask(taskId)
         }
     }
+
+    suspend fun setSyncDate(id: String, date: Long) {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.setSyncDate(id, date)
+        }
+    }
 }

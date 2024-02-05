@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentDate
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import java.io.File
 
@@ -32,6 +33,7 @@ abstract class BasicTargetWriter constructor(
                 ExecutionState.IDLE,
                 ""
             )
+            syncObjectStateChanger.setSyncDate(syncObject.id, currentDate())
         }
         catch (t: Throwable) {
             syncObjectStateChanger.changeExecutionState(

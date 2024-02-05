@@ -25,4 +25,7 @@ interface SyncObjectDAO {
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
     fun deleteObjectsForTask(taskId: String)
+
+    @Query("UPDATE sync_objects SET sync_date = :date WHERE id = :id")
+    fun setSyncDate(id: String, date: Long)
 }
