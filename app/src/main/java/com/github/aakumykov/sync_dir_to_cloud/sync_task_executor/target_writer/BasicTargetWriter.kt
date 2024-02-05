@@ -36,11 +36,13 @@ abstract class BasicTargetWriter constructor(
             syncObjectStateChanger.setSyncDate(syncObject.id, currentDate())
         }
         catch (t: Throwable) {
+            val errorMsg = ExceptionUtils.getErrorMessage(t)
             syncObjectStateChanger.changeExecutionState(
                 syncObject.id,
                 ExecutionState.ERROR,
-                ExceptionUtils.getErrorMessage(t)
+                errorMsg
             )
+            MyLogger.e(TAG, errorMsg, t)
         }
     }
 
@@ -48,12 +50,13 @@ abstract class BasicTargetWriter constructor(
     @Throws(IllegalStateException::class)
     override suspend fun writeToTarget(overwriteIfExists: Boolean) {
 
+        // Каталоги
         syncObjectReader.getSyncObjectsForTask(taskId).filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
 
                     val parentDirName = targetDirPath
-                    val childDirName = (syncObject.relativeParentDirPath + syncObject.name).stripMultiSlash()
+                    val childDirName = (syncObject.relativeParentDirPath + CloudWriter.DS + syncObject.name).stripMultiSlash()
 
                     try {
                         cloudWriter()?.createDir(
@@ -66,6 +69,7 @@ abstract class BasicTargetWriter constructor(
                 }
             }
 
+        // Файлы
         syncObjectReader.getSyncObjectsForTask(taskId).filter { !it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
@@ -96,4 +100,8 @@ abstract class BasicTargetWriter constructor(
     protected abstract fun cloudWriter(): CloudWriter?
 
     protected abstract fun tag(): String
+
+    companion object {
+        val TAG: String = BasicTargetWriter::class.java.simpleName
+    }
 }
