@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -76,9 +77,9 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         binding.schedulingStateView.text =
             if (syncTask.isEnabled) {
                 when(syncTask.schedulingState) {
-                    SyncTask.SimpleState.IDLE -> detailedSchedulingState(syncTask)
-                    SyncTask.SimpleState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
-                    SyncTask.SimpleState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
+                    SimpleState.IDLE -> detailedSchedulingState(syncTask)
+                    SimpleState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
+                    SimpleState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
                 }
             }
             else {
@@ -104,9 +105,9 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun displayExecutionState(syncTask: SyncTask) {
         binding.executionStateView.text = when (syncTask.executionState) {
-            SyncTask.SimpleState.IDLE -> getString(R.string.EXECUTION_STATE_idle)
-            SyncTask.SimpleState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
-            SyncTask.SimpleState.ERROR -> getString(
+            SimpleState.IDLE -> getString(R.string.EXECUTION_STATE_idle)
+            SimpleState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
+            SimpleState.ERROR -> getString(
                 R.string.EXECUTION_STATE_error,
                 syncTask.executionError
             )

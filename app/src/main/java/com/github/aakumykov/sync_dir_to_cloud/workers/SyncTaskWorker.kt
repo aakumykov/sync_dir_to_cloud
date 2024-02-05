@@ -5,15 +5,13 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.CancellationException
 
@@ -45,7 +43,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
         catch (t: Throwable) {
             runBlocking {
                 val errorMsg = ExceptionUtils.getErrorMessage(t)
-                syncTaskStateChanger.changeExecutionState(taskId!!, SyncTask.SimpleState.ERROR, errorMsg)
+                syncTaskStateChanger.changeExecutionState(taskId!!, SimpleState.ERROR, errorMsg)
                 MyLogger.e(TAG, errorMsg, t)
                 Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
             }

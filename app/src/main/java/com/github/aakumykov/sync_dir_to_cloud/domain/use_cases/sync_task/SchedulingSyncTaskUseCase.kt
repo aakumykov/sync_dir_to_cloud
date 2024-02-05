@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -27,26 +28,26 @@ class SchedulingSyncTaskUseCase @Inject constructor(
 
     private suspend fun scheduleSyncTask(syncTask: SyncTask) {
         try {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.RUNNING)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SimpleState.RUNNING)
             syncTaskScheduler.scheduleSyncTask(syncTask)
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.IDLE)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SimpleState.IDLE)
             syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, true)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
         }
     }
 
 
     suspend fun unScheduleSyncTask(syncTask: SyncTask) {
         try {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.RUNNING)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SimpleState.RUNNING)
             syncTaskScheduler.unScheduleSyncTask(syncTask)
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.IDLE)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SimpleState.IDLE)
             syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, false)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, SyncTask.SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
         }
     }
 

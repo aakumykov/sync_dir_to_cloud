@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SimpleState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectClearer
@@ -41,7 +42,7 @@ class SyncTaskExecutor @Inject constructor(
     suspend fun stopExecutingTask(taskId: String) {
         // TODO: по-настоящему прерывать работу CloudWriter-а
         MyLogger.d(TAG, "stopExecutingTask(), [${hashCode()}]")
-        syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.IDLE)
+        syncTaskStateChanger.changeExecutionState(taskId, SimpleState.IDLE)
     }
 
     // FIXME: убрать !! в sourcePath
@@ -53,7 +54,7 @@ class SyncTaskExecutor @Inject constructor(
         syncObjectClearer.clearSyncObjectsOfTask(taskId)
 
         try {
-            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.RUNNING)
+            syncTaskStateChanger.changeExecutionState(taskId, SimpleState.RUNNING)
 
             syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
             sourceReader?.read(syncTask.sourcePath!!)
@@ -61,10 +62,10 @@ class SyncTaskExecutor @Inject constructor(
             syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
             mTargetWriter?.writeToTarget()
 
-            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.IDLE)
+            syncTaskStateChanger.changeExecutionState(taskId, SimpleState.IDLE)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, SyncTask.SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
+            syncTaskStateChanger.changeExecutionState(taskId, SimpleState.ERROR, ExceptionUtils.getErrorMessage(t))
         }
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
