@@ -29,7 +29,7 @@ class SyncObject (
     @ColumnInfo(name = "execution_state") val executionState: SimpleState,
     @ColumnInfo(name = "execution_error") var executionError: String,
     @ColumnInfo(name = "m_time") val mTime: Long,
-    @ColumnInfo(defaultValue = "0") val size: Long,
+    val size: Long,
     @ColumnInfo(name = "sync_date") val syncDate: Long,
 ) {
     override fun toString(): String {
