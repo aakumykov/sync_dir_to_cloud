@@ -28,6 +28,7 @@ class SyncObject (
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
     @ColumnInfo(name = "execution_state") val executionState: ExecutionState,
     @ColumnInfo(name = "execution_error") var executionError: String,
+    @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
     @ColumnInfo(name = "m_time") val mTime: Long,
     val size: Long,
     @ColumnInfo(name = "sync_date") val syncDate: Long,
@@ -60,10 +61,12 @@ class SyncObject (
                 isDir = fsItem.isDir,
                 executionState = ExecutionState.IDLE,
                 executionError = "",
+                modificationState = ModificationState.UNCHANGED,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
                 syncDate = 0L,
             )
         }
     }
+
 }
