@@ -1,14 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader
 
-import android.net.Uri
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.FileLister
-import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReaderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
@@ -22,9 +22,12 @@ class LocalSourceReader @AssistedInject constructor(
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
     @Assisted private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
+    private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
-): SourceReader {
-
+    private val syncObjectStateChanger: SyncObjectStateChanger
+)
+    : SourceReader
+{
     @AssistedFactory
     interface Factory : SourceReaderAssistedFactory {
         override fun create(@Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
@@ -49,7 +52,8 @@ class LocalSourceReader @AssistedInject constructor(
             val syncObject = SyncObject.create(
                 taskId = taskId,
                 fsItem = fileListItem,
-                relativeParentDirPath = relativeParentDirPath
+                relativeParentDirPath = relativeParentDirPath,
+                modificationState = changesDetectionStrategy.detectItemModification(sourcePath, fileListItem)
             )
 
             syncObjectAdder.addSyncObject(syncObject)

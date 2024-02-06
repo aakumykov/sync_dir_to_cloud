@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.data_sources
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,12 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
     suspend fun getSyncObjectsForTask(taskId: String): List<SyncObject> {
         return withContext(Dispatchers.IO) {
             syncObjectDAO.getSyncObjectsForTask(taskId)
+        }
+    }
+
+    suspend fun getNewAndChangedSyncObjectsForTask(taskId: String): List<SyncObject> {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.getNewAndChangedSyncObjectsForTask(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
         }
     }
 
@@ -43,6 +50,24 @@ class SyncObjectLocalDataSource @Inject constructor(private val syncObjectDAO: S
     suspend fun setSyncDate(id: String, date: Long) {
         return withContext(Dispatchers.IO) {
             syncObjectDAO.setSyncDate(id, date)
+        }
+    }
+
+    suspend fun hasObjectWithPath(name: String, relativeParentDirPath: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.hasObject(name, relativeParentDirPath)
+        }
+    }
+
+    suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject? {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.getSyncObject(name, relativeParentDirPath)
+        }
+    }
+
+    suspend fun markAllItemsAsDeleted(taskId: String) {
+        return withContext(Dispatchers.IO) {
+            syncObjectDAO.setStateOfAllItems(taskId, ModificationState.DELETED)
         }
     }
 }

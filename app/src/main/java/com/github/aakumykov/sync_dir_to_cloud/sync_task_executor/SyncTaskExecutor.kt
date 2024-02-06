@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectClearer
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
@@ -22,7 +22,8 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
-    private val syncObjectClearer: SyncObjectClearer
+    private val syncObjectStateREsetter: SyncObjectStateResetter,
+    private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime
 ) {
     private var sourceReader: SourceReader? = null
     private var mTargetWriter: TargetWriter? = null
@@ -51,7 +52,7 @@ class SyncTaskExecutor @Inject constructor(
         val taskId = syncTask.id
         val notificationId = syncTask.notificationId
 
-        syncObjectClearer.clearSyncObjectsOfTask(taskId)
+        syncObjectStateREsetter.resetSyncObjectsStateOfTask(taskId)
 
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
@@ -78,7 +79,7 @@ class SyncTaskExecutor @Inject constructor(
             syncTask.sourceType,
             "",
             syncTask.id,
-            ChangesDetectionStrategy.SizeAndModificationTime()
+            changesDetectionStrategy
         )
     }
 

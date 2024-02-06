@@ -51,7 +51,7 @@ abstract class BasicTargetWriter constructor(
     override suspend fun writeToTarget(overwriteIfExists: Boolean) {
 
         // Каталоги
-        syncObjectReader.getSyncObjectsForTask(taskId).filter { it.isDir }
+        syncObjectReader.getNewAndChangedSyncObjectsForTask(taskId).filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
 
@@ -70,7 +70,7 @@ abstract class BasicTargetWriter constructor(
             }
 
         // Файлы
-        syncObjectReader.getSyncObjectsForTask(taskId).filter { !it.isDir }
+        syncObjectReader.getNewAndChangedSyncObjectsForTask(taskId).filter { !it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject) {
 

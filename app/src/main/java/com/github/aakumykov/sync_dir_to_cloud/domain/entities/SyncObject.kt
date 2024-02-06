@@ -2,7 +2,9 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
+import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
+import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 @Entity(
@@ -37,11 +39,16 @@ class SyncObject (
         return SyncObject::class.simpleName + " { $relativeParentDirPath/$name ($executionState) }"
     }
 
-    /*fun toFSItem(): FSItem {
-        return when(isDir) {
-            true ->
-        }
-    }*/
+    fun toFSItem(basePath: String): FSItem {
+        return SimpleFSItem(
+            name = name,
+            parentPath = relativeParentDirPath,
+            absolutePath = basePath + CloudWriter.DS + relativeParentDirPath + CloudWriter.DS + name,
+            isDir = isDir,
+            mTime = mTime,
+            size = size
+        )
+    }
 
     companion object {
 
@@ -50,7 +57,8 @@ class SyncObject (
         fun create(
             taskId: String,
             fsItem: FSItem,
-            relativeParentDirPath: String
+            relativeParentDirPath: String,
+            modificationState: ModificationState
         ): SyncObject {
 
             return SyncObject(
@@ -61,7 +69,7 @@ class SyncObject (
                 isDir = fsItem.isDir,
                 executionState = ExecutionState.IDLE,
                 executionError = "",
-                modificationState = ModificationState.UNCHANGED,
+                modificationState = modificationState,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
                 syncDate = 0L,
