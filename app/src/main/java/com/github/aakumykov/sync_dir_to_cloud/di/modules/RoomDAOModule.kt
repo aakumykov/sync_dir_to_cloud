@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskExecutionStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import dagger.Module
@@ -20,6 +21,9 @@ class RoomDAOModule(private val appDatabase: AppDatabase) {
 
     @Provides
     fun provideSyncTaskStateDAO(): SyncTaskStateDAO = appDatabase.getSyncTaskStateDAO()
+
+    @Provides
+    fun provideSyncTaskRunningTimeDAO(): SyncTaskRunningTimeDAO = appDatabase.getSyncTaskRunningTimeDAO()
 
     @Provides
     fun provideSyncTaskSchedulingStateDAO(): SyncTaskSchedulingStateDAO = appDatabase.getSyncTaskSchedulingStateDAO()

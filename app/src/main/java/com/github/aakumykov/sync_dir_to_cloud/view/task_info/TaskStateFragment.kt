@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBindi
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
@@ -71,6 +72,15 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
         displaySchedulingState(syncTask)
         displayExecutionState(syncTask)
+        displayLastRunState(syncTask)
+    }
+
+    private fun displayLastRunState(syncTask: SyncTask) {
+        val lastStartDateString = syncTask.lastStart?.let { CurrentDateTime.format(it) } ?: getString(R.string.last_run_never)
+        val lastFinishDateString = syncTask.lastFinish?.let { CurrentDateTime.format(it)} ?: getString(R.string.last_run_never)
+
+        binding.lastStartInfo.text = getString(R.string.last_start_info, lastStartDateString)
+        binding.lastFinishInfo.text = getString(R.string.last_finish_info, lastFinishDateString)
     }
 
     private fun displaySchedulingState(syncTask: SyncTask) {

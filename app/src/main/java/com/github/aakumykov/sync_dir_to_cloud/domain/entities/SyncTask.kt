@@ -52,6 +52,8 @@ class SyncTask {
     @ColumnInfo(name = "cloud_auth_id") var cloudAuthId: String? = null  // FIXME: не-null
 
     @ColumnInfo(name = "c_time") var cTime: Long = Date().time
+    @ColumnInfo(name = "last_start") var lastStart: Long? = null
+    @ColumnInfo(name = "last_finish") var lastFinish: Long? = null
 
     @ColumnInfo(name = "total_objects_count", defaultValue = "0") var totalObjectsCount: Int = 0
     @ColumnInfo(name = "synced_objects_count", defaultValue = "0") var syncedObjectsCount: Int = 0

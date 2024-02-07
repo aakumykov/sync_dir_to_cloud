@@ -13,6 +13,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import java.util.Date
 import java.util.concurrent.CancellationException
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
@@ -21,6 +22,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
     private val syncTaskExecutor: SyncTaskExecutor by lazy { App.getAppComponent().getSyncTaskExecutor() }
     private val syncTaskReader: SyncTaskReader by lazy { App.getAppComponent().getSyncTaskReader() }
     private val syncTaskStateChanger by lazy { App.getAppComponent().getSyncTaskStateChanger() }
+    private val syncTaskRunningTimeUpdater by lazy { App.getAppComponent().getSyncTaskRunningTimeUpdater() }
     private var taskSummary: String? = null
     private val hashCode: String = hashCode().toString()
     private var scope: CoroutineScope? = null
@@ -39,6 +41,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
                 scope = this
 
                 MyLogger.d(TAG, "Перед 'syncTaskExecutor.executeSyncTask()'")
+                syncTaskRunningTimeUpdater.updateStartTime(taskId!!)
                 syncTaskExecutor.executeSyncTask(taskId!!)
                 MyLogger.d(TAG, "После 'syncTaskExecutor.executeSyncTask()'")
 
@@ -53,6 +56,11 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
                 MyLogger.e(TAG, errorMsg, t)
 
                 Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
+            }
+        }
+        finally {
+            runBlocking {
+                syncTaskRunningTimeUpdater.updateFinishTime(taskId!!)
             }
         }
 

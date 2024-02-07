@@ -5,8 +5,13 @@ import java.util.*
 
 @Deprecated("Нужен для отладки")
 class CurrentDateTime {
+
     companion object {
-        fun get(): String = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale("ru"))
-                .format(Date())
+
+        const val FORMAT = "yyyy-MM-dd_HH:mm:ss"
+
+        fun get(): String = SimpleDateFormat(FORMAT, Locale.getDefault()).format(Date())
+
+        fun format(timestamp: Long) = SimpleDateFormat(FORMAT, Locale.getDefault()).format(timestamp)
     }
 }

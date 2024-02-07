@@ -7,28 +7,34 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SimpleStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskExecutionStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @AppScope
 class SyncTaskRepository @Inject constructor(
     private val syncTaskDAO: SyncTaskDAO,
     private val syncTaskStateDAO: SyncTaskStateDAO,
+    private val syncTaskRunningTimeDAO: SyncTaskRunningTimeDAO,
     private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO,
     private val syncTaskExecutionStateDAO: SyncTaskExecutionStateDAO,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
 )
-    : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater, SyncTaskStateChanger
+    : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater, SyncTaskStateChanger,
+    SyncTaskRunningTimeUpdater
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
 //        return syncTaskLocalDataSource.listSyncTasks()
@@ -91,5 +97,13 @@ class SyncTaskRepository @Inject constructor(
 
     companion object {
         val TAG: String = SyncTaskRepository::class.java.simpleName
+    }
+
+    override suspend fun updateStartTime(taskId: String) {
+        syncTaskRunningTimeDAO.updateStartTime(taskId, currentDate())
+    }
+
+    override suspend fun updateFinishTime(taskId: String) {
+        syncTaskRunningTimeDAO.updateFinishTime(taskId, currentDate())
     }
 }

@@ -10,9 +10,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Database(
     entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 33,
+    version = 34,
     autoMigrations = [
-
+        AutoMigration(from = 33, to = 34)
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -23,4 +23,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskStateDAO(): SyncTaskStateDAO
     abstract fun getSyncTaskSchedulingStateDAO(): SyncTaskSchedulingStateDAO
     abstract fun getSyncTaskExecutionStateDAO(): SyncTaskExecutionStateDAO
+    abstract fun getSyncTaskRunningTimeDAO(): SyncTaskRunningTimeDAO
 }

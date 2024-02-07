@@ -4,5 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 
 interface SyncObjectStateChanger {
     suspend fun changeExecutionState(syncObjectId: String, executionState: ExecutionState, errorMsg: String = "")
+    // TODO: переименовать в setSyncTime()
     suspend fun setSyncDate(id: String, date: Long)
 }

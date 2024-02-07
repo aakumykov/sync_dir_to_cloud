@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingVertical="4dp"
-    android:paddingHorizontal="6dp">
+    android:paddingHorizontal="14dp">
 
     <TextView
         android:id="@+id/titleView"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:textAlignment="center"
-        android:paddingVertical="6dp"
+        android:paddingBottom="6dp"
         tools:text="task id" />
 
     <TextView
@@ -33,10 +33,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
+        android:paddingBottom="6dp"
         android:textSize="18sp"
-        android:textAlignment="center"
         android:textStyle="italic"
         tools:text="Статус планирования" />
+
+    <TextView
+        android:id="@+id/lastStartInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:paddingBottom="6dp"
+        tools:text="Последний запуск:" />
+
+    <TextView
+        android:id="@+id/lastFinishInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:paddingBottom="6dp"
+        tools:text="Завершение:" />
 
     <TextView
         android:id="@+id/executionStateView"
