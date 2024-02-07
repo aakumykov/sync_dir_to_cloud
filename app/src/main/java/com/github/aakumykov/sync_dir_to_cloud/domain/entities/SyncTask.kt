@@ -102,7 +102,7 @@ class SyncTask {
     }
 
     @Ignore
-    fun summary() = "SyncTask: $sourcePath --> $targetPath"
+    fun summary() = "SyncTask ($id): $sourcePath --> $targetPath"
 
     enum class State {
         IDLE,
