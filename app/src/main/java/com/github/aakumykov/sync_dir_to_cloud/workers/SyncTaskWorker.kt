@@ -32,23 +32,31 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
         taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
 
+        MyLogger.d(TAG, "taskId: $taskId")
+
         try {
             runBlocking {
                 scope = this
+
+                MyLogger.d(TAG, "Перед 'syncTaskExecutor.executeSyncTask()'")
                 syncTaskExecutor.executeSyncTask(taskId!!)
+                MyLogger.d(TAG, "После 'syncTaskExecutor.executeSyncTask()'")
+
                 fetchTaskSummary(taskId!!)
-                MyLogger.d(TAG, "doWork() [${hashCode}] завершился ($taskSummary).")
             }
         }
         catch (t: Throwable) {
             runBlocking {
                 val errorMsg = ExceptionUtils.getErrorMessage(t)
+
                 syncTaskStateChanger.changeExecutionState(taskId!!, ExecutionState.ERROR, errorMsg)
                 MyLogger.e(TAG, errorMsg, t)
+
                 Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
             }
         }
 
+        MyLogger.d(TAG, "doWork() [${hashCode}] завершился ($taskSummary).")
         return Result.success(successData(taskSummary!!))
     }
 
@@ -65,6 +73,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
 
 
     private suspend fun fetchTaskSummary(taskId: String) {
+        MyLogger.d(TAG, "fetchTaskSummary(taskId: $taskId)")
         taskSummary = syncTaskReader.getSyncTask(taskId).summary()
     }
 
