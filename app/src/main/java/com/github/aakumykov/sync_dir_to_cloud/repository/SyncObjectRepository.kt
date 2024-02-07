@@ -22,9 +22,8 @@ class SyncObjectRepository @Inject constructor(
         syncObjectDAO.add(syncObject)
     }
 
-    // TODO: переименовать в getSyncObjectsForTaskWithModificationState()
     override suspend fun getNewAndChangedSyncObjectsForTask(taskId: String): List<SyncObject>
-        = syncObjectDAO.getNewAndChangedSyncObjectsForTask(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
+        = syncObjectDAO.getSyncObjectsForTaskWithModificationState(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
 
     // TODO: state --> executionState
     override suspend fun changeExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String) {

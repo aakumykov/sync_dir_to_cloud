@@ -19,7 +19,7 @@ interface SyncObjectDAO {
     fun getSyncObjectsForTask(taskId: String): List<SyncObject>
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
-    fun getNewAndChangedSyncObjectsForTask(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
+    fun getSyncObjectsForTaskWithModificationState(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
     @Query("UPDATE sync_objects SET execution_state = :state, execution_error = :errorMsg WHERE id = :syncObjectId")
     fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
