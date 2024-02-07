@@ -16,7 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBindin
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.view.StorageAccessViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
