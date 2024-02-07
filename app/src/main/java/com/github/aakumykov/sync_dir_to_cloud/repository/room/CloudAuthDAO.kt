@@ -9,15 +9,15 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 @Dao
 interface CloudAuthDAO {
 
-    @Insert
-    fun add(cloudAuth: CloudAuth)
-
     @Query("SELECT * FROM cloud_auth")
     fun list(): LiveData<List<CloudAuth>>
 
-    @Query("SELECT * FROM cloud_auth WHERE name = :name")
-    fun hasName(name: String): Boolean
+    @Insert
+    suspend fun add(cloudAuth: CloudAuth)
+
+    @Query("SELECT count(id) FROM cloud_auth WHERE name = :name")
+    suspend fun hasName(name: String): Boolean
 
     @Query("SELECT * FROM cloud_auth WHERE id = :id")
-    fun get(id: String): CloudAuth
+    suspend fun get(id: String): CloudAuth
 }

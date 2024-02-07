@@ -5,23 +5,23 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.repository.data_sources.CloudAuthLocalDataSource
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.CloudAuthDAO
 import javax.inject.Inject
 
 class CloudAuthRepository @Inject constructor(
-    private val localDataSource: CloudAuthLocalDataSource
+    private val cloudAuthDAO: CloudAuthDAO
 )
     : CloudAuthReader, CloudAuthAdder, CloudAuthChecker
 {
     override suspend fun addCloudAuth(cloudAuth: CloudAuth)
-        = localDataSource.add(cloudAuth)
+        = cloudAuthDAO.add(cloudAuth)
 
     override suspend fun listCloudAuth(): LiveData<List<CloudAuth>>
-        = localDataSource.listCloudAuth()
+        = cloudAuthDAO.list()
 
     override suspend fun getCloudAuth(id: String): CloudAuth
-        = localDataSource.get(id)
+        = cloudAuthDAO.get(id)
 
     override suspend fun hasAuthWithName(name: String): Boolean
-        = localDataSource.hasAuthWithName(name)
+        = cloudAuthDAO.hasName(name)
 }
