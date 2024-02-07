@@ -15,9 +15,6 @@ interface SyncObjectDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add(syncObject: SyncObject)
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
-    suspend fun getSyncObjectsForTask(taskId: String): List<SyncObject>
-
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
     suspend fun getSyncObjectsForTaskWithModificationState(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
@@ -33,18 +30,9 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET sync_date = :date WHERE id = :id")
     suspend fun setSyncDate(id: String, date: Long)
 
-
-    @Query(NAME_AND_PATH_QUERY)
-    suspend fun hasObject(name: String, relativeParentDirPath: String): Boolean
-
-    @Query(NAME_AND_PATH_QUERY)
+    @Query("SELECT * FROM sync_objects WHERE name = :name AND relative_parent_dir_path = :relativeParentDirPath")
     suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject?
 
     @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE task_id = :taskId")
     suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
-
-
-    companion object {
-        const val NAME_AND_PATH_QUERY = "SELECT * FROM sync_objects WHERE name = :name AND relative_parent_dir_path = :relativeParentDirPath"
-    }
 }
