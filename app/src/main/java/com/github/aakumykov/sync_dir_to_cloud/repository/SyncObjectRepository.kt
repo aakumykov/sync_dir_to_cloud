@@ -12,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import javax.inject.Inject
 
-// TODO: передавать диспетчер сопрограммы
 @AppScope
 class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO
@@ -22,10 +21,6 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun addSyncObject(syncObject: SyncObject) {
         syncObjectDAO.add(syncObject)
     }
-
-    // TODO: удалить
-    override suspend fun getSyncObjectsForTask(taskId: String): List<SyncObject>
-        = syncObjectDAO.getSyncObjectsForTask(taskId)
 
     // TODO: переименовать в getSyncObjectsForTaskWithModificationState()
     override suspend fun getNewAndChangedSyncObjectsForTask(taskId: String): List<SyncObject>
