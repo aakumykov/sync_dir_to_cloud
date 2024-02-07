@@ -13,35 +13,35 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 interface SyncObjectDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun add(syncObject: SyncObject)
+    suspend fun add(syncObject: SyncObject)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
-    fun getSyncObjectsForTask(taskId: String): List<SyncObject>
+    suspend fun getSyncObjectsForTask(taskId: String): List<SyncObject>
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
-    fun getSyncObjectsForTaskWithModificationState(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
+    suspend fun getSyncObjectsForTaskWithModificationState(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
     @Query("UPDATE sync_objects SET execution_state = :state, execution_error = :errorMsg WHERE id = :syncObjectId")
-    fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
+    suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
     fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>>
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
-    fun deleteObjectsForTask(taskId: String)
+    suspend fun deleteObjectsForTask(taskId: String)
 
     @Query("UPDATE sync_objects SET sync_date = :date WHERE id = :id")
-    fun setSyncDate(id: String, date: Long)
+    suspend fun setSyncDate(id: String, date: Long)
 
 
     @Query(NAME_AND_PATH_QUERY)
-    fun hasObject(name: String, relativeParentDirPath: String): Boolean
+    suspend fun hasObject(name: String, relativeParentDirPath: String): Boolean
 
     @Query(NAME_AND_PATH_QUERY)
-    fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject?
+    suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject?
 
     @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE task_id = :taskId")
-    fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
+    suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
 
 
     companion object {
