@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-open class OpStateViewModel(application: Application) : AndroidViewModel(application) {
+open class PageOpStateViewModel(application: Application) : AndroidViewModel(application) {
 
     private val opStateMutableLiveData: MutableLiveData<OpState> = MutableLiveData()
 
