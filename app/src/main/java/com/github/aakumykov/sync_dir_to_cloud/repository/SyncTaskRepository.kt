@@ -16,11 +16,10 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskExecutionS
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.utils.currentDate
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @AppScope
@@ -100,10 +99,10 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override suspend fun updateStartTime(taskId: String) {
-        syncTaskRunningTimeDAO.updateStartTime(taskId, currentDate())
+        syncTaskRunningTimeDAO.updateStartTime(taskId, currentTime())
     }
 
     override suspend fun updateFinishTime(taskId: String) {
-        syncTaskRunningTimeDAO.updateFinishTime(taskId, currentDate())
+        syncTaskRunningTimeDAO.updateFinishTime(taskId, currentTime())
     }
 }
