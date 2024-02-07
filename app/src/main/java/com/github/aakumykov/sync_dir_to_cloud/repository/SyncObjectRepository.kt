@@ -18,29 +18,30 @@ class SyncObjectRepository @Inject constructor(
 )
     : SyncObjectAdder, SyncObjectReader, SyncObjectStateChanger, SyncObjectStateResetter
 {
-    override suspend fun addSyncObject(syncObject: SyncObject) {
-        syncObjectDAO.add(syncObject)
-    }
+    override suspend fun addSyncObject(syncObject: SyncObject)
+        = syncObjectDAO.add(syncObject)
+
 
     override suspend fun getNewAndChangedSyncObjectsForTask(taskId: String): List<SyncObject>
         = syncObjectDAO.getSyncObjectsForTaskWithModificationState(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
 
-    // TODO: state --> executionState
-    override suspend fun changeExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String) {
-        syncObjectDAO.setExecutionState(syncObjectId, state, errorMsg)
-    }
+
+    override suspend fun changeExecutionState(syncObjectId: String, executionState: ExecutionState, errorMsg: String)
+        = syncObjectDAO.setExecutionState(syncObjectId, executionState, errorMsg)
+
 
     override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
         = syncObjectDAO.getSyncObjectList(taskId)
 
+
     override suspend fun setSyncDate(id: String, date: Long)
         = syncObjectDAO.setSyncDate(id, date)
 
-    override suspend fun resetSyncObjectsStateOfTask(taskId: String) {
-        syncObjectDAO.setStateOfAllItems(taskId, ModificationState.DELETED)
-    }
 
-    override suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject? {
-        return syncObjectDAO.getSyncObject(name, relativeParentDirPath)
-    }
+    override suspend fun resetSyncObjectsStateOfTask(taskId: String)
+        = syncObjectDAO.setStateOfAllItems(taskId, ModificationState.DELETED)
+
+
+    override suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject?
+        = syncObjectDAO.getSyncObject(name, relativeParentDirPath)
 }
