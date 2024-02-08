@@ -124,6 +124,6 @@ dependencies {
     // TODO: убрать
 //    implementation "androidx.lifecycle:lifecycle-process:2.6.2"
 
-    implementation 'com.github.aakumykov:file_lister_navigator_selector:0.0.7'
-    implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.7'
+    implementation 'com.github.aakumykov:file_lister_navigator_selector:0.0.6'
+    implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.6'
 }
