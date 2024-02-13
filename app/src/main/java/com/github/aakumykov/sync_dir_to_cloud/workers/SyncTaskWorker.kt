@@ -40,8 +40,10 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
             runBlocking {
                 scope = this
 
-                MyLogger.d(TAG, "Перед 'syncTaskExecutor.executeSyncTask()'")
                 syncTaskRunningTimeUpdater.updateStartTime(taskId!!)
+                syncTaskRunningTimeUpdater.clearFinishTime(taskId!!)
+
+                MyLogger.d(TAG, "Перед 'syncTaskExecutor.executeSyncTask()'")
                 syncTaskExecutor.executeSyncTask(taskId!!)
                 MyLogger.d(TAG, "После 'syncTaskExecutor.executeSyncTask()'")
 

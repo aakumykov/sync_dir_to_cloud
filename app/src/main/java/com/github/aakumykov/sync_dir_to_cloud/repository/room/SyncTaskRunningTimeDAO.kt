@@ -11,4 +11,7 @@ interface SyncTaskRunningTimeDAO {
 
     @Query("UPDATE sync_tasks SET last_finish = :time WHERE id = :taskId")
     suspend fun updateFinishTime(taskId: String, time: Long)
+
+    @Query("UPDATE sync_tasks SET last_finish = 0 WHERE id = :taskId")
+    fun clearFinishTime(taskId: String)
 }

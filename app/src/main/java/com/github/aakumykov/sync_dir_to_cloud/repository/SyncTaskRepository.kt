@@ -105,4 +105,8 @@ class SyncTaskRepository @Inject constructor(
     override suspend fun updateFinishTime(taskId: String) {
         syncTaskRunningTimeDAO.updateFinishTime(taskId, currentTime())
     }
+
+    override suspend fun clearFinishTime(taskId: String) {
+        syncTaskRunningTimeDAO.clearFinishTime(taskId)
+    }
 }
