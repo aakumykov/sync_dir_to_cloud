@@ -77,7 +77,11 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun displayLastRunState(syncTask: SyncTask) {
         val lastStartDateString = syncTask.lastStart?.let { CurrentDateTime.format(it) } ?: getString(R.string.last_run_never)
-        val lastFinishDateString = syncTask.lastFinish?.let { CurrentDateTime.format(it)} ?: getString(R.string.last_run_never)
+
+        val lastFinishDateString = syncTask.lastFinish?.let {
+            if (0L == it) getString(R.string.last_run_unknown_yet)
+            else CurrentDateTime.format(it)
+        } ?: getString(R.string.last_run_never)
 
         binding.lastStartInfo.text = getString(R.string.last_start_info, lastStartDateString)
         binding.lastFinishInfo.text = getString(R.string.last_finish_info, lastFinishDateString)

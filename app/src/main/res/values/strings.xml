@@ -74,6 +74,7 @@
     <string name="EXECUTION_STATE_running">Выполняется</string>
     <string name="EXECUTION_STATE_idle">Неактивно</string>
     <string name="last_run_never">никогда</string>
+    <string name="last_run_unknown_yet">пока неизвестно</string>
     <string name="last_start_info">Последний запуск: %1$s</string>
     <string name="last_finish_info">Завершение: %1$s</string>
 </resources>
