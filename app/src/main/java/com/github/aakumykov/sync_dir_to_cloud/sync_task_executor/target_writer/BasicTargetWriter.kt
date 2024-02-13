@@ -90,7 +90,7 @@ abstract class BasicTargetWriter constructor(
 
                     cloudWriter()?.putFile(
                         file = File(pathInSource),
-                        targetPath = pathInTarget,
+                        targetDirPath = pathInTarget,
                         overwriteIfExists = overwriteIfExists
                     )
                 }
