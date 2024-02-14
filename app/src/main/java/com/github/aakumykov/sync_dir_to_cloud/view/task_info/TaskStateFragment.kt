@@ -1,8 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_info
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -50,6 +52,10 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         listAdapter = ListViewAdapter(requireContext(), R.layout.sync_object_list_item, R.id.title, syncObjectList)
         binding.listView.adapter = listAdapter
 
+        binding.listView.setOnItemClickListener { parent, view, position, id ->
+            showItemInfo(syncObjectList.get(position))
+        }
+
         mTaskInfoViewModel = DaggerViewModelHelper.get(this, TaskInfoViewModel::class.java)
 
         lifecycleScope.launch {
@@ -61,6 +67,40 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
             mTaskInfoViewModel.getSyncTask(taskId).observe(viewLifecycleOwner, ::displaySyncTask)
         }
+    }
+
+    private fun showItemInfo(syncObject: SyncObject) {
+        AlertDialog.Builder(requireContext()).apply {
+
+            setTitle(R.string.sync_object_info_dialog_title)
+
+            setMessage(StringBuilder().apply {
+
+                append("Имя: ")
+                append(syncObject.name)
+                append("\n")
+
+                append("Время изменения: ")
+                append(syncObject.mTime)
+                append("\n")
+
+                append("Тип изменения: ")
+                append(syncObject.modificationState.name)
+                append("\n")
+
+                append("Время синхронизации: ")
+                append(syncObject.syncDate)
+
+                if (ExecutionState.ERROR == syncObject.executionState) {
+                    append("Ошибка синхронизации: ")
+                    append(syncObject.executionError)
+                    append("\n")
+                }
+            })
+
+            setPositiveButton(R.string.DIALOG_BUTTON_close) { _, _ ->  }
+        }
+            .create().show()
     }
 
     private fun displaySyncTask(syncTask: SyncTask?) {

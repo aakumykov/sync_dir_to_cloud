@@ -77,4 +77,6 @@
     <string name="last_run_unknown_yet">пока неизвестно</string>
     <string name="last_start_info">Последний запуск: %1$s</string>
     <string name="last_finish_info">Завершение: %1$s</string>
+    <string name="sync_object_info_dialog_title">Сведения об объекте</string>
+    <string name="DIALOG_BUTTON_close">Закрыть</string>
 </resources>
