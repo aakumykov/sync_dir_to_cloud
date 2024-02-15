@@ -48,12 +48,16 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
         _binding = FragmentTaskStateBinding.bind(view)
 
-        listAdapter = ListViewAdapter(requireContext(), R.layout.sync_object_list_item, R.id.title, syncObjectList)
+        listAdapter = ListViewAdapter(requireContext(),
+            R.layout.sync_object_list_item, R.id.title, syncObjectList) { syncObject ->
+                with(syncObject) {
+                    "${name} (${modificationState})"
+                }
+            }
+
         binding.listView.adapter = listAdapter
 
-        binding.listView.setOnItemClickListener { parent, view, position, id ->
-            showItemInfo(syncObjectList.get(position))
-        }
+        binding.listView.setOnItemClickListener { _, _, position, _ -> showItemInfo(syncObjectList.get(position)) }
 
         mTaskInfoViewModel = DaggerViewModelHelper.get(this, TaskInfoViewModel::class.java)
 
