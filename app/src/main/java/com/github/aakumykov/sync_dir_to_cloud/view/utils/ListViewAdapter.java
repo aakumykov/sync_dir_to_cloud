@@ -26,15 +26,6 @@ public class ListViewAdapter<T> extends ArrayAdapter<T> {
     public ListViewAdapter(Context context,
                            @LayoutRes int layoutResource,
                            @IdRes int titleId,
-                           List<T> list
-    ) {
-        super(context, layoutResource, titleId, list);
-        init(context, layoutResource, titleId, list, null);
-    }
-
-    public ListViewAdapter(Context context,
-                           @LayoutRes int layoutResource,
-                           @IdRes int titleId,
                            List<T> list,
                            @Nullable Function<T,String> titleGetter
     ) {
