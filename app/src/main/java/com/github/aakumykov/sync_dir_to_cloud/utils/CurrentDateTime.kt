@@ -8,7 +8,7 @@ class CurrentDateTime {
 
     companion object {
 
-        const val FORMAT = "yyyy-MM-dd_HH:mm:ss"
+        private const val FORMAT = "yyyy-MM-dd HH:mm:ss"
 
         fun get(): String = SimpleDateFormat(FORMAT, Locale.getDefault()).format(Date())
 
