@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_info
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -81,7 +80,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 append("\n")
 
                 append("Время изменения: ")
-                append(syncObject.mTime)
+                append(CurrentDateTime.format(syncObject.mTime))
                 append("\n")
 
                 append("Тип изменения: ")
@@ -89,7 +88,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 append("\n")
 
                 append("Время синхронизации: ")
-                append(syncObject.syncDate)
+                append(dateStringOrNever(syncObject.syncDate))
 
                 if (ExecutionState.ERROR == syncObject.executionState) {
                     append("Ошибка синхронизации: ")
@@ -116,12 +115,12 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     }
 
     private fun displayLastRunState(syncTask: SyncTask) {
-        val lastStartDateString = syncTask.lastStart?.let { CurrentDateTime.format(it) } ?: getString(R.string.last_run_never)
+        val lastStartDateString = syncTask.lastStart?.let { CurrentDateTime.format(it) } ?: getString(R.string.never)
 
         val lastFinishDateString = syncTask.lastFinish?.let {
             if (0L == it) getString(R.string.last_run_unknown_yet)
             else CurrentDateTime.format(it)
-        } ?: getString(R.string.last_run_never)
+        } ?: getString(R.string.never)
 
         binding.lastStartInfo.text = getString(R.string.last_start_info, lastStartDateString)
         binding.lastFinishInfo.text = getString(R.string.last_finish_info, lastFinishDateString)
@@ -173,6 +172,10 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         _binding = null
     }
 
+    private fun dateStringOrNever(timestamp: Long): String {
+        return if (0L == timestamp) getString(R.string.never)
+        else CurrentDateTime.format(timestamp)
+    }
 
     companion object {
 
