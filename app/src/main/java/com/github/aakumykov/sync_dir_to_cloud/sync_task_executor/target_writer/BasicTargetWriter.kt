@@ -60,8 +60,8 @@ abstract class BasicTargetWriter constructor(
 
                     try {
                         cloudWriter()?.createDir(
-                            parentDirName = parentDirName,
-                            childDirName = childDirName
+                            basePath = parentDirName,
+                            dirName = childDirName
                         )
                     } catch (e: CloudWriter.AlreadyExistsException) {
                         MyLogger.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
