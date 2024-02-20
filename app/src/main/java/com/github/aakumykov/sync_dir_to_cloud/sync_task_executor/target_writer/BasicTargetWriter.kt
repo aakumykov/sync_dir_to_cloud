@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -37,6 +38,10 @@ abstract class BasicTargetWriter constructor(
 
     @Throws(IllegalStateException::class)
     override suspend fun writeToTarget(overwriteIfExists: Boolean) {
+
+        // Удаляю в облаке объекты, удалённые локально.
+        deleteDeletedFiles()
+        deleteDeletedDirs()
 
         // Каталоги
         syncObjectReader.getNewAndChangedSyncObjectsForTask(taskId).filter { it.isDir }
@@ -83,6 +88,25 @@ abstract class BasicTargetWriter constructor(
                     )
                 }
             }
+    }
+
+    private suspend fun deleteDeletedFiles() {
+        syncObjectReader.getObjectsForTask(taskId, ModificationState.DELETED)
+            .filter { !it.isDir }
+            .forEach { syncObject -> deleteObjectInTarget(syncObject) }
+    }
+
+    private suspend fun deleteDeletedDirs() {
+        syncObjectReader.getObjectsForTask(taskId, ModificationState.DELETED)
+            .filter { it.isDir }
+            .forEach { syncObject -> deleteObjectInTarget(syncObject) }
+    }
+
+    private suspend fun deleteObjectInTarget(syncObject: SyncObject) {
+        writeSyncObjectToTarget(syncObject) {
+            val basePath = CloudWriter.composeFullPath(targetDirPath, syncObject.relativeParentDirPath)
+            cloudWriter()?.deleteFile(basePath, syncObject.name)
+        }
     }
 
     protected abstract fun cloudWriter(): CloudWriter?

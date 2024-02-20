@@ -121,7 +121,7 @@ dependencies {
 
     implementation "com.github.aakumykov:yandex_disk_client:0.0.12"
 
-    implementation "com.github.aakumykov:cloud_writer:0.0.6"
+    implementation "com.github.aakumykov:cloud_writer:0.0.7"
 
     // TODO: убрать
 //    implementation "androidx.lifecycle:lifecycle-process:2.6.2"
