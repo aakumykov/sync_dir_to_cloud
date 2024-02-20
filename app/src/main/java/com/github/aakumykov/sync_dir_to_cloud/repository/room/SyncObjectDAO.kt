@@ -16,7 +16,7 @@ interface SyncObjectDAO {
     suspend fun add(syncObject: SyncObject)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
-    suspend fun getSyncObjectsForTaskWithModificationState(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
+    suspend fun getSyncObjectsForTaskWithModificationStates(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
     @Query("UPDATE sync_objects SET execution_state = :state, execution_error = :errorMsg WHERE id = :syncObjectId")
     suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
