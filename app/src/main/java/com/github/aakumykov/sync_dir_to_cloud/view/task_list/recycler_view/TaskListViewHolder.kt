@@ -53,7 +53,7 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     private fun displayStartStopButton() {
 
-        MyLogger.d(TAG, "displayStartStopButton(), executionState: ${currentTask.executionState}")
+//        MyLogger.d(TAG, "displayStartStopButton(), executionState: ${currentTask.executionState}")
 
         runButton.setImageResource(
             when(currentTask.executionState){
