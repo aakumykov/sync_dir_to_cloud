@@ -9,6 +9,7 @@ interface ItemClickCallback {
 
     fun onTaskEditClicked(taskId: String)
     fun onTaskRunClicked(taskId: String)
+    fun onTaskForceRunClicked(taskId: String)
     fun onTaskDeleteClicked(taskId: String)
     fun onTaskInfoClicked(taskId: String)
     fun onTaskEnableSwitchClicked(taskId: String)
