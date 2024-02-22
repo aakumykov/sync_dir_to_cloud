@@ -26,7 +26,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private val binding get() = _binding!!
 
     // TODO: внудрять ViewModel-и Dagger-ом?
-    private lateinit var mTaskInfoViewModel: TaskInfoViewModel // эту получаю от Dagger-а
+    private lateinit var mTaskStateViewModel: TaskStateViewModel // эту получаю от Dagger-а
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
@@ -59,16 +59,16 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
         binding.listView.setOnItemClickListener { _, _, position, _ -> showItemInfo(syncObjectList.get(position)) }
 
-        mTaskInfoViewModel = DaggerViewModelHelper.get(this, TaskInfoViewModel::class.java)
+        mTaskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
 
         lifecycleScope.launch {
-            mTaskInfoViewModel.getSyncObjectList(taskId).observe(viewLifecycleOwner) { list ->
+            mTaskStateViewModel.getSyncObjectList(taskId).observe(viewLifecycleOwner) { list ->
                 syncObjectList.clear()
                 syncObjectList.addAll(list)
                 listAdapter.notifyDataSetChanged()
             }
 
-            mTaskInfoViewModel.getSyncTask(taskId).observe(viewLifecycleOwner, ::displaySyncTask)
+            mTaskStateViewModel.getSyncTask(taskId).observe(viewLifecycleOwner, ::displaySyncTask)
         }
     }
 

@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskInfoViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -31,10 +31,10 @@ class ViewModelsModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(TaskInfoViewModel::class)
+    @ViewModelKey(TaskStateViewModel::class)
     fun provideTaskInfoViewModel(syncTaskReader: SyncTaskReader,
                                  syncObjectReader: SyncObjectReader): ViewModel
     {
-        return TaskInfoViewModel(syncTaskReader, syncObjectReader)
+        return TaskStateViewModel(syncTaskReader, syncObjectReader)
     }
 }
