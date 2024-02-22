@@ -26,7 +26,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private val binding get() = _binding!!
 
     // TODO: внудрять ViewModel-и Dagger-ом?
-    private lateinit var mTaskStateViewModel: TaskStateViewModel // эту получаю от Dagger-а
+    private lateinit var taskStateViewModel: TaskStateViewModel // эту получаю от Dagger-а
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
@@ -37,39 +37,55 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        prepareView(view)
+        prepareListAdapter()
+        prepareViewModels()
+        processArguments()
+    }
+
+    private fun prepareViewModels() {
         pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_INFO_title))
+        taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
+
+    }
+
+    private fun processArguments() {
 
         val taskId: String? = arguments?.getString(KEY_TASK_ID)
+
         if (null == taskId) {
             showToast(R.string.there_is_no_task_id)
             navigationViewModel.navigateBack()
             return
         }
 
-        _binding = FragmentTaskStateBinding.bind(view)
-
-        listAdapter = ListViewAdapter(requireContext(),
-            R.layout.sync_object_list_item, R.id.title, syncObjectList) { syncObject ->
-                with(syncObject) {
-                    "${name} (${modificationState})"
-                }
-            }
-
-        binding.listView.adapter = listAdapter
-
-        binding.listView.setOnItemClickListener { _, _, position, _ -> showItemInfo(syncObjectList.get(position)) }
-
-        mTaskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
-
         lifecycleScope.launch {
-            mTaskStateViewModel.getSyncObjectList(taskId).observe(viewLifecycleOwner) { list ->
+            taskStateViewModel.getSyncObjectList(taskId).observe(viewLifecycleOwner) { list ->
                 syncObjectList.clear()
                 syncObjectList.addAll(list)
                 listAdapter.notifyDataSetChanged()
             }
 
-            mTaskStateViewModel.getSyncTask(taskId).observe(viewLifecycleOwner, ::displaySyncTask)
+            taskStateViewModel.getSyncTask(taskId).observe(viewLifecycleOwner, ::displaySyncTask)
         }
+    }
+
+    private fun prepareView(view: View) {
+        _binding = FragmentTaskStateBinding.bind(view)
+    }
+
+    private fun prepareListAdapter() {
+
+        listAdapter = ListViewAdapter(requireContext(),
+            R.layout.sync_object_list_item, R.id.title, syncObjectList) { syncObject ->
+            with(syncObject) {
+                "${name} (${modificationState} / ${executionState})"
+            }
+        }
+
+        binding.listView.adapter = listAdapter
+
+        binding.listView.setOnItemClickListener { _, _, position, _ -> showItemInfo(syncObjectList[position]) }
     }
 
     private fun showItemInfo(syncObject: SyncObject) {
