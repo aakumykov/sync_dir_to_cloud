@@ -76,11 +76,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun prepareListAdapter() {
 
-        listAdapter = ListViewAdapter(requireContext(),
-            R.layout.sync_object_list_item, R.id.title, syncObjectList) { syncObject ->
-            with(syncObject) {
-                "${name} (${modificationState} / ${executionState})"
-            }
+        listAdapter = ListViewAdapter(requireContext(), R.layout.sync_object_list_item, R.id.title, syncObjectList) {
+                syncObject -> SyncStateItem.makeTitle(syncObject)
         }
 
         binding.listView.adapter = listAdapter
