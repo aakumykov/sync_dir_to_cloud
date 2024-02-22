@@ -129,10 +129,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
         taskListViewModel.startStopTask(taskId)
     }
 
-    override fun onTaskForceRunClicked(taskId: String) {
-
-    }
-
     override fun onTaskDeleteClicked(taskId: String) {
         TODO("Not yet implemented")
     }
@@ -154,17 +150,8 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
                 showDeleteTaskDialog()
                 true
             }
-            R.id.actionRunForce -> {
-                forceRunTask()
-            }
             else -> false
         }
-    }
-
-    private fun forceRunTask(): Boolean {
-        return clickedTask?.let {
-            true
-        } ?: true
     }
 
     private fun showDeleteTaskDialog() {

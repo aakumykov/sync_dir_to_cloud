@@ -2,13 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/actionRunForce"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/ic_task_start"
-        android:title="@string/MENU_ITEM_action_force_run" />
-
-    <item
         android:id="@+id/actionDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
