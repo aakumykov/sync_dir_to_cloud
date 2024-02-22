@@ -19,7 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
-import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskStateFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_info
+package com.github.aakumykov.sync_dir_to_cloud.view.task_state
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

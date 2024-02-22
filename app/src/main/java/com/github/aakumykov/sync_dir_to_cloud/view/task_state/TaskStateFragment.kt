@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_info
+package com.github.aakumykov.sync_dir_to_cloud.view.task_state
 
 import android.content.Intent
 import android.os.Bundle

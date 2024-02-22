@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.tagWithHashCode
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
-import com.github.aakumykov.sync_dir_to_cloud.view.task_info.TaskStateFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
 import javax.inject.Inject
 
 class SyncTaskNotificator @Inject constructor(
