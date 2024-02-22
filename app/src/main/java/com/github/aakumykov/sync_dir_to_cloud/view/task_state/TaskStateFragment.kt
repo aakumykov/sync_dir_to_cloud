@@ -106,6 +106,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
                 append("Время синхронизации: ")
                 append(dateStringOrNever(syncObject.syncDate))
+                append("\n")
 
                 if (ExecutionState.ERROR == syncObject.executionState) {
                     append("Ошибка синхронизации: ")
