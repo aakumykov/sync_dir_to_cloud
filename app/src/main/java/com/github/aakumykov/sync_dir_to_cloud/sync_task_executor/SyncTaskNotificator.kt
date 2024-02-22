@@ -40,7 +40,7 @@ class SyncTaskNotificator @Inject constructor(
 
     fun showNotification(taskId: String, notificationId: Int, state: SyncTask.State) {
 
-        MyLogger.d(tagWithHashCode(), "showNotification($taskId, $notificationId, $state)")
+//        MyLogger.d(tagWithHashCode(), "showNotification($taskId, $notificationId, $state)")
 
         prepareNotificationChannel()
 
@@ -59,7 +59,7 @@ class SyncTaskNotificator @Inject constructor(
     }
 
     fun hideNotification(taskId: String, notificationId: Int) {
-        MyLogger.d(tagWithHashCode(), "hideNotification($taskId, $notificationId)")
+//        MyLogger.d(tagWithHashCode(), "hideNotification($taskId, $notificationId)")
         notificationManagerCompat.cancel(taskId, notificationId)
     }
 
