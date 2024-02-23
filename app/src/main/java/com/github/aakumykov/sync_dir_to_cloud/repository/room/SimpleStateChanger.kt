@@ -10,7 +10,7 @@ abstract class SimpleStateChanger {
     @Transaction @Update
     suspend fun setIdleState(taskId: String) {
         MyLogger.d(TAG, "setIdleState() called with: taskId = $taskId")
-        setStateNotUseDirectly(taskId, ExecutionState.IDLE)
+        setStateNotUseDirectly(taskId, ExecutionState.NEVER)
         setErrorMsgNotUseDirectly(taskId, "")
     }
 
@@ -18,6 +18,13 @@ abstract class SimpleStateChanger {
     suspend fun setBusyState(taskId: String) {
         MyLogger.d(TAG, "setBusyState() called with: taskId = $taskId")
         setStateNotUseDirectly(taskId, ExecutionState.RUNNING)
+        setErrorMsgNotUseDirectly(taskId, "")
+    }
+
+    @Transaction @Update
+    suspend fun setSuccessState(taskId: String) {
+        MyLogger.d(TAG, "setSuccessState() called with: taskId = $taskId")
+        setStateNotUseDirectly(taskId, ExecutionState.SUCCESS)
         setErrorMsgNotUseDirectly(taskId, "")
     }
 

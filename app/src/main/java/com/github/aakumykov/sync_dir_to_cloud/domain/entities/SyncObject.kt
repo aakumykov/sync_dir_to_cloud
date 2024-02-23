@@ -67,7 +67,7 @@ class SyncObject (
                 name = fsItem.name,
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
-                executionState = ExecutionState.IDLE,
+                executionState = ExecutionState.NEVER,
                 executionError = "",
                 modificationState = modificationState,
                 mTime = fsItem.mTime,

@@ -79,4 +79,5 @@
     <string name="last_finish_info">Завершение: %1$s</string>
     <string name="sync_object_info_dialog_title">Сведения об объекте</string>
     <string name="DIALOG_BUTTON_close">Закрыть</string>
+    <string name="EXECUTION_STATE_success">Синхронизировано</string>
 </resources>

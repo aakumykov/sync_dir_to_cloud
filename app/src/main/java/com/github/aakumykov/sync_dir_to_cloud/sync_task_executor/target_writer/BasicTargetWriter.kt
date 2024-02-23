@@ -30,7 +30,7 @@ abstract class BasicTargetWriter constructor(
             writeAction.run()
             syncObjectStateChanger.changeExecutionState(
                 syncObject.id,
-                ExecutionState.IDLE,
+                ExecutionState.NEVER,
                 ""
             )
             syncObjectStateChanger.setSyncDate(syncObject.id, currentTime())

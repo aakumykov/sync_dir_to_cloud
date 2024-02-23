@@ -148,7 +148,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         binding.schedulingStateView.text =
             if (syncTask.isEnabled) {
                 when(syncTask.schedulingState) {
-                    ExecutionState.IDLE -> detailedSchedulingState(syncTask)
+                    ExecutionState.NEVER -> detailedSchedulingState(syncTask)
+                    ExecutionState.SUCCESS -> detailedSchedulingState(syncTask)
                     ExecutionState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
                     ExecutionState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
                 }
@@ -176,8 +177,9 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun displayExecutionState(syncTask: SyncTask) {
         binding.executionStateView.text = when (syncTask.executionState) {
-            ExecutionState.IDLE -> getString(R.string.EXECUTION_STATE_idle)
+            ExecutionState.NEVER -> getString(R.string.EXECUTION_STATE_idle)
             ExecutionState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
+            ExecutionState.SUCCESS -> getString(R.string.EXECUTION_STATE_success)
             ExecutionState.ERROR -> getString(
                 R.string.EXECUTION_STATE_error,
                 syncTask.executionError

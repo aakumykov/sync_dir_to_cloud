@@ -87,8 +87,9 @@ class SyncTaskRepository @Inject constructor(
                                           newState: ExecutionState,
                                           errorMsg: String = "") {
         when(newState) {
-            ExecutionState.IDLE -> simpleStateChanger.setIdleState(taskId)
+            ExecutionState.NEVER -> simpleStateChanger.setIdleState(taskId)
             ExecutionState.RUNNING -> simpleStateChanger.setBusyState(taskId)
+            ExecutionState.SUCCESS -> simpleStateChanger.setSuccessState(taskId)
             ExecutionState.ERROR -> simpleStateChanger.setErrorState(taskId, errorMsg)
         }
     }

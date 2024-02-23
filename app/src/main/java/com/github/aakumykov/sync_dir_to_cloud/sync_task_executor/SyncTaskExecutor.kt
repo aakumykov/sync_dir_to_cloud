@@ -43,7 +43,7 @@ class SyncTaskExecutor @Inject constructor(
     suspend fun stopExecutingTask(taskId: String) {
         // TODO: по-настоящему прерывать работу CloudWriter-а
         MyLogger.d(TAG, "stopExecutingTask(), [${hashCode()}]")
-        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.IDLE)
+        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
 
     // FIXME: убрать !! в sourcePath
@@ -63,7 +63,7 @@ class SyncTaskExecutor @Inject constructor(
             syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
             mTargetWriter?.writeToTarget()
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.IDLE)
+            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
         catch (t: Throwable) {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))

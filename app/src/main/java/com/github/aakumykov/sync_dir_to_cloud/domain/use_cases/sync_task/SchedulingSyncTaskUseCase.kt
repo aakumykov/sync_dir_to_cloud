@@ -30,7 +30,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         try {
             syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.RUNNING)
             syncTaskScheduler.scheduleSyncTask(syncTask)
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.IDLE)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.NEVER)
             syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, true)
         }
         catch (t: Throwable) {
@@ -43,7 +43,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         try {
             syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.RUNNING)
             syncTaskScheduler.unScheduleSyncTask(syncTask)
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.IDLE)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.NEVER)
             syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, false)
         }
         catch (t: Throwable) {
