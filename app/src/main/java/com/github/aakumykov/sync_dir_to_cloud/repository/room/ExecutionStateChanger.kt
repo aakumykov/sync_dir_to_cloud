@@ -5,7 +5,7 @@ import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 
-abstract class SimpleStateChanger {
+abstract class ExecutionStateChanger {
 
     @Transaction @Update
     suspend fun setIdleState(taskId: String) {
@@ -40,6 +40,6 @@ abstract class SimpleStateChanger {
     abstract suspend fun setErrorMsgNotUseDirectly(taskId: String, errorMsg: String)
 
     companion object {
-        val TAG: String = SimpleStateChanger::class.java.simpleName
+        val TAG: String = ExecutionStateChanger::class.java.simpleName
     }
 }

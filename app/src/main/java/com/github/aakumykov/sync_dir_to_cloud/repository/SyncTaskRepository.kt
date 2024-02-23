@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SimpleStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.ExecutionStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskExecutionStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskRunningTimeDAO
@@ -74,23 +74,23 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override suspend fun changeSchedulingState(taskId: String, newState: ExecutionState, errorMsg: String) {
-        changeSimpleState(syncTaskSchedulingStateDAO, taskId, newState, errorMsg)
+        changeExecutionState(syncTaskSchedulingStateDAO, taskId, newState, errorMsg)
     }
 
     override suspend fun changeExecutionState(taskId: String, newState: ExecutionState, errorMsg: String) {
-        changeSimpleState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
+        changeExecutionState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
     }
 
 
-    private suspend fun changeSimpleState(simpleStateChanger: SimpleStateChanger,
-                                          taskId: String,
-                                          newState: ExecutionState,
-                                          errorMsg: String = "") {
+    private suspend fun changeExecutionState(executionStateChanger: ExecutionStateChanger,
+                                             taskId: String,
+                                             newState: ExecutionState,
+                                             errorMsg: String = "") {
         when(newState) {
-            ExecutionState.NEVER -> simpleStateChanger.setIdleState(taskId)
-            ExecutionState.RUNNING -> simpleStateChanger.setBusyState(taskId)
-            ExecutionState.SUCCESS -> simpleStateChanger.setSuccessState(taskId)
-            ExecutionState.ERROR -> simpleStateChanger.setErrorState(taskId, errorMsg)
+            ExecutionState.NEVER -> executionStateChanger.setIdleState(taskId)
+            ExecutionState.RUNNING -> executionStateChanger.setBusyState(taskId)
+            ExecutionState.SUCCESS -> executionStateChanger.setSuccessState(taskId)
+            ExecutionState.ERROR -> executionStateChanger.setErrorState(taskId, errorMsg)
         }
     }
 
