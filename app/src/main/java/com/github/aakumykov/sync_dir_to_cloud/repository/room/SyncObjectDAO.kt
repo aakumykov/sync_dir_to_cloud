@@ -5,7 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
@@ -18,8 +18,8 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
     suspend fun getSyncObjectsForTaskWithModificationStates(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
-    @Query("UPDATE sync_objects SET execution_state = :state, execution_error = :errorMsg WHERE id = :syncObjectId")
-    suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
+    @Query("UPDATE sync_objects SET sync_state =  :state, execution_error = :errorMsg WHERE id = :syncObjectId")
+    suspend fun setExecutionState(syncObjectId: String, state: SyncState, errorMsg: String)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
     fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>>

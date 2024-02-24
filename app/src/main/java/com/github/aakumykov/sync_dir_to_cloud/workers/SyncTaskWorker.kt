@@ -5,7 +5,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -13,7 +13,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
-import java.util.Date
 import java.util.concurrent.CancellationException
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
@@ -54,7 +53,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
             runBlocking {
                 val errorMsg = ExceptionUtils.getErrorMessage(t)
 
-                syncTaskStateChanger.changeExecutionState(taskId!!, ExecutionState.ERROR, errorMsg)
+                syncTaskStateChanger.changeExecutionState(taskId!!, SyncState.ERROR, errorMsg)
                 MyLogger.e(TAG, errorMsg, t)
 
                 Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))

@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
@@ -23,14 +23,14 @@ abstract class BasicTargetWriter constructor(
 {
     private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
         try {
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.RUNNING, "")
+            syncObjectStateChanger.changeExecutionState(syncObject.id, SyncState.RUNNING, "")
             writeAction.run()
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.SUCCESS, "")
+            syncObjectStateChanger.changeExecutionState(syncObject.id, SyncState.SUCCESS, "")
             syncObjectStateChanger.setSyncDate(syncObject.id, currentTime())
         }
         catch (t: Throwable) {
             val errorMsg = ExceptionUtils.getErrorMessage(t)
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, errorMsg)
+            syncObjectStateChanger.changeExecutionState(syncObject.id, SyncState.ERROR, errorMsg)
             MyLogger.e(TAG, errorMsg, t)
         }
     }

@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -43,7 +43,7 @@ class SyncTaskExecutor @Inject constructor(
     suspend fun stopExecutingTask(taskId: String) {
         // TODO: по-настоящему прерывать работу CloudWriter-а
         MyLogger.d(TAG, "stopExecutingTask(), [${hashCode()}]")
-        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
+        syncTaskStateChanger.changeExecutionState(taskId, SyncState.NEVER)
     }
 
     // FIXME: убрать !! в sourcePath
@@ -53,15 +53,15 @@ class SyncTaskExecutor @Inject constructor(
         val notificationId = syncTask.notificationId
 
         try {
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
+            syncTaskStateChanger.changeExecutionState(taskId, SyncState.RUNNING)
 
             prepareForSync(taskId)
             produceSync(syncTask)
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
+            syncTaskStateChanger.changeExecutionState(taskId, SyncState.SUCCESS)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
+            syncTaskStateChanger.changeExecutionState(taskId, SyncState.ERROR, ExceptionUtils.getErrorMessage(t))
         }
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)

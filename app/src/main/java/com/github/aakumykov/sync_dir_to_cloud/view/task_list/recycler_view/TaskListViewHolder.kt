@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 
@@ -52,14 +52,14 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     private fun displayStartStopButton() {
 
-//        MyLogger.d(TAG, "displayStartStopButton(), executionState: ${currentTask.executionState}")
+//        MyLogger.d(TAG, "displayStartStopButton(), syncState: ${currentTask.syncState}")
 
         runButton.setImageResource(
-            when(currentTask.executionState){
-                ExecutionState.NEVER -> R.drawable.ic_task_start
-                ExecutionState.SUCCESS -> R.drawable.ic_task_start
-                ExecutionState.RUNNING -> R.drawable.ic_task_stop
-                ExecutionState.ERROR -> R.drawable.ic_task_start
+            when(currentTask.syncState){
+                SyncState.NEVER -> R.drawable.ic_task_start
+                SyncState.SUCCESS -> R.drawable.ic_task_start
+                SyncState.RUNNING -> R.drawable.ic_task_stop
+                SyncState.ERROR -> R.drawable.ic_task_start
             }
         )
 
@@ -98,11 +98,11 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
 
     private fun displayExecutionState() {
         stateView.setImageResource(
-            when (currentTask.executionState) {
-                ExecutionState.NEVER -> idleIcon()
-                ExecutionState.SUCCESS -> idleIcon()
-                ExecutionState.RUNNING -> R.drawable.ic_task_state_running
-                ExecutionState.ERROR -> R.drawable.ic_task_state_error
+            when (currentTask.syncState) {
+                SyncState.NEVER -> idleIcon()
+                SyncState.SUCCESS -> idleIcon()
+                SyncState.RUNNING -> R.drawable.ic_task_state_running
+                SyncState.ERROR -> R.drawable.ic_task_state_error
             }
         )
     }

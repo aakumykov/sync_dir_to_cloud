@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
@@ -108,7 +108,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 append(dateStringOrNever(syncObject.syncDate))
                 append("\n")
 
-                if (ExecutionState.ERROR == syncObject.executionState) {
+                if (SyncState.ERROR == syncObject.syncState) {
                     append("Ошибка синхронизации: ")
                     append(syncObject.executionError)
                     append("\n")
@@ -148,10 +148,10 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         binding.schedulingStateView.text =
             if (syncTask.isEnabled) {
                 when(syncTask.schedulingState) {
-                    ExecutionState.NEVER -> detailedSchedulingState(syncTask)
-                    ExecutionState.SUCCESS -> detailedSchedulingState(syncTask)
-                    ExecutionState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
-                    ExecutionState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
+                    SyncState.NEVER -> detailedSchedulingState(syncTask)
+                    SyncState.SUCCESS -> detailedSchedulingState(syncTask)
+                    SyncState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
+                    SyncState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
                 }
             }
             else {
@@ -176,11 +176,11 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     }
 
     private fun displayExecutionState(syncTask: SyncTask) {
-        binding.executionStateView.text = when (syncTask.executionState) {
-            ExecutionState.NEVER -> getString(R.string.EXECUTION_STATE_idle)
-            ExecutionState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
-            ExecutionState.SUCCESS -> getString(R.string.EXECUTION_STATE_success)
-            ExecutionState.ERROR -> getString(
+        binding.syncStateView.text = when (syncTask.syncState) {
+            SyncState.NEVER -> getString(R.string.EXECUTION_STATE_idle)
+            SyncState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
+            SyncState.SUCCESS -> getString(R.string.EXECUTION_STATE_success)
+            SyncState.ERROR -> getString(
                 R.string.EXECUTION_STATE_error,
                 syncTask.executionError
             )

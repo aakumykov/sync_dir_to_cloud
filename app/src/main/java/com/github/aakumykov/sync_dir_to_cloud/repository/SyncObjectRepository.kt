@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -34,8 +34,8 @@ class SyncObjectRepository @Inject constructor(
     }
 
 
-    override suspend fun changeExecutionState(syncObjectId: String, executionState: ExecutionState, errorMsg: String)
-        = syncObjectDAO.setExecutionState(syncObjectId, executionState, errorMsg)
+    override suspend fun changeExecutionState(syncObjectId: String, syncState: SyncState, errorMsg: String)
+        = syncObjectDAO.setExecutionState(syncObjectId, syncState, errorMsg)
 
 
     override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
