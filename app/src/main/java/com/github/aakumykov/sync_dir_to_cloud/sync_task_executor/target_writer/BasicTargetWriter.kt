@@ -22,26 +22,14 @@ abstract class BasicTargetWriter constructor(
 {
     private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: Runnable) {
         try {
-            syncObjectStateChanger.changeExecutionState(
-                syncObject.id,
-                ExecutionState.RUNNING,
-                ""
-            )
+            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.RUNNING, "")
             writeAction.run()
-            syncObjectStateChanger.changeExecutionState(
-                syncObject.id,
-                ExecutionState.NEVER,
-                ""
-            )
+            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.SUCCESS, "")
             syncObjectStateChanger.setSyncDate(syncObject.id, currentTime())
         }
         catch (t: Throwable) {
             val errorMsg = ExceptionUtils.getErrorMessage(t)
-            syncObjectStateChanger.changeExecutionState(
-                syncObject.id,
-                ExecutionState.ERROR,
-                errorMsg
-            )
+            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, errorMsg)
             MyLogger.e(TAG, errorMsg, t)
         }
     }
