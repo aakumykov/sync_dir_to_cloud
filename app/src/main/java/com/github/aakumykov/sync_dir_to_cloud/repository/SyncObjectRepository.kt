@@ -47,7 +47,7 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.setSyncDate(id, date)
 
 
-    override suspend fun resetSyncObjectsStateOfTask(taskId: String)
+    override suspend fun markAllObjectsAsDeleted(taskId: String)
         = syncObjectDAO.setStateOfAllItems(taskId, ModificationState.DELETED)
 
 

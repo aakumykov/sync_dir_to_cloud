@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
@@ -75,7 +74,8 @@ class SyncTaskExecutor @Inject constructor(
         // Стираю из БД объекты, удалённые в предыдущую синхронизацию.
         syncObjectDeleter.clearObjectsWasSuccessfullyDeleted(taskId)
 
-        syncObjectStateResetter.resetSyncObjectsStateOfTask(taskId)
+        // Помечаю всё объекты как удалённые (в источнике), потом они будут вновь найдены.
+        syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
     }
 
     private suspend fun produceSync(syncTask: SyncTask) {
