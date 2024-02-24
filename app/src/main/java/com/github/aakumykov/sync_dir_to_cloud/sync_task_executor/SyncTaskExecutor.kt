@@ -22,7 +22,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
-    private val syncObjectStateREsetter: SyncObjectStateResetter,
+    private val syncObjectStateResetter: SyncObjectStateResetter,
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime
 ) {
     private var sourceReader: SourceReader? = null
@@ -52,16 +52,11 @@ class SyncTaskExecutor @Inject constructor(
         val taskId = syncTask.id
         val notificationId = syncTask.notificationId
 
-        syncObjectStateREsetter.resetSyncObjectsStateOfTask(taskId)
-
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.READING_SOURCE)
-            sourceReader?.read(syncTask.sourcePath!!)
-
-            syncTaskNotificator.showNotification(taskId, notificationId, SyncTask.State.WRITING_TARGET)
-            mTargetWriter?.writeToTarget()
+            prepareForSync(taskId)
+            produceSync(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -71,6 +66,18 @@ class SyncTaskExecutor @Inject constructor(
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun prepareForSync(taskId: String) {
+        syncObjectStateResetter.resetSyncObjectsStateOfTask(taskId)
+    }
+
+    private suspend fun produceSync(syncTask: SyncTask) {
+        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
+        sourceReader?.read(syncTask.sourcePath!!)
+
+        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
+        mTargetWriter?.writeToTarget()
     }
 
     private fun prepareReader(syncTask: SyncTask) {
