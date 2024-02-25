@@ -22,9 +22,7 @@ class LocalSourceReader @AssistedInject constructor(
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
     @Assisted private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
-    private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
-    private val syncObjectStateChanger: SyncObjectStateChanger
 )
     : SourceReader
 {
