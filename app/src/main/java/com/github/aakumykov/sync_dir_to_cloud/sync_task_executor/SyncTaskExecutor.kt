@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.SizeAndModificationTimeStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -25,7 +25,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskNotificator: SyncTaskNotificator,
     private val syncObjectDeleter: SyncObjectDeleter,
     private val syncObjectStateResetter: SyncObjectStateResetter,
-    private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime
+    private val changesDetectionStrategy: SizeAndModificationTimeStrategy
 ) {
     private var sourceReader: SourceReader? = null
     private var mTargetWriter: TargetWriter? = null
