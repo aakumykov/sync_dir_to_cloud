@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -38,4 +39,10 @@ interface SyncObjectDAO {
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND sync_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: SyncState)
+
+    @Update
+    suspend fun updateSyncObject(syncObject: SyncObject)
+
+    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE id = :objectId")
+    suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
 }

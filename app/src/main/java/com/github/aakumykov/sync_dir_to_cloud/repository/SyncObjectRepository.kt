@@ -10,14 +10,16 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import javax.inject.Inject
 
 @AppScope
 class SyncObjectRepository @Inject constructor(
-    private val syncObjectDAO: SyncObjectDAO
+    private val syncObjectDAO: SyncObjectDAO,
 )
-    : SyncObjectAdder, SyncObjectReader, SyncObjectStateChanger, SyncObjectStateResetter, SyncObjectDeleter
+    : SyncObjectAdder, SyncObjectReader, SyncObjectStateChanger, SyncObjectStateResetter, SyncObjectDeleter,
+        SyncObjectUpdater
 {
     override suspend fun addSyncObject(syncObject: SyncObject)
         = syncObjectDAO.add(syncObject)
@@ -35,16 +37,16 @@ class SyncObjectRepository @Inject constructor(
     }
 
 
-    override suspend fun changeExecutionState(syncObjectId: String, syncState: SyncState, errorMsg: String)
-        = syncObjectDAO.setExecutionState(syncObjectId, syncState, errorMsg)
+    override suspend fun changeExecutionState(objectId: String, syncState: SyncState, errorMsg: String)
+        = syncObjectDAO.setExecutionState(objectId, syncState, errorMsg)
 
 
     override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
         = syncObjectDAO.getSyncObjectList(taskId)
 
 
-    override suspend fun setSyncDate(id: String, date: Long)
-        = syncObjectDAO.setSyncDate(id, date)
+    override suspend fun setSyncDate(objectId: String, date: Long)
+        = syncObjectDAO.setSyncDate(objectId, date)
 
 
     override suspend fun markAllObjectsAsDeleted(taskId: String)
@@ -54,6 +56,13 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject?
         = syncObjectDAO.getSyncObject(name, relativeParentDirPath)
 
+
     override suspend fun clearObjectsWasSuccessfullyDeleted(taskId: String)
         = syncObjectDAO.deleteObjectsWithModificationAndSyncState(taskId, ModificationState.DELETED, SyncState.SUCCESS)
+
+    override suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
+        = syncObjectDAO.updateSyncObject(modifiedSyncObject)
+
+    override suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
+        = syncObjectDAO.changeModificationState(objectId, modificationState)
 }

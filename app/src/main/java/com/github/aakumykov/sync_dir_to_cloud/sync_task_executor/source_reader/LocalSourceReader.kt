@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReaderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
@@ -22,7 +22,9 @@ class LocalSourceReader @AssistedInject constructor(
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
     @Assisted private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
+    private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
+    private val syncObjectUpdater: SyncObjectUpdater
 )
     : SourceReader
 {
@@ -47,14 +49,27 @@ class LocalSourceReader @AssistedInject constructor(
 
             val relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath)
 
-            val syncObject = SyncObject.create(
-                taskId = taskId,
-                fsItem = fileListItem,
-                relativeParentDirPath = relativeParentDirPath,
-                modificationState = changesDetectionStrategy.detectItemModification(sourcePath, fileListItem)
-            )
+            val existingObject = syncObjectReader.getSyncObject(fileListItem.name, relativeParentDirPath)
 
-            syncObjectAdder.addSyncObject(syncObject)
+            if (null == existingObject) {
+                SyncObject.create(
+                    taskId = taskId,
+                    fsItem = fileListItem,
+                    relativeParentDirPath = relativeParentDirPath,
+                    modificationState = changesDetectionStrategy.detectItemModification(
+                        sourcePath,
+                        fileListItem
+                    )
+                ).also {
+                    syncObjectAdder.addSyncObject(it)
+                }
+            }
+            else {
+                SyncObject.createAsModified(existingObject, fileListItem)
+                    .also {
+                        syncObjectUpdater.updateSyncObject(it)
+                    }
+            }
         }
     }
 }

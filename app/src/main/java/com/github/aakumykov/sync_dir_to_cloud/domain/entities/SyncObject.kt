@@ -7,6 +7,8 @@ import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
+// TODO: сложный ключ, включающий taskId, name, parentPath и другое, что составляет уникальность.
+
 @Entity(
     tableName = "sync_objects",
     foreignKeys = [
@@ -31,8 +33,13 @@ class SyncObject (
     @ColumnInfo(name = "sync_state") val syncState: SyncState,
     @ColumnInfo(name = "execution_error") var executionError: String,
     @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
-    @ColumnInfo(name = "m_time") val mTime: Long,
-    val size: Long,
+
+    @ColumnInfo(name = "m_time") var mTime: Long,
+    @ColumnInfo(name = "new_m_time") var newMTime: Long? = null,
+
+    @ColumnInfo(name = "size") var size: Long,
+    @ColumnInfo(name = "new_size") var newSize: Long? = null,
+
     @ColumnInfo(name = "sync_date") val syncDate: Long,
 ) {
     override fun toString(): String {
@@ -74,6 +81,25 @@ class SyncObject (
                 size = fsItem.size,
                 syncDate = 0L,
             )
+        }
+
+        fun createAsModified(existingSyncObject: SyncObject,
+                             modifiedFSItem: FSItem): SyncObject
+        {
+            return existingSyncObject.apply {
+                // TODO: инкапсулировать в SyncObject или, лучше, объекте-расширении.
+
+                if (null != newSize)
+                    size = newSize!!
+
+                if (null != newMTime)
+                    mTime = newMTime!!
+
+                newSize = modifiedFSItem.size
+                newMTime = modifiedFSItem.mTime
+
+                modificationState = ModificationState.MODIFIED
+            }
         }
     }
 
