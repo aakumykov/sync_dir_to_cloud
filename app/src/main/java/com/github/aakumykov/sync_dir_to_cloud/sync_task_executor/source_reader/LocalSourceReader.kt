@@ -4,11 +4,15 @@ import com.github.aakumykov.file_lister_navigator_selector.file_lister.FileListe
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReaderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,8 +22,7 @@ class LocalSourceReader @AssistedInject constructor(
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
     @Assisted private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
-    private val syncObjectChangesDetector: SyncObjectChangesDetector,
-    private val syncObjectUpdater: SyncObjectUpdater
+    private val syncObjectAdder: SyncObjectAdder,
 )
     : SourceReader
 {
@@ -42,14 +45,16 @@ class LocalSourceReader @AssistedInject constructor(
 
         recursiveDirReader?.getRecursiveList(sourcePath)?.forEach { fileListItem: RecursiveDirReader.FileListItem ->
 
-            val syncObjectChanges = syncObjectChangesDetector.detectSyncObjectChanges(
-                taskId,
-                fileListItem,
-                sourcePath,
-                changesDetectionStrategy
+            val relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath)
+
+            val syncObject = SyncObject.create(
+                taskId = taskId,
+                fsItem = fileListItem,
+                relativeParentDirPath = relativeParentDirPath,
+                modificationState = changesDetectionStrategy.detectItemModification(sourcePath, fileListItem)
             )
 
-            syncObjectUpdater.updateSyncObject(syncObjectChanges)
+            syncObjectAdder.addSyncObject(syncObject)
         }
     }
 }

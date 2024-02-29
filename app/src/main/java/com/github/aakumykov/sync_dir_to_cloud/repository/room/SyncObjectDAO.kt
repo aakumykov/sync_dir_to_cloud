@@ -8,7 +8,6 @@ import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectChanges
 
 @Dao
 interface SyncObjectDAO {
@@ -31,20 +30,12 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET sync_date = :date WHERE id = :id")
     suspend fun setSyncDate(id: String, date: Long)
 
-    @Query("SELECT * FROM sync_objects WHERE name = :name AND relative_parent_dir_path = :relativeParentDirPath " +
-            " AND task_id = :taskId")
-    suspend fun getSyncObject(
-        name: String,
-        relativeParentDirPath: String,
-        taskId: String
-    ): SyncObject?
+    @Query("SELECT * FROM sync_objects WHERE name = :name AND relative_parent_dir_path = :relativeParentDirPath")
+    suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject?
 
     @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE task_id = :taskId")
     suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND sync_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: SyncState)
-
-    @Query("UPDATE sync_objects SET ")
-    fun updateSyncObject(syncObjectChanges: SyncObjectChanges)
 }
