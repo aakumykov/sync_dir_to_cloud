@@ -61,11 +61,10 @@ class SyncObject (
 
         fun id(fsItem: FSItem): String = sha256(fsItem.absolutePath)
 
-        fun create(
+        fun createAsNew(
             taskId: String,
             fsItem: FSItem,
             relativeParentDirPath: String,
-            modificationState: ModificationState
         ): SyncObject {
 
             return SyncObject(
@@ -76,15 +75,16 @@ class SyncObject (
                 isDir = fsItem.isDir,
                 syncState = SyncState.NEVER,
                 executionError = "",
-                modificationState = modificationState,
+                modificationState = ModificationState.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
                 syncDate = 0L,
             )
         }
 
-        fun createAsModified(existingSyncObject: SyncObject,
-                             modifiedFSItem: FSItem): SyncObject
+        fun createAsExisting(existingSyncObject: SyncObject,
+                             modifiedFSItem: FSItem,
+                             modificationState: ModificationState): SyncObject
         {
             return existingSyncObject.apply {
                 // TODO: инкапсулировать в SyncObject или, лучше, объекте-расширении.
@@ -95,10 +95,10 @@ class SyncObject (
                 if (null != newMTime)
                     mTime = newMTime!!
 
-                newSize = modifiedFSItem.size
-                newMTime = modifiedFSItem.mTime
+                this.newSize = modifiedFSItem.size
+                this.newMTime = modifiedFSItem.mTime
 
-                modificationState = ModificationState.MODIFIED
+                this.modificationState = modificationState
             }
         }
     }

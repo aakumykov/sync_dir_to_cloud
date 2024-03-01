@@ -52,20 +52,21 @@ class LocalSourceReader @AssistedInject constructor(
             val existingObject = syncObjectReader.getSyncObject(fileListItem.name, relativeParentDirPath)
 
             if (null == existingObject) {
-                SyncObject.create(
+                SyncObject.createAsNew(
                     taskId = taskId,
                     fsItem = fileListItem,
                     relativeParentDirPath = relativeParentDirPath,
-                    modificationState = changesDetectionStrategy.detectItemModification(
-                        sourcePath,
-                        fileListItem
-                    )
-                ).also {
-                    syncObjectAdder.addSyncObject(it)
-                }
+                )
+                    .also {
+                        syncObjectAdder.addSyncObject(it)
+                    }
             }
             else {
-                SyncObject.createAsModified(existingObject, fileListItem)
+                SyncObject.createAsExisting(
+                    existingObject,
+                    fileListItem,
+                    changesDetectionStrategy.detectItemModification(sourcePath, fileListItem, existingObject)
+                )
                     .also {
                         syncObjectUpdater.updateSyncObject(it)
                     }
