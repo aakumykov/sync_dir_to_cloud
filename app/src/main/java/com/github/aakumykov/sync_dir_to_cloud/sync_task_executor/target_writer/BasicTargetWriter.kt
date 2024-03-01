@@ -34,7 +34,7 @@ abstract class BasicTargetWriter constructor(
         deleteDeletedDirs()
 
         // Каталоги
-        syncObjectReader.getNewAndChangedSyncObjectsForTask(taskId).filter { it.isDir }
+        syncObjectReader.getObjectsNeedsToBeSynched(taskId).filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
@@ -56,7 +56,7 @@ abstract class BasicTargetWriter constructor(
             }
 
         // Файлы
-        syncObjectReader.getNewAndChangedSyncObjectsForTask(taskId).filter { !it.isDir }
+        syncObjectReader.getObjectsNeedsToBeSynched(taskId).filter { !it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {

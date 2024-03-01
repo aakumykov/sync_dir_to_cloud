@@ -34,9 +34,6 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects WHERE name = :name AND relative_parent_dir_path = :relativeParentDirPath")
     suspend fun getSyncObject(name: String, relativeParentDirPath: String): SyncObject?
 
-    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE task_id = :taskId")
-    suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
-
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND sync_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: SyncState)
 
@@ -45,4 +42,13 @@ interface SyncObjectDAO {
 
     @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE id = :objectId")
     suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
+
+    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE task_id = :taskId")
+    suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
+
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND sync_state = :syncState")
+    suspend fun getObjectsWithSyncState(taskId: String, syncState: SyncState): List<SyncObject>
+
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState")
+    suspend fun getObjectsWithModificationState(taskId: String, modificationState: ModificationState): List<SyncObject>
 }

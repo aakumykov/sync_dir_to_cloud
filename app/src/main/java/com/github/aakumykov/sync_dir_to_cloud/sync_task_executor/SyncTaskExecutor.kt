@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
@@ -32,8 +31,7 @@ class SyncTaskExecutor @Inject constructor(
     private var mTargetWriter: TargetWriter? = null
 
 
-    // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. А как устойчивость к ошибкам?
-    // TODO: переименовать в startExecutingTask()
+    // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             prepareReader(syncTask)
@@ -58,8 +56,16 @@ class SyncTaskExecutor @Inject constructor(
         try {
             syncTaskStateChanger.changeExecutionState(taskId, SyncState.RUNNING)
 
-            prepareForSync(taskId)
-            produceSync(syncTask)
+            removePreviouslySynchronizedObjects(taskId)
+            fixBadStates(taskId)
+            markObjectsVirtuallyDeleted(taskId)
+
+            syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
+            readFromSource(syncTask)
+
+
+            syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
+//            writeToTarget()
 
             syncTaskStateChanger.changeExecutionState(taskId, SyncState.SUCCESS)
         }
@@ -71,21 +77,34 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
-    private suspend fun prepareForSync(taskId: String) {
+    private suspend fun removePreviouslySynchronizedObjects(taskId: String) {
         // Стираю из БД объекты, удалённые в предыдущую синхронизацию.
         syncObjectDeleter.clearObjectsWasSuccessfullyDeleted(taskId)
+    }
 
-        // Помечаю всё объекты как удалённые (в источнике), потом они будут вновь найдены.
+    private suspend fun markObjectsVirtuallyDeleted(taskId: String) {
+        // Помечаю всё объекты в БД как удалённые, чтобы не проверять каждый раз существование
+        // связанного файла/папки. Те, что существуют, будут учтены на этапе чтения.
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
     }
 
-    private suspend fun produceSync(syncTask: SyncTask) {
-        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
-        sourceReader?.read(syncTask.sourcePath!!)
 
-        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
+    private suspend fun readFromSource(syncTask: SyncTask) {
+        sourceReader?.read(syncTask.sourcePath!!)
+    }
+
+
+    private suspend fun writeToTarget() {
         mTargetWriter?.writeToTarget()
     }
+
+
+    private suspend fun fixBadStates(taskId: String) {
+        // Меняю SyncState.RUNNING на SyncState.NEVER, чтобы эти объекты синхронизировались вновь
+        // (такой статус может сохраниться, если приложение было убито во время работы).
+        syncObjectStateResetter.markBadStateAsNeverSynced(taskId)
+    }
+
 
     private fun prepareReader(syncTask: SyncTask) {
         // TODO: реализовать sourceAuthToken
@@ -99,7 +118,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun prepareWriter(syncTask: SyncTask) {
 
-        // FIXME: убрать двойное !!
+        // FIXME: убрать двойное "!!"
 
         val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.cloudAuthId!!)?.authToken
             ?: throw IllegalStateException("Target auth token cannot be null")

@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 interface SyncObjectReader {
-    suspend fun getNewAndChangedSyncObjectsForTask(taskId: String): List<SyncObject>
+    suspend fun getObjectsNeedsToBeSynched(taskId: String): List<SyncObject>
     suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
 
     @Deprecated("Ввести параметр taskId, так как объекты с одинаковыми именами и родительскими путями могут принадлежать одному заданию.")

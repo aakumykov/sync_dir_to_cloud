@@ -12,11 +12,13 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
 import javax.inject.Inject
 
 @AppScope
 class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
+    private val badObjectStateResettingDAO: BadObjectStateResettingDAO
 )
     : SyncObjectAdder, SyncObjectReader, SyncObjectStateChanger, SyncObjectStateResetter, SyncObjectDeleter,
         SyncObjectUpdater
@@ -25,9 +27,13 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.add(syncObject)
 
 
-    override suspend fun getNewAndChangedSyncObjectsForTask(taskId: String): List<SyncObject>
-        = syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId,
-        arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
+    override suspend fun getObjectsNeedsToBeSynched(taskId: String): List<SyncObject> {
+//        syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
+        val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, SyncState.NEVER)
+        val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.NEW)
+        val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.MODIFIED)
+        return neverSyncedObjects + newObjects + modifiedObjects
+    }
 
     override suspend fun getObjectsForTask(
         taskId: String,
@@ -65,4 +71,7 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
         = syncObjectDAO.changeModificationState(objectId, modificationState)
+
+    override suspend fun markBadStateAsNeverSynced(taskId: String)
+        = badObjectStateResettingDAO.markBadStateAsNeverSynced(taskId)
 }
