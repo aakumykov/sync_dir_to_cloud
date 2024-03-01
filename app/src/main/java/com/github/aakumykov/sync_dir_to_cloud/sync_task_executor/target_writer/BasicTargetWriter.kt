@@ -22,6 +22,7 @@ abstract class BasicTargetWriter constructor(
     : TargetWriter
 {
     // TODO: SuspendRunnable --> kotlin.coroutines.Runnable
+    @FunctionalInterface
     internal interface SuspendRunnable {
         suspend fun run()
     }
