@@ -48,8 +48,6 @@ abstract class BasicTargetWriter constructor(
                                 dirName = childDirName
                             )
 
-                            syncObjectStateChanger.changeModificationState(syncObject.id, ModificationState.UNCHANGED)
-
                         } catch (e: CloudWriter.AlreadyExistsException) {
                             MyLogger.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
                         }
@@ -81,8 +79,6 @@ abstract class BasicTargetWriter constructor(
                             targetPath = pathInTarget,
                             overwriteIfExists = overwriteIfExists
                         )
-
-                        syncObjectStateChanger.changeModificationState(syncObject.id, ModificationState.UNCHANGED)
                     }
                 })
             }
