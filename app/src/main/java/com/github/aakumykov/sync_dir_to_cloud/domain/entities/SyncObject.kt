@@ -5,6 +5,7 @@ import androidx.room.ForeignKey.Companion.CASCADE
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 // TODO: сложный ключ, включающий taskId, name, parentPath и другое, что составляет уникальность.
@@ -87,17 +88,7 @@ class SyncObject (
                              modificationState: ModificationState): SyncObject
         {
             return existingSyncObject.apply {
-                // TODO: инкапсулировать в SyncObject или, лучше, объекте-расширении.
-
-                if (null != newSize)
-                    size = newSize!!
-
-                if (null != newMTime)
-                    mTime = newMTime!!
-
-                this.newSize = modifiedFSItem.size
-                this.newMTime = modifiedFSItem.mTime
-
+                existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
                 this.modificationState = modificationState
             }
         }
