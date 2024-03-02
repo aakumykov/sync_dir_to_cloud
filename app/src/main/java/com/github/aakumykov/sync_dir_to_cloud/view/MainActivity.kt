@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -17,6 +18,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleV
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.HasCustomActions
+import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
@@ -28,11 +31,16 @@ class MainActivity : AppCompatActivity() {
     private val navigationViewModel: NavigationViewModel by viewModels()
     private val pageTitleViewModel: PageTitleViewModel by viewModels()
 
-    private lateinit var fragmentManager: androidx.fragment.app.FragmentManager
+    private lateinit var fragmentManager: FragmentManager
+    private var currentFragment: Fragment? = null
     private lateinit var onBackStackChangedListener: OnBackStackChangedListener
+    private lateinit var fragmentLifecycleCallbacks: FragmentManager.FragmentLifecycleCallbacks
 
     private lateinit var storageAccessHelper: StorageAccessHelper
     private val storageAccessViewModel: StorageAccessViewModel by viewModels()
+
+    private val menuHelper: MenuHelper by lazy { MenuHelper(this@MainActivity, R.color.primary, R.color.onPrimary) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +56,6 @@ class MainActivity : AppCompatActivity() {
         prepareViewModels()
         prepareFragmentManager()
     }
-
 
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
@@ -79,6 +86,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main, menu)
+        updateMenu()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -112,6 +120,7 @@ class MainActivity : AppCompatActivity() {
 
         fragmentManager = supportFragmentManager
 
+
         onBackStackChangedListener = OnBackStackChangedListener {
             if (0 == fragmentManager.backStackEntryCount) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -122,13 +131,25 @@ class MainActivity : AppCompatActivity() {
                     setHomeAsUpIndicator(R.drawable.ic_page_back)
                 }
             }
+        }.also {
+            fragmentManager.addOnBackStackChangedListener(it)
         }
 
-        fragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
+
+        fragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+                super.onFragmentResumed(fm, f)
+                currentFragment = f
+                updateMenu()
+            }
+        }.also {
+            fragmentManager.registerFragmentLifecycleCallbacks(it, false)
+        }
     }
 
     private fun releaseFragmentManager() {
         fragmentManager.removeOnBackStackChangedListener(onBackStackChangedListener)
+        fragmentManager.unregisterFragmentLifecycleCallbacks(fragmentLifecycleCallbacks)
     }
 
 
@@ -168,6 +189,18 @@ class MainActivity : AppCompatActivity() {
     private fun returnToPrevFragment() {
         fragmentManager.popBackStack()
     }
+
+    private fun updateMenu() {
+        with(binding.toolbar.menu) {
+            clear()
+            if (currentFragment is HasCustomActions) {
+                (currentFragment as HasCustomActions).getCustomActions().also { customActions ->
+                    menuHelper.generateMenu(this@with, customActions, false)
+                }
+            }
+        }
+    }
+
 
     companion object {
         val TAG: String = MainActivity::class.java.simpleName
