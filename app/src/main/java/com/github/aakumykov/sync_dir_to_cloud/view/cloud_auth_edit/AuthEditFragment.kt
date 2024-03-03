@@ -11,9 +11,9 @@ import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
-import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.setError
-import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.setText
-import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setError
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setText
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.yandex.authsdk.internal.strategy.LoginType
 

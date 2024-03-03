@@ -23,8 +23,8 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.CustomMenuAction
-import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.HasCustomActions
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker

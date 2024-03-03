@@ -22,9 +22,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelection
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
-import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
-import com.github.aakumykov.sync_dir_to_cloud.view.utils.SimpleTextWatcher
-import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
+import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat

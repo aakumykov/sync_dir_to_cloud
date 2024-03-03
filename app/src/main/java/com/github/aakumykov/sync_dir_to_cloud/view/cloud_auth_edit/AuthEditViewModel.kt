@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.view.utils.TextMessage
+import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import kotlinx.coroutines.launch
 
 class AuthEditViewModel(application: Application) : AndroidViewModel(application) {

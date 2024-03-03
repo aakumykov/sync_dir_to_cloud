@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.ext_functions
+package com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions
 
 import android.app.Activity
 import android.widget.Toast

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.menu_helper
+package com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -7,8 +7,6 @@ import android.view.MenuItem
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
-import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 
 class MenuHelper (
