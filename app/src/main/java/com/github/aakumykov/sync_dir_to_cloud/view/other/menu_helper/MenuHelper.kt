@@ -7,18 +7,20 @@ import android.view.MenuItem
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
+import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 
 class MenuHelper (
     private val context: Context,
     @ColorRes private val topLevelIconColor: Int,
     @ColorRes private val submenuIconColor: Int
 ) {
-    fun generateMenu(
-        menu: Menu,
-        customActions: Array<CustomMenuAction>?,
-        isSubmenu: Boolean = false
-    ) {
+    fun generateMenu(menu: Menu, customActions: Array<CustomMenuAction>?, isSubmenu: Boolean = false) {
+
+        MyLogger.d(TAG, "generateMenu()...")
+
         customActions?.forEach { customMenuAction ->
             addItemToMenu(menu, customMenuAction, isSubmenu).also { menu ->
                 customMenuAction.childItems?.also {
@@ -33,18 +35,22 @@ class MenuHelper (
         customMenuAction: CustomMenuAction,
         itemInSubmenu: Boolean
     ): Menu {
-
         val returnedMenu: Menu
         val menuItem: MenuItem
 
         if (null == customMenuAction.childItems) {
+            MyLogger.d(TAG, "addItemToMenu($customMenuAction)")
+
             returnedMenu = menu
             menuItem = menu.add(0, customMenuAction.id, 0, customMenuAction.title)
             menuItem.setOnMenuItemClickListener { item: MenuItem? ->
                 customMenuAction.clickAction.run()
                 true
             }
-        } else {
+        }
+        else {
+            MyLogger.d(TAG, "adding submenu")
+
             val itemId: Int = customMenuAction.id
             returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuAction.title)
             menuItem = menu.findItem(itemId)
@@ -87,20 +93,24 @@ class MenuHelper (
     }
 
 
-    /*fun updateItem(
+    fun updateItem(
         menu: Menu?,
-        @IdRes itemId: Int,
-        @DrawableRes iconRes: Int,
-        @StringRes titleRes: Int,
+        @IdRes id: Int,
+        @DrawableRes icon: Int,
+        @StringRes title: Int,
         onClickRunnable: Runnable
     ) {
-        if (null == menu) return
-        val menuItem = menu.findItem(itemId) ?: return
-        menuItem.setTitle(titleRes)
-        menuItem.setIcon(iconRes)
-        menuItem.setOnMenuItemClickListener { item: MenuItem? ->
-            onClickRunnable.run()
-            true
+        menu?.findItem(id)?.apply {
+            setTitle(title)
+            setIcon(icon)
+            setOnMenuItemClickListener {
+                onClickRunnable.run()
+                true
+            }
         }
-    }*/
+    }
+
+    companion object {
+        val TAG: String = MenuHelper::class.java.simpleName
+    }
 }

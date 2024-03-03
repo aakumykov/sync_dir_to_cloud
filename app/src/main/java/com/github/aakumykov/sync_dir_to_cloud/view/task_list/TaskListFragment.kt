@@ -9,6 +9,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
@@ -239,7 +242,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         taskListAdapter?.setList(list)
     }
 
-    override fun getCustomActions() = arrayOf(
+    private val _customActionsMutableLiveData = MutableLiveData<CustomActions>(arrayOf(
         CustomMenuAction(
             id = R.id.actionAppProperties,
             title = R.string.MENU_ITEM_app_properties,
@@ -251,7 +254,9 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
             title = R.string.MENU_ITEM_manage_external_storage,
             icon = R.drawable.ic_storage,
             clickAction = { activity?.also { StorageAccessHelper.create(it).openStorageAccessSettings() } }
-        ),
+        ))
     )
+
+    override val customActions: LiveData<Array<CustomMenuAction>> = _customActionsMutableLiveData
 }
 

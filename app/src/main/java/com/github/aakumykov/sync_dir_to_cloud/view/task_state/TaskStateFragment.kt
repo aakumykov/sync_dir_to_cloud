@@ -6,6 +6,8 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -17,8 +19,10 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
@@ -66,7 +70,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
                     listAdapter.notifyDataSetChanged()
                 }
 
-                taskStateViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::displaySyncTask)
+                taskStateViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::onTaskChanged)
             }
 
         } ?: {
@@ -125,16 +129,32 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
             .create().show()
     }
 
-    private fun displaySyncTask(syncTask: SyncTask?) {
+    private fun onTaskChanged(syncTask: SyncTask?) {
+
         if (null == syncTask)
             return
 
         binding.titleView.text = "${syncTask.sourcePath} --> ${syncTask.targetPath}"
         binding.idView.text = "(${syncTask.id})"
 
+        changeToolbarButtons(syncTask.state)
         displaySchedulingState(syncTask)
         displayExecutionState(syncTask)
         displayLastRunState(syncTask)
+    }
+
+    private fun changeToolbarButtons(state: SyncTask.State) {
+
+        val iconRes = when(state) {
+            in arrayOf(SyncTask.State.READING_SOURCE, SyncTask.State.WRITING_TARGET) -> R.drawable.ic_task_stop
+            else -> R.drawable.ic_task_start
+        }
+
+        // TODO: внедрять
+        /*MenuHelper(requireContext(), R.color.onPrimary, R.color.primary).updateItem(
+
+            R.id.actionStartStopTask,
+        )*/
     }
 
     private fun displayLastRunState(syncTask: SyncTask) {
@@ -217,11 +237,15 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
         }
     }
 
-    override fun getCustomActions(): Array<CustomMenuAction> = arrayOf(
+
+    private val _customActions = MediatorLiveData(arrayOf(
         CustomMenuAction(
             id = R.id.actionStartStopTask,
             title = R.string.MENU_ITEM_action_start_stop_task,
             icon = R.drawable.ic_task_start,
             clickAction = { taskStateViewModel.startStopTask(currentTaskId) })
-    )
+    ))
+
+    override val customActions: LiveData<CustomActions>
+        get() = _customActions
 }
