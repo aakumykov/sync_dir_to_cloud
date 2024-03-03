@@ -241,13 +241,13 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
 
     override fun getCustomActions() = arrayOf(
         CustomMenuAction(
-            itemId = R.id.actionAppProperties,
+            id = R.id.actionAppProperties,
             title = R.string.MENU_ITEM_app_properties,
             icon = R.drawable.ic_app_properties,
             clickAction = { activity?.openAppProperties() }
         ),
         CustomMenuAction(
-            itemId = R.id.actionManageExternalStorage,
+            id = R.id.actionManageExternalStorage,
             title = R.string.MENU_ITEM_manage_external_storage,
             icon = R.drawable.ic_storage,
             clickAction = { activity?.also { StorageAccessHelper.create(it).openStorageAccessSettings() } }

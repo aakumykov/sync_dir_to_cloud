@@ -39,13 +39,13 @@ class MenuHelper (
 
         if (null == customMenuAction.childItems) {
             returnedMenu = menu
-            menuItem = menu.add(0, customMenuAction.itemId, 0, customMenuAction.title)
+            menuItem = menu.add(0, customMenuAction.id, 0, customMenuAction.title)
             menuItem.setOnMenuItemClickListener { item: MenuItem? ->
                 customMenuAction.clickAction.run()
                 true
             }
         } else {
-            val itemId: Int = customMenuAction.itemId
+            val itemId: Int = customMenuAction.id
             returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuAction.title)
             menuItem = menu.findItem(itemId)
         }

@@ -5,7 +5,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 
 class CustomMenuAction(
-    @IdRes val itemId: Int,
+    @IdRes val id: Int,
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
     val alwaysVisible: Boolean = true,
