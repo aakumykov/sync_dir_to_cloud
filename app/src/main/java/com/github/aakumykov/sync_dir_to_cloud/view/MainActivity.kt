@@ -16,8 +16,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleV
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.getCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
@@ -177,7 +177,9 @@ class MainActivity : AppCompatActivity() {
     private fun updateMenu() {
         binding.toolbar.menu.apply {
             clear()
-            menuHelper.generateMenu(this, currentFragment?.getCustomActions())
+            if (currentFragment is HasCustomActions) {
+                menuHelper.generateMenu(this, (currentFragment as HasCustomActions).getCustomActions())
+            }
         }
     }
 
