@@ -90,20 +90,6 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.actionAppProperties -> {
-                openAppProperties()
-                true
-            }
-            R.id.actionManageExternalStorage -> {
-                storageAccessHelper.openStorageAccessSettings()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
 
     private fun prepareView() {
         binding = ActivityMainBinding.inflate(layoutInflater)
