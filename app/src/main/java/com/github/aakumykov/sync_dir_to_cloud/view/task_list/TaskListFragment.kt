@@ -244,15 +244,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
             itemId = R.id.actionAppProperties,
             title = R.string.MENU_ITEM_app_properties,
             icon = R.drawable.ic_app_properties,
-            clickAction = {  },
-            childItems = arrayOf(
-                CustomMenuAction(
-                    itemId = R.id.actionDelete,
-                    title = R.string.MENU_ITEM_action_delete,
-                    icon = R.drawable.ic_delete,
-                    clickAction = {},
-                )
-            )
+            clickAction = { activity?.openAppProperties() }
         ),
         CustomMenuAction(
             itemId = R.id.actionManageExternalStorage,
