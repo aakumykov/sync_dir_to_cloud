@@ -17,10 +17,12 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import kotlinx.coroutines.launch
 
-class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
+class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActions {
 
     private var _binding: FragmentTaskStateBinding? = null
     private val binding get() = _binding!!
@@ -32,6 +34,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private lateinit var listAdapter: ListViewAdapter<SyncObject>
     private val syncObjectList: MutableList<SyncObject> = mutableListOf()
+
+    private lateinit var currentTaskId: String
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,22 +55,23 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun processArguments() {
 
-        val taskId: String? = arguments?.getString(KEY_TASK_ID)
+        arguments?.getString(KEY_TASK_ID)?.also { taskId ->
 
-        if (null == taskId) {
-            showToast(R.string.there_is_no_task_id)
-            navigationViewModel.navigateBack()
-            return
-        }
+            currentTaskId = taskId
 
-        lifecycleScope.launch {
-            taskStateViewModel.getSyncObjectList(taskId).observe(viewLifecycleOwner) { list ->
-                syncObjectList.clear()
-                syncObjectList.addAll(list)
-                listAdapter.notifyDataSetChanged()
+            lifecycleScope.launch {
+                taskStateViewModel.getSyncObjectList(currentTaskId).observe(viewLifecycleOwner) { list ->
+                    syncObjectList.clear()
+                    syncObjectList.addAll(list)
+                    listAdapter.notifyDataSetChanged()
+                }
+
+                taskStateViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::displaySyncTask)
             }
 
-            taskStateViewModel.getSyncTask(taskId).observe(viewLifecycleOwner, ::displaySyncTask)
+        } ?: {
+            showToast(R.string.there_is_no_task_id)
+            navigationViewModel.navigateBack()
         }
     }
 
@@ -211,4 +216,12 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             return create(intent.getStringExtra(KEY_TASK_ID))
         }
     }
+
+    override fun getCustomActions(): Array<CustomMenuAction> = arrayOf(
+        CustomMenuAction(
+            id = R.id.actionStartStopTask,
+            title = R.string.MENU_ITEM_action_start_stop_task,
+            icon = R.drawable.ic_task_start,
+            clickAction = { taskStateViewModel.startStopTask(currentTaskId) })
+    )
 }
