@@ -3,22 +3,16 @@ package com.github.aakumykov.sync_dir_to_cloud.view
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
-import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
@@ -34,7 +28,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private var currentCustomActions: LiveData<CustomActions>? = null
+    private var currentCustomActionsLiveData: LiveData<CustomActions>? = null
+    private var currentCustomActions: CustomActions? = null
 
     private lateinit var binding: ActivityMainBinding
 
@@ -95,8 +90,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.main, menu)
-//        updateMenu()
+        updateMenu()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -137,16 +131,16 @@ class MainActivity : AppCompatActivity() {
                 super.onFragmentResumed(fm, f)
                 currentFragment = f
 //                updateMenu()
-//                subscribeToCustomActions()
+                subscribeToCustomActions()
 
-                binding.toolbar.menu.add(R.string.MENU_ITEM_app_properties).apply {
+                /*binding.toolbar.menu.add(R.string.MENU_ITEM_app_properties).apply {
                     setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                     setOnMenuItemClickListener { openAppProperties(); true }
                     ResourcesCompat.getDrawable(resources, R.drawable.ic_app_properties, theme).also {
                         it?.setTint(ResourcesCompat.getColor(resources, R.color.white, theme))
                         icon = it
                     }
-                }
+                }*/
             }
 
             override fun onFragmentPaused(fm: FragmentManager, f: Fragment) {
@@ -159,27 +153,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun subscribeToCustomActions() {
-        MyLogger.d(TAG, "------------------------------")
-        MyLogger.d(TAG, "subscribeToCustomActions(${currentFragmentName()})")
+//        MyLogger.d(TAG, "------------------------------")
+//        MyLogger.d(TAG, "subscribeToCustomActions(${currentFragmentName()})")
         if (currentFragment is HasCustomActions) {
-            currentCustomActions = (currentFragment as HasCustomActions).customActions
-            currentCustomActions?.observe(this, ::onCustomActionsChanged)
+            currentCustomActionsLiveData = (currentFragment as HasCustomActions).customActions
+            currentCustomActionsLiveData?.observe(this, ::onCustomActionsChanged)
         }
     }
 
     private fun unsubscribeFromCustomActions() {
-        MyLogger.d(TAG, "unsubscribeFromCustomActions(${currentFragmentName()})")
-        currentCustomActions?.removeObservers(this)
+//        MyLogger.d(TAG, "unsubscribeFromCustomActions(${currentFragmentName()})")
+        currentCustomActionsLiveData?.removeObservers(this)
     }
 
     private fun onCustomActionsChanged(customMenuActions: Array<CustomMenuAction>?) {
-        MyLogger.d(TAG, "onCustomActionsChanged(count: ${customMenuActions?.size}), ${currentFragmentName()}")
+//        MyLogger.d(TAG, "onCustomActionsChanged(count: ${customMenuActions?.size}), ${currentFragmentName()}")
         customMenuActions?.also {
-            binding.toolbar.menu.apply {
-                MyLogger.d(TAG, "CLEARING MENU")
-                clear()
-                menuHelper.generateMenu(this, it)
-            }
+            currentCustomActions = it
+            updateMenu()
         }
     }
 
@@ -230,11 +221,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateMenu() {
-        MyLogger.d(TAG, "updateMenu(), ${currentFragmentName()}")
-        /*binding.toolbar.menu.apply {
+//        MyLogger.d(TAG, "updateMenu(), ${currentFragmentName()}")
+        binding.toolbar.menu.apply {
             clear()
-            menuHelper.generateMenu(this, currentFragment?.getCustomActions())
-        }*/
+            menuHelper.generateMenu(this, currentCustomActions)
+        }
     }
 
 
