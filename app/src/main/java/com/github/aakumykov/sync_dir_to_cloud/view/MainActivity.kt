@@ -13,11 +13,11 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
-import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
@@ -153,11 +153,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun subscribeToCustomActions() {
-//        MyLogger.d(TAG, "------------------------------")
-//        MyLogger.d(TAG, "subscribeToCustomActions(${currentFragmentName()})")
         if (currentFragment is HasCustomActions) {
             currentCustomActionsLiveData = (currentFragment as HasCustomActions).customActions
             currentCustomActionsLiveData?.observe(this, ::onCustomActionsChanged)
+
+            (currentFragment as HasCustomActions).customActionsUpdates?.observe(this, ::onCustomActionUpdates)
         }
     }
 
@@ -167,14 +167,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onCustomActionsChanged(customMenuActions: Array<CustomMenuAction>?) {
-//        MyLogger.d(TAG, "onCustomActionsChanged(count: ${customMenuActions?.size}), ${currentFragmentName()}")
         customMenuActions?.also {
             currentCustomActions = it
             updateMenu()
         }
     }
 
-    private fun currentFragmentName(): String? = currentFragment?.javaClass?.simpleName
+    private fun onCustomActionUpdates(customActionUpdate: CustomActionUpdate?) {
+        // TODO: вкорячить menu в menuHelper
+        menuHelper.updateItem(binding.toolbar.menu, customActionUpdate)
+    }
 
 
     private fun releaseFragmentManager() {

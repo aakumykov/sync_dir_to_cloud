@@ -42,7 +42,9 @@ class MenuHelper (
             MyLogger.d(TAG, "addItemToMenu($customMenuAction)")
 
             returnedMenu = menu
+
             menuItem = menu.add(0, customMenuAction.id, 0, customMenuAction.title)
+
             menuItem.setOnMenuItemClickListener { item: MenuItem? ->
                 customMenuAction.clickAction.run()
                 true
@@ -93,18 +95,15 @@ class MenuHelper (
     }
 
 
-    fun updateItem(
-        menu: Menu?,
-        @IdRes id: Int,
-        @DrawableRes icon: Int,
-        @StringRes title: Int,
-        onClickRunnable: Runnable
-    ) {
-        menu?.findItem(id)?.apply {
-            setTitle(title)
+    fun updateItem(menu: Menu?, customActionUpdate: CustomActionUpdate?) {
+
+        if (null == menu || null === customActionUpdate)
+            return
+
+        menu.findItem(customActionUpdate.id)?.apply {
             setIcon(icon)
             setOnMenuItemClickListener {
-                onClickRunnable.run()
+                customActionUpdate.clickAction.run()
                 true
             }
         }

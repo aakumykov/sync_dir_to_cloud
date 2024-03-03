@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -19,6 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
@@ -150,11 +152,11 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
             else -> R.drawable.ic_task_start
         }
 
-        // TODO: внедрять
-        /*MenuHelper(requireContext(), R.color.onPrimary, R.color.primary).updateItem(
-
-            R.id.actionStartStopTask,
-        )*/
+        _customActionUpdates.value = CustomActionUpdate(
+            id = R.id.actionStartStopTask,
+            title = R.string.MENU_ITEM_action_start_stop_task,
+            icon = iconRes,
+            clickAction = { taskStateViewModel.startStopTask(currentTaskId) })
     }
 
     private fun displayLastRunState(syncTask: SyncTask) {
@@ -238,14 +240,18 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
     }
 
 
-    private val _customActions = MediatorLiveData(arrayOf(
+    private val _customActions = MutableLiveData(arrayOf(
         CustomMenuAction(
             id = R.id.actionStartStopTask,
             title = R.string.MENU_ITEM_action_start_stop_task,
             icon = R.drawable.ic_task_start,
             clickAction = { taskStateViewModel.startStopTask(currentTaskId) })
     ))
-
     override val customActions: LiveData<CustomActions>
         get() = _customActions
+
+
+    private val _customActionUpdates = MutableLiveData<CustomActionUpdate>()
+    override val customActionsUpdates: LiveData<CustomActionUpdate>
+        get() = _customActionUpdates
 }

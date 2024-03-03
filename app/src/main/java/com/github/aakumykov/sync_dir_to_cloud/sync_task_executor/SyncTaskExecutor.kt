@@ -65,7 +65,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
             syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
-//            writeToTarget()
+            writeToTarget()
 
             syncTaskStateChanger.changeExecutionState(taskId, SyncState.SUCCESS)
         }

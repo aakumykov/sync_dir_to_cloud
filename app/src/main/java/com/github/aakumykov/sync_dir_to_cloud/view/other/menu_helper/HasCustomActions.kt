@@ -6,4 +6,5 @@ typealias CustomActions = Array<CustomMenuAction>
 
 interface HasCustomActions {
     val customActions: LiveData<CustomActions>
+    val customActionsUpdates: LiveData<CustomActionUpdate>?
 }

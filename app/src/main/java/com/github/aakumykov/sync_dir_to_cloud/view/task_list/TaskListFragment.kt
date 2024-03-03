@@ -25,6 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
@@ -258,5 +259,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
     )
 
     override val customActions: LiveData<Array<CustomMenuAction>> = _customActionsMutableLiveData
+
+    override val customActionsUpdates: LiveData<CustomActionUpdate>? = null
 }
 
