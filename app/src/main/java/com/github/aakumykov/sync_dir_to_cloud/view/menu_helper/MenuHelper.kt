@@ -13,25 +13,29 @@ import androidx.core.content.res.ResourcesCompat
 
 class MenuHelper (
     private val context: Context,
-    @ColorRes private val menuIconColor: Int,
+    @ColorRes private val topLevelIconColor: Int,
     @ColorRes private val submenuIconColor: Int
 ) {
     fun generateMenu(
         menu: Menu,
-        customActions: Array<CustomMenuAction>,
-        isSubmenu: Boolean
+        customActions: Array<CustomMenuAction>?,
+        isSubmenu: Boolean = false
     ) {
+        if (null == customActions)
+            return
+
         for (customMenuAction in customActions) {
-            if (null != customMenuAction.childActions) {
-                val subMenu = addItemToMenu(context, menu, customMenuAction, false)
-                generateMenu(subMenu, customMenuAction.childActions, true)
-            } else addItemToMenu(context, menu, customMenuAction, isSubmenu)
+            if (null != customMenuAction.childItems) {
+                val subMenu = addItemToMenu(menu, customMenuAction, false)
+                generateMenu(subMenu, customMenuAction.childItems, true)
+            }
+            else
+                addItemToMenu(menu, customMenuAction, isSubmenu)
         }
     }
 
 
     private fun addItemToMenu(
-        context: Context,
         menu: Menu,
         customMenuAction: CustomMenuAction,
         itemInSubmenu: Boolean
@@ -39,23 +43,23 @@ class MenuHelper (
 
         val returnedMenu: Menu
         val menuItem: MenuItem
-        val isSubmenu = null != customMenuAction.childActions
+        val isSubmenu = null != customMenuAction.childItems
 
         if (isSubmenu) {
             val itemId: Int = customMenuAction.itemId
-            returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuAction.titleRes)
+            returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuAction.title)
             menuItem = menu.findItem(itemId)
         } else {
             returnedMenu = menu
-            menuItem = menu.add(0, customMenuAction.itemId, 0, customMenuAction.titleRes)
+            menuItem = menu.add(0, customMenuAction.itemId, 0, customMenuAction.title)
             menuItem.setOnMenuItemClickListener { item: MenuItem? ->
-                customMenuAction.clickRunnable.run()
+                customMenuAction.clickAction.run()
                 true
             }
         }
 
-        if (itemInSubmenu) menuItem.icon = makeSubmenuIcon(customMenuAction.iconRes)
-        else menuItem.icon = makeTopLevelIcon(customMenuAction.iconRes)
+        if (itemInSubmenu) menuItem.icon = makeSubmenuIcon(customMenuAction.icon)
+        else menuItem.icon = makeTopLevelIcon(customMenuAction.icon)
 
         menuItem.setShowAsAction(
             if (customMenuAction.alwaysVisible) MenuItem.SHOW_AS_ACTION_ALWAYS
@@ -67,8 +71,9 @@ class MenuHelper (
 
 
     private fun makeTopLevelIcon(@DrawableRes iconRes: Int): Drawable? {
-        return colorizeIcon(iconRes, getColor(menuIconColor))
+        return colorizeIcon(iconRes, getColor(topLevelIconColor))
     }
+
 
     private fun makeSubmenuIcon(@DrawableRes iconRes: Int): Drawable? {
         return colorizeIcon(iconRes, getColor(submenuIconColor))
@@ -85,7 +90,12 @@ class MenuHelper (
     }
 
 
-    fun updateItem(
+    private fun getColor(@ColorRes colorRes: Int): Int {
+        return ResourcesCompat.getColor(context.resources, colorRes, context.theme)
+    }
+
+
+    /*fun updateItem(
         menu: Menu?,
         @IdRes itemId: Int,
         @DrawableRes iconRes: Int,
@@ -100,10 +110,5 @@ class MenuHelper (
             onClickRunnable.run()
             true
         }
-    }
-
-
-    private fun getColor(@ColorRes colorRes: Int): Int {
-        return ResourcesCompat.getColor(context.resources, colorRes, context.theme)
-    }
+    }*/
 }

@@ -1,14 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.menu_helper
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 
 class CustomMenuAction(
-    val itemId: Int,
-    @DrawableRes val iconRes: Int,
-    @StringRes val titleRes: Int,
-    val alwaysVisible: Boolean,
-    val clickRunnable: Runnable,
-    val longClickRunnable: Runnable? = null,
-    val childActions: Array<CustomMenuAction>? = null
+    @IdRes val itemId: Int,
+    @StringRes val title: Int,
+    @DrawableRes val icon: Int,
+    val alwaysVisible: Boolean = true,
+    val clickAction: Runnable,
+    val longClickAction: Runnable? = null,
+    val childItems: Array<CustomMenuAction>? = null
 )

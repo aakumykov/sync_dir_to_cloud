@@ -18,8 +18,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleV
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.MenuHelper
+import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.getCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var storageAccessHelper: StorageAccessHelper
     private val storageAccessViewModel: StorageAccessViewModel by viewModels()
 
-    private val menuHelper: MenuHelper by lazy { MenuHelper(this@MainActivity, R.color.primary, R.color.onPrimary) }
+    private val menuHelper: MenuHelper by lazy { MenuHelper(this@MainActivity, R.color.onPrimary, R.color.primary) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
+//        menuInflater.inflate(R.menu.main, menu)
         updateMenu()
         return super.onCreateOptionsMenu(menu)
     }
@@ -191,13 +191,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateMenu() {
-        with(binding.toolbar.menu) {
+        binding.toolbar.menu.apply {
             clear()
-            if (currentFragment is HasCustomActions) {
-                (currentFragment as HasCustomActions).getCustomActions().also { customActions ->
-                    menuHelper.generateMenu(this@with, customActions, false)
-                }
-            }
+            menuHelper.generateMenu(this, currentFragment?.getCustomActions())
         }
     }
 

@@ -6,38 +6,36 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.widget.PopupMenuCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
-import androidx.work.Operation
-import androidx.work.WorkManager
-import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
 import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.CustomMenuAction
+import com.github.aakumykov.sync_dir_to_cloud.view.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import permissions.dispatcher.ktx.constructPermissionsRequest
 
-class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallback,
-    PopupMenu.OnMenuItemClickListener {
-
+class TaskListFragment : Fragment(R.layout.fragment_task_list),
+    ItemClickCallback,
+    PopupMenu.OnMenuItemClickListener,
+    HasCustomActions
+{
     companion object {
         fun create() : TaskListFragment = TaskListFragment()
     }
@@ -241,5 +239,19 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), ItemClickCallbac
         taskListAdapter?.setList(list)
     }
 
+    override fun getCustomActions() = arrayOf(
+        CustomMenuAction(
+            itemId = R.id.actionAppProperties,
+            title = R.string.MENU_ITEM_app_properties,
+            icon = R.drawable.ic_app_properties,
+            clickAction = { activity?.openAppProperties() }
+        ),
+        CustomMenuAction(
+            itemId = R.id.actionManageExternalStorage,
+            title = R.string.MENU_ITEM_manage_external_storage,
+            icon = R.drawable.ic_storage,
+            clickAction = { activity?.also { StorageAccessHelper.create(it).openStorageAccessSettings() } }
+        ),
+    )
 }
 
