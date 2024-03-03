@@ -5,8 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
@@ -15,6 +18,7 @@ import androidx.lifecycle.Observer
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
+import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
@@ -133,7 +137,16 @@ class MainActivity : AppCompatActivity() {
                 super.onFragmentResumed(fm, f)
                 currentFragment = f
 //                updateMenu()
-                subscribeToCustomActions()
+//                subscribeToCustomActions()
+
+                binding.toolbar.menu.add(R.string.MENU_ITEM_app_properties).apply {
+                    setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    setOnMenuItemClickListener { openAppProperties(); true }
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_app_properties, theme).also {
+                        it?.setTint(ResourcesCompat.getColor(resources, R.color.white, theme))
+                        icon = it
+                    }
+                }
             }
 
             override fun onFragmentPaused(fm: FragmentManager, f: Fragment) {
