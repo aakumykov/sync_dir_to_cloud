@@ -43,19 +43,18 @@ class MenuHelper (
 
         val returnedMenu: Menu
         val menuItem: MenuItem
-        val isSubmenu = null != customMenuAction.childItems
 
-        if (isSubmenu) {
-            val itemId: Int = customMenuAction.itemId
-            returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuAction.title)
-            menuItem = menu.findItem(itemId)
-        } else {
+        if (null == customMenuAction.childItems) {
             returnedMenu = menu
             menuItem = menu.add(0, customMenuAction.itemId, 0, customMenuAction.title)
             menuItem.setOnMenuItemClickListener { item: MenuItem? ->
                 customMenuAction.clickAction.run()
                 true
             }
+        } else {
+            val itemId: Int = customMenuAction.itemId
+            returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuAction.title)
+            menuItem = menu.findItem(itemId)
         }
 
         if (itemInSubmenu) menuItem.icon = makeSubmenuIcon(customMenuAction.icon)
