@@ -21,19 +21,14 @@ class MenuHelper (
         customActions: Array<CustomMenuAction>?,
         isSubmenu: Boolean = false
     ) {
-        if (null == customActions)
-            return
-
-        for (customMenuAction in customActions) {
-            if (null != customMenuAction.childItems) {
-                val subMenu = addItemToMenu(menu, customMenuAction, false)
-                generateMenu(subMenu, customMenuAction.childItems, true)
+        customActions?.forEach { customMenuAction ->
+            addItemToMenu(menu, customMenuAction, isSubmenu).also { menu ->
+                customMenuAction.childItems?.also {
+                    generateMenu(menu, customMenuAction.childItems, true)
+                }
             }
-            else
-                addItemToMenu(menu, customMenuAction, isSubmenu)
         }
     }
-
 
     private fun addItemToMenu(
         menu: Menu,
