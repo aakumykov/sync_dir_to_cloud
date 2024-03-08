@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 
         onBackStackChangedListener = OnBackStackChangedListener {
 
-            binding.toolbar.menu.clear()
+            clearMenu()
 
             if (0 == supportFragmentManager.backStackEntryCount) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
         fragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                 super.onFragmentResumed(fm, f)
+                clearMenu()
             }
 
             override fun onFragmentPaused(fm: FragmentManager, f: Fragment) {
@@ -147,6 +148,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun clearMenu() {
+        binding.toolbar.menu.clear()
+    }
 
 
     private fun releaseFragmentManager() {
