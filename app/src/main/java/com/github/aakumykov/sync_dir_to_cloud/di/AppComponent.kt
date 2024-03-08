@@ -30,6 +30,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import dagger.Component
@@ -85,4 +86,6 @@ interface AppComponent {
     fun getSyncTaskStateChanger(): SyncTaskStateChanger
 
     fun getSyncTaskRunningTimeUpdater(): SyncTaskRunningTimeUpdater
+
+    fun getSyncTaskStateDAO(): SyncTaskStateDAO
 }

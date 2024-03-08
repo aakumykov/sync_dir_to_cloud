@@ -7,9 +7,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
@@ -17,15 +17,16 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
+import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActions {
@@ -37,6 +38,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
     private lateinit var taskStateViewModel: TaskStateViewModel // эту получаю от Dagger-а
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
+    private val menuStateViewModel: MenuStateViewModel by activityViewModels()
 
     private lateinit var listAdapter: ListViewAdapter<SyncObject>
     private val syncObjectList: MutableList<SyncObject> = mutableListOf()
@@ -139,24 +141,33 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
         binding.titleView.text = "${syncTask.sourcePath} --> ${syncTask.targetPath}"
         binding.idView.text = "(${syncTask.id})"
 
-        changeToolbarButtons(syncTask.state)
+        changeToolbarButtons(syncTask.syncState)
+
         displaySchedulingState(syncTask)
         displayExecutionState(syncTask)
         displayLastRunState(syncTask)
     }
 
-    private fun changeToolbarButtons(state: SyncTask.State) {
-
-        val iconRes = when(state) {
-            in arrayOf(SyncTask.State.READING_SOURCE, SyncTask.State.WRITING_TARGET) -> R.drawable.ic_task_stop
-            else -> R.drawable.ic_task_start
-        }
-
-        _customActionUpdates.value = CustomActionUpdate(
-            id = R.id.actionStartStopTask,
-            title = R.string.MENU_ITEM_action_start_stop_task,
-            icon = iconRes,
-            clickAction = { taskStateViewModel.startStopTask(currentTaskId) })
+    private fun changeToolbarButtons(syncState: SyncState) {
+        menuStateViewModel.sendMenuState(arrayOf(
+            CustomMenuItem(
+                id = R.id.actionStartStopTask,
+                title = R.string.MENU_ITEM_action_start_stop_task,
+                icon = if (SyncState.RUNNING == syncState) R.drawable.ic_task_stop_toolbar else R.drawable.ic_task_start_toolbar,
+                action = { taskStateViewModel.startStopTask(currentTaskId) }
+            ),
+            CustomMenuItem(
+                id = R.id.actionProbeChangeTaskState,
+                title = R.string.MENU_ITEM_action_probe_change_task_state,
+                icon = R.drawable.action_probe_change_task_state,
+                action = {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        App.getAppComponent().getSyncTaskStateDAO()
+                            .setSyncState(currentTaskId, SyncState.RUNNING)
+                    }
+                }
+            )
+        ))
     }
 
     private fun displayLastRunState(syncTask: SyncTask) {
@@ -241,11 +252,11 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
 
 
     private val _customActions = MutableLiveData(arrayOf(
-        CustomMenuAction(
+        CustomMenuItem(
             id = R.id.actionStartStopTask,
             title = R.string.MENU_ITEM_action_start_stop_task,
-            icon = R.drawable.ic_task_start,
-            clickAction = { taskStateViewModel.startStopTask(currentTaskId) })
+            icon = R.drawable.ic_task_start_toolbar,
+            action = { taskStateViewModel.startStopTask(currentTaskId) })
     ))
     override val customActions: LiveData<CustomActions>
         get() = _customActions

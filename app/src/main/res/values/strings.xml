@@ -81,4 +81,5 @@
     <string name="DIALOG_BUTTON_close">Закрыть</string>
     <string name="EXECUTION_STATE_success">Синхронизировано</string>
     <string name="MENU_ITEM_action_start_stop_task">Запустить или остановить задачу</string>
+    <string name="MENU_ITEM_action_probe_change_task_state">Пробное изменение статуса задачи</string>
 </resources>

@@ -4,7 +4,7 @@ import android.view.View
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 interface ItemClickCallback {
-//    fun onProbeRunClicked(taskId: String)
+    fun onProbeRunClicked(taskId: String)
 //    fun onProbeRunLongClicked(taskId: String)
 
     fun onTaskEditClicked(taskId: String)

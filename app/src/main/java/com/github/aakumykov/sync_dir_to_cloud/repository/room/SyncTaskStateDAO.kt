@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Dao
@@ -16,4 +17,10 @@ interface SyncTaskStateDAO {
 
     @Query("UPDATE sync_tasks SET is_enabled = :isEnabled WHERE id = :taskId")
     suspend fun setEnabled(taskId: String, isEnabled: Boolean)
+
+    @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
+    suspend fun getState(taskId: String): SyncTask.State
+
+    @Query("UPDATE sync_tasks SET sync_state = :syncState WHERE id = :taskId")
+    suspend fun setSyncState(taskId: String, syncState: SyncState)
 }

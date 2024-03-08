@@ -5,16 +5,15 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 
 // TODO: переименовать в CustomMenuItem
-class CustomMenuAction(
+class CustomMenuItem (
     @IdRes val id: Int,
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
+    val action: Runnable,
     val alwaysVisible: Boolean = true,
-    val clickAction: Runnable,
-    val longClickAction: Runnable? = null, // TODO: убрать
-    val childItems: Array<CustomMenuAction>? = null
+    val childItems: Array<CustomMenuItem>? = null
 ) {
-    override fun toString(): String = "CustomMenuAction{${title}}"
+    override fun toString(): String = "CustomMenuItem{${title}}"
 }
 
 

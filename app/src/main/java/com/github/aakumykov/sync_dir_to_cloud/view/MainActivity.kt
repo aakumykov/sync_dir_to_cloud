@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -19,7 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
@@ -28,16 +29,12 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private var currentCustomActionsLiveData: LiveData<CustomActions>? = null
-    private var currentCustomActions: CustomActions? = null
-
     private lateinit var binding: ActivityMainBinding
 
     private val navigationViewModel: NavigationViewModel by viewModels()
     private val pageTitleViewModel: PageTitleViewModel by viewModels()
+    private val menuStateViewModel: MenuStateViewModel by viewModels()
 
-    private lateinit var fragmentManager: FragmentManager
-    private var currentFragment: Fragment? = null
     private lateinit var onBackStackChangedListener: OnBackStackChangedListener
     private lateinit var fragmentLifecycleCallbacks: FragmentManager.FragmentLifecycleCallbacks
 
@@ -68,12 +65,10 @@ class MainActivity : AppCompatActivity() {
         loadInitialFragment(intent)
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
         releaseFragmentManager()
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         navigationViewModel.navigateBack()
@@ -90,7 +85,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        updateMenu()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -104,15 +98,29 @@ class MainActivity : AppCompatActivity() {
     private fun prepareViewModels() {
         navigationViewModel.getNavigationTargetEvents().observe(this, this::onNewNavTarget)
         pageTitleViewModel.getPageTitle().observe(this, this::onPageTitleChanged)
+        menuStateViewModel.menuState.observe(this, this::onMenuStateChanged)
+    }
+
+    private fun onMenuStateChanged(menuState: MenuState) {
+        binding.toolbar.menu.also { menu ->
+//            menuHelper.generateMenu(it, menuState, false)
+            menuState.forEach { customMenuItem ->
+                menu.add(0, customMenuItem.id, 0, customMenuItem.title).also { menuItem ->
+                    menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    menuItem.setIcon(customMenuItem.icon)
+                    menuItem.setOnMenuItemClickListener { customMenuItem.action.run(); true }
+                }
+            }
+        }
     }
 
     private fun prepareFragmentManager() {
 
-        fragmentManager = supportFragmentManager
-
-
         onBackStackChangedListener = OnBackStackChangedListener {
-            if (0 == fragmentManager.backStackEntryCount) {
+
+            binding.toolbar.menu.clear()
+
+            if (0 == supportFragmentManager.backStackEntryCount) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
             }
             else {
@@ -122,66 +130,28 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }.also {
-            fragmentManager.addOnBackStackChangedListener(it)
+            supportFragmentManager.addOnBackStackChangedListener(it)
         }
 
 
         fragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                 super.onFragmentResumed(fm, f)
-                currentFragment = f
-//                updateMenu()
-                subscribeToCustomActions()
-
-                /*binding.toolbar.menu.add(R.string.MENU_ITEM_app_properties).apply {
-                    setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                    setOnMenuItemClickListener { openAppProperties(); true }
-                    ResourcesCompat.getDrawable(resources, R.drawable.ic_app_properties, theme).also {
-                        it?.setTint(ResourcesCompat.getColor(resources, R.color.white, theme))
-                        icon = it
-                    }
-                }*/
             }
 
             override fun onFragmentPaused(fm: FragmentManager, f: Fragment) {
                 super.onFragmentPaused(fm, f)
-                unsubscribeFromCustomActions()
             }
         }.also {
-            fragmentManager.registerFragmentLifecycleCallbacks(it, false)
+            supportFragmentManager.registerFragmentLifecycleCallbacks(it, false)
         }
     }
 
-    private fun subscribeToCustomActions() {
-        if (currentFragment is HasCustomActions) {
-            currentCustomActionsLiveData = (currentFragment as HasCustomActions).customActions
-            currentCustomActionsLiveData?.observe(this, ::onCustomActionsChanged)
-
-            (currentFragment as HasCustomActions).customActionsUpdates?.observe(this, ::onCustomActionUpdates)
-        }
-    }
-
-    private fun unsubscribeFromCustomActions() {
-//        MyLogger.d(TAG, "unsubscribeFromCustomActions(${currentFragmentName()})")
-        currentCustomActionsLiveData?.removeObservers(this)
-    }
-
-    private fun onCustomActionsChanged(customMenuActions: Array<CustomMenuAction>?) {
-        customMenuActions?.also {
-            currentCustomActions = it
-            updateMenu()
-        }
-    }
-
-    private fun onCustomActionUpdates(customActionUpdate: CustomActionUpdate?) {
-        // TODO: вкорячить menu в menuHelper
-        menuHelper.updateItem(binding.toolbar.menu, customActionUpdate)
-    }
 
 
     private fun releaseFragmentManager() {
-        fragmentManager.removeOnBackStackChangedListener(onBackStackChangedListener)
-        fragmentManager.unregisterFragmentLifecycleCallbacks(fragmentLifecycleCallbacks)
+        supportFragmentManager.removeOnBackStackChangedListener(onBackStackChangedListener)
+        supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentLifecycleCallbacks)
     }
 
 
@@ -202,16 +172,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setFragment(fragment: Fragment) {
 
-        fragmentManager.clearBackStack(DEFAULT_BACK_STACK_NAME)
+        // Не удалять "as FragmentManager"
+        (supportFragmentManager as FragmentManager).clearBackStack(DEFAULT_BACK_STACK_NAME)
 
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
             .setReorderingAllowed(false)
             .replace(R.id.fragmentContainerView, fragment, null)
             .commitNow()
     }
 
     private fun loadFragment(fragment: Fragment) {
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
             .addToBackStack(DEFAULT_BACK_STACK_NAME)
             .setReorderingAllowed(true)
             .replace(R.id.fragmentContainerView, fragment)
@@ -219,15 +190,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun returnToPrevFragment() {
-        fragmentManager.popBackStack()
+        supportFragmentManager.popBackStack()
     }
 
     private fun updateMenu() {
-//        MyLogger.d(TAG, "updateMenu(), ${currentFragmentName()}")
-        binding.toolbar.menu.apply {
-            clear()
-            menuHelper.generateMenu(this, currentCustomActions)
-        }
+
     }
 
 

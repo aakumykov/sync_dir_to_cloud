@@ -14,24 +14,29 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuAction
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.ItemClickCallback
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import permissions.dispatcher.ktx.constructPermissionsRequest
 
@@ -75,22 +80,29 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         super.onDestroyView()
     }
 
-/*
+
     override fun onProbeRunClicked(taskId: String) {
 
         lifecycleScope.launch (Dispatchers.IO) {
 
-            WorkManager.getInstance(requireContext())
+            /*WorkManager.getInstance(requireContext())
                 .beginUniqueWork(
                     probeTaskId(taskId),
                     ExistingWorkPolicy.KEEP,
                     oneTimeWorkRequest(taskId)
                 )
-                .enqueue()
+                .enqueue()*/
+
+            val currentState = App.getAppComponent().getSyncTaskStateDAO().getState(taskId)
+
+            App.getAppComponent().getSyncTaskStateDAO().setStateSuspend(taskId, when(currentState) {
+                SyncTask.State.IDLE -> SyncTask.State.WRITING_TARGET
+                else -> SyncTask.State.IDLE
+            })
         }
     }
 
-    override fun onProbeRunLongClicked(taskId: String) {
+/*    override fun onProbeRunLongClicked(taskId: String) {
         WorkManager.getInstance(requireContext())
                 .cancelUniqueWork(probeTaskId(taskId))
                 .state.observe(viewLifecycleOwner) { operationState ->
@@ -244,21 +256,21 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
     }
 
     private val _customActionsMutableLiveData = MutableLiveData<CustomActions>(arrayOf(
-        CustomMenuAction(
+        CustomMenuItem(
             id = R.id.actionAppProperties,
             title = R.string.MENU_ITEM_app_properties,
             icon = R.drawable.ic_app_properties,
-            clickAction = { activity?.openAppProperties() }
+            action = { activity?.openAppProperties() }
         ),
-        CustomMenuAction(
+        CustomMenuItem(
             id = R.id.actionManageExternalStorage,
             title = R.string.MENU_ITEM_manage_external_storage,
             icon = R.drawable.ic_storage,
-            clickAction = { activity?.also { StorageAccessHelper.create(it).openStorageAccessSettings() } }
+            action = { activity?.also { StorageAccessHelper.create(it).openStorageAccessSettings() } }
         ))
     )
 
-    override val customActions: LiveData<Array<CustomMenuAction>> = _customActionsMutableLiveData
+    override val customActions: LiveData<Array<CustomMenuItem>> = _customActionsMutableLiveData
 
     override val customActionsUpdates: LiveData<CustomActionUpdate>? = null
 }

@@ -7,8 +7,6 @@ import android.view.MenuItem
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
-import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 
@@ -17,7 +15,7 @@ class MenuHelper (
     @ColorRes private val topLevelIconColor: Int,
     @ColorRes private val submenuIconColor: Int
 ) {
-    fun generateMenu(menu: Menu, customActions: Array<CustomMenuAction>?, isSubmenu: Boolean = false) {
+    fun generateMenu(menu: Menu, customActions: Array<CustomMenuItem>?, isSubmenu: Boolean = false) {
 
         MyLogger.d(TAG, "generateMenu()...")
 
@@ -32,37 +30,37 @@ class MenuHelper (
 
     private fun addItemToMenu(
         menu: Menu,
-        customMenuAction: CustomMenuAction,
+        customMenuItem: CustomMenuItem,
         itemInSubmenu: Boolean
     ): Menu {
         val returnedMenu: Menu
         val menuItem: MenuItem
 
-        if (null == customMenuAction.childItems) {
-            MyLogger.d(TAG, "addItemToMenu($customMenuAction)")
+        if (null == customMenuItem.childItems) {
+            MyLogger.d(TAG, "addItemToMenu($customMenuItem)")
 
             returnedMenu = menu
 
-            menuItem = menu.add(0, customMenuAction.id, 0, customMenuAction.title)
+            menuItem = menu.add(0, customMenuItem.id, 0, customMenuItem.title)
 
             menuItem.setOnMenuItemClickListener { item: MenuItem? ->
-                customMenuAction.clickAction.run()
+                customMenuItem.action.run()
                 true
             }
         }
         else {
             MyLogger.d(TAG, "adding submenu")
 
-            val itemId: Int = customMenuAction.id
-            returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuAction.title)
+            val itemId: Int = customMenuItem.id
+            returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuItem.title)
             menuItem = menu.findItem(itemId)
         }
 
-        if (itemInSubmenu) menuItem.icon = makeSubmenuIcon(customMenuAction.icon)
-        else menuItem.icon = makeTopLevelIcon(customMenuAction.icon)
+        if (itemInSubmenu) menuItem.icon = makeSubmenuIcon(customMenuItem.icon)
+        else menuItem.icon = makeTopLevelIcon(customMenuItem.icon)
 
         menuItem.setShowAsAction(
-            if (customMenuAction.alwaysVisible) MenuItem.SHOW_AS_ACTION_ALWAYS
+            if (customMenuItem.alwaysVisible) MenuItem.SHOW_AS_ACTION_ALWAYS
             else MenuItem.SHOW_AS_ACTION_NEVER
         )
 
@@ -80,10 +78,7 @@ class MenuHelper (
     }
 
 
-    private fun colorizeIcon(
-        @DrawableRes iconRes: Int,
-        @ColorInt color: Int
-    ): Drawable? {
+    private fun colorizeIcon(@DrawableRes iconRes: Int, @ColorInt color: Int): Drawable? {
         val icon = ResourcesCompat.getDrawable(context.resources, iconRes, context.theme)
         icon?.setTint(color)
         return icon
@@ -100,9 +95,9 @@ class MenuHelper (
         if (null == menu || null === customActionUpdate)
             return
 
-        menu.findItem(customActionUpdate.id)?.apply {
-            setIcon(icon)
-            setOnMenuItemClickListener {
+        menu.findItem(customActionUpdate.id)?.also { menuItem ->
+            menuItem.setIcon(customActionUpdate.icon)
+            menuItem.setOnMenuItemClickListener {
                 customActionUpdate.clickAction.run()
                 true
             }
