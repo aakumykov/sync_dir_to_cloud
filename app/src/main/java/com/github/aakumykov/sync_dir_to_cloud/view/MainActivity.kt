@@ -55,7 +55,10 @@ class MainActivity : AppCompatActivity() {
         prepareButtons()
         prepareViewModels()
         prepareFragmentManager()
+    }
 
+    override fun onStart() {
+        super.onStart()
         createProbeMenu()
     }
 
