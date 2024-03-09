@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMain2Binding
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.probe_first_fragment.ProbeFirstFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 
 class MainActivity2 : AppCompatActivity(){
 
@@ -24,7 +25,8 @@ class MainActivity2 : AppCompatActivity(){
         menuStateViewModel.menuState.observe(this, ::onMenuStateChanged)
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainerView2, ProbeFirstFragment.create(), null)
+            .setReorderingAllowed(true)
+            .add(R.id.fragmentContainerView2, TaskListFragment.create(), null)
             .commitNow()
     }
 
