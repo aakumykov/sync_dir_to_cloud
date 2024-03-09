@@ -34,8 +34,6 @@
                 android:value="" />
         </activity>
 
-        <activity android:exported="true" android:name="com.github.aakumykov.sync_dir_to_cloud.view.MainActivity2" />
-
     </application>
 
 </manifest>

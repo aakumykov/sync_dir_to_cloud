@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -13,15 +12,12 @@ import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
-import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
-import com.github.aakumykov.sync_dir_to_cloud.view.probe_first_fragment.ProbeFirstFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
@@ -53,8 +49,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         prepareLayout()
-        prepareViewModels()
         prepareFragmentManager()
+
+        subscribeToPageTitle()
+        subscribeToPageNavigation()
+        // Подписка на меню производится в onCreateOptionsMenu()
     }
 
 
@@ -68,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         releaseFragmentManager()
     }
+
 
     override fun onSupportNavigateUp(): Boolean {
         navigationViewModel.navigateBack()
@@ -88,49 +88,52 @@ class MainActivity : AppCompatActivity() {
     private fun prepareLayout() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.toolbar)
     }
 
-    private fun prepareViewModels() {
-        navigationViewModel.getNavigationTargetEvents().observe(this, this::onNewNavTarget)
+    private fun subscribeToPageTitle() {
         pageTitleViewModel.getPageTitle().observe(this, this::onPageTitleChanged)
+    }
+
+    private fun subscribeToPageNavigation() {
+        navigationViewModel.getNavigationTargetEvents().observe(this, this::onNewNavTarget)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        subscribeToMenuState()
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun subscribeToMenuState() {
         menuStateViewModel.menuState.observe(this, this::onMenuStateChanged)
     }
 
     private fun onMenuStateChanged(menuState: MenuState) {
+        updateHomeIcon()
         binding.toolbar.menu.also { menu ->
             menu.clear()
             menuHelper.generateMenu(menu, menuState.menuItems, false)
-            /*menuState.menuItems.forEach { customMenuItem ->
-                menu.add(0, customMenuItem.id, 0, customMenuItem.title).also { menuItem ->
-                    menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                    menuItem.setIcon(customMenuItem.icon)
-                    menuItem.setOnMenuItemClickListener { customMenuItem.action.run(); true }
-                }
-            }*/
         }
     }
 
     private fun prepareFragmentManager() {
 
         onBackStackChangedListener = OnBackStackChangedListener {
-
-            if (0 == supportFragmentManager.backStackEntryCount) {
-//                supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                binding.toolbar.navigationIcon = null
-            }
-            else {
-//                supportActionBar?.apply {
-//                    setDisplayHomeAsUpEnabled(true)
-//                }
-                binding.toolbar.setNavigationIcon(R.drawable.ic_page_back)
-                binding.toolbar.menu.findItem(android.R.id.home)?.setOnMenuItemClickListener {
-                    navigationViewModel.navigateBack()
-                    true
-                }
-            }
+            updateHomeIcon()
         }.also {
             supportFragmentManager.addOnBackStackChangedListener(it)
+        }
+    }
+
+    private fun updateHomeIcon() {
+        supportActionBar?.also { actionBar ->
+            if (0 == supportFragmentManager.backStackEntryCount) {
+                actionBar.setDisplayHomeAsUpEnabled(false)
+            }
+            else {
+                actionBar.setDisplayHomeAsUpEnabled(true)
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_page_back)
+            }
         }
     }
 
