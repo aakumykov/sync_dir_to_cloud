@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -34,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     private val menuStateViewModel: MenuStateViewModel by viewModels()
 
     private lateinit var onBackStackChangedListener: OnBackStackChangedListener
-    private lateinit var fragmentLifecycleCallbacks: FragmentManager.FragmentLifecycleCallbacks
 
     private lateinit var storageAccessHelper: StorageAccessHelper
     private val storageAccessViewModel: StorageAccessViewModel by viewModels()
@@ -53,38 +53,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         prepareLayout()
-        prepareButtons()
         prepareViewModels()
-//        prepareFragmentManager()
-
-//        createProbeMenu()
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainerView, ProbeFirstFragment.create(), null)
-            .commit()
+        prepareFragmentManager()
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        createProbeMenu()
-        return super.onCreateOptionsMenu(menu)
-    }
-
-
-    private fun prepareButtons() {
-        binding.generateMenuButton.setOnClickListener {
-            createProbeMenu()
-        }
-    }
-
-    private fun createProbeMenu() {
-        menuHelper.generateMenu(
-            binding.toolbar.menu,
-            arrayOf(
-                CustomMenuItem(R.id.actionAppProperties, R.string.MENU_ITEM_app_properties, R.drawable.ic_app_properties, { openAppProperties() })
-            )
-        )
-    }
 
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
@@ -116,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     private fun prepareLayout() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
+//        setSupportActionBar(binding.toolbar)
     }
 
     private fun prepareViewModels() {
@@ -144,12 +116,17 @@ class MainActivity : AppCompatActivity() {
         onBackStackChangedListener = OnBackStackChangedListener {
 
             if (0 == supportFragmentManager.backStackEntryCount) {
-                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+//                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                binding.toolbar.navigationIcon = null
             }
             else {
-                supportActionBar?.apply {
-                    setDisplayHomeAsUpEnabled(true)
-                    setHomeAsUpIndicator(R.drawable.ic_page_back)
+//                supportActionBar?.apply {
+//                    setDisplayHomeAsUpEnabled(true)
+//                }
+                binding.toolbar.setNavigationIcon(R.drawable.ic_page_back)
+                binding.toolbar.menu.findItem(android.R.id.home)?.setOnMenuItemClickListener {
+                    navigationViewModel.navigateBack()
+                    true
                 }
             }
         }.also {
@@ -160,13 +137,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun releaseFragmentManager() {
         supportFragmentManager.removeOnBackStackChangedListener(onBackStackChangedListener)
-        supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentLifecycleCallbacks)
     }
 
 
 
     private fun onPageTitleChanged(title: String) {
-        setTitle(title)
+        binding.toolbar.title = title
     }
 
     private fun onNewNavTarget(navTarget: NavTarget) {
