@@ -7,6 +7,15 @@
     android:orientation="vertical"
     tools:context=".view.MainActivity">
 
+    <Button
+        android:id="@+id/generateMenuButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:backgroundTint="#4FC3F7"
+        android:layout_marginHorizontal="4dp"
+        android:text="Создать меню" />
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

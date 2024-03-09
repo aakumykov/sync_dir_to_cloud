@@ -15,7 +15,7 @@ class MenuHelper (
     @ColorRes private val topLevelIconColor: Int,
     @ColorRes private val submenuIconColor: Int
 ) {
-    fun generateMenu(menu: Menu, customActions: Array<CustomMenuItem>?, isSubmenu: Boolean = false) {
+    fun generateMenu(menu: Menu, customActions: Array<out CustomMenuItem>?, isSubmenu: Boolean = false) {
 
         MyLogger.d(TAG, "generateMenu()...")
 

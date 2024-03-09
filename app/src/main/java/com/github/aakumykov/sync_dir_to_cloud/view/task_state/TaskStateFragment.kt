@@ -6,30 +6,34 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActions {
+class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
+
+    private val menuItems = arrayOf(
+        CustomMenuItem(
+            id = R.id.actionStartStopTask,
+            title = R.string.MENU_ITEM_action_start_stop_task,
+            icon = R.drawable.ic_task_start_toolbar,
+            action = { taskStateViewModel.startStopTask(currentTaskId) })
+    )
 
     private var _binding: FragmentTaskStateBinding? = null
     private val binding get() = _binding!!
@@ -53,6 +57,11 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
         prepareListAdapter()
         prepareViewModels()
         processArguments()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        menuStateViewModel.sendMenuState(MenuState(*menuItems))
     }
 
     private fun prepareViewModels() {
@@ -149,7 +158,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
     }
 
     private fun changeToolbarButtons(syncState: SyncState) {
-        menuStateViewModel.sendMenuState(arrayOf(
+        /*menuStateViewModel.sendMenuState(arrayOf(
             CustomMenuItem(
                 id = R.id.actionStartStopTask,
                 title = R.string.MENU_ITEM_action_start_stop_task,
@@ -167,7 +176,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
                     }
                 }
             )
-        ))
+        ))*/
     }
 
     private fun displayLastRunState(syncTask: SyncTask) {
@@ -249,20 +258,4 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state), HasCustomActio
             return create(intent.getStringExtra(KEY_TASK_ID))
         }
     }
-
-
-    private val _customActions = MutableLiveData(arrayOf(
-        CustomMenuItem(
-            id = R.id.actionStartStopTask,
-            title = R.string.MENU_ITEM_action_start_stop_task,
-            icon = R.drawable.ic_task_start_toolbar,
-            action = { taskStateViewModel.startStopTask(currentTaskId) })
-    ))
-    override val customActions: LiveData<CustomActions>
-        get() = _customActions
-
-
-    private val _customActionUpdates = MutableLiveData<CustomActionUpdate>()
-    override val customActionsUpdates: LiveData<CustomActionUpdate>
-        get() = _customActionUpdates
 }

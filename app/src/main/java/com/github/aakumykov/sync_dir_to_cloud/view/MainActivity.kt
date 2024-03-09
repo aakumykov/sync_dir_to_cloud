@@ -4,25 +4,22 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
-import androidx.lifecycle.LiveData
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
+import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActionUpdate
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
-import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.HasCustomActions
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
@@ -54,9 +51,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        prepareView()
+        prepareLayout()
+        prepareButtons()
         prepareViewModels()
         prepareFragmentManager()
+
+        createProbeMenu()
+    }
+
+    private fun prepareButtons() {
+        createProbeMenu()
+    }
+
+    private fun createProbeMenu() {
+        binding.generateMenuButton.setOnClickListener {
+            menuHelper.generateMenu(
+                binding.toolbar.menu,
+                arrayOf(
+                    CustomMenuItem(R.id.actionAppProperties, R.string.MENU_ITEM_app_properties, R.drawable.ic_app_properties, { openAppProperties() })
+                )
+            )
+        }
     }
 
     @SuppressLint("MissingSuperCall")
@@ -89,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun prepareView() {
+    private fun prepareLayout() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -102,23 +117,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onMenuStateChanged(menuState: MenuState) {
-        binding.toolbar.menu.also { menu ->
-//            menuHelper.generateMenu(it, menuState, false)
-            menuState.forEach { customMenuItem ->
+        /*binding.toolbar.menu.also { menu ->
+            menu.clear()
+            menuHelper.generateMenu(menu, menuState.menuItems, false)
+            *//*menuState.menuItems.forEach { customMenuItem ->
                 menu.add(0, customMenuItem.id, 0, customMenuItem.title).also { menuItem ->
                     menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                     menuItem.setIcon(customMenuItem.icon)
                     menuItem.setOnMenuItemClickListener { customMenuItem.action.run(); true }
                 }
-            }
-        }
+            }*//*
+        }*/
     }
 
     private fun prepareFragmentManager() {
 
         onBackStackChangedListener = OnBackStackChangedListener {
-
-            clearMenu()
 
             if (0 == supportFragmentManager.backStackEntryCount) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -132,24 +146,6 @@ class MainActivity : AppCompatActivity() {
         }.also {
             supportFragmentManager.addOnBackStackChangedListener(it)
         }
-
-
-        fragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
-            override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
-                super.onFragmentResumed(fm, f)
-                clearMenu()
-            }
-
-            override fun onFragmentPaused(fm: FragmentManager, f: Fragment) {
-                super.onFragmentPaused(fm, f)
-            }
-        }.also {
-            supportFragmentManager.registerFragmentLifecycleCallbacks(it, false)
-        }
-    }
-
-    private fun clearMenu() {
-        binding.toolbar.menu.clear()
     }
 
 
