@@ -20,6 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
+import com.github.aakumykov.sync_dir_to_cloud.view.probe_first_fragment.ProbeFirstFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
@@ -54,32 +55,35 @@ class MainActivity : AppCompatActivity() {
         prepareLayout()
         prepareButtons()
         prepareViewModels()
-        prepareFragmentManager()
+//        prepareFragmentManager()
+
+//        createProbeMenu()
+
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragmentContainerView, ProbeFirstFragment.create(), null)
+            .commit()
     }
 
-    override fun onStart() {
-        super.onStart()
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        createProbeMenu()
+        return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onResume() {
-        super.onResume()
-        createProbeMenu()
-    }
 
     private fun prepareButtons() {
-        createProbeMenu()
+        binding.generateMenuButton.setOnClickListener {
+            createProbeMenu()
+        }
     }
 
     private fun createProbeMenu() {
-        binding.generateMenuButton.setOnClickListener {
-            menuHelper.generateMenu(
-                binding.toolbar.menu,
-                arrayOf(
-                    CustomMenuItem(R.id.actionAppProperties, R.string.MENU_ITEM_app_properties, R.drawable.ic_app_properties, { openAppProperties() })
-                )
+        menuHelper.generateMenu(
+            binding.toolbar.menu,
+            arrayOf(
+                CustomMenuItem(R.id.actionAppProperties, R.string.MENU_ITEM_app_properties, R.drawable.ic_app_properties, { openAppProperties() })
             )
-        }
+        )
     }
 
     @SuppressLint("MissingSuperCall")
@@ -107,9 +111,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        return super.onCreateOptionsMenu(menu)
-    }
 
 
     private fun prepareLayout() {
@@ -125,17 +126,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onMenuStateChanged(menuState: MenuState) {
-        /*binding.toolbar.menu.also { menu ->
+        binding.toolbar.menu.also { menu ->
             menu.clear()
             menuHelper.generateMenu(menu, menuState.menuItems, false)
-            *//*menuState.menuItems.forEach { customMenuItem ->
+            /*menuState.menuItems.forEach { customMenuItem ->
                 menu.add(0, customMenuItem.id, 0, customMenuItem.title).also { menuItem ->
                     menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                     menuItem.setIcon(customMenuItem.icon)
                     menuItem.setOnMenuItemClickListener { customMenuItem.action.run(); true }
                 }
-            }*//*
-        }*/
+            }*/
+        }
     }
 
     private fun prepareFragmentManager() {
@@ -184,7 +185,7 @@ class MainActivity : AppCompatActivity() {
         (supportFragmentManager as FragmentManager).clearBackStack(DEFAULT_BACK_STACK_NAME)
 
         supportFragmentManager.beginTransaction()
-            .setReorderingAllowed(false)
+//            .setReorderingAllowed(false)
             .replace(R.id.fragmentContainerView, fragment, null)
             .commitNow()
     }
@@ -192,7 +193,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .addToBackStack(DEFAULT_BACK_STACK_NAME)
-            .setReorderingAllowed(true)
+//            .setReorderingAllowed(true)
             .replace(R.id.fragmentContainerView, fragment)
             .commit()
     }
