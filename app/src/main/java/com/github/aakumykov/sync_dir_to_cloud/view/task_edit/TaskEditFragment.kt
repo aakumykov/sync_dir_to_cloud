@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelector
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -28,6 +29,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.google.gson.Gson
+import javax.inject.Inject
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     AuthSelectionDialog.Callback {
@@ -46,6 +49,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private var authSelectionDialog: AuthSelectionDialog? = null
 
     private var currentCloudAuth: CloudAuth? = null
+
+    private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
 
     private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
@@ -215,8 +220,18 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
         childFragmentManager.setFragmentResultListener(
             AuthListDialog.CODE_SELECT_CLOUD_AUTH,
-            viewLifecycleOwner) { _, _ ->
-            onSelectTargetPathClicked()
+            viewLifecycleOwner
+        ) { _, bundle ->
+            currentCloudAuth = bundle.getString(AuthListDialog.CLOUD_AUTH)?.let { value ->
+                gson.fromJson(value, CloudAuth::class.java)
+            }
+
+            if (null != currentCloudAuth) {
+                onSelectTargetPathClicked()
+                return@setFragmentResultListener
+            } else {
+                showToast(R.string.TOAST_select_cloud_auth_first)
+            }
         }
 
         onAuthSelectionClicked()

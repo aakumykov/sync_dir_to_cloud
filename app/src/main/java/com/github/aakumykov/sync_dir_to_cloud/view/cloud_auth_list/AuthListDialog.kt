@@ -9,12 +9,16 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListRelativeBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.toJSON
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 typealias Layout = FragmentAuthListRelativeBinding
 
@@ -29,6 +33,8 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
 
     @Deprecated("Перехожу на FragmentResultAPI")
     private var authSelectionCallback: AuthSelectionDialog.Callback? = null
+
+    private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,7 +92,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             listAdapter.getItem(position)?.let { cloudAuth ->
                 authSelectionCallback?.onCloudAuthSelected(cloudAuth)
-                setFragmentResult(CODE_SELECT_CLOUD_AUTH, bundleOf(CLOUD_AUTH to cloudAuth))
+                setFragmentResult(CODE_SELECT_CLOUD_AUTH, bundleOf(CLOUD_AUTH to cloudAuth.toJSON(gson)))
                 dismiss()
             }
         }

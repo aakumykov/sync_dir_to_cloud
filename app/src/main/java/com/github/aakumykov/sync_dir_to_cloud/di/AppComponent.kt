@@ -33,6 +33,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
+import com.google.gson.Gson
 import dagger.Component
 
 @Component(
@@ -88,4 +90,6 @@ interface AppComponent {
     fun getSyncTaskRunningTimeUpdater(): SyncTaskRunningTimeUpdater
 
     fun getSyncTaskStateDAO(): SyncTaskStateDAO
+
+    fun getGson(): Gson
 }
