@@ -18,7 +18,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
-import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -31,8 +30,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.gson.Gson
 
-class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
-    AuthSelectionDialog.Callback {
+class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
@@ -44,8 +42,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
-
-    private var authSelectionDialog: AuthSelectionDialog? = null
 
     private var currentCloudAuth: CloudAuth? = null
 
@@ -85,7 +81,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private fun prepareViewModels() {
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
         taskEditViewModel.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
-        taskEditViewModel.cloudAuthLiveData.observe(viewLifecycleOwner, ::onCloudAuthChanged)
         storageAccessViewModel.storageAccessResult.observe(viewLifecycleOwner, ::onStorageAccessResult)
     }
 
@@ -102,9 +97,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             fillForm(syncTask)
     }
 
-    private fun onCloudAuthChanged(cloudAuth: CloudAuth?) {
-        cloudAuth?.let { onCloudAuthSelected(cloudAuth) }
-    }
 
     private fun prepareForCreationOfEdition() {
 
@@ -123,13 +115,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
     private fun reconnectToChildDialogs() {
-
-        childFragmentManager.findFragmentByTag(AuthListDialog.TAG).let { fragment ->
-            if (fragment is AuthSelectionDialog) {
-                authSelectionDialog = fragment
-                authSelectionDialog?.setCallback(this)
-            }
-        }
 
         FileSelector.find(YandexDiskFileSelector.TAG, childFragmentManager)
             ?.setCallback(sourcePathSelectionCallback)
@@ -187,7 +172,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.intervalMinutes.setOnClickListener { onSelectTimeClicked() }
         binding.periodSelectionButton.setOnClickListener { onSelectTimeClicked() }
 
-        binding.authSelectionButton.setOnClickListener { onSelectCloudAuthClicked() }
+        binding.authSelectionButton.setOnClickListener { showAuthSelectionDialog(false) }
     }
 
 
@@ -216,26 +201,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun redirectToSelectCloudAuth() {
-
-        childFragmentManager.setFragmentResultListener(
-            AuthListDialog.CODE_SELECT_CLOUD_AUTH,
-            viewLifecycleOwner
-        ) { _, bundle ->
-            currentCloudAuth = bundle.getString(AuthListDialog.CLOUD_AUTH)?.let { value ->
-                gson.fromJson(value, CloudAuth::class.java)
-            }
-
-            if (null != currentCloudAuth) {
-                onSelectTargetPathClicked()
-                return@setFragmentResultListener
-            } else {
-                showToast(R.string.TOAST_select_cloud_auth_first)
-            }
-        }
-
-        onSelectCloudAuthClicked()
-
-        showToast(R.string.TOAST_select_cloud_auth_first)
+        showAuthSelectionDialog(true)
+//        showToast(R.string.TOAST_select_cloud_auth_first)
     }
 
 
@@ -270,16 +237,32 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         timePicker.showNow(childFragmentManager, "")
     }
 
-    private fun onSelectCloudAuthClicked() {
-        val authListDialog = AuthListDialog()
-        authListDialog.show(childFragmentManager, AuthListDialog.TAG)
-        authListDialog.setCallback(this@TaskEditFragment)
+    private fun showAuthSelectionDialog(withNextAction: Boolean) {
 
-        /*with(AuthListDialog()) {
-            setCallback(this@TaskEditFragment)
-            show(childFragmentManager, AuthListDialog.TAG)
-        }*/
+        childFragmentManager.setFragmentResultListener(
+            AuthListDialog.CODE_SELECT_CLOUD_AUTH,
+            viewLifecycleOwner
+        ) { _, fragmentResult -> processAuthSelectionResult(fragmentResult) }
+        .also {
+            AuthListDialog.create(withNextAction).show(childFragmentManager, AuthListDialog.TAG)
+        }
     }
+
+
+    private fun processAuthSelectionResult(fragmentResult: Bundle) {
+        fragmentResult.getString(AuthListDialog.CLOUD_AUTH)?.also { cloudAuthJSON ->
+            currentCloudAuth = gson.fromJson(cloudAuthJSON, CloudAuth::class.java)?.also { cloudAuth ->
+                currentCloudAuth = cloudAuth
+                currentTask?.cloudAuthId = cloudAuth.id
+                
+                displayCloudAuthSelectionState(cloudAuth)
+
+                if (fragmentResult.getBoolean(AuthListDialog.WITH_NEXT_ACTION, false))
+                    onSelectTargetPathClicked()
+            }
+        } ?: showToast(R.string.TOAST_select_cloud_auth_first)
+    }
+
 
     private fun onSaveButtonClicked() {
         // FIXME: убрать!
@@ -391,16 +374,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.errorMessage.visibility = View.GONE
     }
 
-    override fun onCloudAuthSelected(cloudAuth: CloudAuth) {
-        currentTask?.cloudAuthId = cloudAuth.id
-        currentCloudAuth = cloudAuth
-        displayCLoudAuthSelectionState(cloudAuth)
-    }
-
-    private fun displayCLoudAuthSelectionState(cloudAuth: CloudAuth) {
+    private fun displayCloudAuthSelectionState(cloudAuth: CloudAuth) {
         binding.authSelectionButton.text = cloudAuth.name
     }
-
 
     companion object {
 

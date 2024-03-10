@@ -18,24 +18,19 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragm
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 typealias Layout = FragmentAuthListRelativeBinding
 
-class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), AuthSelectionDialog {
+class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
     private var _binding: Layout? = null
     private val binding get() = _binding!!
 
     private lateinit var listAdapter: ListViewAdapter<CloudAuth>
-
     private val authListViewModel: AuthListViewModel by viewModels()
-
-    @Deprecated("Перехожу на FragmentResultAPI")
-    private var authSelectionCallback: AuthSelectionDialog.Callback? = null
-
     private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
+    private val withNextAction: Boolean get() = arguments?.getBoolean(WITH_NEXT_ACTION, false) ?: false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,8 +86,10 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
 
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             listAdapter.getItem(position)?.let { cloudAuth ->
-                authSelectionCallback?.onCloudAuthSelected(cloudAuth)
-                setFragmentResult(CODE_SELECT_CLOUD_AUTH, bundleOf(CLOUD_AUTH to cloudAuth.toJSON(gson)))
+                setFragmentResult(CODE_SELECT_CLOUD_AUTH, bundleOf(
+                    CLOUD_AUTH to cloudAuth.toJSON(gson),
+                    WITH_NEXT_ACTION to withNextAction
+                ))
                 dismiss()
             }
         }
@@ -106,17 +103,16 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
     }
 
     companion object {
+
+        fun create(withNextAction: Boolean): AuthListDialog {
+            return AuthListDialog().apply {
+                arguments = bundleOf(WITH_NEXT_ACTION to withNextAction)
+            }
+        }
+
         val TAG: String = AuthListDialog::class.java.simpleName
         const val CODE_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
         const val CLOUD_AUTH = "CLOUD_AUTH"
-    }
-
-
-    override fun setCallback(callback: AuthSelectionDialog.Callback) {
-        authSelectionCallback = callback
-    }
-
-    override fun unsetCallback() {
-        authSelectionCallback = null
+        const val WITH_NEXT_ACTION = "WITH_NEXT_ACTION"
     }
 }
