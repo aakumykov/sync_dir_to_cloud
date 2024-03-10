@@ -16,10 +16,10 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBindin
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthSelectionDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
@@ -88,7 +88,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     private fun onStorageAccessResult(isGranted: Boolean?) {
         isGranted?.also { granted ->
-            if (granted) selectSourcePath()
+            if (granted) onSelectSourcePathClicked()
             else showToast(R.string.ERROR_storage_access_required)
         }
     }
@@ -174,7 +174,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             storageAccessViewModel.requestStorageAccess()
         }
 
-        binding.targetPathSelectionButton.setOnClickListener { selectTargetPath() }
+        binding.targetPathSelectionButton.setOnClickListener { onSelectTargetPathClicked() }
 
         binding.saveButton.setOnClickListener { onSaveButtonClicked() }
         binding.cancelButton.setOnClickListener { onCancelButtonClicked() }
@@ -187,21 +187,20 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
 
-    private fun selectSourcePath() {
+    private fun onSelectSourcePathClicked() {
         val targetPathSelector = LocalFileSelector.create(sourcePathSelectionCallback)
         targetPathSelector.show(childFragmentManager)
     }
 
-    private fun selectTargetPath() {
+    private fun onSelectTargetPathClicked() {
 
         if (null == currentCloudAuth) {
-            showToast(R.string.TOAST_select_cloud_auth_first)
-            // TODO: помигать соответствующей кнопкой
+            redirectToSelectCloudAuth()
             return
         }
 
         currentCloudAuth?.authToken?.let { token ->
-            // TODO: режим выбора каталога, а не файла
+
             val fileSelector = YandexDiskFileSelector.create(
                 token,
                 isMultipleSelectionMode = false,
@@ -210,6 +209,19 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             fileSelector.setCallback(targetPathSelectionCallback)
             fileSelector.show(childFragmentManager)
         }
+    }
+
+    private fun redirectToSelectCloudAuth() {
+
+        childFragmentManager.setFragmentResultListener(
+            AuthListDialog.CODE_SELECT_CLOUD_AUTH,
+            viewLifecycleOwner) { _, _ ->
+            onSelectTargetPathClicked()
+        }
+
+        onAuthSelectionClicked()
+
+        showToast(R.string.TOAST_select_cloud_auth_first)
     }
 
 
@@ -377,6 +389,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
 
     companion object {
+
+        val TAG: String = TaskEditFragment::class.java.simpleName
 
         private const val TASK_ID = "TASK_ID"
 

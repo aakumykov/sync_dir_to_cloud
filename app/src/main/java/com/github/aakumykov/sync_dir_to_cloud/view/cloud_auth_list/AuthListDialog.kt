@@ -3,8 +3,10 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.os.bundleOf
 import androidx.core.util.Function
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -25,6 +27,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
 
     private val authListViewModel: AuthListViewModel by viewModels()
 
+    @Deprecated("Перехожу на FragmentResultAPI")
     private var authSelectionCallback: AuthSelectionDialog.Callback? = null
 
 
@@ -83,6 +86,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             listAdapter.getItem(position)?.let { cloudAuth ->
                 authSelectionCallback?.onCloudAuthSelected(cloudAuth)
+                setFragmentResult(CODE_SELECT_CLOUD_AUTH, bundleOf(CLOUD_AUTH to cloudAuth))
                 dismiss()
             }
         }
@@ -97,6 +101,8 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative), Aut
 
     companion object {
         val TAG: String = AuthListDialog::class.java.simpleName
+        const val CODE_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
+        const val CLOUD_AUTH = "CLOUD_AUTH"
     }
 
 
