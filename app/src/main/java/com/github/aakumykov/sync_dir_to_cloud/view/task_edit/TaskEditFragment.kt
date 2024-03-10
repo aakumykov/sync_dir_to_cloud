@@ -73,10 +73,20 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         prepareButtons()
         prepareViewModels()
 
+        prepareFragmentResultListeners()
         reconnectToChildDialogs()
+
         prepareForCreationOfEdition()
     }
 
+    private fun prepareFragmentResultListeners() {
+
+        childFragmentManager.setFragmentResultListener(
+            AuthListDialog.CODE_SELECT_CLOUD_AUTH,
+            viewLifecycleOwner
+        ) { _, fragmentResult -> processAuthSelectionResult(fragmentResult) }
+
+    }
 
     private fun prepareViewModels() {
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
@@ -114,6 +124,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
 
+    @Deprecated("Используй FragmentResultAPI")
     private fun reconnectToChildDialogs() {
 
         FileSelector.find(YandexDiskFileSelector.TAG, childFragmentManager)
@@ -238,14 +249,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun showAuthSelectionDialog(withNextAction: Boolean) {
-
-        childFragmentManager.setFragmentResultListener(
-            AuthListDialog.CODE_SELECT_CLOUD_AUTH,
-            viewLifecycleOwner
-        ) { _, fragmentResult -> processAuthSelectionResult(fragmentResult) }
-        .also {
-            AuthListDialog.create(withNextAction).show(childFragmentManager, AuthListDialog.TAG)
-        }
+        AuthListDialog.create(withNextAction).show(childFragmentManager, AuthListDialog.TAG)
     }
 
 
