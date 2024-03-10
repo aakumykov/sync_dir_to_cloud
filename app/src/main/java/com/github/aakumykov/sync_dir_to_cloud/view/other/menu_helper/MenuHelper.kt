@@ -90,21 +90,6 @@ class MenuHelper (
     }
 
 
-    @Deprecated("К удалению")
-    fun updateItem(menu: Menu?, customActionUpdate: CustomActionUpdate?) {
-
-        if (null == menu || null === customActionUpdate)
-            return
-
-        menu.findItem(customActionUpdate.id)?.also { menuItem ->
-            menuItem.setIcon(customActionUpdate.icon)
-            menuItem.setOnMenuItemClickListener {
-                customActionUpdate.clickAction.run()
-                true
-            }
-        }
-    }
-
     companion object {
         val TAG: String = MenuHelper::class.java.simpleName
     }

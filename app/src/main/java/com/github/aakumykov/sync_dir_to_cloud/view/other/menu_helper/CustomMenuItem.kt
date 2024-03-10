@@ -14,12 +14,3 @@ class CustomMenuItem (
 ) {
     override fun toString(): String = "CustomMenuItem{${title}}"
 }
-
-
-@Deprecated("К удалению")
-class CustomActionUpdate(
-    @IdRes val id: Int,
-    @StringRes val title: Int? = null,
-    @DrawableRes val icon: Int,
-    val clickAction: Runnable
-)
