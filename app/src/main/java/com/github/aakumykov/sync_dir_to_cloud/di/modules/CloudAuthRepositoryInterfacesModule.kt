@@ -15,7 +15,7 @@ class CloudAuthRepositoryInterfacesModule {
         = cloudAuthRepository
 
     @Provides
-    fun provideCloudAuthLister(cloudAuthRepository: CloudAuthRepository): CloudAuthReader
+    fun provideCloudAuthReader(cloudAuthRepository: CloudAuthRepository): CloudAuthReader
         = cloudAuthRepository
 
     @Provides

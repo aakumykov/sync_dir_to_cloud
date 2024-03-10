@@ -72,7 +72,7 @@ interface AppComponent {
 
     // FIXME: временное
     fun getCloudAuthAdder(): CloudAuthAdder
-    fun getCloudAuthLister(): CloudAuthReader
+
     fun getCloudAuthChecker(): CloudAuthChecker
 
     fun getSyncTaskReader(): SyncTaskReader

@@ -30,7 +30,6 @@ import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_di
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.gson.Gson
-import javax.inject.Inject
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     AuthSelectionDialog.Callback {
@@ -188,7 +187,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.intervalMinutes.setOnClickListener { onSelectTimeClicked() }
         binding.periodSelectionButton.setOnClickListener { onSelectTimeClicked() }
 
-        binding.authSelectionButton.setOnClickListener { onAuthSelectionClicked() }
+        binding.authSelectionButton.setOnClickListener { onSelectCloudAuthClicked() }
     }
 
 
@@ -234,7 +233,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
             }
         }
 
-        onAuthSelectionClicked()
+        onSelectCloudAuthClicked()
 
         showToast(R.string.TOAST_select_cloud_auth_first)
     }
@@ -271,7 +270,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         timePicker.showNow(childFragmentManager, "")
     }
 
-    private fun onAuthSelectionClicked() {
+    private fun onSelectCloudAuthClicked() {
         val authListDialog = AuthListDialog()
         authListDialog.show(childFragmentManager, AuthListDialog.TAG)
         authListDialog.setCallback(this@TaskEditFragment)

@@ -11,12 +11,12 @@ typealias AuthList = List<CloudAuth>
 
 class AuthListViewModel(application: Application) : PageOpStateViewModel(application) {
 
-    private val cloudAuthLister = App.getAppComponent().getCloudAuthLister()
+    private val cloudAuthReader = App.getAppComponent().getCloudAuthReader()
     private val _authListMediatorLiveData: MediatorLiveData<AuthList> = MediatorLiveData()
     val authList: LiveData<AuthList> get() = _authListMediatorLiveData
 
     suspend fun startLoadingList() {
-        _authListMediatorLiveData.addSource(cloudAuthLister.listCloudAuth()) {
+        _authListMediatorLiveData.addSource(cloudAuthReader.listCloudAuth()) {
             _authListMediatorLiveData.setValue(it)
         }
     }
