@@ -7,7 +7,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
@@ -22,7 +21,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
@@ -34,6 +32,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             icon = R.drawable.ic_task_start_toolbar,
             action = { taskStateViewModel.startStopTask(currentTaskId) })
     )
+
+    private val menuState = MenuState(*menuItems)
 
     private var _binding: FragmentTaskStateBinding? = null
     private val binding get() = _binding!!
@@ -61,13 +61,12 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     override fun onResume() {
         super.onResume()
-        menuStateViewModel.sendMenuState(MenuState(*menuItems))
+        menuStateViewModel.sendMenuState(menuState)
     }
 
     private fun prepareViewModels() {
         pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_INFO_title))
         taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
-
     }
 
     private fun processArguments() {
@@ -150,33 +149,20 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         binding.titleView.text = "${syncTask.sourcePath} --> ${syncTask.targetPath}"
         binding.idView.text = "(${syncTask.id})"
 
-        changeToolbarButtons(syncTask.syncState)
+        changeToolbarButtons(syncTask)
 
         displaySchedulingState(syncTask)
         displayExecutionState(syncTask)
         displayLastRunState(syncTask)
     }
 
-    private fun changeToolbarButtons(syncState: SyncState) {
-        /*menuStateViewModel.sendMenuState(arrayOf(
-            CustomMenuItem(
-                id = R.id.actionStartStopTask,
-                title = R.string.MENU_ITEM_action_start_stop_task,
-                icon = if (SyncState.RUNNING == syncState) R.drawable.ic_task_stop_toolbar else R.drawable.ic_task_start_toolbar,
-                action = { taskStateViewModel.startStopTask(currentTaskId) }
-            ),
-            CustomMenuItem(
-                id = R.id.actionProbeChangeTaskState,
-                title = R.string.MENU_ITEM_action_probe_change_task_state,
-                icon = R.drawable.action_probe_change_task_state,
-                action = {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        App.getAppComponent().getSyncTaskStateDAO()
-                            .setSyncState(currentTaskId, SyncState.RUNNING)
-                    }
-                }
-            )
-        ))*/
+    private fun changeToolbarButtons(syncTask: SyncTask) {
+        menuState.updateIcon(R.id.actionStartStopTask, when(syncTask.syncState){
+            SyncState.RUNNING -> R.drawable.ic_task_stop_toolbar
+            else -> R.drawable.ic_task_start_toolbar
+        }).also {
+            menuStateViewModel.sendMenuState(it)
+        }
     }
 
     private fun displayLastRunState(syncTask: SyncTask) {

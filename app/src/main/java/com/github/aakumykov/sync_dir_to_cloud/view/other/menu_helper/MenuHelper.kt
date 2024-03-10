@@ -90,6 +90,7 @@ class MenuHelper (
     }
 
 
+    @Deprecated("К удалению")
     fun updateItem(menu: Menu?, customActionUpdate: CustomActionUpdate?) {
 
         if (null == menu || null === customActionUpdate)
