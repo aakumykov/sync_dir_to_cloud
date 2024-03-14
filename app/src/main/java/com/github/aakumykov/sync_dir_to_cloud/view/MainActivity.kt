@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         storageAccessHelper = StorageAccessHelper.create(this)
         storageAccessViewModel.storageAccessRequest.observe(this) {
-            storageAccessHelper.requestStorageAccess {
+            storageAccessHelper.requestReadAccess {
                 storageAccessViewModel.setStorageAccessResult(it)
             }
         }
