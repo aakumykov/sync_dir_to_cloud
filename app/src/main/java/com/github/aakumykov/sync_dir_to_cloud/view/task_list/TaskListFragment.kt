@@ -51,7 +51,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
             id = R.id.actionManageExternalStorage,
             title = R.string.MENU_ITEM_manage_external_storage,
             icon = R.drawable.ic_storage,
-            action = { activity?.also { StorageAccessHelper.create(it).openStorageAccessSettings() } }
+            action = { activity?.also { StorageAccessHelper.openStorageAccessSettings(this) } }
         )
     )
 

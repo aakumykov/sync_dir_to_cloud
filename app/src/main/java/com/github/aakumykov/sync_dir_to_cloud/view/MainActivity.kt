@@ -9,11 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
-import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
@@ -32,21 +30,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var onBackStackChangedListener: OnBackStackChangedListener
 
-    private lateinit var storageAccessHelper: StorageAccessHelper
-    private val storageAccessViewModel: StorageAccessViewModel by viewModels()
-
     private val menuHelper: MenuHelper by lazy { MenuHelper(this@MainActivity, R.color.onPrimary, R.color.primary) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        storageAccessHelper = StorageAccessHelper.create(this)
-        storageAccessViewModel.storageAccessRequest.observe(this) {
-            storageAccessHelper.requestReadAccess {
-                storageAccessViewModel.setStorageAccessResult(it)
-            }
-        }
 
         prepareLayout()
         prepareFragmentManager()

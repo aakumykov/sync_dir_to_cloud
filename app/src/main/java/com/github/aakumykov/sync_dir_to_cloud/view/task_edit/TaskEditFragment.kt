@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelector
+import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
@@ -19,7 +20,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.StorageAccessViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
@@ -31,14 +31,15 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.gson.Gson
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
-    
+
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
 
     private val taskEditViewModel: TaskEditViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
-    private val storageAccessViewModel: StorageAccessViewModel by activityViewModels()
+
+    private lateinit var storageAccessHelper: StorageAccessHelper
 
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
@@ -69,6 +70,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         firstRun = (null == savedInstanceState)
 
+        storageAccessHelper = StorageAccessHelper.Companion.create(this)
+
         prepareLayout(view)
         prepareButtons()
         prepareViewModels()
@@ -91,16 +94,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun prepareViewModels() {
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
         taskEditViewModel.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
-        storageAccessViewModel.storageAccessResult.observe(viewLifecycleOwner, ::onStorageAccessResult)
     }
 
-
-    private fun onStorageAccessResult(isGranted: Boolean?) {
-        isGranted?.also { granted ->
-            if (granted) onSelectSourcePathClicked()
-            else showToast(R.string.ERROR_storage_access_required)
-        }
-    }
 
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
         if (null != syncTask)
@@ -170,10 +165,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun prepareButtons() {
 
-        binding.sourcePathSelectionButton.setOnClickListener {
-            storageAccessViewModel.requestStorageAccess()
-        }
-
+        binding.sourcePathSelectionButton.setOnClickListener { onSelectSourcePathClicked() }
         binding.targetPathSelectionButton.setOnClickListener { onSelectTargetPathClicked() }
 
         binding.saveButton.setOnClickListener { onSaveButtonClicked() }
@@ -188,8 +180,13 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
 
     private fun onSelectSourcePathClicked() {
-        val targetPathSelector = LocalFileSelector.create(sourcePathSelectionCallback)
-        targetPathSelector.show(childFragmentManager)
+        storageAccessHelper.requestReadAccess { isGranted ->
+            if (isGranted) {
+                LocalFileSelector.create(sourcePathSelectionCallback).show(childFragmentManager)
+            } else {
+                showToast(R.string.ERROR_storage_access_required)
+            }
+        }
     }
 
     private fun onSelectTargetPathClicked() {

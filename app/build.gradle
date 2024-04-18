@@ -127,5 +127,5 @@ dependencies {
     implementation 'com.github.aakumykov:file_lister_navigator_selector:0.0.13'
     implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.13'
 
-    implementation 'com.github.aakumykov:storage_access_helper:0.0.2'
+    implementation 'com.github.aakumykov:storage_access_helper:0.0.5'
 }
