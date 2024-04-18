@@ -39,7 +39,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
-    private lateinit var storageAccessHelper: StorageAccessHelper
+    private val storageAccessHelper: StorageAccessHelper by lazy { StorageAccessHelper.Companion.create(this) }
 
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
@@ -69,8 +69,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         super.onViewCreated(view, savedInstanceState)
 
         firstRun = (null == savedInstanceState)
-
-        storageAccessHelper = StorageAccessHelper.Companion.create(this)
 
         prepareLayout(view)
         prepareButtons()
