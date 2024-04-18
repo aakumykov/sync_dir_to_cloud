@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelectorFragment
@@ -39,7 +40,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
-    private val storageAccessHelper: StorageAccessHelper by lazy { StorageAccessHelper.Companion.create(this) }
+    private lateinit var storageAccessHelper: StorageAccessHelper
 
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
@@ -49,22 +50,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
 
-    /*private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
-        override fun onFilesSelected(selectedItemsList: List<FSItem>) {
-            val path = selectedItemsList[0].absolutePath
-            currentTask?.sourcePath = path
-            binding.sourcePathInput.setText(path)
-        }
-    }*/
-
-    /*private val targetPathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
-        override fun onFilesSelected(selectedItemsList: List<FSItem>) {
-            val path = selectedItemsList[0].absolutePath
-            currentTask?.targetPath = path
-            binding.targetPathInput.setText(path)
-        }
-    }*/
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,20 +58,47 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         prepareLayout(view)
         prepareButtons()
         prepareViewModels()
-
+        prepareStorageAccessHelper()
         prepareFragmentResultListeners()
-        reconnectToChildDialogs()
-
         prepareForCreationOfEdition()
+    }
+
+    private fun prepareStorageAccessHelper() {
+        storageAccessHelper = StorageAccessHelper.Companion.create(this)
     }
 
     private fun prepareFragmentResultListeners() {
 
-        childFragmentManager.setFragmentResultListener(
-            AuthListDialog.CODE_SELECT_CLOUD_AUTH,
-            viewLifecycleOwner
-        ) { _, fragmentResult -> processAuthSelectionResult(fragmentResult) }
+        listenForFragmentResult(AuthListDialog.KEY_SELECT_CLOUD_AUTH) { _, fragmentResult ->
+            processAuthSelectionResult(fragmentResult)
+        }
 
+        listenForFragmentResult(LocalFileSelectorFragment.LOCAL_SELECTION_REQUEST_KEY) { _, fragmentResult ->
+            FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
+                onSourcePathSelected(list?.first())
+            }
+        }
+
+        // FIXME: а вот это проблема. Здесь будут разные реализации фрагментов. И их нужно как-то различать!
+        listenForFragmentResult(YandexDiskFileSelectorFragment.YANDEX_DISK_SELECTION_REQUEST_KEY) { _, fragmentResult ->
+            FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
+                onTargetPathSelected(list?.first())
+            }
+        }
+    }
+
+    private fun onTargetPathSelected(fsItem: FSItem?) {
+        fsItem?.absolutePath.also { path ->
+            currentTask?.targetPath = path
+            binding.targetPathInput.setText(path)
+        }
+    }
+
+    private fun onSourcePathSelected(fsItem: FSItem?) {
+        fsItem?.absolutePath.also { path ->
+            currentTask?.sourcePath = path
+            binding.sourcePathInput.setText(path)
+        }
     }
 
     private fun prepareViewModels() {
@@ -116,16 +128,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         }
     }
 
-
-    @Deprecated("Используй FragmentResultAPI")
-    private fun reconnectToChildDialogs() {
-
-        /*FileSelector.find(YandexDiskFileSelector.TAG, childFragmentManager)
-            ?.setCallback(sourcePathSelectionCallback)
-
-        FileSelector.find(LocalFileSelector.TAG, childFragmentManager)
-            ?.setCallback(targetPathSelectionCallback)*/
-    }
 
     override fun onDestroyView() {
         _binding = null
@@ -247,6 +249,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun processAuthSelectionResult(fragmentResult: Bundle) {
         fragmentResult.getString(AuthListDialog.CLOUD_AUTH)?.also { cloudAuthJSON ->
+            // TODO: инкапсулировать это в AuthListDialog ...
             currentCloudAuth = gson.fromJson(cloudAuthJSON, CloudAuth::class.java)?.also { cloudAuth ->
                 currentCloudAuth = cloudAuth
                 currentTask?.cloudAuthId = cloudAuth.id

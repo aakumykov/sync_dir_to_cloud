@@ -86,7 +86,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             listAdapter.getItem(position)?.let { cloudAuth ->
-                setFragmentResult(CODE_SELECT_CLOUD_AUTH, bundleOf(
+                setFragmentResult(KEY_SELECT_CLOUD_AUTH, bundleOf(
                     CLOUD_AUTH to cloudAuth.toJSON(gson),
                     WITH_NEXT_ACTION to withNextAction
                 ))
@@ -111,7 +111,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
         }
 
         val TAG: String = AuthListDialog::class.java.simpleName
-        const val CODE_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
+        const val KEY_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
         const val CLOUD_AUTH = "CLOUD_AUTH"
         const val WITH_NEXT_ACTION = "WITH_NEXT_ACTION"
     }
