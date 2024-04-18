@@ -8,9 +8,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
+import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
-import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelector
+import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelectorFragment
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -25,7 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.O
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
-import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
+import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelectorFragment
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.gson.Gson
@@ -49,21 +49,21 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
 
-    private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
+    /*private val sourcePathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
         override fun onFilesSelected(selectedItemsList: List<FSItem>) {
             val path = selectedItemsList[0].absolutePath
             currentTask?.sourcePath = path
             binding.sourcePathInput.setText(path)
         }
-    }
+    }*/
 
-    private val targetPathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
+    /*private val targetPathSelectionCallback: FileSelector.Callback = object: FileSelector.Callback {
         override fun onFilesSelected(selectedItemsList: List<FSItem>) {
             val path = selectedItemsList[0].absolutePath
             currentTask?.targetPath = path
             binding.targetPathInput.setText(path)
         }
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -122,11 +122,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     @Deprecated("Используй FragmentResultAPI")
     private fun reconnectToChildDialogs() {
 
-        FileSelector.find(YandexDiskFileSelector.TAG, childFragmentManager)
+        /*FileSelector.find(YandexDiskFileSelector.TAG, childFragmentManager)
             ?.setCallback(sourcePathSelectionCallback)
 
         FileSelector.find(LocalFileSelector.TAG, childFragmentManager)
-            ?.setCallback(targetPathSelectionCallback)
+            ?.setCallback(targetPathSelectionCallback)*/
     }
 
     override fun onDestroyView() {
@@ -182,7 +182,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun onSelectSourcePathClicked() {
         storageAccessHelper.requestReadAccess { isGranted ->
             if (isGranted) {
-                LocalFileSelector.create(sourcePathSelectionCallback).show(childFragmentManager)
+                LocalFileSelectorFragment.create().show(childFragmentManager, FileSelectorFragment.TAG)
             } else {
                 showToast(R.string.ERROR_storage_access_required)
             }
@@ -197,14 +197,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         }
 
         currentCloudAuth?.authToken?.let { token ->
-
-            val fileSelector = YandexDiskFileSelector.create(
+            YandexDiskFileSelectorFragment.create(
                 token,
                 isMultipleSelectionMode = false,
-                isDirMode = true
-            )
-            fileSelector.setCallback(targetPathSelectionCallback)
-            fileSelector.show(childFragmentManager)
+                isDirSelectionMode = true
+            ).show(childFragmentManager, FileSelectorFragment.TAG)
         }
     }
 

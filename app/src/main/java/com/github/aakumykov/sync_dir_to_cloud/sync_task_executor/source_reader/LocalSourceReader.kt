@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader
 
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.FileLister
+import com.github.aakumykov.file_lister_navigator_selector.file_lister.SimpleSortingMode
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
@@ -45,7 +46,13 @@ class LocalSourceReader @AssistedInject constructor(
     @Throws(FileLister.NotADirException::class)
     override suspend fun read(sourcePath: String) {
 
-        recursiveDirReader?.getRecursiveList(sourcePath)?.forEach { fileListItem: RecursiveDirReader.FileListItem ->
+        recursiveDirReader?.getRecursiveList(
+            path = sourcePath,
+            sortingMode = SimpleSortingMode.NAME,
+            reverseOrder = false,
+            foldersFirst = true,
+            dirMode = false
+        )?.forEach { fileListItem: RecursiveDirReader.FileListItem ->
 
             val relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath)
 
