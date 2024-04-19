@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
@@ -29,7 +30,12 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 {
     private var _binding: FragmentAuthEditBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: AuthEditViewModel by viewModels()
+
+    private var cloudAuthenticator: CloudAuthenticator? = null
+
+    @Deprecated("Перехожу на CloudAuthenticator")
     private lateinit var yandexAuthenticator: YandexAuthenticator
 
     private val storageTypeNames: List<String> by lazy {
@@ -41,11 +47,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
-        yandexAuthenticator = YandexAuthenticator(
-            this,
-            LoginType.NATIVE,
-            this)
+        yandexAuthenticator = YandexAuthenticator.create(this, this)
     }
 
     
@@ -81,6 +83,8 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
     private fun prepareButtons() {
 
+        binding.cloudAuthButton.setOnClickListener { onCloudAuthClicked() }
+
         binding.yandexAuthButton.setOnClickListener {
             yandexAuthenticator.startAuth()
         }
@@ -99,12 +103,26 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
                     storageType,
                     binding.tokenView.text.toString()
                 )
-            } ?: showToast(R.string.ERROR_select_storage_type)
+            } ?: showStorageTypeNotSelectedError()
         }
 
         binding.buttonsInclude.cancelButton.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun onCloudAuthClicked() {
+        storageType()?.also { storageType ->
+            if (StorageType.LOCAL != storageType) {
+                App.getAppComponent().getCloudAuthenticatorFactory()
+                    .createCloudAuthenticator(storageType, this, this)
+                    .startAuth()
+            }
+        } ?: showStorageTypeNotSelectedError()
+    }
+
+    private fun showStorageTypeNotSelectedError() {
+        showToast(R.string.ERROR_select_storage_type)
     }
 
     private fun storageType(): StorageType? {

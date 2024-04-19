@@ -37,6 +37,12 @@
             android:minHeight="48dp" />
 
         <Button
+            android:id="@+id/cloudAuthButton"
+            style="@style/cloud_auth_button"
+            android:backgroundTint="#66BB6A"
+            android:text="@string/AUTH_BUTTON_yandex" />
+
+        <Button
             android:id="@+id/yandexAuthButton"
             style="@style/cloud_auth_button"
             android:backgroundTint="@color/yandex_button"

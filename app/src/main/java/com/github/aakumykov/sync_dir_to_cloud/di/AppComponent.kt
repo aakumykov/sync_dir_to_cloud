@@ -1,6 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
+import com.github.aakumykov.sync_dir_to_cloud.CloudAuthenticatorFactory
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
+import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
@@ -92,4 +94,6 @@ interface AppComponent {
     fun getSyncTaskStateDAO(): SyncTaskStateDAO
 
     fun getGson(): Gson
+
+    fun getCloudAuthenticatorFactory(): CloudAuthenticatorFactory
 }

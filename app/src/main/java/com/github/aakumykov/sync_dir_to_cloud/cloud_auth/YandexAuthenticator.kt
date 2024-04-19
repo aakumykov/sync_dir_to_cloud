@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.cloud_auth
 
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdkContract
@@ -9,7 +10,6 @@ import com.yandex.authsdk.internal.strategy.LoginType
 
 class YandexAuthenticator (
     fragment: Fragment,
-    private val loginType: LoginType,
     private val cloudAuthenticatorCallbacks: CloudAuthenticator.Callbacks
 ) : CloudAuthenticator {
 
@@ -27,7 +27,14 @@ class YandexAuthenticator (
     }
 
     override fun startAuth() {
-        activityResultLauncher.launch(YandexAuthLoginOptions(loginType))
+        // FIXME: вынести настройку типа аутентификации куда-нибудь вовне.
+        activityResultLauncher.launch(YandexAuthLoginOptions(LoginType.NATIVE))
+    }
+
+    companion object {
+        fun create(fragment: Fragment, callbacks: CloudAuthenticator.Callbacks): YandexAuthenticator {
+            return YandexAuthenticator(fragment, callbacks)
+        }
     }
 
 }
