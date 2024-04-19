@@ -4,12 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setError
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setText
@@ -17,15 +21,23 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.yandex.authsdk.internal.strategy.LoginType
 
+
 // FIXME: переименовать в CreateAuthFragment
 class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
-    CloudAuthenticator.Callbacks
+    CloudAuthenticator.Callbacks,
+    AdapterView.OnItemSelectedListener
 {
     private var _binding: FragmentAuthEditBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AuthEditViewModel by viewModels()
     private lateinit var yandexAuthenticator: YandexAuthenticator
 
+    private val storageTypeNames: List<String> by lazy {
+        listOf(
+            getString(R.string.SPINNER_storage_type_default_value),
+            *StorageType.entries.map { it.name }.toTypedArray(),
+        )
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -41,11 +53,30 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         super.onViewCreated(view, savedInstanceState)
 
         prepareLayout(view)
+        prepareStorageTypeSpinner()
         prepareButtons()
         prepareViewModel()
 
         // FIXME: если есть ViewModel, можно хранить в ней
         restoreFormValues(savedInstanceState)
+    }
+
+    private fun prepareStorageTypeSpinner() {
+        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, storageTypeNames).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.storageTypeSpinner.apply {
+                setAdapter(adapter)
+                setOnItemSelectedListener(this@AuthEditFragment)
+            }
+        }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+
     }
 
     private fun prepareButtons() {
@@ -55,19 +86,31 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         }
 
         binding.googleAuthButton.setOnClickListener {
-            showToast(R.string.not_implemented_yet)
+            showToast(com.github.aakumykov.sync_dir_to_cloud.R.string.not_implemented_yet)
         }
 
         binding.buttonsInclude.saveButton.setOnClickListener {
+
             hideTokenError()
-            viewModel.createCloudAuth(
-                binding.nameView.text.toString(),
-                binding.tokenView.text.toString()
-            )
+
+            storageType()?.also { storageType ->
+                viewModel.createCloudAuth(
+                    binding.nameView.text.toString(),
+                    storageType,
+                    binding.tokenView.text.toString()
+                )
+            } ?: showToast(R.string.ERROR_select_storage_type)
         }
 
         binding.buttonsInclude.cancelButton.setOnClickListener {
             dismiss()
+        }
+    }
+
+    private fun storageType(): StorageType? {
+        return binding.storageTypeSpinner.selectedItemPosition.let { position ->
+            if (0 == position) null
+            else StorageType.valueOf(storageTypeNames[position])
         }
     }
 
@@ -120,7 +163,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         binding.tokenView.setText("")
         binding.tokenErrorView.text = ExceptionUtils.getErrorMessage(throwable)
 
-        showToast(R.string.auth_error)
+        showToast(com.github.aakumykov.sync_dir_to_cloud.R.string.auth_error)
         MyLogger.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
     }
 
