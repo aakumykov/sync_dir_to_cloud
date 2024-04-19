@@ -9,12 +9,15 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.CloudAuthenticatorFactory
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.invisible_auth_fragment.InvisibleAuthFragment
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setError
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setText
@@ -45,6 +48,11 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         )
     }
 
+    private val cloudAuthenticatorFactory: CloudAuthenticatorFactory by lazy {
+        App.getAppComponent().getCloudAuthenticatorFactory()
+    }
+
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         yandexAuthenticator = YandexAuthenticator.create(this, this)
@@ -55,12 +63,39 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         super.onViewCreated(view, savedInstanceState)
 
         prepareLayout(view)
+        prepareFragmentResultListeners()
         prepareStorageTypeSpinner()
         prepareButtons()
         prepareViewModel()
 
         // FIXME: если есть ViewModel, можно хранить в ней
         restoreFormValues(savedInstanceState)
+    }
+
+    private fun prepareFragmentResultListeners() {
+        listenForFragmentResult(InvisibleAuthFragment.KEY_AUTH_RESULT) { key,resultBundle ->
+            // TODO: искапсулировать получение значений из bundle в InvisibleAuthFragment
+            when {
+                resultBundle.containsKey(InvisibleAuthFragment.AUTH_TOKEN) -> processAuthToken(
+                    resultBundle.getString(InvisibleAuthFragment.AUTH_TOKEN)
+                )
+
+                resultBundle.containsKey(InvisibleAuthFragment.AUTH_ERROR_MSG) -> showAuthError(
+                    resultBundle.getString(InvisibleAuthFragment.AUTH_ERROR_MSG)
+                )
+
+                else -> throw IllegalStateException("Fragment result for InvisibleAuthFragment does not contains any known keys.")
+            }
+        }
+    }
+
+    private fun processAuthToken(token: String?) {
+        TODO("Not yet implemented")
+    }
+
+    // FIXME: нормально показывать эту ошибку
+    private fun showAuthError(errorMsg: String?) {
+        binding.tokenErrorView.text = errorMsg
     }
 
     private fun prepareStorageTypeSpinner() {
@@ -113,11 +148,13 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
     private fun onCloudAuthClicked() {
         storageType()?.also { storageType ->
+
             if (StorageType.LOCAL != storageType) {
-                App.getAppComponent().getCloudAuthenticatorFactory()
-                    .createCloudAuthenticator(storageType, this, this)
-                    .startAuth()
+                cloudAuthenticatorFactory.createCloudAuthenticator(storageType).apply {
+                    (this as InvisibleAuthFragment).show(childFragmentManager, InvisibleAuthFragment.TAG)
+                }
             }
+
         } ?: showStorageTypeNotSelectedError()
     }
 
