@@ -80,14 +80,14 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             } ?: showToast(R.string.TOAST_select_cloud_auth_first)
         }
 
-        listenForFragmentResult(LocalFileSelectorFragment.LOCAL_SELECTION_REQUEST_KEY) { _, fragmentResult ->
+        listenForFragmentResult(LOCAL_SELECTION_REQUEST_KEY) { _, fragmentResult ->
             FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
                 onSourcePathSelected(list?.first())
             }
         }
 
         // FIXME: а вот это проблема. Здесь будут разные реализации фрагментов. И их нужно как-то различать!
-        listenForFragmentResult(YandexDiskFileSelectorFragment.YANDEX_DISK_SELECTION_REQUEST_KEY) { _, fragmentResult ->
+        listenForFragmentResult(YANDEX_DISK_SELECTION_REQUEST_KEY) { _, fragmentResult ->
             FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
                 onTargetPathSelected(list?.first())
             }
@@ -189,7 +189,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun onSelectSourcePathClicked() {
         storageAccessHelper.requestReadAccess { isGranted ->
             if (isGranted) {
-                LocalFileSelectorFragment.create().show(childFragmentManager, FileSelectorFragment.TAG)
+                LocalFileSelectorFragment.create(LOCAL_SELECTION_REQUEST_KEY).show(childFragmentManager, FileSelectorFragment.TAG)
             } else {
                 showToast(R.string.ERROR_storage_access_required)
             }
@@ -205,7 +205,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         currentCloudAuth?.authToken?.let { token ->
             YandexDiskFileSelectorFragment.create(
-                token,
+                fragmentResultKey = YANDEX_DISK_SELECTION_REQUEST_KEY,
+                authToken = token,
                 isMultipleSelectionMode = false,
                 isDirSelectionMode = true
             ).show(childFragmentManager, FileSelectorFragment.TAG)
@@ -377,13 +378,18 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         val TAG: String = TaskEditFragment::class.java.simpleName
 
+        const val LOCAL_SELECTION_REQUEST_KEY = "LOCAL_SELECTION_REQUEST_KEY"
+
+        const val YANDEX_DISK_SELECTION_REQUEST_KEY = "YANDEX_DISK_SELECTION_REQUEST_KEY"
+
         private const val TASK_ID = "TASK_ID"
 
-        fun create(): TaskEditFragment =
-            createFragment(null)
 
-        fun create(taskId: String): TaskEditFragment =
-            createFragment(taskId)
+        fun create(): TaskEditFragment
+            = createFragment(null)
+
+        fun create(taskId: String): TaskEditFragment
+            = createFragment(taskId)
 
         private fun createFragment(taskId: String?) = TaskEditFragment().apply {
             arguments = bundleOf(TASK_ID to taskId)
