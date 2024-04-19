@@ -70,7 +70,14 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun prepareFragmentResultListeners() {
 
         listenForFragmentResult(AuthListDialog.KEY_SELECT_CLOUD_AUTH) { _, fragmentResult ->
-            processAuthSelectionResult(fragmentResult)
+            AuthListDialog.extractCloudAuth(fragmentResult)?.also { cloudAuth ->
+
+                onCloudAuthSelected(cloudAuth)
+
+                if (AuthListDialog.hasNextAction(fragmentResult))
+                    onSelectTargetPathClicked()
+
+            } ?: showToast(R.string.TOAST_select_cloud_auth_first)
         }
 
         listenForFragmentResult(LocalFileSelectorFragment.LOCAL_SELECTION_REQUEST_KEY) { _, fragmentResult ->
@@ -246,22 +253,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         AuthListDialog.create(withNextAction).show(childFragmentManager, AuthListDialog.TAG)
     }
 
-
-    private fun processAuthSelectionResult(fragmentResult: Bundle) {
-        fragmentResult.getString(AuthListDialog.CLOUD_AUTH)?.also { cloudAuthJSON ->
-            // TODO: инкапсулировать это в AuthListDialog ...
-            currentCloudAuth = gson.fromJson(cloudAuthJSON, CloudAuth::class.java)?.also { cloudAuth ->
-                currentCloudAuth = cloudAuth
-                currentTask?.cloudAuthId = cloudAuth.id
-                
-                displayCloudAuthSelectionState(cloudAuth)
-
-                if (fragmentResult.getBoolean(AuthListDialog.WITH_NEXT_ACTION, false))
-                    onSelectTargetPathClicked()
-            }
-        } ?: showToast(R.string.TOAST_select_cloud_auth_first)
+    private fun onCloudAuthSelected(cloudAuth: CloudAuth) {
+        currentCloudAuth = cloudAuth
+        currentTask?.cloudAuthId = cloudAuth.id
+        displayCloudAuthSelectionState(cloudAuth)
     }
-
 
     private fun onSaveButtonClicked() {
         // FIXME: убрать!

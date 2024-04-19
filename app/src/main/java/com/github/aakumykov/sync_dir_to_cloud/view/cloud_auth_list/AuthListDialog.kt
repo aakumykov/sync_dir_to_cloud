@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.core.os.bundleOf
@@ -16,7 +17,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.toJSON
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 
 typealias Layout = FragmentAuthListRelativeBinding
@@ -104,15 +107,31 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
     companion object {
 
+        val TAG: String = AuthListDialog::class.java.simpleName
+        const val KEY_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
+        const val CLOUD_AUTH = "CLOUD_AUTH"
+        const val WITH_NEXT_ACTION = "WITH_NEXT_ACTION"
+
+        // TODO: дать более конкретное имя
         fun create(withNextAction: Boolean): AuthListDialog {
             return AuthListDialog().apply {
                 arguments = bundleOf(WITH_NEXT_ACTION to withNextAction)
             }
         }
 
-        val TAG: String = AuthListDialog::class.java.simpleName
-        const val KEY_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
-        const val CLOUD_AUTH = "CLOUD_AUTH"
-        const val WITH_NEXT_ACTION = "WITH_NEXT_ACTION"
+        fun extractCloudAuth(fragmentResult: Bundle): CloudAuth? {
+            return fragmentResult.getString(CLOUD_AUTH).let { json ->
+                try {
+                    Gson().fromJson(json, CloudAuth::class.java)
+                } catch (e: JsonSyntaxException) {
+                    Log.e(TAG, ExceptionUtils.getErrorMessage(e))
+                    null
+                }
+            }
+        }
+
+        fun hasNextAction(fragmentResult: Bundle): Boolean {
+            return fragmentResult.getBoolean(WITH_NEXT_ACTION, false)
+        }
     }
 }
