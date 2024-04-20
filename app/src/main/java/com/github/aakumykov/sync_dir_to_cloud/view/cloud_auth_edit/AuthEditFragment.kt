@@ -2,14 +2,11 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.CloudAuthenticatorFactory
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -17,13 +14,11 @@ import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.invisible_auth_fragment.InvisibleAuthFragment
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setError
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setText
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import com.yandex.authsdk.internal.strategy.LoginType
 
 
 // FIXME: переименовать в CreateAuthFragment
@@ -48,10 +43,6 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         )
     }
 
-    private val cloudAuthenticatorFactory: CloudAuthenticatorFactory by lazy {
-        App.getAppComponent().getCloudAuthenticatorFactory()
-    }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -73,7 +64,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
     }
 
     private fun prepareFragmentResultListeners() {
-        listenForFragmentResult(InvisibleAuthFragment.KEY_AUTH_RESULT) { key,resultBundle ->
+        /*listenForFragmentResult(InvisibleAuthFragment.KEY_AUTH_RESULT) { key,resultBundle ->
             // TODO: искапсулировать получение значений из bundle в InvisibleAuthFragment
             when {
                 resultBundle.containsKey(InvisibleAuthFragment.AUTH_TOKEN) -> processAuthToken(
@@ -86,7 +77,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
                 else -> throw IllegalStateException("Fragment result for InvisibleAuthFragment does not contains any known keys.")
             }
-        }
+        }*/
     }
 
     private fun processAuthToken(token: String?) {
@@ -128,7 +119,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
             showToast(com.github.aakumykov.sync_dir_to_cloud.R.string.not_implemented_yet)
         }
 
-        binding.buttonsInclude.saveButton.setOnClickListener {
+        /*binding.saveCancelButtonsInclude.saveButton.setOnClickListener {
 
             hideTokenError()
 
@@ -139,15 +130,15 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
                     binding.tokenView.text.toString()
                 )
             } ?: showStorageTypeNotSelectedError()
-        }
+        }*/
 
-        binding.buttonsInclude.cancelButton.setOnClickListener {
+        /*binding.saveCancelButtonsInclude.cancelButton.setOnClickListener {
             dismiss()
-        }
+        }*/
     }
 
     private fun onCloudAuthClicked() {
-        storageType()?.also { storageType ->
+        /*storageType()?.also { storageType ->
 
             if (StorageType.LOCAL != storageType) {
                 cloudAuthenticatorFactory.createCloudAuthenticator(storageType).apply {
@@ -155,7 +146,7 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
                 }
             }
 
-        } ?: showStorageTypeNotSelectedError()
+        } ?: showStorageTypeNotSelectedError()*/
     }
 
     private fun showStorageTypeNotSelectedError() {

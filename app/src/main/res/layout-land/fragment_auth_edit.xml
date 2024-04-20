@@ -63,7 +63,7 @@
         android:orientation="vertical">
 
         <include
-            android:id="@+id/buttonsInclude"
+            android:id="@+id/saveCancelButtonsInclude"
             layout="@layout/save_cancel_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

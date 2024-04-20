@@ -1,8 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
-import com.github.aakumykov.sync_dir_to_cloud.CloudAuthenticatorFactory
+import com.github.aakumykov.sync_dir_to_cloud.di.factories.CloudAuthenticatorFactoryAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
@@ -35,7 +34,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
-import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.google.gson.Gson
 import dagger.Component
 
@@ -95,5 +93,5 @@ interface AppComponent {
 
     fun getGson(): Gson
 
-    fun getCloudAuthenticatorFactory(): CloudAuthenticatorFactory
+    fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
 }

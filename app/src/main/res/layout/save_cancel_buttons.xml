@@ -8,12 +8,16 @@
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:textSize="16sp"
         android:text="@string/BUTTON_save" />
 
     <Button
         android:id="@+id/cancelButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:textSize="16sp"
         android:backgroundTint="?attr/colorButtonNormal"
         android:text="@string/BUTTON_cancel" />
 

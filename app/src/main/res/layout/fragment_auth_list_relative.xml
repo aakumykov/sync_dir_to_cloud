@@ -43,7 +43,7 @@
         android:layout_alignParentBottom="true"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addButton"
+        android:id="@+id/addYandexButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -53,11 +53,25 @@
         android:clickable="true"
         android:contentDescription="@string/description_cloud_auth_add_button"
         android:focusable="true"
-        android:src="@drawable/ic_cloud_auth"
-        android:visibility="gone"
+        android:src="@drawable/ic_yandex_disk"
         tools:ignore="ImageContrastCheck"
-        tools:visibility="visible"
         android:layout_alignParentEnd="true"
         android:layout_alignBottom="@id/listView"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addLocalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:contentDescription="@string/description_cloud_auth_add_button"
+        android:focusable="true"
+        android:src="@drawable/ic_storage"
+        tools:ignore="ImageContrastCheck"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

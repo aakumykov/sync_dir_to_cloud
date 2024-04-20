@@ -128,4 +128,6 @@ dependencies {
     implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.18'
 
     implementation 'com.github.aakumykov:storage_access_helper:0.0.5'
+
+//    implementation 'me.jahirfiquitiva:FABsMenu:1.1.4'
 }

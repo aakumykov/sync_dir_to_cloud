@@ -15,7 +15,9 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListRelativeBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.toJSON
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEditDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.google.gson.Gson
@@ -56,8 +58,14 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
 
     private fun prepareButtons() {
-        binding.addButton.setOnClickListener {
-            AuthEditFragment().show(childFragmentManager, AuthEditFragment.TAG)
+        binding.addLocalButton.setOnClickListener {
+            CloudAuthEditDialog.create(StorageType.LOCAL)
+                .show(childFragmentManager, AuthEditFragment.TAG)
+        }
+
+        binding.addYandexButton.setOnClickListener {
+            CloudAuthEditDialog.create(StorageType.YANDEX_DISK)
+                .show(childFragmentManager, AuthEditFragment.TAG)
         }
     }
 
@@ -102,7 +110,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
     private fun hideProgressShowList() {
         binding.progressBar.visibility = View.GONE
         binding.listView.visibility = View.VISIBLE
-        binding.addButton.visibility = View.VISIBLE
+//        binding.addButton.visibility = View.VISIBLE
     }
 
     companion object {

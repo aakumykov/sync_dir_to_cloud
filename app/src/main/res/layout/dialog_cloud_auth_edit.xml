@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/nameView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_auth_name"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:singleLine="true"
+            android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/cloudAuthButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            android:backgroundTint="#66BB6A"
+            android:text="@string/BUTTON_cloud_auth" />
+
+        <include
+            android:id="@+id/saveCancelButtonsInclude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/save_cancel_buttons"/>
+
+    </LinearLayout>
+
+</ScrollView>

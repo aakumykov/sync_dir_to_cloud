@@ -68,7 +68,7 @@
         android:textAlignment="center" />
 
     <include
-        android:id="@+id/buttonsInclude"
+        android:id="@+id/saveCancelButtonsInclude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         layout="@layout/save_cancel_buttons"/>

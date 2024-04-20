@@ -85,4 +85,7 @@
     <string name="MENU_ITEM_action_probe_change_task_state">Пробное изменение статуса задачи</string>
     <string name="SPINNER_storage_type_default_value">Тип хранилища</string>
     <string name="ERROR_select_storage_type">Выберите тип хранилища</string>
+    <string name="MENU_storage_type_local">Локальное хранилище</string>
+    <string name="MENU_storage_type_yandex">Яндекс.Диск</string>
+    <string name="MENU_storage_type_google">Google Drive</string>
 </resources>
