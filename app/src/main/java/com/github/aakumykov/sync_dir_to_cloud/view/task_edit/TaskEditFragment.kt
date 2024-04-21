@@ -221,10 +221,10 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun onOpStateChanged(opState: OpState) {
         when (opState) {
-            is OpState.Idle -> showIdleOpState()
             is OpState.Busy -> showBusyOpState(opState)
             is OpState.Error -> showErrorOpState(opState)
             is OpState.Success -> finishWork(opState)
+            else -> showIdleOpState()
         }
     }
 
