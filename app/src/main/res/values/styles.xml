@@ -34,4 +34,9 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style name="error_view">
+        <item name="android:textColor">@color/error_view_fg</item>
+        <item name="android:background">@color/error_view_bg</item>
+    </style>
+
 </resources>

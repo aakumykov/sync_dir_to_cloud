@@ -7,8 +7,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.CloudAuthenticatorFactory
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator

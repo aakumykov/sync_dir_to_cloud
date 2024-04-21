@@ -21,6 +21,28 @@
             android:singleLine="true"
             android:textAlignment="center" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/errorView"
+            style="@style/error_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:textSize="16sp"
+            tools:text="Сообщение об ошибке"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         <Button
             android:id="@+id/cloudAuthButton"
             android:layout_width="match_parent"

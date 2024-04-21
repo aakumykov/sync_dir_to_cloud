@@ -6,7 +6,9 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.file_lister_navigator_selector.extensions.hide
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogCloudAuthEditBinding
@@ -27,6 +29,9 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     private var cloudAuthenticator: CloudAuthenticator? = null
     private var cloudAuthToken: String? = null
 
+    private lateinit var viewModel: CloudAuthEditViewModel
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DialogCloudAuthEditBinding.bind(view)
@@ -34,6 +39,40 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         restoreAuthToken(savedInstanceState)
         prepareButtons()
         prepareCloudAuthenticator()
+        prepareViewModel()
+    }
+
+    private fun prepareViewModel() {
+        // Удивительно, но ViewModel создаётся только один раз, а не при каждом
+        // пересоздании фрагмента, несмотря на то, что ViewModelStoreOwner - this ...
+        viewModel = DaggerViewModelHelper.get(this, CloudAuthEditViewModel::class.java)
+
+        viewModel.authCreationResult.observe(viewLifecycleOwner, ::onResultChanged)
+    }
+
+    private fun onResultChanged(result: Result<CloudAuth>?) {
+        result?.also {
+            if (it.isSuccess)
+                closeDialog()
+            else {
+                showError(it.exceptionOrNull())
+                hideProgressBar()
+                enableForm()
+            }
+        }
+    }
+
+    private fun showError(throwable: Throwable?) {
+        binding.errorView.apply {
+            text = throwable?.let {
+                ExceptionUtils.getErrorMessage(throwable)
+            } ?: getString(R.string.unknown_error)
+            visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideError() {
+        binding.errorView.visibility = View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -69,21 +108,37 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun onSaveButtonClicked() {
+
+        hideError()
+        disableForm()
+        showProgressBar()
+
         cloudAuthToken?.also { token ->
-            lifecycleScope.launch(Dispatchers.IO) {
-//                try {
-                    App.getAppComponent()
-                        .getCloudAuthAdder()
-                        .addCloudAuth(
-                            CloudAuth(binding.nameView.text.toString(), token)
-                        )
-                /*} catch (throwable: Throwable) {
-
-                }*/
-
-                closeDialog()
-            }
+            viewModel.createCloudAuth(
+                binding.nameView.text.toString(),
+                token
+            )
         }
+    }
+
+    private fun disableForm() {
+        binding.nameView.isEnabled = false
+        binding.cloudAuthButton.isEnabled = false
+        binding.saveCancelButtonsInclude.saveButton.isEnabled = false
+    }
+
+    private fun enableForm() {
+        binding.nameView.isEnabled = true
+        binding.cloudAuthButton.isEnabled = true
+        binding.saveCancelButtonsInclude.saveButton.isEnabled = true
+    }
+
+    private fun showProgressBar() {
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun onCloudAuthButtonClicked() {

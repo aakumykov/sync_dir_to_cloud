@@ -88,4 +88,5 @@
     <string name="MENU_storage_type_local">Локальное хранилище</string>
     <string name="MENU_storage_type_yandex">Яндекс.Диск</string>
     <string name="MENU_storage_type_google">Google Drive</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
 </resources>
