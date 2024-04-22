@@ -22,6 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuI
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import kotlinx.coroutines.launch
+import java.util.function.Function
 
 class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
@@ -97,8 +98,15 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun prepareListAdapter() {
 
-        listAdapter = ListViewAdapter(requireContext(), R.layout.sync_object_list_item, R.id.title, syncObjectList) {
-                syncObject -> SyncStateItem(syncObject).title
+        listAdapter = object: ListViewAdapter<SyncObject>(
+            requireContext(),
+            R.layout.sync_object_list_item,
+            R.id.syncObjectTitle,
+            R.id.syncObjectStateIcon,
+            syncObjectList,
+            { it.name }
+        ){
+            override fun modifyView(item: SyncObject?, viewHolder: ViewHolder?) {}
         }
 
         binding.listView.adapter = listAdapter

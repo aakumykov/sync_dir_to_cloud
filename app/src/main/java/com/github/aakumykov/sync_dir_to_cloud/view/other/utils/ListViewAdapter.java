@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
@@ -15,27 +16,32 @@ import androidx.core.util.Function;
 
 import java.util.List;
 
-public class ListViewAdapter<T> extends ArrayAdapter<T> {
+public abstract class ListViewAdapter<T> extends ArrayAdapter<T> {
 
     private LayoutInflater inflater;
     @LayoutRes private int layoutRes;
     @IdRes private int titleId;
+    @IdRes private int iconId;
     private List<T> mList;
     @Nullable private Function<T,String> mTitleGetter;
+
+    public abstract void modifyView(T item, ViewHolder viewHolder);
 
     public ListViewAdapter(Context context,
                            @LayoutRes int layoutResource,
                            @IdRes int titleId,
+                           @IdRes int iconId,
                            List<T> list,
                            @Nullable Function<T,String> titleGetter
     ) {
         super(context, layoutResource, list);
-        init(context, layoutResource, titleId, list, titleGetter);
+        init(context, layoutResource, titleId, iconId, list, titleGetter);
     }
 
     private void init(Context context,
                       @LayoutRes int layoutResource,
                       @IdRes int titleId,
+                      @IdRes int iconId,
                       List<T> list,
                       @Nullable Function<T,String> titleGetter
     ) {
@@ -54,16 +60,20 @@ public class ListViewAdapter<T> extends ArrayAdapter<T> {
 
         if(convertView==null){
             convertView = inflater.inflate(this.layoutRes, parent, false);
-            viewHolder = new ViewHolder(convertView, titleId);
+            viewHolder = new ViewHolder(convertView, titleId, iconId);
             convertView.setTag(viewHolder);
         }
         else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        T listItem = mList.get(position);
+
         viewHolder.titleView.setText(
-                (null != mTitleGetter) ? mTitleGetter.apply(mList.get(position)) : mList.get(position).toString()
+                (null != mTitleGetter) ? mTitleGetter.apply(listItem) : listItem.toString()
         );
+
+        modifyView(listItem, viewHolder);
 
         return convertView;
     }
@@ -74,10 +84,12 @@ public class ListViewAdapter<T> extends ArrayAdapter<T> {
         notifyDataSetChanged();
     }
 
-    private static class ViewHolder {
-        final TextView titleView;
-        ViewHolder(View view, @IdRes int titleId){
+    public static class ViewHolder {
+        public final TextView titleView;
+        public final ImageView itemTypeIcon;
+        ViewHolder(View view, @IdRes int titleId, @IdRes int iconId){
             titleView = view.findViewById(titleId);
+            itemTypeIcon = view.findViewById(iconId);
         }
     }
 }

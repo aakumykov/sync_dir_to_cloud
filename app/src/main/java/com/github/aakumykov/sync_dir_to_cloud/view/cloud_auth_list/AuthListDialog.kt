@@ -131,13 +131,22 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
     private fun prepareList() {
 
-        listAdapter = ListViewAdapter<CloudAuth>(
+        listAdapter = object: ListViewAdapter<CloudAuth>(
             requireContext(),
             R.layout.auth_list_item,
             R.id.cloudAuthNameView,
+            R.id.cloudAuthIcon,
             ArrayList(),
             Function { return@Function it.name }
-        )
+        ) {
+            override fun modifyView(item: CloudAuth?, viewHolder: ViewHolder?) {
+                item?.let {
+                    viewHolder?.itemTypeIcon?.apply {
+                        setImageResource(StorageTypeIconGetter.getIconFor(item.storageType))
+                    }
+                }
+            }
+        }
 
         binding.listView.adapter = listAdapter
 
