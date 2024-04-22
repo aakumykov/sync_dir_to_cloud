@@ -13,7 +13,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagi
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -39,21 +38,6 @@ class TaskEditViewModel(
     private val cloudAuthManagingUseCase = App.getAppComponent().getCloudAuthManagingUseCase()
 
 
-    //
-    // LiveData с объектом CloudAuth, который связан с текущим
-    //
-    private val _cloudAuthMutableLiveData: MutableLiveData<CloudAuth> = MutableLiveData()
-    val cloudAuthLiveData: LiveData<CloudAuth> get() = _cloudAuthMutableLiveData
-
-    //
-    // Поле для более удобного обращения к текущему CloudAuth (возможно, понадобится "var").
-    //
-    val currentCloudAuth get(): CloudAuth? = _cloudAuthMutableLiveData.value
-
-    private val _cloudAuth: MutableLiveData<Result<CloudAuth>> = MutableLiveData()
-    val cloudAuth: LiveData<Result<CloudAuth>> = _cloudAuth
-
-
     fun saveSyncTask() {
         viewModelScope.launch {
             currentTask?.let {
@@ -68,8 +52,6 @@ class TaskEditViewModel(
     fun prepareForEdit(taskId: String) {
         viewModelScope.launch {
             _syncTaskMutableLiveData.value = syncTaskManagingUseCase.getSyncTask(taskId)
-
-            loadCloudAuth(currentTask?.cloudAuthId)
         }
     }
 
@@ -80,23 +62,7 @@ class TaskEditViewModel(
     }
 
 
-    private fun loadCloudAuth(cloudAuthId: String?) {
-        viewModelScope.launch {
-            cloudAuthId?.let {
-                _cloudAuthMutableLiveData.value = cloudAuthManagingUseCase.getCloudAuth(it)
-            }
-        }
-    }
-
-    fun fetchCloudAuth(cloudAuthId: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                cloudAuthReader.getCloudAuth(cloudAuthId)
-            }?.also {
-                _cloudAuth.value = Result.success(it)
-            } ?: {
-                _cloudAuth.value = Result.failure(Exception("Cloud auth with id='${cloudAuthId}' not found."))
-            }
-        }
+    suspend fun getCloudAuth(authId: String?): CloudAuth? {
+        return authId?.let { cloudAuthReader.getCloudAuth(authId) }
     }
 }

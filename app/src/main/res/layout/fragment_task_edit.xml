@@ -100,7 +100,7 @@
             app:iconGravity="textEnd"
             app:iconPadding="16dp"
             app:iconTint="@color/black"
-            android:text="@string/BUTTON_task_edit_cloud_auth"
+            android:text="@string/BUTTON_task_edit_select_cloud_auth"
             android:textColor="@color/black"/>
 
         <EditText

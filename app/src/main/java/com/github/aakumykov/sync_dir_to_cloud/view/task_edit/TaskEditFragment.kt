@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
@@ -33,6 +33,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
@@ -116,41 +117,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
         taskEditViewModel.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
-
-        taskEditViewModel.cloudAuth.observe(viewLifecycleOwner, ::onCloudAuthChanged)
-    }
-
-    private fun onCloudAuthChanged(result: Result<CloudAuth>?) {
-        if (null == result)
-            return
-
-        if (result.isSuccess)
-            onNewCloudAuth(result.getOrNull())
-        else {
-            result.exceptionOrNull()?.also { Log.e(TAG, ExceptionUtils.getErrorMessage(it), it); }
-            showDefaultCloudAuthButtonLabel()
-        }
-    }
-
-    private fun showDefaultCloudAuthButtonLabel() {
-        binding.authSelectionButton.setText(R.string.BUTTON_task_edit_cloud_auth)
-    }
-
-    private fun onNewCloudAuth(cloudAuth: CloudAuth?) {
-        cloudAuth?.also {
-            currentCloudAuth = cloudAuth
-            currentTask?.cloudAuthId = cloudAuth.id
-            displayCloudAuthSelectionState(cloudAuth)
-        }
     }
 
 
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
         syncTask?.also {task ->
             fillForm(task)
-            task.cloudAuthId?.also { cloudAuthId ->
-                taskEditViewModel.fetchCloudAuth(cloudAuthId)
-            }
         }
     }
 
@@ -290,7 +262,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun onCloudAuthSelected(cloudAuth: CloudAuth) {
-        onNewCloudAuth(cloudAuth)
+        currentCloudAuth = cloudAuth
+        currentTask?.cloudAuthId = cloudAuth.id
+        displayCloudAuthSelectionState(cloudAuth)
     }
 
     private fun onSaveButtonClicked() {
@@ -311,6 +285,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun fillForm(syncTask: SyncTask) {
         fillPaths(syncTask)
         fillPeriodView(syncTask)
+        fillAuthButton(syncTask)
     }
 
     private fun fillPaths(syncTask: SyncTask) {
@@ -324,7 +299,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun fillAuthButton(syncTask: SyncTask) {
-        binding.authSelectionButton.text = syncTask.cloudAuthId
+        lifecycleScope.launch {
+            binding.authSelectionButton.setText(
+                taskEditViewModel.getCloudAuth(syncTask.cloudAuthId)?.name
+                    ?: getString(R.string.BUTTON_task_edit_select_cloud_auth)
+            )
+        }
     }
 
 
