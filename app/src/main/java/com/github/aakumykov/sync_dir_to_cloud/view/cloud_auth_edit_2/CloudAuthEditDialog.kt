@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -36,10 +37,15 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         super.onViewCreated(view, savedInstanceState)
         _binding = DialogCloudAuthEditBinding.bind(view)
 
+        prepareLayout()
         restoreAuthToken(savedInstanceState)
         prepareButtons()
         prepareCloudAuthenticator()
         prepareViewModel()
+    }
+
+    private fun prepareLayout() {
+        binding.cloudAuthButton.setText(authButtonLabel())
     }
 
     private fun prepareViewModel() {
@@ -161,15 +167,24 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         }
     }
 
+    @StringRes
+    private fun authButtonLabel(): Int {
+        return arguments?.getInt(AUTH_BUTTON_LABEL) ?: R.string.BUTTON_LABEL_unknown_storage_type
+    }
+
     companion object {
         val TAG: String = CloudAuthEditDialog::class.java.simpleName
 
         const val STORAGE_TYPE = "STORAGE_TYPE"
+        const val AUTH_BUTTON_LABEL = "AUTH_BUTTON_LABEL"
         const val AUTH_TOKEN = "AUTH_TOKEN"
 
-        fun create(storageType: StorageType): CloudAuthEditDialog {
+        fun create(storageType: StorageType, authButtonLabel: Int): CloudAuthEditDialog {
             return CloudAuthEditDialog().apply {
-                arguments = bundleOf(STORAGE_TYPE to storageType.name)
+                arguments = bundleOf(
+                    STORAGE_TYPE to storageType.name,
+                    AUTH_BUTTON_LABEL to authButtonLabel
+                )
             }
         }
     }

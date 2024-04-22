@@ -2,7 +2,7 @@
 <resources>
     <item name="actionStartStopTask" type="id" />
     <item name="actionProbeChangeTaskState" type="id" />
-    <item name="authTypeLocal" type="id" />
-    <item name="authTypeYandex" type="id" />
-    <item name="authTypeGoogle" type="id" />
+    <item name="storageTypeLocal" type="id" />
+    <item name="storageTypeGoogle" type="id" />
+    <item name="storageTypeYandex" type="id" />
 </resources>

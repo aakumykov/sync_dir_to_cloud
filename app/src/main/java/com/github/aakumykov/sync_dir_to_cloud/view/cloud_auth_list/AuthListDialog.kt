@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list
 
-import android.content.res.Resources
 import android.content.res.Resources.Theme
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +19,8 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListRelativeBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.toJSON
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEditDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.google.gson.Gson
@@ -43,7 +44,6 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareLayout(view)
-        prepareSpeedDialView()
         prepareButtons()
         prepareViewModel()
         prepareList()
@@ -58,6 +58,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
     private fun prepareLayout(view: View) {
         _binding = Layout.bind(view)
+        prepareSpeedDialView()
     }
 
     // TODO: вынести создание этого меню в отдельный класс
@@ -65,42 +66,45 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
         binding.addButton.apply {
             addActionItem(
                 SpeedDialActionItem
-                    .Builder(R.id.authTypeYandex, R.drawable.ic_auth_type_local)
+                    .Builder(R.id.storageTypeLocal, R.drawable.ic_auth_type_local)
                     .setLabel(R.string.auth_type_local)
                     .setFabBackgroundColor(color(R.color.white))
                     .create()
             )
             addActionItem(
                 SpeedDialActionItem
-                    .Builder(R.id.authTypeLocal, R.drawable.ic_storage_type_yandex_disk)
+                    .Builder(R.id.storageTypeYandex, R.drawable.ic_storage_type_yandex_disk)
                     .setLabel(R.string.auth_type_yandex)
                     .setFabBackgroundColor(color(R.color.white))
                     .create()
             )
-            addActionItem(
+            /*addActionItem(
                 SpeedDialActionItem
-                    .Builder(R.id.authTypeGoogle, R.drawable.ic_storage_type_google_drive)
+                    .Builder(R.id.storageTypeGoogle, R.drawable.ic_storage_type_google_drive)
                     .setLabel(R.string.auth_type_google)
                     .setFabBackgroundColor(color(R.color.white))
                     .create()
-            )
+            )*/
         }
-
-//        binding.addButton.
     }
 
     private fun prepareButtons() {
-        /*binding.add.setOnClickListener {
-            CloudAuthEditDialog.create(StorageType.LOCAL)
-                .show(childFragmentManager, AuthEditFragment.TAG)
-        }
-
-        binding.addYandexButton.setOnClickListener {
-            CloudAuthEditDialog.create(StorageType.YANDEX_DISK)
-                .show(childFragmentManager, AuthEditFragment.TAG)
-        }*/
+        binding.addButton.setOnActionSelectedListener(::onSpeedDialActionSelected)
     }
 
+    private fun onSpeedDialActionSelected(speedDialActionItem: SpeedDialActionItem?): Boolean {
+        when(speedDialActionItem?.id) {
+            R.id.storageTypeYandex -> StorageType.YANDEX_DISK
+//            R.id.storageTypeGoogle -> StorageType.GOOGLE
+            R.id.storageTypeLocal -> StorageType.LOCAL
+            else -> null
+        }?.also { storageType ->
+            CloudAuthEditDialog
+                .create(storageType, AuthButtonLabel.getFor(storageType))
+                .show(childFragmentManager, CloudAuthEditDialog.TAG)
+        }
+        return true
+    }
 
     private fun prepareViewModel() {
 

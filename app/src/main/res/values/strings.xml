@@ -90,4 +90,7 @@
     <string name="MENU_storage_type_google">Google Drive</string>
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="auth_type_local">Локально</string>
+    <string name="BUTTON_LABEL_auth_in_yandex">Авторизоваться в Яндекс</string>
+    <string name="BUTTON_LABEL_auth_locally">Авторизоваться локально (НЕ ИСПОЛЬЗУЕТСЯ)</string>
+    <string name="BUTTON_LABEL_unknown_storage_type">Неизвестный тип хранилища</string>
 </resources>
