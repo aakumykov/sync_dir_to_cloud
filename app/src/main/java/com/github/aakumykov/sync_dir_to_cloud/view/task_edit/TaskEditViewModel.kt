@@ -8,14 +8,21 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class TaskEditViewModel(application: Application) : TaskManagingViewModel(application) {
-
-
+class TaskEditViewModel(
+    application: Application,
+    private val cloudAuthReader: CloudAuthReader
+)
+    : TaskManagingViewModel(application)
+{
     //
     // LiveData для оповещения View о том, что можно отображать данные.
     //
@@ -43,6 +50,8 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
     //
     val currentCloudAuth get(): CloudAuth? = _cloudAuthMutableLiveData.value
 
+    private val _cloudAuth: MutableLiveData<Result<CloudAuth>> = MutableLiveData()
+    val cloudAuth: LiveData<Result<CloudAuth>> = _cloudAuth
 
 
     fun saveSyncTask() {
@@ -75,6 +84,18 @@ class TaskEditViewModel(application: Application) : TaskManagingViewModel(applic
         viewModelScope.launch {
             cloudAuthId?.let {
                 _cloudAuthMutableLiveData.value = cloudAuthManagingUseCase.getCloudAuth(it)
+            }
+        }
+    }
+
+    fun fetchCloudAuth(cloudAuthId: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                cloudAuthReader.getCloudAuth(cloudAuthId)
+            }?.also {
+                _cloudAuth.value = Result.success(it)
+            } ?: {
+                _cloudAuth.value = Result.failure(Exception("Cloud auth with id='${cloudAuthId}' not found."))
             }
         }
     }

@@ -22,4 +22,7 @@
     <color name="task_state">@color/grey</color>
 
     <color name="dialog_title">@color/black</color>
+
+    <color name="yandex_disk_color">#0073f7</color>
+    <color name="local_storage_color">#707070</color>
 </resources>

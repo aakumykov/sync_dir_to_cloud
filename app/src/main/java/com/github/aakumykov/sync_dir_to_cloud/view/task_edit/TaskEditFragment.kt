@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -14,6 +15,7 @@ import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelectorFragment
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -27,6 +29,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelectorFragment
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.gson.Gson
@@ -36,7 +39,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
 
-    private val taskEditViewModel: TaskEditViewModel by viewModels()
+    private lateinit var taskEditViewModel: TaskEditViewModel
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
 
@@ -109,14 +112,46 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun prepareViewModels() {
+        taskEditViewModel = DaggerViewModelHelper.get(this, TaskEditViewModel::class.java)
+
         taskEditViewModel.getOpState().observe(viewLifecycleOwner, ::onOpStateChanged)
         taskEditViewModel.syncTaskLiveData.observe(viewLifecycleOwner, ::onSyncTaskChanged)
+
+        taskEditViewModel.cloudAuth.observe(viewLifecycleOwner, ::onCloudAuthChanged)
+    }
+
+    private fun onCloudAuthChanged(result: Result<CloudAuth>?) {
+        if (null == result)
+            return
+
+        if (result.isSuccess)
+            onNewCloudAuth(result.getOrNull())
+        else {
+            result.exceptionOrNull()?.also { Log.e(TAG, ExceptionUtils.getErrorMessage(it), it); }
+            showDefaultCloudAuthButtonLabel()
+        }
+    }
+
+    private fun showDefaultCloudAuthButtonLabel() {
+        binding.authSelectionButton.setText(R.string.BUTTON_task_edit_cloud_auth)
+    }
+
+    private fun onNewCloudAuth(cloudAuth: CloudAuth?) {
+        cloudAuth?.also {
+            currentCloudAuth = cloudAuth
+            currentTask?.cloudAuthId = cloudAuth.id
+            displayCloudAuthSelectionState(cloudAuth)
+        }
     }
 
 
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
-        if (null != syncTask)
-            fillForm(syncTask)
+        syncTask?.also {task ->
+            fillForm(task)
+            task.cloudAuthId?.also { cloudAuthId ->
+                taskEditViewModel.fetchCloudAuth(cloudAuthId)
+            }
+        }
     }
 
 
@@ -255,9 +290,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun onCloudAuthSelected(cloudAuth: CloudAuth) {
-        currentCloudAuth = cloudAuth
-        currentTask?.cloudAuthId = cloudAuth.id
-        displayCloudAuthSelectionState(cloudAuth)
+        onNewCloudAuth(cloudAuth)
     }
 
     private fun onSaveButtonClicked() {
@@ -278,7 +311,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun fillForm(syncTask: SyncTask) {
         fillPaths(syncTask)
         fillPeriodView(syncTask)
-        fillAuthButton(syncTask)
     }
 
     private fun fillPaths(syncTask: SyncTask) {

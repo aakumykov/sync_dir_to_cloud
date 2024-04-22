@@ -68,14 +68,18 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
                 SpeedDialActionItem
                     .Builder(R.id.storageTypeLocal, R.drawable.ic_auth_type_local)
                     .setLabel(R.string.speed_dial_auth_label_local)
-                    .setFabBackgroundColor(color(R.color.white))
+                    .setFabBackgroundColor(color(R.color.local_storage_color))
+                    .setFabImageTintColor(color(R.color.white))
+                    .setLabelColor(color(R.color.local_storage_color))
                     .create()
             )
             addActionItem(
                 SpeedDialActionItem
                     .Builder(R.id.storageTypeYandex, R.drawable.ic_storage_type_yandex_disk)
                     .setLabel(R.string.speed_dial_auth_label_yandex)
-                    .setFabBackgroundColor(color(R.color.white))
+                    .setFabBackgroundColor(color(R.color.yandex_disk_color))
+                    .setFabImageTintColor(color(R.color.white))
+                    .setLabelColor(color(R.color.yandex_disk_color))
                     .create()
             )
             /*addActionItem(
