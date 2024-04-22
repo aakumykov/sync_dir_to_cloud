@@ -36,8 +36,8 @@
     <string name="BUTTON_select_cloud_auth">Выбор облачной авторизации</string>
     <string name="description_home_icon_back">Венруться назад</string>
     <string name="BUTTON_cloud_auth">Авторизоваться в облаке</string>
-    <string name="AUTH_BUTTON_yandex">Авторизоваться в Яндекс</string>
-    <string name="AUTH_BUTTON_google">Авторизоваться в Google</string>
+    <string name="auth_type_yandex">Яндекс</string>
+    <string name="auth_type_google">Google</string>
     <string name="hint_auth_name">Название</string>
     <string name="BUTTON_cancel">Отменить</string>
     <string name="BUTTON_save">Сохранить</string>
@@ -89,4 +89,5 @@
     <string name="MENU_storage_type_yandex">Яндекс.Диск</string>
     <string name="MENU_storage_type_google">Google Drive</string>
     <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="auth_type_local">Локально</string>
 </resources>

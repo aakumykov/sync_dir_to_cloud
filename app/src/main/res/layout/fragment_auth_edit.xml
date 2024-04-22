@@ -46,18 +46,18 @@
         android:id="@+id/cloudAuthButton"
         style="@style/cloud_auth_button"
         android:backgroundTint="#66BB6A"
-        android:text="@string/AUTH_BUTTON_yandex" />
+        android:text="@string/auth_type_yandex" />
 
     <Button
         android:id="@+id/yandexAuthButton"
         style="@style/cloud_auth_button"
         android:backgroundTint="@color/yandex_button"
-        android:text="@string/AUTH_BUTTON_yandex" />
+        android:text="@string/auth_type_yandex" />
 
     <Button
         android:id="@+id/googleAuthButton"
         style="@style/cloud_auth_button"
-        android:text="@string/AUTH_BUTTON_google" />
+        android:text="@string/auth_type_google" />
 
     <TextView
         android:id="@+id/tokenErrorView"
