@@ -40,13 +40,13 @@
             android:id="@+id/cloudAuthButton"
             style="@style/cloud_auth_button"
             android:backgroundTint="#66BB6A"
-            android:text="@string/auth_type_yandex" />
+            android:text="@string/speed_dial_auth_label_yandex" />
 
         <Button
             android:id="@+id/yandexAuthButton"
             style="@style/cloud_auth_button"
             android:backgroundTint="@color/yandex_button"
-            android:text="@string/auth_type_yandex" />
+            android:text="@string/speed_dial_auth_label_yandex" />
 
         <Button
             android:id="@+id/googleAuthButton"

@@ -67,14 +67,14 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
             addActionItem(
                 SpeedDialActionItem
                     .Builder(R.id.storageTypeLocal, R.drawable.ic_auth_type_local)
-                    .setLabel(R.string.auth_type_local)
+                    .setLabel(R.string.speed_dial_auth_label_local)
                     .setFabBackgroundColor(color(R.color.white))
                     .create()
             )
             addActionItem(
                 SpeedDialActionItem
                     .Builder(R.id.storageTypeYandex, R.drawable.ic_storage_type_yandex_disk)
-                    .setLabel(R.string.auth_type_yandex)
+                    .setLabel(R.string.speed_dial_auth_label_yandex)
                     .setFabBackgroundColor(color(R.color.white))
                     .create()
             )
@@ -89,10 +89,16 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
     }
 
     private fun prepareButtons() {
-        binding.addButton.setOnActionSelectedListener(::onSpeedDialActionSelected)
+        binding.addButton.setOnActionSelectedListener {
+            binding.addButton.close()
+            onSpeedDialActionSelected(it)
+        }
     }
 
     private fun onSpeedDialActionSelected(speedDialActionItem: SpeedDialActionItem?): Boolean {
+
+        val authButtonLabel: AuthButtonLabel by lazy { AuthButtonLabel(resources) }
+
         when(speedDialActionItem?.id) {
             R.id.storageTypeYandex -> StorageType.YANDEX_DISK
 //            R.id.storageTypeGoogle -> StorageType.GOOGLE
@@ -100,7 +106,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
             else -> null
         }?.also { storageType ->
             CloudAuthEditDialog
-                .create(storageType, AuthButtonLabel.getFor(storageType))
+                .create(storageType, authButtonLabel.getFor(storageType))
                 .show(childFragmentManager, CloudAuthEditDialog.TAG)
         }
         return true

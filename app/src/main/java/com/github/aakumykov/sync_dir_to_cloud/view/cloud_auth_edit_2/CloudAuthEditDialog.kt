@@ -3,11 +3,9 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.lifecycleScope
-import com.github.aakumykov.file_lister_navigator_selector.extensions.hide
+import com.github.aakumykov.file_lister_navigator_selector.extensions.hideIf
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -17,8 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
@@ -37,11 +33,27 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         super.onViewCreated(view, savedInstanceState)
         _binding = DialogCloudAuthEditBinding.bind(view)
 
-        prepareLayout()
         restoreAuthToken(savedInstanceState)
+        hideAuthButtonIfAuthorized()
+
+        prepareLayout()
         prepareButtons()
         prepareCloudAuthenticator()
         prepareViewModel()
+    }
+
+    override fun onCloudAuthSuccess(authToken: String) {
+        cloudAuthToken = authToken
+        hideAuthButtonIfAuthorized()
+    }
+
+    private fun hideAuthButtonIfAuthorized() {
+        binding.cloudAuthButton.visibility = if (null != cloudAuthToken) View.GONE else View.VISIBLE
+    }
+
+    override fun onCloudAuthFailed(throwable: Throwable) {
+        showToast(R.string.auth_error)
+        Log.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
     }
 
     private fun prepareLayout() {
@@ -167,9 +179,8 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         }
     }
 
-    @StringRes
-    private fun authButtonLabel(): Int {
-        return arguments?.getInt(AUTH_BUTTON_LABEL) ?: R.string.BUTTON_LABEL_unknown_storage_type
+    private fun authButtonLabel(): String {
+        return arguments?.getString(AUTH_BUTTON_LABEL) ?: getString(R.string.BUTTON_LABEL_unknown_storage_type)
     }
 
     companion object {
@@ -179,7 +190,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         const val AUTH_BUTTON_LABEL = "AUTH_BUTTON_LABEL"
         const val AUTH_TOKEN = "AUTH_TOKEN"
 
-        fun create(storageType: StorageType, authButtonLabel: Int): CloudAuthEditDialog {
+        fun create(storageType: StorageType, authButtonLabel: String): CloudAuthEditDialog {
             return CloudAuthEditDialog().apply {
                 arguments = bundleOf(
                     STORAGE_TYPE to storageType.name,
@@ -187,14 +198,5 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
                 )
             }
         }
-    }
-
-    override fun onCloudAuthSuccess(authToken: String) {
-        cloudAuthToken = authToken
-    }
-
-    override fun onCloudAuthFailed(throwable: Throwable) {
-        showToast(R.string.auth_error)
-        Log.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
     }
 }

@@ -18,6 +18,7 @@
             android:importantForAutofill="no"
             android:inputType="textPersonName"
             android:minHeight="48dp"
+            android:minEms="20"
             android:singleLine="true"
             android:textAlignment="center" />
 
