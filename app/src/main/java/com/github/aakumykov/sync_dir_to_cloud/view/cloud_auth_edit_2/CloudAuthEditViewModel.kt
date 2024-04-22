@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,10 +21,10 @@ class CloudAuthEditViewModel(
     private val _result: MutableLiveData<Result<CloudAuth>> = MutableLiveData()
     val authCreationResult: LiveData<Result<CloudAuth>> = _result
 
-    fun createCloudAuth(name: String, authToken: String) {
+    fun createCloudAuth(name: String, storageType: StorageType, authToken: String) {
         viewModelScope.launch {
             try {
-                CloudAuth(name, authToken).also {
+                CloudAuth(name, storageType, authToken).also {
 
                     withContext(Dispatchers.IO) {
                         cloudAuthAdder.addCloudAuth(it)

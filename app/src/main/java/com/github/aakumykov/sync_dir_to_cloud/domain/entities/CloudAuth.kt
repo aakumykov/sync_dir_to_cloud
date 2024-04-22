@@ -22,12 +22,13 @@ class CloudAuth (
     @ColumnInfo(name = "auth_token")
     val authToken: String,
 
-    /*@ColumnInfo(name = "storage_type")
-    val storageType: StorageType,*/
+    @ColumnInfo(name = "storage_type")
+    val storageType: StorageType,
 ) {
     @Ignore
-    constructor(name: String, authToken: String) : this(
-        UUID.randomUUID().toString(),
-        name,
-        authToken)
+    constructor(name: String, storageType: StorageType, authToken: String) : this(
+        id = UUID.randomUUID().toString(),
+        name = name,
+        storageType = storageType,
+        authToken = authToken)
 }

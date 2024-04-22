@@ -134,6 +134,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         cloudAuthToken?.also { token ->
             viewModel.createCloudAuth(
                 binding.nameView.text.toString(),
+                storageType(),
                 token
             )
         }
@@ -168,15 +169,10 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         _binding = null
     }
 
-    private fun storageType(): StorageType? {
-        return try {
-            arguments?.getString(STORAGE_TYPE)?.let {
-                StorageType.valueOf(it)
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
-            null
-        }
+    private fun storageType(): StorageType {
+        return arguments?.getString(STORAGE_TYPE)?.let {
+            StorageType.valueOf(it)
+        } ?: throw IllegalArgumentException("Fragment arguments must contain '${STORAGE_TYPE}' value.")
     }
 
     private fun authButtonLabel(): String {

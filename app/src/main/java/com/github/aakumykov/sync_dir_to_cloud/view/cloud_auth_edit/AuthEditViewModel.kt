@@ -39,7 +39,7 @@ class AuthEditViewModel(application: Application) : AndroidViewModel(application
     }
 
     private suspend fun createCloudAuthReal(formState: FormState) {
-        cloudAuthManagingUseCase.addCloudAuth(CloudAuth(formState.name!!, formState.token!!))
+        cloudAuthManagingUseCase.addCloudAuth(CloudAuth(formState.name!!, StorageType.YANDEX_DISK, formState.token!!))
         _formState.value = formState.copy(isFinished = true)
     }
 
