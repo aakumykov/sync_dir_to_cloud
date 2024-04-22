@@ -7,11 +7,9 @@
 
     <ImageView
         android:id="@+id/cloudAuthIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:scaleType="center"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="8dp"
         android:layout_weight="0"
         app:srcCompat="@drawable/ic_storage_type_yandex_disk"
         tools:ignore="ContentDescription" />
