@@ -20,4 +20,6 @@
     <color name="list_divider">#CCCCCC</color>
 
     <color name="task_state">@color/grey</color>
+
+    <color name="dialog_title">@color/black</color>
 </resources>

@@ -8,7 +8,13 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="4dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloud_auth_dialog_title"
+            style="@style/dialog_title" />
 
         <EditText
             android:id="@+id/nameView"
