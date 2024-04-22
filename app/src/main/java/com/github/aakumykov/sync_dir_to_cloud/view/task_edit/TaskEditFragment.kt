@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -14,7 +13,6 @@ import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSel
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelectorFragment
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
-import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
@@ -29,10 +27,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelectorFragment
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
@@ -50,8 +46,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
 
     private var currentCloudAuth: CloudAuth? = null
-
-    private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,7 +70,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         listenForFragmentResult(AuthListDialog.KEY_SELECT_CLOUD_AUTH) { _, fragmentResult ->
             AuthListDialog.extractCloudAuth(fragmentResult)?.also { cloudAuth ->
 
-                onCloudAuthSelected(cloudAuth)
+                onCloudAuthSelectionChanged(cloudAuth)
 
                 if (AuthListDialog.hasNextAction(fragmentResult))
                     onSelectTargetPathClicked()
@@ -121,8 +115,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
 
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
-        syncTask?.also {task ->
+        syncTask?.also { task ->
             fillForm(task)
+            requestCloudAuth(task.cloudAuthId)
+        }
+    }
+
+    private fun requestCloudAuth(cloudAuthId: String?) {
+        lifecycleScope.launch {
+            taskEditViewModel.getCloudAuth(cloudAuthId)?.also { cloudAuth ->
+                onCloudAuthSelectionChanged(cloudAuth)
+            }
         }
     }
 
@@ -261,10 +264,10 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         AuthListDialog.create(withNextAction).show(childFragmentManager, AuthListDialog.TAG)
     }
 
-    private fun onCloudAuthSelected(cloudAuth: CloudAuth) {
+    private fun onCloudAuthSelectionChanged(cloudAuth: CloudAuth) {
         currentCloudAuth = cloudAuth
         currentTask?.cloudAuthId = cloudAuth.id
-        displayCloudAuthSelectionState(cloudAuth)
+        displayCloudAuthState()
     }
 
     private fun onSaveButtonClicked() {
@@ -285,7 +288,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun fillForm(syncTask: SyncTask) {
         fillPaths(syncTask)
         fillPeriodView(syncTask)
-        fillAuthButton(syncTask)
     }
 
     private fun fillPaths(syncTask: SyncTask) {
@@ -298,17 +300,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         binding.intervalMinutes.setText(syncTask.intervalMinutes.toString())
     }
 
-    private fun fillAuthButton(syncTask: SyncTask) {
-        lifecycleScope.launch {
-            binding.authSelectionButton.setText(
-                taskEditViewModel.getCloudAuth(syncTask.cloudAuthId)?.name
-                    ?: getString(R.string.BUTTON_task_edit_select_cloud_auth)
-            )
-        }
+    private fun displayCloudAuthState() {
+        binding.authSelectionButton.setText(
+            currentCloudAuth?.name ?: getString(R.string.BUTTON_task_edit_select_cloud_auth)
+        )
     }
-
-
-
 
     private fun showIdleOpState() {
         hideProgressBar()
@@ -380,10 +376,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun hideErrorMessage() {
         binding.errorMessage.visibility = View.GONE
-    }
-
-    private fun displayCloudAuthSelectionState(cloudAuth: CloudAuth) {
-        binding.authSelectionButton.text = cloudAuth.name
     }
 
     companion object {

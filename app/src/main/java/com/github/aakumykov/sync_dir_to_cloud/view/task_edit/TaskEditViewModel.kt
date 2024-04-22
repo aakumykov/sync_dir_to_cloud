@@ -35,9 +35,6 @@ class TaskEditViewModel(
     val currentTask get(): SyncTask? = _syncTaskMutableLiveData.value
 
 
-    private val cloudAuthManagingUseCase = App.getAppComponent().getCloudAuthManagingUseCase()
-
-
     fun saveSyncTask() {
         viewModelScope.launch {
             currentTask?.let {
