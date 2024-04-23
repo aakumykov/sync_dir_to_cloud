@@ -86,10 +86,10 @@ public abstract class ListViewAdapter<T> extends ArrayAdapter<T> {
 
     public static class ViewHolder {
         public final TextView titleView;
-        public final ImageView itemTypeIcon;
+        public final ImageView iconView;
         ViewHolder(View view, @IdRes int titleId, @IdRes int iconId){
             titleView = view.findViewById(titleId);
-            itemTypeIcon = view.findViewById(iconId);
+            iconView = view.findViewById(iconId);
         }
     }
 }
