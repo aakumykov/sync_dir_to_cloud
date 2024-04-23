@@ -40,14 +40,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private var _binding: FragmentTaskStateBinding? = null
     private val binding get() = _binding!!
 
-    // TODO: внудрять ViewModel-и Dagger-ом?
-    private lateinit var taskStateViewModel: TaskStateViewModel // эту получаю от Dagger-а
-
-//    private val navigationViewModel: NavigationViewModel by viewModels()
-//    private val pageTitleViewModel: PageTitleViewModel by viewModels()
-//    private val menuStateViewModel: MenuStateViewModel by viewModels()
-
-    /** --> [prepareViewModels] */
+    private lateinit var taskStateViewModel: TaskStateViewModel
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
@@ -74,13 +67,14 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         menuStateViewModel.sendMenuState(menuState)
     }
 
-    /** --> [navigationViewModel] */
     private fun prepareViewModels() {
+        // Местная ViewModel
         taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
 
-        pageTitleViewModel = DaggerViewModelHelper.get(this, PageTitleViewModel::class.java)
-        navigationViewModel = DaggerViewModelHelper.get(this, NavigationViewModel::class.java)
-        menuStateViewModel = DaggerViewModelHelper.get(this, MenuStateViewModel::class.java)
+        // ViewModel-и уровня приложения
+        pageTitleViewModel = DaggerViewModelHelper.get(requireActivity(), PageTitleViewModel::class.java)
+        navigationViewModel = DaggerViewModelHelper.get(requireActivity(), NavigationViewModel::class.java)
+        menuStateViewModel = DaggerViewModelHelper.get(requireActivity(), MenuStateViewModel::class.java)
     }
 
     private fun processArguments() {
