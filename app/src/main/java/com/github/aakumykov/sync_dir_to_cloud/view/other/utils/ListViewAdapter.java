@@ -47,6 +47,7 @@ public abstract class ListViewAdapter<T> extends ArrayAdapter<T> {
     ) {
         this.layoutRes = layoutResource;
         this.titleId = titleId;
+        this.iconId = iconId;
         this.mList = list;
         this.mTitleGetter = titleGetter;
 
