@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -41,6 +42,12 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     // TODO: внудрять ViewModel-и Dagger-ом?
     private lateinit var taskStateViewModel: TaskStateViewModel // эту получаю от Dagger-а
+
+//    private val navigationViewModel: NavigationViewModel by viewModels()
+//    private val pageTitleViewModel: PageTitleViewModel by viewModels()
+//    private val menuStateViewModel: MenuStateViewModel by viewModels()
+
+    /** --> [prepareViewModels] */
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
@@ -67,11 +74,13 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         menuStateViewModel.sendMenuState(menuState)
     }
 
+    /** --> [navigationViewModel] */
     private fun prepareViewModels() {
+        taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
+
         pageTitleViewModel = DaggerViewModelHelper.get(this, PageTitleViewModel::class.java)
         navigationViewModel = DaggerViewModelHelper.get(this, NavigationViewModel::class.java)
         menuStateViewModel = DaggerViewModelHelper.get(this, MenuStateViewModel::class.java)
-        taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
     }
 
     private fun processArguments() {
@@ -110,7 +119,11 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             syncObjectList,
             { it.name }
         ){
-            override fun modifyView(item: SyncObject?, viewHolder: ViewHolder?) {}
+            override fun modifyView(item: SyncObject?, viewHolder: ViewHolder?) {
+                if (null != item && null != viewHolder) {
+                    viewHolder.iconView.setImageResource(SyncObjectStateIconGetter.getIconFor(item.syncState))
+                }
+            }
         }
 
         binding.listView.adapter = listAdapter
