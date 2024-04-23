@@ -41,9 +41,9 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     // TODO: внудрять ViewModel-и Dagger-ом?
     private lateinit var taskStateViewModel: TaskStateViewModel // эту получаю от Dagger-а
-    private val navigationViewModel: NavigationViewModel by activityViewModels()
-    private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
-    private val menuStateViewModel: MenuStateViewModel by activityViewModels()
+    private lateinit var navigationViewModel: NavigationViewModel
+    private lateinit var pageTitleViewModel: PageTitleViewModel
+    private lateinit var menuStateViewModel: MenuStateViewModel
 
     private lateinit var listAdapter: ListViewAdapter<SyncObject>
     private val syncObjectList: MutableList<SyncObject> = mutableListOf()
@@ -58,6 +58,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         prepareListAdapter()
         prepareViewModels()
         processArguments()
+
+        pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_INFO_title))
     }
 
     override fun onResume() {
@@ -66,7 +68,9 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     }
 
     private fun prepareViewModels() {
-        pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_TASK_INFO_title))
+        pageTitleViewModel = DaggerViewModelHelper.get(this, PageTitleViewModel::class.java)
+        navigationViewModel = DaggerViewModelHelper.get(this, NavigationViewModel::class.java)
+        menuStateViewModel = DaggerViewModelHelper.get(this, MenuStateViewModel::class.java)
         taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
     }
 
