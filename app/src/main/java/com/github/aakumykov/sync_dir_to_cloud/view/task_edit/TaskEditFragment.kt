@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconGetter
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
@@ -301,9 +303,16 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun displayCloudAuthState() {
-        binding.authSelectionButton.setText(
-            currentCloudAuth?.name ?: getString(R.string.BUTTON_task_edit_select_cloud_auth)
-        )
+        binding.authSelectionButton.apply {
+            setText(currentCloudAuth?.name ?: getString(R.string.BUTTON_task_edit_select_cloud_auth))
+            setIcon(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    StorageTypeIconGetter.getIconFor(currentTask?.targetType),
+                    requireActivity().theme
+                )
+            )
+        }
     }
 
     private fun showIdleOpState() {
