@@ -95,4 +95,7 @@
     <string name="BUTTON_LABEL_auth_prefix">Авторизоваться %1$s</string>
     <string name="BUTTON_LABEL_unknown_storage_type">Неизвестный тип хранилища</string>
     <string name="cloud_auth_dialog_title">Новая облачная авторизация</string>
+    <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_title">Не найден WebView</string>
+    <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_message">В вашей системе не найден компонент WebView, необходимый для отображения страницы авторизации.</string>
+    <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_neutral_button">Понятно</string>
 </resources>

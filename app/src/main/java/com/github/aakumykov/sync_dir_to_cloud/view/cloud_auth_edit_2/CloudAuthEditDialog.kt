@@ -3,9 +3,9 @@ package com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.github.aakumykov.file_lister_navigator_selector.extensions.hideIf
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -13,9 +13,9 @@ import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogCloudAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.utils.WebViewChecker
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import java.lang.Exception
 
 class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     CloudAuthenticator.Callbacks
@@ -161,7 +161,18 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun onCloudAuthButtonClicked() {
-        cloudAuthenticator?.startAuth()
+        if (WebViewChecker.isAvailable(requireContext()))
+            cloudAuthenticator?.startAuth()
+        else
+            reportWebViewNowAvailable()
+    }
+
+    private fun reportWebViewNowAvailable() {
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle(R.string.DIALOG_WEBVIEW_NOT_AVAILABLE_title)
+            setMessage(R.string.DIALOG_WEBVIEW_NOT_AVAILABLE_message)
+            setNeutralButton(R.string.DIALOG_WEBVIEW_NOT_AVAILABLE_neutral_button) { _,_ -> }
+        }.create().show()
     }
 
     override fun onDestroyView() {
