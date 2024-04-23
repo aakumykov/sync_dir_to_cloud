@@ -15,6 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.utils.WebViewChecker
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.hideIf
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
@@ -40,6 +41,15 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         prepareButtons()
         prepareCloudAuthenticator()
         prepareViewModel()
+
+        // Вызывать после "prepareCloudAuthenticator()".
+        processRequestedStorageType()
+    }
+
+    private fun processRequestedStorageType() {
+        if (StorageType.LOCAL == storageType()) {
+            cloudAuthenticator?.startAuth()
+        }
     }
 
     override fun onCloudAuthSuccess(authToken: String) {
@@ -107,7 +117,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun prepareCloudAuthenticator() {
-        cloudAuthenticator = storageType()?.let {
+        cloudAuthenticator = storageType().let {
             App.getAppComponent()
                 .getCloudAuthenticatorFactoryAssistedFactory()
                 .createCloudAuthenticatorFactory(this, this)
@@ -126,12 +136,10 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun onSaveButtonClicked() {
-
-        hideError()
-        disableForm()
-        showProgressBar()
-
         cloudAuthToken?.also { token ->
+            hideError()
+            disableForm()
+            showProgressBar()
             viewModel.createCloudAuth(
                 binding.nameView.text.toString(),
                 storageType(),
