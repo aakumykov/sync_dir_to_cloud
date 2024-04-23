@@ -63,14 +63,14 @@ class ViewModelsModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(TaskStateViewModel::class)
+    @ViewModelKey(PageTitleViewModel::class)
     fun providePageTitleViewModel(): ViewModel {
         return PageTitleViewModel()
     }
 
     @Provides
     @IntoMap
-    @ViewModelKey(TaskStateViewModel::class)
+    @ViewModelKey(MenuStateViewModel::class)
     fun provideMenuStateViewModel(): ViewModel {
         return MenuStateViewModel()
     }
