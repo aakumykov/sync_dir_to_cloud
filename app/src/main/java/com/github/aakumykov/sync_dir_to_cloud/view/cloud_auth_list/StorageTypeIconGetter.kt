@@ -11,7 +11,7 @@ class StorageTypeIconGetter {
             return when(storageType) {
                 StorageType.LOCAL -> R.drawable.ic_storage_type_local
                 StorageType.YANDEX_DISK -> R.drawable.ic_storage_type_yandex_disk
-                else -> R.drawable.ic_storage_type_unknown
+                else -> R.drawable.ic_storage_type_question_mark
             }
         }
     }
