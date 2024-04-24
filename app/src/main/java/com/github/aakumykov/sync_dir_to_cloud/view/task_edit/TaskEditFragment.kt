@@ -21,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.EndpointType
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconGetter
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -184,6 +185,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun prepareButtons() {
 
+        binding.sourceTypeButton.setOnClickListener { onSourceTypeButtonClicked() }
+        binding.targetTypeButton.setOnClickListener { onTargetTypeButtonClicked() }
+
         binding.sourcePathSelectionButton.setOnClickListener { onSelectSourcePathClicked() }
         binding.targetPathSelectionButton.setOnClickListener { onSelectTargetPathClicked() }
 
@@ -193,8 +197,15 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         binding.intervalHours.setOnClickListener { onSelectTimeClicked() }
         binding.intervalMinutes.setOnClickListener { onSelectTimeClicked() }
         binding.periodSelectionButton.setOnClickListener { onSelectTimeClicked() }
+    }
 
-        binding.authSelectionButton.setOnClickListener { showAuthSelectionDialog(false) }
+
+    private fun onSourceTypeButtonClicked() {
+        showAuthSelectionDialog(EndpointType.SOURCE, false)
+    }
+
+    private fun onTargetTypeButtonClicked() {
+        showAuthSelectionDialog(EndpointType.TARGET, false)
     }
 
 
@@ -211,7 +222,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun onSelectTargetPathClicked() {
 
         if (null == currentCloudAuth) {
-            redirectToSelectCloudAuth()
+            redirectToSelectCloudAuth(EndpointType.TARGET)
             return
         }
 
@@ -225,8 +236,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         }
     }
 
-    private fun redirectToSelectCloudAuth() {
-        showAuthSelectionDialog(true)
+    private fun redirectToSelectCloudAuth(endpointType: EndpointType) {
+        showAuthSelectionDialog(endpointType, true)
 //        showToast(R.string.TOAST_select_cloud_auth_first)
     }
 
@@ -262,8 +273,10 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         timePicker.showNow(childFragmentManager, "")
     }
 
-    private fun showAuthSelectionDialog(withNextAction: Boolean) {
-        AuthListDialog.create(withNextAction).show(childFragmentManager, AuthListDialog.TAG)
+    private fun showAuthSelectionDialog(endpointType: EndpointType, withNextAction: Boolean) {
+        AuthListDialog
+            .create(endpointType, withNextAction)
+            .show(childFragmentManager, AuthListDialog.TAG)
     }
 
     private fun onCloudAuthSelectionChanged(cloudAuth: CloudAuth) {
@@ -303,7 +316,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun displayCloudAuthState() {
-        binding.authSelectionButton.apply {
+        /*binding.authSelectionButton.apply {
             setText(currentCloudAuth?.name ?: getString(R.string.BUTTON_task_edit_select_cloud_auth))
             setIcon(
                 ResourcesCompat.getDrawable(
@@ -312,7 +325,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                     requireActivity().theme
                 )
             )
-        }
+        }*/
     }
 
     private fun showIdleOpState() {

@@ -16,15 +16,25 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/sourceTypeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                app:srcCompat="@drawable/ic_storage_type_question_mark" />
+
             <EditText
                 android:id="@+id/sourcePathInput"
                 style="@style/path_input"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:hint="@string/hint_source_path_input"
                 android:importantForAutofill="no" />
 
             <ImageButton
                 android:id="@+id/sourcePathSelectionButton"
                 style="@style/end_line_image_button"
+                android:layout_height="match_parent"
                 android:contentDescription="@string/description_sync_task_select_source_path" />
         </LinearLayout>
 
@@ -32,6 +42,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/targetTypeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                app:srcCompat="@drawable/ic_storage_type_question_mark" />
 
             <EditText
                 android:id="@+id/targetPathInput"
@@ -91,7 +108,7 @@
 
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
+        <!--<com.google.android.material.button.MaterialButton
             android:id="@+id/authSelectionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,7 +118,7 @@
             app:iconPadding="16dp"
             app:iconTint="@color/black"
             android:text="@string/BUTTON_task_edit_select_cloud_auth"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"/>-->
 
         <EditText
             android:id="@+id/cloudAuthId"

@@ -40,6 +40,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
     private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
     private val withNextAction: Boolean get() = arguments?.getBoolean(WITH_NEXT_ACTION, false) ?: false
+    private val endpointType: EndpointType? = arguments?.getString(ENDPOINT_TYPE)?.let { EndpointType.valueOf(it) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -173,12 +174,16 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
         val TAG: String = AuthListDialog::class.java.simpleName
         const val KEY_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
         const val CLOUD_AUTH = "CLOUD_AUTH"
+        const val ENDPOINT_TYPE = "ENDPOINT_TYPE"
         const val WITH_NEXT_ACTION = "WITH_NEXT_ACTION"
 
         // TODO: дать более конкретное имя
-        fun create(withNextAction: Boolean): AuthListDialog {
+        fun create(endpointType: EndpointType, withNextAction: Boolean): AuthListDialog {
             return AuthListDialog().apply {
-                arguments = bundleOf(WITH_NEXT_ACTION to withNextAction)
+                arguments = bundleOf(
+                    WITH_NEXT_ACTION to withNextAction,
+                    ENDPOINT_TYPE to endpointType
+                )
             }
         }
 
