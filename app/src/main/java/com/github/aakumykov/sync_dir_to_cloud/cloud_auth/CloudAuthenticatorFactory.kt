@@ -16,7 +16,8 @@ class CloudAuthenticatorFactory @AssistedInject constructor(
     : CloudAuthenticator
     {
         return when(storageType) {
-            StorageType.YANDEX_DISK -> YandexAuthenticator.create(fragment,cloudAuthenticatorCallbacks)
+            StorageType.YANDEX_DISK -> YandexAuthenticator.create(fragment, cloudAuthenticatorCallbacks)
+            StorageType.LOCAL -> LocalAuthenticator(fragment, cloudAuthenticatorCallbacks)
             else -> DummyCloudAuthenticator(cloudAuthenticatorCallbacks)
         }
     }
