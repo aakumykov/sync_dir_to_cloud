@@ -18,10 +18,11 @@ class LocalAuthenticator(
     }
 
     override fun startAuth() {
-//        Log.d(TAG, "startAuth() called")
-        storageAccessHelper.requestReadAccess {
-            Log.d(TAG, "Результат запроса доступа к хранилищу: ${it}")
-            callbacks.onCloudAuthSuccess(DUMMY_AUTH_TOKEN)
+        storageAccessHelper.requestReadAccess { isGranted ->
+            if (isGranted)
+                callbacks.onCloudAuthSuccess(DUMMY_AUTH_TOKEN)
+            else
+                callbacks.onCloudAuthFailed(Exception("Storage access denied."))
         }
     }
 

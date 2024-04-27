@@ -15,7 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.utils.WebViewChecker
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
-import com.github.aakumykov.sync_dir_to_cloud.view.view_utils.hideIf
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
@@ -58,7 +57,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun hideAuthButtonIfAuthorized() {
-        binding.cloudAuthButton.visibility = if (null != cloudAuthToken) View.GONE else View.VISIBLE
+        binding.authRequestButton.visibility = if (null != cloudAuthToken) View.GONE else View.VISIBLE
     }
 
     override fun onCloudAuthFailed(throwable: Throwable) {
@@ -67,7 +66,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun prepareLayout() {
-        binding.cloudAuthButton.setText(authButtonLabel())
+        binding.authRequestButton.setText(authButtonLabel())
     }
 
     private fun prepareViewModel() {
@@ -126,7 +125,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun prepareButtons() {
-        binding.cloudAuthButton.setOnClickListener { onCloudAuthButtonClicked() }
+        binding.authRequestButton.setOnClickListener { onCloudAuthButtonClicked() }
         binding.saveCancelButtonsInclude.saveButton.setOnClickListener { onSaveButtonClicked() }
         binding.saveCancelButtonsInclude.cancelButton.setOnClickListener { closeDialog() }
     }
@@ -150,13 +149,13 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
 
     private fun disableForm() {
         binding.nameView.isEnabled = false
-        binding.cloudAuthButton.isEnabled = false
+        binding.authRequestButton.isEnabled = false
         binding.saveCancelButtonsInclude.saveButton.isEnabled = false
     }
 
     private fun enableForm() {
         binding.nameView.isEnabled = true
-        binding.cloudAuthButton.isEnabled = true
+        binding.authRequestButton.isEnabled = true
         binding.saveCancelButtonsInclude.saveButton.isEnabled = true
     }
 
