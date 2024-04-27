@@ -51,13 +51,13 @@
             tools:visibility="visible" />
 
         <Button
-            android:id="@+id/cloudAuthButton"
+            android:id="@+id/authRequestButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textAllCaps="false"
             android:backgroundTint="#66BB6A"
-            android:text="@string/BUTTON_cloud_auth" />
+            android:text="@string/BUTTON_auth" />
 
         <include
             android:id="@+id/saveCancelButtonsInclude"

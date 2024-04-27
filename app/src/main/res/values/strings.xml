@@ -35,7 +35,7 @@
     <string name="description_select_source_path_button">Выбор пути к источнику</string>
     <string name="BUTTON_select_cloud_auth">Выбор облачной авторизации</string>
     <string name="description_home_icon_back">Венруться назад</string>
-    <string name="BUTTON_cloud_auth">Авторизоваться в облаке</string>
+    <string name="BUTTON_auth">Запросить доступ</string>
     <string name="auth_type_google">Google</string>
     <string name="hint_auth_name">Название</string>
     <string name="BUTTON_cancel">Отменить</string>
@@ -90,9 +90,9 @@
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="speed_dial_auth_label_local">Локально</string>
     <string name="speed_dial_auth_label_yandex">Яндекс</string>
-    <string name="auth_suffix_yandex">в Яндекс</string>
-    <string name="auth_suffix_local">локально (НЕ ИСПОЛЬЗУЕТСЯ)</string>
-    <string name="BUTTON_LABEL_auth_prefix">Авторизоваться %1$s</string>
+    <string name="auth_suffix_yandex">к Яндекс.Диску</string>
+    <string name="auth_suffix_local">к хранилищу</string>
+    <string name="BUTTON_LABEL_auth_prefix">Запросить доступ %1$s</string>
     <string name="BUTTON_LABEL_unknown_storage_type">Неизвестный тип хранилища</string>
     <string name="cloud_auth_dialog_title">Новая облачная авторизация</string>
     <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_title">Не найден WebView</string>
