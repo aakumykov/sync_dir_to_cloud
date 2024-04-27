@@ -127,7 +127,7 @@ dependencies {
     implementation 'com.github.aakumykov:file_lister_navigator_selector:0.0.20'
     implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.20'
 
-    implementation 'com.github.aakumykov:storage_access_helper:0.0.5'
+    implementation 'com.github.aakumykov:storage_access_helper:1.0.0-alpha'
 
 //    implementation 'me.jahirfiquitiva:FABsMenu:1.1.4'
 
