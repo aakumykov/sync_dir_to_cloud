@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.cloud_auth
 
+@Deprecated("Переименовать в StorageAuthenticator")
 interface CloudAuthenticator {
 
     fun startAuth()
