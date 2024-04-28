@@ -120,7 +120,7 @@ class SyncTaskExecutor @Inject constructor(
 
         // FIXME: убрать двойное "!!"
 
-        val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.cloudAuthId!!)?.authToken
+        val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.authToken
             ?: throw IllegalStateException("Target auth token cannot be null")
 
         mTargetWriter = targetWriterCreator.create(

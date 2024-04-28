@@ -15,14 +15,14 @@ import java.util.concurrent.TimeUnit
 
 @Entity(
     tableName = "sync_tasks",
-    foreignKeys = [
+    /*foreignKeys = [
         ForeignKey(entity = CloudAuth::class,
             parentColumns = ["id"],
-            childColumns = ["cloud_auth_id"],
+            childColumns = ["source_auth_id"],
             onDelete = NO_ACTION,
             onUpdate = NO_ACTION)
     ],
-    indices = [ Index("cloud_auth_id") ]
+    indices = [ Index("source_auth_id"), Index("target_auth_id") ]*/
 )
 class SyncTask {
 
@@ -49,7 +49,8 @@ class SyncTask {
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
 
-    @ColumnInfo(name = "cloud_auth_id") var cloudAuthId: String? = null  // FIXME: не-null
+    @ColumnInfo(name = "source_auth_id") var sourceAuthId: String? = null
+    @ColumnInfo(name = "target_auth_id") var targetAuthId: String? = null
 
     @ColumnInfo(name = "c_time") var cTime: Long = Date().time
     @ColumnInfo(name = "last_start") var lastStart: Long? = null
@@ -61,7 +62,7 @@ class SyncTask {
 
     @Ignore
     constructor() {
-        this.sourceType = StorageType.LOCAL
+        this.sourceType = null
         this.targetType = null
 
         this.sourcePath = null

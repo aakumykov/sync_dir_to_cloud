@@ -40,7 +40,13 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
     private val gson: Gson by lazy { App.getAppComponent().getGson() }
 
     private val withNextAction: Boolean get() = arguments?.getBoolean(WITH_NEXT_ACTION, false) ?: false
-    private val endpointType: EndpointType? = arguments?.getString(ENDPOINT_TYPE)?.let { EndpointType.valueOf(it) }
+    private val endpointType: EndpointType? get() = arguments?.getString(ENDPOINT_TYPE)?.let { EndpointType.valueOf(it) }
+
+    /*private fun endpointType(): EndpointType? {
+        return arguments?.getString(ENDPOINT_TYPE)?.let {
+            return EndpointType.valueOf(it)
+        }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -153,13 +159,18 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
         binding.listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             listAdapter.getItem(position)?.let { cloudAuth ->
-                setFragmentResult(KEY_SELECT_CLOUD_AUTH, bundleOf(
-                    CLOUD_AUTH to cloudAuth.toJSON(gson),
-                    WITH_NEXT_ACTION to withNextAction
-                ))
-                dismiss()
+                onCloudAuthSelected(cloudAuth)
             }
         }
+    }
+
+    private fun onCloudAuthSelected(cloudAuth: CloudAuth) {
+        setFragmentResult(KEY_SELECT_CLOUD_AUTH, bundleOf(
+            CLOUD_AUTH to cloudAuth.toJSON(gson),
+            ENDPOINT_TYPE to endpointType?.name, // У Enum спользовать свойство "name".
+            WITH_NEXT_ACTION to withNextAction
+        ))
+        dismiss()
     }
 
 
@@ -172,17 +183,22 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
     companion object {
 
         val TAG: String = AuthListDialog::class.java.simpleName
+
         const val KEY_SELECT_CLOUD_AUTH = "CODE_SELECT_CLOUD_AUTH"
+        const val KEY_SELECT_SOURCE_AUTH = "CODE_SELECT_SOURCE_AUTH"
+        const val KEY_SELECT_TARGET_AUTH = "CODE_SELECT_TARGET_AUTH"
+
         const val CLOUD_AUTH = "CLOUD_AUTH"
         const val ENDPOINT_TYPE = "ENDPOINT_TYPE"
         const val WITH_NEXT_ACTION = "WITH_NEXT_ACTION"
+
 
         // TODO: дать более конкретное имя
         fun create(endpointType: EndpointType, withNextAction: Boolean): AuthListDialog {
             return AuthListDialog().apply {
                 arguments = bundleOf(
+                    ENDPOINT_TYPE to endpointType.name, // Нужно использовать Enum-поле "name".
                     WITH_NEXT_ACTION to withNextAction,
-                    ENDPOINT_TYPE to endpointType
                 )
             }
         }
