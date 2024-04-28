@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
+import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
@@ -17,6 +18,8 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.file_selector_factory.FileSelectorFactory
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
@@ -28,7 +31,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
@@ -44,11 +49,15 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
 
-    private val sourceReaderCreator: SourceReaderCreator
+    /*private val sourceReaderCreator: SourceReaderCreator
         get() = App.getAppComponent().getSourceReaderCreator()
 
     private val targetWriterCreator: TargetWriterCreator
-        get() = App.getAppComponent().getTargetWriterCreator()
+        get() = App.getAppComponent().getTargetWriterCreator()*/
+
+    private val cloudAuthReader: CloudAuthReader
+        get() = App.getAppComponent().getCloudAuthReader()
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -202,15 +211,32 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
 
     private fun onSelectSourcePathClicked() {
-        /*storageAccessHelper.requestReadAccess { isGranted ->
-            if (isGranted) {
-                LocalFileSelectorFragment
-                    .create(LOCAL_SELECTION_REQUEST_KEY)
-                    .show(childFragmentManager, FileSelectorFragment.TAG)
-            } else {
-                showToast(R.string.ERROR_storage_access_required)
+
+        currentTask?.also { syncTask ->
+            syncTask.sourceAuthId?.also { sourceAuthId ->
+                syncTask.sourceStorageType?.also { storageType ->
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+
+                        cloudAuthReader.getCloudAuth(sourceAuthId)?.also { cloudAuth ->
+
+                            withContext(Dispatchers.Main) {
+
+                                FileSelectorFactory()
+                                    .create(
+                                        REQUEST_KEY_PATH_SELECTION,
+                                        storageType,
+                                        cloudAuth
+                                    )
+                                    .show(childFragmentManager, FileSelectorFragment.TAG)
+
+                            }
+                        }
+
+                    }
+                }
             }
-        }*/
+        }
     }
 
     private fun onSelectTargetPathClicked() {
@@ -404,11 +430,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     companion object {
 
         val TAG: String = TaskEditFragment::class.java.simpleName
-
-        const val LOCAL_SELECTION_REQUEST_KEY = "LOCAL_SELECTION_REQUEST_KEY"
-
-        const val YANDEX_DISK_SELECTION_REQUEST_KEY = "YANDEX_DISK_SELECTION_REQUEST_KEY"
-
+        const val REQUEST_KEY_PATH_SELECTION = "REQUEST_KEY_PATH_SELECTION"
         private const val TASK_ID = "TASK_ID"
 
 
