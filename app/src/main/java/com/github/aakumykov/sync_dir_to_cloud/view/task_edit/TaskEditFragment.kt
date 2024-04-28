@@ -20,8 +20,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.file_selector_factory.FileSelectorFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.EndpointType
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -82,18 +80,29 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             onCloudAuthSelectionChanged(fragmentResult)
         }
 
-        /*listenForFragmentResult(LOCAL_SELECTION_REQUEST_KEY) { _, fragmentResult ->
-            FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
-                onSourcePathSelected(list?.first())
-            }
+        listenForFragmentResult(SOURCE_PATH_SELECTION_REQUEST_KEY) { _, fragmentResult ->
+            onSourcePathSelectionResult(fragmentResult)
         }
 
-        // FIXME: а вот это проблема. Здесь будут разные реализации фрагментов. И их нужно как-то различать!
-        listenForFragmentResult(YANDEX_DISK_SELECTION_REQUEST_KEY) { _, fragmentResult ->
-            FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
-                onTargetPathSelected(list?.first())
-            }
-        }*/
+        listenForFragmentResult(TARGET_PATH_SELECTION_REQUEST_KEY) { _, fragmentResult ->
+            onTargetPathSelectionResult(fragmentResult)
+        }
+    }
+
+    private fun onSourcePathSelectionResult(fragmentResult: Bundle) {
+        extractSelectedItems(fragmentResult) { list ->
+            onSourcePathSelected(list?.firstOrNull())
+        }
+    }
+
+    private fun onTargetPathSelectionResult(fragmentResult: Bundle) {
+        extractSelectedItems(fragmentResult) { list ->
+            onTargetPathSelected(list?.firstOrNull())
+        }
+    }
+
+    private fun extractSelectedItems(fragmentResult: Bundle, block: (list: List<FSItem>?) -> Unit) {
+        FileSelectorFragment.extractSelectionResult(fragmentResult).also(block)
     }
 
     private fun onTargetPathSelected(fsItem: FSItem?) {
@@ -224,7 +233,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
                                 FileSelectorFactory()
                                     .create(
-                                        REQUEST_KEY_PATH_SELECTION,
+                                        SOURCE_PATH_SELECTION_REQUEST_KEY,
                                         storageType,
                                         cloudAuth
                                     )
@@ -240,20 +249,31 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun onSelectTargetPathClicked() {
+        currentTask?.also { syncTask ->
+            syncTask.targetAuthId?.also { targetAuthId ->
+                syncTask.targetStorageType?.also { storageType ->
 
-        /*if (null == currentTask?.targetType) {
-            redirectToSelectCloudAuth(EndpointType.TARGET)
-            return
+                    lifecycleScope.launch(Dispatchers.IO) {
+
+                        cloudAuthReader.getCloudAuth(targetAuthId)?.also { cloudAuth ->
+
+                            withContext(Dispatchers.Main) {
+
+                                FileSelectorFactory()
+                                    .create(
+                                        TARGET_PATH_SELECTION_REQUEST_KEY,
+                                        storageType,
+                                        cloudAuth
+                                    )
+                                    .show(childFragmentManager, FileSelectorFragment.TAG)
+
+                            }
+                        }
+
+                    }
+                }
+            }
         }
-
-        currentCloudAuth?.authToken?.let { token ->
-            YandexDiskFileSelectorFragment.create(
-                fragmentResultKey = YANDEX_DISK_SELECTION_REQUEST_KEY,
-                authToken = token,
-                isMultipleSelectionMode = false,
-                isDirSelectionMode = true
-            ).show(childFragmentManager, FileSelectorFragment.TAG)
-        }*/
     }
 
     private fun redirectToSelectCloudAuth(endpointType: EndpointType) {
@@ -305,8 +325,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                 ?.let { EndpointType.valueOf(it) }
                 ?.also { endpointType ->
                     when (endpointType) {
-                        EndpointType.SOURCE -> { currentTask?.sourceAuthId = cloudAuth.id }
-                        EndpointType.TARGET -> { currentTask?.targetAuthId = cloudAuth.id }
+                        EndpointType.SOURCE -> { taskEditViewModel.setSourceAuthAndType(cloudAuth) }
+                        EndpointType.TARGET -> { taskEditViewModel.setTargetAuthAndType(cloudAuth) }
                     }
                 }
         }
@@ -430,7 +450,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     companion object {
 
         val TAG: String = TaskEditFragment::class.java.simpleName
-        const val REQUEST_KEY_PATH_SELECTION = "REQUEST_KEY_PATH_SELECTION"
+        const val SOURCE_PATH_SELECTION_REQUEST_KEY = "SOURCE_PATH_SELECTION_REQUEST_KEY"
+        const val TARGET_PATH_SELECTION_REQUEST_KEY = "TARGET_PATH_SELECTION_REQUEST_KEY"
         private const val TASK_ID = "TASK_ID"
 
 

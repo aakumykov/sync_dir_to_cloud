@@ -70,15 +70,15 @@ class SyncTask {
     }
 
     constructor(sourcePath: String,
-                targetType: StorageType,
-                sourceType: StorageType,
+                targetStorageType: StorageType,
+                sourceStorageType: StorageType,
                 targetPath: String,
                 intervalHours: Int,
                 intervalMinutes: Int
     ) : this() {
         this.sourcePath = sourcePath
-        this.targetStorageType = targetType
-        this.sourceStorageType = sourceType
+        this.targetStorageType = targetStorageType
+        this.sourceStorageType = sourceStorageType
         this.targetPath = targetPath
         this.intervalHours = intervalHours
         this.intervalMinutes = intervalMinutes

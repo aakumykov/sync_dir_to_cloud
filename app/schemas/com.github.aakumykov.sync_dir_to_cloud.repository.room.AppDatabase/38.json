@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 38,
-    "identityHash": "b1311512f4cda0c56f1eb3cf70df0a00",
+    "identityHash": "2a55a92a143e8ce8e28f9a7d8d2eca4f",
     "entities": [
       {
         "tableName": "sync_tasks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `notification_id` INTEGER NOT NULL, `state` TEXT NOT NULL, `is_enabled` INTEGER NOT NULL, `scheduling_state` TEXT NOT NULL, `scheduling_error` TEXT, `sync_state` TEXT NOT NULL, `execution_error` TEXT, `source_type` TEXT, `target_type` TEXT, `source_path` TEXT, `target_path` TEXT, `interval_h` INTEGER NOT NULL, `interval_m` INTEGER NOT NULL, `source_auth_id` TEXT, `target_auth_id` TEXT, `c_time` INTEGER NOT NULL, `last_start` INTEGER, `last_finish` INTEGER, `total_objects_count` INTEGER NOT NULL DEFAULT 0, `synced_objects_count` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `notification_id` INTEGER NOT NULL, `state` TEXT NOT NULL, `is_enabled` INTEGER NOT NULL, `scheduling_state` TEXT NOT NULL, `scheduling_error` TEXT, `sync_state` TEXT NOT NULL, `execution_error` TEXT, `source_storage_type` TEXT, `target_storage_type` TEXT, `source_path` TEXT, `target_path` TEXT, `interval_h` INTEGER NOT NULL, `interval_m` INTEGER NOT NULL, `source_auth_id` TEXT, `target_auth_id` TEXT, `c_time` INTEGER NOT NULL, `last_start` INTEGER, `last_finish` INTEGER, `total_objects_count` INTEGER NOT NULL DEFAULT 0, `synced_objects_count` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -57,14 +57,14 @@
             "notNull": false
           },
           {
-            "fieldPath": "sourceType",
-            "columnName": "source_type",
+            "fieldPath": "sourceStorageType",
+            "columnName": "source_storage_type",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "targetType",
-            "columnName": "target_type",
+            "fieldPath": "targetStorageType",
+            "columnName": "target_storage_type",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -312,7 +312,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b1311512f4cda0c56f1eb3cf70df0a00')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2a55a92a143e8ce8e28f9a7d8d2eca4f')"
     ]
   }
 }
