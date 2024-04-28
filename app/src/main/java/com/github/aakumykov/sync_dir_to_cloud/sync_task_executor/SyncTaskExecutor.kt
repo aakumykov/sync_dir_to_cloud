@@ -109,7 +109,7 @@ class SyncTaskExecutor @Inject constructor(
     private fun prepareReader(syncTask: SyncTask) {
         // TODO: реализовать sourceAuthToken
         sourceReader = sourceReaderCreator.create(
-            syncTask.sourceType,
+            syncTask.sourceStorageType,
             "",
             syncTask.id,
             changesDetectionStrategy
@@ -124,7 +124,7 @@ class SyncTaskExecutor @Inject constructor(
             ?: throw IllegalStateException("Target auth token cannot be null")
 
         mTargetWriter = targetWriterCreator.create(
-            syncTask.targetType!!,
+            syncTask.targetStorageType!!,
             targetAuthToken,
             syncTask.id,
             syncTask.sourcePath!!,
