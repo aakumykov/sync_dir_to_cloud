@@ -9,20 +9,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
-import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.EndpointType
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
-import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -43,6 +44,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
 
+    private val sourceReaderCreator: SourceReaderCreator
+        get() = App.getAppComponent().getSourceReaderCreator()
+
+    private val targetWriterCreator: TargetWriterCreator
+        get() = App.getAppComponent().getTargetWriterCreator()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -282,7 +288,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun onSaveButtonClicked() {
         // FIXME: убрать!
-        currentTask?.targetType = StorageType.YANDEX_DISK
+        currentTask?.targetStorageType = StorageType.YANDEX_DISK
         taskEditViewModel.saveSyncTask()
     }
 

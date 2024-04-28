@@ -34,6 +34,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import com.google.gson.Gson
 import dagger.Component
 
@@ -94,4 +96,8 @@ interface AppComponent {
     fun getGson(): Gson
 
     fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
+
+    fun getSourceReaderCreator(): SourceReaderCreator
+    fun getTargetWriterCreator(): TargetWriterCreator
+
 }
