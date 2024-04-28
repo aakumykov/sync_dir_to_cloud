@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,24 +11,20 @@ import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
-import com.github.aakumykov.file_lister_navigator_selector.local_file_selector.LocalFileSelectorFragment
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.EndpointType
-import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconGetter
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
-import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelectorFragment
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.launch
@@ -47,8 +42,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
-
-    private var currentCloudAuth: CloudAuth? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,17 +64,10 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun prepareFragmentResultListeners() {
 
         listenForFragmentResult(AuthListDialog.KEY_SELECT_CLOUD_AUTH) { _, fragmentResult ->
-            AuthListDialog.extractCloudAuth(fragmentResult)?.also { cloudAuth ->
-
-                onCloudAuthSelectionChanged(cloudAuth)
-
-                if (AuthListDialog.hasNextAction(fragmentResult))
-                    onSelectTargetPathClicked()
-
-            } ?: showToast(R.string.TOAST_select_cloud_auth_first)
+            onCloudAuthSelectionChanged(fragmentResult)
         }
 
-        listenForFragmentResult(LOCAL_SELECTION_REQUEST_KEY) { _, fragmentResult ->
+        /*listenForFragmentResult(LOCAL_SELECTION_REQUEST_KEY) { _, fragmentResult ->
             FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
                 onSourcePathSelected(list?.first())
             }
@@ -92,7 +78,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             FileSelectorFragment.extractSelectionResult(fragmentResult).also { list ->
                 onTargetPathSelected(list?.first())
             }
-        }
+        }*/
     }
 
     private fun onTargetPathSelected(fsItem: FSItem?) {
@@ -120,14 +106,14 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
         syncTask?.also { task ->
             fillForm(task)
-            requestCloudAuth(task.cloudAuthId)
+//            requestCloudAuth(task.cloudAuthId)
         }
     }
 
     private fun requestCloudAuth(cloudAuthId: String?) {
         lifecycleScope.launch {
             taskEditViewModel.getCloudAuth(cloudAuthId)?.also { cloudAuth ->
-                onCloudAuthSelectionChanged(cloudAuth)
+//                onCloudAuthSelectionChanged(cloudAuth)
             }
         }
     }
@@ -210,18 +196,20 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
 
     private fun onSelectSourcePathClicked() {
-        storageAccessHelper.requestReadAccess { isGranted ->
+        /*storageAccessHelper.requestReadAccess { isGranted ->
             if (isGranted) {
-                LocalFileSelectorFragment.create(LOCAL_SELECTION_REQUEST_KEY).show(childFragmentManager, FileSelectorFragment.TAG)
+                LocalFileSelectorFragment
+                    .create(LOCAL_SELECTION_REQUEST_KEY)
+                    .show(childFragmentManager, FileSelectorFragment.TAG)
             } else {
                 showToast(R.string.ERROR_storage_access_required)
             }
-        }
+        }*/
     }
 
     private fun onSelectTargetPathClicked() {
 
-        if (null == currentCloudAuth) {
+        /*if (null == currentTask?.targetType) {
             redirectToSelectCloudAuth(EndpointType.TARGET)
             return
         }
@@ -233,7 +221,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                 isMultipleSelectionMode = false,
                 isDirSelectionMode = true
             ).show(childFragmentManager, FileSelectorFragment.TAG)
-        }
+        }*/
     }
 
     private fun redirectToSelectCloudAuth(endpointType: EndpointType) {
@@ -279,10 +267,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             .show(childFragmentManager, AuthListDialog.TAG)
     }
 
-    private fun onCloudAuthSelectionChanged(cloudAuth: CloudAuth) {
-        currentCloudAuth = cloudAuth
-        currentTask?.cloudAuthId = cloudAuth.id
-        displayCloudAuthState()
+    private fun onCloudAuthSelectionChanged(fragmentResult: Bundle) {
+        AuthListDialog.extractCloudAuth(fragmentResult)?.also { cloudAuth ->
+            fragmentResult.getString(AuthListDialog.ENDPOINT_TYPE)
+                ?.let { EndpointType.valueOf(it) }
+                ?.also { endpointType ->
+                    when (endpointType) {
+                        EndpointType.SOURCE -> { currentTask?.sourceAuthId = cloudAuth.id }
+                        EndpointType.TARGET -> { currentTask?.targetAuthId = cloudAuth.id }
+                    }
+                }
+        }
     }
 
     private fun onSaveButtonClicked() {
