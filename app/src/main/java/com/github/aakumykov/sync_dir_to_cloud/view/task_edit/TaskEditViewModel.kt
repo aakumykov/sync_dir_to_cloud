@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -12,9 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class TaskEditViewModel(
     application: Application,
@@ -61,5 +58,19 @@ class TaskEditViewModel(
 
     suspend fun getCloudAuth(authId: String?): CloudAuth? {
         return authId?.let { cloudAuthReader.getCloudAuth(authId) }
+    }
+
+    fun setSourceAuthAndType(cloudAuth: CloudAuth) {
+        currentTask?.apply {
+            sourceAuthId = cloudAuth.id
+            sourceStorageType = cloudAuth.storageType
+        }
+    }
+
+    fun setTargetAuthAndType(cloudAuth: CloudAuth) {
+        currentTask?.apply {
+            targetAuthId = cloudAuth.id
+            targetStorageType = cloudAuth.storageType
+        }
     }
 }
