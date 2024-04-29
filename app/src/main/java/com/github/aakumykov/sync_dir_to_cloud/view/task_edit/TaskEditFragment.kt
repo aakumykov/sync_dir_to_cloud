@@ -333,8 +333,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun onSaveButtonClicked() {
-        // FIXME: убрать!
-        currentTask?.targetStorageType = StorageType.YANDEX_DISK
         taskEditViewModel.saveSyncTask()
     }
 
