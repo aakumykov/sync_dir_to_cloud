@@ -98,7 +98,10 @@ class SyncTask {
 
     override fun toString(): String {
         return SyncTask::class.simpleName +
-                " { enabled: $isEnabled, $sourcePath -> $targetStorageType:$targetPath }"
+                " { " +
+                (if(isEnabled) "[enabled]" else "[disabled]") +
+                ": $sourceStorageType($sourcePath) -> $targetStorageType($targetPath) " +
+                "}"
     }
 
     @Ignore
