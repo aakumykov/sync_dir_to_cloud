@@ -28,7 +28,7 @@ class SyncTaskExecutor @Inject constructor(
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime
 ) {
     private var sourceReader: SourceReader? = null
-    private var mTargetWriter: TargetWriter? = null
+    private var targetWriter: TargetWriter? = null
 
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
@@ -95,7 +95,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun writeToTarget() {
-        mTargetWriter?.writeToTarget()
+        targetWriter?.writeToTarget()
     }
 
 
@@ -106,30 +106,31 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private fun prepareReader(syncTask: SyncTask) {
-        // TODO: реализовать sourceAuthToken
-        sourceReader = sourceReaderCreator.create(
-            syncTask.sourceStorageType,
-            "",
-            syncTask.id,
-            changesDetectionStrategy
-        )
+    private suspend fun prepareReader(syncTask: SyncTask) {
+        syncTask.sourceAuthId?.also { sourceAuthId ->
+            cloudAuthReader.getCloudAuth(sourceAuthId)?.also { sourceAuth ->
+                sourceReader = sourceReaderCreator.create(
+                    syncTask.sourceStorageType,
+                    sourceAuth.authToken,
+                    syncTask.id,
+                    changesDetectionStrategy
+                )
+            }
+        }
     }
 
     private suspend fun prepareWriter(syncTask: SyncTask) {
-
-        // FIXME: убрать двойное "!!"
-
-        val targetAuthToken = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.authToken
-            ?: throw IllegalStateException("Target auth token cannot be null")
-
-        mTargetWriter = targetWriterCreator.create(
-            syncTask.targetStorageType!!,
-            targetAuthToken,
-            syncTask.id,
-            syncTask.sourcePath!!,
-            syncTask.targetPath!!
-        )
+        syncTask.targetAuthId?.also { targetAuthId ->
+            cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetAuth ->
+                targetWriter = targetWriterCreator.create(
+                    syncTask.targetStorageType!!,
+                    targetAuth.authToken,
+                    syncTask.id,
+                    syncTask.sourcePath!!,
+                    syncTask.targetPath!!
+                )
+            }
+        }
     }
 
 
