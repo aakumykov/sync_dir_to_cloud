@@ -72,6 +72,8 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
         = syncObjectDAO.changeModificationState(objectId, modificationState)
 
-    override suspend fun markBadStateAsNeverSynced(taskId: String)
-        = badObjectStateResettingDAO.markBadStateAsNeverSynced(taskId)
+    override suspend fun markBadStatesAsNeverSynced(taskId: String) {
+        badObjectStateResettingDAO.markRunningStateAsNeverSynced(taskId)
+        badObjectStateResettingDAO.markErrorStateAsNeverSynced(taskId)
+    }
 }

@@ -56,15 +56,23 @@ class SyncTaskExecutor @Inject constructor(
         try {
             syncTaskStateChanger.changeExecutionState(taskId, SyncState.RUNNING)
 
-            removePreviouslySynchronizedObjects(taskId)
-            fixBadStates(taskId)
+            // Стираю из БД объекты, удалённые в предыдущую синхронизацию
+            // (чтобы не пытаться удалить их повторно).
+            removePreviouslyDeletedObjects(taskId)
+
+            // Меняю SyncState.RUNNING на SyncState.NEVER, чтобы эти объекты синхронизировались вновь
+            // (такой статус может сохраниться, если приложение было убито во время работы).
+            markBadStatesAsNeverSynced(taskId)
+
+            // Помечаю всё объекты в БД как удалённые, чтобы не проверять каждый раз существование
+            // связанного файла/папки. Те, что существуют, будут обнаружены на этапе чтения источника.
             markObjectsVirtuallyDeleted(taskId)
 
-            syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
+
+            showReadingSourceNotification(syncTask)
             readFromSource(syncTask)
 
-
-            syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
+            showWritingTargetNotification(syncTask)
             writeToTarget()
 
             syncTaskStateChanger.changeExecutionState(taskId, SyncState.SUCCESS)
@@ -77,14 +85,19 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
-    private suspend fun removePreviouslySynchronizedObjects(taskId: String) {
-        // Стираю из БД объекты, удалённые в предыдущую синхронизацию.
+    private fun showWritingTargetNotification(syncTask: SyncTask) {
+        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
+    }
+
+    private fun showReadingSourceNotification(syncTask: SyncTask) {
+        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
+    }
+
+    private suspend fun removePreviouslyDeletedObjects(taskId: String) {
         syncObjectDeleter.clearObjectsWasSuccessfullyDeleted(taskId)
     }
 
     private suspend fun markObjectsVirtuallyDeleted(taskId: String) {
-        // Помечаю всё объекты в БД как удалённые, чтобы не проверять каждый раз существование
-        // связанного файла/папки. Те, что существуют, будут учтены на этапе чтения.
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
     }
 
@@ -99,10 +112,8 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private suspend fun fixBadStates(taskId: String) {
-        // Меняю SyncState.RUNNING на SyncState.NEVER, чтобы эти объекты синхронизировались вновь
-        // (такой статус может сохраниться, если приложение было убито во время работы).
-        syncObjectStateResetter.markBadStateAsNeverSynced(taskId)
+    private suspend fun markBadStatesAsNeverSynced(taskId: String) {
+        syncObjectStateResetter.markBadStatesAsNeverSynced(taskId)
     }
 
 
