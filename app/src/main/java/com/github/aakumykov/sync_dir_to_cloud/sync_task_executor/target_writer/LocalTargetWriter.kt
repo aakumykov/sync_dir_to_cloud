@@ -32,7 +32,8 @@ class LocalTargetWriter @AssistedInject constructor(
         cloudWriterCreator.createCloudWriter(StorageType.LOCAL, taskId)
     }
 
-    override fun cloudWriter(): CloudWriter? = localCloudWriter
+    override val cloudWriter get() = localCloudWriter
+    override val tag: String get() = LocalTargetWriter::class.java.simpleName
 
     @AssistedFactory
     interface Factory : TargetWriterFactory {
@@ -43,6 +44,4 @@ class LocalTargetWriter @AssistedInject constructor(
             @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
         ): LocalTargetWriter
     }
-
-    override fun tag(): String = LocalTargetWriter::class.java.simpleName
 }

@@ -44,13 +44,13 @@ abstract class BasicTargetWriter constructor(
                         val childDirName = (syncObject.relativeParentDirPath + CloudWriter.DS + syncObject.name).stripMultiSlash()
 
                         try {
-                            cloudWriter()?.createDir(
+                            cloudWriter?.createDir(
                                 basePath = parentDirName,
                                 dirName = childDirName
                             )
 
                         } catch (e: CloudWriter.AlreadyExistsException) {
-                            MyLogger.d(tag(), "Каталог '$childDirName' уже существует в '$parentDirName'.")
+                            MyLogger.d(tag, "Каталог '$childDirName' уже существует в '$parentDirName'.")
                         }
                     }
                 })
@@ -75,7 +75,7 @@ abstract class BasicTargetWriter constructor(
                                 syncObject.name)
                             .stripMultiSlash()
 
-                        cloudWriter()?.putFile(
+                        cloudWriter?.putFile(
                             file = File(pathInSource),
                             targetPath = pathInTarget,
                             overwriteIfExists = overwriteIfExists
@@ -97,7 +97,7 @@ abstract class BasicTargetWriter constructor(
         catch (t: Throwable) {
             val errorMsg = ExceptionUtils.getErrorMessage(t)
             syncObjectStateChanger.changeExecutionState(syncObject.id, SyncState.ERROR, errorMsg)
-            MyLogger.e(TAG, errorMsg, t)
+            MyLogger.e(tag, errorMsg, t)
         }
     }
 
@@ -118,14 +118,14 @@ abstract class BasicTargetWriter constructor(
         writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
             override suspend fun run() {
                 val basePath = CloudWriter.composeFullPath(targetDirPath, syncObject.relativeParentDirPath)
-                cloudWriter()?.deleteFile(basePath, syncObject.name)
+                cloudWriter?.deleteFile(basePath, syncObject.name)
             }
         })
     }
 
-    protected abstract fun cloudWriter(): CloudWriter?
+    protected abstract val cloudWriter: CloudWriter?
 
-    protected abstract fun tag(): String
+    protected abstract val tag: String
 
     companion object {
         val TAG: String = BasicTargetWriter::class.java.simpleName
