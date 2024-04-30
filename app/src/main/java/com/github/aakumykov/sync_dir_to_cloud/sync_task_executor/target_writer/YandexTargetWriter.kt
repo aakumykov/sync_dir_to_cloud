@@ -32,7 +32,9 @@ class YandexTargetWriter @AssistedInject constructor(
         cloudWriterCreator.createCloudWriter(StorageType.YANDEX_DISK, authToken)
     }
 
-    override fun cloudWriter(): CloudWriter? = yandexCloudWriter
+    override val cloudWriter get() = yandexCloudWriter
+
+    override val tag: String get() = YandexTargetWriter::class.java.simpleName
 
     @AssistedFactory
     interface Factory : TargetWriterFactory {
@@ -43,6 +45,4 @@ class YandexTargetWriter @AssistedInject constructor(
             @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
         ): YandexTargetWriter
     }
-
-    override fun tag(): String = YandexTargetWriter::class.java.simpleName
 }
