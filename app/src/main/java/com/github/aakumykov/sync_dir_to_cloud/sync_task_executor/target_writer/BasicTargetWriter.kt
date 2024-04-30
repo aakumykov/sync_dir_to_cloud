@@ -30,11 +30,11 @@ abstract class BasicTargetWriter constructor(
     @Throws(IllegalStateException::class)
     override suspend fun writeToTarget(overwriteIfExists: Boolean) {
 
-        // Удаляю в облаке объекты, удалённые локально.
+        // Удаляю в каталоге назначения объекты, удалённые в источнике.
         deleteDeletedFiles()
         deleteDeletedDirs()
 
-        // Каталоги
+        // Записываю (создаю) каталоги.
         syncObjectReader.getObjectsNeedsToBeSynched(taskId).filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
@@ -56,7 +56,7 @@ abstract class BasicTargetWriter constructor(
                 })
             }
 
-        // Файлы
+        // Копирую файлы из источника в приёмник.
         syncObjectReader.getObjectsNeedsToBeSynched(taskId).filter { !it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
