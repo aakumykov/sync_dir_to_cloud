@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_file_stream.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
@@ -29,12 +30,13 @@ class SyncTaskExecutor @Inject constructor(
 ) {
     private var sourceReader: SourceReader? = null
     private var targetWriter: TargetWriter? = null
-
+    private var sourceFileStreamSupplier: SourceFileStreamSupplier? = null
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             prepareReader(syncTask)
+            prepareSourceFileStreamSupplier(syncTask)
             prepareWriter(syncTask)
             doWork(syncTask)
         }
@@ -70,10 +72,12 @@ class SyncTaskExecutor @Inject constructor(
 
 
             showReadingSourceNotification(syncTask)
-            readFromSource(syncTask)
+            readFromSourceToDatabase(syncTask)
+
 
             showWritingTargetNotification(syncTask)
-            writeToTarget()
+            writeFromDatabaseToTarget()
+
 
             syncTaskStateChanger.changeExecutionState(taskId, SyncState.SUCCESS)
         }
@@ -102,13 +106,14 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private suspend fun readFromSource(syncTask: SyncTask) {
+    private suspend fun readFromSourceToDatabase(syncTask: SyncTask) {
         sourceReader?.read(syncTask.sourcePath!!)
     }
 
 
-    private suspend fun writeToTarget() {
-        targetWriter?.writeToTarget()
+    private suspend fun writeFromDatabaseToTarget() {
+        // FIXME: убрать "!!"
+        targetWriter?.writeToTarget(sourceFileStreamSupplier!!, true)
     }
 
 
@@ -127,6 +132,12 @@ class SyncTaskExecutor @Inject constructor(
                     changesDetectionStrategy
                 )
             }
+        }
+    }
+
+    private fun prepareSourceFileStreamSupplier(syncTask: SyncTask) {
+        syncTask.sourceStorageType?.also { storageType ->
+            sourceFileStreamSupplier = SFSSFactory.create(syncTask.id, storageType)
         }
     }
 

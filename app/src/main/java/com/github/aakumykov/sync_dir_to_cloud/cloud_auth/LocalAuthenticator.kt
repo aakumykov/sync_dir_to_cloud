@@ -14,11 +14,11 @@ class LocalAuthenticator(
     private val storageAccessHelper: StorageAccessHelper = StorageAccessHelper.create(fragment)
 
     init {
-        storageAccessHelper.prepareForReadAccess()
+        storageAccessHelper.prepareForFullAccess()
     }
 
     override fun startAuth() {
-        storageAccessHelper.requestReadAccess { isGranted ->
+        storageAccessHelper.requestFullAccess { isGranted ->
             if (isGranted)
                 callbacks.onCloudAuthSuccess(DUMMY_AUTH_TOKEN)
             else

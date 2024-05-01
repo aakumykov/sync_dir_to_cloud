@@ -7,12 +7,13 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_file_stream.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import java.io.File
 
-abstract class BasicTargetWriter constructor(
+abstract class BasicTargetWriter (
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val taskId: String,
@@ -27,15 +28,16 @@ abstract class BasicTargetWriter constructor(
         suspend fun run()
     }
 
-    @Throws(IllegalStateException::class)
-    override suspend fun writeToTarget(overwriteIfExists: Boolean) {
+    override suspend fun writeToTarget(sourceFileStreamSupplier: SourceFileStreamSupplier,
+                                       overwriteIfExists: Boolean) {
 
         // Удаляю в каталоге назначения объекты, удалённые в источнике.
         deleteDeletedFiles()
         deleteDeletedDirs()
 
         // Записываю (создаю) каталоги.
-        syncObjectReader.getObjectsNeedsToBeSynched(taskId).filter { it.isDir }
+        syncObjectReader.getObjectsNeedsToBeSynched(taskId)
+            .filter { it.isDir }
             .forEach { syncObject ->
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
@@ -57,10 +59,13 @@ abstract class BasicTargetWriter constructor(
             }
 
         // Копирую файлы из источника в приёмник.
-        syncObjectReader.getObjectsNeedsToBeSynched(taskId).filter { !it.isDir }
+        syncObjectReader.getObjectsNeedsToBeSynched(taskId)
+            .filter { !it.isDir }
             .forEach { syncObject ->
+
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
+
                         val pathInSource = (sourceDirPath +
                                 CloudWriter.DS +
                                 syncObject.relativeParentDirPath +
@@ -68,18 +73,26 @@ abstract class BasicTargetWriter constructor(
                                 syncObject.name)
                             .stripMultiSlash()
 
-                        val pathInTarget = (targetDirPath +
-                                CloudWriter.DS +
-                                syncObject.relativeParentDirPath +
-                                CloudWriter.DS +
-                                syncObject.name)
-                            .stripMultiSlash()
+                        sourceFileStreamSupplier
+                            .getSourceFileStream(pathInSource)
+                            .getOrNull()?.also {  inputStream ->
 
-                        cloudWriter?.putFile(
-                            file = File(pathInSource),
-                            targetPath = pathInTarget,
-                            overwriteIfExists = overwriteIfExists
-                        )
+                                inputStream.use {
+
+                                    val pathInTarget = (targetDirPath +
+                                            CloudWriter.DS +
+                                            syncObject.relativeParentDirPath +
+                                            CloudWriter.DS +
+                                            syncObject.name)
+                                        .stripMultiSlash()
+
+                                    cloudWriter?.putFile(
+                                        inputStream,
+                                        pathInTarget,
+                                        overwriteIfExists
+                                    )
+                                }
+                        }
                     }
                 })
             }
@@ -108,11 +121,13 @@ abstract class BasicTargetWriter constructor(
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }
 
+
     private suspend fun deleteDeletedDirs() {
         syncObjectReader.getObjectsForTask(taskId, ModificationState.DELETED)
             .filter { it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }
+
 
     private suspend fun deleteObjectInTarget(syncObject: SyncObject) {
         writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
@@ -123,9 +138,12 @@ abstract class BasicTargetWriter constructor(
         })
     }
 
+
     protected abstract val cloudWriter: CloudWriter?
 
+
     protected abstract val tag: String
+
 
     companion object {
         val TAG: String = BasicTargetWriter::class.java.simpleName
