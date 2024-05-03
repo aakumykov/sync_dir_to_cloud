@@ -135,6 +135,7 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+    // TODO: в Dagger2
     private fun prepareSourceFileStreamSupplier(syncTask: SyncTask) {
         sourceFileStreamSupplier = syncTask.sourceStorageType?.let { storageType ->
             SFSSFactory.create(syncTask.id, storageType)
