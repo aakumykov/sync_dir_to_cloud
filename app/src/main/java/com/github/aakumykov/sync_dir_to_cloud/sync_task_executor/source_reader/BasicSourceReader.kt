@@ -42,15 +42,13 @@ abstract class BasicSourceReader(
             dirMode = false
         )?.forEach { fileListItem: RecursiveDirReader.FileListItem ->
 
-            val relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath)
-
-            val existingObject = syncObjectReader.getSyncObject(fileListItem.name, relativeParentDirPath)
+            val existingObject = syncObjectReader.getSyncObject(taskId, fileListItem.name)
 
             if (null == existingObject) {
                 SyncObject.createAsNew(
                     taskId = taskId,
                     fsItem = fileListItem,
-                    relativeParentDirPath = relativeParentDirPath,
+                    relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath),
                 )
                     .also {
                         syncObjectAdder.addSyncObject(it)
