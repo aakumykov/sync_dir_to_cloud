@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 @Entity(
     tableName = "sync_objects",
+    primaryKeys = [ "id", "task_id" ],
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -26,7 +27,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
     ]
 )
 class SyncObject (
-    @PrimaryKey val id: String,
+    val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     val name: String,
     @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
