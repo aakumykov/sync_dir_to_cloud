@@ -136,8 +136,8 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private fun prepareSourceFileStreamSupplier(syncTask: SyncTask) {
-        syncTask.sourceStorageType?.also { storageType ->
-            sourceFileStreamSupplier = SFSSFactory.create(syncTask.id, storageType)
+        sourceFileStreamSupplier = syncTask.sourceStorageType?.let { storageType ->
+            SFSSFactory.create(syncTask.id, storageType)
         }
     }
 
