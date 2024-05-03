@@ -22,6 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.file_selector_factory.FileSelector
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.EndpointType
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconGetter
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
@@ -130,7 +131,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun onSyncTaskChanged(syncTask: SyncTask?) {
         syncTask?.also { task ->
             fillForm(task)
-//            requestCloudAuth(task.cloudAuthId)
         }
     }
 
@@ -195,9 +195,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun prepareButtons() {
 
-        binding.sourceTypeButton.setOnClickListener { onSourceTypeButtonClicked() }
-        binding.targetTypeButton.setOnClickListener { onTargetTypeButtonClicked() }
-
         binding.sourcePathSelectionButton.setOnClickListener { onSelectSourcePathClicked() }
         binding.targetPathSelectionButton.setOnClickListener { onSelectTargetPathClicked() }
 
@@ -210,17 +207,31 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
 
-    private fun onSourceTypeButtonClicked() {
-        showAuthSelectionDialog(EndpointType.SOURCE, false)
+    private fun selectSourceStorageType() {
+        showAuthSelectionDialog(EndpointType.SOURCE, true)
     }
 
-    private fun onTargetTypeButtonClicked() {
-        showAuthSelectionDialog(EndpointType.TARGET, false)
+    private fun selectTargetStorageType() {
+        showAuthSelectionDialog(EndpointType.TARGET, true)
     }
 
 
     private fun onSelectSourcePathClicked() {
+        if (null != currentTask && null != currentTask?.sourceStorageType)
+            selectSourcePath()
+        else
+            selectSourceStorageType()
+    }
 
+    private fun onSelectTargetPathClicked() {
+        if (null != currentTask && null != currentTask?.targetStorageType)
+            selectTargetPath()
+        else
+            selectTargetStorageType()
+    }
+
+
+    private fun selectSourcePath() {
         currentTask?.also { syncTask ->
             syncTask.sourceAuthId?.also { sourceAuthId ->
                 syncTask.sourceStorageType?.also { storageType ->
@@ -248,7 +259,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         }
     }
 
-    private fun onSelectTargetPathClicked() {
+
+    private fun selectTargetPath() {
         currentTask?.also { syncTask ->
             syncTask.targetAuthId?.also { targetAuthId ->
                 syncTask.targetStorageType?.also { storageType ->
@@ -274,11 +286,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                 }
             }
         }
-    }
-
-    private fun redirectToSelectCloudAuth(endpointType: EndpointType) {
-        showAuthSelectionDialog(endpointType, true)
-//        showToast(R.string.TOAST_select_cloud_auth_first)
     }
 
 
@@ -313,9 +320,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         timePicker.showNow(childFragmentManager, "")
     }
 
-    private fun showAuthSelectionDialog(endpointType: EndpointType, withNextAction: Boolean) {
+    private fun showAuthSelectionDialog(endpointType: EndpointType, openFileSelectorOnFinish: Boolean) {
         AuthListDialog
-            .create(endpointType, withNextAction)
+            .create(endpointType, openFileSelectorOnFinish)
             .show(childFragmentManager, AuthListDialog.TAG)
     }
 
@@ -347,7 +354,16 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun fillForm(syncTask: SyncTask) {
         fillPaths(syncTask)
+        fillStorageTypeIcons(syncTask.sourceStorageType, syncTask.targetStorageType)
         fillPeriodView(syncTask)
+    }
+
+    private fun fillStorageTypeIcons(
+        sourceStorageType: StorageType?,
+        targetStorageType: StorageType?
+    ) {
+        binding.sourcePathSelectionButton.setImageResource(StorageTypeIconGetter.getIconFor(sourceStorageType))
+        binding.targetPathSelectionButton.setImageResource(StorageTypeIconGetter.getIconFor(targetStorageType))
     }
 
     private fun fillPaths(syncTask: SyncTask) {

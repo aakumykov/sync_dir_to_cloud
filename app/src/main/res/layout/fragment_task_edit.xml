@@ -16,13 +16,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/sourceTypeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                app:srcCompat="@drawable/ic_storage_type_question_mark" />
-
             <EditText
                 android:id="@+id/sourcePathInput"
                 style="@style/path_input"
@@ -42,13 +35,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/targetTypeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                app:srcCompat="@drawable/ic_storage_type_question_mark" />
 
             <EditText
                 android:id="@+id/targetPathInput"
