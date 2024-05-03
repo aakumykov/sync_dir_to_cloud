@@ -16,6 +16,12 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/sourceTypeButton"
+                style="@style/storageTypeButton"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
             <EditText
                 android:id="@+id/sourcePathInput"
                 style="@style/path_input"
@@ -35,6 +41,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/targetTypeButton"
+                style="@style/storageTypeButton"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <EditText
                 android:id="@+id/targetPathInput"

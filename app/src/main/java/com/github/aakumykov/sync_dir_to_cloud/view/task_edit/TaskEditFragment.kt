@@ -3,11 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.View
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.file_lister_navigator_selector.extensions.hide
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
@@ -195,6 +197,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun prepareButtons() {
 
+        binding.sourceTypeButton.setOnClickListener { selectSourceStorageType() }
+        binding.targetTypeButton.setOnClickListener { selectTargetStorageType() }
+
         binding.sourcePathSelectionButton.setOnClickListener { onSelectSourcePathClicked() }
         binding.targetPathSelectionButton.setOnClickListener { onSelectTargetPathClicked() }
 
@@ -363,16 +368,24 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
     private fun fillForm(syncTask: SyncTask) {
         fillPaths(syncTask)
-        fillStorageTypeIcons(syncTask.sourceStorageType, syncTask.targetStorageType)
+        fillStorageTypeButtons(syncTask)
         fillPeriodView(syncTask)
     }
 
-    private fun fillStorageTypeIcons(
-        sourceStorageType: StorageType?,
-        targetStorageType: StorageType?
-    ) {
-        binding.sourcePathSelectionButton.setImageResource(StorageTypeIconGetter.getIconFor(sourceStorageType))
-        binding.targetPathSelectionButton.setImageResource(StorageTypeIconGetter.getIconFor(targetStorageType))
+    private fun fillStorageTypeButtons(syncTask: SyncTask) {
+        showOrHideStorageTypeIcon(binding.sourceTypeButton, syncTask.sourceStorageType)
+        showOrHideStorageTypeIcon(binding.targetTypeButton, syncTask.targetStorageType)
+    }
+
+    private fun showOrHideStorageTypeIcon(imageButton: ImageButton, storageType: StorageType?) {
+        if (null == storageType) {
+            imageButton.visibility = View.GONE
+        } else {
+            imageButton.apply {
+                setImageResource(StorageTypeIconGetter.getIconFor(storageType))
+                visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun fillPaths(syncTask: SyncTask) {
