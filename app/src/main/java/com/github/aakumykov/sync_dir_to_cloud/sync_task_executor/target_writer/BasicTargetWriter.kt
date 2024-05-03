@@ -31,6 +31,8 @@ abstract class BasicTargetWriter (
     override suspend fun writeToTarget(sourceFileStreamSupplier: SourceFileStreamSupplier,
                                        overwriteIfExists: Boolean) {
 
+        MyLogger.d(TAG, "writeToTarget()")
+
         // Удаляю в каталоге назначения объекты, удалённые в источнике.
         deleteDeletedFiles()
         deleteDeletedDirs()
@@ -39,6 +41,9 @@ abstract class BasicTargetWriter (
         syncObjectReader.getObjectsNeedsToBeSynched(taskId)
             .filter { it.isDir }
             .forEach { syncObject ->
+
+                MyLogger.d(TAG, "Создание каталога: '${syncObject.name}'")
+
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
 
@@ -62,6 +67,8 @@ abstract class BasicTargetWriter (
         syncObjectReader.getObjectsNeedsToBeSynched(taskId)
             .filter { !it.isDir }
             .forEach { syncObject ->
+
+                MyLogger.d(TAG, "Отправка файла: '${syncObject.name}'")
 
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
