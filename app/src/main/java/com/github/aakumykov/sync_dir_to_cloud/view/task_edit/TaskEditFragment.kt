@@ -9,7 +9,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.github.aakumykov.file_lister_navigator_selector.extensions.hide
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
@@ -24,7 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.file_selector_factory.FileSelector
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.EndpointType
-import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconGetter
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconProvider
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
@@ -382,7 +381,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             imageButton.visibility = View.GONE
         } else {
             imageButton.apply {
-                setImageResource(StorageTypeIconGetter.getIconFor(storageType))
+                setImageResource(StorageTypeIconProvider.getIconFor(storageType))
                 visibility = View.VISIBLE
             }
         }

@@ -4,8 +4,7 @@ import androidx.annotation.DrawableRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 
-@Deprecated("Переименова в StorageTypeIconProvider")
-class StorageTypeIconGetter {
+class StorageTypeIconProvider {
     companion object {
         @DrawableRes
         fun getIconFor(storageType: StorageType?): Int {

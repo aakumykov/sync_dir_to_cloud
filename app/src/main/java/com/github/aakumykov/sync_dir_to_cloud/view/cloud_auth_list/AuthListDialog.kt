@@ -149,7 +149,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
             override fun modifyView(item: CloudAuth?, viewHolder: ViewHolder?) {
                 item?.let {
                     viewHolder?.iconView?.apply {
-                        setImageResource(StorageTypeIconGetter.getIconFor(item.storageType))
+                        setImageResource(StorageTypeIconProvider.getIconFor(item.storageType))
                     }
                 }
             }
