@@ -43,10 +43,6 @@ class SyncObject (
 
     @ColumnInfo(name = "sync_date") val syncDate: Long,
 ) {
-    override fun toString(): String {
-        return SyncObject::class.simpleName + " { $relativeParentDirPath/$name ($syncState) }"
-    }
-
     fun toFSItem(basePath: String): FSItem {
         return SimpleFSItem(
             name = name,
@@ -56,6 +52,10 @@ class SyncObject (
             mTime = mTime,
             size = size
         )
+    }
+
+    override fun toString(): String {
+        return "SyncObject(id='$id', taskId='$taskId', name='$name', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, executionError='$executionError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize, syncDate=$syncDate)"
     }
 
     companion object {
