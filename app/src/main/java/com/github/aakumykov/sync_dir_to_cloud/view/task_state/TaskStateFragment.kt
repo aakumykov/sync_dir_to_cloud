@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -23,7 +21,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuI
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import kotlinx.coroutines.launch
-import java.util.function.Function
 
 class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
@@ -115,7 +112,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         ){
             override fun modifyView(item: SyncObject?, viewHolder: ViewHolder?) {
                 if (null != item && null != viewHolder) {
-                    viewHolder.iconView.setImageResource(SyncObjectStateIconGetter.getIconFor(item.syncState))
+                    viewHolder.iconView.setImageResource(SyncObjectStateIconProvider.getIconFor(item.syncState))
                 }
             }
         }

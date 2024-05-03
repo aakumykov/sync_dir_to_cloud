@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 
-class SyncObjectStateIconGetter {
+class SyncObjectStateIconProvider {
     companion object {
         @DrawableRes
         fun getIconFor(syncState: SyncState): Int {
