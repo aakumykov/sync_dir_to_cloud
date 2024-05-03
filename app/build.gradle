@@ -119,7 +119,7 @@ dependencies {
 
     implementation "com.github.aakumykov:yandex_disk_client:0.0.12"
 
-    implementation "com.github.aakumykov:cloud_writer:0.0.9-alpha"
+    implementation "com.github.aakumykov:cloud_writer:0.0.10-alpha"
     implementation "com.github.aakumykov:cloud_reader:0.0.4-alpha"
     implementation 'com.github.aakumykov:storage_access_helper:1.0.1-alpha'
 
