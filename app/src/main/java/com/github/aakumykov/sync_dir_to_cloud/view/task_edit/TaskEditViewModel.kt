@@ -65,6 +65,7 @@ class TaskEditViewModel(
             sourceAuthId = cloudAuth.id
             sourceStorageType = cloudAuth.storageType
         }
+        reSendCurrentTask()
     }
 
     fun setTargetAuthAndType(cloudAuth: CloudAuth) {
@@ -72,5 +73,10 @@ class TaskEditViewModel(
             targetAuthId = cloudAuth.id
             targetStorageType = cloudAuth.storageType
         }
+        reSendCurrentTask()
+    }
+
+    private fun reSendCurrentTask() {
+        _syncTaskMutableLiveData.value = currentTask
     }
 }

@@ -190,6 +190,8 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
 
         const val CLOUD_AUTH = "CLOUD_AUTH"
         const val ENDPOINT_TYPE = "ENDPOINT_TYPE"
+
+        @Deprecated("Дать конкретное название")
         const val WITH_NEXT_ACTION = "WITH_NEXT_ACTION"
 
 

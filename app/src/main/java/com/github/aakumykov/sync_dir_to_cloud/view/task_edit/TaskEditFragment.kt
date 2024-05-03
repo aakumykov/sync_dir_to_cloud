@@ -78,7 +78,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun prepareFragmentResultListeners() {
 
         listenForFragmentResult(AuthListDialog.KEY_SELECT_CLOUD_AUTH) { _, fragmentResult ->
-            onCloudAuthSelectionChanged(fragmentResult)
+            onCloudAuthSelectionResult(fragmentResult)
         }
 
         listenForFragmentResult(SOURCE_PATH_SELECTION_REQUEST_KEY) { _, fragmentResult ->
@@ -326,14 +326,23 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             .show(childFragmentManager, AuthListDialog.TAG)
     }
 
-    private fun onCloudAuthSelectionChanged(fragmentResult: Bundle) {
+    private fun onCloudAuthSelectionResult(fragmentResult: Bundle) {
+
         AuthListDialog.extractCloudAuth(fragmentResult)?.also { cloudAuth ->
             fragmentResult.getString(AuthListDialog.ENDPOINT_TYPE)
                 ?.let { EndpointType.valueOf(it) }
                 ?.also { endpointType ->
+
                     when (endpointType) {
                         EndpointType.SOURCE -> { taskEditViewModel.setSourceAuthAndType(cloudAuth) }
                         EndpointType.TARGET -> { taskEditViewModel.setTargetAuthAndType(cloudAuth) }
+                    }
+
+                    if (fragmentResult.getBoolean(AuthListDialog.WITH_NEXT_ACTION, false)) {
+                        when(endpointType) {
+                            EndpointType.SOURCE -> selectSourcePath()
+                            EndpointType.TARGET -> selectTargetPath()
+                        }
                     }
                 }
         }
