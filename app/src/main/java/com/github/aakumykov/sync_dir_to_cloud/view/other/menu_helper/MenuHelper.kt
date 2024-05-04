@@ -17,7 +17,7 @@ class MenuHelper (
 ) {
     fun generateMenu(menu: Menu, customActions: Array<out CustomMenuItem>?, isSubmenu: Boolean = false) {
 
-        MyLogger.d(TAG, "generateMenu()...")
+//        MyLogger.d(TAG, "generateMenu()...")
 
         customActions?.forEach { customMenuAction ->
             addItemToMenu(menu, customMenuAction, isSubmenu).also { menu ->
@@ -37,7 +37,7 @@ class MenuHelper (
         val menuItem: MenuItem
 
         if (null == customMenuItem.childItems) {
-            MyLogger.d(TAG, "addItemToMenu($customMenuItem)")
+//            MyLogger.d(TAG, "addItemToMenu($customMenuItem)")
 
             returnedMenu = menu
 
@@ -49,7 +49,7 @@ class MenuHelper (
             }
         }
         else {
-            MyLogger.d(TAG, "adding submenu")
+//            MyLogger.d(TAG, "adding submenu")
 
             val itemId: Int = customMenuItem.id
             returnedMenu = menu.addSubMenu(0, itemId, 0, customMenuItem.title)
