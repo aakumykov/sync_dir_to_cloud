@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -34,6 +35,9 @@ class SyncTaskExecutor @Inject constructor(
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
+
+        MyLogger.d(TAG, "executeSyncTask() [${classNameWithHash()}]")
+
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             prepareReader(syncTask)
             prepareSourceFileStreamSupplier(syncTask)

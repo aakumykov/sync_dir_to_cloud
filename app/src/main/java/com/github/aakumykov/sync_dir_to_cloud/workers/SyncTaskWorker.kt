@@ -6,6 +6,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -28,7 +29,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
     private var taskId: String? = null
 
     override fun doWork(): Result {
-        MyLogger.d(TAG, "doWork() [${hashCode}] начался, executorHashCode: ${syncTaskExecutor.hashCode()}")
+        MyLogger.d(TAG, "[${classNameWithHash()}] doWork() начался")
 
         taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
@@ -42,9 +43,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
                 syncTaskRunningTimeUpdater.updateStartTime(taskId!!)
                 syncTaskRunningTimeUpdater.clearFinishTime(taskId!!)
 
-                MyLogger.d(TAG, "Перед 'syncTaskExecutor.executeSyncTask()'")
+//                MyLogger.d(TAG, "Перед 'syncTaskExecutor.executeSyncTask()'")
                 syncTaskExecutor.executeSyncTask(taskId!!)
-                MyLogger.d(TAG, "После 'syncTaskExecutor.executeSyncTask()'")
+//                MyLogger.d(TAG, "После 'syncTaskExecutor.executeSyncTask()'")
 
                 fetchTaskSummary(taskId!!)
             }
@@ -65,7 +66,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
             }
         }
 
-        MyLogger.d(TAG, "doWork() [${hashCode}] завершился ($taskSummary).")
+        MyLogger.d(TAG, "[${classNameWithHash()}] doWork() завершился.") //  ($taskSummary)
         return Result.success(successData(taskSummary!!))
     }
 

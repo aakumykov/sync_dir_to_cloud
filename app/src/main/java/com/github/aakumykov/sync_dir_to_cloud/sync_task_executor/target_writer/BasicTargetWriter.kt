@@ -4,6 +4,7 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -31,7 +32,7 @@ abstract class BasicTargetWriter (
     override suspend fun writeToTarget(sourceFileStreamSupplier: SourceFileStreamSupplier,
                                        overwriteIfExists: Boolean) {
 
-        MyLogger.d(TAG, "writeToTarget()")
+//        MyLogger.d(TAG, "writeToTarget()")
 
         // Удаляю в каталоге назначения объекты, удалённые в источнике.
         deleteDeletedFiles()
@@ -42,7 +43,7 @@ abstract class BasicTargetWriter (
             .filter { it.isDir }
             .forEach { syncObject ->
 
-                MyLogger.d(TAG, "Создание каталога: '${syncObject.name}'")
+                MyLogger.d(TAG, "Создание каталога (${classNameWithHash()}): '${syncObject.name}'")
 
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
@@ -68,7 +69,7 @@ abstract class BasicTargetWriter (
             .filter { !it.isDir }
             .forEach { syncObject ->
 
-                MyLogger.d(TAG, "Отправка файла: '${syncObject.name}'")
+                MyLogger.d(TAG, "Отправка файла (${classNameWithHash()}): '${syncObject.name}'")
 
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
