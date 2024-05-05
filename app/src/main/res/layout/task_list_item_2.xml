@@ -6,148 +6,52 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-<!--
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/probeRunButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            android:src="@drawable/ic_probe_run"
-            android:visibility="gone"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/titleView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            android:singleLine="true"
-            android:textSize="18sp"
-            tools:text="Заголовок" />
-
-        <ImageView
-            android:id="@+id/taskStateView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="0"
-            android:contentDescription="@string/description_sync_task_state"
-            tools:srcCompat="@drawable/ic_task_state_scheduled" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/enablingSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0" />
-
-        <ImageButton
-            android:id="@+id/editButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:contentDescription="@string/description_sync_task_edit_button"
-            app:srcCompat="@drawable/ic_baseline_edit_24" />
-
-        <ImageButton
-            android:id="@+id/runButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:contentDescription="@string/description_sync_task_play_button"
-            app:srcCompat="@drawable/ic_task_start" />
-
-        <ImageButton
-            android:id="@+id/moreButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            android:contentDescription="@string/description_sync_task_more_actions"
-            app:srcCompat="@drawable/ic_baseline_more_vert_24" />
-    </LinearLayout>
--->
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/taskInfoRow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0"
-        android:minHeight="64dp">
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/sourceTypeIcon"
-            style="@style/task_list_item_info_row_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
             android:minWidth="42dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/sourcePath"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@drawable/ic_storage_type_local" />
 
         <TextView
             android:id="@+id/sourcePath"
-            style="@style/task_list_item_info_row_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
             android:ellipsize="start"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/titleView"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/sourceTypeIcon"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="/path/to/source/very/long/path/to/source/path/to/source/very/long/path/to/source" />
 
-        <TextView
-            android:id="@+id/titleView"
-            style="@style/task_list_item_info_row_element"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/taskDirectionIcon"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/sourcePath"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="[Название]" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
-        <ImageView
-            android:id="@+id/taskDirectionIcon"
-            style="@style/task_list_item_info_row_icon"
-            android:layout_marginHorizontal="12dp"
-            android:minWidth="42dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/targetTypeIcon"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/titleView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_sync_direction_arrow" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/targetTypeIcon"
             style="@style/task_list_item_info_row_icon"
             android:minWidth="42dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/targetPath"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/taskDirectionIcon"
-            app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@drawable/ic_storage_type_yandex_disk" />
 
         <TextView
             android:id="@+id/targetPath"
             style="@style/task_list_item_info_row_text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/targetTypeIcon"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="/path/to/target" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/taskActionsRow"
