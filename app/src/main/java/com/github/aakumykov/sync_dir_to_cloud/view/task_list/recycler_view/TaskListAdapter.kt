@@ -18,7 +18,7 @@ class TaskListAdapter(private val itemClickCallback: ItemClickCallback) : Recycl
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.task_list_item, parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.task_list_item_2, parent,false)
         return TaskListViewHolder(view, itemClickCallback)
     }
 

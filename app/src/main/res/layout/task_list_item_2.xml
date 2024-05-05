@@ -82,7 +82,7 @@
         android:minHeight="64dp">
 
         <ImageView
-            android:id="@+id/sourceType"
+            android:id="@+id/sourceTypeIcon"
             style="@style/task_list_item_info_row_icon"
             android:minWidth="42dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -97,14 +97,14 @@
             style="@style/task_list_item_info_row_text"
             android:ellipsize="start"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/taskTitleView"
+            app:layout_constraintEnd_toStartOf="@+id/titleView"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/sourceType"
+            app:layout_constraintStart_toEndOf="@+id/sourceTypeIcon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="/path/to/source/very/long/path/to/source/path/to/source/very/long/path/to/source" />
 
         <TextView
-            android:id="@+id/taskTitleView"
+            android:id="@+id/titleView"
             style="@style/task_list_item_info_row_element"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -122,7 +122,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/targetTypeIcon"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/taskTitleView"
+            app:layout_constraintStart_toEndOf="@+id/titleView"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_sync_direction_arrow" />
 

@@ -9,23 +9,49 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconProvider
 
 
-class TaskListViewHolder(private val itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
+class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClickCallback) : RecyclerView.ViewHolder(itemView) {
 
-    private val probeRunButton: ImageButton = itemView.findViewById(R.id.probeRunButton)
+//    private val probeRunButton: ImageButton = itemView.findViewById(R.id.probeRunButton)
 
-    private val titleView: TextView = itemView.findViewById(R.id.titleView)
-    private val stateView: ImageView = itemView.findViewById(R.id.taskStateView)
-    private val editButton: View = itemView.findViewById(R.id.editButton)
-    private val runButton: ImageButton = itemView.findViewById(R.id.runButton)
-    private val moreButton: View = itemView.findViewById(R.id.moreButton)
-    private val enablingSwitch: SwitchCompat = itemView.findViewById(R.id.enablingSwitch)
+    private val sourceTypeIcon: ImageView
+    private val targetTypeIcon: ImageView
+
+    private val sourcePathView: TextView
+    private val targetPathView: TextView
+
+    private val titleView: TextView
+    private val stateView: ImageView
+    private val editButton: View
+    private val runButton: ImageButton
+    private val moreButton: View
+    private val enablingSwitch: SwitchCompat
 
     private lateinit var currentTask: SyncTask
 
     init {
-        probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
+        itemView.apply {
+            sourceTypeIcon = findViewById(R.id.sourceTypeIcon)
+            targetTypeIcon = findViewById(R.id.targetTypeIcon)
+
+            sourcePathView = findViewById(R.id.sourcePath)
+            targetPathView = findViewById(R.id.targetPath)
+
+            titleView = findViewById(R.id.titleView)
+            stateView = findViewById(R.id.taskStateView)
+            editButton = findViewById(R.id.editButton)
+            runButton = findViewById(R.id.runButton)
+            moreButton = findViewById(R.id.moreButton)
+            enablingSwitch = findViewById(R.id.enablingSwitch)
+        }
+
+        initButtons()
+    }
+
+    private fun initButtons() {
+//        probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
 //        probeRunButton.setOnLongClickListener { itemClickCallback.onProbeRunLongClicked(currentTask.id); return@setOnLongClickListener true }
 
         titleView.setOnClickListener { itemClickCallback.onTaskInfoClicked(currentTask.id) }
@@ -42,11 +68,25 @@ class TaskListViewHolder(private val itemView: View, private val itemClickCallba
     }
 
     fun fill(syncTask: SyncTask) {
+
         currentTask = syncTask
+
+        displayStorageTypes()
+        displayStoragePaths()
         displayTitle()
         displaySchedulingState()
         displayExecutionState()
         displayStartStopButton()
+    }
+
+    private fun displayStorageTypes() {
+        sourceTypeIcon.setImageResource(StorageTypeIconProvider.getIconFor(currentTask.sourceStorageType))
+        targetTypeIcon.setImageResource(StorageTypeIconProvider.getIconFor(currentTask.targetStorageType))
+    }
+
+    private fun displayStoragePaths() {
+        sourcePathView.text = currentTask.sourcePath
+        targetPathView.text = currentTask.targetPath
     }
 
 
