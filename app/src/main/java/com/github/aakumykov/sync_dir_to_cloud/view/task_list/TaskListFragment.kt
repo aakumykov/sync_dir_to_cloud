@@ -155,10 +155,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         taskListViewModel.startStopTask(taskId)
     }
 
-    override fun onTaskDeleteClicked(taskId: String) {
-        TODO("Not yet implemented")
-    }
-
     override fun onTaskMoreButtonClicked(itemView: View, anchorView: View, syncTask: SyncTask) {
 
         clickedTask = syncTask
