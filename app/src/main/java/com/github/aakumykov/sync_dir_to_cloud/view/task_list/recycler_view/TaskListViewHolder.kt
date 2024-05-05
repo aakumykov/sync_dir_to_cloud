@@ -54,17 +54,25 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 //        probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
 //        probeRunButton.setOnLongClickListener { itemClickCallback.onProbeRunLongClicked(currentTask.id); return@setOnLongClickListener true }
 
-        titleView.setOnClickListener { itemClickCallback.onTaskInfoClicked(currentTask.id) }
-        stateView.setOnClickListener { itemClickCallback.onTaskInfoClicked(currentTask.id) }
+        sourceTypeIcon.setOnClickListener { onTaskInfoClicked() }
+        targetTypeIcon.setOnClickListener { onTaskInfoClicked() }
+        sourcePathView.setOnClickListener { onTaskInfoClicked() }
+        targetPathView.setOnClickListener { onTaskInfoClicked() }
+        titleView.setOnClickListener { onTaskInfoClicked() }
+        stateView.setOnClickListener { onTaskInfoClicked() }
+
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
-
         moreButton.setOnClickListener { itemClickCallback.onTaskMoreButtonClicked(itemView, moreButton, currentTask) }
 
         // Переключается не прямо, а после изменения статуса SyncTask (в БД).
         enablingSwitch.setOnClickListener {
             itemClickCallback.onTaskEnableSwitchClicked(currentTask.id)
         }
+    }
+
+    private fun onTaskInfoClicked() {
+        itemClickCallback.onTaskInfoClicked(currentTask.id)
     }
 
     fun fill(syncTask: SyncTask) {
