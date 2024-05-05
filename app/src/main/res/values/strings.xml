@@ -98,4 +98,5 @@
     <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_title">Не найден WebView</string>
     <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_message">В вашей системе не найден компонент WebView, необходимый для отображения страницы авторизации.</string>
     <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_neutral_button">Понятно</string>
+    <string name="MENU_ITEM_action_edit_task">Редактировать задачу</string>
 </resources>

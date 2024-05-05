@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
@@ -20,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
+import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import kotlinx.coroutines.launch
 
 class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
@@ -29,7 +31,13 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             id = R.id.actionStartStopTask,
             title = R.string.MENU_ITEM_action_start_stop_task,
             icon = R.drawable.ic_task_start_toolbar,
-            action = { taskStateViewModel.startStopTask(currentTaskId) })
+            action = { taskStateViewModel.startStopTask(currentTaskId) }),
+        CustomMenuItem(
+            id = R.id.actionEditTask,
+            title = R.string.MENU_ITEM_action_edit_task,
+            icon = R.drawable.ic_task_edit_toolbar,
+            action = ::onTaskEditClicked
+        )
     )
 
     private val menuState = MenuState(*menuItems)
@@ -244,6 +252,15 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private fun dateStringOrNever(timestamp: Long): String {
         return if (0L == timestamp) getString(R.string.never)
         else CurrentDateTime.format(timestamp)
+    }
+
+    private fun onTaskEditClicked() {
+        TaskEditFragment.create(currentTaskId).also {
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(DEFAULT_BACK_STACK_NAME)
+                .replace(R.id.fragmentContainerView, it)
+                .commit()
+        }
     }
 
     companion object {

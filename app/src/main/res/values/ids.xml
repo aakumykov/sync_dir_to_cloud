@@ -5,4 +5,5 @@
     <item name="storageTypeLocal" type="id" />
     <item name="storageTypeGoogle" type="id" />
     <item name="storageTypeYandex" type="id" />
+    <item name="actionEditTask" type="id" />
 </resources>
