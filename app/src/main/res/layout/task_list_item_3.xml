@@ -1,133 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginTop="10dp">
 
-
-    <ImageView
-        android:id="@+id/sourceTypeIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="8dp"
-        tools:srcCompat="@drawable/ic_storage_type_local" />
-
-    <TextView
-        android:id="@+id/sourcePath"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:minLines="1"
-        android:maxLines="2"
-        app:layout_constraintStart_toEndOf="@id/sourceTypeIcon"
-        app:layout_constraintTop_toTopOf="@id/sourceTypeIcon"
-        app:layout_constraintBottom_toBottomOf="@id/sourceTypeIcon"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="48dp"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
-        android:ellipsize="marquee"
-
-        tools:text="/path/to/source/very/long/path/to/source/path/to/source/very/long/path/to/source" />
-
-    <ImageView
-        android:id="@+id/targetTypeIcon"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_margin="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sourcePath"
-        tools:srcCompat="@drawable/ic_storage_type_yandex_disk" />
-
-    <TextView
-        android:id="@+id/targetPath"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:minLines="1"
-        android:maxLines="2"
-        app:layout_constraintEnd_toStartOf="@id/targetTypeIcon"
-        app:layout_constraintTop_toTopOf="@id/targetTypeIcon"
-        app:layout_constraintBottom_toBottomOf="@id/targetTypeIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="48dp"
-        android:textAlignment="textEnd"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
-        tools:text="/path/to/target" />
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/targetPath"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageButton
-            android:id="@+id/probeRunButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            android:src="@drawable/ic_probe_run"
-            android:visibility="gone"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/titleView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            android:textSize="18sp"
-            android:singleLine="true"
-            tools:text="Заголовок" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/taskStateView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="0"
-            android:contentDescription="@string/description_sync_task_state"
-            tools:srcCompat="@drawable/ic_task_state_scheduled" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/enablingSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0" />
-
-        <ImageButton
-            android:id="@+id/editButton"
+            android:id="@+id/sourceTypeIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            app:srcCompat="@drawable/ic_baseline_edit_24"
-            android:contentDescription="@string/description_sync_task_edit_button" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="8dp"
+            tools:srcCompat="@drawable/ic_storage_type_local" />
 
-        <ImageButton
-            android:id="@+id/runButton"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/sourcePath"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:contentDescription="@string/description_sync_task_play_button"
-            app:srcCompat="@drawable/ic_task_start" />
+            android:minLines="1"
+            android:maxLines="2"
+            app:layout_constraintStart_toEndOf="@id/sourceTypeIcon"
+            app:layout_constraintTop_toTopOf="@id/sourceTypeIcon"
+            app:layout_constraintBottom_toBottomOf="@id/sourceTypeIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="48dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:ellipsize="marquee"
 
-        <ImageButton
-            android:id="@+id/moreButton"
+            tools:text="/path/to/source/very/long/path/to/source/path/to/source/very/long/path/to/source" />
+
+        <ImageView
+            android:id="@+id/targetTypeIcon"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            app:srcCompat="@drawable/ic_baseline_more_vert_24"
-            android:contentDescription="@string/description_sync_task_more_actions" />
+            android:layout_margin="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sourcePath"
+            tools:srcCompat="@drawable/ic_storage_type_yandex_disk" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/targetPath"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minLines="1"
+            android:maxLines="2"
+            app:layout_constraintEnd_toStartOf="@id/targetTypeIcon"
+            app:layout_constraintTop_toTopOf="@id/targetTypeIcon"
+            app:layout_constraintBottom_toBottomOf="@id/targetTypeIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="48dp"
+            android:textAlignment="textEnd"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            tools:text="/path/to/target" />
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/targetPath"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageButton
+                android:id="@+id/probeRunButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:src="@drawable/ic_probe_run"
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/titleView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textSize="18sp"
+                android:singleLine="true"
+                tools:text="Заголовок" />
+
+            <ImageView
+                android:id="@+id/taskStateView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="0"
+                android:contentDescription="@string/description_sync_task_state"
+                tools:srcCompat="@drawable/ic_task_state_scheduled" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/enablingSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0" />
+
+            <ImageButton
+                android:id="@+id/editButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                app:srcCompat="@drawable/ic_baseline_edit_24"
+                android:contentDescription="@string/description_sync_task_edit_button" />
+
+            <ImageButton
+                android:id="@+id/runButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:contentDescription="@string/description_sync_task_play_button"
+                app:srcCompat="@drawable/ic_task_start" />
+
+            <ImageButton
+                android:id="@+id/moreButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                app:srcCompat="@drawable/ic_baseline_more_vert_24"
+                android:contentDescription="@string/description_sync_task_more_actions" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
