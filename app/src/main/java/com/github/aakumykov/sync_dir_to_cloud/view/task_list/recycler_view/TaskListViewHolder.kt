@@ -81,7 +81,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
         displayStorageTypes()
         displayStoragePaths()
-        displayTitle()
+//        displayTitle()
         displaySchedulingState()
         displayExecutionState()
         displayStartStopButton()
