@@ -20,7 +20,7 @@ abstract class BadObjectStateResettingDAO {
     }
 
 
-    @Query("UPDATE sync_objects SET sync_state = :syncState " +
-            "WHERE (sync_state = :sourceSyncState AND task_id = :taskId)")
+    @Query("UPDATE sync_objects SET execution_state = :syncState " +
+            "WHERE (execution_state = :sourceSyncState AND task_id = :taskId)")
     abstract suspend fun changeSyncState(taskId: String, sourceSyncState: ExecutionState, syncState: ExecutionState)
 }

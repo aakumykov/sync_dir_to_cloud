@@ -120,7 +120,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         ){
             override fun modifyView(item: SyncObject?, viewHolder: ViewHolder?) {
                 if (null != item && null != viewHolder) {
-                    viewHolder.iconView.setImageResource(SyncObjectStateIconProvider.getIconFor(item.syncState))
+                    viewHolder.iconView.setImageResource(SyncObjectStateIconProvider.getIconFor(item.executionState))
                 }
             }
         }
@@ -153,7 +153,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 append(dateStringOrNever(syncObject.syncDate))
                 append("\n")
 
-                if (ExecutionState.ERROR == syncObject.syncState) {
+                if (ExecutionState.ERROR == syncObject.executionState) {
                     append("Ошибка синхронизации: ")
                     append(syncObject.executionError)
                     append("\n")
@@ -181,7 +181,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     }
 
     private fun changeToolbarButtons(syncTask: SyncTask) {
-        menuState.updateIcon(R.id.actionStartStopTask, when(syncTask.syncState){
+        menuState.updateIcon(R.id.actionStartStopTask, when(syncTask.executionState){
             ExecutionState.RUNNING -> R.drawable.ic_task_stop_toolbar
             else -> R.drawable.ic_task_start_toolbar
         }).also {
@@ -233,7 +233,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     }
 
     private fun displayExecutionState(syncTask: SyncTask) {
-        binding.syncStateView.text = when (syncTask.syncState) {
+        binding.syncStateView.text = when (syncTask.executionState) {
             ExecutionState.NEVER -> getString(R.string.EXECUTION_STATE_idle)
             ExecutionState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
             ExecutionState.SUCCESS -> getString(R.string.EXECUTION_STATE_success)

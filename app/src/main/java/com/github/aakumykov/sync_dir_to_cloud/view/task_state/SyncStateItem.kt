@@ -9,5 +9,5 @@ class SyncStateItem(private val syncObject: SyncObject) {
 
     private fun modificationState(): String = syncObject.modificationState.name
 
-    private fun synchronizationState(): String = syncObject.syncState.name
+    private fun synchronizationState(): String = syncObject.executionState.name
 }

@@ -15,7 +15,7 @@ class StartStopSyncTaskUseCase @Inject constructor(
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
 
-        when (syncTask.syncState) {
+        when (syncTask.executionState) {
             ExecutionState.RUNNING -> stopSyncTask(syncTask)
             ExecutionState.NEVER -> startSyncTask(syncTask)
             ExecutionState.SUCCESS -> startSyncTask(syncTask)

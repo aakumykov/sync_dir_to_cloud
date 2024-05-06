@@ -103,7 +103,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 //        MyLogger.d(TAG, "displayStartStopButton(), syncState: ${currentTask.syncState}")
 
         runButton.setImageResource(
-            when(currentTask.syncState){
+            when(currentTask.executionState){
                 ExecutionState.NEVER -> R.drawable.ic_task_start
                 ExecutionState.SUCCESS -> R.drawable.ic_task_start
                 ExecutionState.RUNNING -> R.drawable.ic_task_stop
@@ -146,7 +146,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
     private fun displayExecutionState() {
         stateView.setImageResource(
-            when (currentTask.syncState) {
+            when (currentTask.executionState) {
                 ExecutionState.NEVER -> idleIcon()
                 ExecutionState.SUCCESS -> idleIcon()
                 ExecutionState.RUNNING -> R.drawable.ic_task_state_running

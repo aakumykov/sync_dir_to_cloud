@@ -32,7 +32,7 @@ class SyncObject (
     val name: String,
     @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
-    @ColumnInfo(name = "sync_state") val syncState: ExecutionState,
+    @ColumnInfo(name = "execution_state") val executionState: ExecutionState,
     @ColumnInfo(name = "execution_error") var executionError: String,
     @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
 
@@ -56,7 +56,7 @@ class SyncObject (
     }
 
     override fun toString(): String {
-        return "SyncObject(id='$id', taskId='$taskId', name='$name', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, executionError='$executionError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize, syncDate=$syncDate)"
+        return "SyncObject(id='$id', taskId='$taskId', name='$name', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$executionState, executionError='$executionError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize, syncDate=$syncDate)"
     }
 
     companion object {
@@ -75,7 +75,7 @@ class SyncObject (
                 name = fsItem.name,
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
-                syncState = ExecutionState.NEVER,
+                executionState = ExecutionState.NEVER,
                 executionError = "",
                 modificationState = ModificationState.NEW,
                 mTime = fsItem.mTime,

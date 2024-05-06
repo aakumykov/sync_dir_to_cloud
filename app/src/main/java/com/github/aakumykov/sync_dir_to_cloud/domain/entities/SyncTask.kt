@@ -34,7 +34,7 @@ class SyncTask {
     @ColumnInfo(name = "scheduling_state") var schedulingState: ExecutionState = ExecutionState.NEVER
     @ColumnInfo(name = "scheduling_error") var schedulingError: String? = null
 
-    @ColumnInfo(name = "sync_state") var syncState: ExecutionState = ExecutionState.NEVER
+    @ColumnInfo(name = "execution_state") var executionState: ExecutionState = ExecutionState.NEVER
     @ColumnInfo(name = "execution_error") var executionError: String? = null
 
     @ColumnInfo(name = "source_storage_type") var sourceStorageType: StorageType?

@@ -21,6 +21,6 @@ interface SyncTaskStateDAO {
     @Query("SELECT state FROM sync_tasks WHERE id = :taskId")
     suspend fun getState(taskId: String): SyncTask.State
 
-    @Query("UPDATE sync_tasks SET sync_state = :syncState WHERE id = :taskId")
+    @Query("UPDATE sync_tasks SET execution_state = :syncState WHERE id = :taskId")
     suspend fun setSyncState(taskId: String, syncState: ExecutionState)
 }
