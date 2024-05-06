@@ -38,7 +38,12 @@ class TaskEditViewModel(
         viewModelScope.launch {
             currentTask?.let {
                 setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))
+
+                // FIXME: что, если ошибка?
                 syncTaskManagingUseCase.createOrUpdateSyncTask(it)
+
+
+
                 setOpState(OpState.Success(TextMessage(R.string.task_saved)))
             }
         }
