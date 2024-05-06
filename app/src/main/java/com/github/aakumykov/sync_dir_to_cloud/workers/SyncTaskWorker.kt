@@ -5,7 +5,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
@@ -54,7 +54,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
             runBlocking {
                 val errorMsg = ExceptionUtils.getErrorMessage(t)
 
-                syncTaskStateChanger.changeExecutionState(taskId!!, SyncState.ERROR, errorMsg)
+                syncTaskStateChanger.changeExecutionState(taskId!!, ExecutionState.ERROR, errorMsg)
                 MyLogger.e(TAG, errorMsg, t)
 
                 Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))

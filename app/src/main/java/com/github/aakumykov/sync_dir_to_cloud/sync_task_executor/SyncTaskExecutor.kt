@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
@@ -50,7 +50,7 @@ class SyncTaskExecutor @Inject constructor(
     suspend fun stopExecutingTask(taskId: String) {
         // TODO: по-настоящему прерывать работу CloudWriter-а
         MyLogger.d(TAG, "stopExecutingTask(), [${hashCode()}]")
-        syncTaskStateChanger.changeExecutionState(taskId, SyncState.NEVER)
+        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
 
     // FIXME: убрать !! в sourcePath
@@ -60,13 +60,13 @@ class SyncTaskExecutor @Inject constructor(
         val notificationId = syncTask.notificationId
 
         try {
-            syncTaskStateChanger.changeExecutionState(taskId, SyncState.RUNNING)
+            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
             // Стираю из БД объекты, удалённые в предыдущую синхронизацию
             // (чтобы не пытаться удалить их повторно).
             removePreviouslyDeletedObjects(taskId)
 
-            // Меняю SyncState.RUNNING на SyncState.NEVER, чтобы эти объекты синхронизировались вновь
+            // Меняю ExecutionState.RUNNING на ExecutionState.NEVER, чтобы эти объекты синхронизировались вновь
             // (такой статус может сохраниться, если приложение было убито во время работы).
             markBadStatesAsNeverSynced(taskId)
 
@@ -83,10 +83,10 @@ class SyncTaskExecutor @Inject constructor(
             writeFromDatabaseToTarget()
 
 
-            syncTaskStateChanger.changeExecutionState(taskId, SyncState.SUCCESS)
+            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, SyncState.ERROR, ExceptionUtils.getErrorMessage(t))
+            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
         }
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)

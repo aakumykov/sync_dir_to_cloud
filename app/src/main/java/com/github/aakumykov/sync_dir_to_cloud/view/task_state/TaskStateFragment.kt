@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -153,7 +153,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 append(dateStringOrNever(syncObject.syncDate))
                 append("\n")
 
-                if (SyncState.ERROR == syncObject.syncState) {
+                if (ExecutionState.ERROR == syncObject.syncState) {
                     append("Ошибка синхронизации: ")
                     append(syncObject.executionError)
                     append("\n")
@@ -182,7 +182,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun changeToolbarButtons(syncTask: SyncTask) {
         menuState.updateIcon(R.id.actionStartStopTask, when(syncTask.syncState){
-            SyncState.RUNNING -> R.drawable.ic_task_stop_toolbar
+            ExecutionState.RUNNING -> R.drawable.ic_task_stop_toolbar
             else -> R.drawable.ic_task_start_toolbar
         }).also {
             menuStateViewModel.sendMenuState(it)
@@ -205,10 +205,10 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         binding.schedulingStateView.text =
             if (syncTask.isEnabled) {
                 when(syncTask.schedulingState) {
-                    SyncState.NEVER -> detailedSchedulingState(syncTask)
-                    SyncState.SUCCESS -> detailedSchedulingState(syncTask)
-                    SyncState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
-                    SyncState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
+                    ExecutionState.NEVER -> detailedSchedulingState(syncTask)
+                    ExecutionState.SUCCESS -> detailedSchedulingState(syncTask)
+                    ExecutionState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
+                    ExecutionState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
                 }
             }
             else {
@@ -234,10 +234,10 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun displayExecutionState(syncTask: SyncTask) {
         binding.syncStateView.text = when (syncTask.syncState) {
-            SyncState.NEVER -> getString(R.string.EXECUTION_STATE_idle)
-            SyncState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
-            SyncState.SUCCESS -> getString(R.string.EXECUTION_STATE_success)
-            SyncState.ERROR -> getString(
+            ExecutionState.NEVER -> getString(R.string.EXECUTION_STATE_idle)
+            ExecutionState.RUNNING -> getString(R.string.EXECUTION_STATE_running)
+            ExecutionState.SUCCESS -> getString(R.string.EXECUTION_STATE_success)
+            ExecutionState.ERROR -> getString(
                 R.string.EXECUTION_STATE_error,
                 syncTask.executionError
             )

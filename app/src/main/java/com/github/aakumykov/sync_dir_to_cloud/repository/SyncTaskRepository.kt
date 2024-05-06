@@ -3,8 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
@@ -74,24 +73,24 @@ class SyncTaskRepository @Inject constructor(
         syncTaskStateDAO.setEnabled(taskId, isEnabled)
     }
 
-    override suspend fun changeSchedulingState(taskId: String, newState: SyncState, errorMsg: String) {
+    override suspend fun changeSchedulingState(taskId: String, newState: ExecutionState, errorMsg: String) {
         changeExecutionState(syncTaskSchedulingStateDAO, taskId, newState, errorMsg)
     }
 
-    override suspend fun changeExecutionState(taskId: String, newState: SyncState, errorMsg: String) {
+    override suspend fun changeExecutionState(taskId: String, newState: ExecutionState, errorMsg: String) {
         changeExecutionState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
     }
 
 
     private suspend fun changeExecutionState(syncStateChanger: SyncStateChanger,
                                              taskId: String,
-                                             newState: SyncState,
+                                             newState: ExecutionState,
                                              errorMsg: String = "") {
         when(newState) {
-            SyncState.NEVER -> syncStateChanger.setIdleState(taskId)
-            SyncState.RUNNING -> syncStateChanger.setBusyState(taskId)
-            SyncState.SUCCESS -> syncStateChanger.setSuccessState(taskId)
-            SyncState.ERROR -> syncStateChanger.setErrorState(taskId, errorMsg)
+            ExecutionState.NEVER -> syncStateChanger.setIdleState(taskId)
+            ExecutionState.RUNNING -> syncStateChanger.setBusyState(taskId)
+            ExecutionState.SUCCESS -> syncStateChanger.setSuccessState(taskId)
+            ExecutionState.ERROR -> syncStateChanger.setErrorState(taskId, errorMsg)
         }
     }
 

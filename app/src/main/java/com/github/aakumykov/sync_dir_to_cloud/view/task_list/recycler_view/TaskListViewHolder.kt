@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconProvider
 
@@ -104,10 +104,10 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
         runButton.setImageResource(
             when(currentTask.syncState){
-                SyncState.NEVER -> R.drawable.ic_task_start
-                SyncState.SUCCESS -> R.drawable.ic_task_start
-                SyncState.RUNNING -> R.drawable.ic_task_stop
-                SyncState.ERROR -> R.drawable.ic_task_start
+                ExecutionState.NEVER -> R.drawable.ic_task_start
+                ExecutionState.SUCCESS -> R.drawable.ic_task_start
+                ExecutionState.RUNNING -> R.drawable.ic_task_stop
+                ExecutionState.ERROR -> R.drawable.ic_task_start
             }
         )
 
@@ -147,10 +147,10 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
     private fun displayExecutionState() {
         stateView.setImageResource(
             when (currentTask.syncState) {
-                SyncState.NEVER -> idleIcon()
-                SyncState.SUCCESS -> idleIcon()
-                SyncState.RUNNING -> R.drawable.ic_task_state_running
-                SyncState.ERROR -> R.drawable.ic_task_state_error
+                ExecutionState.NEVER -> idleIcon()
+                ExecutionState.SUCCESS -> idleIcon()
+                ExecutionState.RUNNING -> R.drawable.ic_task_state_running
+                ExecutionState.ERROR -> R.drawable.ic_task_state_error
             }
         )
     }

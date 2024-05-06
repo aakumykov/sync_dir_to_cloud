@@ -32,7 +32,7 @@ class SyncObject (
     val name: String,
     @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
-    @ColumnInfo(name = "sync_state") val syncState: SyncState,
+    @ColumnInfo(name = "sync_state") val syncState: ExecutionState,
     @ColumnInfo(name = "execution_error") var executionError: String,
     @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
 
@@ -75,7 +75,7 @@ class SyncObject (
                 name = fsItem.name,
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
-                syncState = SyncState.NEVER,
+                syncState = ExecutionState.NEVER,
                 executionError = "",
                 modificationState = ModificationState.NEW,
                 mTime = fsItem.mTime,

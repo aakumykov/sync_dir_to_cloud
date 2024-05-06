@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -12,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_file_str
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import java.io.File
 
 abstract class BasicTargetWriter (
     private val syncObjectReader: SyncObjectReader,
@@ -110,14 +109,14 @@ abstract class BasicTargetWriter (
     private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: SuspendRunnable) {
         kotlinx.coroutines.Runnable {  }
         try {
-            syncObjectStateChanger.changeExecutionState(syncObject.id, SyncState.RUNNING, "")
+            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.RUNNING, "")
             writeAction.run()
-            syncObjectStateChanger.changeExecutionState(syncObject.id, SyncState.SUCCESS, "")
+            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.SUCCESS, "")
             syncObjectStateChanger.setSyncDate(syncObject.id, currentTime())
         }
         catch (t: Throwable) {
             val errorMsg = ExceptionUtils.getErrorMessage(t)
-            syncObjectStateChanger.changeExecutionState(syncObject.id, SyncState.ERROR, errorMsg)
+            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, errorMsg)
             MyLogger.e(tag, errorMsg, t)
         }
     }

@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
@@ -20,7 +20,7 @@ interface SyncObjectDAO {
     suspend fun getSyncObjectsForTaskWithModificationStates(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
     @Query("UPDATE sync_objects SET sync_state =  :state, execution_error = :errorMsg WHERE id = :syncObjectId")
-    suspend fun setExecutionState(syncObjectId: String, state: SyncState, errorMsg: String)
+    suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
     fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>>
@@ -35,7 +35,7 @@ interface SyncObjectDAO {
     suspend fun getSyncObject(taskId: String, name: String): SyncObject?
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND sync_state = :syncState")
-    suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: SyncState)
+    suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: ExecutionState)
 
     @Update
     suspend fun updateSyncObject(syncObject: SyncObject)
@@ -47,7 +47,7 @@ interface SyncObjectDAO {
     suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND sync_state = :syncState")
-    suspend fun getObjectsWithSyncState(taskId: String, syncState: SyncState): List<SyncObject>
+    suspend fun getObjectsWithSyncState(taskId: String, syncState: ExecutionState): List<SyncObject>
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState")
     suspend fun getObjectsWithModificationState(taskId: String, modificationState: ModificationState): List<SyncObject>

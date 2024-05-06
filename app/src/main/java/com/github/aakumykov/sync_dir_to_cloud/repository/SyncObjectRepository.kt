@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -30,7 +30,7 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun getObjectsNeedsToBeSynched(taskId: String): List<SyncObject> {
 //        syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
 
-        val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, SyncState.NEVER)
+        val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, ExecutionState.NEVER)
         val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.NEW)
         val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.MODIFIED)
 
@@ -46,7 +46,7 @@ class SyncObjectRepository @Inject constructor(
     }
 
 
-    override suspend fun changeExecutionState(objectId: String, syncState: SyncState, errorMsg: String)
+    override suspend fun changeExecutionState(objectId: String, syncState: ExecutionState, errorMsg: String)
         = syncObjectDAO.setExecutionState(objectId, syncState, errorMsg)
 
 
@@ -67,7 +67,7 @@ class SyncObjectRepository @Inject constructor(
 
 
     override suspend fun clearObjectsWasSuccessfullyDeleted(taskId: String)
-        = syncObjectDAO.deleteObjectsWithModificationAndSyncState(taskId, ModificationState.DELETED, SyncState.SUCCESS)
+        = syncObjectDAO.deleteObjectsWithModificationAndSyncState(taskId, ModificationState.DELETED, ExecutionState.SUCCESS)
 
     override suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
         = syncObjectDAO.updateSyncObject(modifiedSyncObject)

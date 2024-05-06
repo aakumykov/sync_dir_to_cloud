@@ -31,10 +31,10 @@ class SyncTask {
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
 
-    @ColumnInfo(name = "scheduling_state") var schedulingState: SyncState = SyncState.NEVER
+    @ColumnInfo(name = "scheduling_state") var schedulingState: ExecutionState = ExecutionState.NEVER
     @ColumnInfo(name = "scheduling_error") var schedulingError: String? = null
 
-    @ColumnInfo(name = "sync_state") var syncState: SyncState = SyncState.NEVER
+    @ColumnInfo(name = "sync_state") var syncState: ExecutionState = ExecutionState.NEVER
     @ColumnInfo(name = "execution_error") var executionError: String? = null
 
     @ColumnInfo(name = "source_storage_type") var sourceStorageType: StorageType?
