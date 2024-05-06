@@ -11,6 +11,7 @@ open class PageOpStateViewModel(application: Application) : AndroidViewModel(app
 
     fun getOpState(): LiveData<OpState> = opStateMutableLiveData
 
+    @Deprecated("Используется только в одном месте")
     protected fun setOpState(opState: OpState) {
         opStateMutableLiveData.postValue(opState)
     }

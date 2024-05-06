@@ -3,21 +3,22 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
+import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
-import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
 import kotlinx.coroutines.launch
 
 class TaskListViewModel(
     application: Application,
+    private val syncTaskManagingUseCase: SyncTaskManagingUseCase,
     private val syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
     private val syncTaskNotificator: SyncTaskNotificator
 )
-    :TaskManagingViewModel(application)
+    : PageOpStateViewModel(application)
 {
     suspend fun getTaskList(): LiveData<List<SyncTask>> =
         syncTaskManagingUseCase.listSyncTasks()

@@ -7,17 +7,19 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import kotlinx.coroutines.launch
 
 class TaskEditViewModel(
     application: Application,
+    private val syncTaskManagingUseCase: SyncTaskManagingUseCase,
     private val cloudAuthReader: CloudAuthReader
 )
-    : TaskManagingViewModel(application)
+    : PageOpStateViewModel(application)
 {
     //
     // LiveData для оповещения View о том, что можно отображать данные.
