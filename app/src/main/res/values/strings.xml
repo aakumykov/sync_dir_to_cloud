@@ -44,7 +44,7 @@
     <string name="VALIDATION_name_already_used">Название уже используется</string>
     <string name="auth_error">Ошибка авторизации</string>
     <string name="VALIDATION_cannot_be_empty">Не может быть пустым</string>
-    <string name="DIALOG_AUTH_LIST_title">Облачные авторизации</string>
+    <string name="DIALOG_AUTH_LIST_title">Выбор хранилища</string>
     <string name="TOAST_select_cloud_auth_first">Выберите облачную авторизацию</string>
     <string name="notifications_channel_name">Процесс синхронизации</string>
     <string name="notifications_channel_description">Уведомления о процессе выполнения задания синхронизации</string>
