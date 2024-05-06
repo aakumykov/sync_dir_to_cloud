@@ -36,6 +36,7 @@ class TaskListViewModel(
         }
     }
 
+    // TODO: TaskDeletingUseCase ?
     fun deleteTask(syncTask: SyncTask) {
         viewModelScope.launch {
             syncTaskStartStopUseCase.stopSyncTask(syncTask)
