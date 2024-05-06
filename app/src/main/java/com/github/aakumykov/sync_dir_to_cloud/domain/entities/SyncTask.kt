@@ -46,6 +46,9 @@ class SyncTask {
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
 
+    @ColumnInfo(name = "old_interval_h") var oldIntervalH: Int
+    @ColumnInfo(name = "old_interval_m") var oldIntervalM: Int
+
     @ColumnInfo(name = "source_auth_id") var sourceAuthId: String? = null
     @ColumnInfo(name = "target_auth_id") var targetAuthId: String? = null
 
@@ -67,6 +70,9 @@ class SyncTask {
 
         this.intervalHours = 0
         this.intervalMinutes = 0
+
+        this.oldIntervalH = 0
+        this.oldIntervalM = 0
     }
 
     constructor(sourcePath: String,
@@ -76,12 +82,17 @@ class SyncTask {
                 intervalHours: Int,
                 intervalMinutes: Int
     ) : this() {
-        this.sourcePath = sourcePath
-        this.targetStorageType = targetStorageType
         this.sourceStorageType = sourceStorageType
+        this.targetStorageType = targetStorageType
+
+        this.sourcePath = sourcePath
         this.targetPath = targetPath
+
         this.intervalHours = intervalHours
         this.intervalMinutes = intervalMinutes
+
+        this.oldIntervalH = 0
+        this.oldIntervalM = 0
     }
 
 
