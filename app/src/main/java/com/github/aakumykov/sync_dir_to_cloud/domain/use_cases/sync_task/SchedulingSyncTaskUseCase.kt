@@ -2,6 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.executionIntervalNotZero
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isExecutionIntervalCahnged
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
@@ -25,6 +27,27 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         }
     }
 
+    suspend fun unScheduleSyncTask(syncTask: SyncTask) {
+        try {
+            // FIXME: ExecutionState.RUNNING плохо подходит для состояния регистрации задачи в планировщике.
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.RUNNING)
+            syncTaskScheduler.unScheduleSyncTask(syncTask)
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.NEVER)
+            syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, false)
+        }
+        catch (t: Throwable) {
+            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
+        }
+    }
+
+    suspend fun updateTaskSchedule(syncTask: SyncTask) {
+        if (syncTask.isEnabled && syncTask.executionIntervalNotZero()) {
+            // Метод SyncTaskScheduler.scheduleSyncTask() обновляет задачу,
+            // поэтому необязательно предварительно убирать её из планировщика.
+            scheduleSyncTask(syncTask)
+        }
+    }
+
 
     private suspend fun scheduleSyncTask(syncTask: SyncTask) {
         try {
@@ -32,19 +55,6 @@ class SchedulingSyncTaskUseCase @Inject constructor(
             syncTaskScheduler.scheduleSyncTask(syncTask)
             syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.SUCCESS)
             syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, true)
-        }
-        catch (t: Throwable) {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
-        }
-    }
-
-
-    suspend fun unScheduleSyncTask(syncTask: SyncTask) {
-        try {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.RUNNING)
-            syncTaskScheduler.unScheduleSyncTask(syncTask)
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.NEVER)
-            syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, false)
         }
         catch (t: Throwable) {
             syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))

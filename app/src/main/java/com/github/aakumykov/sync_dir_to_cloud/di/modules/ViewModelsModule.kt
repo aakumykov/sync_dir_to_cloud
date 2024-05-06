@@ -32,9 +32,13 @@ class ViewModelsModule {
     fun provideTaskEditViewModel(
         application: Application,
         cloudAuthReader: CloudAuthReader,
-        syncTaskManagingUseCase: SyncTaskManagingUseCase
+        syncTaskManagingUseCase: SyncTaskManagingUseCase,
+        syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
     ): ViewModel {
-        return TaskEditViewModel(application, syncTaskManagingUseCase, cloudAuthReader)
+        return TaskEditViewModel(application,
+            syncTaskManagingUseCase,
+            syncTaskSchedulingUseCase,
+            cloudAuthReader)
     }
 
     @Provides

@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isExecutionIntervalCahnged
+import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
@@ -14,9 +16,11 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.P
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import kotlinx.coroutines.launch
 
+// TODO: отправка во View Toast-сообщений
 class TaskEditViewModel(
     application: Application,
     private val syncTaskManagingUseCase: SyncTaskManagingUseCase,
+    private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
     private val cloudAuthReader: CloudAuthReader
 )
     : PageOpStateViewModel(application)
@@ -36,13 +40,13 @@ class TaskEditViewModel(
 
     fun saveSyncTask() {
         viewModelScope.launch {
-            currentTask?.let {
+            currentTask?.let { syncTask ->
                 setOpState(OpState.Busy(TextMessage(R.string.saving_new_task)))
 
                 // FIXME: что, если ошибка?
-                syncTaskManagingUseCase.createOrUpdateSyncTask(it)
+                syncTaskManagingUseCase.createOrUpdateSyncTask(syncTask)
 
-
+                syncTaskSchedulingUseCase.updateTaskSchedule(syncTask)
 
                 setOpState(OpState.Success(TextMessage(R.string.task_saved)))
             }
@@ -85,5 +89,19 @@ class TaskEditViewModel(
 
     private fun reSendCurrentTask() {
         _syncTaskMutableLiveData.value = currentTask
+    }
+
+    fun setIntervalHours(hoursCount: Int) {
+        currentTask?.apply {
+            oldIntervalH = intervalHours
+            intervalHours = hoursCount
+        }
+    }
+
+    fun setIntervalMinutes(minutesCount: Int) {
+        currentTask?.apply {
+            oldIntervalM = intervalMinutes
+            intervalMinutes = minutesCount
+        }
     }
 }

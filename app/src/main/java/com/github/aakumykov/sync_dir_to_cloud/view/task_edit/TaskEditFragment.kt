@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -208,6 +209,14 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         binding.intervalHours.setOnClickListener { onSelectTimeClicked() }
         binding.intervalMinutes.setOnClickListener { onSelectTimeClicked() }
         binding.periodSelectionButton.setOnClickListener { onSelectTimeClicked() }
+
+        binding.intervalHours.doOnTextChanged { text, start, before, count ->
+            taskEditViewModel.setIntervalHours(text.toString().toInt())
+        }
+
+        binding.intervalMinutes.doOnTextChanged { text, start, before, count ->
+            taskEditViewModel.setIntervalMinutes(text.toString().toInt())
+        }
     }
 
 
