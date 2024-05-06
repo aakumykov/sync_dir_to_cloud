@@ -109,20 +109,20 @@
                 android:layout_weight="0" />
 
             <ImageButton
-                android:id="@+id/editButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                app:srcCompat="@drawable/ic_baseline_edit_24"
-                android:contentDescription="@string/description_sync_task_edit_button" />
-
-            <ImageButton
                 android:id="@+id/runButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:contentDescription="@string/description_sync_task_play_button"
                 app:srcCompat="@drawable/ic_task_start" />
+
+            <ImageButton
+                android:id="@+id/editButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                app:srcCompat="@drawable/ic_baseline_edit_24"
+                android:contentDescription="@string/description_sync_task_edit_button" />
 
             <ImageButton
                 android:id="@+id/moreButton"
