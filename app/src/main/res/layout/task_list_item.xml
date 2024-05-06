@@ -106,7 +106,9 @@
                 android:id="@+id/enablingSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0" />
+                android:layout_weight="0"
+                android:visibility="invisible"
+                tools:visibility="visible" />
 
             <ImageButton
                 android:id="@+id/runButton"
