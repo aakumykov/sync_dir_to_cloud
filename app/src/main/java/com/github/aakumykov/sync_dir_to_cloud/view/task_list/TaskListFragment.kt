@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.OneTimeWorkRequest
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
@@ -65,7 +66,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
     private var taskListAdapter: TaskListAdapter? = null
 
     // ViewModels
-    private val taskListViewModel: TaskListViewModel by viewModels()
+    private lateinit var taskListViewModel: TaskListViewModel
     private val navigationViewModel: NavigationViewModel by activityViewModels()
     private val pageTitleViewModel: PageTitleViewModel by activityViewModels()
     private val menuStateViewModel: MenuStateViewModel by activityViewModels()
@@ -217,6 +218,8 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
 
 
     private fun prepareViewModels() {
+        taskListViewModel = DaggerViewModelHelper.get(this, TaskListViewModel::class.java)
+
         lifecycleScope.launch {
             taskListViewModel.getTaskList().observe(viewLifecycleOwner) { onListChanged(it) }
         }

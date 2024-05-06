@@ -11,14 +11,14 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotific
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.TaskManagingViewModel
 import kotlinx.coroutines.launch
 
-// TODO: поля в конструктор, LAZY
-class TaskListViewModel(application: Application) : TaskManagingViewModel(application) {
-
-    private val syncTaskStartStopUseCase: StartStopSyncTaskUseCase = App.getAppComponent().getStartStopSyncTaskUseCase()
-    private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase = App.getAppComponent().getTaskSchedulingUseCase()
-    private val syncTaskNotificator: SyncTaskNotificator = App.getAppComponent().getSyncTaskNotificator()
-
-
+class TaskListViewModel(
+    application: Application,
+    private val syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
+    private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
+    private val syncTaskNotificator: SyncTaskNotificator
+)
+    :TaskManagingViewModel(application)
+{
     suspend fun getTaskList(): LiveData<List<SyncTask>> =
         syncTaskManagingUseCase.listSyncTasks()
 
