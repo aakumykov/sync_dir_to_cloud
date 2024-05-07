@@ -41,7 +41,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     }
 
     suspend fun updateTaskSchedule(syncTask: SyncTask) {
-        if (syncTask.isEnabled && syncTask.executionIntervalNotZero()) {
+        if (syncTask.isEnabled) {
             // Метод SyncTaskScheduler.scheduleSyncTask() обновляет задачу,
             // поэтому необязательно предварительно убирать её из планировщика.
             scheduleSyncTask(syncTask)
@@ -49,12 +49,18 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     }
 
 
+    // TODO: возвращать Result
+    // TODO: возвращать сообщение об ошибке как TextMessage
     private suspend fun scheduleSyncTask(syncTask: SyncTask) {
         try {
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.RUNNING)
-            syncTaskScheduler.scheduleSyncTask(syncTask)
-            syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.SUCCESS)
-            syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, true)
+            if (syncTask.executionIntervalNotZero()) {
+                syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.RUNNING)
+                syncTaskScheduler.scheduleSyncTask(syncTask)
+                syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.SUCCESS)
+                syncTaskStateChanger.changeSyncTaskEnabled(syncTask.id, true)
+            } else {
+                throw Exception("Scheduling interval cannot be zero.")
+            }
         }
         catch (t: Throwable) {
             syncTaskStateChanger.changeSchedulingState(syncTask.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
