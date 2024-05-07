@@ -8,7 +8,6 @@
         <item name="minHeight">48dp</item>
         <item name="android:inputType">text</item>
         <item name="android:minHeight">48dp</item>
-        <!--FIXME: false-->
         <item name="android:enabled">true</item>
     </style>
 
