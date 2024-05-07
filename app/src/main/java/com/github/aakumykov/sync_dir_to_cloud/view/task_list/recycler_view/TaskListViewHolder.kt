@@ -27,7 +27,6 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
     private val editButton: View
     private val runButton: ImageButton
     private val moreButton: View
-    private val enablingSwitch: SwitchCompat
 
     private lateinit var currentTask: SyncTask
 
@@ -44,7 +43,6 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
             editButton = findViewById(R.id.editButton)
             runButton = findViewById(R.id.runButton)
             moreButton = findViewById(R.id.moreButton)
-            enablingSwitch = findViewById(R.id.enablingSwitch)
         }
 
         initButtons()
@@ -64,11 +62,6 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
         runButton.setOnClickListener { itemClickCallback.onTaskRunClicked(currentTask.id) }
         moreButton.setOnClickListener { itemClickCallback.onTaskMoreButtonClicked(itemView, moreButton, currentTask) }
-
-        // Переключается не прямо, а после изменения статуса SyncTask (в БД).
-        enablingSwitch.setOnClickListener {
-            itemClickCallback.onTaskEnableSwitchClicked(currentTask.id)
-        }
     }
 
     private fun onTaskInfoClicked() {
@@ -123,10 +116,10 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
     }
 
     private fun displaySchedulingState() {
-        enablingSwitch.apply {
+        /*enablingSwitch.apply {
             isChecked = currentTask.isEnabled
             visibility = View.VISIBLE
-        }
+        }*/
     }
 
     private fun displayOpState() {
