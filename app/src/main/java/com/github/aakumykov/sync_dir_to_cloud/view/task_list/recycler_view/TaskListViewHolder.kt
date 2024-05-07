@@ -4,7 +4,6 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
@@ -16,13 +15,15 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
 //    private val probeRunButton: ImageButton = itemView.findViewById(R.id.probeRunButton)
 
+    private val listItemView: View
+
     private val sourceTypeIcon: ImageView
     private val targetTypeIcon: ImageView
 
     private val sourcePathView: TextView
     private val targetPathView: TextView
 
-    private val titleView: TextView
+    private val schedulingStateView: TextView
     private val stateView: ImageView
     private val editButton: View
     private val runButton: ImageButton
@@ -32,13 +33,15 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
     init {
         itemView.apply {
+            listItemView = findViewById(R.id.taskListItemView)
+
             sourceTypeIcon = findViewById(R.id.sourceTypeIcon)
             targetTypeIcon = findViewById(R.id.targetTypeIcon)
 
             sourcePathView = findViewById(R.id.sourcePath)
             targetPathView = findViewById(R.id.targetPath)
 
-            titleView = findViewById(R.id.titleView)
+            schedulingStateView = findViewById(R.id.schedulingStateView)
             stateView = findViewById(R.id.taskStateView)
             editButton = findViewById(R.id.editButton)
             runButton = findViewById(R.id.runButton)
@@ -52,11 +55,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 //        probeRunButton.setOnClickListener { itemClickCallback.onProbeRunClicked(currentTask.id) }
 //        probeRunButton.setOnLongClickListener { itemClickCallback.onProbeRunLongClicked(currentTask.id); return@setOnLongClickListener true }
 
-        sourceTypeIcon.setOnClickListener { onTaskInfoClicked() }
-        targetTypeIcon.setOnClickListener { onTaskInfoClicked() }
-        sourcePathView.setOnClickListener { onTaskInfoClicked() }
-        targetPathView.setOnClickListener { onTaskInfoClicked() }
-        titleView.setOnClickListener { onTaskInfoClicked() }
+        listItemView.setOnClickListener { onTaskInfoClicked() }
         stateView.setOnClickListener { onTaskInfoClicked() }
 
         editButton.setOnClickListener { itemClickCallback.onTaskEditClicked(currentTask.id) }
@@ -111,15 +110,8 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
         runButton.setColorFilter(colorForFilter, PorterDuff.Mode.MULTIPLY)*/
     }
 
-    private fun displayTitle() {
-        titleView.text = currentTask.getTitle()
-    }
-
     private fun displaySchedulingState() {
-        /*enablingSwitch.apply {
-            isChecked = currentTask.isEnabled
-            visibility = View.VISIBLE
-        }*/
+        schedulingStateView.setText(if (currentTask.isEnabled) R.string.task_is_enabled else R.string.task_is_disabled)
     }
 
     private fun displayOpState() {

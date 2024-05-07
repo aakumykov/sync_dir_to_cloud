@@ -99,4 +99,6 @@
     <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_neutral_button">Понятно</string>
     <string name="MENU_ITEM_action_edit_task">Редактировать задачу</string>
     <string name="MENU_ITEM_action_enabling_toggle">Включить/выключить</string>
+    <string name="task_is_enabled">Запланирована</string>
+    <string name="task_is_disabled">Отключена</string>
 </resources>
