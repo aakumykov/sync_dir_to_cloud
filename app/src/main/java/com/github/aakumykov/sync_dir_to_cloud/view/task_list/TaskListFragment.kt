@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -169,6 +170,10 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         return when(item?.itemId) {
+            R.id.actionEnablingToggle -> {
+                taskListViewModel.changeTaskEnabled(clickedTask!!.id)
+                true
+            }
             R.id.actionDelete -> {
                 showDeleteTaskDialog()
                 true
