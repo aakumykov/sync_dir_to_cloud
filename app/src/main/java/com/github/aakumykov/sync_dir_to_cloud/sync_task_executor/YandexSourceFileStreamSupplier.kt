@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import java.io.InputStream
 
-class YandexSFSS(private val taskId: String) : SourceFileStreamSupplier {
+class YandexSourceFileStreamSupplier(private val taskId: String) : SourceFileStreamSupplier {
 
     private var yandexCloudReader: YandexCloudReader? = null
 

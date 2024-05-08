@@ -27,11 +27,11 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskNotificator: SyncTaskNotificator,
     private val syncObjectDeleter: SyncObjectDeleter,
     private val syncObjectStateResetter: SyncObjectStateResetter,
-    private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime
+    private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
+    private val sourceFileStreamSupplier: SourceFileStreamSupplier
 ) {
     private var sourceReader: SourceReader? = null
     private var targetWriter: TargetWriter? = null
-    private var sourceFileStreamSupplier: SourceFileStreamSupplier? = null
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
@@ -142,7 +142,7 @@ class SyncTaskExecutor @Inject constructor(
     // TODO: в Dagger2
     private fun prepareSourceFileStreamSupplier(syncTask: SyncTask) {
         sourceFileStreamSupplier = syncTask.sourceStorageType?.let { storageType ->
-            SFSSFactory.create(syncTask.id, storageType)
+            SourceFileStreamSupplierFactory.create(syncTask.id, storageType)
         }
     }
 
