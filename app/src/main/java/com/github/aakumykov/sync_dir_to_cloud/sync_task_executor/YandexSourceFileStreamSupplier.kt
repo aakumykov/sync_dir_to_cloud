@@ -7,7 +7,10 @@ import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import java.io.InputStream
 
-class YandexSourceFileStreamSupplier(private val taskId: String) : SourceFileStreamSupplier {
+// TODO: внедрять SyncTaskReader, CloudAuthReader
+class YandexSourceFileStreamSupplier(
+    private val taskId: String
+) : SourceFileStreamSupplier {
 
     private var yandexCloudReader: YandexCloudReader? = null
 
