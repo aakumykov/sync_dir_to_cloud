@@ -4,6 +4,7 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -30,6 +31,7 @@ abstract class BasicTargetWriter (
     // TODO: SuspendRunnable --> kotlin.coroutines.Runnable
     @FunctionalInterface
     internal interface SuspendRunnable {
+        @Throws(Throwable::class)
         suspend fun run()
     }
 
@@ -47,26 +49,20 @@ abstract class BasicTargetWriter (
 
         syncObjectReader.getObjectsNeedsToBeSynched(taskId)
             .filter { it.isDir }
-            .forEach { syncObject ->
+            .forEach { dirSyncObject ->
 
-                MyLogger.d(TAG, "Создание каталога (${classNameWithHash()}): '${syncObject.name}'")
+//                MyLogger.d(TAG, "Создание каталога (${classNameWithHash()}): '${dirSyncObject.name}'")
 
-                writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
+                writeSyncObjectToTarget(dirSyncObject, object: SuspendRunnable {
                     override suspend fun run() {
 
                         val parentDirName = targetDirPath
-                        val childDirName = (syncObject.relativeParentDirPath + CloudWriter.DS + syncObject.name).stripMultiSlash()
+                        val childDirName = (dirSyncObject.relativeParentDirPath + CloudWriter.DS + dirSyncObject.name).stripMultiSlash()
 
-                        try {
-                            cloudWriter?.createDir(
-                                basePath = parentDirName,
-                                dirName = childDirName
-                            )
-
-                        } catch (throwable: Throwable) {
-//                            MyLogger.d(tag, "Каталог '$childDirName' уже существует в '$parentDirName'.")
-                            markObjectAsFailed(syncObject, throwable)
-                        }
+                        cloudWriter?.createDir(
+                            basePath = parentDirName,
+                            dirName = childDirName
+                        )
                     }
                 })
             }
@@ -77,45 +73,28 @@ abstract class BasicTargetWriter (
         sourceFileStreamSupplier: SourceFileStreamSupplier,
         overwriteIfExists: Boolean
     ) {
-
         syncObjectReader.getObjectsNeedsToBeSynched(taskId)
             .filter { !it.isDir }
-            .forEach { syncObject ->
+            .forEach { fileSyncObject ->
 
-                MyLogger.d(TAG, "Отправка файла (${classNameWithHash()}): '${syncObject.name}'")
+//                MyLogger.d(TAG, "Отправка файла (${classNameWithHash()}): '${syncObject.name}'")
 
-                writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
+                writeSyncObjectToTarget(fileSyncObject, object: SuspendRunnable {
                     override suspend fun run() {
 
-                        // TODO: вынести в отдельный метод
-                        val pathInSource = (sourceDirPath +
-                                CloudWriter.DS +
-                                syncObject.relativeParentDirPath +
-                                CloudWriter.DS +
-                                syncObject.name)
-                            .stripMultiSlash()
+                        val pathInSource = fileSyncObject.absolutePathIn(sourceDirPath)
+                        val pathInTarget = fileSyncObject.absolutePathIn(targetDirPath)
 
-                        val pathInTarget = (targetDirPath +
-                                CloudWriter.DS +
-                                syncObject.relativeParentDirPath +
-                                CloudWriter.DS +
-                                syncObject.name)
-                            .stripMultiSlash()
-
-                        try {
-                            sourceFileStreamSupplier
-                                .getSourceFileStream(pathInSource)
-                                .getOrThrow()
-                                .also { inputStream ->
-                                    writeFromInputStreamToTarget(
-                                        inputStream,
-                                        pathInTarget,
-                                        overwriteIfExists
-                                    )
-                                }
-                        } catch (throwable: Throwable) {
-                            markObjectAsFailed(syncObject, throwable)
-                        }
+                        sourceFileStreamSupplier
+                            .getSourceFileStream(pathInSource)
+                            .getOrThrow()
+                            .also { inputStream ->
+                                writeFromInputStreamToTarget(
+                                    inputStream,
+                                    pathInTarget,
+                                    overwriteIfExists
+                                )
+                            }
                     }
                 })
             }
@@ -123,7 +102,9 @@ abstract class BasicTargetWriter (
 
 
     private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: SuspendRunnable) {
-        kotlinx.coroutines.Runnable {  }
+
+//        kotlinx.coroutines.Runnable {  }
+
         try {
             syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.RUNNING, "")
             writeAction.run()
@@ -131,9 +112,10 @@ abstract class BasicTargetWriter (
             syncObjectStateChanger.setSyncDate(syncObject.id, currentTime())
         }
         catch (t: Throwable) {
-            val errorMsg = ExceptionUtils.getErrorMessage(t)
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, errorMsg)
-            MyLogger.e(tag, errorMsg, t)
+            ExceptionUtils.getErrorMessage(t).also { errorMsg ->
+                markObjectAsFailed(syncObject, errorMsg)
+                MyLogger.e(tag, errorMsg, t)
+            }
         }
     }
 
@@ -148,8 +130,8 @@ abstract class BasicTargetWriter (
     }
 
 
-    private suspend fun markObjectAsFailed(syncObject: SyncObject, throwable: Throwable) {
-        syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(throwable))
+    private suspend fun markObjectAsFailed(syncObject: SyncObject, errorMsg: String) {
+        syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, errorMsg)
     }
 
 
