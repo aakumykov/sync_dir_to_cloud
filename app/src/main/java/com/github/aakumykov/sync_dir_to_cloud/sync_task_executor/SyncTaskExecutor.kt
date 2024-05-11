@@ -115,9 +115,14 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun writeFromDatabaseToTarget(syncTask: SyncTask) {
-        syncTask.targetStorageType?.also { storageType ->
-            sourceFileStreamSupplierFactory.create("", storageType)?.also { sourceFileStreamSupplier ->
-                targetWriter?.writeToTarget(sourceFileStreamSupplier, true)
+        syncTask.sourceAuthId?.also { sourceAuthId ->
+            cloudAuthReader.getCloudAuth(sourceAuthId)?.also { cloudAuth ->
+                // FIXME: тип источника!
+                syncTask.targetStorageType?.also { storageType ->
+                    sourceFileStreamSupplierFactory.create(cloudAuth.authToken, storageType)?.also { sourceFileStreamSupplier ->
+                        targetWriter?.writeToTarget(sourceFileStreamSupplier, true)
+                    }
+                }
             }
         }
     }

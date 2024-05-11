@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.yandex_disk
 
+import android.util.Log
 import com.github.aakumykov.cloud_reader.YandexCloudReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
@@ -16,6 +17,9 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
 
     private var yandexCloudReader: YandexCloudReader? = null
 
+    init {
+        Log.d("YSFSS", "init")
+    }
 
     override suspend fun getSourceFileStream(absolutePath: String): Result<InputStream> {
 

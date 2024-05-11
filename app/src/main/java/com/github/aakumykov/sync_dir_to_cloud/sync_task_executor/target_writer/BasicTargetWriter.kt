@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.Source
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import java.io.InputStream
 
 abstract class BasicTargetWriter (
     private val syncObjectReader: SyncObjectReader,
@@ -22,22 +23,28 @@ abstract class BasicTargetWriter (
 )
     : TargetWriter
 {
+    protected abstract val cloudWriter: CloudWriter?
+    protected abstract val tag: String
+
+
     // TODO: SuspendRunnable --> kotlin.coroutines.Runnable
     @FunctionalInterface
     internal interface SuspendRunnable {
         suspend fun run()
     }
 
+
     override suspend fun writeToTarget(sourceFileStreamSupplier: SourceFileStreamSupplier,
                                        overwriteIfExists: Boolean) {
-
-//        MyLogger.d(TAG, "writeToTarget()")
-
-        // Удаляю в каталоге назначения объекты, удалённые в источнике.
         deleteDeletedFiles()
         deleteDeletedDirs()
+        copyDirs()
+        copyFiles(sourceFileStreamSupplier, overwriteIfExists)
+    }
 
-        // Записываю (создаю) каталоги.
+
+    private suspend fun copyDirs() {
+
         syncObjectReader.getObjectsNeedsToBeSynched(taskId)
             .filter { it.isDir }
             .forEach { syncObject ->
@@ -56,14 +63,21 @@ abstract class BasicTargetWriter (
                                 dirName = childDirName
                             )
 
-                        } catch (e: CloudWriter.AlreadyExistsException) {
-                            MyLogger.d(tag, "Каталог '$childDirName' уже существует в '$parentDirName'.")
+                        } catch (throwable: Throwable) {
+//                            MyLogger.d(tag, "Каталог '$childDirName' уже существует в '$parentDirName'.")
+                            markObjectAsFailed(syncObject, throwable)
                         }
                     }
                 })
             }
+    }
 
-        // Копирую файлы из источника в приёмник.
+
+    private suspend fun copyFiles(
+        sourceFileStreamSupplier: SourceFileStreamSupplier,
+        overwriteIfExists: Boolean
+    ) {
+
         syncObjectReader.getObjectsNeedsToBeSynched(taskId)
             .filter { !it.isDir }
             .forEach { syncObject ->
@@ -73,6 +87,7 @@ abstract class BasicTargetWriter (
                 writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
                     override suspend fun run() {
 
+                        // TODO: вынести в отдельный метод
                         val pathInSource = (sourceDirPath +
                                 CloudWriter.DS +
                                 syncObject.relativeParentDirPath +
@@ -80,25 +95,26 @@ abstract class BasicTargetWriter (
                                 syncObject.name)
                             .stripMultiSlash()
 
-                        sourceFileStreamSupplier
-                            .getSourceFileStream(pathInSource)
-                            .getOrNull()?.also {  inputStream ->
+                        val pathInTarget = (targetDirPath +
+                                CloudWriter.DS +
+                                syncObject.relativeParentDirPath +
+                                CloudWriter.DS +
+                                syncObject.name)
+                            .stripMultiSlash()
 
-                                inputStream.use {
-
-                                    val pathInTarget = (targetDirPath +
-                                            CloudWriter.DS +
-                                            syncObject.relativeParentDirPath +
-                                            CloudWriter.DS +
-                                            syncObject.name)
-                                        .stripMultiSlash()
-
-                                    cloudWriter?.putFile(
+                        try {
+                            sourceFileStreamSupplier
+                                .getSourceFileStream(pathInSource)
+                                .getOrThrow()
+                                .also { inputStream ->
+                                    writeFromInputStreamToTarget(
                                         inputStream,
                                         pathInTarget,
                                         overwriteIfExists
                                     )
                                 }
+                        } catch (throwable: Throwable) {
+                            markObjectAsFailed(syncObject, throwable)
                         }
                     }
                 })
@@ -119,6 +135,21 @@ abstract class BasicTargetWriter (
             syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, errorMsg)
             MyLogger.e(tag, errorMsg, t)
         }
+    }
+
+    private fun writeFromInputStreamToTarget(inputStream: InputStream, pathInTarget: String, overwriteIfExists: Boolean) {
+        inputStream.use {
+            cloudWriter?.putFile(
+                inputStream,
+                pathInTarget,
+                overwriteIfExists
+            )
+        }
+    }
+
+
+    private suspend fun markObjectAsFailed(syncObject: SyncObject, throwable: Throwable) {
+        syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(throwable))
     }
 
 
@@ -144,12 +175,6 @@ abstract class BasicTargetWriter (
             }
         })
     }
-
-
-    protected abstract val cloudWriter: CloudWriter?
-
-
-    protected abstract val tag: String
 
 
     companion object {
