@@ -118,7 +118,7 @@ class SyncTaskExecutor @Inject constructor(
         syncTask.sourceAuthId?.also { sourceAuthId ->
             cloudAuthReader.getCloudAuth(sourceAuthId)?.also { cloudAuth ->
                 syncTask.sourceStorageType?.also { sourceStorageType ->
-                    sourceFileStreamSupplierCreator.create(cloudAuth.authToken, sourceStorageType)?.also { sourceFileStreamSupplier ->
+                    sourceFileStreamSupplierCreator.create(syncTask.id, sourceStorageType)?.also { sourceFileStreamSupplier ->
                         targetWriter?.writeToTarget(sourceFileStreamSupplier, true)
                     }
                 }

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class SourceFileStreamSupplierCreator @Inject constructor(
     private val map: Map<StorageType, SourceFileStreamSupplierFactory>
 ) {
-    fun create(authToken: String, storageType: StorageType): SourceFileStreamSupplier? {
-        return map[storageType]?.create(authToken)
+    fun create(taskId: String, storageType: StorageType): SourceFileStreamSupplier? {
+        return map[storageType]?.create(taskId)
     }
 }

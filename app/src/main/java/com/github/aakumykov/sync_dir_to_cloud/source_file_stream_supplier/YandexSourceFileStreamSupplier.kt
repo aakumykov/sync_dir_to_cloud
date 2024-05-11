@@ -13,7 +13,7 @@ import java.io.InputStream
 
 // TODO: внедрять SyncTaskReader, CloudAuthReader, а то и YnadexCloudReader
 class YandexSourceFileStreamSupplier @AssistedInject constructor(
-    @Assisted private val taskId: String
+    @Assisted private val taskId: String,
 ) : SourceFileStreamSupplier {
 
     private var yandexCloudReader: YandexCloudReader? = null
@@ -25,8 +25,11 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
     override suspend fun getSourceFileStream(absolutePath: String): Result<InputStream> {
 
         App.getAppComponent().also { appComponent ->
+
             appComponent.getSyncTaskReader().getSyncTask(taskId).also { syncTask ->
+
                 syncTask.sourceAuthId?.also { authId ->
+
                     appComponent.getCloudAuthReader().getCloudAuth(authId)?.also { cloudAuth ->
 
                         yandexCloudReader = YandexCloudReader(
@@ -47,6 +50,6 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory: SourceFileStreamSupplierFactory {
-        override fun create(authToken: String): YandexSourceFileStreamSupplier
+        override fun create(taskId: String): YandexSourceFileStreamSupplier
     }
 }

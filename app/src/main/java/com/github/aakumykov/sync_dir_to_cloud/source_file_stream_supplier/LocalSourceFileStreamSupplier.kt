@@ -9,7 +9,7 @@ import java.io.File
 import java.io.FileInputStream
 
 class LocalSourceFileStreamSupplier @AssistedInject constructor(
-    @Assisted private val dummyAuthToken: String
+    @Assisted private val unusedTaskId: String,
 ) : SourceFileStreamSupplier
 {
     init {
@@ -26,6 +26,6 @@ class LocalSourceFileStreamSupplier @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory : SourceFileStreamSupplierFactory {
-        override fun create(authToken: String): LocalSourceFileStreamSupplier
+        override fun create(taskId: String): LocalSourceFileStreamSupplier
     }
 }

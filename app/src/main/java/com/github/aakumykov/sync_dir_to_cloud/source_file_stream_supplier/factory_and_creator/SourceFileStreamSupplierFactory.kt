@@ -3,5 +3,5 @@ package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.facto
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 
 interface SourceFileStreamSupplierFactory {
-    fun create(authToken: String): SourceFileStreamSupplier
+    fun create(taskId: String): SourceFileStreamSupplier
 }
