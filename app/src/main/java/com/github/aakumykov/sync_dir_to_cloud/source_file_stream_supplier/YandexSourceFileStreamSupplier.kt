@@ -1,11 +1,12 @@
-package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.yandex_disk
+package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier
 
 import android.util.Log
 import com.github.aakumykov.cloud_reader.YandexCloudReader
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
+import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierFactory
 import com.google.gson.Gson
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import okhttp3.OkHttpClient
 import java.io.InputStream
@@ -43,4 +44,9 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
             ?: Result.failure(Exception("YandexCloudReader is null."))
     }
 
+
+    @AssistedFactory
+    interface Factory: SourceFileStreamSupplierFactory {
+        override fun create(authToken: String): YandexSourceFileStreamSupplier
+    }
 }

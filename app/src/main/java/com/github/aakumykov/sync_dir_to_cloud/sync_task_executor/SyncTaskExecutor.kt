@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplierFactory
+import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
@@ -28,7 +28,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncObjectDeleter: SyncObjectDeleter,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
-    private val sourceFileStreamSupplierFactory: SourceFileStreamSupplierFactory
+    private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator
 ) {
     private var sourceReader: SourceReader? = null
     private var targetWriter: TargetWriter? = null
@@ -118,7 +118,7 @@ class SyncTaskExecutor @Inject constructor(
         syncTask.sourceAuthId?.also { sourceAuthId ->
             cloudAuthReader.getCloudAuth(sourceAuthId)?.also { cloudAuth ->
                 syncTask.sourceStorageType?.also { sourceStorageType ->
-                    sourceFileStreamSupplierFactory.create(cloudAuth.authToken, sourceStorageType)?.also { sourceFileStreamSupplier ->
+                    sourceFileStreamSupplierCreator.create(cloudAuth.authToken, sourceStorageType)?.also { sourceFileStreamSupplier ->
                         targetWriter?.writeToTarget(sourceFileStreamSupplier, true)
                     }
                 }
