@@ -1,7 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
+package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier
 
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_file_stream.SourceFileStreamSupplier
 import javax.inject.Inject
 
 class SourceFileStreamSupplierFactory @Inject constructor(

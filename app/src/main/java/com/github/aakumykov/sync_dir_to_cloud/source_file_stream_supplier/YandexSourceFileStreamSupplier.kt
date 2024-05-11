@@ -1,8 +1,7 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
+package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier
 
 import com.github.aakumykov.cloud_reader.YandexCloudReader
 import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_file_stream.SourceFileStreamSupplier
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import java.io.InputStream
