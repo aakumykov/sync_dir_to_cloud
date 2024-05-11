@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplierFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
@@ -29,7 +28,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncObjectDeleter: SyncObjectDeleter,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
-    private val sourceFileStreamSupplier: SourceFileStreamSupplier
+    private val sourceFileStreamSupplierFactory: SourceFileStreamSupplierFactory
 ) {
     private var sourceReader: SourceReader? = null
     private var targetWriter: TargetWriter? = null
@@ -41,7 +40,6 @@ class SyncTaskExecutor @Inject constructor(
 
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             prepareReader(syncTask)
-            prepareSourceFileStreamSupplier(syncTask)
             prepareWriter(syncTask)
             doWork(syncTask)
         }
@@ -81,7 +79,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
             showWritingTargetNotification(syncTask)
-            writeFromDatabaseToTarget()
+            writeFromDatabaseToTarget(syncTask)
 
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
@@ -116,9 +114,12 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private suspend fun writeFromDatabaseToTarget() {
-        // FIXME: убрать "!!"
-        targetWriter?.writeToTarget(sourceFileStreamSupplier!!, true)
+    private suspend fun writeFromDatabaseToTarget(syncTask: SyncTask) {
+        syncTask.targetStorageType?.also { storageType ->
+            sourceFileStreamSupplierFactory.create("", storageType)?.also { sourceFileStreamSupplier ->
+                targetWriter?.writeToTarget(sourceFileStreamSupplier, true)
+            }
+        }
     }
 
 
@@ -137,13 +138,6 @@ class SyncTaskExecutor @Inject constructor(
                     changesDetectionStrategy
                 )
             }
-        }
-    }
-
-    // TODO: в Dagger2
-    private fun prepareSourceFileStreamSupplier(syncTask: SyncTask) {
-        sourceFileStreamSupplier = syncTask.sourceStorageType?.let { storageType ->
-            SourceFileStreamSupplierFactory.create(syncTask.id, storageType)
         }
     }
 

@@ -1,0 +1,9 @@
+package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.yandex_disk
+
+import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplierAssistedFactory
+import dagger.assisted.AssistedFactory
+
+@AssistedFactory
+interface YandexSourceFileStreamSupplierAssistedFactory : SourceFileStreamSupplierAssistedFactory {
+    override fun create(authToken: String): YandexSourceFileStreamSupplier
+}

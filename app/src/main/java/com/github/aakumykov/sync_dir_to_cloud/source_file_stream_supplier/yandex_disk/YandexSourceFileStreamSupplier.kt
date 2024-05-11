@@ -1,14 +1,17 @@
-package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier
+package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.yandex_disk
 
 import com.github.aakumykov.cloud_reader.YandexCloudReader
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.google.gson.Gson
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import okhttp3.OkHttpClient
 import java.io.InputStream
 
-// TODO: внедрять SyncTaskReader, CloudAuthReader
-class YandexSourceFileStreamSupplier(
-    private val taskId: String
+// TODO: внедрять SyncTaskReader, CloudAuthReader, а то и YnadexCloudReader
+class YandexSourceFileStreamSupplier @AssistedInject constructor(
+    @Assisted private val taskId: String
 ) : SourceFileStreamSupplier {
 
     private var yandexCloudReader: YandexCloudReader? = null

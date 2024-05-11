@@ -13,6 +13,8 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
@@ -57,7 +59,9 @@ import dagger.Component
         CloudWriterAssistedFactoriesModule::class,
         TargetWriterAssistedFactoriesModule3::class,
         OkhttpModule::class,
-        GsonModule::class
+        GsonModule::class,
+        SourceFileStreamSupplierFactoryModule::class,
+        SourceFileStreamSupplierAssistedFactoriesModule::class
     ]
 )
 @AppScope
