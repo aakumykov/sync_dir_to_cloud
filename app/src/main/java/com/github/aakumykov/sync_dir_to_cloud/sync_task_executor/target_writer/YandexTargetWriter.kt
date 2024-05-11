@@ -12,13 +12,13 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class YandexTargetWriter @AssistedInject constructor(
+    @Assisted(AssistedArgName.SOURCE_DIR_PATH) private val sourceDirPath: String,
+    @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String,
+    @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
+    @Assisted(AssistedArgName.AUTH_TOKEN) private val authToken: String,
     syncObjectReader: SyncObjectReader,
     syncObjectStateChanger: SyncObjectStateChanger,
     private val cloudWriterCreator: CloudWriterCreator,
-    @Assisted(AssistedArgName.AUTH_TOKEN)  private val authToken: String,
-    @Assisted(AssistedArgName.TASK_ID)  private val taskId: String,
-    @Assisted(AssistedArgName.SOURCE_DIR_PATH) private val sourceDirPath: String,
-    @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String,
 )
     : BasicTargetWriter(
         syncObjectReader = syncObjectReader,

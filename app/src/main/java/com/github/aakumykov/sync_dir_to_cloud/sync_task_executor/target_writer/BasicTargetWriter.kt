@@ -16,11 +16,11 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import java.io.InputStream
 
 abstract class BasicTargetWriter (
+    private val sourceDirPath: String,
+    private val targetDirPath: String,
+    private val taskId: String,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val taskId: String,
-    private val sourceDirPath: String,
-    private val targetDirPath: String
 )
     : TargetWriter
 {
