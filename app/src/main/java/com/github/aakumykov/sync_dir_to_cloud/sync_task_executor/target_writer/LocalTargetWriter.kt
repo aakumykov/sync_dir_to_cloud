@@ -12,20 +12,20 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class LocalTargetWriter @AssistedInject constructor(
-    syncObjectReader: SyncObjectReader,
-    syncObjectStateChanger: SyncObjectStateChanger,
-    private val cloudWriterCreator: CloudWriterCreator,
-    @Assisted(AssistedArgName.AUTH_TOKEN) private val authToken: String, // не используется
+    @Assisted(AssistedArgName.AUTH_TOKEN) private val dummyAuthToken: String,
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
     @Assisted(AssistedArgName.SOURCE_DIR_PATH) private val sourceDirPath: String,
     @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String,
+    syncObjectReader: SyncObjectReader,
+    syncObjectStateChanger: SyncObjectStateChanger,
+    private val cloudWriterCreator: CloudWriterCreator,
 )
     : BasicTargetWriter(
         taskId = taskId,
-        syncObjectStateChanger = syncObjectStateChanger,
-        syncObjectReader = syncObjectReader,
         sourceDirPath = sourceDirPath,
         targetDirPath = targetDirPath,
+        syncObjectStateChanger = syncObjectStateChanger,
+        syncObjectReader = syncObjectReader,
     )
 {
     private val localCloudWriter: CloudWriter?  by lazy {
