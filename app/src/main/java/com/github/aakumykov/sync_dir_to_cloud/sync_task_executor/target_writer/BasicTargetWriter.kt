@@ -5,7 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -28,9 +27,9 @@ abstract class BasicTargetWriter (
     protected abstract val tag: String
 
 
-    // TODO: SuspendRunnable --> kotlin.coroutines.Runnable
+    // TODO: ActualWork --> kotlin.coroutines.Runnable
     @FunctionalInterface
-    internal interface SuspendRunnable {
+    internal interface ActualWork {
         @Throws(Throwable::class)
         suspend fun run()
     }
@@ -53,7 +52,7 @@ abstract class BasicTargetWriter (
 
 //                MyLogger.d(TAG, "Создание каталога (${classNameWithHash()}): '${dirSyncObject.name}'")
 
-                writeSyncObjectToTarget(dirSyncObject, object: SuspendRunnable {
+                writeSyncObjectToTarget(dirSyncObject, object: ActualWork {
                     override suspend fun run() {
 
                         val parentDirName = targetDirPath
@@ -79,7 +78,7 @@ abstract class BasicTargetWriter (
 
 //                MyLogger.d(TAG, "Отправка файла (${classNameWithHash()}): '${syncObject.name}'")
 
-                writeSyncObjectToTarget(fileSyncObject, object: SuspendRunnable {
+                writeSyncObjectToTarget(fileSyncObject, object: ActualWork {
                     override suspend fun run() {
 
                         val pathInSource = fileSyncObject.absolutePathIn(sourceDirPath)
@@ -101,7 +100,7 @@ abstract class BasicTargetWriter (
     }
 
 
-    private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: SuspendRunnable) {
+    private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: ActualWork) {
 
 //        kotlinx.coroutines.Runnable {  }
 
@@ -150,7 +149,7 @@ abstract class BasicTargetWriter (
 
 
     private suspend fun deleteObjectInTarget(syncObject: SyncObject) {
-        writeSyncObjectToTarget(syncObject, object: SuspendRunnable {
+        writeSyncObjectToTarget(syncObject, object: ActualWork {
             override suspend fun run() {
                 val basePath = CloudWriter.composeFullPath(targetDirPath, syncObject.relativeParentDirPath)
                 cloudWriter?.deleteFile(basePath, syncObject.name)
