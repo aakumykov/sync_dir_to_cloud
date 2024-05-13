@@ -117,7 +117,7 @@ dependencies {
 
     implementation "com.github.permissions-dispatcher:ktx:1.1.4"
 
-    implementation "com.github.aakumykov:cloud_writer:0.0.10-alpha"
+    implementation "com.github.aakumykov:cloud_writer:1.0.0-alpha"
     implementation "com.github.aakumykov:cloud_reader:0.0.5-alpha"
     implementation 'com.github.aakumykov:storage_access_helper:1.0.1-alpha'
 
