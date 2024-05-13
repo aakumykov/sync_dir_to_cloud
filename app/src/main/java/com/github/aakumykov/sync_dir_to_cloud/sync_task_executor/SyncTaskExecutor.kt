@@ -78,6 +78,10 @@ class SyncTaskExecutor @Inject constructor(
             readFromSourceToDatabase(syncTask)
 
 
+            // TODO: уведомление
+            checkTargetFilesExistence()
+
+
             showWritingTargetNotification(syncTask)
             writeFromDatabaseToTarget(syncTask)
 
@@ -111,6 +115,24 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun readFromSourceToDatabase(syncTask: SyncTask) {
         sourceReader?.read(syncTask.sourcePath!!)
+    }
+
+
+    private suspend fun checkTargetFilesExistence(syncTask: SyncTask) {
+        syncTask.targetAuthId?.also { targetAuthId ->
+            cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetCloudAuth ->
+                syncTask.targetStorageType?.also { targetStorageType ->
+                    sourceReaderCreator.create(
+                        targetStorageType,
+                        targetCloudAuth.authToken,
+                        syncTask.id,
+                        ChangesDetectionStrategy.SizeAndModificationTime()
+                    )?.also { targetReader ->
+
+                    }
+                }
+            }
+        }
     }
 
 

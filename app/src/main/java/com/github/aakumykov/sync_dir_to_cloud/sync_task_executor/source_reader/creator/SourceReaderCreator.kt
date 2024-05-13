@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.i
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
 import javax.inject.Inject
 
+@Deprecated("Переименовать в StorageReaderCreator")
 class SourceReaderCreator @Inject constructor(
     private val factoriesMap: Map<StorageType, @JvmSuppressWildcards SourceReaderAssistedFactory>,
 ) {
