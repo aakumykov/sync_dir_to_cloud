@@ -27,13 +27,17 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
     ]
 )
 class SyncObject (
+
     val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
+
     val name: String,
-    @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
+    @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
+
     @ColumnInfo(name = "execution_state") val executionState: ExecutionState,
     @ColumnInfo(name = "execution_error") var executionError: String,
+
     @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
