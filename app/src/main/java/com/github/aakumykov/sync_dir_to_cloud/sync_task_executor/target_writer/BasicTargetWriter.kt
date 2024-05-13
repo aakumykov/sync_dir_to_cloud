@@ -27,9 +27,9 @@ abstract class BasicTargetWriter (
     protected abstract val tag: String
 
 
-    // TODO: ActualWork --> kotlin.coroutines.Runnable
+    // TODO: ExceptionableActualWork --> kotlin.coroutines.Runnable
     @FunctionalInterface
-    internal interface ActualWork {
+    internal interface ExceptionableActualWork {
         @Throws(Throwable::class)
         suspend fun run()
     }
@@ -52,7 +52,7 @@ abstract class BasicTargetWriter (
 
 //                MyLogger.d(TAG, "Создание каталога (${classNameWithHash()}): '${dirSyncObject.name}'")
 
-                writeSyncObjectToTarget(dirSyncObject, object: ActualWork {
+                writeSyncObjectToTarget(dirSyncObject, object: ExceptionableActualWork {
                     override suspend fun run() {
 
                         val parentDirName = targetDirPath
@@ -78,7 +78,7 @@ abstract class BasicTargetWriter (
 
 //                MyLogger.d(TAG, "Отправка файла (${classNameWithHash()}): '${syncObject.name}'")
 
-                writeSyncObjectToTarget(fileSyncObject, object: ActualWork {
+                writeSyncObjectToTarget(fileSyncObject, object: ExceptionableActualWork {
                     override suspend fun run() {
 
                         val pathInSource = fileSyncObject.absolutePathIn(sourceDirPath)
@@ -100,7 +100,7 @@ abstract class BasicTargetWriter (
     }
 
 
-    private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: ActualWork) {
+    private suspend fun writeSyncObjectToTarget(syncObject: SyncObject, writeAction: ExceptionableActualWork) {
 
 //        kotlinx.coroutines.Runnable {  }
 
@@ -149,7 +149,7 @@ abstract class BasicTargetWriter (
 
 
     private suspend fun deleteObjectInTarget(syncObject: SyncObject) {
-        writeSyncObjectToTarget(syncObject, object: ActualWork {
+        writeSyncObjectToTarget(syncObject, object: ExceptionableActualWork {
             override suspend fun run() {
                 val basePath = CloudWriter.composeFullPath(targetDirPath, syncObject.relativeParentDirPath)
                 cloudWriter?.deleteFile(basePath, syncObject.name)
