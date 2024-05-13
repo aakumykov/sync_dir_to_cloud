@@ -38,7 +38,7 @@ class SyncObject (
     @ColumnInfo(name = "execution_state") val executionState: ExecutionState,
     @ColumnInfo(name = "execution_error") var executionError: String,
 
-    @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
+    @ColumnInfo(name = "source_modification_state") var sourceModificationState: ModificationState,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
     @ColumnInfo(name = "new_m_time") var newMTime: Long? = null,
@@ -60,7 +60,7 @@ class SyncObject (
     }
 
     override fun toString(): String {
-        return "SyncObject(id='$id', taskId='$taskId', name='$name', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$executionState, executionError='$executionError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize, syncDate=$syncDate)"
+        return "SyncObject(id='$id', taskId='$taskId', name='$name', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$executionState, executionError='$executionError', modificationState=$sourceModificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize, syncDate=$syncDate)"
     }
 
     companion object {
@@ -81,7 +81,7 @@ class SyncObject (
                 isDir = fsItem.isDir,
                 executionState = ExecutionState.NEVER,
                 executionError = "",
-                modificationState = ModificationState.NEW,
+                sourceModificationState = ModificationState.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
                 syncDate = 0L,
@@ -94,7 +94,7 @@ class SyncObject (
         {
             return existingSyncObject.apply {
                 existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
-                this.modificationState = modificationState
+                this.sourceModificationState = modificationState
             }
         }
     }

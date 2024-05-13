@@ -7,7 +7,7 @@ class SyncStateItem(private val syncObject: SyncObject) {
     val title: String get() = "${syncObject.name} (${modificationState()}/${synchronizationState()})"
 
 
-    private fun modificationState(): String = syncObject.modificationState.name
+    private fun modificationState(): String = syncObject.sourceModificationState.name
 
     private fun synchronizationState(): String = syncObject.executionState.name
 }

@@ -16,7 +16,7 @@ interface SyncObjectDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add(syncObject: SyncObject)
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND source_modification_state IN (:modificationStateList)")
     suspend fun getSyncObjectsForTaskWithModificationStates(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
     @Query("UPDATE sync_objects SET execution_state =  :state, execution_error = :errorMsg WHERE id = :syncObjectId")
@@ -34,21 +34,21 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND name = :name")
     suspend fun getSyncObject(taskId: String, name: String): SyncObject?
 
-    @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND execution_state = :syncState")
+    @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND source_modification_state = :modificationState AND execution_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: ExecutionState)
 
     @Update
     suspend fun updateSyncObject(syncObject: SyncObject)
 
-    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE id = :objectId")
+    @Query("UPDATE sync_objects SET source_modification_state = :modificationState WHERE id = :objectId")
     suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
 
-    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE task_id = :taskId")
+    @Query("UPDATE sync_objects SET source_modification_state = :modificationState WHERE task_id = :taskId")
     suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND execution_state = :syncState")
     suspend fun getObjectsWithSyncState(taskId: String, syncState: ExecutionState): List<SyncObject>
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState")
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND source_modification_state = :modificationState")
     suspend fun getObjectsWithModificationState(taskId: String, modificationState: ModificationState): List<SyncObject>
 }
