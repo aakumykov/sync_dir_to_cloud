@@ -39,6 +39,7 @@ class SyncObject (
     @ColumnInfo(name = "execution_error") var executionError: String,
 
     @ColumnInfo(name = "source_modification_state") var sourceModificationState: ModificationState,
+    @ColumnInfo(name = "target_modification_state") var targetModificationState: ModificationState = ModificationState.UNKNOWN,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
     @ColumnInfo(name = "new_m_time") var newMTime: Long? = null,
@@ -90,11 +91,11 @@ class SyncObject (
 
         fun createAsExisting(existingSyncObject: SyncObject,
                              modifiedFSItem: FSItem,
-                             modificationState: ModificationState): SyncObject
+                             sourceModificationState: ModificationState): SyncObject
         {
             return existingSyncObject.apply {
                 existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
-                this.sourceModificationState = modificationState
+                this.sourceModificationState = sourceModificationState
             }
         }
     }
