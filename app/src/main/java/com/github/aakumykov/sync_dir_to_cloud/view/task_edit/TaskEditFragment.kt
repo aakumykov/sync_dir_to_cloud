@@ -50,11 +50,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private var firstRun: Boolean = true
     private val currentTask get(): SyncTask? = taskEditViewModel.currentTask
 
-    /*private val sourceReaderCreator: StorageReaderCreator
-        get() = App.getAppComponent().getSourceReaderCreator()
-
-    private val targetWriterCreator: TargetWriterCreator
-        get() = App.getAppComponent().getTargetWriterCreator()*/
 
     private val cloudAuthReader: CloudAuthReader
         get() = App.getAppComponent().getCloudAuthReader()

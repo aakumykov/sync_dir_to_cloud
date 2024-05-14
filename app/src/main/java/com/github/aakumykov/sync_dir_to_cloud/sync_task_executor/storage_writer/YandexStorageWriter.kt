@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
@@ -6,12 +6,12 @@ import com.github.aakumykov.sync_dir_to_cloud.cloud_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class YandexTargetWriter @AssistedInject constructor(
+class YandexStorageWriter @AssistedInject constructor(
     @Assisted(AssistedArgName.SOURCE_DIR_PATH) private val sourceDirPath: String,
     @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String,
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
@@ -20,7 +20,7 @@ class YandexTargetWriter @AssistedInject constructor(
     syncObjectStateChanger: SyncObjectStateChanger,
     private val cloudWriterCreator: CloudWriterCreator,
 )
-    : BasicTargetWriter(
+    : BasicStorageWriter(
         syncObjectReader = syncObjectReader,
         syncObjectStateChanger = syncObjectStateChanger,
         taskId = taskId,
@@ -34,15 +34,15 @@ class YandexTargetWriter @AssistedInject constructor(
 
     override val cloudWriter get() = yandexCloudWriter
 
-    override val tag: String get() = YandexTargetWriter::class.java.simpleName
+    override val tag: String get() = YandexStorageWriter::class.java.simpleName
 
     @AssistedFactory
-    interface Factory : TargetWriterFactory {
+    interface Factory : StorageWriterFactory {
         override fun create(
             @Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
             @Assisted(AssistedArgName.TASK_ID) taskId: String,
             @Assisted(AssistedArgName.SOURCE_DIR_PATH) sourceDirPath: String,
             @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
-        ): YandexTargetWriter
+        ): YandexStorageWriter
     }
 }

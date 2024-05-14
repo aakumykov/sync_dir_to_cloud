@@ -12,15 +12,15 @@ import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
     private val storageReaderCreator: StorageReaderCreator,
-    private val targetWriterCreator: TargetWriterCreator,
+    private val storageWriterCreator: StorageWriterCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
@@ -31,7 +31,7 @@ class SyncTaskExecutor @Inject constructor(
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator
 ) {
     private var storageReader: StorageReader? = null
-    private var targetWriter: TargetWriter? = null
+    private var storageWriter: StorageWriter? = null
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
@@ -141,7 +141,7 @@ class SyncTaskExecutor @Inject constructor(
             cloudAuthReader.getCloudAuth(sourceAuthId)?.also { cloudAuth ->
                 syncTask.sourceStorageType?.also { sourceStorageType ->
                     sourceFileStreamSupplierCreator.create(syncTask.id, sourceStorageType)?.also { sourceFileStreamSupplier ->
-                        targetWriter?.writeToTarget(sourceFileStreamSupplier, true)
+                        storageWriter?.writeToTarget(sourceFileStreamSupplier, true)
                     }
                 }
             }
@@ -170,7 +170,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun prepareWriter(syncTask: SyncTask) {
         syncTask.targetAuthId?.also { targetAuthId ->
             cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetAuth ->
-                targetWriter = targetWriterCreator.create(
+                storageWriter = storageWriterCreator.create(
                     syncTask.targetStorageType!!,
                     targetAuth.authToken,
                     syncTask.id,

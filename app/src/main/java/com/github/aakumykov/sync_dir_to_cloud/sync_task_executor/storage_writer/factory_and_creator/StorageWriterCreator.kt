@@ -1,18 +1,18 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator
 
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import javax.inject.Inject
 
-class TargetWriterCreator @Inject constructor(
-    private val map: Map<StorageType, @JvmSuppressWildcards TargetWriterFactory>
+class StorageWriterCreator @Inject constructor(
+    private val map: Map<StorageType, @JvmSuppressWildcards StorageWriterFactory>
 ) {
     fun create(storageType: StorageType,
                authToken: String,
                taskId: String,
                sourceDirPath: String,
                targetDirPath: String
-    ): TargetWriter?
+    ): StorageWriter?
     {
         return map[storageType]?.create(
             authToken,
