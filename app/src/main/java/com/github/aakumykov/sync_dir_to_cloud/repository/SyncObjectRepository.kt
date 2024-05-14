@@ -45,6 +45,8 @@ class SyncObjectRepository @Inject constructor(
         return syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId, arrayOf(ModificationState.DELETED))
     }
 
+    override suspend fun getObjectsForTask(taskId: String): List<SyncObject>
+        = syncObjectDAO.getObjectsForTask(taskId)
 
     override suspend fun changeExecutionState(objectId: String, syncState: ExecutionState, errorMsg: String)
         = syncObjectDAO.setExecutionState(objectId, syncState, errorMsg)
