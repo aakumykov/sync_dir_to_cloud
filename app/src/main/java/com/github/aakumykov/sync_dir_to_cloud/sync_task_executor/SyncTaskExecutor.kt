@@ -1,16 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
-import com.github.aakumykov.sync_dir_to_cloud.file_checker_creator.FileCheckerCreator
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -32,12 +26,9 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
     private val syncObjectDeleter: SyncObjectDeleter,
-    private val syncObjectReader: SyncObjectReader,
-    private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
-    private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
-    private val fileCheckerCreator: FileCheckerCreator
+    private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator
 ) {
     private var sourceReader: SourceReader? = null
     private var targetWriter: TargetWriter? = null
@@ -88,7 +79,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
             // TODO: уведомление
-            checkTargetFilesExistence(syncTask)
+            checkTargetFilesExistence()
 
 
             showWritingTargetNotification(syncTask)
@@ -126,20 +117,18 @@ class SyncTaskExecutor @Inject constructor(
         sourceReader?.read(syncTask.sourcePath!!)
     }
 
-    // FIXME: избавиться от "!!"
+
     private suspend fun checkTargetFilesExistence(syncTask: SyncTask) {
+        syncTask.targetAuthId?.also { targetAuthId ->
+            cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetCloudAuth ->
+                syncTask.targetStorageType?.also { targetStorageType ->
+                    sourceReaderCreator.create(
+                        targetStorageType,
+                        targetCloudAuth.authToken,
+                        syncTask.id,
+                        ChangesDetectionStrategy.SizeAndModificationTime()
+                    )?.also { targetReader ->
 
-        syncTask.targetStorageType?.also { targetStorageType ->
-
-            val fileChecker = fileCheckerCreator.createFileChecker(targetStorageType)
-
-            syncObjectReader.getObjectsForTask(syncTask.id).forEach { syncObject ->
-                fileChecker.fileExists(syncObject.absolutePathIn(syncTask.targetPath!!)).also { result ->
-                    if (result.isSuccess && !result.getOrThrow()) {
-                        syncObjectStateChanger.changeModificationState(
-                            syncObject.id,
-                            ModificationState.DELETED
-                        )
                     }
                 }
             }

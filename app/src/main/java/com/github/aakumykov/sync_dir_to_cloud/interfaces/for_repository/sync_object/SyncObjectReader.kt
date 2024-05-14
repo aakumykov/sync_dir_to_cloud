@@ -10,6 +10,5 @@ interface SyncObjectReader {
 
     suspend fun getSyncObject(taskId: String, name: String): SyncObject?
 
-    suspend fun getObjectsForTask(taskId: String): List<SyncObject>
     suspend fun getObjectsForTask(taskId: String, modificationState: ModificationState): List<SyncObject>
 }
