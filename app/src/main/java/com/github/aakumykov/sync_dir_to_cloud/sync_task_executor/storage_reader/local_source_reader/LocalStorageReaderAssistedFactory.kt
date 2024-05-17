@@ -11,5 +11,5 @@ interface LocalStorageReaderAssistedFactory : StorageReaderAssistedFactory {
     override fun create(@Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
                         @Assisted(AssistedArgName.TASK_ID) taskId: String,
                         @Assisted changesDetectionStrategy: ChangesDetectionStrategy
-    ): LocalStorageReader
+    ): LocalStorageToDbReader
 }

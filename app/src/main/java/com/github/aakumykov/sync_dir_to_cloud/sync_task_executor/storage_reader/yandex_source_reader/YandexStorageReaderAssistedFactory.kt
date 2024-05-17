@@ -11,5 +11,5 @@ interface YandexStorageReaderAssistedFactory : StorageReaderAssistedFactory {
     override fun create(@Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
                         @Assisted(AssistedArgName.TASK_ID) taskId: String,
                         changesDetectionStrategy: ChangesDetectionStrategy
-    ): YandexStorageReader
+    ): YandexStorageToDbReader
 }

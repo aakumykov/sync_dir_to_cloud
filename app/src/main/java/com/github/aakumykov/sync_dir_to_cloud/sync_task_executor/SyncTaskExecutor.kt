@@ -120,7 +120,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun checkTargetFilesExistence(syncTask: SyncTask) {
 
-        syncTask.targetAuthId?.also { targetAuthId ->
+        /*syncTask.targetAuthId?.also { targetAuthId ->
 
             cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetCloudAuth ->
 
@@ -140,7 +140,7 @@ class SyncTaskExecutor @Inject constructor(
                     }
                 }
             }
-        }
+        }*/
     }
 
 

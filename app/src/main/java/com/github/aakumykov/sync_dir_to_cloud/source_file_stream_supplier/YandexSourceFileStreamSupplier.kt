@@ -1,50 +1,38 @@
 package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier
 
-import android.util.Log
-import com.github.aakumykov.cloud_reader.YandexCloudReader
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.App.Companion.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierFactory
-import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import okhttp3.OkHttpClient
 import java.io.InputStream
 
 // TODO: внедрять SyncTaskReader, CloudAuthReader, а то и YnadexCloudReader
 class YandexSourceFileStreamSupplier @AssistedInject constructor(
     @Assisted private val taskId: String,
-) : SourceFileStreamSupplier {
-
-    private var yandexCloudReader: YandexCloudReader? = null
-
-    init {
-        Log.d("YSFSS", "init")
-    }
-
+) : SourceFileStreamSupplier
+{
     override suspend fun getSourceFileStream(absolutePath: String): Result<InputStream> {
 
-        App.getAppComponent().also { appComponent ->
+        return with(appComponent) {
 
-            appComponent.getSyncTaskReader().getSyncTask(taskId).also { syncTask ->
+            getSyncTaskReader().getSyncTask(taskId).let { syncTask ->
 
-                syncTask.sourceAuthId?.also { authId ->
+                syncTask.sourceAuthId?.let { authId ->
 
-                    appComponent.getCloudAuthReader().getCloudAuth(authId)?.also { cloudAuth ->
+                    getCloudAuthReader().getCloudAuth(authId)?.let { cloudAuth ->
 
-                        yandexCloudReader = YandexCloudReader(
-                            cloudAuth.authToken,
-                            OkHttpClient(),
-                            Gson()
-                        )
+                        App.cloudReadersComponent.getYandexCloudReader(cloudAuth.authToken)
+                            .getFileInputStream(absolutePath)
 
-                    }
-                }
-            }
+                    } ?: Result.failure(Exception("CloudAuth with id '${authId}' not found."))
+
+                } ?: Result.failure(Exception("SyncTask with id '${taskId}' not found."))
+
+                // Не убирай эту неиспользуемую ветку, нужно добавить null-абельность в SyncTaskReader.getSyncTask()
+            } ?: Result.failure(Exception("SyncTask with id '${taskId}' not found."))
         }
-
-        return yandexCloudReader?.getFileInputStream(absolutePath)
-            ?: Result.failure(Exception("YandexCloudReader is null."))
     }
 
 

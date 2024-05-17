@@ -26,6 +26,7 @@ class App : Application() {
 
         // AppComponent
         private var _appComponent: AppComponent? = null
+        val appComponent get() = _appComponent!!
 
         @Deprecated("заменить на свойство")
         fun getAppComponent(): AppComponent {

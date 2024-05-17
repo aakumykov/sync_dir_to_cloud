@@ -3,37 +3,31 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.FileLister
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.SimpleSortingMode
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
-import com.github.aakumykov.sync_dir_to_cloud.FileListerFactoryCreator
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 
-abstract class BasicStorageReader(
+abstract class BasicStorageToDbReader(
     private val taskId: String,
-    private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
-    private val fileListerFactoryCreator: FileListerFactoryCreator,
-    private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val authToken: String,
+    private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
+    private val changesDetectionStrategy: ChangesDetectionStrategy,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
-    private val syncObjectStateChanger: SyncObjectStateChanger
 )
     : StorageReader
 {
     protected abstract val storageType: StorageType
 
 
-    override suspend fun checkDbObjectsForExistenceAtStorage(targetDirPath: String) {
+    /*override suspend fun checkDbObjectsForExistenceAtStorage(targetDirPath: String) {
 
         fileListerFactoryCreator.createFileListerFactory(storageType)?.createFileLister(authToken).also { fileLister ->
 
@@ -54,7 +48,7 @@ abstract class BasicStorageReader(
                 syncObjectStateChanger.changeSourceModificationState(syncObject.id, modificationState)
             }
         }
-    }
+    }*/
 
 
     private val recursiveDirReader: RecursiveDirReader?
