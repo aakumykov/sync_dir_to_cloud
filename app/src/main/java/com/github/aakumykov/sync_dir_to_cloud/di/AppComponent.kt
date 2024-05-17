@@ -15,7 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceReaderAssistedFactoriesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TargetWriterAssistedFactoriesModule3
@@ -36,7 +36,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
 import com.google.gson.Gson
 import dagger.Component
@@ -55,7 +55,7 @@ import dagger.Component
         CoroutineModule::class,
         ViewModelsModule::class,
         FileListerAssistedFactoriesModule::class,
-        SourceReaderAssistedFactoriesModule::class,
+        StorageReaderAssistedFactoriesModule::class,
         CloudWriterAssistedFactoriesModule::class,
         TargetWriterAssistedFactoriesModule3::class,
         OkhttpModule::class,
@@ -101,7 +101,7 @@ interface AppComponent {
 
     fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
 
-    fun getSourceReaderCreator(): SourceReaderCreator
+    fun getStorageReaderCreator(): StorageReaderCreator
     fun getTargetWriterCreator(): TargetWriterCreator
 
 }

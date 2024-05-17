@@ -2,8 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.
 
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
 
-interface SourceReaderAssistedFactory {
+interface StorageReaderAssistedFactory {
     fun create(authToken: String,
                taskId: String,
-               changesDetectionStrategy: ChangesDetectionStrategy): SourceReader
+               changesDetectionStrategy: ChangesDetectionStrategy): StorageReader
 }

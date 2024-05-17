@@ -9,11 +9,11 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 
-abstract class BasicSourceReader(
+abstract class BasicStorageReader(
     private val taskId: String,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
     private val changesDetectionStrategy: ChangesDetectionStrategy,
@@ -22,7 +22,7 @@ abstract class BasicSourceReader(
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater
 )
-    : SourceReader
+    : StorageReader
 {
     protected abstract val storageType: StorageType
 

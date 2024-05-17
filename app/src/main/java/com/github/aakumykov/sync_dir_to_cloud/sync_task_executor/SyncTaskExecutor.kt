@@ -9,8 +9,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.SourceReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.SourceReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.StorageReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
@@ -19,7 +19,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
-    private val sourceReaderCreator: SourceReaderCreator,
+    private val sourceReaderCreator: StorageReaderCreator,
     private val targetWriterCreator: TargetWriterCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskReader: SyncTaskReader,
@@ -30,7 +30,7 @@ class SyncTaskExecutor @Inject constructor(
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator
 ) {
-    private var sourceReader: SourceReader? = null
+    private var storageReader: StorageReader? = null
     private var targetWriter: TargetWriter? = null
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
@@ -110,7 +110,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun readFromSourceToDatabase(syncTask: SyncTask) {
-        sourceReader?.read(syncTask.sourcePath!!)
+        storageReader?.read(syncTask.sourcePath!!)
     }
 
 
@@ -135,7 +135,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun prepareReader(syncTask: SyncTask) {
         syncTask.sourceAuthId?.also { sourceAuthId ->
             cloudAuthReader.getCloudAuth(sourceAuthId)?.also { sourceAuth ->
-                sourceReader = sourceReaderCreator.create(
+                storageReader = sourceReaderCreator.create(
                     syncTask.sourceStorageType,
                     sourceAuth.authToken,
                     syncTask.id,
