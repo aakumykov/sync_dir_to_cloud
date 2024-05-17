@@ -25,4 +25,8 @@ abstract class ChangesDetectionStrategy {
             return ModificationState.MODIFIED
         }
     }
+
+    companion object {
+        val SIZE_AND_MODIFICATION_TIME = SizeAndModificationTime()
+    }
 }

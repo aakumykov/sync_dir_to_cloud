@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
@@ -61,26 +62,9 @@ class SyncTaskExecutor @Inject constructor(
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            // Стираю из БД объекты, удалённые в предыдущую синхронизацию
-            // (чтобы не пытаться удалить их повторно).
-            removePreviouslyDeletedObjects(taskId)
-
-            // Меняю ExecutionState.RUNNING на ExecutionState.NEVER, чтобы эти объекты синхронизировались вновь
-            // (такой статус может сохраниться, если приложение было убито во время работы).
-            markBadStatesAsNeverSynced(taskId)
-
-            // Помечаю всё объекты в БД как удалённые, чтобы не проверять каждый раз существование
-            // связанного файла/папки. Те, что существуют, будут обнаружены на этапе чтения источника.
-            markObjectsVirtuallyDeleted(taskId)
-
-
-            showReadingSourceNotification(syncTask)
-            readFromSourceToDatabase(syncTask)
-
-
-            showWritingTargetNotification(syncTask)
-            writeFromDatabaseToTarget(syncTask)
-
+            readSource(syncTask)
+            readTarget(taskId)
+            syncSourceWithTarget(taskId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -90,6 +74,30 @@ class SyncTaskExecutor @Inject constructor(
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun readSource(syncTask: SyncTask) {
+
+        cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)?.also { cloudAuth ->
+            with(App.getAppComponent()) {
+                getStorageReaderCreator()
+                    .create(
+                        syncTask.sourceStorageType,
+                        cloudAuth.authToken,
+                        syncTask.id,
+                        ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+                    )
+                    ?.read(syncTask.sourcePath, this.getSourceObjectsRepository())
+            }
+        }
+    }
+
+    private fun readTarget(taskId: String) {
+
+    }
+
+    private fun syncSourceWithTarget(taskId: String) {
+
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {

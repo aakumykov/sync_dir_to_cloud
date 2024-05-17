@@ -1,5 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
+import com.github.aakumykov.sync_dir_to_cloud.SourceSyncObjectsRepository
+import com.github.aakumykov.sync_dir_to_cloud.TargetSyncObjectsRepository
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.CloudAuthenticatorFactoryAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -33,6 +35,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
@@ -104,4 +107,6 @@ interface AppComponent {
     fun getStorageReaderCreator(): StorageReaderCreator
     fun getStorageWriterCreator(): StorageWriterCreator
 
+    fun getSourceObjectsRepository(): SourceSyncObjectsRepository
+    fun getTargetObjectsRepository(): TargetSyncObjectsRepository
 }
