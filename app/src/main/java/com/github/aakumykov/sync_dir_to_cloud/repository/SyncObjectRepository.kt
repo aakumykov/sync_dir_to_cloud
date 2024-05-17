@@ -46,6 +46,10 @@ class SyncObjectRepository @Inject constructor(
     }
 
 
+    override suspend fun getObjectsForTask(taskId: String): List<SyncObject>
+        = syncObjectDAO.getSyncObjectsForTask(taskId)
+
+
     override suspend fun changeExecutionState(objectId: String, syncState: ExecutionState, errorMsg: String)
         = syncObjectDAO.setExecutionState(objectId, syncState, errorMsg)
 
@@ -72,8 +76,11 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
         = syncObjectDAO.updateSyncObject(modifiedSyncObject)
 
-    override suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
-        = syncObjectDAO.changeModificationState(objectId, modificationState)
+    override suspend fun changeSourceModificationState(objectId: String, modificationState: ModificationState)
+        = syncObjectDAO.changeSourceModificationState(objectId, modificationState)
+
+    override suspend fun changeTargetModificationState(objectId: String, modificationState: ModificationState)
+            = syncObjectDAO.changeTargetModificationState(objectId, modificationState)
 
     override suspend fun markBadStatesAsNeverSynced(taskId: String) {
         badObjectStateResettingDAO.markRunningStateAsNeverSynced(taskId)

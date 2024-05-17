@@ -16,6 +16,9 @@ interface SyncObjectDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add(syncObject: SyncObject)
 
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
+    suspend fun getSyncObjectsForTask(taskId: String): List<SyncObject>
+
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND source_modification_state IN (:modificationStateList)")
     suspend fun getSyncObjectsForTaskWithModificationStates(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
@@ -41,7 +44,10 @@ interface SyncObjectDAO {
     suspend fun updateSyncObject(syncObject: SyncObject)
 
     @Query("UPDATE sync_objects SET source_modification_state = :modificationState WHERE id = :objectId")
-    suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
+    suspend fun changeSourceModificationState(objectId: String, modificationState: ModificationState)
+
+    @Query("UPDATE sync_objects SET target_modification_state = :modificationState WHERE id = :objectId")
+    suspend fun changeTargetModificationState(objectId: String, modificationState: ModificationState)
 
     @Query("UPDATE sync_objects SET source_modification_state = :modificationState WHERE task_id = :taskId")
     suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)

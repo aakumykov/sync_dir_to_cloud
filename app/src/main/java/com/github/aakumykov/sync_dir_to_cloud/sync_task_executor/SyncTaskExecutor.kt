@@ -119,15 +119,23 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun checkTargetFilesExistence(syncTask: SyncTask) {
+
         syncTask.targetAuthId?.also { targetAuthId ->
+
             cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetCloudAuth ->
+
                 syncTask.targetStorageType?.also { targetStorageType ->
+
                     storageReaderCreator.create(
                         targetStorageType,
                         targetCloudAuth.authToken,
                         syncTask.id,
                         ChangesDetectionStrategy.SizeAndModificationTime()
-                    )?.also { targetReader ->
+                    )?.also { storageReader ->
+
+                        syncTask.targetPath?.also { path ->
+                            storageReader.checkDbObjectsForExistenceAtStorage(path)
+                        }
 
                     }
                 }

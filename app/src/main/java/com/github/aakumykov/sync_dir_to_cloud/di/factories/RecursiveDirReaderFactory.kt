@@ -5,11 +5,11 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import javax.inject.Inject
 
 class RecursiveDirReaderFactory @Inject constructor(
-    private val fileListerAssistedFactoriesMap: Map<StorageType, @JvmSuppressWildcards FileListerAssistedFactory>
+    private val fileListerAssistedFactoriesMap: Map<StorageType, @JvmSuppressWildcards FileListerFactory>
 ) {
     fun create(storageType: StorageType, authToken: String): RecursiveDirReader? {
         return fileListerAssistedFactoriesMap[storageType]?.let { factory ->
-            RecursiveDirReader(factory.create(authToken))
+            RecursiveDirReader(factory.createFileLister(authToken))
         }
     }
 }

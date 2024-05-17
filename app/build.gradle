@@ -121,8 +121,8 @@ dependencies {
     implementation "com.github.aakumykov:cloud_reader:0.0.5-alpha"
     implementation 'com.github.aakumykov:storage_access_helper:1.0.1-alpha'
 
-    implementation 'com.github.aakumykov:file_lister_navigator_selector:0.0.21'
-    implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.21'
+    implementation 'com.github.aakumykov:file_lister_navigator_selector:0.0.23'
+    implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:0.0.23'
 
     implementation "com.leinardi.android:speed-dial:3.3.0"
 }

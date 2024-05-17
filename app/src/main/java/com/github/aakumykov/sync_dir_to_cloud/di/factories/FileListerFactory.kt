@@ -6,20 +6,16 @@ import com.github.aakumykov.file_lister_navigator_selector.local_file_lister.Loc
 import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_lister.YandexDiskFileLister
 import dagger.assisted.AssistedFactory
 
-interface FileListerAssistedFactory {
-    fun create(authToken: String): FileLister<SimpleSortingMode>
+interface FileListerFactory {
+    fun createFileLister(authToken: String): FileLister<SimpleSortingMode>
 }
 
 @AssistedFactory
-interface LocalFileListerAssistedFactory : FileListerAssistedFactory {
-    override fun create(authToken: String): LocalFileLister {
-        return LocalFileLister(authToken)
-    }
+interface LocalFileListerFactory: FileListerFactory {
+    override fun createFileLister(authToken: String): LocalFileLister
 }
 
 @AssistedFactory
-interface YandexDiskFileListerAssistedFactory : FileListerAssistedFactory {
-    override fun create(authToken: String): YandexDiskFileLister {
-        return YandexDiskFileLister(authToken)
-    }
+interface YandexDiskFileListerFactory: FileListerFactory {
+    override fun createFileLister(authToken: String): YandexDiskFileLister
 }

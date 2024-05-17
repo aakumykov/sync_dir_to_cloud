@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReadersModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
@@ -61,7 +62,7 @@ import dagger.Component
         OkhttpModule::class,
         GsonModule::class,
         SourceFileStreamSupplierFactoryModule::class,
-        SourceFileStreamSupplierAssistedFactoriesModule::class
+        SourceFileStreamSupplierAssistedFactoriesModule::class,
     ]
 )
 @AppScope

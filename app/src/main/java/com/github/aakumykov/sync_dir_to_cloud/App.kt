@@ -3,6 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.github.aakumykov.cloud_reader.di.CloudReadersComponent
+import com.github.aakumykov.cloud_reader.di.DaggerCloudReadersComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.DbConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.DaggerAppComponent
@@ -22,18 +24,15 @@ class App : Application() {
 
     companion object {
 
+        // AppComponent
         private var _appComponent: AppComponent? = null
-        private var _appDatabase: AppDatabase? = null
 
+        @Deprecated("заменить на свойство")
         fun getAppComponent(): AppComponent {
             return _appComponent!!
         }
 
-        fun appDatabase(): AppDatabase {
-            return _appDatabase!!
-        }
-
-        fun prepareAppComponent(application: Application, appContext: Context) {
+        private fun prepareAppComponent(application: Application, appContext: Context) {
             _appComponent = DaggerAppComponent.builder()
                 .contextModule(ContextModule(appContext))
                 .applicationModule(ApplicationModule(application))
@@ -41,7 +40,20 @@ class App : Application() {
                 .build()
         }
 
-        fun prepareAndGetAppDatabase(appContext: Context): AppDatabase {
+
+        // CloudReadersComponent
+        private var _cloudReadersComponent: CloudReadersComponent? = null
+        val cloudReadersComponent get() = _cloudReadersComponent!!
+
+        private fun prepareCloudReadersComponent() {
+            _cloudReadersComponent = DaggerCloudReadersComponent.builder().build()
+        }
+
+
+        // AppDatabase
+        private var _appDatabase: AppDatabase? = null
+
+        private fun prepareAndGetAppDatabase(appContext: Context): AppDatabase {
             _appDatabase = Room
                 .databaseBuilder(appContext, AppDatabase::class.java, DbConfig.APP_DB_NAME)
                 // FIXME: убрать
