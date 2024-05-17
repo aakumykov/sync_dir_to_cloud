@@ -18,7 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplie
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.TargetWriterAssistedFactoriesModule3
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterAssistedFactoriesModule3
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
@@ -36,8 +36,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.StorageReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.google.gson.Gson
 import dagger.Component
 
@@ -57,7 +57,7 @@ import dagger.Component
         FileListerAssistedFactoriesModule::class,
         StorageReaderAssistedFactoriesModule::class,
         CloudWriterAssistedFactoriesModule::class,
-        TargetWriterAssistedFactoriesModule3::class,
+        StorageWriterAssistedFactoriesModule3::class,
         OkhttpModule::class,
         GsonModule::class,
         SourceFileStreamSupplierFactoryModule::class,
@@ -102,6 +102,6 @@ interface AppComponent {
     fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
 
     fun getStorageReaderCreator(): StorageReaderCreator
-    fun getTargetWriterCreator(): TargetWriterCreator
+    fun getStorageWriterCreator(): StorageWriterCreator
 
 }

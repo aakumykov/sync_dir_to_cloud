@@ -53,8 +53,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     /*private val sourceReaderCreator: StorageReaderCreator
         get() = App.getAppComponent().getStorageReaderCreator()
 
-    private val targetWriterCreator: TargetWriterCreator
-        get() = App.getAppComponent().getTargetWriterCreator()*/
+    private val targetWriterCreator: StorageWriterCreator
+        get() = App.getAppComponent().getStorageWriterCreator()*/
 
     private val cloudAuthReader: CloudAuthReader
         get() = App.getAppComponent().getCloudAuthReader()

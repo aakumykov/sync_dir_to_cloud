@@ -9,18 +9,18 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator.StorageReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.StorageReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.TargetWriter
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer.factory_and_creator.TargetWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
     private val sourceReaderCreator: StorageReaderCreator,
-    private val targetWriterCreator: TargetWriterCreator,
+    private val targetWriterCreator: StorageWriterCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
@@ -31,7 +31,7 @@ class SyncTaskExecutor @Inject constructor(
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator
 ) {
     private var storageReader: StorageReader? = null
-    private var targetWriter: TargetWriter? = null
+    private var targetWriter: StorageWriter? = null
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {

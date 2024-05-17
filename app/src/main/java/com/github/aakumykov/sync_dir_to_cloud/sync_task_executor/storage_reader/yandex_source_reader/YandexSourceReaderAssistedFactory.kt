@@ -1,8 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.yandex_source_reader
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.yandex_source_reader
 
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.StorageReaderAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReaderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 

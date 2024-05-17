@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.target_writer
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
@@ -14,14 +14,14 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import java.io.InputStream
 
-abstract class BasicTargetWriter (
+abstract class BasicStorageWriter (
     private val sourceDirPath: String,
     private val targetDirPath: String,
     private val taskId: String,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
 )
-    : TargetWriter
+    : StorageWriter
 {
     protected abstract val cloudWriter: CloudWriter?
     protected abstract val tag: String
@@ -159,6 +159,6 @@ abstract class BasicTargetWriter (
 
 
     companion object {
-        val TAG: String = BasicTargetWriter::class.java.simpleName
+        val TAG: String = BasicStorageWriter::class.java.simpleName
     }
 }

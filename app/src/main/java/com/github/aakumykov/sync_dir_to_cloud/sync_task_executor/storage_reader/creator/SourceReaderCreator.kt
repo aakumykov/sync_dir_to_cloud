@@ -1,9 +1,9 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.creator
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator
 
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.StorageReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.interfaces.StorageReaderAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.source_reader.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReaderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import javax.inject.Inject
 
 class StorageReaderCreator @Inject constructor(
