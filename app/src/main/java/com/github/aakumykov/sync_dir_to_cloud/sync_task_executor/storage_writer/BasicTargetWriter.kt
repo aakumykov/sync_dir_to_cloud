@@ -136,14 +136,14 @@ abstract class BasicStorageWriter (
 
 
     private suspend fun deleteDeletedFiles() {
-        syncObjectReader.getObjectsForTask(taskId, ModificationState.DELETED)
+        syncObjectReader.getObjectsForTask(StorageHalf.TARGET, taskId, ModificationState.DELETED)
             .filter { !it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }
 
 
     private suspend fun deleteDeletedDirs() {
-        syncObjectReader.getObjectsForTask(taskId, ModificationState.DELETED)
+        syncObjectReader.getObjectsForTask(StorageHalf.TARGET, taskId, ModificationState.DELETED)
             .filter { it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }

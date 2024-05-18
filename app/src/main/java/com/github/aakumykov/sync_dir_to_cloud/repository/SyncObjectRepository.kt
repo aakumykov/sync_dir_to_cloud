@@ -39,6 +39,7 @@ class SyncObjectRepository @Inject constructor(
     }
 
     override suspend fun getObjectsForTask(
+        storageHalf: StorageHalf,
         taskId: String,
         modificationState: ModificationState
     ): List<SyncObject> {
