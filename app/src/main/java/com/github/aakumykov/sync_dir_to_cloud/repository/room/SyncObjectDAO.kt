@@ -44,8 +44,8 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE id = :objectId")
     suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
 
-    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE task_id = :taskId")
-    suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
+    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE storage_half = :storageHalf AND task_id = :taskId")
+    suspend fun setStateOfAllItems(storageHalf: StorageHalf, taskId: String, modificationState: ModificationState)
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND execution_state = :syncState")
     suspend fun getObjectsWithSyncState(taskId: String, syncState: ExecutionState): List<SyncObject>

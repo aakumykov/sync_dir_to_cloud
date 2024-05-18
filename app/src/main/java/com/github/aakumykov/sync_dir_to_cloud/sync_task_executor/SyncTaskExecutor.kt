@@ -66,6 +66,7 @@ class SyncTaskExecutor @Inject constructor(
 
             readSource(syncTask)
             readTarget(syncTask)
+            makeBackups(syncTask)
             syncSourceWithTarget(taskId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
@@ -79,6 +80,11 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readSource(syncTask: SyncTask) {
+        markObjectsVirtuallyDeleted(StorageHalf.SOURCE, syncTask.id)
+        readSourceReal(syncTask)
+    }
+
+    private suspend fun readSourceReal(syncTask: SyncTask) {
         cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)?.also { cloudAuth ->
             App.getAppComponent()
                 .getStorageReaderCreator()
@@ -93,6 +99,11 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readTarget(syncTask: SyncTask) {
+        markObjectsVirtuallyDeleted(StorageHalf.TARGET, syncTask.id)
+        readTargetReal(syncTask)
+    }
+
+    private suspend fun readTargetReal(syncTask: SyncTask) {
         cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.also { cloudAuth ->
             App.getAppComponent()
                 .getStorageReaderCreator()
@@ -104,6 +115,10 @@ class SyncTaskExecutor @Inject constructor(
                 )
                 ?.read(StorageHalf.TARGET, syncTask.targetPath)
         }
+    }
+
+    private suspend fun makeBackups(syncTask: SyncTask) {
+
     }
 
     private fun syncSourceWithTarget(taskId: String) {
@@ -122,8 +137,8 @@ class SyncTaskExecutor @Inject constructor(
         syncObjectDeleter.clearObjectsWasSuccessfullyDeleted(taskId)
     }
 
-    private suspend fun markObjectsVirtuallyDeleted(taskId: String) {
-        syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
+    private suspend fun markObjectsVirtuallyDeleted(storageHalf: StorageHalf, taskId: String) {
+        syncObjectStateResetter.markAllObjectsAsDeleted(storageHalf, taskId)
     }
 
 
