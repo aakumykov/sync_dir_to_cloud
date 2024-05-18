@@ -23,8 +23,8 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET execution_state =  :state, execution_error = :errorMsg WHERE id = :syncObjectId")
     suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
-    fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>>
+    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId")
+    fun getSyncObjectList(storageHalf: StorageHalf, taskId: String): LiveData<List<SyncObject>>
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
     suspend fun deleteObjectsForTask(taskId: String)

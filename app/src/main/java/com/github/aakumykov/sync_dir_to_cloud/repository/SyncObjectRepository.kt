@@ -50,8 +50,8 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.setExecutionState(objectId, syncState, errorMsg)
 
 
-    override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
-        = syncObjectDAO.getSyncObjectList(taskId)
+    override suspend fun getSyncObjectListAsLiveData(storageHalf: StorageHalf, taskId: String): LiveData<List<SyncObject>>
+        = syncObjectDAO.getSyncObjectList(storageHalf, taskId)
 
 
     override suspend fun setSyncDate(objectId: String, date: Long)

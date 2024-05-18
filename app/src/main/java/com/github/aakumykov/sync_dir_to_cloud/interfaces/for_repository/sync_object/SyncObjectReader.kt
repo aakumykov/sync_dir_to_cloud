@@ -9,7 +9,7 @@ interface SyncObjectReader {
 
     suspend fun getObjectsNeedsToBeSynced(storageHalf: StorageHalf, taskId: String): List<SyncObject>
 
-    suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
+    suspend fun getSyncObjectListAsLiveData(storageHalf: StorageHalf, taskId: String): LiveData<List<SyncObject>>
 
     suspend fun getSyncObject(storageHalf: StorageHalf, taskId: String, name: String): SyncObject?
 
