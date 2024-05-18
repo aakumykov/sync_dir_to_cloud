@@ -4,6 +4,7 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -46,7 +47,7 @@ abstract class BasicStorageWriter (
 
     private suspend fun copyDirs() {
 
-        syncObjectReader.getObjectsNeedsToBeSynced(taskId)
+        syncObjectReader.getObjectsNeedsToBeSynced(StorageHalf.SOURCE, taskId)
             .filter { it.isDir }
             .forEach { dirSyncObject ->
 
@@ -72,7 +73,7 @@ abstract class BasicStorageWriter (
         sourceFileStreamSupplier: SourceFileStreamSupplier,
         overwriteIfExists: Boolean
     ) {
-        syncObjectReader.getObjectsNeedsToBeSynced(taskId)
+        syncObjectReader.getObjectsNeedsToBeSynced(StorageHalf.SOURCE, taskId)
             .filter { !it.isDir }
             .forEach { fileSyncObject ->
 

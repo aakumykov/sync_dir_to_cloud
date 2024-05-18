@@ -28,12 +28,11 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.add(syncObject)
 
 
-    override suspend fun getObjectsNeedsToBeSynced(taskId: String): List<SyncObject> {
-//        syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
+    override suspend fun getObjectsNeedsToBeSynced(storageHalf: StorageHalf, taskId: String): List<SyncObject> {
 
-        val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, ExecutionState.NEVER)
-        val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.NEW)
-        val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.MODIFIED)
+        val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(storageHalf, taskId, ExecutionState.NEVER)
+        val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(storageHalf, taskId, ModificationState.NEW)
+        val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(storageHalf, taskId, ModificationState.MODIFIED)
 
         return (neverSyncedObjects + newObjects + modifiedObjects)
             .distinctBy { syncObject -> syncObject.id }
