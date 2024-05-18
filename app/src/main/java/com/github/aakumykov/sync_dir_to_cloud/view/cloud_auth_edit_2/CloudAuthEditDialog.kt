@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogCloudAuthEditBin
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.utils.WebViewChecker
+import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconProvider
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
@@ -66,7 +67,8 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun prepareLayout() {
-        binding.authRequestButton.setText(authButtonLabel())
+        binding.storageTypeView.setImageResource(StorageTypeIconProvider.getIconFor(storageType()))
+        binding.authRequestButton.text = authButtonLabel()
     }
 
     private fun prepareViewModel() {
