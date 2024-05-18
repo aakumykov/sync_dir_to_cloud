@@ -28,7 +28,7 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.add(syncObject)
 
 
-    override suspend fun getObjectsNeedsToBeSynched(taskId: String): List<SyncObject> {
+    override suspend fun getObjectsNeedsToBeSynced(taskId: String): List<SyncObject> {
 //        syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId, arrayOf(ModificationState.NEW, ModificationState.MODIFIED))
 
         val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, ExecutionState.NEVER)

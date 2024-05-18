@@ -22,8 +22,8 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
-    private val sourceReaderCreator: StorageReaderCreator,
-    private val targetWriterCreator: StorageWriterCreator,
+    private val storageReaderCreator: StorageReaderCreator,
+    private val storageWriterCreator: StorageWriterCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
@@ -80,7 +80,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readSource(syncTask: SyncTask) {
-        markObjectsVirtuallyDeleted(StorageHalf.SOURCE, syncTask.id)
+        markObjectsAsDeleted(StorageHalf.SOURCE, syncTask.id)
         readSourceReal(syncTask)
     }
 
@@ -99,7 +99,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        markObjectsVirtuallyDeleted(StorageHalf.TARGET, syncTask.id)
+        markObjectsAsDeleted(StorageHalf.TARGET, syncTask.id)
         readTargetReal(syncTask)
     }
 
@@ -121,7 +121,7 @@ class SyncTaskExecutor @Inject constructor(
 
     }
 
-    private fun syncSourceWithTarget(taskId: String) {
+    private suspend fun syncSourceWithTarget(taskId: String) {
 
     }
 
@@ -137,7 +137,7 @@ class SyncTaskExecutor @Inject constructor(
         syncObjectDeleter.clearObjectsWasSuccessfullyDeleted(taskId)
     }
 
-    private suspend fun markObjectsVirtuallyDeleted(storageHalf: StorageHalf, taskId: String) {
+    private suspend fun markObjectsAsDeleted(storageHalf: StorageHalf, taskId: String) {
         syncObjectStateResetter.markAllObjectsAsDeleted(storageHalf, taskId)
     }
 
@@ -150,7 +150,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun prepareReader(syncTask: SyncTask) {
         syncTask.sourceAuthId?.also { sourceAuthId ->
             cloudAuthReader.getCloudAuth(sourceAuthId)?.also { sourceAuth ->
-                storageReader = sourceReaderCreator.create(
+                storageReader = storageReaderCreator.create(
                     syncTask.sourceStorageType,
                     sourceAuth.authToken,
                     syncTask.id,
@@ -163,7 +163,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun prepareWriter(syncTask: SyncTask) {
         syncTask.targetAuthId?.also { targetAuthId ->
             cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetAuth ->
-                targetWriter = targetWriterCreator.create(
+                targetWriter = storageWriterCreator.create(
                     syncTask.targetStorageType!!,
                     targetAuth.authToken,
                     syncTask.id,

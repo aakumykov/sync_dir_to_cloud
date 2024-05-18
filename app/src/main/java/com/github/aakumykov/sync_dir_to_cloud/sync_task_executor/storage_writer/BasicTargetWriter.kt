@@ -35,8 +35,8 @@ abstract class BasicStorageWriter (
     }
 
 
-    override suspend fun writeToTarget(sourceFileStreamSupplier: SourceFileStreamSupplier,
-                                       overwriteIfExists: Boolean) {
+    override suspend fun write(sourceFileStreamSupplier: SourceFileStreamSupplier,
+                               overwriteIfExists: Boolean) {
         deleteDeletedFiles()
         deleteDeletedDirs()
         copyDirs()
@@ -46,7 +46,7 @@ abstract class BasicStorageWriter (
 
     private suspend fun copyDirs() {
 
-        syncObjectReader.getObjectsNeedsToBeSynched(taskId)
+        syncObjectReader.getObjectsNeedsToBeSynced(taskId)
             .filter { it.isDir }
             .forEach { dirSyncObject ->
 
@@ -72,7 +72,7 @@ abstract class BasicStorageWriter (
         sourceFileStreamSupplier: SourceFileStreamSupplier,
         overwriteIfExists: Boolean
     ) {
-        syncObjectReader.getObjectsNeedsToBeSynched(taskId)
+        syncObjectReader.getObjectsNeedsToBeSynced(taskId)
             .filter { !it.isDir }
             .forEach { fileSyncObject ->
 
