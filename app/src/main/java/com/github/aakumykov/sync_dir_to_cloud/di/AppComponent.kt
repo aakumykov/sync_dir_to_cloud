@@ -1,7 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
-import com.github.aakumykov.sync_dir_to_cloud.SourceSyncObjectsRepository
-import com.github.aakumykov.sync_dir_to_cloud.TargetSyncObjectsRepository
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.CloudAuthenticatorFactoryAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -106,7 +104,4 @@ interface AppComponent {
 
     fun getStorageReaderCreator(): StorageReaderCreator
     fun getStorageWriterCreator(): StorageWriterCreator
-
-    fun getSourceObjectsRepository(): SourceSyncObjectsRepository
-    fun getTargetObjectsRepository(): TargetSyncObjectsRepository
 }

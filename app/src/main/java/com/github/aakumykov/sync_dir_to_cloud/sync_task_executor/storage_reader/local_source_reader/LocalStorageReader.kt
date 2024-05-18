@@ -14,6 +14,7 @@ class LocalStorageReader @AssistedInject constructor(
     @Assisted(AssistedArgName.TASK_ID) taskId: String,
     @Assisted changesDetectionStrategy: ChangesDetectionStrategy,
     recursiveDirReaderFactory: RecursiveDirReaderFactory,
+    syncObjectRepository: SyncObjectRepository,
 )
     // TODO: делегировать ему, чтобы не вызывать этот громоздкий конструктор.
     : BasicStorageReader(
@@ -21,6 +22,7 @@ class LocalStorageReader @AssistedInject constructor(
         authToken = authToken,
         recursiveDirReaderFactory = recursiveDirReaderFactory,
         changesDetectionStrategy = changesDetectionStrategy,
+        syncObjectRepository = syncObjectRepository,
     )
 {
     override val storageType: StorageType

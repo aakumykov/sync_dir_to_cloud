@@ -3,7 +3,9 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
+import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -37,7 +39,7 @@ class SyncTaskExecutor @Inject constructor(
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
-        MyLogger.d(TAG, "executeSyncTask() [${classNameWithHash()}]")
+        MyLogger.d(tag, "executeSyncTask() [${classNameWithHash()}]")
 
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             prepareReader(syncTask)
@@ -49,11 +51,11 @@ class SyncTaskExecutor @Inject constructor(
 
     suspend fun stopExecutingTask(taskId: String) {
         // TODO: по-настоящему прерывать работу CloudWriter-а
-        MyLogger.d(TAG, "stopExecutingTask(), [${hashCode()}]")
+        MyLogger.d(tag, "stopExecutingTask(), [${hashCode()}]")
         syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
 
-    // FIXME: убрать !! в sourcePath
+
     private suspend fun doWork(syncTask: SyncTask) {
 
         val taskId = syncTask.id
@@ -63,7 +65,7 @@ class SyncTaskExecutor @Inject constructor(
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
             readSource(syncTask)
-            readTarget(taskId)
+            readTarget(syncTask)
             syncSourceWithTarget(taskId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
@@ -77,23 +79,31 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readSource(syncTask: SyncTask) {
-
         cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)?.also { cloudAuth ->
-            with(App.getAppComponent()) {
-                getStorageReaderCreator()
-                    .create(
-                        syncTask.sourceStorageType,
-                        cloudAuth.authToken,
-                        syncTask.id,
-                        ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
-                    )
-                    ?.read(syncTask.sourcePath, this.getSourceObjectsRepository())
-            }
+            App.getAppComponent()
+                .getStorageReaderCreator()
+                .create(
+                    syncTask.sourceStorageType,
+                    cloudAuth.authToken,
+                    syncTask.id,
+                    ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+                )
+                ?.read(StorageHalf.SOURCE, syncTask.sourcePath)
         }
     }
 
-    private fun readTarget(taskId: String) {
-
+    private suspend fun readTarget(syncTask: SyncTask) {
+        cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.also { cloudAuth ->
+            App.getAppComponent()
+                .getStorageReaderCreator()
+                .create(
+                    syncTask.targetStorageType,
+                    cloudAuth.authToken,
+                    syncTask.id,
+                    ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+                )
+                ?.read(StorageHalf.TARGET, syncTask.targetPath)
+        }
     }
 
     private fun syncSourceWithTarget(taskId: String) {
@@ -114,24 +124,6 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun markObjectsVirtuallyDeleted(taskId: String) {
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
-    }
-
-
-    private suspend fun readFromSourceToDatabase(syncTask: SyncTask) {
-        storageReader?.read(syncTask.sourcePath!!)
-    }
-
-
-    private suspend fun writeFromDatabaseToTarget(syncTask: SyncTask) {
-        syncTask.sourceAuthId?.also { sourceAuthId ->
-            cloudAuthReader.getCloudAuth(sourceAuthId)?.also { cloudAuth ->
-                syncTask.sourceStorageType?.also { sourceStorageType ->
-                    sourceFileStreamSupplierCreator.create(syncTask.id, sourceStorageType)?.also { sourceFileStreamSupplier ->
-                        targetWriter?.writeToTarget(sourceFileStreamSupplier, true)
-                    }
-                }
-            }
-        }
     }
 
 

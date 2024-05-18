@@ -22,6 +22,7 @@ class YandexStorageReader @AssistedInject constructor(
         authToken = authToken,
         recursiveDirReaderFactory = recursiveDirReaderFactory,
         changesDetectionStrategy = changesDetectionStrategy,
+        syncObjectRepository = syncObjectRepository,
     )
 {
     override val storageType: StorageType

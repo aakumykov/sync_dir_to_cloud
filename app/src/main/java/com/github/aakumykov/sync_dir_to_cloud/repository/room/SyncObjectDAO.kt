@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 
 @Dao
 interface SyncObjectDAO {
@@ -31,8 +32,8 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET sync_date = :date WHERE id = :id")
     suspend fun setSyncDate(id: String, date: Long)
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND name = :name")
-    suspend fun getSyncObject(taskId: String, name: String): SyncObject?
+    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId AND name = :name")
+    suspend fun getSyncObject(storageHalf: StorageHalf, taskId: String, name: String): SyncObject?
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND execution_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: ExecutionState)

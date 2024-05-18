@@ -6,13 +6,14 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 // TODO: сложный ключ, включающий taskId, name, parentPath и другое, что составляет уникальность.
 
 @Entity(
     tableName = "sync_objects",
-    primaryKeys = [ "id", "task_id" ],
+    primaryKeys = [ "storage_half", "id", "task_id", "relative_parent_dir_path", "name" ],
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -22,14 +23,18 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
             onUpdate = CASCADE
         )
     ],
+    // TODO: дополнить, оптимизировать индекс
     indices = [
         Index("task_id")
     ]
 )
 class SyncObject (
-    val id: String,
-    @ColumnInfo(name = "task_id") val taskId: String,
-    val name: String,
+
+    @ColumnInfo(name = "storage_half") val storageHalf: StorageHalf,
+    @ColumnInfo(name = "id")           val id: String,
+    @ColumnInfo(name = "task_id")      val taskId: String,
+
+    @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
     @ColumnInfo(name = "execution_state") val executionState: ExecutionState,
@@ -64,12 +69,14 @@ class SyncObject (
         fun id(fsItem: FSItem): String = sha256(fsItem.absolutePath)
 
         fun createAsNew(
+            storageHalf: StorageHalf,
             taskId: String,
             fsItem: FSItem,
             relativeParentDirPath: String,
         ): SyncObject {
 
             return SyncObject(
+                storageHalf = storageHalf,
                 id = id(fsItem),
                 taskId = taskId,
                 name = fsItem.name,

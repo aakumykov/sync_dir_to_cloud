@@ -6,6 +6,7 @@ import com.github.aakumykov.file_lister_navigator_selector.file_lister.SimpleSor
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.di.factories.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
@@ -18,6 +19,7 @@ abstract class BasicStorageReader(
     private val authToken: String,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
     private val changesDetectionStrategy: ChangesDetectionStrategy,
+    private val syncObjectRepository: SyncObjectRepository
 )
     : StorageReader
 {
@@ -29,7 +31,7 @@ abstract class BasicStorageReader(
 
 
     @Throws(FileLister.NotADirException::class)
-    override suspend fun read(sourcePath: String?, syncObjectRepository: SyncObjectRepository) {
+    override suspend fun read(storageHalf: StorageHalf, sourcePath: String?) {
 
         if (null == sourcePath) {
             Log.e(tag, "Source path is null.")
@@ -44,10 +46,11 @@ abstract class BasicStorageReader(
             dirMode = false
         )?.forEach { fileListItem: RecursiveDirReader.FileListItem ->
 
-            val existingObject = syncObjectRepository.getSyncObject(taskId, fileListItem.name)
+            val existingObject = syncObjectRepository.getSyncObject(storageHalf, taskId, fileListItem.name)
 
             if (null == existingObject) {
                 SyncObject.createAsNew(
+                    storageHalf = storageHalf,
                     taskId = taskId,
                     fsItem = fileListItem,
                     relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath),

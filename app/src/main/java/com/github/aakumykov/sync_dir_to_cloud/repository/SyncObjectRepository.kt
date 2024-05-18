@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -62,8 +63,8 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.setStateOfAllItems(taskId, ModificationState.DELETED)
 
 
-    override suspend fun getSyncObject(taskId: String, name: String): SyncObject?
-        = syncObjectDAO.getSyncObject(taskId, name)
+    override suspend fun getSyncObject(storageHalf: StorageHalf, taskId: String, name: String): SyncObject?
+        = syncObjectDAO.getSyncObject(storageHalf, taskId, name)
 
 
     override suspend fun clearObjectsWasSuccessfullyDeleted(taskId: String)
