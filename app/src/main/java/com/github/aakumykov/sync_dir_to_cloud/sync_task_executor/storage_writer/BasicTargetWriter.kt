@@ -36,8 +36,7 @@ abstract class BasicStorageWriter (
     }
 
 
-    override suspend fun write(sourceFileStreamSupplier: SourceFileStreamSupplier,
-                               overwriteIfExists: Boolean) {
+    override suspend fun write(sourceFileStreamSupplier: SourceFileStreamSupplier?, overwriteIfExists: Boolean) {
         deleteDeletedFiles()
         deleteDeletedDirs()
         copyDirs()
@@ -70,7 +69,7 @@ abstract class BasicStorageWriter (
 
 
     private suspend fun copyFiles(
-        sourceFileStreamSupplier: SourceFileStreamSupplier,
+        sourceFileStreamSupplier: SourceFileStreamSupplier?,
         overwriteIfExists: Boolean
     ) {
         syncObjectReader.getObjectsNeedsToBeSynced(StorageHalf.SOURCE, taskId)
@@ -86,8 +85,8 @@ abstract class BasicStorageWriter (
                         val pathInTarget = fileSyncObject.absolutePathIn(targetDirPath)
 
                         sourceFileStreamSupplier
-                            .getSourceFileStream(pathInSource)
-                            .getOrThrow()
+                            ?.getSourceFileStream(pathInSource)
+                            ?.getOrThrow()
                             .also { inputStream ->
                                 writeFromInputStreamToTarget(
                                     inputStream,
@@ -119,8 +118,8 @@ abstract class BasicStorageWriter (
         }
     }
 
-    private fun writeFromInputStreamToTarget(inputStream: InputStream, pathInTarget: String, overwriteIfExists: Boolean) {
-        inputStream.use {
+    private fun writeFromInputStreamToTarget(inputStream: InputStream?, pathInTarget: String, overwriteIfExists: Boolean) {
+        inputStream?.use {
             cloudWriter?.putFile(
                 inputStream,
                 pathInTarget,
