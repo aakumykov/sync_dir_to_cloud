@@ -20,7 +20,7 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
     suspend fun getSyncObjectsForTaskWithModificationStates(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
 
-    @Query("UPDATE sync_objects SET execution_state =  :state, execution_error = :errorMsg WHERE id = :syncObjectId")
+    @Query("UPDATE sync_objects SET sync_state =  :state, sync_error = :errorMsg WHERE id = :syncObjectId")
     suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
 
     @Deprecated("Добавить суффикс 'LiveData'")
@@ -36,7 +36,7 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId AND name = :name")
     suspend fun getSyncObject(storageHalf: StorageHalf, taskId: String, name: String): SyncObject?
 
-    @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND execution_state = :syncState")
+    @Query("DELETE FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState AND sync_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(taskId: String, modificationState: ModificationState, syncState: ExecutionState)
 
     @Update
@@ -48,7 +48,7 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE storage_half = :storageHalf AND task_id = :taskId")
     suspend fun setStateOfAllItems(storageHalf: StorageHalf, taskId: String, modificationState: ModificationState)
 
-    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId AND execution_state = :syncState")
+    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId AND sync_state = :syncState")
     suspend fun getObjectsWithSyncState(
         storageHalf: StorageHalf,
         taskId: String,

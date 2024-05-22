@@ -37,8 +37,11 @@ class SyncObject (
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
-    @ColumnInfo(name = "execution_state") val executionState: ExecutionState,
-    @ColumnInfo(name = "execution_error") var executionError: String,
+
+    @ColumnInfo(name = "sync_state") val syncState: ExecutionState,
+    @ColumnInfo(name = "sync_date") val syncDate: Long,
+    @ColumnInfo(name = "sync_error") var syncError: String,
+
     @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
@@ -46,8 +49,6 @@ class SyncObject (
 
     @ColumnInfo(name = "size") var size: Long,
     @ColumnInfo(name = "new_size") var newSize: Long? = null,
-
-    @ColumnInfo(name = "sync_date") val syncDate: Long,
 ) {
     fun toFSItem(basePath: String): FSItem {
         return SimpleFSItem(
@@ -61,7 +62,7 @@ class SyncObject (
     }
 
     override fun toString(): String {
-        return "SyncObject(id='$id', taskId='$taskId', name='$name', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$executionState, executionError='$executionError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize, syncDate=$syncDate)"
+        return "SyncObject(id='$id', taskId='$taskId', name='$name', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, executionError='$syncError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize, syncDate=$syncDate)"
     }
 
     companion object {
@@ -82,8 +83,8 @@ class SyncObject (
                 name = fsItem.name,
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
-                executionState = ExecutionState.NEVER,
-                executionError = "",
+                syncState = ExecutionState.NEVER,
+                syncError = "",
                 modificationState = ModificationState.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,

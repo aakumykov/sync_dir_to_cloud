@@ -120,7 +120,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         ){
             override fun modifyView(item: SyncObject?, viewHolder: ViewHolder?) {
                 if (null != item && null != viewHolder) {
-                    viewHolder.iconView.setImageResource(SyncObjectStateIconProvider.getIconFor(item.executionState))
+                    viewHolder.iconView.setImageResource(SyncObjectStateIconProvider.getIconFor(item.syncState))
                 }
             }
         }
@@ -153,9 +153,9 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 append(dateStringOrNever(syncObject.syncDate))
                 append("\n")
 
-                if (ExecutionState.ERROR == syncObject.executionState) {
+                if (ExecutionState.ERROR == syncObject.syncState) {
                     append("Ошибка синхронизации: ")
-                    append(syncObject.executionError)
+                    append(syncObject.syncError)
                     append("\n")
                 }
             })
