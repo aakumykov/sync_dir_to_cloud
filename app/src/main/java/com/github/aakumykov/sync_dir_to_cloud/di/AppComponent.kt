@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
-import com.github.aakumykov.sync_dir_to_cloud.di.factories.CloudAuthenticatorFactoryAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerAssistedFactoriesModule
+import com.github.aakumykov.sync_dir_to_cloud.factories.CloudAuthenticatorFactoryAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterAssistedFactoriesModule
@@ -16,9 +16,9 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageReaderAssistedFactoriesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterAssistedFactoriesModule3
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterAssistedFactoriesModule3
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
@@ -33,7 +33,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
@@ -55,14 +54,14 @@ import dagger.Component
         WorkerModule::class,
         CoroutineModule::class,
         ViewModelsModule::class,
-        FileListerAssistedFactoriesModule::class,
         StorageReaderAssistedFactoriesModule::class,
         CloudWriterAssistedFactoriesModule::class,
         StorageWriterAssistedFactoriesModule3::class,
         OkhttpModule::class,
         GsonModule::class,
         SourceFileStreamSupplierFactoryModule::class,
-        SourceFileStreamSupplierAssistedFactoriesModule::class
+        SourceFileStreamSupplierAssistedFactoriesModule::class,
+        FileListerCreatorsModule::class,
     ]
 )
 @AppScope
@@ -103,5 +102,6 @@ interface AppComponent {
     fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
 
     fun getStorageReaderCreator(): StorageReaderCreator
+
     fun getStorageWriterCreator(): StorageWriterCreator
 }

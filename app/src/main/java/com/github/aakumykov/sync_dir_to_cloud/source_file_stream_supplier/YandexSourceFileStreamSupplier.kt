@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier
 
 import android.util.Log
-import com.github.aakumykov.cloud_reader.YandexCloudReader
+import com.github.aakumykov.cloud_reader.yandex_cloud_reader.YandexCloudReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierFactory
 import com.google.gson.Gson

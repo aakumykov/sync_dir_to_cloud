@@ -20,7 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.file_selector_factory.FileSelectorFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.FileSelectorFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.EndpointType

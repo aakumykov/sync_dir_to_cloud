@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.di.factories
+package com.github.aakumykov.sync_dir_to_cloud.factories
 
 import androidx.fragment.app.Fragment
 import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticatorFactory

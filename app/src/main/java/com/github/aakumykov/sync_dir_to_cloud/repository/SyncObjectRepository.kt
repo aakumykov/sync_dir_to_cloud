@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import javax.inject.Inject
 
 @AppScope
@@ -44,6 +45,16 @@ class SyncObjectRepository @Inject constructor(
         modificationState: ModificationState
     ): List<SyncObject> {
         return syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId, arrayOf(ModificationState.DELETED))
+    }
+
+    override suspend fun getList(
+        taskId: String,
+        storageHalf: StorageHalf,
+        readingStrategy: ReadingStrategy
+    ): List<SyncObject> {
+        return syncObjectDAO.getObjectsForTask(taskId, storageHalf).filter {
+            readingStrategy.isAcceptedForSync(it)
+        }
     }
 
 

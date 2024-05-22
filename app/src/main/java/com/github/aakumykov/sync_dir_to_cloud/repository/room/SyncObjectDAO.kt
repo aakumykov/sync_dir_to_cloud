@@ -23,6 +23,7 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET execution_state =  :state, execution_error = :errorMsg WHERE id = :syncObjectId")
     suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
 
+    @Deprecated("Добавить суффикс 'LiveData'")
     @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId")
     fun getSyncObjectList(storageHalf: StorageHalf, taskId: String): LiveData<List<SyncObject>>
 
@@ -60,4 +61,7 @@ interface SyncObjectDAO {
         taskId: String,
         modificationState: ModificationState
     ): List<SyncObject>
+
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND storage_half = :storageHalf")
+    fun getObjectsForTask(taskId: String, storageHalf: StorageHalf): List<SyncObject>
 }

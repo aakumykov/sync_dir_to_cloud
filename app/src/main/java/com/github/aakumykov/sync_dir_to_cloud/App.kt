@@ -51,3 +51,5 @@ class App : Application() {
         }
     }
 }
+
+val appComponent: AppComponent get() = App.getAppComponent()

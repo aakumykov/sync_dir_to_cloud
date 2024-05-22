@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 
 interface SyncObjectReader {
 
@@ -14,4 +15,6 @@ interface SyncObjectReader {
     suspend fun getSyncObject(storageHalf: StorageHalf, taskId: String, name: String): SyncObject?
 
     suspend fun getObjectsForTask(storageHalf: StorageHalf, taskId: String, modificationState: ModificationState): List<SyncObject>
+
+    suspend fun getList(taskId: String, storageHalf: StorageHalf, readingStrategy: ReadingStrategy): List<SyncObject>
 }

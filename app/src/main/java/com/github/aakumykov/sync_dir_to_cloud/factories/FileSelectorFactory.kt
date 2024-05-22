@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_selector_factory
+package com.github.aakumykov.sync_dir_to_cloud.factories
 
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.SimpleSortingMode
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment

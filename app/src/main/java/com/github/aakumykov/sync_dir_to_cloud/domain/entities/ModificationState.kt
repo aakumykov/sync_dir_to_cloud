@@ -4,5 +4,7 @@ enum class ModificationState {
     NEW,
     DELETED,
     UNCHANGED,
-    MODIFIED
+    MODIFIED;
 }
+
+fun ModificationState.isNew(): Boolean = this == ModificationState.NEW

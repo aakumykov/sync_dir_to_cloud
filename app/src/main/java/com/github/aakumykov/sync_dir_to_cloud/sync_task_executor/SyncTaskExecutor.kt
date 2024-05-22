@@ -1,13 +1,17 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -66,8 +70,7 @@ class SyncTaskExecutor @Inject constructor(
 
             readSource(syncTask)
             readTarget(syncTask)
-            makeBackups(syncTask)
-            syncSourceWithTarget(taskId)
+//            syncSourceWithTarget(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -117,12 +120,19 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
-    private suspend fun makeBackups(syncTask: SyncTask) {
 
-    }
+    private suspend fun syncSourceWithTarget(syncTask: SyncTask) {
 
-    private suspend fun syncSourceWithTarget(taskId: String) {
+        val syncObjectReader: SyncObjectReader = appComponent.getSyncObjectReader()
 
+        // Выбрать объекты для синхронизации
+        val objectListToSync: List<SyncObject> = syncObjectReader.getList(
+            syncTask.id,
+            StorageHalf.SOURCE,
+            ReadingStrategy.NewAndModified()
+        )
+
+//        targetWriter2.writeToTarget(objectListToSync, ConflictResolver.for(syncTask))
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {
