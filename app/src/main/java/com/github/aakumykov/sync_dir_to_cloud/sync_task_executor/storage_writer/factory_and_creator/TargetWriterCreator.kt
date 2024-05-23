@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import javax.inject.Inject
 
+@Deprecated("Переименовать файл")
 class StorageWriterCreator @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards StorageWriterFactory>
 ) {

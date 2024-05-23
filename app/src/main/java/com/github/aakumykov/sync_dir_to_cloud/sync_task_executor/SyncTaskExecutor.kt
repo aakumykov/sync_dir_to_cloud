@@ -6,16 +6,14 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
+import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.SyncObjectsToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
@@ -32,10 +30,9 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
-    private val syncObjectDeleter: SyncObjectDeleter,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
-    private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator
+    private val syncObjectsToStorageWriter: SyncObjectsToStorageWriter
 ) {
     private var storageReader: StorageReader? = null
     private var targetWriter: StorageWriter? = null
@@ -50,13 +47,6 @@ class SyncTaskExecutor @Inject constructor(
             prepareWriter(syncTask)
             doWork(syncTask)
         }
-    }
-
-
-    suspend fun stopExecutingTask(taskId: String) {
-        // TODO: по-настоящему прерывать работу CloudWriter-а
-        MyLogger.d(tag, "stopExecutingTask(), [${hashCode()}]")
-        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
 
 
@@ -132,9 +122,7 @@ class SyncTaskExecutor @Inject constructor(
             ReadingStrategy.Default()
         )
 
-        val b = objectListToSync
-
-//        targetWriter2.writeToTarget(objectListToSync, ConflictResolver.for(syncTask))
+        syncObjectsToStorageWriter.writeObjectsToTarget(objectListToSync, syncTask)
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {
@@ -143,10 +131,6 @@ class SyncTaskExecutor @Inject constructor(
 
     private fun showReadingSourceNotification(syncTask: SyncTask) {
         syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
-    }
-
-    private suspend fun removePreviouslyDeletedObjects(taskId: String) {
-        syncObjectDeleter.clearObjectsWasSuccessfullyDeleted(taskId)
     }
 
     private suspend fun markObjectsAsDeleted(storageHalf: StorageHalf, taskId: String) {
@@ -184,6 +168,13 @@ class SyncTaskExecutor @Inject constructor(
                 )
             }
         }
+    }
+
+
+    suspend fun stopExecutingTask(taskId: String) {
+        // TODO: по-настоящему прерывать работу CloudWriter-а
+        MyLogger.d(tag, "stopExecutingTask(), [${hashCode()}]")
+        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
 
 
