@@ -1,10 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.factories.CloudAuthenticatorFactoryAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
@@ -22,6 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInter
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.cloud_auth.CloudAuthManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
@@ -34,12 +37,15 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.google.gson.Gson
 import dagger.Component
+import javax.inject.Named
 
 @Component(
     modules = [
@@ -104,4 +110,10 @@ interface AppComponent {
     fun getStorageReaderCreator(): StorageReaderCreator
 
     fun getStorageWriterCreator(): StorageWriterCreator
+
+    fun getSourceFileStreamSupplierCreator(): SourceFileStreamSupplierCreator
+
+    fun getAuthHolder(): AuthHolder
 }
+
+val authHolder: AuthHolder get() = appComponent.getAuthHolder()

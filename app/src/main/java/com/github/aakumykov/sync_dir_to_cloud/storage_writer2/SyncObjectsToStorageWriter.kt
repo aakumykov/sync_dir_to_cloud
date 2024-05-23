@@ -9,9 +9,14 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import javax.inject.Inject
 
-class SyncObjectsToStorageWriter @Inject constructor(
+class SyncObjectsToStorageWriter @AssistedInject constructor(
+    @Assisted authToken: String,
+    @Assisted targetStorageType: StorageType,
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
     private val storageWriter2Creator: StorageWriter2_Creator,
     private val syncObjectStateChanger: SyncObjectStateChanger
@@ -82,5 +87,16 @@ class SyncObjectsToStorageWriter @Inject constructor(
 
     private fun interface SuspendableRunnable {
         suspend fun runSuspend()
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(authToken: String?, targetStorageType: StorageType?): SyncObjectsToStorageWriter
+    }
+
+    class Creator @Inject constructor(private val factory: Factory) {
+        fun create(authToken: String?, targetStorageType: StorageType?): SyncObjectsToStorageWriter {
+            return factory.create(authToken, targetStorageType)
+        }
     }
 }

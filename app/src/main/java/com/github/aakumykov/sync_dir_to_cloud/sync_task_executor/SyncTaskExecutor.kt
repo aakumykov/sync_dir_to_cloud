@@ -2,6 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.di.authHolder
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -14,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
+import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.SyncObjectsToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
@@ -30,11 +33,13 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
+    private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
-//    private val syncObjectsToStorageWriter: SyncObjectsToStorageWriter
-    private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator
+    private val syncObjectsToStorageWriterCreator: SyncObjectsToStorageWriter.Creator,
+    private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
 ) {
+    private var currentTask: SyncTask? = null
     private var storageReader: StorageReader? = null
     private var storageWriter: StorageWriter? = null
 
@@ -44,6 +49,7 @@ class SyncTaskExecutor @Inject constructor(
         MyLogger.d(tag, "executeSyncTask() [${classNameWithHash()}]")
 
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
+            currentTask = syncTask
             prepareReader(syncTask)
             prepareWriter(syncTask)
             doWork(syncTask)
@@ -79,18 +85,15 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readSourceReal(syncTask: SyncTask) {
-        cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)?.also { cloudAuth ->
-            App.getAppComponent()
-                .getStorageReaderCreator()
-                .create(
-                    syncTask.sourceStorageType,
-                    cloudAuth.authToken,
-                    syncTask.id,
-                    ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
-                )
-                ?.read(StorageHalf.SOURCE, syncTask.sourcePath)
-        }
+        storageReaderCreator.create(
+            syncTask.sourceStorageType,
+            authHolder.getSourceAuthToken(syncTask),
+            syncTask.id,
+            ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+        )
+            ?.read(StorageHalf.SOURCE, syncTask.sourcePath)
     }
+
 
     private suspend fun readTarget(syncTask: SyncTask) {
         markObjectsAsDeleted(StorageHalf.TARGET, syncTask.id)
@@ -98,23 +101,23 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readTargetReal(syncTask: SyncTask) {
-        cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.also { cloudAuth ->
-            App.getAppComponent()
-                .getStorageReaderCreator()
-                .create(
-                    syncTask.targetStorageType,
-                    cloudAuth.authToken,
-                    syncTask.id,
-                    ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
-                )
-                ?.read(StorageHalf.TARGET, syncTask.targetPath)
-        }
+        storageReaderCreator.create(
+            syncTask.targetStorageType,
+            authHolder.getTargetAuthToken(syncTask),
+            syncTask.id,
+            ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+        )?.read(StorageHalf.TARGET, syncTask.targetPath)
     }
 
 
     private suspend fun syncSourceWithTarget(syncTask: SyncTask) {
 
-        val syncObjectReader: SyncObjectReader = appComponent.getSyncObjectReader()
+        // FIXME: класс-писатель не должен читать
+        /*storageWriter?.write(
+            sourceFileStreamSupplier(syncTask.id, syncTask.sourceStorageType!!),
+            ReadingStrategy.DEFAULT,
+            true
+        )*/
 
         // Выбрать объекты для синхронизации
         val objectListToSync: List<SyncObject> = syncObjectReader.getList(
@@ -123,14 +126,12 @@ class SyncTaskExecutor @Inject constructor(
             ReadingStrategy.Default()
         )
 
-//        syncObjectsToStorageWriter.writeObjectsToTarget(objectListToSync, syncTask)
-
-        // FIXME: класс-бэкапер
-        sourceFileStreamSupplierCreator.create(syncTask.id, syncTask.sourceStorageType).also {
-            // FIXME: класс-писатель не должен читать
-            storageWriter?.write(it, ReadingStrategy.Default(), true)
-        }
+        syncObjectsToStorageWriterCreator.create(
+            authHolder.getTargetAuthToken(syncTask),
+            syncTask.targetStorageType
+        ).writeObjectsToTarget(objectListToSync, syncTask)
     }
+
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {
         syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
@@ -152,10 +153,10 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun prepareReader(syncTask: SyncTask) {
         syncTask.sourceAuthId?.also { sourceAuthId ->
-            cloudAuthReader.getCloudAuth(sourceAuthId)?.also { sourceAuth ->
+            cloudAuthReader.getCloudAuth(sourceAuthId)?.also { sourceCloudAuth ->
                 storageReader = storageReaderCreator.create(
                     syncTask.sourceStorageType,
-                    sourceAuth.authToken,
+                    sourceCloudAuth.authToken,
                     syncTask.id,
                     changesDetectionStrategy
                 )
@@ -165,10 +166,10 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun prepareWriter(syncTask: SyncTask) {
         syncTask.targetAuthId?.also { targetAuthId ->
-            cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetAuth ->
+            cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetCloudAuth ->
                 storageWriter = storageWriterCreator.create(
                     syncTask.targetStorageType!!,
-                    targetAuth.authToken,
+                    targetCloudAuth.authToken,
                     syncTask.id,
                     syncTask.sourcePath!!,
                     syncTask.targetPath!!

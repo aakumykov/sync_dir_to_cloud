@@ -32,4 +32,8 @@ abstract class ReadingStrategy {
             return true
         }
     }
+
+    companion object {
+        val DEFAULT: ReadingStrategy = ReadingStrategy.Default()
+    }
 }
