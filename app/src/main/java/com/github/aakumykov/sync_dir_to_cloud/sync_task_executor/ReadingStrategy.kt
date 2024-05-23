@@ -1,36 +1,35 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import androidx.annotation.CallSuper
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.isNew
 
-abstract class ReadingStrategy(
-    private val syncObjectFileFilteringPredicate: (SyncObject) -> Boolean,
-    private val syncObjectDirFilteringPredicate: (SyncObject) -> Boolean,
-) {
+abstract class ReadingStrategy {
 
-    constructor(syncObjectUnifiedFilteringPredicate: (SyncObject) -> Boolean)
-            : this(syncObjectUnifiedFilteringPredicate, syncObjectUnifiedFilteringPredicate)
+    abstract fun isAcceptedForSync(syncObject: SyncObject): Boolean
 
-    fun isAcceptedForSync(syncObject: SyncObject): Boolean {
-        return when(syncObject.isDir) {
-            true -> syncObjectDirFilteringPredicate.invoke(syncObject)
-            false -> syncObjectFileFilteringPredicate.invoke(syncObject)
+
+    /**
+     * Отбирает для синхронизации новые, изменённые или никогда не синхронизировавшиеся объекты.
+     */
+    open class Default : ReadingStrategy() {
+        override fun isAcceptedForSync(syncObject: SyncObject): Boolean {
+
+            val isNewOrModified = syncObject.modificationState in arrayOf(
+                ModificationState.NEW,
+                ModificationState.MODIFIED
+            )
+
+            val isNeverSynced = syncObject.syncState == ExecutionState.NEVER
+
+            return isNewOrModified or isNeverSynced
         }
     }
 
-    companion object {
-        fun createFor(syncTask: SyncTask): ReadingStrategy {
-            return All()
+
+    class All : Default() {
+        override fun isAcceptedForSync(syncObject: SyncObject): Boolean {
+            return true
         }
     }
-
-    class All : ReadingStrategy({ true }, { true })
-
-    class New : ReadingStrategy({ it.modificationState.isNew() })
-
-    class Modified : ReadingStrategy({ it.modificationState.isNew() })
-
-    class NewAndModified : ReadingStrategy({ it.modificationState.isNew() })
 }

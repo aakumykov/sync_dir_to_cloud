@@ -129,7 +129,7 @@ class SyncTaskExecutor @Inject constructor(
         val objectListToSync: List<SyncObject> = syncObjectReader.getList(
             syncTask.id,
             StorageHalf.SOURCE,
-            ReadingStrategy.NewAndModified()
+            ReadingStrategy.Default()
         )
 
         val b = objectListToSync
