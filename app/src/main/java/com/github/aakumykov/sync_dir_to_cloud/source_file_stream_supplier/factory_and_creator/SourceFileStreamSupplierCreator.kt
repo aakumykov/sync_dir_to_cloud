@@ -7,7 +7,6 @@ import javax.inject.Inject
 class SourceFileStreamSupplierCreator @Inject constructor(
     private val map: Map<StorageType, SourceFileStreamSupplierFactory>
 ) {
-    @Deprecated("Передавать готовый SyncTask или интерфейс с нужными данными")
     fun create(taskId: String, storageType: StorageType?): SourceFileStreamSupplier? {
         return map[storageType]?.create(taskId)
     }

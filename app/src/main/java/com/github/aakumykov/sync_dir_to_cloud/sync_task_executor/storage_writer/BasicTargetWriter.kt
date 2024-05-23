@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
@@ -36,18 +37,23 @@ abstract class BasicStorageWriter (
     }
 
 
-    override suspend fun write(sourceFileStreamSupplier: SourceFileStreamSupplier?, overwriteIfExists: Boolean) {
+    override suspend fun write(
+        sourceFileStreamSupplier: SourceFileStreamSupplier?,
+        readingStrategy: ReadingStrategy,
+        overwriteIfExists: Boolean
+    ) {
         deleteDeletedFiles()
         deleteDeletedDirs()
-        copyDirs()
-        copyFiles(sourceFileStreamSupplier, overwriteIfExists)
+        copyDirs(readingStrategy)
+        copyFiles(sourceFileStreamSupplier, readingStrategy, overwriteIfExists)
     }
 
 
-    private suspend fun copyDirs() {
+    private suspend fun copyDirs(readingStrategy: ReadingStrategy) {
 
         syncObjectReader.getObjectsNeedsToBeSynced(StorageHalf.SOURCE, taskId)
             .filter { it.isDir }
+            .filter { readingStrategy.isAcceptedForSync(it) }
             .forEach { dirSyncObject ->
 
 //                MyLogger.d(TAG, "Создание каталога (${classNameWithHash()}): '${dirSyncObject.name}'")
@@ -70,10 +76,12 @@ abstract class BasicStorageWriter (
 
     private suspend fun copyFiles(
         sourceFileStreamSupplier: SourceFileStreamSupplier?,
+        readingStrategy: ReadingStrategy,
         overwriteIfExists: Boolean
     ) {
         syncObjectReader.getObjectsNeedsToBeSynced(StorageHalf.SOURCE, taskId)
             .filter { !it.isDir }
+            .filter { readingStrategy.isAcceptedForSync(it) }
             .forEach { fileSyncObject ->
 
 //                MyLogger.d(TAG, "Отправка файла (${classNameWithHash()}): '${syncObject.name}'")
