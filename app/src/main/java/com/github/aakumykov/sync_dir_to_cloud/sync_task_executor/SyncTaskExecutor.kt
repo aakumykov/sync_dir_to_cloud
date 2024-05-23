@@ -70,7 +70,7 @@ class SyncTaskExecutor @Inject constructor(
 
             readSource(syncTask)
             readTarget(syncTask)
-//            syncSourceWithTarget(syncTask)
+            syncSourceWithTarget(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -131,6 +131,8 @@ class SyncTaskExecutor @Inject constructor(
             StorageHalf.SOURCE,
             ReadingStrategy.NewAndModified()
         )
+
+        val b = objectListToSync
 
 //        targetWriter2.writeToTarget(objectListToSync, ConflictResolver.for(syncTask))
     }
