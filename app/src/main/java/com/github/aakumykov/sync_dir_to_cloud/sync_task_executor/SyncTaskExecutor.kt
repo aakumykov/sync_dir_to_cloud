@@ -1,11 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import com.github.aakumykov.sync_dir_to_cloud.App
-import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.authHolder
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
@@ -29,15 +25,23 @@ import javax.inject.Inject
 class SyncTaskExecutor @Inject constructor(
     private val storageReaderCreator: StorageReaderCreator,
     private val storageWriterCreator: StorageWriterCreator,
+
     private val cloudAuthReader: CloudAuthReader,
+
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
+
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
-    private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime,
+    private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime, // FIXME: это не нужно передавать через конструктор
+
     private val syncObjectsToStorageWriterCreator: SyncObjectsToStorageWriter.Creator,
+
+    // FIXME: SourceFileStreamSupplierCreator нужно внедрять в SyncObjectsToStorageWriter
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
+
+    private val inputStreamSupplier: InputStreamSupplier
 ) {
     private var currentTask: SyncTask? = null
     private var storageReader: StorageReader? = null
@@ -67,7 +71,7 @@ class SyncTaskExecutor @Inject constructor(
 
             readSource(syncTask)
             readTarget(syncTask)
-            syncSourceWithTarget(syncTask)
+            doSync(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -110,26 +114,13 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private suspend fun syncSourceWithTarget(syncTask: SyncTask) {
+    private suspend fun doSync(syncTask: SyncTask) {
+        // Скопировать новые в источнике объекты.
+        // Скопировать изменившиеся в источнике объекты.
+        // Скопировать исчезнувшие в приёмнике объекты.
+        // Удалить в приёмнике объекты, удалённые в источнике.
 
-        // FIXME: класс-писатель не должен читать
-        /*storageWriter?.write(
-            sourceFileStreamSupplier(syncTask.id, syncTask.sourceStorageType!!),
-            ReadingStrategy.DEFAULT,
-            true
-        )*/
-
-        // Выбрать объекты для синхронизации
-        val objectListToSync: List<SyncObject> = syncObjectReader.getList(
-            syncTask.id,
-            StorageHalf.SOURCE,
-            ReadingStrategy.Default()
-        )
-
-        syncObjectsToStorageWriterCreator.create(
-            authHolder.getTargetAuthToken(syncTask),
-            syncTask.targetStorageType
-        ).writeObjectsToTarget(objectListToSync, syncTask)
+//        syncObjectsToStorageWriterCreator.create(syncTask)
     }
 
 

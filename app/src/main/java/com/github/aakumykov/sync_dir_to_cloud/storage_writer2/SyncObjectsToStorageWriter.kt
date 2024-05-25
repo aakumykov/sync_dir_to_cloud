@@ -5,9 +5,11 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -89,14 +91,23 @@ class SyncObjectsToStorageWriter @AssistedInject constructor(
         suspend fun runSuspend()
     }
 
+
     @AssistedFactory
     interface Factory {
         fun create(authToken: String?, targetStorageType: StorageType?): SyncObjectsToStorageWriter
     }
 
-    class Creator @Inject constructor(private val factory: Factory) {
-        fun create(authToken: String?, targetStorageType: StorageType?): SyncObjectsToStorageWriter {
-            return factory.create(authToken, targetStorageType)
+
+    class Creator @Inject constructor(
+        private val factory: Factory,
+        private val authHolder: AuthHolder
+    ) {
+        suspend fun create(syncTask: SyncTask): SyncObjectsToStorageWriter {
+
+            return factory.create(
+                authHolder.getTargetAuthToken(syncTask),
+                syncTask.targetStorageType
+            )
         }
     }
 }

@@ -13,21 +13,30 @@ class AuthHolder @Inject constructor(
     private var _sourceCloudAuth: CloudAuth? = null
     private var _targetCloudAuth: CloudAuth? = null
 
-    suspend fun getSourceCloudAuth(syncTask: SyncTask): CloudAuth? {
+
+    suspend fun getSourceAuthToken(syncTask: SyncTask): String?
+            = getSourceCloudAuth(syncTask)?.authToken
+
+
+    // TODO: Предоставлять сюда подобъект SyncTask
+    /*interface AuthTokenSupplier {
+        val sourceAuthId: String?
+        val targetAuthId: String?
+    }*/
+
+    suspend fun getTargetAuthToken(syncTask: SyncTask): String?
+            = getTargetCloudAuth(syncTask)?.authToken
+
+
+    private suspend fun getSourceCloudAuth(syncTask: SyncTask): CloudAuth? {
         if (null == _sourceCloudAuth)
             _sourceCloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
         return _sourceCloudAuth
     }
 
-    suspend fun getTargetCloudAuth(syncTask: SyncTask): CloudAuth? {
+    private suspend fun getTargetCloudAuth(syncTask: SyncTask): CloudAuth? {
         if (null == _targetCloudAuth)
             _targetCloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
         return _targetCloudAuth
     }
-
-    suspend fun getSourceAuthToken(syncTask: SyncTask): String?
-        = getSourceCloudAuth(syncTask)?.authToken
-
-    suspend fun getTargetAuthToken(syncTask: SyncTask): String?
-        = getTargetCloudAuth(syncTask)?.authToken
 }

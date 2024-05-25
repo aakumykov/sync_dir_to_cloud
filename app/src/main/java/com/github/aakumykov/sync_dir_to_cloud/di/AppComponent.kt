@@ -2,15 +2,14 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.factories.CloudAuthenticatorFactoryAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
@@ -24,11 +23,11 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInter
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.cloud_auth.CloudAuthManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
+import com.github.aakumykov.sync_dir_to_cloud.factories.CloudAuthenticatorFactoryAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
@@ -45,7 +44,6 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.google.gson.Gson
 import dagger.Component
-import javax.inject.Named
 
 @Component(
     modules = [
@@ -68,6 +66,7 @@ import javax.inject.Named
         SourceFileStreamSupplierFactoryModule::class,
         SourceFileStreamSupplierAssistedFactoriesModule::class,
         FileListerCreatorsModule::class,
+        CloudReaderFactoriesModule::class,
     ]
 )
 @AppScope
