@@ -12,10 +12,10 @@ interface StorageWriters2_Module {
     @Binds
     @IntoMap
     @KeyStorageType(StorageType.LOCAL)
-    fun bindLocalStorageWriter2Factory(storageWriter2: LocalStorageWriter2.Factory): StorageWriter2_Factory
+    fun bindLocalStorageWriter2Factory(factory: LocalStorageWriter2.Factory): StorageWriter2_Factory
 
     @Binds
     @IntoMap
     @KeyStorageType(StorageType.YANDEX_DISK)
-    fun bindYandexDiskStorageWriter2Factory(storageWriter2: YandexDiskStorageWriter2.Factory): StorageWriter2_Factory
+    fun bindYandexDiskStorageWriter2Factory(factory: YandexDiskStorageWriter2.Factory): StorageWriter2_Factory
 }

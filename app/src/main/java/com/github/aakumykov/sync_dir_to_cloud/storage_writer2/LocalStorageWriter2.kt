@@ -44,6 +44,6 @@ class LocalStorageWriter2 @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory : StorageWriter2_Factory {
-        override fun createStorageWriter2(targetStorageType: StorageType, targetAuthToken: String): LocalStorageWriter2
+        override fun createStorageWriter2(targetStorageType: StorageType?, targetAuthToken: String?): LocalStorageWriter2
     }
 }

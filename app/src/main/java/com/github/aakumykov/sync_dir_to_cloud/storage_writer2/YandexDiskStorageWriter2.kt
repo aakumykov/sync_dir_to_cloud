@@ -45,6 +45,6 @@ class YandexDiskStorageWriter2 @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory : StorageWriter2_Factory {
-        override fun createStorageWriter2(targetStorageType: StorageType, targetAuthToken: String): YandexDiskStorageWriter2
+        override fun createStorageWriter2(targetStorageType: StorageType?, targetAuthToken: String?): YandexDiskStorageWriter2
     }
 }
