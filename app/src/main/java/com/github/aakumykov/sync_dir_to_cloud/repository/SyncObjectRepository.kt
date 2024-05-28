@@ -15,6 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 @AppScope
@@ -44,7 +45,19 @@ class SyncObjectRepository @Inject constructor(
         taskId: String,
         modificationState: ModificationState
     ): List<SyncObject> {
-        return syncObjectDAO.getSyncObjectsForTaskWithModificationStates(taskId, arrayOf(ModificationState.DELETED))
+        return syncObjectDAO.getSyncObjectsForTaskWithModificationState(taskId, modificationState)
+    }
+
+    override suspend fun getObjectsForTask(
+        storageHalf: StorageHalf,
+        taskId: String,
+        syncState: ExecutionState
+    ): List<SyncObject> {
+        return syncObjectDAO.getSyncObjectsForTaskWithSyncState(storageHalf, taskId, syncState)
+    }
+
+    override suspend fun getInTargetMissingObjects(taskId: String): List<SyncObject> {
+        return syncObjectDAO.getObjectsNotDeletedInSourceButDeletedInTarget(taskId)
     }
 
     override suspend fun getList(
@@ -81,11 +94,39 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun clearObjectsWasSuccessfullyDeleted(taskId: String)
         = syncObjectDAO.deleteObjectsWithModificationAndSyncState(taskId, ModificationState.DELETED, ExecutionState.SUCCESS)
 
+
     override suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
         = syncObjectDAO.updateSyncObject(modifiedSyncObject)
 
-    override suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
-        = syncObjectDAO.changeModificationState(objectId, modificationState)
+
+    override suspend fun changeModificationState(
+        syncObject: SyncObject,
+        storageHalf: StorageHalf,
+        modificationState: ModificationState
+    ) {
+        syncObjectDAO.changeModificationState(
+            storageHalf = storageHalf,
+            name = syncObject.name,
+            relativeParentDirPath = syncObject.relativeParentDirPath,
+            taskId = syncObject.taskId,
+            modificationState = modificationState
+        )
+    }
+
+    override suspend fun setErrorState(
+        syncObject: SyncObject,
+        storageHalf: StorageHalf,
+        throwable: Throwable?
+    ) {
+        syncObjectDAO.setErrorState(
+            storageHalf = storageHalf,
+            name = syncObject.name,
+            relativeParentDirPath = syncObject.relativeParentDirPath,
+            taskId = syncObject.taskId,
+            errorMessage = ExceptionUtils.getErrorMessage(throwable)
+        )
+    }
+
 
     override suspend fun markBadStatesAsNeverSynced(taskId: String) {
         badObjectStateResettingDAO.markRunningStateAsNeverSynced(taskId)

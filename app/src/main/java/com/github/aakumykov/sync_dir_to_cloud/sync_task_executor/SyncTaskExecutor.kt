@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -32,6 +33,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskNotificator: SyncTaskNotificator,
 
     private val syncObjectReader: SyncObjectReader,
+    private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime, // FIXME: это не нужно передавать через конструктор
 
@@ -109,24 +111,83 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun doSync(syncTask: SyncTask) {
+        // Скопировать то, что никогда не копировалось (ситуация возникает в процессе разработки).
         // Скопировать новые в источнике объекты.
         // Скопировать изменившиеся в источнике объекты.
         // Скопировать исчезнувшие в приёмнике объекты.
         // Удалить в приёмнике объекты, удалённые в источнике.
 
+        // TODO: исправить ошибочные статусы (например, сейчас есть элементы,
+        //  зависшие в состоянии "выполняется". При этом м.б. нужно прервать их возможную синхронизацию...
+
+        copyInTargetMissingItems(syncTask)
+        copyNeverSyncedItems(syncTask)
+        copyErrorItems(syncTask)
         copyNewItems(syncTask)
+        copyModifiedItems(syncTask)
     }
 
-
-    private suspend fun copyNewItems(syncTask: SyncTask) {
+    private suspend fun copyNeverSyncedItems(syncTask: SyncTask) {
         syncObjectReader.getObjectsForTask(
             StorageHalf.SOURCE,
             syncTask.id,
-            ModificationState.NEW
-        ).onEach { syncObject ->
+            ExecutionState.NEVER
+        ).forEach { syncObject ->
             syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
         }
     }
+
+    private suspend fun copyErrorItems(syncTask: SyncTask) {
+        syncObjectReader.getObjectsForTask(
+            StorageHalf.SOURCE,
+            syncTask.id,
+            ExecutionState.ERROR
+        ).forEach { syncObject ->
+            syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
+        }
+    }
+
+    private suspend fun copyNewItems(syncTask: SyncTask) {
+        copyItemsWithModificationState(syncTask, ModificationState.NEW)
+    }
+
+    private suspend fun copyModifiedItems(syncTask: SyncTask) {
+        copyItemsWithModificationState(syncTask, ModificationState.MODIFIED)
+    }
+
+    private suspend fun copyInTargetMissingItems(syncTask: SyncTask) {
+
+        syncObjectReader.getInTargetMissingObjects(syncTask.id)
+            .let { it }
+            .forEach { syncObject ->
+                syncObjectToTargetWriter2Creator.create(syncTask)
+                    ?.write(syncTask, syncObject, true)
+                    ?.also { result ->
+                        if (result.isSuccess) { syncObjectStateChanger.changeModificationState(
+                            syncObject,
+                            StorageHalf.TARGET,
+                            ModificationState.UNCHANGED
+                        ) }
+                        else { syncObjectStateChanger.setErrorState(
+                            syncObject,
+                            StorageHalf.SOURCE,
+                            result.exceptionOrNull()
+                        ) }
+                    }
+            }
+    }
+
+
+    private suspend fun copyItemsWithModificationState(syncTask: SyncTask, modificationState: ModificationState) {
+        syncObjectReader.getObjectsForTask(
+            StorageHalf.SOURCE,
+            syncTask.id,
+            modificationState
+        ).forEach { syncObject ->
+            syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
+        }
+    }
+
 
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {

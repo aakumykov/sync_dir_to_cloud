@@ -17,8 +17,8 @@ interface SyncObjectDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add(syncObject: SyncObject)
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state IN (:modificationStateList)")
-    suspend fun getSyncObjectsForTaskWithModificationStates(taskId: String, modificationStateList: Array<ModificationState>): List<SyncObject>
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND modification_state = :modificationState")
+    suspend fun getSyncObjectsForTaskWithModificationState(taskId: String, modificationState: ModificationState): List<SyncObject>
 
     @Query("UPDATE sync_objects SET sync_state =  :state, sync_error = :errorMsg WHERE id = :syncObjectId")
     suspend fun setExecutionState(syncObjectId: String, state: ExecutionState, errorMsg: String)
@@ -42,8 +42,21 @@ interface SyncObjectDAO {
     @Update
     suspend fun updateSyncObject(syncObject: SyncObject)
 
-    @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE id = :objectId")
-    suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
+
+    @Query("UPDATE sync_objects " +
+            "SET modification_state = :modificationState " +
+            "WHERE storage_half = :storageHalf " +
+            "AND name = :name " +
+            "AND relative_parent_dir_path = :relativeParentDirPath " +
+            "AND task_id = :taskId")
+    suspend fun changeModificationState(
+        storageHalf: StorageHalf,
+        name: String,
+        relativeParentDirPath: String,
+        taskId: String,
+        modificationState: ModificationState
+    )
+
 
     @Query("UPDATE sync_objects SET modification_state = :modificationState WHERE storage_half = :storageHalf AND task_id = :taskId")
     suspend fun setStateOfAllItems(storageHalf: StorageHalf, taskId: String, modificationState: ModificationState)
@@ -62,6 +75,45 @@ interface SyncObjectDAO {
         modificationState: ModificationState
     ): List<SyncObject>
 
+    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId AND sync_state = :syncState")
+    suspend fun getSyncObjectsForTaskWithSyncState(
+        storageHalf: StorageHalf,
+        taskId: String, syncState: ExecutionState
+    ): List<SyncObject>
+
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND storage_half = :storageHalf")
     fun getObjectsForTask(taskId: String, storageHalf: StorageHalf): List<SyncObject>
+
+    //
+    // Разработал для выборки исчезнувших в приёмнике элементов, такой запрос. Но будет ли он работать?
+    //
+    /*@Query("SELECT * FROM sync_objects AS T2, sync_objects AS T1 " +
+            "INNER JOIN sync_objects ON T1.name = T2.name " +
+            "WHERE (T2.task_id = :taskId) " +
+            "AND (T2.storage_half = 'TARGET' AND T1.storage_half = 'SOURCE') " +
+            "AND (T2.modification_state = 'DELETED' AND T1.modification_state IS NOT 'DELETED') " +
+            "GROUP BY T2.name")*/
+    @Query("SELECT * " +
+            "FROM sync_objects AS T2 " +
+            "INNER JOIN sync_objects AS T1 " +
+            "ON T1.name = T2.name " +
+            "WHERE (T2.task_id = :taskId) " +
+            "AND (T2.storage_half = 'TARGET' AND T1.storage_half = 'SOURCE') " +
+            "AND (T2.modification_state = 'DELETED' AND T1.modification_state IS NOT 'DELETED') " +
+            "GROUP BY T2.name")
+    fun getObjectsNotDeletedInSourceButDeletedInTarget(taskId: String): List<SyncObject>
+
+
+    @Query("UPDATE sync_objects " +
+            "SET sync_error = :errorMessage " +
+            "WHERE storage_half = :storageHalf " +
+            "AND name = :name " +
+            "AND relative_parent_dir_path = :relativeParentDirPath " +
+            "AND task_id = :taskId")
+    @Deprecated("переделать setExecutionState()")
+    fun setErrorState(storageHalf: StorageHalf,
+                      name: String,
+                      relativeParentDirPath: String,
+                      taskId: String,
+                      errorMessage: String?)
 }

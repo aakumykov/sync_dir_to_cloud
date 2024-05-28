@@ -2,11 +2,24 @@ package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_ob
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 
 // TODO: дать более осмысленное название / разделить на отдельные интерфейсы
 interface SyncObjectStateChanger {
+
     suspend fun changeExecutionState(objectId: String, syncState: ExecutionState, errorMsg: String = "")
+
     // TODO: переименовать в setSyncTime()
     suspend fun setSyncDate(objectId: String, date: Long)
-    suspend fun changeModificationState(objectId: String, modificationState: ModificationState)
+
+    suspend fun changeModificationState(
+        syncObject: SyncObject,
+        storageHalf: StorageHalf,
+        modificationState: ModificationState
+    )
+
+    // FIXME: убрать этот метод, передав его функцию "changeExecutionState" (который
+    //  нужно переименовать в "changeSyncState")
+    suspend fun setErrorState(syncObject: SyncObject, storageHalf: StorageHalf, throwable: Throwable?)
 }
