@@ -113,9 +113,9 @@ abstract class BasicStorageWriter (
 //        kotlinx.coroutines.Runnable {  }
 
         try {
-            syncObjectStateChanger.changeSyncState(ExecutionState.RUNNING, "")
+            syncObjectStateChanger.changeSyncState(syncObject.id, ExecutionState.RUNNING, "")
             writeAction.run()
-            syncObjectStateChanger.changeSyncState(ExecutionState.SUCCESS, "")
+            syncObjectStateChanger.changeSyncState(syncObject.id, ExecutionState.SUCCESS, "")
             syncObjectStateChanger.setSyncDate(syncObject.id, currentTime())
         }
         catch (t: Throwable) {
@@ -138,7 +138,7 @@ abstract class BasicStorageWriter (
 
 
     private suspend fun markObjectAsFailed(syncObject: SyncObject, errorMsg: String) {
-        syncObjectStateChanger.changeSyncState(ExecutionState.ERROR, errorMsg)
+        syncObjectStateChanger.changeSyncState(syncObject.id, ExecutionState.ERROR, errorMsg)
     }
 
 

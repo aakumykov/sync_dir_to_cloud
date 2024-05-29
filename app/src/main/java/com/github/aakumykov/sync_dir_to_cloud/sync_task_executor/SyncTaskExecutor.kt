@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -20,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
@@ -33,8 +35,10 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskNotificator: SyncTaskNotificator,
 
     private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDeleter: SyncObjectDeleter,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectStateResetter: SyncObjectStateResetter,
+
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime, // FIXME: это не нужно передавать через конструктор
 
     private val syncObjectToTargetWriter2Creator: SyncObjectToTargetWriter2.Creator,
@@ -67,7 +71,6 @@ class SyncTaskExecutor @Inject constructor(
 
             readSource(syncTask)
             readTarget(syncTask)
-            resetBadSyncStates(syncTask)
             doSync(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
@@ -98,6 +101,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun readTarget(syncTask: SyncTask) {
         syncObjectStateResetter.markAllObjectsAsDeleted(StorageHalf.TARGET, syncTask.id)
+        delay(1000)
         readTargetReal(syncTask)
     }
 
