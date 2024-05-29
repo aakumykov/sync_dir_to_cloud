@@ -117,21 +117,6 @@ class SyncObjectRepository @Inject constructor(
         )
     }
 
-    override suspend fun setErrorState(
-        syncObject: SyncObject,
-        storageHalf: StorageHalf,
-        throwable: Throwable?
-    ) {
-        syncObjectDAO.setErrorState(
-            storageHalf = storageHalf,
-            name = syncObject.name,
-            relativeParentDirPath = syncObject.relativeParentDirPath,
-            taskId = syncObject.taskId,
-            errorMessage = ExceptionUtils.getErrorMessage(throwable)
-        )
-    }
-
-
     override suspend fun markBadStatesAsNeverSynced(taskId: String) {
         badObjectStateResettingDAO.markRunningStateAsNeverSynced(taskId)
         badObjectStateResettingDAO.markErrorStateAsNeverSynced(taskId)

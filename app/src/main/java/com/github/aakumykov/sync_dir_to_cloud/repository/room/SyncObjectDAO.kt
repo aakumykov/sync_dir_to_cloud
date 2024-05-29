@@ -110,20 +110,4 @@ interface SyncObjectDAO {
             "AND (T2.modification_state = 'DELETED' AND T1.modification_state IS NOT 'DELETED') " +
             "GROUP BY T2.name")
     fun getObjectsNotDeletedInSourceButDeletedInTarget(taskId: String): List<SyncObject>
-
-
-    @Query("UPDATE sync_objects " +
-            "SET sync_error = :errorMessage " +
-            "WHERE storage_half = :storageHalf " +
-            "AND name = :name " +
-            "AND relative_parent_dir_path = :relativeParentDirPath " +
-            "AND task_id = :taskId")
-    @Deprecated("переделать setExecutionState()")
-    fun setErrorState(
-                storageHalf: StorageHalf,
-                name: String,
-                relativeParentDirPath: String,
-                taskId: String,
-                errorMessage: String?
-    )
 }

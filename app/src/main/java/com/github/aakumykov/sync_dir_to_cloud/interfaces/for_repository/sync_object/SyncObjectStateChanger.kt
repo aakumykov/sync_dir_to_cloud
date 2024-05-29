@@ -18,8 +18,4 @@ interface SyncObjectStateChanger {
         storageHalf: StorageHalf,
         modificationState: ModificationState
     )
-
-    // FIXME: убрать этот метод, передав его функцию "changeExecutionState" (который
-    //  нужно переименовать в "changeSyncState")
-    suspend fun setErrorState(syncObject: SyncObject, storageHalf: StorageHalf, throwable: Throwable?)
 }

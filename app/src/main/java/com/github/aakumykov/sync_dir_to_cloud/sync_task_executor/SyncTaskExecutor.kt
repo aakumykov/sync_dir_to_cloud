@@ -35,8 +35,6 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskNotificator: SyncTaskNotificator,
 
     private val syncObjectReader: SyncObjectReader,
-    private val syncObjectDeleter: SyncObjectDeleter,
-    private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectStateResetter: SyncObjectStateResetter,
 
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime, // FIXME: это не нужно передавать через конструктор
@@ -65,6 +63,8 @@ class SyncTaskExecutor @Inject constructor(
 
         val taskId = syncTask.id
         val notificationId = syncTask.notificationId
+
+        showReadingSourceNotification(syncTask)
 
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
@@ -117,18 +117,12 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun doSync(syncTask: SyncTask) {
-        // Скопировать то, что никогда не копировалось (ситуация возникает в процессе разработки).
-        // Скопировать новые в источнике объекты.
-        // Скопировать изменившиеся в источнике объекты.
-        // Скопировать исчезнувшие в приёмнике объекты.
-        // Удалить в приёмнике объекты, удалённые в источнике.
 
         copyNewItems(syncTask)
         copyModifiedItems(syncTask)
 
-//        copyInTargetMissingItems(syncTask)
+        copyInTargetMissingItems(syncTask)
         copyNeverSyncedItems(syncTask)
-
         copyErrorItems(syncTask)
     }
 
@@ -148,24 +142,11 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun copyInTargetMissingItems(syncTask: SyncTask) {
 
-        /*syncObjectReader.getInTargetMissingObjects(syncTask.id)
-            .let { it }
+        syncObjectReader.getInTargetMissingObjects(syncTask.id)
+//            .let { it }
             .forEach { syncObject ->
-                syncObjectToTargetWriter2Creator.create(syncTask)
-                    ?.write(syncTask, syncObject, true)
-                    ?.also { result ->
-                        if (result.isSuccess) { syncObjectStateChanger.changeModificationState(
-                            syncObject,
-                            StorageHalf.TARGET,
-                            ModificationState.UNCHANGED
-                        ) }
-                        else { syncObjectStateChanger.setErrorState(
-                            syncObject,
-                            StorageHalf.SOURCE,
-                            result.exceptionOrNull()
-                        ) }
-                    }
-            }*/
+                syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
+            }
     }
 
     private suspend fun copyNeverSyncedItems(syncTask: SyncTask) {
@@ -174,7 +155,7 @@ class SyncTaskExecutor @Inject constructor(
             syncTask.id,
             ExecutionState.NEVER
         )
-            .let { it }
+//            .let { it }
             .forEach { syncObject ->
                 syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
             }
@@ -187,7 +168,7 @@ class SyncTaskExecutor @Inject constructor(
             syncTask.id,
             ExecutionState.ERROR
         )
-            .let { it }
+//            .let { it }
             .forEach { syncObject ->
                 syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
             }
@@ -200,10 +181,10 @@ class SyncTaskExecutor @Inject constructor(
             syncTask.id,
             modificationState
         )
-            .let {
+            /*.let {
                 val ms = modificationState
                 it
-            }
+            }*/
             .forEach { syncObject ->
             syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
         }

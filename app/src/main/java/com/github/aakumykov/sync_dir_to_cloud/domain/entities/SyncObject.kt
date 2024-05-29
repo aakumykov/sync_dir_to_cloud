@@ -63,7 +63,7 @@ class SyncObject (
 
     override fun toString(): String {
         return "SyncObject( " +
-                if (isDir) "[DIR]" else "[FILE]" +
+                (if (isDir) "[DIR]" else "[FILE]") +
                 " name='$name',  storageHalf=$storageHalf, id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
     }
 
