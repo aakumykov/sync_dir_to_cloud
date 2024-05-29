@@ -7,10 +7,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
+import com.github.aakumykov.sync_dir_to_cloud.in_target_existence_checker.InTargetExistenceChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -21,7 +20,6 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
@@ -40,6 +38,8 @@ class SyncTaskExecutor @Inject constructor(
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime, // FIXME: это не нужно передавать через конструктор
 
     private val syncObjectToTargetWriter2Creator: SyncObjectToTargetWriter2.Creator,
+
+    private val inTargetExistenceCheckerFactory: InTargetExistenceChecker.Factory
 ) {
     private var currentTask: SyncTask? = null
     private var storageReader: StorageReader? = null
@@ -100,9 +100,12 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        syncObjectStateResetter.markAllObjectsAsDeleted(StorageHalf.TARGET, syncTask.id)
-        delay(1000)
-        readTargetReal(syncTask)
+//        syncObjectStateResetter.markAllObjectsAsDeleted(StorageHalf.TARGET, syncTask.id)
+//        delay(1000)
+//        readTargetReal(syncTask)
+        syncObjectReader.getAllObjectsForTask(StorageHalf.SOURCE, syncTask.id).forEach { syncObject ->
+            inTargetExistenceCheckerFactory.create(syncTask).checkObjectExists(syncObject)
+        }
     }
 
 
@@ -150,7 +153,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun copyNeverSyncedItems(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTask(
+        syncObjectReader.getObjectsForTaskWithSyncState(
             StorageHalf.SOURCE,
             syncTask.id,
             ExecutionState.NEVER
@@ -163,7 +166,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun copyErrorItems(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTask(
+        syncObjectReader.getObjectsForTaskWithSyncState(
             StorageHalf.SOURCE,
             syncTask.id,
             ExecutionState.ERROR
@@ -176,7 +179,7 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun copyItemsWithModificationState(syncTask: SyncTask, modificationState: ModificationState) {
-        syncObjectReader.getObjectsForTask(
+        syncObjectReader.getObjectsForTaskWithModificationState(
             StorageHalf.SOURCE,
             syncTask.id,
             modificationState

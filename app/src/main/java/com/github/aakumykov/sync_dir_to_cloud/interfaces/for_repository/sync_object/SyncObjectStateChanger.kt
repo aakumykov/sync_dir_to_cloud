@@ -11,6 +11,7 @@ interface SyncObjectStateChanger {
     suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String = "")
 
     // TODO: переименовать в setSyncTime()
+    // TODO: перенести в SyncObjectUpdater
     suspend fun setSyncDate(objectId: String, date: Long)
 
     suspend fun changeModificationState(

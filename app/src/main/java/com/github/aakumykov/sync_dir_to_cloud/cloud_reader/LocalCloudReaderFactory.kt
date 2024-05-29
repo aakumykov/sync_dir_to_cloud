@@ -5,7 +5,7 @@ import com.github.aakumykov.cloud_reader.local_cloud_reader.LocalCloudReader
 import javax.inject.Inject
 
 class LocalCloudReaderFactory @Inject constructor() : CloudReaderFactory {
-    override fun createCloudReader(authToken: String): CloudReader {
+    override fun createCloudReader(authToken: String?): CloudReader {
         return LocalCloudReader()
     }
 }

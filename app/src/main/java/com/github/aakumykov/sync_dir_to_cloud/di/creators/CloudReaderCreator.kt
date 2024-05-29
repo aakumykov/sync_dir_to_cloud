@@ -9,7 +9,7 @@ import javax.inject.Inject
 class CloudReaderCreator @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudReaderFactory>
 ){
-    fun createCloudReader(storageType: StorageType, authToken: String): CloudReader? {
+    fun createCloudReader(storageType: StorageType?, authToken: String?): CloudReader? {
         return map[storageType]?.createCloudReader(authToken)
     }
 }

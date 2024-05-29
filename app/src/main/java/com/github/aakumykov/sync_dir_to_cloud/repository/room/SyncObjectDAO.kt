@@ -110,4 +110,11 @@ interface SyncObjectDAO {
             "AND (T2.modification_state = 'DELETED' AND T1.modification_state IS NOT 'DELETED') " +
             "GROUP BY T2.name")
     fun getObjectsNotDeletedInSourceButDeletedInTarget(taskId: String): List<SyncObject>
+
+
+    @Query("UPDATE sync_objects SET is_exists_in_target = :isExists WHERE id = :objectId")
+    fun setExistsInTarget(objectId: String, isExists: Boolean)
+
+    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId")
+    fun getAllObjectsForTask(storageHalf: StorageHalf, taskId: String): List<SyncObject>
 }

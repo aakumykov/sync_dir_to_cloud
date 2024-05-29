@@ -40,7 +40,16 @@ class SyncObjectRepository @Inject constructor(
             .distinctBy { syncObject -> syncObject.id }
     }
 
-    override suspend fun getObjectsForTask(
+
+    override suspend fun getAllObjectsForTask(
+        storageHalf: StorageHalf,
+        taskId: String
+    ): List<SyncObject> {
+        return syncObjectDAO.getAllObjectsForTask(storageHalf, taskId)
+    }
+
+
+    override suspend fun getObjectsForTaskWithModificationState(
         storageHalf: StorageHalf,
         taskId: String,
         modificationState: ModificationState
@@ -48,7 +57,7 @@ class SyncObjectRepository @Inject constructor(
         return syncObjectDAO.getObjectsWithModificationState(storageHalf, taskId, modificationState)
     }
 
-    override suspend fun getObjectsForTask(
+    override suspend fun getObjectsForTaskWithSyncState(
         storageHalf: StorageHalf,
         taskId: String,
         syncState: ExecutionState
@@ -101,6 +110,9 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
         = syncObjectDAO.updateSyncObject(modifiedSyncObject)
+
+    override suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
+        = syncObjectDAO.setExistsInTarget(objectId, isExists)
 
 
     override suspend fun changeModificationState(
