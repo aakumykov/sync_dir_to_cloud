@@ -26,18 +26,17 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
     private val syncObjectStateChanger: SyncObjectStateChanger,
 ){
     // TODO: передавать не SyncTask, а его часть.
-    suspend fun write(syncTask: SyncTask, syncObject: SyncObject, overwriteIfExists: Boolean = false): Result<String> {
-        return try {
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.RUNNING)
-            val res = writeReal(syncTask, syncObject, overwriteIfExists)
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.SUCCESS)
-            res
-        }
-        catch (e: Exception) {
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(e))
-            Log.e(tag, ExceptionUtils.getErrorMessage(e), e);
-            Result.failure(e)
-        }
+    suspend fun write(syncTask: SyncTask, syncObject: SyncObject, overwriteIfExists: Boolean = false) {
+
+        syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.RUNNING)
+
+        writeReal(syncTask, syncObject, overwriteIfExists)
+            .onSuccess {
+                syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.SUCCESS)
+            }
+            .onFailure {
+                syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(it))
+            }
     }
 
     /**
@@ -66,7 +65,7 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
     }
 
     private suspend fun createDirReal(syncTask: SyncTask, syncObject: SyncObject): Result<String> {
-        val basePath = syncTask.sourcePath + "/" + syncObject.relativeParentDirPath
+        val basePath = syncTask.targetPath + "/" + syncObject.relativeParentDirPath
         val fileName = syncObject.name
         return storageWriter2.createDir(basePath, fileName)
     }
