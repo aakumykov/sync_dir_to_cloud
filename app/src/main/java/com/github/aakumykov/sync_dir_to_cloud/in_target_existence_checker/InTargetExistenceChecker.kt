@@ -24,7 +24,7 @@ class InTargetExistenceChecker @AssistedInject constructor(
 
     private suspend fun cloudReader(): CloudReader? {
         if (null == cloudReader) {
-            cloudReaderCreator.createCloudReader(
+            cloudReader = cloudReaderCreator.createCloudReader(
                 syncTask.targetStorageType,
                 cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.authToken
             )
