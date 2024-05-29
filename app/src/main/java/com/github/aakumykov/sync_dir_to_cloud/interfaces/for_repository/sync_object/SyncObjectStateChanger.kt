@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 // TODO: дать более осмысленное название / разделить на отдельные интерфейсы
 interface SyncObjectStateChanger {
 
-    suspend fun changeExecutionState(objectId: String, syncState: ExecutionState, errorMsg: String = "")
+    suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String = "")
 
     // TODO: переименовать в setSyncTime()
     suspend fun setSyncDate(objectId: String, date: Long)

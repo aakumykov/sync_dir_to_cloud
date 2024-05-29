@@ -1,11 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriter2
@@ -28,14 +26,18 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
     // TODO: передавать не SyncTask, а его часть.
     suspend fun write(syncTask: SyncTask, syncObject: SyncObject, overwriteIfExists: Boolean = false) {
 
-        syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.RUNNING)
+        syncObjectStateChanger.changeSyncState(syncObject.id, ExecutionState.RUNNING)
 
         writeReal(syncTask, syncObject, overwriteIfExists)
             .onSuccess {
-                syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.SUCCESS)
+                syncObjectStateChanger.changeSyncState(syncObject.id, ExecutionState.SUCCESS)
             }
             .onFailure {
-                syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(it))
+                syncObjectStateChanger.changeSyncState(
+                    syncObject.id,
+                    ExecutionState.ERROR,
+                    ExceptionUtils.getErrorMessage(it)
+                )
             }
     }
 

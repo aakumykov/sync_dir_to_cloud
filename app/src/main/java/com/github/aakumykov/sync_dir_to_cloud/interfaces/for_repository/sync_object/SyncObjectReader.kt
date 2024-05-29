@@ -19,6 +19,7 @@ interface SyncObjectReader {
 
     suspend fun getObjectsForTask(storageHalf: StorageHalf, taskId: String, syncState: ExecutionState): List<SyncObject>
 
+    @Deprecated("Не используется")
     suspend fun getList(taskId: String, storageHalf: StorageHalf, readingStrategy: ReadingStrategy): List<SyncObject>
 
     suspend fun getInTargetMissingObjects(taskId: String): List<SyncObject>

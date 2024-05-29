@@ -45,7 +45,7 @@ class SyncObjectRepository @Inject constructor(
         taskId: String,
         modificationState: ModificationState
     ): List<SyncObject> {
-        return syncObjectDAO.getSyncObjectsForTaskWithModificationState(taskId, modificationState)
+        return syncObjectDAO.getObjectsWithModificationState(storageHalf, taskId, modificationState)
     }
 
     override suspend fun getObjectsForTask(
@@ -53,7 +53,7 @@ class SyncObjectRepository @Inject constructor(
         taskId: String,
         syncState: ExecutionState
     ): List<SyncObject> {
-        return syncObjectDAO.getSyncObjectsForTaskWithSyncState(storageHalf, taskId, syncState)
+        return syncObjectDAO.getObjectsWithSyncState(storageHalf, taskId, syncState)
     }
 
     override suspend fun getInTargetMissingObjects(taskId: String): List<SyncObject> {
@@ -65,18 +65,22 @@ class SyncObjectRepository @Inject constructor(
         storageHalf: StorageHalf,
         readingStrategy: ReadingStrategy
     ): List<SyncObject> {
-        return syncObjectDAO.getObjectsForTask(taskId, storageHalf).filter {
+        return syncObjectDAO.getObjectsForTask(storageHalf, taskId).filter {
             readingStrategy.isAcceptedForSync(it)
         }
     }
 
 
-    override suspend fun changeExecutionState(objectId: String, syncState: ExecutionState, errorMsg: String)
-        = syncObjectDAO.setExecutionState(objectId, syncState, errorMsg)
+    override suspend fun changeSyncState(
+        objectId: String,
+        syncState: ExecutionState,
+        errorMsg: String
+    )
+        = syncObjectDAO.setSyncState(objectId, syncState, errorMsg)
 
 
     override suspend fun getSyncObjectListAsLiveData(storageHalf: StorageHalf, taskId: String): LiveData<List<SyncObject>>
-        = syncObjectDAO.getSyncObjectList(storageHalf, taskId)
+        = syncObjectDAO.getSyncObjectListAsLiveData(storageHalf, taskId)
 
 
     override suspend fun setSyncDate(objectId: String, date: Long)

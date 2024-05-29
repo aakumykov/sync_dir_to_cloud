@@ -4,8 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
@@ -77,12 +75,15 @@ class SyncObjectsToStorageWriter @AssistedInject constructor(
     private suspend fun processSyncObject(syncObject: SyncObject, block: SuspendableRunnable) {
         try {
             with(syncObject) {
-                syncObjectStateChanger.changeExecutionState(id, com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState.RUNNING)
+                syncObjectStateChanger.changeSyncState(id, com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState.RUNNING)
                 block.runSuspend()
-                syncObjectStateChanger.changeExecutionState(id, com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState.SUCCESS)
+                syncObjectStateChanger.changeSyncState(id, com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState.SUCCESS)
             }
         } catch (e: Exception) {
-            syncObjectStateChanger.changeExecutionState(syncObject.id, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(e))
+            syncObjectStateChanger.changeSyncState(
+                ExecutionState.ERROR,
+                ExceptionUtils.getErrorMessage(e)
+            )
         }
     }
 
