@@ -101,14 +101,9 @@ interface SyncObjectDAO {
     fun getObjectsForTask(storageHalf: StorageHalf, taskId: String): List<SyncObject>
 
 
-    @Query("SELECT * " +
-            "FROM sync_objects AS T2 " +
-            "INNER JOIN sync_objects AS T1 " +
-            "ON T1.name = T2.name " +
-            "WHERE (T2.task_id = :taskId) " +
-            "AND (T2.storage_half = 'TARGET' AND T1.storage_half = 'SOURCE') " +
-            "AND (T2.modification_state = 'DELETED' AND T1.modification_state IS NOT 'DELETED') " +
-            "GROUP BY T2.name")
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId " +
+            "AND is_exists_in_target = 0 " +
+            "AND modification_state IS NOT 'DELETED'")
     fun getObjectsNotDeletedInSourceButDeletedInTarget(taskId: String): List<SyncObject>
 
 

@@ -100,22 +100,9 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-//        syncObjectStateResetter.markAllObjectsAsDeleted(StorageHalf.TARGET, syncTask.id)
-//        delay(1000)
-//        readTargetReal(syncTask)
         syncObjectReader.getAllObjectsForTask(StorageHalf.SOURCE, syncTask.id).forEach { syncObject ->
             inTargetExistenceCheckerFactory.create(syncTask).checkObjectExists(syncObject)
         }
-    }
-
-
-    private suspend fun readTargetReal(syncTask: SyncTask) {
-        storageReaderCreator.create(
-            syncTask.targetStorageType,
-            authHolder.getTargetAuthToken(syncTask),
-            syncTask.id,
-            ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
-        )?.read(StorageHalf.TARGET, syncTask.targetPath)
     }
 
 
@@ -144,9 +131,8 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun copyInTargetMissingItems(syncTask: SyncTask) {
-
         syncObjectReader.getInTargetMissingObjects(syncTask.id)
-//            .let { it }
+            .let { it }
             .forEach { syncObject ->
                 syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
             }
