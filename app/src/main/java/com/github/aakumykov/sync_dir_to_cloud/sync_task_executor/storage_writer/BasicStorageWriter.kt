@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer
 
+import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -96,13 +97,18 @@ abstract class BasicStorageWriter (
                         ?.getOrThrow()
                         .also { sourceFileStream ->
 
-                            //                                val counting
+                            if (null != sourceFileStream) {
 
-                            writeFromInputStreamToTarget(
-                                sourceFileStream,
-                                pathInTarget,
-                                overwriteIfExists
-                            )
+                                val countingInputStream = CountingInputStream(sourceFileStream) { count ->
+                                    Log.d("CountingInputStream", "Файл '${fileSyncObject.name}', размер: ${fileSyncObject.newSize}, обработано: $count")
+                                }
+
+                                writeFromInputStreamToTarget(
+                                    countingInputStream,
+                                    pathInTarget,
+                                    overwriteIfExists
+                                )
+                            }
                         }
                 }
             }
