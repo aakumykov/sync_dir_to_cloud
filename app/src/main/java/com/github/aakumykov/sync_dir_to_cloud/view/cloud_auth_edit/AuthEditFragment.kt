@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger

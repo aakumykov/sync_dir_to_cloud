@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.factories.file_lister_creator
+package com.github.aakumykov.sync_dir_to_cloud.factories.file_lister
 
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.FileLister
 import com.github.aakumykov.file_lister_navigator_selector.file_lister.SimpleSortingMode

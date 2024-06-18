@@ -1,9 +1,9 @@
-package com.github.aakumykov.sync_dir_to_cloud.cloud_auth
+package com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth
 
 import androidx.fragment.app.Fragment
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.DummyCloudAuthenticator
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.YandexAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.DummyCloudAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

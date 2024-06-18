@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.cloud_auth
+package com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth
 
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.cloud_auth
+package com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth
 
 @Deprecated("Переименовать в StorageAuthenticator")
 interface CloudAuthenticator {

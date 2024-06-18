@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.KeyStorageType
-import com.github.aakumykov.sync_dir_to_cloud.factories.file_lister_creator.FileListerCreator
-import com.github.aakumykov.sync_dir_to_cloud.factories.file_lister_creator.LocalFileListerCreator
-import com.github.aakumykov.sync_dir_to_cloud.factories.file_lister_creator.YandexDiskFileListerCreator
+import com.github.aakumykov.sync_dir_to_cloud.factories.file_lister.FileListerCreator
+import com.github.aakumykov.sync_dir_to_cloud.factories.file_lister.LocalFileListerCreator
+import com.github.aakumykov.sync_dir_to_cloud.factories.file_lister.YandexDiskFileListerCreator
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.Binds
 import dagger.Module

@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.factories
 
 import androidx.fragment.app.Fragment
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticatorFactory
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticatorFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticator
 import dagger.assisted.AssistedFactory
 
 // FIXME: нужно ли отделять фабрики от производимых ими классов, если Dagger2 накрепко

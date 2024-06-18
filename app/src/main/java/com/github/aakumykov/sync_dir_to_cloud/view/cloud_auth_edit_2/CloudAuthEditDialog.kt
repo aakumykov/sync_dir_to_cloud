@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.cloud_auth.CloudAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogCloudAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType

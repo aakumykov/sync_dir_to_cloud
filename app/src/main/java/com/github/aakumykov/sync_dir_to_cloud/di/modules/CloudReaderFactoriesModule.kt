@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.sync_dir_to_cloud.cloud_reader.CloudReaderFactory
-import com.github.aakumykov.sync_dir_to_cloud.cloud_reader.LocalCloudReaderFactory
-import com.github.aakumykov.sync_dir_to_cloud.cloud_reader.YandexDiskCloudReaderFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_reader.CloudReaderFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_reader.LocalCloudReaderFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_reader.YandexDiskCloudReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.KeyStorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.Binds
