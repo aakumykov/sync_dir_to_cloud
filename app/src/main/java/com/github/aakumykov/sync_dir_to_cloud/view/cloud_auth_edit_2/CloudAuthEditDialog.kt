@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.StorageAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogCloudAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
@@ -19,12 +19,12 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
-    CloudAuthenticator.Callbacks
+    StorageAuthenticator.Callbacks
 {
     private var _binding: DialogCloudAuthEditBinding? = null
     private val binding get() = _binding!!
 
-    private var cloudAuthenticator: CloudAuthenticator? = null
+    private var storageAuthenticator: StorageAuthenticator? = null
     private var cloudAuthToken: String? = null
 
     private lateinit var viewModel: CloudAuthEditViewModel
@@ -48,7 +48,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
 
     private fun processRequestedStorageType() {
         if (StorageType.LOCAL == storageType()) {
-            cloudAuthenticator?.startAuth()
+            storageAuthenticator?.startAuth()
         }
     }
 
@@ -118,7 +118,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun prepareCloudAuthenticator() {
-        cloudAuthenticator = storageType().let {
+        storageAuthenticator = storageType().let {
             App.getAppComponent()
                 .getCloudAuthenticatorFactoryAssistedFactory()
                 .createCloudAuthenticatorFactory(this, this)
@@ -171,7 +171,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
 
     private fun onCloudAuthButtonClicked() {
         if (WebViewChecker.isAvailable(requireContext()))
-            cloudAuthenticator?.startAuth()
+            storageAuthenticator?.startAuth()
         else
             reportWebViewNowAvailable()
     }

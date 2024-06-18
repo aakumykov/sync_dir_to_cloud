@@ -1,8 +1,7 @@
-package com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth
+package com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth
 
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
-import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditFragment
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdkContract
@@ -10,8 +9,8 @@ import com.yandex.authsdk.internal.strategy.LoginType
 
 class YandexAuthenticator (
     fragment: Fragment,
-    private val cloudAuthenticatorCallbacks: CloudAuthenticator.Callbacks
-) : CloudAuthenticator {
+    private val storageAuthenticatorCallbacks: StorageAuthenticator.Callbacks
+) : StorageAuthenticator {
 
     private val activityResultLauncher: ActivityResultLauncher<YandexAuthLoginOptions>
 
@@ -21,8 +20,8 @@ class YandexAuthenticator (
 
         activityResultLauncher = fragment.registerForActivityResult(yandexAuthSdkContract) { result ->
             result.getOrNull()?.also {
-                cloudAuthenticatorCallbacks.onCloudAuthSuccess(it.value)
-            } ?: cloudAuthenticatorCallbacks.onCloudAuthFailed(Throwable("Auth was cancelled or result is null."))
+                storageAuthenticatorCallbacks.onCloudAuthSuccess(it.value)
+            } ?: storageAuthenticatorCallbacks.onCloudAuthFailed(Throwable("Auth was cancelled or result is null."))
         }
     }
 
@@ -32,7 +31,7 @@ class YandexAuthenticator (
     }
 
     companion object {
-        fun create(fragment: Fragment, callbacks: CloudAuthenticator.Callbacks): YandexAuthenticator {
+        fun create(fragment: Fragment, callbacks: StorageAuthenticator.Callbacks): YandexAuthenticator {
             return YandexAuthenticator(fragment, callbacks)
         }
     }

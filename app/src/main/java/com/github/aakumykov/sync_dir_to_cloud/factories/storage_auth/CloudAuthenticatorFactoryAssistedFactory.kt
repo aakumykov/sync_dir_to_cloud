@@ -1,8 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.factories
+package com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth
 
 import androidx.fragment.app.Fragment
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticatorFactory
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticator
 import dagger.assisted.AssistedFactory
 
 // FIXME: нужно ли отделять фабрики от производимых ими классов, если Dagger2 накрепко
@@ -12,6 +10,6 @@ import dagger.assisted.AssistedFactory
 interface CloudAuthenticatorFactoryAssistedFactory {
     fun createCloudAuthenticatorFactory(
         fragment: Fragment,
-        cloudAuthenticatorCallbacks: CloudAuthenticator.Callbacks
-    ): CloudAuthenticatorFactory
+        storageAuthenticatorCallbacks: StorageAuthenticator.Callbacks
+    ): StorageAuthenticatorFactory
 }

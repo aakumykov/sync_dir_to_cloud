@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.CloudAuthenticator
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth.YandexAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.StorageAuthenticator
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -21,7 +21,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 
 // FIXME: переименовать в CreateAuthFragment
 class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
-    CloudAuthenticator.Callbacks,
+    StorageAuthenticator.Callbacks,
     AdapterView.OnItemSelectedListener
 {
     private var _binding: FragmentAuthEditBinding? = null
@@ -29,9 +29,9 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
 
     private val viewModel: AuthEditViewModel by viewModels()
 
-    private var cloudAuthenticator: CloudAuthenticator? = null
+    private var storageAuthenticator: StorageAuthenticator? = null
 
-    @Deprecated("Перехожу на CloudAuthenticator")
+    @Deprecated("Перехожу на StorageAuthenticator")
     private lateinit var yandexAuthenticator: YandexAuthenticator
 
     private val storageTypeNames: List<String> by lazy {

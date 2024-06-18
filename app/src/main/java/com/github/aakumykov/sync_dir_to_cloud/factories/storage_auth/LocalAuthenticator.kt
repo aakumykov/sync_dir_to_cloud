@@ -1,14 +1,13 @@
-package com.github.aakumykov.sync_dir_to_cloud.factories.cloud_auth
+package com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth
 
-import android.util.Log
 import androidx.fragment.app.Fragment
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 
 // TODO: BasicAuthenticator, содержащий коллбеки
 class LocalAuthenticator(
     fragment: Fragment,
-    private val callbacks: CloudAuthenticator.Callbacks
-) : CloudAuthenticator {
+    private val callbacks: StorageAuthenticator.Callbacks
+) : StorageAuthenticator {
 
     // TODO: внедрять StorageAccessHelper...
     private val storageAccessHelper: StorageAccessHelper = StorageAccessHelper.create(fragment)
