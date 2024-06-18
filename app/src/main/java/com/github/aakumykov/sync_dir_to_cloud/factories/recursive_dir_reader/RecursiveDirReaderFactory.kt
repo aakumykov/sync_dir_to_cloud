@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.factories
+package com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader
 
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.factories.file_lister.FileListerCreatorFactory
