@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.storage_writer2
 
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_writer.CloudWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

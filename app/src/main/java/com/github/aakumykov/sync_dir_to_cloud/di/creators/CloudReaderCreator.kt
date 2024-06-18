@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.creators
 
 import com.github.aakumykov.cloud_reader.CloudReader
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_reader.CloudReaderFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_reader.CloudReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import javax.inject.Inject
 

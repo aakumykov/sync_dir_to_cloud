@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_writer.CloudWriterFactory
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_writer.LocalCloudWriterFactory
-import com.github.aakumykov.sync_dir_to_cloud.factories.cloud_writer.YandexCloudWriterFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.LocalCloudWriterFactory
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.YandexCloudWriterFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.KeyStorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.Binds
