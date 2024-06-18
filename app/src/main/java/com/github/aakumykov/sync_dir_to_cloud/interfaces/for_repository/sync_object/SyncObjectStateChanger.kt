@@ -19,4 +19,6 @@ interface SyncObjectStateChanger {
         storageHalf: StorageHalf,
         modificationState: ModificationState
     )
+
+    suspend fun markObjectAsSyncedSuccess(objectId: String)
 }

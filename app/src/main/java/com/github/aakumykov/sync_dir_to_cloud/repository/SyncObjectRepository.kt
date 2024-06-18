@@ -79,6 +79,11 @@ class SyncObjectRepository @Inject constructor(
         }
     }
 
+    override suspend fun markObjectAsSyncedSuccess(objectId: String) {
+        changeSyncState(objectId, ExecutionState.SUCCESS)
+        setIsExistsInTarget(objectId, true)
+    }
+
 
     override suspend fun changeSyncState(
         objectId: String,

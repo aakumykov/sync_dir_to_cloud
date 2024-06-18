@@ -100,9 +100,10 @@ class SyncTaskExecutor @Inject constructor(
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(StorageHalf.SOURCE, syncTask.id).forEach { syncObject ->
-            inTargetExistenceCheckerFactory.create(syncTask).checkObjectExists(syncObject)
-        }
+        syncObjectReader.getAllObjectsForTask(StorageHalf.SOURCE, syncTask.id)
+            .forEach { syncObject ->
+                inTargetExistenceCheckerFactory.create(syncTask).checkObjectExists(syncObject)
+            }
     }
 
 
