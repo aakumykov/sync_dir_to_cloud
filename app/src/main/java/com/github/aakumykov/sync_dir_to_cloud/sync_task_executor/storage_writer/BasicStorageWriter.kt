@@ -31,7 +31,7 @@ abstract class BasicStorageWriter (
 
     // TODO: ExceptionableActualWork --> kotlin.coroutines.Runnable
     @FunctionalInterface
-    internal interface ExceptionableActualWork {
+    internal fun interface ExceptionableActualWork {
         @Throws(Throwable::class)
         suspend fun run()
     }
@@ -86,24 +86,25 @@ abstract class BasicStorageWriter (
 
 //                MyLogger.d(TAG, "Отправка файла (${classNameWithHash()}): '${syncObject.name}'")
 
-                writeSyncObjectToTarget(fileSyncObject, object: ExceptionableActualWork {
-                    override suspend fun run() {
+                writeSyncObjectToTarget(fileSyncObject) {
 
-                        val pathInSource = fileSyncObject.absolutePathIn(sourceDirPath)
-                        val pathInTarget = fileSyncObject.absolutePathIn(targetDirPath)
+                    val pathInSource = fileSyncObject.absolutePathIn(sourceDirPath)
+                    val pathInTarget = fileSyncObject.absolutePathIn(targetDirPath)
 
-                        sourceFileStreamSupplier
-                            ?.getSourceFileStream(pathInSource)
-                            ?.getOrThrow()
-                            .also { inputStream ->
-                                writeFromInputStreamToTarget(
-                                    inputStream,
-                                    pathInTarget,
-                                    overwriteIfExists
-                                )
-                            }
-                    }
-                })
+                    sourceFileStreamSupplier
+                        ?.getSourceFileStream(pathInSource)
+                        ?.getOrThrow()
+                        .also { sourceFileStream ->
+
+                            //                                val counting
+
+                            writeFromInputStreamToTarget(
+                                sourceFileStream,
+                                pathInTarget,
+                                overwriteIfExists
+                            )
+                        }
+                }
             }
     }
 
