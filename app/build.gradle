@@ -119,10 +119,11 @@ dependencies {
 
     implementation "com.github.aakumykov:cloud_writer:1.0.0-alpha"
     implementation "com.github.aakumykov:cloud_reader:0.0.5-alpha"
-    implementation 'com.github.aakumykov:storage_access_helper:1.0.1-alpha'
+    implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
-    implementation 'com.github.aakumykov:file_lister_navigator_selector:3.0.0-alpha'
-    implementation 'com.github.aakumykov:yandex_disk_file_lister_navigator_selector:3.0.0-alpha'
+    def flnsVersion = '3.1.1-alpha'
+    implementation "com.github.aakumykov:file_lister_navigator_selector:${flnsVersion}"
+    implementation "com.github.aakumykov:yandex_disk_file_lister_navigator_selector:${flnsVersion}"
 
     implementation "com.leinardi.android:speed-dial:3.3.0"
 }
