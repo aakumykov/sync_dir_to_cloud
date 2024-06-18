@@ -111,7 +111,7 @@ class SyncTaskExecutor @Inject constructor(
         copyNewItems(syncTask)
 //        copyModifiedItems(syncTask)
 
-//        copyInTargetMissingItems(syncTask)
+        copyInTargetMissingItems(syncTask)
 //        copyNeverSyncedItems(syncTask)
 //        copyErrorItems(syncTask)
     }
@@ -175,7 +175,8 @@ class SyncTaskExecutor @Inject constructor(
                 it
             }*/
             .forEach { syncObject ->
-            syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
+                syncObjectToTargetWriter2Creator.create(syncTask)
+                    ?.write(syncTask, syncObject, true)
         }
     }
 

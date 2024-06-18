@@ -30,7 +30,7 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
 
         writeReal(syncTask, syncObject, overwriteIfExists)
             .onSuccess {
-                syncObjectStateChanger.changeSyncState(syncObject.id, ExecutionState.SUCCESS)
+                syncObjectStateChanger.markAsSuccessfullySynced(syncTask.id)
             }
             .onFailure {
                 syncObjectStateChanger.changeSyncState(

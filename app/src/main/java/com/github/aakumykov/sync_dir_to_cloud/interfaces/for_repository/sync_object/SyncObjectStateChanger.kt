@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 // TODO: дать более осмысленное название / разделить на отдельные интерфейсы
 interface SyncObjectStateChanger {
 
+    @Deprecated("Переделать в markAs*")
     suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String = "")
 
     // TODO: переименовать в setSyncTime()
@@ -19,4 +20,6 @@ interface SyncObjectStateChanger {
         storageHalf: StorageHalf,
         modificationState: ModificationState
     )
+
+    suspend fun markAsSuccessfullySynced(objectId: String)
 }

@@ -15,7 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 @AppScope
@@ -79,12 +78,13 @@ class SyncObjectRepository @Inject constructor(
         }
     }
 
+    override suspend fun markAsSuccessfullySynced(objectId: String) {
+        changeSyncState(objectId, ExecutionState.SUCCESS)
+        setIsExistsInTarget(objectId, true)
+    }
 
-    override suspend fun changeSyncState(
-        objectId: String,
-        syncState: ExecutionState,
-        errorMsg: String
-    )
+
+    override suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String)
         = syncObjectDAO.setSyncState(objectId, syncState, errorMsg)
 
 
