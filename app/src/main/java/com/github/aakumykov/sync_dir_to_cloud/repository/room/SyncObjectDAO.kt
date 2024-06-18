@@ -101,7 +101,8 @@ interface SyncObjectDAO {
     fun getObjectsForTask(storageHalf: StorageHalf, taskId: String): List<SyncObject>
 
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId " +
+    @Query("SELECT * FROM sync_objects " +
+            "WHERE task_id = :taskId " +
             "AND is_exists_in_target = 0 " +
             "AND modification_state IS NOT 'DELETED'")
     fun getObjectsNotDeletedInSourceButDeletedInTarget(taskId: String): List<SyncObject>
