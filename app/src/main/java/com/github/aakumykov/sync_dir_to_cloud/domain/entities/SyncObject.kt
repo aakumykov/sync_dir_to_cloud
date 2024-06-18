@@ -13,7 +13,13 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 @Entity(
     tableName = "sync_objects",
-    primaryKeys = [ "storage_half", "id", "task_id", "relative_parent_dir_path", "name" ],
+    primaryKeys = [
+        "storage_half",
+        "id",
+        "task_id",
+        "relative_parent_dir_path",
+        "name"
+    ],
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -30,12 +36,17 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 )
 class SyncObject (
 
+    @Deprecated("Не используется")
     @ColumnInfo(name = "storage_half") val storageHalf: StorageHalf,
+
     @ColumnInfo(name = "id")           val id: String,
+
     @ColumnInfo(name = "task_id")      val taskId: String,
 
     @ColumnInfo(name = "name") val name: String,
+
     @ColumnInfo(name = "relative_parent_dir_path") val relativeParentDirPath: String,
+
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
 
     @ColumnInfo(name = "is_exists_in_target") val isExistsInTarget: Boolean,
