@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriter2
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.InputStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.CountingInputStream
@@ -18,8 +19,9 @@ import dagger.assisted.AssistedInject
  * по назначению и менять статус объекта в БД.
  */
 class SyncObjectToTargetWriter2 @AssistedInject constructor(
-    private val inputStreamSupplierCreator: InputStreamSupplier.Creator,
     @Assisted private val storageWriter2: StorageWriter2,
+    private val inputStreamSupplierCreator: InputStreamSupplier.Creator,
+    private val progressInfoHolder: ProgressInfoHolder,
     private val syncObjectStateChanger: SyncObjectStateChanger,
 ){
     // TODO: передавать не SyncTask, а его часть.
@@ -50,12 +52,18 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
     }
 
 
-    private suspend fun putFileReal(syncTask: SyncTask, syncObject: SyncObject, overwriteIfExists: Boolean): Result<String> {
+    private suspend fun putFileReal(
+        syncTask: SyncTask,
+        syncObject: SyncObject,
+        overwriteIfExists: Boolean
+    ): Result<String> {
         return try {
             inputStreamSupplier(syncTask)
                 .getInputStreamFor(syncObject.absolutePathIn(syncTask.sourcePath!!))!!
                 .getOrThrow()
                 .use { inputStream ->
+
+                    progressInfoHolder.addProgressInfo(syncObject.toProgressInfo())
 
                     val countingInputStream = CountingInputStream(inputStream) { count ->
                         Log.d(
@@ -65,6 +73,7 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
                                     ", новый размер: ${syncObject.newSize}" +
                                     ", обработано: $count"
                         )
+                        progressInfoHolder.setProgress(syncObject.id, count)
                     }
 
                     storageWriter2.putFile(
@@ -92,4 +101,14 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
             _inputStreamSupplier = inputStreamSupplierCreator.create(syncTask)
         return _inputStreamSupplier!!
     }
+}
+
+
+private fun SyncObject.toProgressInfo(): ProgressInfoHolder.ProgressInfo {
+    return ProgressInfoHolder.ProgressInfo(
+        isDir,
+        id,
+        (newSize ?: size),
+        0L
+    )
 }
