@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -8,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriter2
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriter2_Creator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.CountingInputStream
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -30,7 +32,7 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
 
         writeReal(syncTask, syncObject, overwriteIfExists)
             .onSuccess {
-                syncObjectStateChanger.markAsSuccessfullySynced(syncTask.id)
+                syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
             }
             .onFailure {
                 syncObjectStateChanger.changeSyncState(
@@ -55,8 +57,19 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
                 .getInputStreamFor(syncObject.absolutePathIn(syncTask.sourcePath!!))!!
                 .getOrThrow()
                 .use { inputStream ->
+
+                    val countingInputStream = CountingInputStream(inputStream) { count ->
+                        Log.d(
+                            "CountingInputStream",
+                            "Файл '${syncObject.name}'" +
+                                    ", размер: ${syncObject.size}" +
+                                    ", новый размер: ${syncObject.newSize}" +
+                                    ", обработано: $count"
+                        )
+                    }
+
                     storageWriter2.putFile(
-                        inputStream,
+                        countingInputStream,
                         syncObject.absolutePathIn(syncTask.targetPath!!),
                         overwriteIfExists
                     )

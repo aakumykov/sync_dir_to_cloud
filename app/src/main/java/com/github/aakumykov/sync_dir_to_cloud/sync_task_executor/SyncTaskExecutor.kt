@@ -109,11 +109,11 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun doSync(syncTask: SyncTask) {
 
         copyNewItems(syncTask)
-//        copyModifiedItems(syncTask)
+        copyModifiedItems(syncTask)
 
         copyInTargetMissingItems(syncTask)
-//        copyNeverSyncedItems(syncTask)
-//        copyErrorItems(syncTask)
+        copyNeverSyncedItems(syncTask)
+        copyErrorItems(syncTask)
     }
 
     private suspend fun resetBadSyncStates(syncTask: SyncTask) {

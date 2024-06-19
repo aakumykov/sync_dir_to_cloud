@@ -96,19 +96,11 @@ abstract class BasicStorageWriter (
                         ?.getSourceFileStream(pathInSource)
                         ?.getOrThrow()
                         .also { sourceFileStream ->
-
-                            if (null != sourceFileStream) {
-
-                                val countingInputStream = CountingInputStream(sourceFileStream) { count ->
-                                    Log.d("CountingInputStream", "Файл '${fileSyncObject.name}', размер: ${fileSyncObject.newSize}, обработано: $count")
-                                }
-
-                                writeFromInputStreamToTarget(
-                                    countingInputStream,
-                                    pathInTarget,
-                                    overwriteIfExists
-                                )
-                            }
+                            writeFromInputStreamToTarget(
+                                sourceFileStream,
+                                pathInTarget,
+                                overwriteIfExists
+                            )
                         }
                 }
             }

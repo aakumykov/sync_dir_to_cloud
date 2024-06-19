@@ -9,34 +9,25 @@ class CountingInputStream(
     private val readingCallback: ReadingCallback
 ) : InputStream() {
 
-    private var readedBytesCount: Long = 0
+    private var readBytesCount: Long = 0
 
     @Throws(IOException::class)
     override fun read(): Int {
-        return inputStream.read().let { justReadByte ->
-            summarizeAndCallBack(1)
-            justReadByte
-        }
+        return inputStream.read()
     }
 
     override fun read(b: ByteArray?): Int {
         return super.read(b).let { justReadCount ->
-            summarizeAndCallBack(justReadCount)
-            justReadCount
-        }
-    }
-
-    override fun read(b: ByteArray?, off: Int, len: Int): Int {
-        return super.read(b, off, len).let { justReadCount ->
-            summarizeAndCallBack(justReadCount)
+            if (justReadCount > 0)
+                summarizeAndCallBack(justReadCount)
             justReadCount
         }
     }
 
 
     private fun summarizeAndCallBack(count: Int) {
-        readedBytesCount += count
-        readingCallback.onReadCountChanged(readedBytesCount)
+        readBytesCount += count
+        readingCallback.onReadCountChanged(readBytesCount)
     }
 
 
