@@ -7,7 +7,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.io.InputStream
 
-// TODO: зачем передавать сюда Creator, м.б. получать его готовым?
+// TODO: зачем передавать сюда SyncObjectToTargetWriter2Creator, м.б. получать его готовым?
 class LocalStorageWriter2 @AssistedInject constructor(
     @Assisted private val targetStorageType: StorageType,
     @Assisted private val targetAuthToken: String,
