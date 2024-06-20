@@ -35,6 +35,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
@@ -115,6 +116,8 @@ interface AppComponent {
     fun getSourceFileStreamSupplierCreator(): SourceFileStreamSupplierCreator
 
     fun getAuthHolder(): AuthHolder
+
+    fun getProgressInfoHolder(): ProgressInfoHolder
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()
