@@ -53,8 +53,10 @@ class StorageToDatabaseLister @Inject constructor(
             fileListItem.name,
             fileListItem.parentPath)
 
+
         if (null == existingObject) {
             syncObjectAdder.addSyncObject(
+                // TODO: сделать определение нового родительского пути более понятным
                 SyncObject.createAsNew(
                     taskId,
                     fileListItem,
