@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -118,6 +119,8 @@ interface AppComponent {
     fun getAuthHolder(): AuthHolder
 
     fun getProgressInfoHolder(): ProgressInfoHolder
+
+    fun getStorageToDatabaseLister(): StorageToDatabaseLister
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

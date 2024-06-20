@@ -82,21 +82,6 @@ class SyncObject (
 
         fun createAsNew(
             taskId: String,
-            fsItem: FSItem
-        ): SyncObject {
-            return createAsNew(
-                taskId,
-                fsItem,
-                fsItem.parentPath
-            )
-        }
-
-        @Deprecated(
-            message = "Используй одноимённый метод с двумя аргументами.",
-            replaceWith = ReplaceWith("SyncObject.createAsNew(taskId, fsItem)")
-        )
-        fun createAsNew(
-            taskId: String,
             fsItem: FSItem,
             relativeParentDirPath: String,
         ): SyncObject {

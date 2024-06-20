@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.authHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
@@ -69,7 +70,9 @@ class SyncTaskExecutor @Inject constructor(
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            readSource(syncTask)
+            virtuallyDeleteObjects(syncTask.id)
+            readSource2(syncTask)
+//            readSource(syncTask)
             readTarget(syncTask)
             doSync(syncTask)
 
@@ -83,8 +86,22 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+    private suspend fun virtuallyDeleteObjects(taskId: String) {
+        syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
+    }
+
+    private suspend fun readSource2(syncTask: SyncTask) {
+
+        appComponent
+            .getStorageToDatabaseLister()
+            .readFromPath(
+                pathReadingFrom = syncTask.sourcePath,
+                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId),
+                taskId = syncTask.id
+            )
+    }
+
     private suspend fun readSource(syncTask: SyncTask) {
-        syncObjectStateResetter.markAllObjectsAsDeleted(syncTask.id)
         readSourceReal(syncTask)
     }
 
