@@ -33,8 +33,11 @@ interface SyncObjectDAO {
     suspend fun setSyncDate(objectId: String, date: Long)
 
 
-    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND name = :name")
-    suspend fun getSyncObject(taskId: String, name: String): SyncObject?
+    @Query("SELECT * FROM sync_objects " +
+            "WHERE task_id = :taskId " +
+            "AND name = :name " +
+            "AND relative_parent_dir_path = :relativeParentDirPath")
+    suspend fun getSyncObject(taskId: String, name: String, relativeParentDirPath: String): SyncObject?
 
 
     @Query("DELETE FROM sync_objects " +

@@ -45,7 +45,11 @@ abstract class BasicStorageReader(
             dirMode = false
         )?.forEach { fileListItem: RecursiveDirReader.FileListItem ->
 
-            val existingObject = syncObjectRepository.getSyncObject(taskId, fileListItem.name)
+            val existingObject = syncObjectRepository.getSyncObject(
+                taskId,
+                fileListItem.name,
+                fileListItem.parentPath
+                )
 
             if (null == existingObject) {
                 SyncObject.createAsNew(
