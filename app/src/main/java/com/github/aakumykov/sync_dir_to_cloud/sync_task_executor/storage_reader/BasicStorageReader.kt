@@ -62,7 +62,7 @@ abstract class BasicStorageReader(
                     }
             }
             else {
-                SyncObject.createAsExisting(
+                SyncObject.createFromExisting(
                     existingObject,
                     fileListItem,
                     changesDetectionStrategy.detectItemModification(sourcePath, fileListItem, existingObject)

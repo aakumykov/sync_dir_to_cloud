@@ -117,9 +117,9 @@ class SyncObject (
             )
         }
 
-        fun createAsExisting(existingSyncObject: SyncObject,
-                             modifiedFSItem: FSItem,
-                             modificationState: ModificationState): SyncObject
+        fun createFromExisting(existingSyncObject: SyncObject,
+                               modifiedFSItem: FSItem,
+                               modificationState: ModificationState): SyncObject
         {
             return existingSyncObject.apply {
                 existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
