@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import kotlinx.coroutines.launch
@@ -23,7 +22,7 @@ class TaskStateViewModel(
     }
 
     suspend fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>> {
-        return syncObjectReader.getSyncObjectListAsLiveData(StorageHalf.SOURCE, taskId)
+        return syncObjectReader.getSyncObjectListAsLiveData(taskId)
     }
 
     fun startStopTask(taskId: String) {

@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_ob
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 
 // TODO: дать более осмысленное название / разделить на отдельные интерфейсы
 interface SyncObjectStateChanger {
@@ -17,7 +16,6 @@ interface SyncObjectStateChanger {
 
     suspend fun changeModificationState(
         syncObject: SyncObject,
-        storageHalf: StorageHalf,
         modificationState: ModificationState
     )
 

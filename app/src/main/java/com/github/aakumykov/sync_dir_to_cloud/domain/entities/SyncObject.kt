@@ -6,7 +6,6 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 // TODO: сложный ключ, включающий taskId, name, parentPath и другое, что составляет уникальность.
@@ -14,7 +13,6 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 @Entity(
     tableName = "sync_objects",
     primaryKeys = [
-        "storage_half",
         "id",
         "task_id",
         "relative_parent_dir_path",
@@ -35,9 +33,6 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
     ]
 )
 class SyncObject (
-
-    @Deprecated("Не используется")
-    @ColumnInfo(name = "storage_half") val storageHalf: StorageHalf,
 
     @ColumnInfo(name = "id")           val id: String,
 
@@ -77,7 +72,7 @@ class SyncObject (
     override fun toString(): String {
         return "SyncObject( " +
                 (if (isDir) "[DIR]" else "[FILE]") +
-                " name='$name',  storageHalf=$storageHalf, id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
+                " name='$name', id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
     }
 
 
@@ -86,14 +81,12 @@ class SyncObject (
         fun id(fsItem: FSItem): String = sha256(fsItem.absolutePath)
 
         fun createAsNew(
-            storageHalf: StorageHalf,
             taskId: String,
             fsItem: FSItem,
             relativeParentDirPath: String,
         ): SyncObject {
 
             return SyncObject(
-                storageHalf = storageHalf,
                 id = id(fsItem),
                 taskId = taskId,
                 name = fsItem.name,

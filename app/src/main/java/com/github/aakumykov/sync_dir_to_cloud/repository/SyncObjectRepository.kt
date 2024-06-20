@@ -5,15 +5,14 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import javax.inject.Inject
 
@@ -33,11 +32,11 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.add(syncObject)
 
 
-    override suspend fun getObjectsNeedsToBeSynced(storageHalf: StorageHalf, taskId: String): List<SyncObject> {
+    override suspend fun getObjectsNeedsToBeSynced(taskId: String): List<SyncObject> {
 
-        val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(storageHalf, taskId, ExecutionState.NEVER)
-        val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(storageHalf, taskId, ModificationState.NEW)
-        val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(storageHalf, taskId, ModificationState.MODIFIED)
+        val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, ExecutionState.NEVER)
+        val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.NEW)
+        val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.MODIFIED)
 
         return (neverSyncedObjects + newObjects + modifiedObjects)
             .distinctBy { syncObject -> syncObject.id }
@@ -45,27 +44,24 @@ class SyncObjectRepository @Inject constructor(
 
 
     override suspend fun getAllObjectsForTask(
-        storageHalf: StorageHalf,
         taskId: String
     ): List<SyncObject> {
-        return syncObjectDAO.getAllObjectsForTask(storageHalf, taskId)
+        return syncObjectDAO.getAllObjectsForTask(taskId)
     }
 
 
     override suspend fun getObjectsForTaskWithModificationState(
-        storageHalf: StorageHalf,
         taskId: String,
         modificationState: ModificationState
     ): List<SyncObject> {
-        return syncObjectDAO.getObjectsWithModificationState(storageHalf, taskId, modificationState)
+        return syncObjectDAO.getObjectsWithModificationState(taskId, modificationState)
     }
 
     override suspend fun getObjectsForTaskWithSyncState(
-        storageHalf: StorageHalf,
         taskId: String,
         syncState: ExecutionState
     ): List<SyncObject> {
-        return syncObjectDAO.getObjectsWithSyncState(storageHalf, taskId, syncState)
+        return syncObjectDAO.getObjectsWithSyncState(taskId, syncState)
     }
 
     override suspend fun getInTargetMissingObjects(taskId: String): List<SyncObject> {
@@ -74,10 +70,9 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun getList(
         taskId: String,
-        storageHalf: StorageHalf,
         readingStrategy: ReadingStrategy
     ): List<SyncObject> {
-        return syncObjectDAO.getObjectsForTask(storageHalf, taskId).filter {
+        return syncObjectDAO.getObjectsForTask(taskId).filter {
             readingStrategy.isAcceptedForSync(it)
         }
     }
@@ -92,20 +87,20 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.setSyncState(objectId, syncState, errorMsg)
 
 
-    override suspend fun getSyncObjectListAsLiveData(storageHalf: StorageHalf, taskId: String): LiveData<List<SyncObject>>
-        = syncObjectDAO.getSyncObjectListAsLiveData(storageHalf, taskId)
+    override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
+        = syncObjectDAO.getSyncObjectListAsLiveData(taskId)
 
 
     override suspend fun setSyncDate(objectId: String, date: Long)
         = syncObjectDAO.setSyncDate(objectId, date)
 
 
-    override suspend fun markAllObjectsAsDeleted(storageHalf: StorageHalf, taskId: String)
-        = syncObjectDAO.setStateOfAllItems(storageHalf, taskId, ModificationState.DELETED)
+    override suspend fun markAllObjectsAsDeleted(taskId: String)
+        = syncObjectDAO.setStateOfAllItems(taskId, ModificationState.DELETED)
 
 
-    override suspend fun getSyncObject(storageHalf: StorageHalf, taskId: String, name: String): SyncObject?
-        = syncObjectDAO.getSyncObject(storageHalf, taskId, name)
+    override suspend fun getSyncObject(taskId: String, name: String): SyncObject?
+        = syncObjectDAO.getSyncObject(taskId, name)
 
 
     override suspend fun clearObjectsWasSuccessfullyDeleted(taskId: String)
@@ -121,11 +116,9 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun changeModificationState(
         syncObject: SyncObject,
-        storageHalf: StorageHalf,
         modificationState: ModificationState
     ) {
         syncObjectDAO.changeModificationState(
-            storageHalf = storageHalf,
             name = syncObject.name,
             relativeParentDirPath = syncObject.relativeParentDirPath,
             taskId = syncObject.taskId,

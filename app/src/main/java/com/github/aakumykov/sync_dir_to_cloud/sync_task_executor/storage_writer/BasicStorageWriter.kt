@@ -5,7 +5,6 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.stripMultiSlash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -52,7 +51,7 @@ abstract class BasicStorageWriter (
 
     private suspend fun copyDirs(readingStrategy: ReadingStrategy) {
 
-        syncObjectReader.getObjectsNeedsToBeSynced(StorageHalf.SOURCE, taskId)
+        syncObjectReader.getObjectsNeedsToBeSynced(taskId)
             .filter { it.isDir }
             .filter { readingStrategy.isAcceptedForSync(it) }
             .forEach { dirSyncObject ->
@@ -80,7 +79,7 @@ abstract class BasicStorageWriter (
         readingStrategy: ReadingStrategy,
         overwriteIfExists: Boolean
     ) {
-        syncObjectReader.getObjectsNeedsToBeSynced(StorageHalf.SOURCE, taskId)
+        syncObjectReader.getObjectsNeedsToBeSynced(taskId)
             .filter { !it.isDir }
             .filter { readingStrategy.isAcceptedForSync(it) }
             .forEach { fileSyncObject ->
@@ -142,14 +141,14 @@ abstract class BasicStorageWriter (
 
 
     private suspend fun deleteDeletedFiles() {
-        syncObjectReader.getObjectsForTaskWithModificationState(StorageHalf.TARGET, taskId, ModificationState.DELETED)
+        syncObjectReader.getObjectsForTaskWithModificationState(taskId, ModificationState.DELETED)
             .filter { !it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }
 
 
     private suspend fun deleteDeletedDirs() {
-        syncObjectReader.getObjectsForTaskWithModificationState(StorageHalf.TARGET, taskId, ModificationState.DELETED)
+        syncObjectReader.getObjectsForTaskWithModificationState(taskId, ModificationState.DELETED)
             .filter { it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }

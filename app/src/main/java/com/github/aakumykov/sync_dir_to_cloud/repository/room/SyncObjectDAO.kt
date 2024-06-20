@@ -9,7 +9,6 @@ import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.StorageHalf
 
 @Dao
 interface SyncObjectDAO {
@@ -22,8 +21,8 @@ interface SyncObjectDAO {
     suspend fun setSyncState(syncObjectId: String, state: ExecutionState, errorMsg: String)
 
 
-    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId")
-    fun getSyncObjectListAsLiveData(storageHalf: StorageHalf, taskId: String): LiveData<List<SyncObject>>
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
+    fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
 
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
@@ -34,8 +33,8 @@ interface SyncObjectDAO {
     suspend fun setSyncDate(objectId: String, date: Long)
 
 
-    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId AND name = :name")
-    suspend fun getSyncObject(storageHalf: StorageHalf, taskId: String, name: String): SyncObject?
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND name = :name")
+    suspend fun getSyncObject(taskId: String, name: String): SyncObject?
 
 
     @Query("DELETE FROM sync_objects " +
@@ -55,12 +54,10 @@ interface SyncObjectDAO {
 
     @Query("UPDATE sync_objects " +
             "SET modification_state = :modificationState " +
-            "WHERE storage_half = :storageHalf " +
             "AND name = :name " +
             "AND relative_parent_dir_path = :relativeParentDirPath " +
             "AND task_id = :taskId")
     suspend fun changeModificationState(
-        storageHalf: StorageHalf,
         name: String,
         relativeParentDirPath: String,
         taskId: String,
@@ -70,35 +67,30 @@ interface SyncObjectDAO {
 
     @Query("UPDATE sync_objects " +
             "SET modification_state = :modificationState " +
-            "WHERE storage_half = :storageHalf " +
             "AND task_id = :taskId")
-    suspend fun setStateOfAllItems(storageHalf: StorageHalf, taskId: String, modificationState: ModificationState)
+    suspend fun setStateOfAllItems(taskId: String, modificationState: ModificationState)
 
 
     @Query("SELECT * FROM sync_objects " +
-            "WHERE storage_half = :storageHalf " +
-            "AND task_id = :taskId " +
+            "WHERE task_id = :taskId " +
             "AND sync_state = :syncState")
     suspend fun getObjectsWithSyncState(
-        storageHalf: StorageHalf,
         taskId: String,
         syncState: ExecutionState
     ): List<SyncObject>
 
 
     @Query("SELECT * FROM sync_objects " +
-            "WHERE storage_half = :storageHalf " +
-            "AND task_id = :taskId " +
+            "WHERE task_id = :taskId " +
             "AND modification_state = :modificationState")
     suspend fun getObjectsWithModificationState(
-        storageHalf: StorageHalf,
         taskId: String,
         modificationState: ModificationState
     ): List<SyncObject>
 
 
-    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId")
-    fun getObjectsForTask(storageHalf: StorageHalf, taskId: String): List<SyncObject>
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
+    fun getObjectsForTask(taskId: String): List<SyncObject>
 
 
     @Query("SELECT * FROM sync_objects " +
@@ -111,6 +103,6 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET is_exists_in_target = :isExists WHERE id = :objectId")
     fun setExistsInTarget(objectId: String, isExists: Boolean)
 
-    @Query("SELECT * FROM sync_objects WHERE storage_half = :storageHalf AND task_id = :taskId")
-    fun getAllObjectsForTask(storageHalf: StorageHalf, taskId: String): List<SyncObject>
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
+    fun getAllObjectsForTask(taskId: String): List<SyncObject>
 }
