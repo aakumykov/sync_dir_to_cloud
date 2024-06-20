@@ -22,7 +22,11 @@ class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
     private val badObjectStateResettingDAO: BadObjectStateResettingDAO
 )
-    : SyncObjectAdder, SyncObjectReader, SyncObjectStateChanger, SyncObjectStateResetter, SyncObjectDeleter,
+    : SyncObjectAdder,
+        SyncObjectReader,
+        SyncObjectStateChanger,
+        SyncObjectStateResetter,
+        SyncObjectDeleter,
         SyncObjectUpdater
 {
     override suspend fun addSyncObject(syncObject: SyncObject)
