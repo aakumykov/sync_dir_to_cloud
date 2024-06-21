@@ -58,10 +58,12 @@ class StorageToDatabaseLister @Inject constructor(
         taskId: String,
         changesDetectionStrategy: ChangesDetectionStrategy
     ) {
+        val inTargetParentDirPath = calculateRelativeParentDirPath(fileListItem, pathReadingFrom)
+
         val existingObject = syncObjectReader.getSyncObject(
             taskId,
             fileListItem.name,
-            fileListItem.parentPath)
+            inTargetParentDirPath)
 
 
         if (null == existingObject) {
@@ -70,7 +72,7 @@ class StorageToDatabaseLister @Inject constructor(
                 SyncObject.createAsNew(
                     taskId,
                     fileListItem,
-                    calculateRelativeParentDirPath(fileListItem, pathReadingFrom)
+                    inTargetParentDirPath
                 )
             )
         }
