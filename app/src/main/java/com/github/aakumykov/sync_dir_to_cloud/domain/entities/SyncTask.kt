@@ -44,7 +44,10 @@ class SyncTask {
     @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "target_storage_type") var targetStorageType: StorageType?
 
+    @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "source_path") var sourcePath: String? // FIXME: не-null
+
+    @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "target_path") var targetPath: String? // FIXME: не-null
 
     @ColumnInfo(name = "interval_h") var intervalHours: Int
