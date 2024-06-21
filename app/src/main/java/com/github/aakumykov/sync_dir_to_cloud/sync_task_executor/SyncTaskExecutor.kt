@@ -96,8 +96,9 @@ class SyncTaskExecutor @Inject constructor(
             .getStorageToDatabaseLister()
             .readFromPath(
                 pathReadingFrom = syncTask.sourcePath,
+                taskId = syncTask.id,
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId),
-                taskId = syncTask.id
+                changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
     }
 
