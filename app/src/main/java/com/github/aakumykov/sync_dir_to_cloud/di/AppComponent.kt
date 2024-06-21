@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -39,7 +38,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplierCreator
+import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
@@ -122,8 +121,6 @@ interface AppComponent {
     fun getProgressInfoHolder(): ProgressInfoHolder
 
     fun getStorageToDatabaseLister(): StorageToDatabaseLister
-
-    fun getDatabaseToStorageWriter(): DatabaseToStorageWriter
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()
