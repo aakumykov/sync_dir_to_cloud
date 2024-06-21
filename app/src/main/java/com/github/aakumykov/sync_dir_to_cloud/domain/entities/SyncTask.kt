@@ -38,7 +38,10 @@ class SyncTask {
     @ColumnInfo(name = "execution_state") var executionState: ExecutionState = ExecutionState.NEVER
     @ColumnInfo(name = "execution_error") var executionError: String? = null
 
+    @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "source_storage_type") var sourceStorageType: StorageType?
+
+    @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "target_storage_type") var targetStorageType: StorageType?
 
     @ColumnInfo(name = "source_path") var sourcePath: String? // FIXME: не-null
