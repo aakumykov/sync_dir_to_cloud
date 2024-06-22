@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.authHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
@@ -80,7 +81,10 @@ class SyncTaskExecutor @Inject constructor(
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
+            ExceptionUtils.getErrorMessage(t).also { errorMsg ->
+                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
+                Log.e(TAG, errorMsg, t)
+            }
         }
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
