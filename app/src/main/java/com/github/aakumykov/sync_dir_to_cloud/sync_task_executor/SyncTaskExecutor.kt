@@ -74,7 +74,8 @@ class SyncTaskExecutor @Inject constructor(
             readSource2(syncTask)
 //            readSource(syncTask)
             readTarget(syncTask)
-            doSync(syncTask)
+            writeToTarget2(syncTask)
+//            doSync(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -91,7 +92,6 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun readSource2(syncTask: SyncTask) {
-
         appComponent
             .getStorageToDatabaseLister()
             .readFromPath(
@@ -100,6 +100,12 @@ class SyncTaskExecutor @Inject constructor(
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId),
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
+    }
+
+    private suspend fun writeToTarget2(syncTask: SyncTask) {
+        appComponent
+            .getDatabaseToStorageWriter()
+            .writeFromDatabaseToStorage(syncTask)
     }
 
     private suspend fun readSource(syncTask: SyncTask) {
