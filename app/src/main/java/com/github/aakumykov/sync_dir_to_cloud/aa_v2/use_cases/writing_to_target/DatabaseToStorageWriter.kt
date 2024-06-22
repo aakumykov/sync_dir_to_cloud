@@ -45,9 +45,9 @@ class DatabaseToStorageWriter @Inject constructor(
 
         syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
 
-            syncTask.targetPath?.also { targetPath ->
+            syncTask.sourcePath?.also { sourcePath ->
 
-                syncObject.absolutePathIn(targetPath).also { sourceFileAbsolutePath ->
+                syncObject.absolutePathIn(sourcePath).also { sourceFileAbsolutePath ->
 
                     cloudReader?.getFileInputStream(sourceFileAbsolutePath)
                         ?.onSuccess { inputStream ->
