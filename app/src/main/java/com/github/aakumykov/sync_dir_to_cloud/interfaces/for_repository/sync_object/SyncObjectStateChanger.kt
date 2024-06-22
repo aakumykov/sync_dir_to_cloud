@@ -20,4 +20,6 @@ interface SyncObjectStateChanger {
     )
 
     suspend fun markAsSuccessfullySynced(objectId: String)
+    suspend fun markAsBusy(objectId: String)
+    suspend fun markAsError(objectId: String, errorMsg: String)
 }
