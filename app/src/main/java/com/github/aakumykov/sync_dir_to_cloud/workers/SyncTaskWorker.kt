@@ -52,12 +52,11 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
         }
         catch (t: Throwable) {
             runBlocking {
-                val errorMsg = ExceptionUtils.getErrorMessage(t)
-
-                syncTaskStateChanger.changeExecutionState(taskId!!, ExecutionState.ERROR, errorMsg)
-                MyLogger.e(TAG, errorMsg, t)
-
-                Result.failure(errorData(ExceptionUtils.getErrorMessage(t)))
+                ExceptionUtils.getErrorMessage(t).let { errorMsg ->
+                    syncTaskStateChanger.changeExecutionState(taskId!!, ExecutionState.ERROR, errorMsg)
+                    MyLogger.e(TAG, errorMsg, t)
+                    Result.failure(errorData(errorMsg))
+                }
             }
         }
         finally {
