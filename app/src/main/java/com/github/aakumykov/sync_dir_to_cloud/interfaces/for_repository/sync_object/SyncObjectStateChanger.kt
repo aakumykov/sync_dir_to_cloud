@@ -7,7 +7,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 // TODO: дать более осмысленное название / разделить на отдельные интерфейсы
 interface SyncObjectStateChanger {
 
-    @Deprecated("Переделать в markAs*")
     suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String = "")
 
     // TODO: переименовать в setSyncTime()

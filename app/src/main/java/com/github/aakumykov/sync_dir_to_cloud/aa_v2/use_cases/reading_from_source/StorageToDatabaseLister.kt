@@ -40,12 +40,7 @@ class StorageToDatabaseLister @Inject constructor(
                     foldersFirst = true
                 )
                 ?.forEach { fileListItem ->
-                    addOrUpdateFileListItem(
-                        fileListItem,
-                        pathReadingFrom,
-                        taskId,
-                        changesDetectionStrategy
-                    )
+                    addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
         } catch (e: Exception) {
             Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);

@@ -43,27 +43,37 @@ class DatabaseToStorageWriter @Inject constructor(
         val cloudReader = cloudReaderCreator.createCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken)
         val cloudWriter = cloudWriterCreator.createCloudWriter(syncTask.targetStorageType, targetAuth?.authToken)
 
-        syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
+        syncObjectReader.getAllObjectsForTask(syncTask.id)
+            .filter { !it.isDir }
+            .forEach { syncObject ->
 
-            syncTask.sourcePath?.also { sourcePath ->
+                val objectId = syncObject.id
 
-                syncObject.absolutePathIn(sourcePath).also { sourceFileAbsolutePath ->
+                try {
+                    val sourceFileAbsolutePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
+                    val targetFileAbsolutePath = syncObject.absolutePathIn(syncTask.targetPath!!)
 
-                    cloudReader?.getFileInputStream(sourceFileAbsolutePath)
-                        ?.onSuccess { inputStream ->
-                            syncObjectStateChanger.markAsBusy(syncObject.id)
-                            cloudWriter?.putFile(inputStream, syncObject.relativeParentDirPath, overwriteIfExists)
-                            syncObjectStateChanger.markAsSuccessfullySynced(syncTask.id)
+                    cloudReader
+                        ?.getFileInputStream(sourceFileAbsolutePath)
+                        // FIXME: асинхронность (Result) + асинхронность (корутины) это перебор.
+                        ?.getOrThrow()
+                        ?.also { inputStream ->
+                            syncObjectStateChanger.markAsBusy(objectId)
+
+                            cloudWriter?.putFile(
+                                inputStream,
+                                targetFileAbsolutePath,
+                                overwriteIfExists)
+
+                            syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                         }
-                        ?.onFailure { throwable ->
-                            ExceptionUtils.getErrorMessage(throwable)?.also { errorMsg ->
-                                syncObjectStateChanger.markAsError(syncTask.id, errorMsg)
-                                Log.e(TAG, errorMsg, throwable)
-                            }
-                        }
+
+                } catch (t: Throwable) {
+                    ExceptionUtils.getErrorMessage(t)?.also { errorMsg ->
+                        syncObjectStateChanger.markAsError(objectId, errorMsg)
+                        Log.e(TAG, errorMsg, t)
+                    }
                 }
-
-            }
         }
     }
 

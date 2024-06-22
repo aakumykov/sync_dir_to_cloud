@@ -77,20 +77,23 @@ class SyncObjectRepository @Inject constructor(
         }
     }
 
-    override suspend fun markAsBusy(objectId: String)
-            = syncObjectDAO.setSyncState(objectId, ExecutionState.RUNNING, "")
+    override suspend fun markAsBusy(objectId: String) {
+        changeSyncState(objectId, ExecutionState.RUNNING)
+    }
 
     override suspend fun markAsSuccessfullySynced(objectId: String) {
         changeSyncState(objectId, ExecutionState.SUCCESS)
         setIsExistsInTarget(objectId, true)
     }
 
-    override suspend fun markAsError(objectId: String, errorMsg: String)
-            = syncObjectDAO.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
+    override suspend fun markAsError(objectId: String, errorMsg: String) {
+        changeSyncState(objectId, ExecutionState.ERROR, errorMsg)
+    }
 
 
-    override suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String)
-        = syncObjectDAO.setSyncState(objectId, syncState, errorMsg)
+    override suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String) {
+        syncObjectDAO.setSyncState(objectId, syncState, errorMsg)
+    }
 
 
     override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
