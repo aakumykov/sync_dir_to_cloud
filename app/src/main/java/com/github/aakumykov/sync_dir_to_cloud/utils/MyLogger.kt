@@ -29,8 +29,7 @@ object MyLogger {
     }
 
     fun e(tag: String, message: String, t: Throwable) {
-        Log.e(fullTag(tag), message)
-        t.printStackTrace()
+        Log.e(fullTag(tag), message, t)
     }
 
     private fun fullTag(tag: String): String {
