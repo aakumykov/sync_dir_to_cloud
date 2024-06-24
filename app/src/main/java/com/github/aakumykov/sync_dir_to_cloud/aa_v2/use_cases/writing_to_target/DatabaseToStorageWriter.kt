@@ -2,13 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 /**
@@ -43,7 +43,26 @@ class DatabaseToStorageWriter @Inject constructor(
         val cloudReader = cloudReaderCreator.createCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken)
         val cloudWriter = cloudWriterCreator.createCloudWriter(syncTask.targetStorageType, targetAuth?.authToken)
 
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
+        // TODO: перевести на Flow
+        val allObjectsForTask = syncObjectReader.getAllObjectsForTask(syncTask.id)
+
+        // новые папки
+        createNewDirs(allObjectsForTask)
+
+        // исчезнувшие папки
+        createInTargetMissingDirs(allObjectsForTask)
+
+        // новые файлы
+        syncNewFiles(allObjectsForTask)
+
+        // изменившиеся файлы
+        syncModifiedFiles(allObjectsForTask)
+
+        // исчезнувшие файлы
+        syncInTargetMissingDirs(allObjectsForTask)
+
+
+        /*syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { !it.isDir }
             .forEach { syncObject ->
 
@@ -74,8 +93,59 @@ class DatabaseToStorageWriter @Inject constructor(
                         Log.e(TAG, errorMsg, t)
                     }
                 }
-        }
+        }*/
     }
+
+
+    private suspend fun createNewDirs(allObjectsForTask: List<SyncObject>) {
+        allObjectsForTask
+            .filter { it.isDir }
+            .filter { it.modificationState == ModificationState.NEW }
+            .forEach { syncObject ->
+                Log.d(TAG, "Новая папка: ${syncObject.relativeParentDirPath}/${syncObject.name}")
+            }
+    }
+
+
+    private fun createInTargetMissingDirs(allObjectsForTask: List<SyncObject>) {
+        allObjectsForTask
+            .filter { it.isDir }
+            .filter { !it.isExistsInTarget }
+            .forEach { syncObject ->
+                Log.d(TAG, "Исчезнувшая папка: ${syncObject.relativeParentDirPath}/${syncObject.name}")
+            }
+    }
+
+
+    private fun syncNewFiles(allObjectsForTask: List<SyncObject>) {
+        allObjectsForTask
+            .filter { !it.isDir }
+            .filter { it.modificationState == ModificationState.NEW }
+            .forEach { syncObject ->
+                Log.d(TAG, "Новый файл: ${syncObject.relativeParentDirPath}/${syncObject.name}")
+            }
+    }
+
+
+    private fun syncModifiedFiles(allObjectsForTask: List<SyncObject>) {
+        allObjectsForTask
+            .filter { !it.isDir }
+            .filter { it.modificationState == ModificationState.MODIFIED }
+            .forEach { syncObject ->
+                Log.d(TAG, "Изменённый файл: ${syncObject.relativeParentDirPath}/${syncObject.name}")
+            }
+    }
+
+
+    private fun syncInTargetMissingDirs(allObjectsForTask: List<SyncObject>) {
+        allObjectsForTask
+            .filter { it.isDir }
+            .filter { !it.isExistsInTarget }
+            .forEach { syncObject ->
+                Log.d(TAG, "Исчезнувшая папка: ${syncObject.relativeParentDirPath}/${syncObject.name}")
+            }
+    }
+
 
     companion object {
         val TAG: String = DatabaseToStorageWriter::class.java.simpleName
