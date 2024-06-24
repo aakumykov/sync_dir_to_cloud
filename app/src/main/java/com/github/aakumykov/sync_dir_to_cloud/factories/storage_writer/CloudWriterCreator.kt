@@ -12,7 +12,7 @@ import javax.inject.Inject
 class CloudWriterCreator @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudWriterFactory>
 ){
-    fun createCloudWriter(storageType: StorageType, authToken: String?): CloudWriter? {
+    fun createCloudWriter(storageType: StorageType?, authToken: String?): CloudWriter? {
         return if (null != authToken) map[storageType]?.create(authToken) else null
     }
 }
