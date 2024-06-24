@@ -108,7 +108,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun writeToTarget2(syncTask: SyncTask) {
         appComponent
-            .getDatabaseToStorageWriter()
+            .getDatabaseToStorageWriterOld()
             .writeFromDatabaseToStorage(syncTask)
     }
 

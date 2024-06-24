@@ -25,7 +25,7 @@ import javax.inject.Inject
  * cloudWriter.putFileFromStream(inputStream)
  *
  */
-class DatabaseToStorageWriter @Inject constructor(
+class DatabaseToStorageWriterOld @Inject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val cloudAuthReader: CloudAuthReader,
     private val cloudReaderCreator: CloudReaderCreator,
@@ -148,6 +148,6 @@ class DatabaseToStorageWriter @Inject constructor(
 
 
     companion object {
-        val TAG: String = DatabaseToStorageWriter::class.java.simpleName
+        val TAG: String = DatabaseToStorageWriterOld::class.java.simpleName
     }
 }
