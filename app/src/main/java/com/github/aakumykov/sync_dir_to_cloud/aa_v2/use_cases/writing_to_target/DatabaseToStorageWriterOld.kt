@@ -25,6 +25,7 @@ import javax.inject.Inject
  * cloudWriter.putFileFromStream(inputStream)
  *
  */
+@Deprecated("К удалению")
 class DatabaseToStorageWriterOld @Inject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val cloudAuthReader: CloudAuthReader,
