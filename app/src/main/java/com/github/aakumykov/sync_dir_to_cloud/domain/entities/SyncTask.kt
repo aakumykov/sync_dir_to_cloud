@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
 import java.util.Date
 import java.util.UUID
@@ -50,6 +51,8 @@ class SyncTask {
     @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "target_path") var targetPath: String? // FIXME: не-null
 
+    @ColumnInfo(name = "sync_mode") var syncMode: SyncMode?
+
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int
 
@@ -75,6 +78,8 @@ class SyncTask {
         this.sourcePath = null
         this.targetPath = null
 
+        this.syncMode = null
+
         this.intervalHours = 0
         this.intervalMinutes = 0
 
@@ -86,6 +91,7 @@ class SyncTask {
                 targetStorageType: StorageType,
                 sourceStorageType: StorageType,
                 targetPath: String,
+                syncMode: SyncMode,
                 intervalHours: Int,
                 intervalMinutes: Int
     ) : this() {
@@ -94,6 +100,8 @@ class SyncTask {
 
         this.sourcePath = sourcePath
         this.targetPath = targetPath
+
+        this.syncMode = syncMode
 
         this.intervalHours = intervalHours
         this.intervalMinutes = intervalMinutes
