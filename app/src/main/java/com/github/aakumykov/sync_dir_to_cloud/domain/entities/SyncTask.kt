@@ -91,7 +91,7 @@ class SyncTask {
                 targetStorageType: StorageType,
                 sourceStorageType: StorageType,
                 targetPath: String,
-                syncMode: SyncMode,
+                syncMode: SyncMode?,
                 intervalHours: Int,
                 intervalMinutes: Int
     ) : this() {

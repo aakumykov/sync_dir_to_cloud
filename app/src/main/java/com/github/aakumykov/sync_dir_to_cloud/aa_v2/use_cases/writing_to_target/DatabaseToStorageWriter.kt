@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target
 
-import com.github.aakumykov.file_lister_navigator_selector.dir_creator.DirCreator
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.DeletedDirsDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.DeletedFilesDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.LostDirsCreator
@@ -8,20 +8,25 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.ModifiedFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.NewDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.NewFilesCopier
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import javax.inject.Inject
 
 class DatabaseToStorageWriter @Inject constructor(
     // Каталоги
-    private val deletedDirsDeleter: DeletedDirsDeleter,
-    private val newDirsCreator: NewDirsCreator,
-    private val lostDirsCreator: LostDirsCreator,
+//    private val deletedDirsDeleter: DeletedDirsDeleter,
+//    private val newDirsCreator: NewDirsCreator,
+//    private val lostDirsCreator: LostDirsCreator,
     // Файлы
     private val deletedFilesDeleter: DeletedFilesDeleter,
-    private val newFilesCopier: NewFilesCopier,
-    private val modifiedFilesCopier: ModifiedFilesCopier,
-    private val lostFilesCopier: LostFilesCopier,
+//    private val newFilesCopier: NewFilesCopier,
+//    private val modifiedFilesCopier: ModifiedFilesCopier,
+//    private val lostFilesCopier: LostFilesCopier,
+    //
+    private val cloudAuthReader: CloudAuthReader,
+
 ) {
     /*
         I. Синхронизировать каталоги
@@ -34,10 +39,28 @@ class DatabaseToStorageWriter @Inject constructor(
             3. Копировать изменившееся (стратегия)
             4. Восстановить пропавшее (стратегия)
    */
-    fun writeToPath(taskId: String,
-//                    syncMode: SyncMode,
-                    sourceAuth: CloudAuth,
-                    targetAuth: CloudAuth) {
 
+    suspend fun writeFromDatabaseToStorage(syncTask: SyncTask) {
+
+        val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
+        val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
+
+        // TODO: syncTaskErrorSetter
+        if (null == sourceAuth) {
+            Log.e(TAG, "Source auth is null")
+            return
+        }
+
+        // TODO: syncTaskErrorSetter
+        if (null == targetAuth) {
+            Log.e(TAG, "Target auth is null")
+            return
+        }
+
+        deletedFilesDeleter.doWork(syncTask, targetAuth)
+    }
+
+    companion object {
+        val TAG: String = DatabaseToStorageWriter::class.java.simpleName
     }
 }

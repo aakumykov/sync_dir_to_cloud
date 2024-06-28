@@ -117,8 +117,8 @@ dependencies {
 
     implementation "com.github.permissions-dispatcher:ktx:1.1.4"
 
-    implementation "com.github.aakumykov:cloud_writer:1.0.0-alpha"
     implementation "com.github.aakumykov:cloud_reader:0.0.5-alpha"
+    implementation "com.github.aakumykov:cloud_writer:1.2.0-alpha"
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
     def flnsVersion = '3.3.0-alpha'
