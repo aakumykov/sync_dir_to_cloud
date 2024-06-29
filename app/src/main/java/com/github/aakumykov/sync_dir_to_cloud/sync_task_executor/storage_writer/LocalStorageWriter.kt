@@ -35,6 +35,7 @@ class LocalStorageWriter @AssistedInject constructor(
     override val cloudWriter get() = localCloudWriter
     override val tag: String get() = LocalStorageWriter::class.java.simpleName
 
+
     @AssistedFactory
     interface Factory : StorageWriterFactory {
         override fun create(

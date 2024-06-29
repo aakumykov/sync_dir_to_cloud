@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterAssistedFactoriesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModule
@@ -20,7 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageReaderAssistedFactoriesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterAssistedFactoriesModule3
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
@@ -64,14 +64,14 @@ import dagger.Component
         CoroutineModule::class,
         ViewModelsModule::class,
         StorageReaderAssistedFactoriesModule::class,
-        CloudWriterAssistedFactoriesModule::class,
-        StorageWriterAssistedFactoriesModule3::class,
         OkhttpModule::class,
         GsonModule::class,
         SourceFileStreamSupplierFactoryModule::class,
         SourceFileStreamSupplierAssistedFactoriesModule::class,
         FileListerCreatorsModule::class,
         CloudReaderFactoriesModule::class,
+        CloudWriterFactoriesModule::class,
+        StorageWriterFactoriesModule::class,
         StorageWriters2_Module::class
     ]
 )

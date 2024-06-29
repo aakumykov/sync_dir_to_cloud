@@ -11,7 +11,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class YandexStorageWriter @AssistedInject constructor(
+class YandexDiskStorageWriter @AssistedInject constructor(
     @Assisted(AssistedArgName.SOURCE_DIR_PATH) private val sourceDirPath: String,
     @Assisted(AssistedArgName.TARGET_DIR_PATH) private val targetDirPath: String,
     @Assisted(AssistedArgName.TASK_ID) private val taskId: String,
@@ -34,7 +34,8 @@ class YandexStorageWriter @AssistedInject constructor(
 
     override val cloudWriter get() = yandexCloudWriter
 
-    override val tag: String get() = YandexStorageWriter::class.java.simpleName
+    override val tag: String get() = YandexDiskStorageWriter::class.java.simpleName
+
 
     @AssistedFactory
     interface Factory : StorageWriterFactory {
@@ -43,6 +44,6 @@ class YandexStorageWriter @AssistedInject constructor(
             @Assisted(AssistedArgName.TASK_ID) taskId: String,
             @Assisted(AssistedArgName.SOURCE_DIR_PATH) sourceDirPath: String,
             @Assisted(AssistedArgName.TARGET_DIR_PATH) targetDirPath: String,
-        ): YandexStorageWriter
+        ): YandexDiskStorageWriter
     }
 }
