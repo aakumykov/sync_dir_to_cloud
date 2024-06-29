@@ -75,8 +75,9 @@ class SyncTaskExecutor @Inject constructor(
             readSource2(syncTask)
 //            readSource(syncTask)
             readTarget(syncTask)
-            writeToTarget2(syncTask)
 //            doSync(syncTask)
+            writeToTarget2(syncTask)
+
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -107,8 +108,12 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun writeToTarget2(syncTask: SyncTask) {
+//        appComponent
+//            .getDatabaseToStorageWriterOld()
+//            .writeFromDatabaseToStorage(syncTask)
+
         appComponent
-            .getDatabaseToStorageWriterOld()
+            .getDatabaseToStorageWriter()
             .writeFromDatabaseToStorage(syncTask)
     }
 
