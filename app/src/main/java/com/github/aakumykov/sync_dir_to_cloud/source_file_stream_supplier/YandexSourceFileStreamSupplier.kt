@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier
 
 import android.util.Log
-import com.github.aakumykov.cloud_reader.yandex_cloud_reader.YandexCloudReader
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierFactory
+import com.github.aakumykov.yandex_disk_cloud_reader.YandexDiskCloudReader
 import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -16,7 +16,7 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
     @Assisted private val taskId: String,
 ) : SourceFileStreamSupplier {
 
-    private var yandexCloudReader: YandexCloudReader? = null
+    private var yandexCloudReader: YandexDiskCloudReader? = null
 
     init {
         Log.d("YSFSS", "init")
@@ -32,7 +32,7 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
 
                     appComponent.getCloudAuthReader().getCloudAuth(authId)?.also { cloudAuth ->
 
-                        yandexCloudReader = YandexCloudReader(
+                        yandexCloudReader = YandexDiskCloudReader(
                             cloudAuth.authToken,
                             OkHttpClient(),
                             Gson()

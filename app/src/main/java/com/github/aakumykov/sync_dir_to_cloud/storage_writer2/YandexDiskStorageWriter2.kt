@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.storage_writer2
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.cloud_writer.stripMultiSlashes
+import com.github.aakumykov.cloud_writer.extensions.stripMultiSlashes
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
