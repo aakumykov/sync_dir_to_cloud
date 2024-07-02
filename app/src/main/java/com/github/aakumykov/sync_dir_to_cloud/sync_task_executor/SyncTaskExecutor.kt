@@ -47,6 +47,7 @@ class SyncTaskExecutor @Inject constructor(
     private var storageReader: StorageReader? = null
     private var storageWriter: StorageWriter? = null
 
+
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
@@ -75,8 +76,8 @@ class SyncTaskExecutor @Inject constructor(
             readSource2(syncTask)
 //            readSource(syncTask)
             readTarget(syncTask)
-//            doSync(syncTask)
-            writeToTarget2(syncTask)
+            doSync(syncTask)
+//            writeToTarget2(syncTask)
 
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
