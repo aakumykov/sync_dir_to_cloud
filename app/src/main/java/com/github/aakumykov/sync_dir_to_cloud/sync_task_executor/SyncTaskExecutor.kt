@@ -72,10 +72,12 @@ class SyncTaskExecutor @Inject constructor(
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            virtuallyDeleteObjects(syncTask.id)
+            prepareSync(syncTask.id)
+
             readSource2(syncTask)
 //            readSource(syncTask)
             readTarget(syncTask)
+
             doSync(syncTask)
 //            writeToTarget2(syncTask)
 
@@ -93,7 +95,7 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
-    private suspend fun virtuallyDeleteObjects(taskId: String) {
+    private suspend fun prepareSync(taskId: String) {
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
     }
 
