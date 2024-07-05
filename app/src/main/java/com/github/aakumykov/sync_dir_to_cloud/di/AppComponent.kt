@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.SyncObjectCopierCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -131,6 +132,8 @@ interface AppComponent {
     fun getDatabaseToStorageWriter(): DatabaseToStorageWriter
 
     fun getFileCopierCreator(): SyncObjectCopierCreator
+
+    fun getSyncTaskFilesCopier(): SyncTaskFilesCopier
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

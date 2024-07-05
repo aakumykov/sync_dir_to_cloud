@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -18,12 +19,15 @@ class SyncTaskFilesCopier @Inject constructor(
     private val syncObjectCopierCreator: SyncObjectCopierCreator
 ){
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, ModificationState.NEW).also {
-            copySyncObjects(
-                syncObjectList = it,
-                syncTask = syncTask,
-                overwriteIfExists = true
-            )
+        syncObjectReader
+            .getObjectsForTaskWithModificationState(syncTask.id, ModificationState.NEW)
+            .filter { !it.isDir }
+            .also {
+                copySyncObjects(
+                    syncObjectList = it,
+                    syncTask = syncTask,
+                    overwriteIfExists = true
+                )
         }
     }
 
@@ -42,9 +46,13 @@ class SyncTaskFilesCopier @Inject constructor(
         syncTask: SyncTask,
         overwriteIfExists: Boolean
     ) {
+        Log.d(TAG, "copySyncObjects()")
+
         val syncObjectCopier = syncObjectCopierCreator.createFileCopierFor(syncTask)
 
         syncObjectList.forEach { syncObject ->
+
+            Log.d(TAG, "copySyncObjects(), syncObject: ${syncObject.name}")
 
             syncObjectStateChanger.markAsBusy(syncObject.id)
 
@@ -59,5 +67,9 @@ class SyncTaskFilesCopier @Inject constructor(
                     }
                 }
         }
+    }
+
+    companion object {
+        val TAG: String = SyncTaskFilesCopier::class.java.simpleName
     }
 }
