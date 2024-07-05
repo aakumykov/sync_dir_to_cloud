@@ -10,7 +10,10 @@ import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.Source
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import javax.inject.Inject
 
-class FileCopier (
+/**
+ * Копирует данные SyncObject-а из источника в приёмник указанного SyncTask.
+ */
+class SyncObjectFileCopier (
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,
     private val cloudWriter: CloudWriter,
 ) {
@@ -30,12 +33,15 @@ class FileCopier (
     }
 }
 
-class FileCopierCreator @Inject constructor(
+/**
+ * Создаёт SyncObjectFileCopier для SyncTask.
+ */
+class SyncObjectCopierCreator @Inject constructor(
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val cloudWriterCreator: CloudWriterCreator
 ) {
-    suspend fun createFileCopierFor(syncTask: SyncTask): FileCopier? {
+    suspend fun createFileCopierFor(syncTask: SyncTask): SyncObjectFileCopier? {
 
         val sourceFileStreamSupplier = sourceFileStreamSupplierCreator.create(
             syncTask.id,
@@ -48,7 +54,7 @@ class FileCopierCreator @Inject constructor(
         )
 
         return if (null != sourceFileStreamSupplier && null != targetCloudWriter) {
-            FileCopier(
+            SyncObjectFileCopier(
                 sourceFileStreamSupplier,
                 targetCloudWriter
             )

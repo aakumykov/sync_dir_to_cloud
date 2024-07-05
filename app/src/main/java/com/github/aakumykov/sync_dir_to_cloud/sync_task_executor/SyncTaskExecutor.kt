@@ -97,7 +97,9 @@ class SyncTaskExecutor @Inject constructor(
             backupModifiedItems(syncTask)
 
             // Скопировать новое
-            copyNewItems(syncTask)
+//            copyNewItems(syncTask)
+            copyNewDirs()
+            copyNewFiles(syncTask)
 
             // Скопировать изменившееся
             copyModifiedItems(syncTask)
@@ -115,6 +117,16 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+    private suspend fun copyNewFiles(syncTask: SyncTask) {
+        /*appComponent.getFileCopierCreator()
+            .createFileCopierFor(syncTask)
+            ?.copySyncObject()*/
+    }
+
+    private fun copyNewDirs() {
+
+    }
+
     private fun backupDeletedItems(syncTask: SyncTask) {
 
     }
@@ -124,8 +136,10 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
+    // TODO: дать осмысленное название
     private suspend fun prepareSync(taskId: String) {
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
+        syncObjectStateResetter.markBadStatesAsNeverSynced(taskId)
     }
 
     private suspend fun readSource2(syncTask: SyncTask) {
