@@ -72,15 +72,35 @@ class SyncTaskExecutor @Inject constructor(
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            prepareSync(syncTask.id)
+            /*prepareSync(syncTask.id)
 
             readSource2(syncTask)
 //            readSource(syncTask)
             readTarget(syncTask)
 
             doSync(syncTask)
-//            writeToTarget2(syncTask)
+//            writeToTarget2(syncTask)*/
 
+            // *Выполнить подготовку
+            prepareSync(taskId)
+
+            // Прочитать источник
+            readSource2(syncTask)
+
+            // Прочитать приёмник
+            readTarget(syncTask)
+
+            // Забекапить удалённое
+            backupDeletedItems(syncTask)
+
+            // Забекапить изменившееся
+            backupModifiedItems(syncTask)
+
+            // Скопировать новое
+            copyNewItems(syncTask)
+
+            // Скопировать изменившееся
+            copyModifiedItems(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -94,6 +114,15 @@ class SyncTaskExecutor @Inject constructor(
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
     }
+
+    private fun backupDeletedItems(syncTask: SyncTask) {
+
+    }
+
+    private fun backupModifiedItems(syncTask: SyncTask) {
+
+    }
+
 
     private suspend fun prepareSync(taskId: String) {
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
@@ -137,7 +166,8 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun readTarget(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
-            inTargetExistenceCheckerFactory.create(syncTask).checkObjectExists(syncObject)
+            inTargetExistenceCheckerFactory.create(syncTask)
+                .checkObjectExists(syncObject)
         }
     }
 
