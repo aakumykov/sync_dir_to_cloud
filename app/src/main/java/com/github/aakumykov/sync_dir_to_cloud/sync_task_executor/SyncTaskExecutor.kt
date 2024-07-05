@@ -104,6 +104,9 @@ class SyncTaskExecutor @Inject constructor(
             // Скопировать изменившееся
 //            copyModifiedItems(syncTask)
 
+            // Восстановить утраченное
+            // ???
+
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
         catch (t: Throwable) {

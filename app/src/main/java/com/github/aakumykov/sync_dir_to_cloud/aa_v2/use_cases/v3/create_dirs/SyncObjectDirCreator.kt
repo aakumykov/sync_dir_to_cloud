@@ -9,6 +9,9 @@ import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWrit
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import javax.inject.Inject
 
+/**
+ * Создаёт каталога "из" SyncObject-а в рамках SyncTask-а.
+ */
 class SyncObjectDirCreator constructor(
     private val cloudWriter: CloudWriter
 ) {
@@ -17,6 +20,10 @@ class SyncObjectDirCreator constructor(
      * @return Полный путь к созданной папке, обёрнутый в Result.
      */
     suspend fun createDir(syncObject: SyncObject, syncTask: SyncTask): Result<String> {
+
+        if (!syncObject.isDir)
+            throw IllegalArgumentException("SyncObject it not a directory object: $syncObject")
+
         try {
             val dirNameInTarget = syncObject.absolutePathIn(syncTask.targetPath!!)
             val pathUri = Uri.parse(dirNameInTarget)
@@ -27,6 +34,7 @@ class SyncObjectDirCreator constructor(
         }
     }
 }
+
 
 class SyncObjectDirCreatorCreator @Inject constructor(
     private val cloudWriterCreator: CloudWriterCreator,
