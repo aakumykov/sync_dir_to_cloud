@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.di.authHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -77,7 +76,7 @@ class SyncTaskExecutor @Inject constructor(
             markAllObjectsAsDeleted(taskId)
 
             // Прочитать источник
-            readSource2(syncTask)
+            readSource(syncTask)
 
             // Прочитать приёмник
             readTarget(syncTask)
@@ -152,10 +151,6 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun copyNewFiles(syncTask: SyncTask) {
-        /*appComponent.getFileCopierCreator()
-            .createFileCopierFor(syncTask)
-            ?.copySyncObject()*/
-
         appComponent
             .getSyncTaskFilesCopier()
             .copyNewFilesForSyncTask(syncTask)
@@ -176,6 +171,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
+    // TODO: разделить на методы, делающие одно логическое действие.
     private suspend fun resetSyncObjectsBadState(taskId: String) {
         syncObjectStateResetter.markBadStatesAsNeverSynced(taskId)
     }
@@ -184,7 +180,7 @@ class SyncTaskExecutor @Inject constructor(
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
     }
 
-    private suspend fun readSource2(syncTask: SyncTask) {
+    private suspend fun readSource(syncTask: SyncTask) {
         appComponent
             .getStorageToDatabaseLister()
             .readFromPath(
@@ -195,30 +191,6 @@ class SyncTaskExecutor @Inject constructor(
             )
     }
 
-    private suspend fun writeToTarget2(syncTask: SyncTask) {
-//        appComponent
-//            .getDatabaseToStorageWriterOld()
-//            .writeFromDatabaseToStorage(syncTask)
-
-        appComponent
-            .getDatabaseToStorageWriter()
-            .writeFromDatabaseToStorage(syncTask)
-    }
-
-    private suspend fun readSource(syncTask: SyncTask) {
-        readSourceReal(syncTask)
-    }
-
-    private suspend fun readSourceReal(syncTask: SyncTask) {
-        storageReaderCreator.create(
-            syncTask.sourceStorageType,
-            authHolder.getSourceAuthToken(syncTask),
-            syncTask.id,
-            ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
-        )
-            ?.read(syncTask.sourcePath)
-    }
-
 
     private suspend fun readTarget(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
@@ -226,71 +198,6 @@ class SyncTaskExecutor @Inject constructor(
                 .checkObjectExists(syncObject)
         }
     }
-
-
-    private suspend fun doSync(syncTask: SyncTask) {
-
-        copyNewItems(syncTask)
-        copyModifiedItems(syncTask)
-
-        copyInTargetMissingItems(syncTask)
-        copyNeverSyncedItems(syncTask)
-        copyErrorItems(syncTask)
-    }
-
-    private suspend fun resetBadSyncStates(syncTask: SyncTask) {
-        syncObjectStateResetter.markBadStatesAsNeverSynced(syncTask.id)
-    }
-
-
-    private suspend fun copyNewItems(syncTask: SyncTask) {
-        copyItemsWithModificationState(syncTask, ModificationState.NEW)
-    }
-
-    private suspend fun copyModifiedItems(syncTask: SyncTask) {
-        copyItemsWithModificationState(syncTask, ModificationState.MODIFIED)
-    }
-
-
-    private suspend fun copyInTargetMissingItems(syncTask: SyncTask) {
-        syncObjectReader.getInTargetMissingObjects(syncTask.id)
-            .let { it }
-            .forEach { syncObject ->
-                syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
-            }
-    }
-
-    private suspend fun copyNeverSyncedItems(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTaskWithSyncState(syncTask.id, ExecutionState.NEVER)
-//            .let { it }
-            .forEach { syncObject ->
-                syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
-            }
-    }
-
-
-    private suspend fun copyErrorItems(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTaskWithSyncState(syncTask.id, ExecutionState.ERROR)
-//            .let { it }
-            .forEach { syncObject ->
-                syncObjectToTargetWriter2Creator.create(syncTask)?.write(syncTask, syncObject, true)
-            }
-    }
-
-
-    private suspend fun copyItemsWithModificationState(syncTask: SyncTask, modificationState: ModificationState) {
-        syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, modificationState)
-            /*.let {
-                val ms = modificationState
-                it
-            }*/
-            .forEach { syncObject ->
-                syncObjectToTargetWriter2Creator.create(syncTask)
-                    ?.write(syncTask, syncObject, true)
-        }
-    }
-
-
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {
         syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
