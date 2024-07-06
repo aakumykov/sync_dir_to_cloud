@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncObjectCopierCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -134,6 +135,8 @@ interface AppComponent {
     fun getFileCopierCreator(): SyncObjectCopierCreator
 
     fun getSyncTaskFilesCopier(): SyncTaskFilesCopier
+
+    fun getSyncTaskDirsCreator(): SyncTaskDirsCreator
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

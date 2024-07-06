@@ -61,9 +61,10 @@ class SyncTaskFilesCopier @Inject constructor(
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
                 }
-                ?.onFailure {
-                    ExceptionUtils.getErrorMessage(it).also { errorMsg ->
+                ?.onFailure { throwable ->
+                    ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
                         syncObjectStateChanger.markAsError(syncObject.id, errorMsg)
+                        Log.e(TAG, errorMsg, throwable)
                     }
                 }
         }

@@ -98,11 +98,12 @@ class SyncTaskExecutor @Inject constructor(
 
             // Скопировать новое
 //            copyNewItems(syncTask)
-//            copyNewDirs(syncTask)
+            createNewDirs(syncTask)
             copyNewFiles(syncTask)
 
             // Скопировать изменившееся
 //            copyModifiedItems(syncTask)
+            copyModifiedFiles(syncTask)
 
             // Восстановить утраченное
             // ???
@@ -120,17 +121,26 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+    private suspend fun copyModifiedFiles(syncTask: SyncTask) {
+        appComponent
+            .getSyncTaskFilesCopier()
+            .copyModifiedFilesForSyncTask(syncTask)
+    }
+
     private suspend fun copyNewFiles(syncTask: SyncTask) {
         /*appComponent.getFileCopierCreator()
             .createFileCopierFor(syncTask)
             ?.copySyncObject()*/
 
-        appComponent.getSyncTaskFilesCopier()
+        appComponent
+            .getSyncTaskFilesCopier()
             .copyNewFilesForSyncTask(syncTask)
     }
 
-    private fun copyNewDirs() {
-
+    private suspend fun createNewDirs(syncTask: SyncTask) {
+        appComponent
+            .getSyncTaskDirsCreator()
+            .createNewDirsFromTask(syncTask)
     }
 
     private fun backupDeletedItems(syncTask: SyncTask) {
