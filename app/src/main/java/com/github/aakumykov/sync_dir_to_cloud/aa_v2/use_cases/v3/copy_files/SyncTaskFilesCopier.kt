@@ -22,7 +22,7 @@ class SyncTaskFilesCopier @Inject constructor(
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getObjectsForTaskWithModificationState(syncTask.id, ModificationState.NEW)
-            .filter { !it.isDir }
+            .filter { !it.isDir }// TODO: заменить на isFile
             .also {
                 copySyncObjects(
                     syncObjectList = it,
@@ -35,7 +35,7 @@ class SyncTaskFilesCopier @Inject constructor(
     suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getObjectsForTaskWithModificationState(syncTask.id, ModificationState.MODIFIED)
-            .filter { !it.isDir }
+            .filter { !it.isDir } // TODO: заменить на isFile
             .also {
                 copySyncObjects(
                     syncObjectList = it,
@@ -48,7 +48,7 @@ class SyncTaskFilesCopier @Inject constructor(
     suspend fun copyNeverCopiedFilesOfSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getAllObjectsForTask(syncTask.id)
-            .filter { !it.isDir }
+            .filter { !it.isDir } // TODO: заменить на isFile
             .filter { it.syncState == ExecutionState.NEVER }
             .also {
                 copySyncObjects(
@@ -57,6 +57,14 @@ class SyncTaskFilesCopier @Inject constructor(
                     overwriteIfExists = true
                 )
             }
+    }
+
+    suspend fun copyInTargetLostFiles(syncTask: SyncTask) {
+        syncObjectReader
+            .getAllObjectsForTask(syncTask.id)
+            .filter { it.isFile }
+            .filter { it.notExistsInTarget }
+            .also { list -> copySyncObjects(list, syncTask, false) }
     }
 
     private suspend fun copySyncObjects(
@@ -92,3 +100,7 @@ class SyncTaskFilesCopier @Inject constructor(
         val TAG: String = SyncTaskFilesCopier::class.java.simpleName
     }
 }
+
+val SyncObject.isFile get() = !isDir
+
+val SyncObject.notExistsInTarget get() = !isExistsInTarget

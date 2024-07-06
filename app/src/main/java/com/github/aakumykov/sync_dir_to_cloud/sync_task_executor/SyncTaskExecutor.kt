@@ -89,7 +89,7 @@ class SyncTaskExecutor @Inject constructor(
 //            backupModifiedItems(syncTask)
 
             // Восстановить утраченные каталоги (перед копированием файлов!)
-            // ???
+            createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами)
             // TODO: выдавать сообщение
@@ -103,10 +103,10 @@ class SyncTaskExecutor @Inject constructor(
             copyNewFiles(syncTask)
 
             // Скопировать изменившееся
-//            copyModifiedItems(syncTask)
             copyModifiedFiles(syncTask)
 
             // Восстановить утраченные файлы
+            copyLostFilesAgain(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -119,6 +119,18 @@ class SyncTaskExecutor @Inject constructor(
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun createLostDirsAgain(syncTask: SyncTask) {
+        appComponent
+            .getSyncTaskDirsCreator()
+            .createInTargetLostDirs(syncTask)
+    }
+
+    private suspend fun copyLostFilesAgain(syncTask: SyncTask) {
+        appComponent
+            .getSyncTaskFilesCopier()
+            .copyInTargetLostFiles(syncTask)
     }
 
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
