@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -32,13 +33,30 @@ class SyncTaskFilesCopier @Inject constructor(
     }
 
     suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, ModificationState.MODIFIED).also {
-            copySyncObjects(
-                syncObjectList = it,
-                syncTask = syncTask,
-                overwriteIfExists = true
-            )
-        }
+        syncObjectReader
+            .getObjectsForTaskWithModificationState(syncTask.id, ModificationState.MODIFIED)
+            .filter { !it.isDir }
+            .also {
+                copySyncObjects(
+                    syncObjectList = it,
+                    syncTask = syncTask,
+                    overwriteIfExists = true
+                )
+            }
+    }
+
+    suspend fun copyNeverCopiedFilesOfSyncTask(syncTask: SyncTask) {
+        syncObjectReader
+            .getAllObjectsForTask(syncTask.id)
+            .filter { !it.isDir }
+            .filter { it.syncState == ExecutionState.NEVER }
+            .also {
+                copySyncObjects(
+                    syncObjectList = it,
+                    syncTask = syncTask,
+                    overwriteIfExists = true
+                )
+            }
     }
 
     private suspend fun copySyncObjects(

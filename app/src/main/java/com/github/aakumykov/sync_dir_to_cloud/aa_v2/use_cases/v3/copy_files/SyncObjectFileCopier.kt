@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 
 /**
- * Копирует данные SyncObject-а из источника в приёмник указанного SyncTask.
+ * Копирует данные SyncObject-а из источника в приёмник указанный в SyncTask.
  */
 class SyncObjectFileCopier (
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,

@@ -18,7 +18,7 @@ class SyncObjectCopierCreator @Inject constructor(
 
         val sourceFileStreamSupplier = sourceFileStreamSupplierCreator.create(
             syncTask.id,
-            syncTask.targetStorageType
+            syncTask.sourceStorageType
         )
 
         val targetCloudWriter = cloudWriterCreator.createCloudWriter(

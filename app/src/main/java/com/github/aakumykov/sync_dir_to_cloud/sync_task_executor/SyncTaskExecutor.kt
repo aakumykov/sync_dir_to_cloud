@@ -72,17 +72,9 @@ class SyncTaskExecutor @Inject constructor(
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            /*prepareSync(syncTask.id)
-
-            readSource2(syncTask)
-//            readSource(syncTask)
-            readTarget(syncTask)
-
-            doSync(syncTask)
-//            writeToTarget2(syncTask)*/
-
-            // *Выполнить подготовку
-            prepareSync(taskId)
+            // Выполнить подготовку
+            resetSyncObjectsBadState(taskId)
+            markAllObjectsAsDeleted(taskId)
 
             // Прочитать источник
             readSource2(syncTask)
@@ -90,14 +82,23 @@ class SyncTaskExecutor @Inject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
-            // Забекапить удалённое
+            // Забэкапить удалённое
 //            backupDeletedItems(syncTask)
 
-            // Забекапить изменившееся
+            // Забэкапить изменившееся
 //            backupModifiedItems(syncTask)
 
+            // Восстановить утраченные каталоги (перед копированием файлов!)
+            // ???
+
+            // Создать никогда не создававшиеся каталоги (перед файлами)
+            // TODO: выдавать сообщение
+            createNeverSyncedDirs(syncTask)
+
+            // Скопировать не копировавшиеся файлы
+            copyNeverSyncedFiles(syncTask)
+
             // Скопировать новое
-//            copyNewItems(syncTask)
             createNewDirs(syncTask)
             copyNewFiles(syncTask)
 
@@ -105,8 +106,7 @@ class SyncTaskExecutor @Inject constructor(
 //            copyModifiedItems(syncTask)
             copyModifiedFiles(syncTask)
 
-            // Восстановить утраченное
-            // ???
+            // Восстановить утраченные файлы
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -119,6 +119,18 @@ class SyncTaskExecutor @Inject constructor(
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
+        appComponent
+            .getSyncTaskDirsCreator()
+            .createNeverProcessedDirsFromTask(syncTask)
+    }
+
+    private suspend fun copyNeverSyncedFiles(syncTask: SyncTask) {
+        appComponent
+            .getSyncTaskFilesCopier()
+            .copyNeverCopiedFilesOfSyncTask(syncTask)
     }
 
     private suspend fun copyModifiedFiles(syncTask: SyncTask) {
@@ -152,14 +164,12 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    // TODO: дать осмысленное название
-    private suspend fun prepareSync(taskId: String) {
-
-        // TODO: добавлять сообщение
-        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
-
-        syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
+    private suspend fun resetSyncObjectsBadState(taskId: String) {
         syncObjectStateResetter.markBadStatesAsNeverSynced(taskId)
+    }
+
+    private suspend fun markAllObjectsAsDeleted(taskId: String) {
+        syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
     }
 
     private suspend fun readSource2(syncTask: SyncTask) {

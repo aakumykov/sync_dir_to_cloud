@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.config.CloudType.Companion.list
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -21,6 +22,13 @@ class SyncTaskDirsCreator @Inject constructor(
     suspend fun createNewDirsFromTask(syncTask: SyncTask) {
         syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, ModificationState.NEW)
             .filter { it.isDir }
+            .also { list -> createDirs(list, syncTask) }
+    }
+
+    suspend fun createNeverProcessedDirsFromTask(syncTask: SyncTask) {
+        syncObjectReader.getAllObjectsForTask(syncTask.id)
+            .filter { it.isDir }
+            .filter { it.syncState == ExecutionState.NEVER }
             .also { list -> createDirs(list, syncTask) }
     }
 

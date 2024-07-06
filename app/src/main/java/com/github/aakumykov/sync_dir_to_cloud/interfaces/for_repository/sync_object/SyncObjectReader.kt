@@ -17,8 +17,10 @@ interface SyncObjectReader {
 
     suspend fun getAllObjectsForTask(taskId: String): List<SyncObject>
 
+    @Deprecated("Сделать отдельные методы для файлов и каталогов")
     suspend fun getObjectsForTaskWithModificationState(taskId: String, modificationState: ModificationState): List<SyncObject>
 
+    @Deprecated("Сделать отдельные методы для файлов и каталогов")
     suspend fun getObjectsForTaskWithSyncState(taskId: String, syncState: ExecutionState): List<SyncObject>
 
     @Deprecated("Не используется")
