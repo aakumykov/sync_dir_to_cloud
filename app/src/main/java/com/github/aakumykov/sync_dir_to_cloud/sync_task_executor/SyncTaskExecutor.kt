@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
@@ -82,10 +81,16 @@ class SyncTaskExecutor @Inject constructor(
             readTarget(syncTask)
 
             // Забэкапить удалённое
+            backupDeletedFiles(syncTask)
+//            backupDeletedDirs()
 //            backupDeletedItems(syncTask)
 
             // Забэкапить изменившееся
 //            backupModifiedItems(syncTask)
+
+            // Удалить удалённые файлы
+
+            // Удалить удалённые каталоги
 
             // Восстановить утраченные каталоги (перед копированием файлов!)
             createLostDirsAgain(syncTask)
@@ -118,6 +123,16 @@ class SyncTaskExecutor @Inject constructor(
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun backupDeletedFiles(syncTask: SyncTask) {
+        appComponent
+            .getFilesBackuperCreator()
+            .createFilesBackuperForSyncTask(syncTask)
+            ?.backupDeletedFilesOfTask(syncTask)
+            ?: {
+                Log.e(TAG, "")
+            }
     }
 
     private suspend fun createLostDirsAgain(syncTask: SyncTask) {
