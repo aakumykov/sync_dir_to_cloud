@@ -81,9 +81,8 @@ class SyncTaskExecutor @Inject constructor(
             readTarget(syncTask)
 
             // Забэкапить удалённое
+            backupDeletedDirs(syncTask)
             backupDeletedFiles(syncTask)
-//            backupDeletedDirs()
-//            backupDeletedItems(syncTask)
 
             // Забэкапить изменившееся
 //            backupModifiedItems(syncTask)
@@ -125,13 +124,23 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
+    private suspend fun backupDeletedDirs(syncTask: SyncTask) {
+        appComponent
+            .getDirsBackuperCreator()
+            .createDirsBackuperForTask(syncTask)
+            ?.backupDeletedDirsOfTask(syncTask)
+            ?: {
+                Log.e(TAG, "Не удалось создать бэкапер каталогов для задачи ${syncTask.description}")
+            }
+    }
+
     private suspend fun backupDeletedFiles(syncTask: SyncTask) {
         appComponent
             .getFilesBackuperCreator()
             .createFilesBackuperForSyncTask(syncTask)
             ?.backupDeletedFilesOfTask(syncTask)
             ?: {
-                Log.e(TAG, "")
+                Log.e(TAG, "Не удалось создать бэкапер файлов для задачи ${syncTask.description}")
             }
     }
 

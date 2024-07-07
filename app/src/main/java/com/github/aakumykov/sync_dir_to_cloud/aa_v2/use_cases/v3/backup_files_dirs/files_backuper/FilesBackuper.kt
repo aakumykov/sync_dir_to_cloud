@@ -1,24 +1,20 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs
+package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper
 
 import android.util.Log
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.BackupDirCreatorCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
-import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import java.io.File
-import javax.inject.Inject
 
 // TODO: где устанавливать статус SyncTask-а "выполняется РК": здесь или в SyncTaskExecutor?
 /**
@@ -31,6 +27,7 @@ class FilesBackuper @AssistedInject constructor(
     private val backupDirCreatorCreator: BackupDirCreatorCreator,
     private val syncObjectStateChanger: SyncObjectStateChanger,
 ) {
+
     suspend fun backupDeletedFilesOfTask(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
@@ -38,9 +35,13 @@ class FilesBackuper @AssistedInject constructor(
             .also { list -> backupFilesFromList(list, syncTask) }
     }
 
-    // FIXME: убрать "!!"
     // TODO: регистрировать ошибку
     private suspend fun backupFilesFromList(list: List<SyncObject>, syncTask: SyncTask) {
+
+        if (list.isEmpty()) {
+            Log.d(TAG, "Бэкап файлов для задачи ${syncTask.description} не требуется.")
+            return
+        }
 
         backupDirCreatorCreator.createBackupDirCreatorFor(syncTask)?.also { backupDirCreator ->
 
@@ -86,26 +87,4 @@ class FilesBackuper @AssistedInject constructor(
 @AssistedFactory
 interface FilesBackuperAssistedFactory {
     fun createFilesBackuper(cloudReader: CloudReader, cloudWriter: CloudWriter): FilesBackuper
-}
-
-class FilesBackuperCreator @Inject constructor(
-    private val filesBackuperAssistedFactory: FilesBackuperAssistedFactory,
-    private val cloudReaderCreator: CloudReaderCreator,
-    private val cloudWriterCreator: CloudWriterCreator,
-    private val cloudAuthReader: CloudAuthReader
-) {
-    suspend fun createFilesBackuperForSyncTask(syncTask: SyncTask): FilesBackuper? {
-        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.let { targetAuth ->
-
-            val targetCloudReader = cloudReaderCreator.createCloudReader(syncTask.targetStorageType, targetAuth.authToken)
-            val targetCloudWriter = cloudWriterCreator.createCloudWriter(syncTask.targetStorageType, targetAuth.authToken)
-
-            return if (null != targetCloudReader && null != targetCloudWriter) {
-                filesBackuperAssistedFactory
-                    .createFilesBackuper(targetCloudReader, targetCloudWriter)
-            } else {
-                null
-            }
-        }
-    }
 }

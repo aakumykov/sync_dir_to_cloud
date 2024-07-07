@@ -133,6 +133,9 @@ class SyncTask {
     @Ignore
     fun summary() = "SyncTask ($id): $sourcePath --> $targetPath"
 
+    @Ignore
+    val description: String = summary()
+
     enum class State {
         IDLE,
         READING_SOURCE,

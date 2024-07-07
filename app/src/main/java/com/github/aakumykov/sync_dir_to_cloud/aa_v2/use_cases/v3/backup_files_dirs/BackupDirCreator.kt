@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
@@ -11,7 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 
-class BackupDirCreator constructor(
+class BackupDirCreator (
     private val cloudWriter: CloudWriter
 ) {
     /**
@@ -21,12 +20,10 @@ class BackupDirCreator constructor(
 
         val dateSuffix = SimpleDateFormat(BackupConfig.BACKUP_DIR_DATE_TIME_FORMAT, Locale.getDefault()).format(syncTask.lastStart)
         val backupDirName = "${BackupConfig.BACKUP_DIR_PREFIX}_${dateSuffix}"
+        val backupParentDir = File(syncTask.targetPath!!, BackupConfig.BACKUPS_TOP_DIR_NAME).absolutePath
 
         return try {
-            cloudWriter.createDir(syncTask.targetPath!!, backupDirName)
-            val fullDirPath = File(syncTask.targetPath!!, backupDirName)
-            Result.success(fullDirPath.absolutePath)
-
+            Result.success(cloudWriter.createDirResult(backupParentDir, backupDirName).getOrThrow())
         } catch (e: Exception) {
             Result.failure(e)
         }
