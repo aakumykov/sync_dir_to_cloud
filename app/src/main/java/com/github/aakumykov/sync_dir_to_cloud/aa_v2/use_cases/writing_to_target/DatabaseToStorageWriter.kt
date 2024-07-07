@@ -1,17 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.DeletedDirsDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.DeletedFilesDeleter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.LostDirsCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.LostFilesCopier
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.ModifiedFilesCopier
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.NewDirsCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.NewFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import javax.inject.Inject
 
 class DatabaseToStorageWriter @Inject constructor(
@@ -27,7 +19,7 @@ class DatabaseToStorageWriter @Inject constructor(
     //
     private val cloudAuthReader: CloudAuthReader,
 
-) {
+    ) {
     /*
         I. Синхронизировать каталоги
             1. Удалить удалённые каталоги (стратегия)

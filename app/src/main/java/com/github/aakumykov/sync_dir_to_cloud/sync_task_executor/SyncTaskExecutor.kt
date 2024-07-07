@@ -88,8 +88,10 @@ class SyncTaskExecutor @Inject constructor(
 //            backupModifiedItems(syncTask)
 
             // Удалить удалённые файлы
+            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
             // Удалить удалённые каталоги
+//            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // Восстановить утраченные каталоги (перед копированием файлов!)
             createLostDirsAgain(syncTask)
@@ -122,6 +124,16 @@ class SyncTaskExecutor @Inject constructor(
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun deleteDeletedFiles(syncTask: SyncTask) {
+        appComponent
+            .getTaskFilesDeleterCreator()
+            .createDeletedFilesDeleterForTask(syncTask)
+            ?.deleteDeletedFilesForTask(syncTask)
+            ?: {
+                Log.e(TAG, "Не удалось создать удалятель файлов для задачи ${syncTask.description}")
+            }
     }
 
     private suspend fun backupDeletedDirs(syncTask: SyncTask) {

@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncObjectCopierCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_deleter.TaskFilesDeleterCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -143,6 +144,8 @@ interface AppComponent {
     fun getFilesBackuperCreator(): FilesBackuperCreator
 
     fun getDirsBackuperCreator(): DirsBackuperCreator
+
+    fun getTaskFilesDeleterCreator(): TaskFilesDeleterCreator
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()
