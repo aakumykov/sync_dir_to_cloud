@@ -36,6 +36,8 @@ class DirsBackuper @AssistedInject constructor(
             return
         }
 
+        list.joinToString(", ") { it.name }.also { Log.d(com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuper.TAG, "list: $it") }
+
         backupDirCreatorCreator.createBackupDirCreatorFor(syncTask)
             ?.createBackupDirFor(syncTask)
             ?.onSuccess { backupDirPath ->

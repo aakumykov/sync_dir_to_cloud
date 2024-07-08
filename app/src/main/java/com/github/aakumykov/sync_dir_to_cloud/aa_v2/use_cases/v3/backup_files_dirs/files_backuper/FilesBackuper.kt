@@ -43,6 +43,8 @@ class FilesBackuper @AssistedInject constructor(
             return
         }
 
+        list.joinToString(", ") { it.name }.also { Log.d(TAG, "list: $it") }
+
         backupDirCreatorCreator.createBackupDirCreatorFor(syncTask)?.also { backupDirCreator ->
 
             backupDirCreator.createBackupDirFor(syncTask)
