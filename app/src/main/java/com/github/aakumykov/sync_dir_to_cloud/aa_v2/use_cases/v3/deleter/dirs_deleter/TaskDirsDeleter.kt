@@ -7,10 +7,13 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import javax.inject.Inject
 
-class TaskDirsDeleter (
-    private val dirDeleter: DirDeleter,
+class TaskDirsDeleter @AssistedInject constructor(
+    @Assisted private val dirDeleter: DirDeleter,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
 ){
@@ -47,5 +50,5 @@ class TaskDirsDeleter (
 
 @AssistedFactory
 interface TaskDirsDeleterAssistedFactory {
-    fun create(dirDeleter: Unit): TaskDirsDeleter
+    fun create(dirDeleter: DirDeleter): TaskDirsDeleter
 }

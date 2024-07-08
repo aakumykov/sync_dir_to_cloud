@@ -10,9 +10,9 @@ class DirDeleter @AssistedInject constructor(
     @Assisted private val cloudWriter: CloudWriter,
     @Assisted private val targetDir: String
 ){
+    // TODO: сделать метод, удаляющий единичный каталог?
     fun deleteDir(syncObject: SyncObject): Result<SyncObject> {
         return try {
-            // FIXME: сделать метод, удаляющий единичный каталог?
             cloudWriter.deleteDirRecursively(targetDir, syncObject.name)
             Result.success(syncObject)
         } catch (e: Exception) {
