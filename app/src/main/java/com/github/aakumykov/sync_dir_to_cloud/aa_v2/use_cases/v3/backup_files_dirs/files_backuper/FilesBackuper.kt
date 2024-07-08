@@ -32,11 +32,11 @@ class FilesBackuper @AssistedInject constructor(
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
             .filter { it.isDeleted }
-            .also { list -> backupFilesFromList(list, syncTask) }
+            .also { list -> processList(list, syncTask) }
     }
 
     // TODO: регистрировать ошибку
-    private suspend fun backupFilesFromList(list: List<SyncObject>, syncTask: SyncTask) {
+    private suspend fun processList(list: List<SyncObject>, syncTask: SyncTask) {
 
         if (list.isEmpty()) {
             Log.d(TAG, "Бэкап файлов для задачи ${syncTask.description} не требуется.")

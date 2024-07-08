@@ -4,18 +4,20 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
+// TODO: помечать объект как "удаляется"
 class TaskDirsDeleter @AssistedInject constructor(
     @Assisted private val dirDeleter: DirDeleter,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
+    private val syncObjectDeleter: SyncObjectDeleter
 ){
     suspend fun deleteDeletedDirsForTask(taskId: String) {
         syncObjectReader.getObjectsForTaskWithModificationState(taskId, ModificationState.DELETED)
@@ -27,15 +29,17 @@ class TaskDirsDeleter @AssistedInject constructor(
     private suspend fun processList(list: List<SyncObject>) {
         list.forEach { syncObject ->
 
-            syncObjectStateChanger.markAsBusy(syncObject.id)
+            val objectId = syncObject.id
+
+            syncObjectStateChanger.markAsBusy(objectId)
 
             dirDeleter.deleteDir(syncObject)
                 .onSuccess {
-                    syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
+                    syncObjectDeleter.deleteObjectWithDeletedState(objectId)
                 }
                 .onFailure {
                     ExceptionUtils.getErrorMessage(it).also { errorMsg ->
-                        syncObjectStateChanger.markAsError(syncObject.id, errorMsg)
+                        syncObjectStateChanger.markAsError(objectId, errorMsg)
                         Log.e(TAG, errorMsg, it)
                     }
                 }

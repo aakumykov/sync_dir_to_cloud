@@ -108,4 +108,7 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
     fun getAllObjectsForTask(taskId: String): List<SyncObject>
+
+    @Query("DELETE FROM sync_objects WHERE id = :objectId AND modification_state = 'DELETED'")
+    fun deleteDeletedObject(objectId: String)
 }

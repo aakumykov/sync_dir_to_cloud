@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.isFi
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
@@ -16,6 +17,7 @@ class TaskFilesDeleter @AssistedInject constructor(
     @Assisted private val fileDeleter: FileDeleter,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
+    private val syncObjectDeleter: SyncObjectDeleter,
 ) {
     suspend fun deleteDeletedFilesForTask(syncTask: SyncTask) {
         syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, ModificationState.DELETED)
@@ -27,15 +29,17 @@ class TaskFilesDeleter @AssistedInject constructor(
     private suspend fun processList(list: List<SyncObject>, syncTask: SyncTask) {
         list.forEach { syncObject ->
 
-            syncObjectStateChanger.markAsBusy(syncObject.id)
+            val objectId = syncObject.id
+
+            syncObjectStateChanger.markAsBusy(objectId)
 
             fileDeleter.deleteFile(syncObject)
                 .onSuccess {
-                    syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
+                    syncObjectDeleter.deleteObjectWithDeletedState(objectId)
                 }
                 .onFailure {
                     ExceptionUtils.getErrorMessage(it).also { errorMsg ->
-                        syncObjectStateChanger.markAsError(syncObject.id, errorMsg)
+                        syncObjectStateChanger.markAsError(objectId, errorMsg)
                         Log.e(TAG, errorMsg, it)
                     }
                 }
