@@ -239,10 +239,10 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
+    // TODO: вынести в отдельный класс
     private suspend fun readTarget(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
-            inTargetExistenceCheckerFactory.create(syncTask)
-                .checkObjectExists(syncObject)
+            inTargetExistenceCheckerFactory.create(syncTask).checkObjectExists(syncObject)
         }
     }
 

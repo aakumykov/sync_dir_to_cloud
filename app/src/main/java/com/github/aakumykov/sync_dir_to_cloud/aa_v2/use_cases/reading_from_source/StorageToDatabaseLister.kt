@@ -3,11 +3,14 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_sour
 import android.util.Log
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
@@ -18,6 +21,7 @@ class StorageToDatabaseLister @Inject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
+    private val syncTaskStateChanger: SyncTaskStateChanger,
 ) {
     @Throws(IllegalArgumentException::class)
     suspend fun readFromPath(
@@ -34,16 +38,25 @@ class StorageToDatabaseLister @Inject constructor(
             throw IllegalArgumentException("cloudAuth argument is null")
 
         try {
+            syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
+
             recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
                 ?.listDirRecursively(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
+                ?.apply {
+                    syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
+                }
                 ?.forEach { fileListItem ->
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
+
         } catch (e: Exception) {
-            Log.e(TAG, ExceptionUtils.getErrorMessage(e), e);
+            ExceptionUtils.getErrorMessage(e).also { errorMsg ->
+                syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
+                Log.e(TAG, errorMsg, e)
+            }
         }
     }
 

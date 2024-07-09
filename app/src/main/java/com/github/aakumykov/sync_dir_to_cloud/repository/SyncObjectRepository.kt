@@ -89,18 +89,6 @@ class SyncObjectRepository @Inject constructor(
         setIsExistsInTarget(objectId, true)
     }
 
-    override suspend fun setSourceReadingState(objectId: String, state: ExecutionState, errorMsg: String?) {
-        syncObjectStateDAO.setSourceReadingState(objectId, state, errorMsg)
-    }
-
-    override suspend fun setTargetReadingState(
-        objectId: String,
-        state: ExecutionState,
-        errorMsg: String?
-    ) {
-        syncObjectStateDAO.setTargetReadingState(objectId, state, errorMsg)
-    }
-
     override suspend fun setBackupState(
         objectId: String,
         state: ExecutionState,

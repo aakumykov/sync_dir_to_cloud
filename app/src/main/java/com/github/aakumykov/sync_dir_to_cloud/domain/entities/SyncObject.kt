@@ -46,8 +46,6 @@ class SyncObject (
 
     @ColumnInfo(name = "is_exists_in_target") val isExistsInTarget: Boolean,
 
-    @ColumnInfo(name = "source_reading_state") val sourceReadingState: ExecutionState,
-    @ColumnInfo(name = "target_reading_state") val targetReadingState: ExecutionState,
     @ColumnInfo(name = "backup_state") val backupState: ExecutionState,
     @ColumnInfo(name = "deletion_state") val deletionState: ExecutionState,
     @ColumnInfo(name = "restoration_state") val restorationState: ExecutionState,
@@ -103,8 +101,6 @@ class SyncObject (
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
                 isExistsInTarget = false,
-                sourceReadingState = ExecutionState.NEVER,
-                targetReadingState = ExecutionState.NEVER,
                 backupState = ExecutionState.NEVER,
                 deletionState = ExecutionState.NEVER,
                 restorationState = ExecutionState.NEVER,

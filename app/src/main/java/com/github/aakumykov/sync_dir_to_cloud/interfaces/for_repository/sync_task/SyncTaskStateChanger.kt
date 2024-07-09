@@ -13,4 +13,8 @@ interface SyncTaskStateChanger {
     suspend fun changeExecutionState(taskId: String, newState: ExecutionState, errorMsg: String = "")
 
     suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean)
+
+
+    suspend fun setSourceReadingState(taskId: String, state: ExecutionState, errorMsg: String? = null)
+    suspend fun setTargetReadingState(taskId: String, state: ExecutionState, errorMsg: String? = null)
 }

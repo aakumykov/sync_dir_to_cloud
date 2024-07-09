@@ -73,6 +73,14 @@ class SyncTaskRepository @Inject constructor(
         syncTaskStateDAO.setEnabled(taskId, isEnabled)
     }
 
+    override suspend fun setSourceReadingState(taskId: String, state: ExecutionState, errorMsg: String?) {
+        syncTaskStateDAO.setSourceReadingState(taskId, state, errorMsg)
+    }
+
+    override suspend fun setTargetReadingState(taskId: String, state: ExecutionState, errorMsg: String?) {
+        syncTaskStateDAO.setTargetReadingState(taskId, state, errorMsg)
+    }
+
     override suspend fun changeSchedulingState(taskId: String, newState: ExecutionState, errorMsg: String) {
         changeExecutionState(syncTaskSchedulingStateDAO, taskId, newState, errorMsg)
     }

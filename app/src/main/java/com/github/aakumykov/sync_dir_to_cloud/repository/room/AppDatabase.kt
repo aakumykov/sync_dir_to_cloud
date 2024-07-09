@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStat
 
 @Database(
     entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 49,
+    version = 50,
     autoMigrations = [
 
     ]

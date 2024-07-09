@@ -39,6 +39,12 @@ class SyncTask {
     @ColumnInfo(name = "execution_state") var executionState: ExecutionState = ExecutionState.NEVER
     @ColumnInfo(name = "execution_error") var executionError: String? = null
 
+    @ColumnInfo(name = "source_reading_state") var sourceReadingState: ExecutionState
+    @ColumnInfo(name = "target_reading_state") var targetReadingState: ExecutionState
+
+    @ColumnInfo(name = "source_reading_error") var sourceReadingError: String? = null
+    @ColumnInfo(name = "target_reading_error") var targetReadingError: String? = null
+
     @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "source_storage_type") var sourceStorageType: StorageType?
 
@@ -85,6 +91,9 @@ class SyncTask {
 
         this.oldIntervalH = 0
         this.oldIntervalM = 0
+
+        this.sourceReadingState = ExecutionState.NEVER
+        this.targetReadingState = ExecutionState.NEVER
     }
 
     constructor(sourcePath: String,
@@ -108,6 +117,9 @@ class SyncTask {
 
         this.oldIntervalH = 0
         this.oldIntervalM = 0
+
+        this.sourceReadingState = ExecutionState.NEVER
+        this.targetReadingState = ExecutionState.NEVER
     }
 
 
