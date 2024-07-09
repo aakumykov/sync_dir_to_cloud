@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuper
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuper.Companion
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
@@ -48,15 +49,23 @@ class DirsBackuper @AssistedInject constructor(
             }
     }
 
-    private fun processListReal(list: List<SyncObject>, syncTask: SyncTask, backupDirPath: String) {
+    private suspend fun processListReal(list: List<SyncObject>, syncTask: SyncTask, backupDirPath: String) {
         list.forEach { syncObject ->
+
+            val objectId = syncObject.id
+
             try {
+                syncObjectStateChanger.setBackupState(objectId, ExecutionState.RUNNING)
+
                 cloudWriter
                     .createDirResult(backupDirPath, syncObject.relativePath)
                     .getOrThrow()
+
+                syncObjectStateChanger.setBackupState(objectId, ExecutionState.SUCCESS)
             }
             catch (e: Exception) {
                 ExceptionUtils.getErrorMessage(e).also { errorMsg ->
+                    syncObjectStateChanger.setBackupState(objectId, ExecutionState.ERROR, errorMsg)
                     Log.e(TAG, errorMsg, e)
                 }
             }
