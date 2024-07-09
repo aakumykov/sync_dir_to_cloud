@@ -78,7 +78,7 @@ class SyncTaskExecutor @Inject constructor(
             readSource(syncTask)
 
             // Прочитать приёмник
-            readTarget(syncTask)
+            checkItemsExistenceInTarget(syncTask)
 
             // Забэкапить удалённое
             backupDeletedDirs(syncTask)
@@ -239,7 +239,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private suspend fun readTarget(syncTask: SyncTask) {
+    private suspend fun checkItemsExistenceInTarget(syncTask: SyncTask) {
         // TODO: вынести в отдельный класс по примеру других aa_v2-методов
         syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
             inTargetExistenceCheckerFactory
