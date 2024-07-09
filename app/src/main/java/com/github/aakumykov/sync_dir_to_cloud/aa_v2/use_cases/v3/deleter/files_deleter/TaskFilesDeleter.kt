@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.isFile
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -31,15 +32,16 @@ class TaskFilesDeleter @AssistedInject constructor(
 
             val objectId = syncObject.id
 
-            syncObjectStateChanger.markAsBusy(objectId)
+            syncObjectStateChanger.setDeletionState(objectId, ExecutionState.RUNNING)
 
             fileDeleter.deleteFile(syncObject)
                 .onSuccess {
+                    // менять "статус удаления" на "успешно" не нужно, так как запись удаляется из таблицы
                     syncObjectDeleter.deleteObjectWithDeletedState(objectId)
                 }
                 .onFailure {
                     ExceptionUtils.getErrorMessage(it).also { errorMsg ->
-                        syncObjectStateChanger.markAsError(objectId, errorMsg)
+                        syncObjectStateChanger.setDeletionState(objectId, ExecutionState.ERROR, errorMsg)
                         Log.e(TAG, errorMsg, it)
                     }
                 }

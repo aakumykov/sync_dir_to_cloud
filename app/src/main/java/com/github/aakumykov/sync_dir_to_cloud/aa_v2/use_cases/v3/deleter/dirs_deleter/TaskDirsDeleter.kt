@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_d
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
@@ -31,10 +32,11 @@ class TaskDirsDeleter @AssistedInject constructor(
 
             val objectId = syncObject.id
 
-            syncObjectStateChanger.markAsBusy(objectId)
+            syncObjectStateChanger.setDeletionState(objectId, ExecutionState.RUNNING)
 
             dirDeleter.deleteDir(syncObject)
                 .onSuccess {
+                    // менять "статус удаления" на "успешно" не нужно, так как запись удаляется из таблицы
                     syncObjectDeleter.deleteObjectWithDeletedState(objectId)
                 }
                 .onFailure {

@@ -93,6 +93,8 @@ class SyncTaskExecutor @Inject constructor(
             // Удалить удалённые каталоги
             deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
+            // TODO: очистка БД от удалённых элементов как отдельный этап?
+
             // Восстановить утраченные каталоги (перед копированием файлов!)
             createLostDirsAgain(syncTask)
 
