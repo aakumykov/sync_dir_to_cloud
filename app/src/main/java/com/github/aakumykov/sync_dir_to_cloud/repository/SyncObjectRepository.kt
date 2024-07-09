@@ -89,10 +89,18 @@ class SyncObjectRepository @Inject constructor(
         setIsExistsInTarget(objectId, true)
     }
 
+    override suspend fun setTargetReadingState(
+        objectId: String,
+        state: ExecutionState,
+        errorMsg: String
+    ) {
+        syncObjectStateDAO.setTargetReadingState(objectId, state, errorMsg)
+    }
+
     override suspend fun setBackupState(
         objectId: String,
         state: ExecutionState,
-        errorMsg: String?
+        errorMsg: String
     ) {
         syncObjectStateDAO.setBackupState(objectId, state, errorMsg)
     }
@@ -100,7 +108,7 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun setDeletionState(
         objectId: String,
         state: ExecutionState,
-        errorMsg: String?
+        errorMsg: String
     ) {
         syncObjectStateDAO.setDeletionState(objectId, state, errorMsg)
     }
@@ -108,12 +116,12 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun setRestorationState(
         objectId: String,
         state: ExecutionState,
-        errorMsg: String?
+        errorMsg: String
     ) {
         syncObjectStateDAO.setRestorationState(objectId, state, errorMsg)
     }
 
-    override suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String?) {
+    override suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String) {
         syncObjectStateDAO.setSyncState(objectId, state, errorMsg)
     }
 

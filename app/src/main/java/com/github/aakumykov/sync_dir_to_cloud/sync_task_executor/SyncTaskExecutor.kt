@@ -239,10 +239,12 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    // TODO: вынести в отдельный класс
     private suspend fun readTarget(syncTask: SyncTask) {
+        // TODO: вынести в отдельный класс по примеру других aa_v2-методов
         syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
-            inTargetExistenceCheckerFactory.create(syncTask).checkObjectExists(syncObject)
+            inTargetExistenceCheckerFactory
+                .create(syncTask)
+                .checkObjectExists(syncObject)
         }
     }
 

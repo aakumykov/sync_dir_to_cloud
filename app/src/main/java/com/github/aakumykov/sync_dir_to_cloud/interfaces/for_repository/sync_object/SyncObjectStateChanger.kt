@@ -22,9 +22,9 @@ interface SyncObjectStateChanger {
     suspend fun markAsBusy(objectId: String)
     suspend fun markAsError(objectId: String, errorMsg: String)
 
-
-    suspend fun setBackupState(objectId: String, state: ExecutionState, errorMsg: String? = null)
-    suspend fun setDeletionState(objectId: String, state: ExecutionState, errorMsg: String? = null)
-    suspend fun setRestorationState(objectId: String, state: ExecutionState, errorMsg: String? = null)
-    suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String? = null)
+    suspend fun setTargetReadingState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    suspend fun setBackupState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    suspend fun setDeletionState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    suspend fun setRestorationState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String = "")
 }
