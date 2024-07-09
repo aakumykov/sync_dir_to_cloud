@@ -13,12 +13,14 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import javax.inject.Inject
 
 @AppScope
 class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
+    private val syncObjectStateDAO: SyncObjectStateDAO,
     private val badObjectStateResettingDAO: BadObjectStateResettingDAO
 )
     : SyncObjectAdder,
@@ -81,9 +83,50 @@ class SyncObjectRepository @Inject constructor(
         changeSyncState(objectId, ExecutionState.RUNNING)
     }
 
+    @Deprecated("Нужна транзакция")
     override suspend fun markAsSuccessfullySynced(objectId: String) {
         changeSyncState(objectId, ExecutionState.SUCCESS)
         setIsExistsInTarget(objectId, true)
+    }
+
+    override suspend fun setSourceReadingState(objectId: String, state: ExecutionState, errorMsg: String?) {
+        syncObjectStateDAO.setSourceReadingState(objectId, state, errorMsg)
+    }
+
+    override suspend fun setTargetReadingState(
+        objectId: String,
+        state: ExecutionState,
+        errorMsg: String?
+    ) {
+        syncObjectStateDAO.setTargetReadingState(objectId, state, errorMsg)
+    }
+
+    override suspend fun setBackupState(
+        objectId: String,
+        state: ExecutionState,
+        errorMsg: String?
+    ) {
+        syncObjectStateDAO.setBackupState(objectId, state, errorMsg)
+    }
+
+    override suspend fun setDeletionState(
+        objectId: String,
+        state: ExecutionState,
+        errorMsg: String?
+    ) {
+        syncObjectStateDAO.setDeletionState(objectId, state, errorMsg)
+    }
+
+    override suspend fun setRestorationState(
+        objectId: String,
+        state: ExecutionState,
+        errorMsg: String?
+    ) {
+        syncObjectStateDAO.setRestorationState(objectId, state, errorMsg)
+    }
+
+    override suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String?) {
+        syncObjectStateDAO.setSyncState(objectId, state, errorMsg)
     }
 
     override suspend fun markAsError(objectId: String, errorMsg: String) {

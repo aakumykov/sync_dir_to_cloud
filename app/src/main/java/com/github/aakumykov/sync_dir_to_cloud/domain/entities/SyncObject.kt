@@ -46,8 +46,18 @@ class SyncObject (
 
     @ColumnInfo(name = "is_exists_in_target") val isExistsInTarget: Boolean,
 
+    @ColumnInfo(name = "source_reading_state") val sourceReadingState: ExecutionState,
+    @ColumnInfo(name = "target_reading_state") val targetReadingState: ExecutionState,
+    @ColumnInfo(name = "backup_state") val backupState: ExecutionState,
+    @ColumnInfo(name = "deletion_state") val deletionState: ExecutionState,
+    @ColumnInfo(name = "restoration_state") val restorationState: ExecutionState,
+
     @ColumnInfo(name = "sync_state") val syncState: ExecutionState,
+
+    @Deprecated("Переименовать в operationDate")
     @ColumnInfo(name = "sync_date") val syncDate: Long,
+
+    @Deprecated("Переименовать в operationError")
     @ColumnInfo(name = "sync_error") var syncError: String,
 
     @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
@@ -93,12 +103,17 @@ class SyncObject (
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
                 isExistsInTarget = false,
+                sourceReadingState = ExecutionState.NEVER,
+                targetReadingState = ExecutionState.NEVER,
+                backupState = ExecutionState.NEVER,
+                deletionState = ExecutionState.NEVER,
+                restorationState = ExecutionState.NEVER,
                 syncState = ExecutionState.NEVER,
+                syncDate = 0L,
                 syncError = "",
                 modificationState = ModificationState.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
-                syncDate = 0L,
             )
         }
 
