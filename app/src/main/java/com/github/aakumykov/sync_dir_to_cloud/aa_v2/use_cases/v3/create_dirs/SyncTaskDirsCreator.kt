@@ -46,15 +46,17 @@ class SyncTaskDirsCreator @Inject constructor(
 
             dirList.forEach { syncObject ->
 
-                syncObjectStateChanger.markAsBusy(syncObject.id)
+                val objectInject = syncObject.id
+
+                syncObjectStateChanger.setRestorationState(objectInject, ExecutionState.RUNNING)
 
                 syncObjectDirCreator.createDir(syncObject, syncTask)
                     .onSuccess {
-                        syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
+                        syncObjectStateChanger.setRestorationState(objectInject, ExecutionState.SUCCESS)
                     }
                     .onFailure { throwable ->
                         ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                            syncObjectStateChanger.markAsError(syncObject.id, errorMsg)
+                            syncObjectStateChanger.setRestorationState(objectInject, ExecutionState.ERROR, errorMsg)
                             Log.e(TAG, errorMsg, throwable)
                         }
                     }

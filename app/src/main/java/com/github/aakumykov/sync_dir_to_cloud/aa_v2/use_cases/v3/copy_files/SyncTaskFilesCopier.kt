@@ -78,18 +78,18 @@ class SyncTaskFilesCopier @Inject constructor(
 
         syncObjectList.forEach { syncObject ->
 
-            Log.d(TAG, "copySyncObjects(), syncObject: ${syncObject.name}")
+            val objectId = syncObject.id
 
-            syncObjectStateChanger.markAsBusy(syncObject.id)
+            syncObjectStateChanger.setRestorationState(objectId, ExecutionState.RUNNING)
 
             syncObjectCopier
                 ?.copySyncObject(syncObject, syncTask, overwriteIfExists)
                 ?.onSuccess {
-                    syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
+                    syncObjectStateChanger.setRestorationState(objectId, ExecutionState.SUCCESS)
                 }
                 ?.onFailure { throwable ->
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                        syncObjectStateChanger.markAsError(syncObject.id, errorMsg)
+                        syncObjectStateChanger.setRestorationState(objectId, ExecutionState.ERROR, errorMsg)
                         Log.e(TAG, errorMsg, throwable)
                     }
                 }
