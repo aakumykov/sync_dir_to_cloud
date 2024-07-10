@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import javax.inject.Inject
 
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
     private val syncObjectStateDAO: SyncObjectStateDAO,
-    private val badObjectStateResettingDAO: BadObjectStateResettingDAO
+    private val syncObjectBadStateResettingDAO: SyncObjectBadStateResettingDAO,
+    private val badObjectStateResettingDAO: BadObjectStateResettingDAO,
 )
     : SyncObjectAdder,
         SyncObjectReader,
@@ -180,5 +182,21 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun markBadStatesAsNeverSynced(taskId: String) {
         badObjectStateResettingDAO.markRunningStateAsNeverSynced(taskId)
         badObjectStateResettingDAO.markErrorStateAsNeverSynced(taskId)
+    }
+
+    override suspend fun resetTargetReadingErrorStateForTask(taskId: String) {
+        syncObjectBadStateResettingDAO.resetTargetReadingErrorState(taskId)
+    }
+
+    override suspend fun resetBackupErrorStateForTask(taskId: String) {
+        syncObjectBadStateResettingDAO.resetBackupErrorState(taskId)
+    }
+
+    override suspend fun resetDeletionStateForTask(taskId: String) {
+        syncObjectBadStateResettingDAO.resetDeletionErrorState(taskId)
+    }
+
+    override suspend fun resetRestorationErrorStateForTask(taskId: String) {
+        syncObjectBadStateResettingDAO.resetRestorationErrorState(taskId)
     }
 }

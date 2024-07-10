@@ -71,49 +71,49 @@ class SyncTaskExecutor @Inject constructor(
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
             // Выполнить подготовку
-            resetSyncObjectsBadState(taskId)
+            resetSyncObjectsErrorStates(taskId)
             markAllObjectsAsDeleted(taskId)
 
             // Прочитать источник
             readSource(syncTask)
 
             // Прочитать приёмник
-            checkItemsExistenceInTarget(syncTask)
+//            readTarget(syncTask)
 
             // Забэкапить удалённое
-            backupDeletedDirs(syncTask)
-            backupDeletedFiles(syncTask)
+//            backupDeletedDirs(syncTask)
+//            backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
-            backupModifiedItems(syncTask)
+//            backupModifiedItems(syncTask)
 
             // Удалить удалённые файлы
-            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
+//            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
             // Удалить удалённые каталоги
-            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
+//            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
             // Восстановить утраченные каталоги (перед копированием файлов!)
-            createLostDirsAgain(syncTask)
+//            createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами)
             // TODO: выдавать сообщение
-            createNeverSyncedDirs(syncTask)
+//            createNeverSyncedDirs(syncTask)
 
             // Скопировать не копировавшиеся файлы
-            copyNeverSyncedFiles(syncTask)
+//            copyNeverSyncedFiles(syncTask)
 
             // Скопировать новое
-            createNewDirs(syncTask)
-            copyNewFiles(syncTask)
+//            createNewDirs(syncTask)
+//            copyNewFiles(syncTask)
 
             // Скопировать изменившееся
-            copyModifiedFiles(syncTask)
+//            copyModifiedFiles(syncTask)
 
             // Восстановить утраченные файлы
-            copyLostFilesAgain(syncTask)
+//            copyLostFilesAgain(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -223,13 +223,21 @@ class SyncTaskExecutor @Inject constructor(
 
 
     // TODO: разделить на методы, делающие одно логическое действие.
-    private suspend fun resetSyncObjectsBadState(taskId: String) {
+    private suspend fun resetSyncObjectsErrorStates(taskId: String) {
+
         syncObjectStateResetter.markBadStatesAsNeverSynced(taskId)
+
+        syncObjectStateResetter.resetTargetReadingErrorStateForTask(taskId)
+        syncObjectStateResetter.resetBackupErrorStateForTask(taskId)
+        syncObjectStateResetter.resetBackupErrorStateForTask(taskId)
+        syncObjectStateResetter.resetDeletionStateForTask(taskId)
     }
+
 
     private suspend fun markAllObjectsAsDeleted(taskId: String) {
         syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
     }
+
 
     private suspend fun readSource(syncTask: SyncTask) {
         appComponent
@@ -243,7 +251,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private suspend fun checkItemsExistenceInTarget(syncTask: SyncTask) {
+    private suspend fun readTarget(syncTask: SyncTask) {
         // TODO: вынести в отдельный класс по примеру других aa_v2-методов
         syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
             inTargetExistenceCheckerFactory
