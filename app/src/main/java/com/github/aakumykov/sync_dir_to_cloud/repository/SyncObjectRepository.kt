@@ -146,7 +146,7 @@ class SyncObjectRepository @Inject constructor(
 
 
     override suspend fun markAllObjectsAsDeleted(taskId: String)
-        = syncObjectDAO.setStateOfAllItems(taskId, ModificationState.DELETED)
+        = syncObjectDAO.markAllObjectsAsDeleted(taskId)
 
 
     override suspend fun getSyncObject(taskId: String, name: String, relativeParentDirPath: String): SyncObject?
