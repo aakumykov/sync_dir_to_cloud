@@ -18,9 +18,6 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
 
     private var yandexCloudReader: YandexDiskCloudReader? = null
 
-    init {
-        Log.d("YSFSS", "init")
-    }
 
     override suspend fun getSourceFileStream(absolutePath: String): Result<InputStream> {
 

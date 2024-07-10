@@ -72,7 +72,7 @@ class SyncTaskFilesCopier @Inject constructor(
         syncTask: SyncTask,
         overwriteIfExists: Boolean
     ) {
-        Log.d(TAG, "copySyncObjects()")
+//        Log.d(TAG, "copySyncObjects()")
 
         val syncObjectCopier = syncObjectCopierCreator.createFileCopierFor(syncTask)
 

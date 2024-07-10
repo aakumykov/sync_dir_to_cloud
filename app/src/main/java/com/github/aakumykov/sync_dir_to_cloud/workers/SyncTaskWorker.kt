@@ -82,7 +82,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
 
 
     private suspend fun fetchTaskSummary(taskId: String) {
-        MyLogger.d(TAG, "fetchTaskSummary(taskId: $taskId)")
+//        MyLogger.d(TAG, "fetchTaskSummary(taskId: $taskId)")
         taskSummary = syncTaskReader.getSyncTask(taskId).summary()
     }
 

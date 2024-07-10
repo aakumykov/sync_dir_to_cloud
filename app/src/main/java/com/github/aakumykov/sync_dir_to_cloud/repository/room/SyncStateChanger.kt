@@ -9,28 +9,28 @@ abstract class SyncStateChanger {
 
     @Transaction @Update
     suspend fun setIdleState(taskId: String) {
-        MyLogger.d(TAG, "setIdleState() called with: taskId = $taskId")
+//        MyLogger.d(TAG, "setIdleState() called with: taskId = $taskId")
         setStateNotUseDirectly(taskId, ExecutionState.NEVER)
         setErrorMsgNotUseDirectly(taskId, "")
     }
 
     @Transaction @Update
     suspend fun setBusyState(taskId: String) {
-        MyLogger.d(TAG, "setBusyState() called with: taskId = $taskId")
+//        MyLogger.d(TAG, "setBusyState() called with: taskId = $taskId")
         setStateNotUseDirectly(taskId, ExecutionState.RUNNING)
         setErrorMsgNotUseDirectly(taskId, "")
     }
 
     @Transaction @Update
     suspend fun setSuccessState(taskId: String) {
-        MyLogger.d(TAG, "setSuccessState() called with: taskId = $taskId")
+//        MyLogger.d(TAG, "setSuccessState() called with: taskId = $taskId")
         setStateNotUseDirectly(taskId, ExecutionState.SUCCESS)
         setErrorMsgNotUseDirectly(taskId, "")
     }
 
     @Transaction @Update
     suspend fun setErrorState(taskId: String, errorMsg: String) {
-        MyLogger.d(TAG, "setErrorState() called with: taskId = $taskId, errorMsg = $errorMsg")
+//        MyLogger.d(TAG, "setErrorState() called with: taskId = $taskId, errorMsg = $errorMsg")
         setStateNotUseDirectly(taskId, ExecutionState.ERROR)
         setErrorMsgNotUseDirectly(taskId, errorMsg)
     }
