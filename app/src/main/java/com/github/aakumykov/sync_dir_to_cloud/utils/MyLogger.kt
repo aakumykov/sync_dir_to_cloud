@@ -33,6 +33,7 @@ object MyLogger {
     }
 
     private fun fullTag(tag: String): String {
-        return if (isEmulator()) "$TAG_PREFIX, $tag" else tag
+//        return if (isEmulator()) "$TAG_PREFIX, $tag" else tag
+        return tag
     }
 }
