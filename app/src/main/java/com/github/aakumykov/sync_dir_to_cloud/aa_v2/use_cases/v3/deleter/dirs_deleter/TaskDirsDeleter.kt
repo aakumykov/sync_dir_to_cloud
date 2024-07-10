@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.targetReadingStateIsOk
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
@@ -21,9 +22,10 @@ class TaskDirsDeleter @AssistedInject constructor(
     private val syncObjectDeleter: SyncObjectDeleter
 ){
     suspend fun deleteDeletedDirsForTask(taskId: String) {
-        syncObjectReader.getObjectsForTaskWithModificationState(taskId, StateInSource.DELETED)
+        syncObjectReader.getAllObjectsForTask(taskId)
             .filter { it.isDir }
             .filter { it.isDeleted }
+            .filter { it.targetReadingStateIsOk }
             .also { list -> processList(list) }
     }
 
