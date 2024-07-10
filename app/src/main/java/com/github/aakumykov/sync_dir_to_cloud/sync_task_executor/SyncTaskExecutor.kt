@@ -79,7 +79,7 @@ class SyncTaskExecutor @Inject constructor(
             readSource(syncTask)
 
             // Прочитать приёмник
-//            readTarget(syncTask)
+            readTarget(syncTask)
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
