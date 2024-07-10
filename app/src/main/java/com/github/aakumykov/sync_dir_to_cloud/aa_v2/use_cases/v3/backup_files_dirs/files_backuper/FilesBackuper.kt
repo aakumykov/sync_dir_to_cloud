@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.BackupDirCreatorCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.targetReadingStateOk
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
@@ -34,6 +35,7 @@ class FilesBackuper @AssistedInject constructor(
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
             .filter { it.isDeleted }
+            .filter { it.targetReadingStateOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
             .also { list -> processDeletedFilesList(list, syncTask) }
     }
 
@@ -46,10 +48,12 @@ class FilesBackuper @AssistedInject constructor(
 
 
     private suspend fun processDeletedFilesList(list: List<SyncObject>, syncTask: SyncTask) {
+
         if (list.isEmpty()) {
             Log.d(TAG, "Бэкап удалённых файлов для задачи ${syncTask.description} не требуется.")
             return
         }
+
         processList(list, syncTask)
     }
 

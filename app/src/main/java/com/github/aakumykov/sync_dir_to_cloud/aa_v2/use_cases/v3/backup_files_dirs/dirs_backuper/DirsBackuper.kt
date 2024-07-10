@@ -27,8 +27,7 @@ class DirsBackuper @AssistedInject constructor(
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isDeleted }
-            // Обрабатываю элементы, которые успешно проверены на наличие в месте назачения.
-            .filter { it.targetReadingStateOk }
+            .filter { it.targetReadingStateOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
             .also { list -> processList(list, syncTask) }
     }
 

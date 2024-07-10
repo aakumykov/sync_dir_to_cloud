@@ -82,8 +82,8 @@ class SyncTaskExecutor @Inject constructor(
             readTarget(syncTask)
 
             // Забэкапить удалённое
-//            backupDeletedDirs(syncTask)
-//            backupDeletedFiles(syncTask)
+            backupDeletedDirs(syncTask)
+            backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
 //            backupModifiedItems(syncTask)
