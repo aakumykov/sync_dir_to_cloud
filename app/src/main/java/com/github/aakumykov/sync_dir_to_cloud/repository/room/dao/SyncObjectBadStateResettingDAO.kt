@@ -8,25 +8,25 @@ interface SyncObjectBadStateResettingDAO {
 
     @Query("UPDATE sync_objects " +
             "SET target_reading_state = 'NEVER' " +
-            "WHERE target_reading_state = 'ERROR' " +
+            "WHERE target_reading_state IN ('ERROR','RUNNING') " +
             "AND task_id = :taskId")
-    fun resetTargetReadingErrorState(taskId: String)
+    fun resetTargetReadingBadState(taskId: String)
 
     @Query("UPDATE sync_objects " +
             "SET backup_state = 'NEVER' " +
-            "WHERE target_reading_state = 'ERROR' " +
+            "WHERE target_reading_state IN ('ERROR','RUNNING') " +
             "AND task_id = :taskId")
-    fun resetBackupErrorState(taskId: String)
+    fun resetBackupBadState(taskId: String)
 
     @Query("UPDATE sync_objects " +
             "SET deletion_state = 'NEVER' " +
-            "WHERE target_reading_state = 'ERROR' " +
+            "WHERE target_reading_state IN ('ERROR','RUNNING') " +
             "AND task_id = :taskId")
-    fun resetDeletionErrorState(taskId: String)
+    fun resetDeletionBadState(taskId: String)
 
     @Query("UPDATE sync_objects " +
             "SET restoration_state = 'NEVER' " +
-            "WHERE target_reading_state = 'ERROR' " +
+            "WHERE target_reading_state IN ('ERROR','RUNNING') " +
             "AND task_id = :taskId")
-    fun resetRestorationErrorState(taskId: String)
+    fun resetRestorationBadState(taskId: String)
 }

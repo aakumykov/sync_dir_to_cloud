@@ -71,7 +71,8 @@ class SyncTaskExecutor @Inject constructor(
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
             // Выполнить подготовку
-            resetSyncObjectsErrorStates(taskId)
+            resetTaskBadStates(taskId)
+            resetObjectsBadState(taskId)
             markAllObjectsAsDeleted(taskId)
 
             // Прочитать источник
@@ -222,15 +223,16 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    // TODO: разделить на методы, делающие одно логическое действие.
-    private suspend fun resetSyncObjectsErrorStates(taskId: String) {
+    private suspend fun resetTaskBadStates(taskId: String) {
+        syncTaskStateChanger.resetSourceReadingBadState(taskId)
+    }
 
-        syncObjectStateResetter.markBadStatesAsNeverSynced(taskId)
+    private suspend fun resetObjectsBadState(taskId: String) {
+        syncObjectStateResetter.resetTargetReadingBadState(taskId)
+        syncObjectStateResetter.resetBackupBadState(taskId)
+        syncObjectStateResetter.resetBackupBadState(taskId)
+        syncObjectStateResetter.resetDeletionBadState(taskId)
 
-        syncObjectStateResetter.resetTargetReadingErrorStateForTask(taskId)
-        syncObjectStateResetter.resetBackupErrorStateForTask(taskId)
-        syncObjectStateResetter.resetBackupErrorStateForTask(taskId)
-        syncObjectStateResetter.resetDeletionStateForTask(taskId)
     }
 
 

@@ -30,4 +30,11 @@ interface SyncTaskStateDAO {
             "source_reading_error = :errorMsg " +
             "WHERE id = :taskId")
     fun setSourceReadingState(taskId: String, state: ExecutionState, errorMsg: String?)
+
+
+    @Query("UPDATE sync_tasks " +
+            "SET source_reading_state = 'NEVER' " +
+            "WHERE id = :taskId " +
+            "AND source_reading_state IN ('ERROR','RUNNING')")
+    suspend fun resetSourceReadingBadState(taskId: String)
 }

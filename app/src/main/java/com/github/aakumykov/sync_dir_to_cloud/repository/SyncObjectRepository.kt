@@ -13,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import javax.inject.Inject
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @AppScope
 class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
-    private val syncObjectStateDAO: SyncObjectStateDAO,
+    private val syncObjectStateSetterDAO: SyncObjectStateSetterDAO,
     private val syncObjectBadStateResettingDAO: SyncObjectBadStateResettingDAO,
     private val badObjectStateResettingDAO: BadObjectStateResettingDAO,
 )
@@ -96,7 +96,7 @@ class SyncObjectRepository @Inject constructor(
         state: ExecutionState,
         errorMsg: String
     ) {
-        syncObjectStateDAO.setTargetReadingState(objectId, state, errorMsg)
+        syncObjectStateSetterDAO.setTargetReadingState(objectId, state, errorMsg)
     }
 
     override suspend fun setBackupState(
@@ -104,7 +104,7 @@ class SyncObjectRepository @Inject constructor(
         state: ExecutionState,
         errorMsg: String
     ) {
-        syncObjectStateDAO.setBackupState(objectId, state, errorMsg)
+        syncObjectStateSetterDAO.setBackupState(objectId, state, errorMsg)
     }
 
     override suspend fun setDeletionState(
@@ -112,7 +112,7 @@ class SyncObjectRepository @Inject constructor(
         state: ExecutionState,
         errorMsg: String
     ) {
-        syncObjectStateDAO.setDeletionState(objectId, state, errorMsg)
+        syncObjectStateSetterDAO.setDeletionState(objectId, state, errorMsg)
     }
 
     override suspend fun setRestorationState(
@@ -120,11 +120,11 @@ class SyncObjectRepository @Inject constructor(
         state: ExecutionState,
         errorMsg: String
     ) {
-        syncObjectStateDAO.setRestorationState(objectId, state, errorMsg)
+        syncObjectStateSetterDAO.setRestorationState(objectId, state, errorMsg)
     }
 
     override suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String) {
-        syncObjectStateDAO.setSyncState(objectId, state, errorMsg)
+        syncObjectStateSetterDAO.setSyncState(objectId, state, errorMsg)
     }
 
     override suspend fun markAsError(objectId: String, errorMsg: String) {
@@ -179,24 +179,21 @@ class SyncObjectRepository @Inject constructor(
         )
     }
 
-    override suspend fun markBadStatesAsNeverSynced(taskId: String) {
-        badObjectStateResettingDAO.markRunningStateAsNeverSynced(taskId)
-        badObjectStateResettingDAO.markErrorStateAsNeverSynced(taskId)
+
+    override suspend fun resetTargetReadingBadState(taskId: String) {
+        syncObjectBadStateResettingDAO.resetTargetReadingBadState(taskId)
     }
 
-    override suspend fun resetTargetReadingErrorStateForTask(taskId: String) {
-        syncObjectBadStateResettingDAO.resetTargetReadingErrorState(taskId)
+    override suspend fun resetBackupBadState(taskId: String) {
+        syncObjectBadStateResettingDAO.resetBackupBadState(taskId)
     }
 
-    override suspend fun resetBackupErrorStateForTask(taskId: String) {
-        syncObjectBadStateResettingDAO.resetBackupErrorState(taskId)
+    override suspend fun resetDeletionBadState(taskId: String) {
+        syncObjectBadStateResettingDAO.resetDeletionBadState(taskId)
     }
 
-    override suspend fun resetDeletionStateForTask(taskId: String) {
-        syncObjectBadStateResettingDAO.resetDeletionErrorState(taskId)
+    override suspend fun resetRestorationBadState(taskId: String) {
+        syncObjectBadStateResettingDAO.resetRestorationBadState(taskId)
     }
 
-    override suspend fun resetRestorationErrorStateForTask(taskId: String) {
-        syncObjectBadStateResettingDAO.resetRestorationErrorState(taskId)
-    }
 }

@@ -5,7 +5,7 @@ import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 
 @Dao
-interface SyncObjectStateDAO {
+interface SyncObjectStateSetterDAO {
 
     @Query("UPDATE sync_objects SET " +
             "target_reading_state = :state, " +

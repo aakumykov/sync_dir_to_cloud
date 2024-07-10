@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 
 
@@ -19,7 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadS
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
     abstract fun getSyncObjectDAO(): SyncObjectDAO
-    abstract fun getSyncObjectStateDAO(): SyncObjectStateDAO
+    abstract fun getSyncObjectStateDAO(): SyncObjectStateSetterDAO
     abstract fun getSyncObjectResettingDAO(): BadObjectStateResettingDAO
     abstract fun getCloudAuthDAO(): CloudAuthDAO
 

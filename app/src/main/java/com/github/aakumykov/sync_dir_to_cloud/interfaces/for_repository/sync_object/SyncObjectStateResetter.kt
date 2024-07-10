@@ -2,12 +2,12 @@ package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_ob
 
 
 interface SyncObjectStateResetter {
-    // TODO: разделить на два интерфейса
-    suspend fun markAllObjectsAsDeleted(taskId: String)
-    suspend fun markBadStatesAsNeverSynced(taskId: String)
 
-    suspend fun resetTargetReadingErrorStateForTask(taskId: String)
-    suspend fun resetBackupErrorStateForTask(taskId: String)
-    suspend fun resetDeletionStateForTask(taskId: String)
-    suspend fun resetRestorationErrorStateForTask(taskId: String)
+    // TODO: вынести в отдельный интерфейс
+    suspend fun markAllObjectsAsDeleted(taskId: String)
+
+    suspend fun resetTargetReadingBadState(taskId: String)
+    suspend fun resetBackupBadState(taskId: String)
+    suspend fun resetDeletionBadState(taskId: String)
+    suspend fun resetRestorationBadState(taskId: String)
 }
