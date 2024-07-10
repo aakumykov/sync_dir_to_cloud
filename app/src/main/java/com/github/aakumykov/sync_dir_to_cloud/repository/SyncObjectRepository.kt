@@ -153,9 +153,6 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.getSyncObject(taskId, name, relativeParentDirPath)
 
 
-    override suspend fun clearObjectsWasSuccessfullyDeleted(taskId: String)
-        = syncObjectDAO.deleteObjectsWithModificationAndSyncState(taskId, ModificationState.DELETED, ExecutionState.SUCCESS)
-
     override suspend fun deleteObjectWithDeletedState(objectId: String)
         = syncObjectDAO.deleteDeletedObject(objectId)
 
