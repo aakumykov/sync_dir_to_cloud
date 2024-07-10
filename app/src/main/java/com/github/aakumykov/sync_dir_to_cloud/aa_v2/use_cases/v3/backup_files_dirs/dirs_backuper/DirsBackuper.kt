@@ -27,6 +27,8 @@ class DirsBackuper @AssistedInject constructor(
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isDeleted }
+            // Обрабатываю элементы, которые успешно проверены на наличие в месте назачения.
+            .filter { it.targetReadingStateOk }
             .also { list -> processList(list, syncTask) }
     }
 
@@ -82,3 +84,6 @@ class DirsBackuper @AssistedInject constructor(
 interface DirsBackuperAssistedFactory {
     fun create(cloudWriter: CloudWriter): DirsBackuper
 }
+
+
+val SyncObject.targetReadingStateOk: Boolean get() = ExecutionState.SUCCESS == targetReadingState
