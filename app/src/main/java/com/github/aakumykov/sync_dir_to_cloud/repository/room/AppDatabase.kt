@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadS
 
 @Database(
     entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 51,
+    version = 52,
     autoMigrations = [
 
     ]

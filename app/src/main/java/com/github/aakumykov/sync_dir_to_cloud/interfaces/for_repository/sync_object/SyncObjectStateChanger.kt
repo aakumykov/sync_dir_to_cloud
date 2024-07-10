@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
@@ -15,7 +15,7 @@ interface SyncObjectStateChanger {
 
     suspend fun changeModificationState(
         syncObject: SyncObject,
-        modificationState: ModificationState
+        stateInSource: StateInSource
     )
 
     suspend fun markAsSuccessfullySynced(objectId: String)

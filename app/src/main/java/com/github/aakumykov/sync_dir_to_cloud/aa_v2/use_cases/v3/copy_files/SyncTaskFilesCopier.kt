@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -21,7 +21,7 @@ class SyncTaskFilesCopier @Inject constructor(
 ){
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
-            .getObjectsForTaskWithModificationState(syncTask.id, ModificationState.NEW)
+            .getObjectsForTaskWithModificationState(syncTask.id, StateInSource.NEW)
             .filter { !it.isDir }// TODO: заменить на isFile
             .also {
                 copySyncObjects(
@@ -34,7 +34,7 @@ class SyncTaskFilesCopier @Inject constructor(
 
     suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
-            .getObjectsForTaskWithModificationState(syncTask.id, ModificationState.MODIFIED)
+            .getObjectsForTaskWithModificationState(syncTask.id, StateInSource.MODIFIED)
             .filter { !it.isDir } // TODO: заменить на isFile
             .also {
                 copySyncObjects(

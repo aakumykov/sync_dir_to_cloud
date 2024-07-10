@@ -3,16 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target
 import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import java.io.File
 import javax.inject.Inject
 
 class DeletedFilesDeleter @Inject constructor(
@@ -55,4 +52,4 @@ class DeletedFilesDeleter @Inject constructor(
     }
 }
 
-val SyncObject.isDeleted: Boolean get() = ModificationState.DELETED == modificationState
+val SyncObject.isDeleted: Boolean get() = StateInSource.DELETED == stateInSource

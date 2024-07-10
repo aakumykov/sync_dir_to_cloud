@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 abstract class ReadingStrategy {
@@ -15,9 +15,9 @@ abstract class ReadingStrategy {
     open class Default : ReadingStrategy() {
         override fun isAcceptedForSync(syncObject: SyncObject): Boolean {
 
-            val isNewOrModified = syncObject.modificationState in arrayOf(
-                ModificationState.NEW,
-                ModificationState.MODIFIED
+            val isNewOrModified = syncObject.stateInSource in arrayOf(
+                StateInSource.NEW,
+                StateInSource.MODIFIED
             )
 
             val isNeverSynced = syncObject.syncState == ExecutionState.NEVER

@@ -151,7 +151,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 append("\n")
 
                 append("Тип изменения: ")
-                append(syncObject.modificationState.name)
+                append(syncObject.stateInSource.name)
                 append("\n")
 
                 append("Время синхронизации: ")

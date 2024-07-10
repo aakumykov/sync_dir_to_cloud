@@ -1,10 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
-enum class ModificationState {
+enum class StateInSource {
     NEW,
     DELETED,
     UNCHANGED,
     MODIFIED;
 }
 
-fun ModificationState.isNew(): Boolean = this == ModificationState.NEW
+fun StateInSource.isNew(): Boolean = this == StateInSource.NEW

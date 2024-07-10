@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
@@ -21,7 +21,7 @@ class TaskFilesDeleter @AssistedInject constructor(
     private val syncObjectDeleter: SyncObjectDeleter,
 ) {
     suspend fun deleteDeletedFilesForTask(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, ModificationState.DELETED)
+        syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, StateInSource.DELETED)
             .filter { it.isFile }
             .also { list -> processList(list, syncTask) }
     }

@@ -59,7 +59,7 @@ class SyncObject (
     @Deprecated("Переименовать в operationError")
     @ColumnInfo(name = "sync_error") var syncError: String,
 
-    @ColumnInfo(name = "modification_state") var modificationState: ModificationState,
+    @ColumnInfo(name = "state_in_source") var stateInSource: StateInSource,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
     @ColumnInfo(name = "new_m_time") var newMTime: Long? = null,
@@ -81,7 +81,7 @@ class SyncObject (
     override fun toString(): String {
         return "SyncObject( " +
                 (if (isDir) "[DIR]" else "[FILE]") +
-                " name='$name', id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$modificationState, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
+                " name='$name', id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$stateInSource, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
     }
 
 
@@ -109,7 +109,7 @@ class SyncObject (
                 syncState = ExecutionState.NEVER,
                 syncDate = 0L,
                 syncError = "",
-                modificationState = ModificationState.NEW,
+                stateInSource = StateInSource.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
             )
@@ -117,11 +117,11 @@ class SyncObject (
 
         fun createFromExisting(existingSyncObject: SyncObject,
                                modifiedFSItem: FSItem,
-                               modificationState: ModificationState): SyncObject
+                               stateInSource: StateInSource): SyncObject
         {
             return existingSyncObject.apply {
                 existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
-                this.modificationState = modificationState
+                this.stateInSource = stateInSource
             }
         }
     }

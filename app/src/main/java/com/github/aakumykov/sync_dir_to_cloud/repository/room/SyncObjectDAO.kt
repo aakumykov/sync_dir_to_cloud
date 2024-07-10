@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 @Dao
@@ -42,11 +42,11 @@ interface SyncObjectDAO {
 
     @Query("DELETE FROM sync_objects " +
             "WHERE task_id = :taskId " +
-            "AND modification_state = :modificationState " +
+            "AND state_in_source = :stateInSource " +
             "AND sync_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(
         taskId: String,
-        modificationState: ModificationState,
+        stateInSource: StateInSource,
         syncState: ExecutionState
     )
 
@@ -56,7 +56,7 @@ interface SyncObjectDAO {
 
 
     @Query("UPDATE sync_objects " +
-            "SET modification_state = :modificationState " +
+            "SET state_in_source = :stateInSource " +
             "AND name = :name " +
             "AND relative_parent_dir_path = :relativeParentDirPath " +
             "AND task_id = :taskId")
@@ -64,12 +64,12 @@ interface SyncObjectDAO {
         name: String,
         relativeParentDirPath: String,
         taskId: String,
-        modificationState: ModificationState
+        stateInSource: StateInSource
     )
 
 
     @Query("UPDATE sync_objects " +
-            "SET modification_state = 'DELETED' " +
+            "SET state_in_source = 'DELETED' " +
             "WHERE task_id = :taskId")
     suspend fun markAllObjectsAsDeleted(taskId: String)
 
@@ -85,10 +85,11 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
-            "AND modification_state = :modificationState")
+            "AND state_in_source = :stateInSource"
+    )
     suspend fun getObjectsWithModificationState(
         taskId: String,
-        modificationState: ModificationState
+        stateInSource: StateInSource
     ): List<SyncObject>
 
 
@@ -99,7 +100,7 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
             "AND is_exists_in_target = 0 " +
-            "AND modification_state IS NOT 'DELETED'")
+            "AND state_in_source IS NOT 'DELETED'")
     fun getObjectsNotDeletedInSourceButDeletedInTarget(taskId: String): List<SyncObject>
 
 
@@ -109,6 +110,6 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects WHERE task_id = :taskId")
     fun getAllObjectsForTask(taskId: String): List<SyncObject>
 
-    @Query("DELETE FROM sync_objects WHERE id = :objectId AND modification_state = 'DELETED'")
+    @Query("DELETE FROM sync_objects WHERE id = :objectId AND state_in_source = 'DELETED'")
     fun deleteDeletedObject(objectId: String)
 }

@@ -1,8 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer
 
-import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
@@ -141,14 +140,14 @@ abstract class BasicStorageWriter (
 
 
     private suspend fun deleteDeletedFiles() {
-        syncObjectReader.getObjectsForTaskWithModificationState(taskId, ModificationState.DELETED)
+        syncObjectReader.getObjectsForTaskWithModificationState(taskId, StateInSource.DELETED)
             .filter { !it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }
 
 
     private suspend fun deleteDeletedDirs() {
-        syncObjectReader.getObjectsForTaskWithModificationState(taskId, ModificationState.DELETED)
+        syncObjectReader.getObjectsForTaskWithModificationState(taskId, StateInSource.DELETED)
             .filter { it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }

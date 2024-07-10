@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ModificationState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
@@ -39,8 +39,8 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun getObjectsNeedsToBeSynced(taskId: String): List<SyncObject> {
 
         val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, ExecutionState.NEVER)
-        val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.NEW)
-        val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, ModificationState.MODIFIED)
+        val newObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, StateInSource.NEW)
+        val modifiedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithModificationState(taskId, StateInSource.MODIFIED)
 
         return (neverSyncedObjects + newObjects + modifiedObjects)
             .distinctBy { syncObject -> syncObject.id }
@@ -56,9 +56,9 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun getObjectsForTaskWithModificationState(
         taskId: String,
-        modificationState: ModificationState
+        stateInSource: StateInSource
     ): List<SyncObject> {
-        return syncObjectDAO.getObjectsWithModificationState(taskId, modificationState)
+        return syncObjectDAO.getObjectsWithModificationState(taskId, stateInSource)
     }
 
     override suspend fun getObjectsForTaskWithSyncState(
@@ -166,13 +166,13 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun changeModificationState(
         syncObject: SyncObject,
-        modificationState: ModificationState
+        stateInSource: StateInSource
     ) {
         syncObjectDAO.changeModificationState(
             name = syncObject.name,
             relativeParentDirPath = syncObject.relativeParentDirPath,
             taskId = syncObject.taskId,
-            modificationState = modificationState
+            stateInSource = stateInSource
         )
     }
 
