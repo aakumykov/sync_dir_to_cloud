@@ -4,7 +4,6 @@ import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.BackupDirCreatorCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuper
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuper.Companion
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -27,7 +26,7 @@ class DirsBackuper @AssistedInject constructor(
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isDeleted }
-            .filter { it.targetReadingStateOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
+            .filter { it.targetReadingStateIsOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
             .also { list -> processList(list, syncTask) }
     }
 
@@ -85,4 +84,4 @@ interface DirsBackuperAssistedFactory {
 }
 
 
-val SyncObject.targetReadingStateOk: Boolean get() = ExecutionState.SUCCESS == targetReadingState
+val SyncObject.targetReadingStateIsOk: Boolean get() = ExecutionState.SUCCESS == targetReadingState
