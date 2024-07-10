@@ -86,13 +86,13 @@ class SyncTaskExecutor @Inject constructor(
             backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
-//            backupModifiedItems(syncTask)
+            backupModifiedItems(syncTask)
 
             // Удалить удалённые файлы
-//            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
+            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
             // Удалить удалённые каталоги
-//            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
+            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
