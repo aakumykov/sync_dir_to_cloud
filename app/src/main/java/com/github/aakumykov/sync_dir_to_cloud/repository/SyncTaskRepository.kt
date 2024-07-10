@@ -65,10 +65,6 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
-    override suspend fun changeState(taskId: String, newSate: SyncTask.State) {
-        syncTaskStateDAO.setStateSuspend(taskId, newSate)
-    }
-
     override suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean) {
         syncTaskStateDAO.setEnabled(taskId, isEnabled)
     }
