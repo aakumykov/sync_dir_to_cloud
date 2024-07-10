@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.targetReadingStateIsOk
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
@@ -35,6 +36,7 @@ class SyncTaskDirsCreator @Inject constructor(
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
+            .filter { it.targetReadingStateIsOk }
             .filter { it.notExistsInTarget }
             .also { list -> createDirs(list, syncTask) }
     }

@@ -23,21 +23,20 @@ class StorageToDatabaseLister @Inject constructor(
     private val syncObjectUpdater: SyncObjectUpdater,
     private val syncTaskStateChanger: SyncTaskStateChanger,
 ) {
-    @Throws(IllegalArgumentException::class)
     suspend fun readFromPath(
         pathReadingFrom: String?,
         changesDetectionStrategy: ChangesDetectionStrategy,
         cloudAuth: CloudAuth?,
         taskId: String
-    ) {
+    ): Result<Boolean> {
 
-        if (null == pathReadingFrom)
-            throw IllegalArgumentException("path argument is null")
+        return try {
+            if (null == pathReadingFrom)
+                throw IllegalArgumentException("path argument is null")
 
-        if (null == cloudAuth)
-            throw IllegalArgumentException("cloudAuth argument is null")
+            if (null == cloudAuth)
+                throw IllegalArgumentException("cloudAuth argument is null")
 
-        try {
             syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
 
             recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
@@ -52,11 +51,14 @@ class StorageToDatabaseLister @Inject constructor(
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
 
+            Result.success(true)
+
         } catch (e: Exception) {
             ExceptionUtils.getErrorMessage(e).also { errorMsg ->
                 syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
                 Log.e(TAG, errorMsg, e)
             }
+            Result.failure(e)
         }
     }
 

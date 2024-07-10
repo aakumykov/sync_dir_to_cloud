@@ -77,6 +77,9 @@ class SyncTaskExecutor @Inject constructor(
 
             // Прочитать источник
             readSource(syncTask)
+                .onFailure {
+                    return // Возврат из метода doWork(), т.е. прерывание цепочки.
+                }
 
             // Прочитать приёмник
             readTarget(syncTask)
@@ -97,7 +100,7 @@ class SyncTaskExecutor @Inject constructor(
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
             // Восстановить утраченные каталоги (перед копированием файлов!)
-//            createLostDirsAgain(syncTask)
+            createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами)
             // TODO: выдавать сообщение
@@ -241,8 +244,11 @@ class SyncTaskExecutor @Inject constructor(
     }
 
 
-    private suspend fun readSource(syncTask: SyncTask) {
-        appComponent
+    /**
+     * @return Флаг успешности чтения источника.
+     */
+    private suspend fun readSource(syncTask: SyncTask): Result<Boolean> {
+        return appComponent
             .getStorageToDatabaseLister()
             .readFromPath(
                 pathReadingFrom = syncTask.sourcePath,
