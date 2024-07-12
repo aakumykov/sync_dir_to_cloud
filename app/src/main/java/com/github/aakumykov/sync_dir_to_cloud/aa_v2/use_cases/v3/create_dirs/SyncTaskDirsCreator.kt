@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import java.util.Collections
 import javax.inject.Inject
 
 /**
@@ -21,23 +22,26 @@ class SyncTaskDirsCreator @Inject constructor(
     private val syncObjectDirCreatorCreator: SyncObjectDirCreatorCreator
 ){
     suspend fun createNewDirsFromTask(syncTask: SyncTask) {
-        syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, StateInSource.NEW)
-            .filter { it.isDir }
-            .also { list -> createDirsReal(syncTask, list) }
+        createSuppliedDirs("createNewDirsFromTask", syncTask) {
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isNew }
+                .filter { it.isDir }
+        }
     }
 
 
-    suspend fun createNeverProcessedDirsFromTask(syncTask: SyncTask) {
-        createSuppliedDirs(syncTask) {
+    suspend fun createNeverProcessedDirs(syncTask: SyncTask) {
+        createSuppliedDirs("createNeverProcessedDirs", syncTask) {
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isDir }
-                .filter { it.syncState == ExecutionState.NEVER }
+                .filter { it.isNeverSynced }
+                .filter { it.targetReadingStateIsOk }
         }
     }
 
 
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
-        createSuppliedDirs(syncTask) {
+        createSuppliedDirs("createInTargetLostDirs", syncTask) {
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isDir }
                 .filter { it.targetReadingStateIsOk }
@@ -46,12 +50,19 @@ class SyncTaskDirsCreator @Inject constructor(
     }
 
 
-    private suspend fun createSuppliedDirs(syncTask: SyncTask, listSupplier: SuspendSupplier<List<SyncObject>>) {
-        createDirsReal(syncTask, listSupplier.get())
+    private suspend fun createSuppliedDirs(parentMethodName: String,
+                                           syncTask: SyncTask,
+                                           listSupplier: SuspendSupplier<List<SyncObject>>) {
+        createDirsReal(syncTask, listSupplier.get(), parentMethodName)
     }
 
 
-    private suspend fun createDirsReal(syncTask: SyncTask, dirList: List<SyncObject>) {
+    private suspend fun createDirsReal(syncTask: SyncTask, dirList: List<SyncObject>, parentMethodName: String) {
+
+        if (dirList.isEmpty())
+            return
+
+        Log.d(TAG, "createDirsReal('${parentMethodName}'), dirList: ${dirList.joinToString(", "){"'${it.name}'"}}")
 
         syncObjectDirCreatorCreator.createFor(syncTask)?.also { syncObjectDirCreator ->
 
@@ -59,15 +70,15 @@ class SyncTaskDirsCreator @Inject constructor(
 
                 val objectInject = syncObject.id
 
-                syncObjectStateChanger.setRestorationState(objectInject, ExecutionState.RUNNING)
+                syncObjectStateChanger.setSyncState(objectInject, ExecutionState.RUNNING)
 
                 syncObjectDirCreator.createDir(syncObject, syncTask)
                     .onSuccess {
-                        syncObjectStateChanger.setRestorationState(objectInject, ExecutionState.SUCCESS)
+                        syncObjectStateChanger.setSyncState(objectInject, ExecutionState.SUCCESS)
                     }
                     .onFailure { throwable ->
                         ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                            syncObjectStateChanger.setRestorationState(objectInject, ExecutionState.ERROR, errorMsg)
+                            syncObjectStateChanger.setSyncState(objectInject, ExecutionState.ERROR, errorMsg)
                             Log.e(TAG, errorMsg, throwable)
                         }
                     }
@@ -85,3 +96,7 @@ class SyncTaskDirsCreator @Inject constructor(
 fun interface SuspendSupplier<T> {
     suspend fun get(): T
 }
+
+
+val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
+val SyncObject.isNew: Boolean get() = StateInSource.NEW == stateInSource

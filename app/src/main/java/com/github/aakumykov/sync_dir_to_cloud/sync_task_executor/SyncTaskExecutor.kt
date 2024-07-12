@@ -49,7 +49,7 @@ class SyncTaskExecutor @Inject constructor(
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
-        MyLogger.d(tag, "executeSyncTask() [${classNameWithHash()}]")
+        Log.d(tag, "executeSyncTask() [${classNameWithHash()}]")
 
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             currentTask = syncTask
@@ -104,7 +104,7 @@ class SyncTaskExecutor @Inject constructor(
 
             // Создать никогда не создававшиеся каталоги (перед файлами)
             // TODO: выдавать сообщение
-//            createNeverSyncedDirs(syncTask)
+            createNeverSyncedDirs(syncTask)
 
             // Скопировать не копировавшиеся файлы
 //            copyNeverSyncedFiles(syncTask)
@@ -198,7 +198,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
         appComponent
             .getSyncTaskDirsCreator()
-            .createNeverProcessedDirsFromTask(syncTask)
+            .createNeverProcessedDirs(syncTask)
     }
 
     private suspend fun copyNeverSyncedFiles(syncTask: SyncTask) {
