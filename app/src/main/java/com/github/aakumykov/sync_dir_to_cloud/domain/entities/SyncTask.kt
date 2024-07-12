@@ -138,10 +138,9 @@ class SyncTask {
     }
 
     @Ignore
-    fun summary() = "SyncTask ($id): $sourcePath --> $targetPath"
+    fun summary() = "SyncTask($id): [$sourceStorageType] $sourcePath --> [$targetStorageType] $targetPath"
 
-    @Ignore
-    val description: String = summary()
+    val description: String get() = summary()
 
     enum class State {
         IDLE,
