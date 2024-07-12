@@ -30,10 +30,11 @@ class DirsBackuper @AssistedInject constructor(
             .also { list -> processList(list, syncTask) }
     }
 
+
     private suspend fun processList(list: List<SyncObject>, syncTask: SyncTask) {
 
         if (list.isEmpty()) {
-            Log.d(FilesBackuper.TAG, "Бэкап каталогов для задачи ${syncTask.description} не требуется.")
+            Log.d(FilesBackuper.TAG, "Бэкап каталогов для задачи не требуется ${syncTask.description}")
             return
         }
 
@@ -48,6 +49,7 @@ class DirsBackuper @AssistedInject constructor(
                 Log.d(TAG, "Ошибка создания каталога для бэкапа для задачи ${syncTask.description}")
             }
     }
+
 
     private suspend fun processListReal(list: List<SyncObject>, syncTask: SyncTask, backupDirPath: String) {
         list.forEach { syncObject ->
@@ -71,6 +73,7 @@ class DirsBackuper @AssistedInject constructor(
             }
         }
     }
+
 
     companion object {
         val TAG: String = DirsBackuper::class.java.simpleName

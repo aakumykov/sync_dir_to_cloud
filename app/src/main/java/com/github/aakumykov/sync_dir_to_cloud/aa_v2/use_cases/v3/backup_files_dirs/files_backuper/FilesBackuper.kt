@@ -51,7 +51,7 @@ class FilesBackuper @AssistedInject constructor(
     private suspend fun processDeletedFilesList(list: List<SyncObject>, syncTask: SyncTask) {
 
         if (list.isEmpty()) {
-            Log.d(TAG, "Бэкап удалённых файлов для задачи ${syncTask.description} не требуется.")
+            Log.d(TAG, "Бэкап удалённых файлов для задачи не требуется ${syncTask.description}")
             return
         }
 
@@ -60,7 +60,7 @@ class FilesBackuper @AssistedInject constructor(
 
     private suspend fun processModifiedFilesList(list: List<SyncObject>, syncTask: SyncTask) {
         if (list.isEmpty()) {
-            Log.d(TAG, "Бэкап изменившихся файлов для задачи ${syncTask.description} не требуется.")
+            Log.d(TAG, "Бэкап изменившихся файлов для задачи не требуется ${syncTask.description}")
             return
         }
         processList(list, syncTask)
