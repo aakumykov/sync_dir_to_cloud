@@ -23,25 +23,35 @@ class SyncTaskDirsCreator @Inject constructor(
     suspend fun createNewDirsFromTask(syncTask: SyncTask) {
         syncObjectReader.getObjectsForTaskWithModificationState(syncTask.id, StateInSource.NEW)
             .filter { it.isDir }
-            .also { list -> createDirs(list, syncTask) }
+            .also { list -> createDirsReal(syncTask, list) }
     }
+
 
     suspend fun createNeverProcessedDirsFromTask(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isDir }
-            .filter { it.syncState == ExecutionState.NEVER }
-            .also { list -> createDirs(list, syncTask) }
+        createSuppliedDirs(syncTask) {
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isDir }
+                .filter { it.syncState == ExecutionState.NEVER }
+        }
     }
+
 
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isDir }
-            .filter { it.targetReadingStateIsOk }
-            .filter { it.notExistsInTarget }
-            .also { list -> createDirs(list, syncTask) }
+        createSuppliedDirs(syncTask) {
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isDir }
+                .filter { it.targetReadingStateIsOk }
+                .filter { it.notExistsInTarget }
+        }
     }
 
-    private suspend fun createDirs(dirList: List<SyncObject>, syncTask: SyncTask) {
+
+    private suspend fun createSuppliedDirs(syncTask: SyncTask, listSupplier: SuspendSupplier<List<SyncObject>>) {
+        createDirsReal(syncTask, listSupplier.get())
+    }
+
+
+    private suspend fun createDirsReal(syncTask: SyncTask, dirList: List<SyncObject>) {
 
         syncObjectDirCreatorCreator.createFor(syncTask)?.also { syncObjectDirCreator ->
 
@@ -65,7 +75,13 @@ class SyncTaskDirsCreator @Inject constructor(
         }
     }
 
+
     companion object {
         val TAG: String = SyncTaskDirsCreator::class.java.simpleName
     }
+}
+
+
+fun interface SuspendSupplier<T> {
+    suspend fun get(): T
 }
