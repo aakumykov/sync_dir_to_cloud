@@ -10,8 +10,12 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import java.util.Collections
 import javax.inject.Inject
+
+
+typealias OnSyncObjectProcessingBegin = suspend (syncObject: SyncObject) -> Unit
+typealias OnSyncObjectProcessingSuccess = suspend (syncObject: SyncObject) -> Unit
+typealias OnSyncObjectProcessingFailed = suspend (syncObject: SyncObject, throwable: Throwable) -> Unit
 
 /**
  * Создаёт каталоги, относящиеся к SyncTask-у.
@@ -22,68 +26,98 @@ class SyncTaskDirsCreator @Inject constructor(
     private val syncObjectDirCreatorCreator: SyncObjectDirCreatorCreator
 ){
     suspend fun createNewDirsFromTask(syncTask: SyncTask) {
-        createSuppliedDirs("createNewDirsFromTask", syncTask) {
-            syncObjectReader.getAllObjectsForTask(syncTask.id)
-                .filter { it.isNew }
-                .filter { it.isDir }
-        }
+        syncObjectReader.getAllObjectsForTask(syncTask.id)
+            .filter { it.isNew }
+            .filter { it.isDir }
+            .also { list ->
+                createDirs(
+                    parentMethodName = "createNewDirsFromTask",
+                    dirList = list,
+                    syncTask = syncTask,
+                )
+            }
     }
 
-
+    // SyncState = NEVER
     suspend fun createNeverProcessedDirs(syncTask: SyncTask) {
-        createSuppliedDirs("createNeverProcessedDirs", syncTask) {
-            syncObjectReader.getAllObjectsForTask(syncTask.id)
-                .filter { it.isDir }
-                .filter { it.isNeverSynced }
-                .filter { it.targetReadingStateIsOk }
-        }
+        syncObjectReader.getAllObjectsForTask(syncTask.id)
+            .filter { it.isDir }
+            .filter { it.isNeverSynced }
+            .filter { it.targetReadingStateIsOk }
+            .also { list ->
+                createDirs(
+                    parentMethodName = "createNeverProcessedDirs",
+                    dirList = list,
+                    syncTask = syncTask,
+                )
+            }
     }
 
 
+    // isExistsInTarget == false
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
-        createSuppliedDirs("createInTargetLostDirs", syncTask) {
-            syncObjectReader.getAllObjectsForTask(syncTask.id)
-                .filter { it.isDir }
-                .filter { it.targetReadingStateIsOk }
-                .filter { it.notExistsInTarget }
-        }
-    }
-
-
-    private suspend fun createSuppliedDirs(parentMethodName: String,
-                                           syncTask: SyncTask,
-                                           listSupplier: SuspendSupplier<List<SyncObject>>) {
-        createDirsReal(syncTask, listSupplier.get(), parentMethodName)
-    }
-
-
-    private suspend fun createDirsReal(syncTask: SyncTask, dirList: List<SyncObject>, parentMethodName: String) {
-
-        if (dirList.isEmpty())
-            return
-
-        Log.d(TAG, "createDirsReal('${parentMethodName}'), dirList: ${dirList.joinToString(", "){"'${it.name}'"}}")
-
-        syncObjectDirCreatorCreator.createFor(syncTask)?.also { syncObjectDirCreator ->
-
-            dirList.forEach { syncObject ->
-
-                val objectInject = syncObject.id
-
-                syncObjectStateChanger.setSyncState(objectInject, ExecutionState.RUNNING)
-
-                syncObjectDirCreator.createDir(syncObject, syncTask)
-                    .onSuccess {
-                        syncObjectStateChanger.setSyncState(objectInject, ExecutionState.SUCCESS)
-                    }
-                    .onFailure { throwable ->
+         syncObjectReader.getAllObjectsForTask(syncTask.id)
+            .filter { it.isDir }
+            .filter { it.targetReadingStateIsOk }
+            .filter { it.notExistsInTarget }
+            .also { list ->
+                createDirs(
+                    parentMethodName = "createInTargetLostDirs",
+                    dirList = list,
+                    syncTask = syncTask,
+                    onSyncObjectProcessingBegin = { syncObject ->
+                        syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING)
+                    },
+                    onSyncObjectProcessingSuccess = { syncObject ->
+                        syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.SUCCESS)
+                    },
+                    onSyncObjectProcessingFailed = { syncObject, throwable ->
                         ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                            syncObjectStateChanger.setSyncState(objectInject, ExecutionState.ERROR, errorMsg)
+                            syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING, errorMsg)
                             Log.e(TAG, errorMsg, throwable)
                         }
                     }
+                )
             }
-        }
+    }
+
+
+    private suspend fun createDirs(
+        parentMethodName: String,
+        dirList: List<SyncObject>,
+        syncTask: SyncTask,
+        onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
+        onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
+        onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
+    ) {
+            if (dirList.isNotEmpty()) {
+
+                Log.d(TAG, "createDirsReal('${parentMethodName}'), dirList: ${dirList.joinToString(", "){"'${it.name}'"}}")
+
+                syncObjectDirCreatorCreator.createFor(syncTask)?.also { syncObjectDirCreator ->
+
+                    dirList.forEach { syncObject ->
+
+                        val objectId = syncObject.id
+
+                        syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
+                        onSyncObjectProcessingBegin?.invoke(syncObject)
+
+                        syncObjectDirCreator.createDir(syncObject, syncTask)
+                            .onSuccess {
+                                syncObjectStateChanger.setSyncState(objectId, ExecutionState.SUCCESS)
+                                onSyncObjectProcessingSuccess?.invoke(syncObject)
+                            }
+                            .onFailure { throwable ->
+                                ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
+                                    syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
+                                    Log.e(TAG, errorMsg, throwable)
+                                }
+                                onSyncObjectProcessingFailed?.invoke(syncObject, throwable)
+                            }
+                    }
+                }
+            }
     }
 
 
@@ -92,10 +126,6 @@ class SyncTaskDirsCreator @Inject constructor(
     }
 }
 
-
-fun interface SuspendSupplier<T> {
-    suspend fun get(): T
-}
 
 
 val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
