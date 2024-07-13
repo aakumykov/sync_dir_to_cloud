@@ -1,16 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_deleter
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.targetReadingStateIsOk
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.isFile
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.dirs.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -26,8 +26,11 @@ class TaskFilesDeleter @AssistedInject constructor(
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
             .filter { it.isDeleted }
-            .filter { it.targetReadingStateIsOk }
-            .also { list -> processList(list, syncTask) }
+            .filter { it.isTargetReadingOk }
+            .also { list ->
+                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "deleteDeletedFilesForTask(${list.size})")
+                processList(list, syncTask)
+            }
     }
 
     // TODO: специальный статус "удаляется"

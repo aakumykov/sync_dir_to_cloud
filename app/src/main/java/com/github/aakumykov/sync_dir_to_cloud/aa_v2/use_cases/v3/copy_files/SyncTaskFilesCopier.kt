@@ -1,12 +1,22 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
+import com.github.aakumykov.sync_dir_to_cloud.config.CloudType.Companion.list
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
@@ -21,38 +31,44 @@ class SyncTaskFilesCopier @Inject constructor(
 ){
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
-            .getObjectsForTaskWithModificationState(syncTask.id, StateInSource.NEW)
-            .filter { !it.isDir }// TODO: заменить на isFile
-            .also {
-                copySyncObjects(
-                    syncObjectList = it,
+            .getAllObjectsForTask(syncTask.id)
+            .filter { it.isFile }
+            .filter { it.isNew }
+            .also { list ->
+                Log.d(TAG+"_"+SyncTaskExecutor.TAG, "copyNewFilesForSyncTask(${list.size})")
+                copyFiles(
+                    list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
                 )
         }
     }
 
-    suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
+    suspend fun copyNeverCopiedFilesOfSyncTask(syncTask: SyncTask) {
         syncObjectReader
-            .getObjectsForTaskWithModificationState(syncTask.id, StateInSource.MODIFIED)
-            .filter { !it.isDir } // TODO: заменить на isFile
-            .also {
-                copySyncObjects(
-                    syncObjectList = it,
+            .getAllObjectsForTask(syncTask.id)
+            .filter { it.isFile }
+            .filter { it.isNeverSynced }
+            .also { list ->
+                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNeverCopiedFilesOfSyncTask(${list.size})")
+                copyFiles(
+                    list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
                 )
             }
     }
 
-    suspend fun copyNeverCopiedFilesOfSyncTask(syncTask: SyncTask) {
+    suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getAllObjectsForTask(syncTask.id)
-            .filter { !it.isDir } // TODO: заменить на isFile
-            .filter { it.syncState == ExecutionState.NEVER }
-            .also {
-                copySyncObjects(
-                    syncObjectList = it,
+            .filter { it.isFile }
+            .filter { it.isModified }
+            .filter { it.isTargetReadingOk }
+            .also { list ->
+                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyModifiedFilesForSyncTask(${list.size})")
+                copyFiles(
+                    list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
                 )
@@ -64,33 +80,58 @@ class SyncTaskFilesCopier @Inject constructor(
             .getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
             .filter { it.notExistsInTarget }
-            .also { list -> copySyncObjects(list, syncTask, false) }
+            .filter { it.isTargetReadingOk }
+            .also { list ->
+                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyInTargetLostFiles(${list.size})")
+                copyFiles(
+                    list = list,
+                    syncTask = syncTask,
+                    overwriteIfExists = false,
+                    onSyncObjectProcessingBegin = { syncObject ->
+                        syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING)
+                    },
+                    onSyncObjectProcessingSuccess = { syncObject ->
+                        syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.SUCCESS)
+                    },
+                    onSyncObjectProcessingFailed = { syncObject, throwable ->
+                        ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
+                            syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.ERROR, errorMsg)
+                            Log.e(TAG, errorMsg, throwable)
+                        }
+                    }
+                )
+            }
     }
 
-    private suspend fun copySyncObjects(
-        syncObjectList: List<SyncObject>,
-        syncTask: SyncTask,
-        overwriteIfExists: Boolean
-    ) {
-//        Log.d(TAG, "copySyncObjects()")
 
+    private suspend fun copyFiles(
+        list: List<SyncObject>,
+        syncTask: SyncTask,
+        overwriteIfExists: Boolean,
+        onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
+        onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
+        onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
+    ) {
         val syncObjectCopier = syncObjectCopierCreator.createFileCopierFor(syncTask)
 
-        syncObjectList.forEach { syncObject ->
+        list.forEach { syncObject ->
 
             val objectId = syncObject.id
 
-            syncObjectStateChanger.setRestorationState(objectId, ExecutionState.RUNNING)
+            syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
+            onSyncObjectProcessingBegin?.invoke(syncObject)
 
             syncObjectCopier
                 ?.copySyncObject(syncObject, syncTask, overwriteIfExists)
                 ?.onSuccess {
-                    syncObjectStateChanger.setRestorationState(objectId, ExecutionState.SUCCESS)
+                    syncObjectStateChanger.setSyncState(objectId, ExecutionState.SUCCESS)
+                    onSyncObjectProcessingSuccess?.invoke(syncObject)
                 }
                 ?.onFailure { throwable ->
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                        syncObjectStateChanger.setRestorationState(objectId, ExecutionState.ERROR, errorMsg)
-                        Log.e(TAG, errorMsg, throwable)
+                        syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
+                        onSyncObjectProcessingFailed?.invoke(syncObject, throwable)
+                            ?: Log.e(TAG, errorMsg, throwable)
                     }
                 }
         }
@@ -100,7 +141,3 @@ class SyncTaskFilesCopier @Inject constructor(
         val TAG: String = SyncTaskFilesCopier::class.java.simpleName
     }
 }
-
-val SyncObject.isFile get() = !isDir
-
-val SyncObject.notExistsInTarget get() = !isExistsInTarget

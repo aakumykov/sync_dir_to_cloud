@@ -1,21 +1,23 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.targetReadingStateIsOk
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.notExistsInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
-
-typealias OnSyncObjectProcessingBegin = suspend (syncObject: SyncObject) -> Unit
-typealias OnSyncObjectProcessingSuccess = suspend (syncObject: SyncObject) -> Unit
-typealias OnSyncObjectProcessingFailed = suspend (syncObject: SyncObject, throwable: Throwable) -> Unit
 
 /**
  * Создаёт каталоги, относящиеся к SyncTask-у.
@@ -30,6 +32,7 @@ class SyncTaskDirsCreator @Inject constructor(
             .filter { it.isDir }
             .filter { it.isNew }
             .also { list ->
+                Log.d(TAG+"_"+SyncTaskExecutor.TAG, "createNewDirsFromTask(${list.size})")
                 createDirs(
                     parentMethodName = "createNewDirsFromTask",
                     dirList = list,
@@ -43,8 +46,9 @@ class SyncTaskDirsCreator @Inject constructor(
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isNeverSynced && it.isUnchanged }
-            .filter { it.targetReadingStateIsOk }
+            .filter { it.isTargetReadingOk }
             .also { list ->
+                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNeverProcessedDirs(${list.size})")
                 createDirs(
                     parentMethodName = "createNeverProcessedDirs",
                     dirList = list,
@@ -58,9 +62,10 @@ class SyncTaskDirsCreator @Inject constructor(
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
          syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
-            .filter { it.targetReadingStateIsOk }
+            .filter { it.isTargetReadingOk }
             .filter { it.notExistsInTarget }
             .also { list ->
+                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createInTargetLostDirs(${list.size})")
                 createDirs(
                     parentMethodName = "createInTargetLostDirs",
                     dirList = list,
@@ -92,7 +97,7 @@ class SyncTaskDirsCreator @Inject constructor(
     ) {
             if (dirList.isNotEmpty()) {
 
-                Log.d(TAG, "createDirsReal('${parentMethodName}'), dirList: ${dirList.joinToString(", "){"'${it.name}'"}}")
+//                Log.d(TAG+"_"+SyncTaskExecutor.TAG, "createDirsReal('${parentMethodName}'), dirList: ${dirList.joinToString(", "){"'${it.name}'"}}")
 
                 syncObjectDirCreatorCreator.createFor(syncTask)?.also { syncObjectDirCreator ->
 
@@ -111,9 +116,9 @@ class SyncTaskDirsCreator @Inject constructor(
                             .onFailure { throwable ->
                                 ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
                                     syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
-                                    Log.e(TAG, errorMsg, throwable)
+                                    onSyncObjectProcessingFailed?.invoke(syncObject, throwable)
+                                        ?: Log.e(TAG, errorMsg, throwable)
                                 }
-                                onSyncObjectProcessingFailed?.invoke(syncObject, throwable)
                             }
                     }
                 }
@@ -125,8 +130,3 @@ class SyncTaskDirsCreator @Inject constructor(
         val TAG: String = SyncTaskDirsCreator::class.java.simpleName
     }
 }
-
-
-val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
-val SyncObject.isUnchanged: Boolean get() = StateInSource.UNCHANGED == stateInSource
-val SyncObject.isNew: Boolean get() = StateInSource.NEW == stateInSource

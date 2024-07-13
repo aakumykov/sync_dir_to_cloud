@@ -99,19 +99,21 @@ class SyncTaskExecutor @Inject constructor(
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
-            // Восстановить утраченные каталоги (перед копированием файлов!)
-            createLostDirsAgain(syncTask)
-
-            // Создать никогда не создававшиеся каталоги (перед файлами)
-            // TODO: выдавать сообщение
-            createNeverSyncedDirs(syncTask)
-
-            // Скопировать не копировавшиеся файлы
-//            copyNeverSyncedFiles(syncTask)
-
-            // Скопировать новое
+            // Скопировать новое (StateInSource
 //            createNewDirs(syncTask)
+
+            // Восстановить утраченные каталоги (перед копированием файлов)
+//            createLostDirsAgain(syncTask)
+
+            // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
+            // TODO: выдавать сообщение
+//            createNeverSyncedDirs(syncTask)
+
+            // Скопировать новые файлы
 //            copyNewFiles(syncTask)
+
+            // Скопировать никогда не копировавшиеся файлы
+//            copyNeverSyncedFiles(syncTask)
 
             // Скопировать изменившееся
 //            copyModifiedFiles(syncTask)

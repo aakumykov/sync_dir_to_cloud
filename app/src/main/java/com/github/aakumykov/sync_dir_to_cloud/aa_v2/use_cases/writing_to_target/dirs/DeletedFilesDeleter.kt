@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -51,5 +52,3 @@ class DeletedFilesDeleter @Inject constructor(
         val TAG: String = DeletedFilesDeleter::class.java.simpleName
     }
 }
-
-val SyncObject.isDeleted: Boolean get() = StateInSource.DELETED == stateInSource
