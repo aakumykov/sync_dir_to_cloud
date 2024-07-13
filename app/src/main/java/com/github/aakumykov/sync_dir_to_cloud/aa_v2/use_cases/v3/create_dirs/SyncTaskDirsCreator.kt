@@ -27,8 +27,8 @@ class SyncTaskDirsCreator @Inject constructor(
 ){
     suspend fun createNewDirsFromTask(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isNew }
             .filter { it.isDir }
+            .filter { it.isNew }
             .also { list ->
                 createDirs(
                     parentMethodName = "createNewDirsFromTask",
@@ -38,11 +38,11 @@ class SyncTaskDirsCreator @Inject constructor(
             }
     }
 
-    // SyncState = NEVER
+    // SyncState = NEVER && StateInSource == UNCHANGED
     suspend fun createNeverProcessedDirs(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
-            .filter { it.isNeverSynced }
+            .filter { it.isNeverSynced && it.isUnchanged }
             .filter { it.targetReadingStateIsOk }
             .also { list ->
                 createDirs(
@@ -127,6 +127,6 @@ class SyncTaskDirsCreator @Inject constructor(
 }
 
 
-
 val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
+val SyncObject.isUnchanged: Boolean get() = StateInSource.UNCHANGED == stateInSource
 val SyncObject.isNew: Boolean get() = StateInSource.NEW == stateInSource
