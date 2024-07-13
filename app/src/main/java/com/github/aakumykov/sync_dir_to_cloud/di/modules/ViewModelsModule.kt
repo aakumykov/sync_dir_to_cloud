@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartSt
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
@@ -94,14 +95,16 @@ class ViewModelsModule {
                                  syncTaskManagingUseCase: SyncTaskManagingUseCase,
                                  syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
                                  syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
-                                 syncTaskNotificator: SyncTaskNotificator): ViewModel
-    {
+                                 syncTaskNotificator: SyncTaskNotificator,
+                                 syncObjectDeleter: SyncObjectDeleter
+    ): ViewModel {
         return TaskListViewModel(
-            application,
-            syncTaskManagingUseCase,
-            syncTaskStartStopUseCase,
-            syncTaskSchedulingUseCase,
-            syncTaskNotificator
+            application = application,
+            syncTaskManagingUseCase =  syncTaskManagingUseCase,
+            syncTaskStartStopUseCase = syncTaskStartStopUseCase,
+            syncTaskSchedulingUseCase = syncTaskSchedulingUseCase,
+            syncTaskNotificator = syncTaskNotificator,
+            syncObjectDeleter = syncObjectDeleter
         )
     }
 }

@@ -14,4 +14,11 @@
         android:layout_height="wrap_content"
         android:icon="@drawable/ic_delete"
         android:title="@string/MENU_ITEM_action_delete" />
+
+    <item
+        android:id="@+id/actionReset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_reset"
+        android:title="@string/MENU_ITEM_action_reset" />
 </menu>

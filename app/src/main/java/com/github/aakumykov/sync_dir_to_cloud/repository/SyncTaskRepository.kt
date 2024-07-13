@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -7,11 +8,13 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
@@ -25,6 +28,7 @@ import javax.inject.Inject
 @AppScope
 class SyncTaskRepository @Inject constructor(
     private val syncTaskDAO: SyncTaskDAO,
+    private val syncTaskResettingDAO: SyncTaskResettingDAO,
     private val syncTaskStateDAO: SyncTaskStateDAO,
     private val syncTaskRunningTimeDAO: SyncTaskRunningTimeDAO,
     private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO,
@@ -32,7 +36,11 @@ class SyncTaskRepository @Inject constructor(
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
 )
-    : SyncTaskCreatorDeleter, SyncTaskReader, SyncTaskUpdater, SyncTaskStateChanger,
+    : SyncTaskCreatorDeleter,
+    SyncTaskResetter,
+    SyncTaskReader,
+    SyncTaskUpdater,
+    SyncTaskStateChanger,
     SyncTaskRunningTimeUpdater
 {
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
@@ -114,4 +122,21 @@ class SyncTaskRepository @Inject constructor(
     override suspend fun clearFinishTime(taskId: String) {
         syncTaskRunningTimeDAO.clearFinishTime(taskId)
     }
+
+    override suspend fun resetSyncTask(taskId: String): Result<SyncTask> {
+        syncTaskDAO.get(taskId).also { syncTask ->
+            return if (syncTask.notRunningNow) {
+                try {
+                    syncTaskResettingDAO.resetSyncTask(taskId)
+                    Result.success(syncTask)
+                } catch (t: Throwable) {
+                    Result.failure(t)
+                }
+            } else {
+                Result.failure(RuntimeException("Cannot reset running task"))
+            }
+        }
+    }
 }
+
+val SyncTask.notRunningNow: Boolean get() = ExecutionState.RUNNING != executionState

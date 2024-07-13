@@ -28,4 +28,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskExecutionStateDAO(): SyncTaskSyncStateDAO
     abstract fun getSyncTaskRunningTimeDAO(): SyncTaskRunningTimeDAO
     abstract fun getSyncObjectBadStateResettingDAO(): SyncObjectBadStateResettingDAO
+    abstract fun getSyncTaskResettingDAO(): SyncTaskResettingDAO
 }

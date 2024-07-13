@@ -107,6 +107,10 @@ class SyncObjectRepository @Inject constructor(
         syncObjectStateSetterDAO.setBackupState(objectId, state, errorMsg)
     }
 
+    override suspend fun deleteAllObjectsForTask(taskId: String) {
+        syncObjectDAO.deleteAllObjectsForTask(taskId)
+    }
+
     override suspend fun setDeletionState(
         objectId: String,
         state: ExecutionState,
