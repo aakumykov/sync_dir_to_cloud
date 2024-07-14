@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -80,6 +81,7 @@ class SyncTaskFilesCopier @Inject constructor(
         syncObjectReader
             .getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
+            .filter { it.isSuccessSynced }
             .filter { it.notExistsInTarget }
             .filter { it.isTargetReadingOk }
             .also { list ->
@@ -125,7 +127,7 @@ class SyncTaskFilesCopier @Inject constructor(
             syncObjectCopier
                 ?.copySyncObject(syncObject, syncTask, overwriteIfExists)
                 ?.onSuccess {
-                    syncObjectStateChanger.setSyncState(objectId, ExecutionState.SUCCESS)
+                    syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)
                 }
                 ?.onFailure { throwable ->

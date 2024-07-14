@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
@@ -62,8 +63,9 @@ class SyncTaskDirsCreator @Inject constructor(
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
          syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
-            .filter { it.isTargetReadingOk }
+            .filter { it.isSuccessSynced }
             .filter { it.notExistsInTarget }
+            .filter { it.isTargetReadingOk }
             .also { list ->
                 if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createInTargetLostDirs(${list.names})")
                 createDirs(
@@ -110,7 +112,8 @@ class SyncTaskDirsCreator @Inject constructor(
 
                         syncObjectDirCreator.createDir(syncObject, syncTask)
                             .onSuccess {
-                                syncObjectStateChanger.setSyncState(objectId, ExecutionState.SUCCESS)
+//                                syncObjectStateChanger.setSyncState(objectId, ExecutionState.SUCCESS)
+                                syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                                 onSyncObjectProcessingSuccess?.invoke(syncObject)
                             }
                             .onFailure { throwable ->

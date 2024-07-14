@@ -24,6 +24,8 @@ val SyncObject.isFile get() = !isDir
 
 val SyncObject.notExistsInTarget get() = !isExistsInTarget
 
+val SyncObject.isSuccessSynced: Boolean get() = ExecutionState.SUCCESS == syncState
+
 val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
 
 val SyncObject.isUnchanged: Boolean get() = StateInSource.UNCHANGED == stateInSource
