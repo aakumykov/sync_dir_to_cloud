@@ -27,14 +27,14 @@ class SyncTaskDirsCreator @Inject constructor(
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectDirCreatorCreator: SyncObjectDirCreatorCreator
 ){
-    suspend fun createNewDirsFromTask(syncTask: SyncTask) {
+    suspend fun createNewDirs(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isNew }
             .also { list ->
-                Log.d(TAG+"_"+SyncTaskExecutor.TAG, "createNewDirsFromTask(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNewDirs(${list.names})")
                 createDirs(
-                    parentMethodName = "createNewDirsFromTask",
+                    parentMethodName = "createNewDirs",
                     dirList = list,
                     syncTask = syncTask,
                 )
@@ -48,7 +48,7 @@ class SyncTaskDirsCreator @Inject constructor(
             .filter { it.isNeverSynced && it.isUnchanged }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNeverProcessedDirs(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNeverProcessedDirs(${list.names})")
                 createDirs(
                     parentMethodName = "createNeverProcessedDirs",
                     dirList = list,
@@ -65,7 +65,7 @@ class SyncTaskDirsCreator @Inject constructor(
             .filter { it.isTargetReadingOk }
             .filter { it.notExistsInTarget }
             .also { list ->
-                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createInTargetLostDirs(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createInTargetLostDirs(${list.names})")
                 createDirs(
                     parentMethodName = "createInTargetLostDirs",
                     dirList = list,
@@ -130,3 +130,5 @@ class SyncTaskDirsCreator @Inject constructor(
         val TAG: String = SyncTaskDirsCreator::class.java.simpleName
     }
 }
+
+val List<SyncObject>.names: String get() = joinToString(", ") { it.name }

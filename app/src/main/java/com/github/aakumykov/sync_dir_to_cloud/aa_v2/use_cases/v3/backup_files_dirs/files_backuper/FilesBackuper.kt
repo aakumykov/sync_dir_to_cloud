@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.BackupDirCreatorCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -38,7 +39,7 @@ class FilesBackuper @AssistedInject constructor(
             .filter { it.isDeleted }
             .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
             .also { list ->
-                Log.d(TAG+"_"+SyncTaskExecutor.TAG, "backupDeletedFilesOfTask(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupDeletedFilesOfTask(${list.names})")
                 processDeletedFilesList(list, syncTask)
             }
     }
@@ -49,7 +50,7 @@ class FilesBackuper @AssistedInject constructor(
             .filter { it.isModified }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupModifiedFilesOfTask(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupModifiedFilesOfTask(${list.names})")
                 processModifiedFilesList(list, syncTask)
             }
     }

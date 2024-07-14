@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.config.CloudType.Companion.list
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -35,7 +36,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .filter { it.isFile }
             .filter { it.isNew }
             .also { list ->
-                Log.d(TAG+"_"+SyncTaskExecutor.TAG, "copyNewFilesForSyncTask(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNewFilesForSyncTask(${list.names})")
                 copyFiles(
                     list = list,
                     syncTask = syncTask,
@@ -50,7 +51,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .filter { it.isFile }
             .filter { it.isNeverSynced }
             .also { list ->
-                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNeverCopiedFilesOfSyncTask(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNeverCopiedFilesOfSyncTask(${list.names})")
                 copyFiles(
                     list = list,
                     syncTask = syncTask,
@@ -66,7 +67,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .filter { it.isModified }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyModifiedFilesForSyncTask(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyModifiedFilesForSyncTask(${list.names})")
                 copyFiles(
                     list = list,
                     syncTask = syncTask,
@@ -82,7 +83,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .filter { it.notExistsInTarget }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyInTargetLostFiles(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyInTargetLostFiles(${list.names})")
                 copyFiles(
                     list = list,
                     syncTask = syncTask,

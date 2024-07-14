@@ -99,27 +99,24 @@ class SyncTaskExecutor @Inject constructor(
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
-            // Скопировать новое (StateInSource
-//            createNewDirs(syncTask)
-
-            // Восстановить утраченные каталоги (перед копированием файлов)
-//            createLostDirsAgain(syncTask)
+            // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
+            createNewDirs(syncTask)
+            createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
-            // TODO: выдавать сообщение
-//            createNeverSyncedDirs(syncTask)
+            createNeverSyncedDirs(syncTask)
 
             // Скопировать новые файлы
-//            copyNewFiles(syncTask)
+            copyNewFiles(syncTask)
 
             // Скопировать никогда не копировавшиеся файлы
-//            copyNeverSyncedFiles(syncTask)
+            copyNeverSyncedFiles(syncTask)
 
             // Скопировать изменившееся
-//            copyModifiedFiles(syncTask)
+            copyModifiedFiles(syncTask)
 
             // Восстановить утраченные файлы
-//            copyLostFilesAgain(syncTask)
+            copyLostFilesAgain(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
         }
@@ -224,7 +221,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun createNewDirs(syncTask: SyncTask) {
         appComponent
             .getSyncTaskDirsCreator()
-            .createNewDirsFromTask(syncTask)
+            .createNewDirs(syncTask)
     }
 
 

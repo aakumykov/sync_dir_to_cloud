@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
@@ -27,7 +28,7 @@ class TaskDirsDeleter @AssistedInject constructor(
             .filter { it.isDeleted }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                Log.d(TAG + "_" + SyncTaskExecutor.TAG, "deleteDeletedDirsForTask(${list.size})")
+                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "deleteDeletedDirsForTask(${list.names})")
                 processList(list)
             }
     }
