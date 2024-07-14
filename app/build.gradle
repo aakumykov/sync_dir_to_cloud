@@ -122,7 +122,7 @@ dependencies {
 
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
-    implementation "com.github.aakumykov:file_lister_navigator_selector_2:6.1.1-alpha"
+    implementation "com.github.aakumykov:file_lister_navigator_selector_2:7.0.0-alpha"
 
     implementation "com.leinardi.android:speed-dial:3.3.0"
 }
