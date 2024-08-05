@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
-import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelectorFragment
+import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
@@ -105,7 +105,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun extractSelectedItems(fragmentResult: Bundle, block: (list: List<FSItem>?) -> Unit) {
-        FileSelectorFragment.extractSelectionResult(fragmentResult).also(block)
+        FileSelector.extractSelectionResult(fragmentResult).also(block)
     }
 
     private fun onTargetPathSelected(fsItem: FSItem?) {
@@ -261,7 +261,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                                         storageType,
                                         cloudAuth
                                     )
-                                    .show(childFragmentManager, FileSelectorFragment.TAG)
+                                    .show(childFragmentManager, FileSelector.TAG)
 
                             }
                         }
@@ -290,7 +290,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                                         storageType,
                                         cloudAuth
                                     )
-                                    .show(childFragmentManager, FileSelectorFragment.TAG)
+                                    .show(childFragmentManager, FileSelector.TAG)
 
                             }
                         }
