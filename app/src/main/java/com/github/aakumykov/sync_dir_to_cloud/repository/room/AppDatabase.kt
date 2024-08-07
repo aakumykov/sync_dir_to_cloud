@@ -8,14 +8,18 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
 
 
 @Database(
-    entities = [ SyncTask::class, SyncObject::class, CloudAuth::class ],
-    version = 52,
-    autoMigrations = [
-
-    ]
+    entities = [
+        SyncTask::class,
+        SyncObject::class,
+        CloudAuth::class,
+        TaskLogEntry::class
+   ],
+    version = 53,
+    autoMigrations = []
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

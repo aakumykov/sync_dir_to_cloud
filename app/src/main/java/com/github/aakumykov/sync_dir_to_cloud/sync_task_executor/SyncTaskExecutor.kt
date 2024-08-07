@@ -18,6 +18,8 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
@@ -31,6 +33,8 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
+
+    private val syncTaskLogger: SyncTaskLogger,
 
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
@@ -67,6 +71,8 @@ class SyncTaskExecutor @Inject constructor(
 
         showReadingSourceNotification(syncTask)
 
+        logExecutionStart(syncTask);
+
         try {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
@@ -77,7 +83,8 @@ class SyncTaskExecutor @Inject constructor(
 
             // Прочитать источник
             readSource(syncTask)
-                .onFailure {
+                .onFailure { e ->
+                    logExecutionError(syncTask, e)
                     return // Возврат из метода doWork(), т.е. прерывание цепочки.
                 }
 
@@ -119,16 +126,49 @@ class SyncTaskExecutor @Inject constructor(
             copyLostFilesAgain(syncTask)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
+
+            logExecutionFinish(syncTask)
         }
         catch (t: Throwable) {
             ExceptionUtils.getErrorMessage(t).also { errorMsg ->
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
                 Log.e(TAG, errorMsg, t)
             }
+            logExecutionError(syncTask, t)
         }
         finally {
             syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun logExecutionStart(syncTask: SyncTask) {
+        syncTaskLogger.log(TaskLogEntry(
+            executionId = hashCode().toString(),
+            taskId = syncTask.id,
+            entryType = TaskLogEntry.EntryType.START
+        ))
+    }
+
+    private suspend fun logExecutionFinish(syncTask: SyncTask) {
+        syncTaskLogger.log(
+            TaskLogEntry(
+            executionId = hashCode().toString(),
+            taskId = syncTask.id,
+            entryType = TaskLogEntry.EntryType.FINISH
+        ))
+    }
+
+    private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
+        syncTaskLogger.log(TaskLogEntry(
+            executionId = hashCode().toString(),
+            taskId = syncTask.id,
+            entryType = TaskLogEntry.EntryType.ERROR,
+            errorMsg = null
+        ))
+    }
+
+    private fun logExecutionFinishReal(syncTask: SyncTask, t: Throwable?) {
+
     }
 
     // TODO: регистрировать ошибку?

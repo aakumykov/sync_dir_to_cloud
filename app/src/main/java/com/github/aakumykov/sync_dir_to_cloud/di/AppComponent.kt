@@ -30,6 +30,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageReaderAssistedFa
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.TaskLoggerModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
@@ -79,7 +80,8 @@ import dagger.Component
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
         StorageWriterFactoriesModule::class,
-        StorageWriters2_Module::class
+        StorageWriters2_Module::class,
+        TaskLoggerModule::class
     ]
 )
 @AppScope

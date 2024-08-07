@@ -8,11 +8,11 @@ import androidx.room.Query
 interface TaskLogDAO {
 
     @Insert
-    suspend fun addTaskLog(taskLog: TaskLog)
+    suspend fun addTaskLog(taskLogEntry: TaskLogEntry)
 
     @Query("DELETE FROM tasks_logs WHERE task_id = :taskId")
     suspend fun deleteEntriesForTask(taskId: String)
 
     @Query("SELECT * FROM tasks_logs WHERE task_id = :taskId")
-    suspend fun listLogsForTask(taskId: String)
+    suspend fun listLogsForTask(taskId: String): List<TaskLogEntry>
 }
