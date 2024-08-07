@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskScheduling
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogDAO
 import dagger.Module
 import dagger.Provides
 
@@ -63,5 +64,10 @@ class RoomDAOModule(private val appDatabase: AppDatabase) {
     @Provides
     fun provideSyncObjectResettingDAO(): BadObjectStateResettingDAO {
         return appDatabase.getSyncObjectResettingDAO()
+    }
+
+    @Provides
+    fun provideTaskLogDAO(): TaskLogDAO {
+        return appDatabase.getTaskLogDAO()
     }
 }

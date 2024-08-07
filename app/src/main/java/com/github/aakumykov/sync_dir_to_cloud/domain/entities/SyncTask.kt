@@ -41,6 +41,7 @@ class SyncTask {
 
     @ColumnInfo(name = "source_reading_state") var sourceReadingState: ExecutionState
     @ColumnInfo(name = "source_reading_error") var sourceReadingError: String? = null
+    // TODO: а 'target_reading_error' ?
 
     @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "source_storage_type") var sourceStorageType: StorageType?

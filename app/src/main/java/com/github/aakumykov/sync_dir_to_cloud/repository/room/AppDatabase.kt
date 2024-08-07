@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogDAO
 
 
 @Database(
@@ -29,4 +30,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskRunningTimeDAO(): SyncTaskRunningTimeDAO
     abstract fun getSyncObjectBadStateResettingDAO(): SyncObjectBadStateResettingDAO
     abstract fun getSyncTaskResettingDAO(): SyncTaskResettingDAO
+    abstract fun getTaskLogDAO(): TaskLogDAO
 }
