@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_logger
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -15,4 +16,7 @@ interface TaskLogDAO {
 
     @Query("SELECT * FROM task_logs WHERE task_id = :taskId")
     suspend fun listLogsForTask(taskId: String): List<TaskLogEntry>
+
+    @Query("SELECT * FROM task_logs WHERE task_id = :taskId")
+    fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>>
 }

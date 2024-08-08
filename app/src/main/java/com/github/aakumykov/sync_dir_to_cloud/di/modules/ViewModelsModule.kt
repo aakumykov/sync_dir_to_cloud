@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
@@ -61,10 +62,16 @@ class ViewModelsModule {
     @ViewModelKey(TaskStateViewModel::class)
     fun provideTaskInfoViewModel(syncTaskReader: SyncTaskReader,
                                  syncObjectReader: SyncObjectReader,
-                                 startStopSyncTaskUseCase: StartStopSyncTaskUseCase
+                                 startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
+                                 taskLogRepository: TaskLogRepository,
     ): ViewModel
     {
-        return TaskStateViewModel(syncTaskReader, syncObjectReader, startStopSyncTaskUseCase)
+        return TaskStateViewModel(
+            syncTaskReader,
+            syncObjectReader,
+            startStopSyncTaskUseCase,
+            taskLogRepository,
+        )
     }
 
     @Provides

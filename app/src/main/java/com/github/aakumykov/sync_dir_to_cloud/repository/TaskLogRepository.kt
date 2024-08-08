@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogDAO
@@ -21,5 +22,9 @@ class TaskLogRepository @Inject constructor(
         withContext(coroutineDispatcher) {
             taskLogDAO.deleteEntriesForTask(taskId)
         }
+    }
+
+    fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>> {
+        return taskLogDAO.getLogsForTask(taskId)
     }
 }

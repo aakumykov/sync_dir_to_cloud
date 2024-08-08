@@ -3,9 +3,12 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_state
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -15,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -52,12 +56,12 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
 
-    private lateinit var listAdapter: ListViewAdapter<SyncObject>
-    private val syncObjectList: MutableList<SyncObject> = mutableListOf()
+    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskLogViewHolder>
 
     private lateinit var currentTaskId: String
 
-    protected lateinit var progressInfoHolder: ProgressInfoHolder
+    private lateinit var progressInfoHolder: ProgressInfoHolder
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,13 +98,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             currentTaskId = taskId
 
             lifecycleScope.launch {
-                taskStateViewModel.getSyncObjectList(currentTaskId).observe(viewLifecycleOwner) { list ->
-                    syncObjectList.clear()
-                    syncObjectList.addAll(list)
-                    listAdapter.notifyDataSetChanged()
-                }
-
                 taskStateViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::onTaskChanged)
+                taskStateViewModel.getTaskLogsLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogListChanged)
             }
 
         } ?: {
@@ -109,30 +108,23 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         }
     }
 
+    private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
+        taskLogEntries?.also { taskLogAdapter.setList(it) }
+    }
+
     private fun prepareView(view: View) {
         _binding = FragmentTaskStateBinding.bind(view)
     }
 
     private fun prepareListAdapter() {
+        taskLogAdapter = TaskLogAdapter()
+        binding.listView.adapter = taskLogAdapter
+        binding.listView.setOnItemClickListener(::onTaskLogItemClicked)
+    }
 
-        listAdapter = object: ListViewAdapter<SyncObject>(
-            requireContext(),
-            R.layout.sync_object_list_item,
-            R.id.syncObjectTitle,
-            R.id.syncObjectStateIcon,
-            syncObjectList,
-            { it.name }
-        ){
-            override fun modifyView(item: SyncObject?, viewHolder: ViewHolder?) {
-                if (null != item && null != viewHolder) {
-                    viewHolder.iconView.setImageResource(SyncObjectStateIconProvider.getIconFor(item.syncState))
-                }
-            }
-        }
 
-        binding.listView.adapter = listAdapter
-
-        binding.listView.setOnItemClickListener { _, _, position, _ -> showItemInfo(syncObjectList[position]) }
+    private fun onTaskLogItemClicked(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
+        showToast(taskLogAdapter.getItem(i).taskId)
     }
 
     private fun showItemInfo(syncObject: SyncObject) {
@@ -281,5 +273,24 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         fun create(intent: Intent): TaskStateFragment {
             return create(intent.getStringExtra(KEY_TASK_ID))
         }
+    }
+}
+
+class TaskLogAdapter : ListHoldingListAdapter<TaskLogEntry, TaskLogViewHolder>(R.layout.task_log_item) {
+    override fun createViewHolder(): ViewHolder<TaskLogEntry> {
+        return TaskLogViewHolder()
+    }
+}
+
+class TaskLogViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
+
+    private lateinit var titleView: TextView
+
+    override fun fill(item: TaskLogEntry, isSelected: Boolean) {
+        titleView.text = CurrentDateTime.format(item.timestamp)
+    }
+
+    override fun init(itemView: View) {
+        titleView = itemView.findViewById(R.id.titleView)
     }
 }
