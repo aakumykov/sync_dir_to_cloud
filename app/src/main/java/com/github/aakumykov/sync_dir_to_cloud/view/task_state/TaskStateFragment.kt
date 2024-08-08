@@ -18,7 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel

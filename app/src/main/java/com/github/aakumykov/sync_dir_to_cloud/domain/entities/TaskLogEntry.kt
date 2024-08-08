@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_logger
+package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

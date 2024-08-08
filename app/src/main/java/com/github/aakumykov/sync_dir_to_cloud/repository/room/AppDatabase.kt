@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedu
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 
 
 @Database(

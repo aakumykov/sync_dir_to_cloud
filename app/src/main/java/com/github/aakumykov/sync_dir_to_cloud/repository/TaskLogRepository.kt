@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

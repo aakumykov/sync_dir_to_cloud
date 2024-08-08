@@ -19,7 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
@@ -142,11 +142,13 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun logExecutionStart(syncTask: SyncTask) {
-        syncTaskLogger.log(TaskLogEntry(
+        syncTaskLogger.log(
+            TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.START
-        ))
+        )
+        )
     }
 
     private suspend fun logExecutionFinish(syncTask: SyncTask) {
@@ -155,16 +157,19 @@ class SyncTaskExecutor @Inject constructor(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.FINISH
-        ))
+        )
+        )
     }
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
-        syncTaskLogger.log(TaskLogEntry(
+        syncTaskLogger.log(
+            TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.ERROR,
             errorMsg = null
-        ))
+        )
+        )
     }
 
     private fun logExecutionFinishReal(syncTask: SyncTask, t: Throwable?) {

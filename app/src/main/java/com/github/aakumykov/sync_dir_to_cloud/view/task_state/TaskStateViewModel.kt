@@ -9,7 +9,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartSt
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
 import kotlinx.coroutines.launch
 
 class TaskStateViewModel(
