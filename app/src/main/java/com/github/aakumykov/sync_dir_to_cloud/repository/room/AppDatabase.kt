@@ -16,7 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunnin
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 
 
@@ -43,5 +43,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskRunningTimeDAO(): SyncTaskRunningTimeDAO
     abstract fun getSyncObjectBadStateResettingDAO(): SyncObjectBadStateResettingDAO
     abstract fun getSyncTaskResettingDAO(): SyncTaskResettingDAO
-    abstract fun getTaskLogDAO(): TaskLogDAO
+    abstract fun getTaskLogDAO(): SyncTaskLogDAO
 }

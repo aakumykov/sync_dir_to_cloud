@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 
 @Dao
-interface TaskLogDAO {
+interface SyncTaskLogDAO {
 
     @Insert
     suspend fun addTaskLog(taskLogEntry: TaskLogEntry)
