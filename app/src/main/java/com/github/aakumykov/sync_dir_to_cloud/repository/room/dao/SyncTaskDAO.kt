@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.repository.room
+package com.github.aakumykov.sync_dir_to_cloud.repository.room.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

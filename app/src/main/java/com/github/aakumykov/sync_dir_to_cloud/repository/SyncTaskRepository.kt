@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -12,13 +11,13 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskResettingDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSyncStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskRunningTimeDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunningTimeDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

@@ -1,18 +1,18 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.CloudAuthDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncObjectDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.BadObjectStateResettingDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskResettingDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSyncStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskRunningTimeDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskSchedulingStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.SyncTaskStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunningTimeDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogDAO
 import dagger.Module
 import dagger.Provides
 

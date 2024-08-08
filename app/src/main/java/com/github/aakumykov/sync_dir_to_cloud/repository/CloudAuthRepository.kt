@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.CloudAuthDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import javax.inject.Inject
 
 class CloudAuthRepository @Inject constructor(
