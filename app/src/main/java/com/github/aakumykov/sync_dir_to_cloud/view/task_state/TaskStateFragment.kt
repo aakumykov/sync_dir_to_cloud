@@ -26,7 +26,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
-import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import kotlinx.coroutines.launch
 
@@ -286,8 +285,8 @@ class TaskLogViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
 
     private lateinit var titleView: TextView
 
-    override fun fill(item: TaskLogEntry, isSelected: Boolean) {
-        titleView.text = CurrentDateTime.format(item.timestamp)
+    override fun fill(taskLogEntry: TaskLogEntry, isSelected: Boolean) {
+        titleView.text = taskLogEntry.entryType.name +": "+CurrentDateTime.format(taskLogEntry.timestamp)
     }
 
     override fun init(itemView: View) {
