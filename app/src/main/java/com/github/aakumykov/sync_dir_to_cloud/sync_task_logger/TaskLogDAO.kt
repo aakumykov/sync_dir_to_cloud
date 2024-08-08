@@ -10,9 +10,9 @@ interface TaskLogDAO {
     @Insert
     suspend fun addTaskLog(taskLogEntry: TaskLogEntry)
 
-    @Query("DELETE FROM tasks_logs WHERE task_id = :taskId")
+    @Query("DELETE FROM task_logs WHERE task_id = :taskId")
     suspend fun deleteEntriesForTask(taskId: String)
 
-    @Query("SELECT * FROM tasks_logs WHERE task_id = :taskId")
+    @Query("SELECT * FROM task_logs WHERE task_id = :taskId")
     suspend fun listLogsForTask(taskId: String): List<TaskLogEntry>
 }

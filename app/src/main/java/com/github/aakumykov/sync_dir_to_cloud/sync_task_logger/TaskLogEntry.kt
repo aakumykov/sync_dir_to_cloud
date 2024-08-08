@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import java.util.UUID
 
 @Entity(
-    tableName = "tasks_logs"
+    tableName = "task_logs"
 )
 class TaskLogEntry(
     @PrimaryKey val id: String,

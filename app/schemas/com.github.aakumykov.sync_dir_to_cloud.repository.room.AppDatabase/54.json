@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 53,
-    "identityHash": "9f372f4f300f8506e72ff9aeff683257",
+    "version": 54,
+    "identityHash": "891dc9840ae91b27a60504424c9d27a4",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -425,7 +425,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9f372f4f300f8506e72ff9aeff683257')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '891dc9840ae91b27a60504424c9d27a4')"
     ]
   }
 }

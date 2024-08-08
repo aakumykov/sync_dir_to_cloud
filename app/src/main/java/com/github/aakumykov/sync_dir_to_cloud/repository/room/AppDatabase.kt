@@ -18,7 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.TaskLogEntry
         CloudAuth::class,
         TaskLogEntry::class
    ],
-    version = 53,
+    version = 54,
     autoMigrations = []
 )
 abstract class AppDatabase : RoomDatabase() {
