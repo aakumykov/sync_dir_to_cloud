@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.storage_writer2
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
@@ -75,9 +75,9 @@ class SyncObjectsToStorageWriter @AssistedInject constructor(
     private suspend fun processSyncObject(syncObject: SyncObject, block: SuspendableRunnable) {
         try {
             with(syncObject) {
-                syncObjectStateChanger.changeSyncState(id, com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState.RUNNING)
+                syncObjectStateChanger.changeSyncState(id, ExecutionState.RUNNING)
                 block.runSuspend()
-                syncObjectStateChanger.changeSyncState(id, com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState.SUCCESS)
+                syncObjectStateChanger.changeSyncState(id, ExecutionState.SUCCESS)
             }
         } catch (e: Exception) {
             syncObjectStateChanger.changeSyncState(

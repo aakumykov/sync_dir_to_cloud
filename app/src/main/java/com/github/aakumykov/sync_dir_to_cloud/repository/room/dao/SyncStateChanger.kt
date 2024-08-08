@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room.dao
 
 import androidx.room.Transaction
 import androidx.room.Update
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 
 abstract class SyncStateChanger {
 

@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_state
 
 import androidx.annotation.DrawableRes
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 
 class SyncObjectStateIconProvider {
     companion object {

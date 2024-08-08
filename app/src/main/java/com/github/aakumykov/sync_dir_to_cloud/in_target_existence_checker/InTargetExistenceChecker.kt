@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.in_target_existence_checker
 import android.util.Log
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
