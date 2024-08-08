@@ -17,6 +17,6 @@ interface TaskLogDAO {
     @Query("SELECT * FROM task_logs WHERE task_id = :taskId")
     suspend fun listLogsForTask(taskId: String): List<TaskLogEntry>
 
-    @Query("SELECT * FROM task_logs WHERE task_id = :taskId")
+    @Query("SELECT * FROM task_logs WHERE task_id = :taskId ORDER BY timestamp DESC")
     fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>>
 }
