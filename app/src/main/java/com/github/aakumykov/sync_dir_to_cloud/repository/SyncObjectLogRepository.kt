@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class SyncObjectLogsRepository @Inject constructor(
+class SyncObjectLogRepository @Inject constructor(
     private val dao: SyncObjectLogDAO,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
