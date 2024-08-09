@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
@@ -26,9 +27,10 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncTask::class,
         SyncObject::class,
         CloudAuth::class,
-        TaskLogEntry::class
+        TaskLogEntry::class,
+        SyncObjectLogItem::class
    ],
-    version = 54,
+    version = 55,
     autoMigrations = []
 )
 abstract class AppDatabase : RoomDatabase() {
