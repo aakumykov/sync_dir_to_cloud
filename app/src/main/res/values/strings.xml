@@ -102,4 +102,9 @@
     <string name="task_is_enabled">Запланирована</string>
     <string name="task_is_disabled">Отключена</string>
     <string name="MENU_ITEM_action_reset">Сбросить</string>
+    <string name="SYNC_OBJECT_LOG_lost_dir_creation_success">Создан пропавший каталог</string>
+    <string name="SYNC_OBJECT_LOG_lost_dir_creation_error">Ошибка создания пропавшего каталога: %1$s</string>
+    <string name="SYNC_OBJECT_LOGGER_create_new_dir">Создание нового каталога</string>
+    <string name="SYNC_OBJECT_LOGGER_create_never_processed_dir">Создание никогда не обрабатывавшегося каталога</string>
+    <string name="SYNC_OBJECT_LOGGER_create_in_target_lost_dir">Восстановление каталога</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.di.modules
+package com.github.aakumykov.sync_dir_to_cloud.di
 
 import android.content.Context
 import android.content.res.Resources
@@ -8,12 +8,11 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class ContextModule(private val appContext: Context) {
+class ResourcesModule {
 
     @AppScope
     @Provides
-    @AppContext
-    fun provideAppContext(): Context {
-        return appContext
+    fun provideAppResources(@AppContext appContext: Context): Resources {
+        return appContext.resources
     }
 }

@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
@@ -62,6 +63,7 @@ import dagger.Component
     modules = [
         ApplicationModule::class,
         ContextModule::class,
+        ResourcesModule::class,
         NotificationModule::class,
         RoomDAOModule::class,
         SyncTaskRepositoryInterfacesModule::class,
@@ -85,6 +87,7 @@ import dagger.Component
     ]
 )
 @AppScope
+@ExecutionScope
 interface AppComponent {
 
     fun getViewModelFactory(): ViewModelFactory

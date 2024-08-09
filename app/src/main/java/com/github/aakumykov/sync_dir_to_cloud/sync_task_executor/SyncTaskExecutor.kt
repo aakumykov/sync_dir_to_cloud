@@ -20,6 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.extensions.executionId
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
@@ -230,7 +231,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun createLostDirsAgain(syncTask: SyncTask) {
         appComponent
             .getSyncTaskDirsCreator()
-            .createInTargetLostDirs(syncTask)
+            .createInTargetLostDirs(syncTask, executionId)
     }
 
     private suspend fun copyLostFilesAgain(syncTask: SyncTask) {
@@ -242,7 +243,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
         appComponent
             .getSyncTaskDirsCreator()
-            .createNeverProcessedDirs(syncTask)
+            .createNeverProcessedDirs(syncTask, executionId)
     }
 
     private suspend fun copyNeverSyncedFiles(syncTask: SyncTask) {
@@ -266,7 +267,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun createNewDirs(syncTask: SyncTask) {
         appComponent
             .getSyncTaskDirsCreator()
-            .createNewDirs(syncTask)
+            .createNewDirs(syncTask, executionId)
     }
 
 
