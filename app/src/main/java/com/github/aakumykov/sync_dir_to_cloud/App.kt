@@ -45,7 +45,7 @@ class App : Application() {
             _appDatabase = Room
                 .databaseBuilder(appContext, AppDatabase::class.java, DbConfig.APP_DB_NAME)
                 // FIXME: убрать
-                .fallbackToDestructiveMigration()
+//                .fallbackToDestructiveMigration()
                 .build()
             return _appDatabase!!
         }
