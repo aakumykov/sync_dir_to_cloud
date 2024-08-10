@@ -12,12 +12,12 @@ interface SyncTaskLogDAO {
     @Insert
     suspend fun addTaskLog(taskLogEntry: TaskLogEntry)
 
-    @Query("DELETE FROM task_logs WHERE task_id = :taskId")
+    @Query("DELETE FROM ${TaskLogEntry.TABLE_NAME} WHERE task_id = :taskId")
     suspend fun deleteEntriesForTask(taskId: String)
 
-    @Query("SELECT * FROM task_logs WHERE task_id = :taskId")
+    @Query("SELECT * FROM ${TaskLogEntry.TABLE_NAME} WHERE task_id = :taskId")
     suspend fun listLogsForTask(taskId: String): List<TaskLogEntry>
 
-    @Query("SELECT * FROM task_logs WHERE task_id = :taskId ORDER BY timestamp DESC")
+    @Query("SELECT * FROM ${TaskLogEntry.TABLE_NAME} WHERE task_id = :taskId ORDER BY timestamp DESC")
     fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>>
 }

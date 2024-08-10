@@ -3,11 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.RenameTable
+import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import java.util.UUID
 
 @Entity(
-    tableName = "task_logs"
+    tableName = TaskLogEntry.TABLE_NAME
 )
 class TaskLogEntry(
     @PrimaryKey val id: String,
@@ -36,4 +38,12 @@ class TaskLogEntry(
     override fun toString(): String {
         return "TaskLogEntry(id='$id', taskId='$taskId', entryType=$entryType, executionId='$executionId', timestamp=$timestamp, errorMsg=$errorMsg)"
     }
+
+    companion object {
+        const val TABLE_NAME = "sync_task_logs"
+        const val OLD_TABLE_NAME = "task_logs"
+    }
+
+    @RenameTable(fromTableName = OLD_TABLE_NAME, toTableName = TABLE_NAME)
+    class RenameTableFromTaskLogsToSyncTaskLogs : AutoMigrationSpec
 }
