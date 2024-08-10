@@ -122,11 +122,11 @@ dependencies {
 
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
-    def fileListerNavigatorSelectorVersion = '10.0.1-alpha'
-//    implementation "com.github.aakumykov:file_lister_navigator_selector_2:7.0.0-alpha"
-    implementation "com.github.aakumykov:local_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"
-    implementation "com.github.aakumykov:yandex_disk_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"
-    implementation "com.github.aakumykov:storage_lister:$fileListerNavigatorSelectorVersion"
+    def fileListerNavigatorSelectorVersion = '10.0.4-alpha'
+    implementation "com.github.aakumykov:file_lister_navigator_selector_2:$fileListerNavigatorSelectorVersion"
+//    implementation "com.github.aakumykov:local_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"
+//    implementation "com.github.aakumykov:yandex_disk_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"
+//    implementation "com.github.aakumykov:storage_lister:$fileListerNavigatorSelectorVersion"
 
     implementation "com.github.aakumykov:android_storage_lister:0.0.1-alpha"
 
