@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -31,10 +30,8 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         TaskLogEntry::class,
         SyncObjectLogItem::class
    ],
-    version = 56,
-    autoMigrations = [
-        AutoMigration(from = 55, to = 56, spec = TaskLogEntry.MigrationRenameTableFromTaskLogsToSyncTaskLogs::class)
-    ]
+    version = 55,
+    autoMigrations = []
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
