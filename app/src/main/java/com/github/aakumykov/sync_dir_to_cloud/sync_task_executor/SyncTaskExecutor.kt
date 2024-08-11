@@ -48,13 +48,14 @@ class SyncTaskExecutor @Inject constructor(
 
     private val inTargetExistenceCheckerFactory: InTargetExistenceChecker.Factory,
 ) {
+    private val executionId: String get() = hashCode().toString()
+
     private var currentTask: SyncTask? = null
     private var storageReader: StorageReader? = null
     private var storageWriter: StorageWriter? = null
 
-    private val syncObjectLogger: SyncObjectLogger by lazy { appComponent.getSyncObjectLogger().init(executionId) }
-
-    private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreator().init(syncObjectLogger) }
+    private val syncObjectLogger: SyncObjectLogger by lazy { appComponent.getSyncObjectLoggerAssistedFactory().create(executionId) }
+    private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(syncObjectLogger) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopier() }
 
 
@@ -351,6 +352,3 @@ class SyncTaskExecutor @Inject constructor(
         val TAG: String = SyncTaskExecutor::class.java.simpleName
     }
 }
-
-
-val Any.executionId: String get() = hashCode().toString()

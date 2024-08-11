@@ -10,18 +10,16 @@ import dagger.assisted.AssistedInject
 import javax.inject.Inject
 
 @ExecutionScope
-class SyncObjectLogger @Inject constructor(
+class SyncObjectLogger @AssistedInject constructor(
+    @Assisted executionId: String,
     private val syncObjectLogRepository: SyncObjectLogRepository
 ) {
-    private var _executionId: String? = null
-    private val executionId: String get() = _executionId!!
-
-    fun init(executionId: String): SyncObjectLogger {
-        _executionId = executionId
-        return this
-    }
-
     suspend fun log(syncObjectLogItem: SyncObjectLogItem) {
-        syncObjectLogRepository.addLogItem(executionId, syncObjectLogItem)
+        syncObjectLogRepository.addLogItem(syncObjectLogItem)
     }
+}
+
+@AssistedFactory
+interface SyncObjectLoggerAssistedFactory {
+    fun create(executionId: String): SyncObjectLogger
 }
