@@ -6,14 +6,18 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SyncObjectLogRepository @Inject constructor(
     private val dao: SyncObjectLogDAO,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend fun addLogItem(syncObjectLogItem: SyncObjectLogItem) {
-        dao.addLogItem(syncObjectLogItem)
+    suspend fun addLogItem(executionId: String, syncObjectLogItem: SyncObjectLogItem) {
+        withContext(coroutineDispatcher) {
+            dao.addLogItem(executionId, syncObjectLogItem)
+        }
     }
 
     fun listLogItems(taskId: String, syncObjectId: String, executionId: String): LiveData<List<SyncObjectLogItem>> {
@@ -21,6 +25,8 @@ class SyncObjectLogRepository @Inject constructor(
     }
 
     suspend fun deleteLogsOfTask(taskId: String) {
-        dao.deleteLogItemsForTask(taskId)
+        withContext(coroutineDispatcher) {
+            dao.deleteLogItemsForTask(taskId)
+        }
     }
 }

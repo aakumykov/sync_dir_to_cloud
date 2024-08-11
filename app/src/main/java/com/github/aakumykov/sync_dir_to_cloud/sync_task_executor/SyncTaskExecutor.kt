@@ -1,6 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -20,7 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.extensions.executionId
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
@@ -44,11 +46,16 @@ class SyncTaskExecutor @Inject constructor(
 
     private val syncObjectToTargetWriter2Creator: SyncObjectToTargetWriter2Creator,
 
-    private val inTargetExistenceCheckerFactory: InTargetExistenceChecker.Factory
+    private val inTargetExistenceCheckerFactory: InTargetExistenceChecker.Factory,
 ) {
     private var currentTask: SyncTask? = null
     private var storageReader: StorageReader? = null
     private var storageWriter: StorageWriter? = null
+
+    private val syncObjectLogger: SyncObjectLogger by lazy { appComponent.getSyncObjectLogger().init(executionId) }
+
+    private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreator().init(syncObjectLogger) }
+    private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopier() }
 
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
@@ -229,45 +236,31 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun createLostDirsAgain(syncTask: SyncTask) {
-        appComponent
-            .getSyncTaskDirsCreator()
-            .createInTargetLostDirs(syncTask, executionId)
+        syncTaskDirCreator.createInTargetLostDirs(syncTask, executionId)
     }
 
     private suspend fun copyLostFilesAgain(syncTask: SyncTask) {
-        appComponent
-            .getSyncTaskFilesCopier()
-            .copyInTargetLostFiles(syncTask)
+        syncTaskFilesCopier.copyInTargetLostFiles(syncTask)
     }
 
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
-        appComponent
-            .getSyncTaskDirsCreator()
-            .createNeverProcessedDirs(syncTask, executionId)
+        syncTaskDirCreator.createNeverProcessedDirs(syncTask, executionId)
     }
 
     private suspend fun copyNeverSyncedFiles(syncTask: SyncTask) {
-        appComponent
-            .getSyncTaskFilesCopier()
-            .copyNeverCopiedFilesOfSyncTask(syncTask)
+        syncTaskFilesCopier.copyNeverCopiedFilesOfSyncTask(syncTask)
     }
 
     private suspend fun copyModifiedFiles(syncTask: SyncTask) {
-        appComponent
-            .getSyncTaskFilesCopier()
-            .copyModifiedFilesForSyncTask(syncTask)
+        syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
     }
 
     private suspend fun copyNewFiles(syncTask: SyncTask) {
-        appComponent
-            .getSyncTaskFilesCopier()
-            .copyNewFilesForSyncTask(syncTask)
+        syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
     }
 
     private suspend fun createNewDirs(syncTask: SyncTask) {
-        appComponent
-            .getSyncTaskDirsCreator()
-            .createNewDirs(syncTask, executionId)
+        syncTaskDirCreator.createNewDirs(syncTask, executionId)
     }
 
 
@@ -361,3 +354,6 @@ class SyncTaskExecutor @Inject constructor(
         val TAG: String = SyncTaskExecutor::class.java.simpleName
     }
 }
+
+
+val Any.executionId: String get() = hashCode().toString()

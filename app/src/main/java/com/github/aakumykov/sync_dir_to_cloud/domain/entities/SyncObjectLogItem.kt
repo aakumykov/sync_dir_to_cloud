@@ -12,6 +12,7 @@ import java.util.UUID
         "task_id", "object_id", "execution_id"
     ]*/
 )
+@Deprecated("Переименовать в SyncObjectLogInfo и пояснить такое название")
 data class SyncObjectLogItem (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,

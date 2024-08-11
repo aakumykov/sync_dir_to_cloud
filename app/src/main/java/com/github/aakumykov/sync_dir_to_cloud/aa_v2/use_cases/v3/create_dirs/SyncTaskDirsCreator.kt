@@ -7,21 +7,23 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import javax.inject.Inject
 
 
@@ -33,8 +35,17 @@ class SyncTaskDirsCreator @Inject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectDirCreatorCreator: SyncObjectDirCreatorCreator,
-    private val syncObjectLogger: SyncObjectLogger,
 ){
+    fun init(syncObjectLogger: SyncObjectLogger): SyncTaskDirsCreator {
+        _syncObjectLogger = syncObjectLogger
+        return this
+    }
+
+    private var _syncObjectLogger: SyncObjectLogger? = null
+    private val syncObjectLogger: SyncObjectLogger get() {
+        return _syncObjectLogger ?: throw IllegalStateException("You must call init(SyncObjectLogger) method before use entity of this class.")
+    }
+
     suspend fun createNewDirs(syncTask: SyncTask, executionId: String) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
