@@ -7,12 +7,11 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import java.util.UUID
 
 @Entity(
-    tableName = "sync_object_logs",
+    tableName = SyncObjectLogItem.TABLE_NAME,
     /*primaryKeys = [
         "task_id", "object_id", "execution_id"
     ]*/
 )
-@Deprecated("Переименовать в SyncObjectLogInfo и пояснить такое название")
 data class SyncObjectLogItem (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
@@ -24,6 +23,9 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = "is_successful") val isSuccessful: Boolean
 ) {
     companion object {
+
+        const val TABLE_NAME = "sync_object_logs"
+
         fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, message: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
