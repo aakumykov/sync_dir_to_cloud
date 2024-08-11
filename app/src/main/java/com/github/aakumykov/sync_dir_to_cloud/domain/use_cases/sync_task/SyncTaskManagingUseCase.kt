@@ -3,18 +3,22 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.SyncTaskLogDeleter
 import javax.inject.Inject
 
 @AppScope
 class SyncTaskManagingUseCase @Inject constructor(
     val syncTaskReader: SyncTaskReader,
-    private val syncTaskCreatorDeleter: SyncTaskCreatorDeleter,
     private val syncTaskUpdater: SyncTaskUpdater,
     private val syncTaskResetter: SyncTaskResetter,
+    private val syncTaskCreatorDeleter: SyncTaskCreatorDeleter,
+    private val syncObjectLogDeleter: SyncObjectLogDeleter,
+    private val syncTaskLogDeleter: SyncTaskLogDeleter,
 ) {
 
     suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
@@ -29,6 +33,8 @@ class SyncTaskManagingUseCase @Inject constructor(
 
     suspend fun deleteSyncTask(syncTask: SyncTask) {
         syncTaskCreatorDeleter.deleteSyncTask(syncTask)
+        syncTaskLogDeleter.deleteLogsForTask(syncTask.id)
+        syncObjectLogDeleter.deleteLogsForTask(syncTask.id)
     }
 
 

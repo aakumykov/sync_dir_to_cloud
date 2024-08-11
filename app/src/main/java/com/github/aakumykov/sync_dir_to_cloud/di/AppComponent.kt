@@ -29,7 +29,9 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplie
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageReaderAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterFactoriesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TaskLoggerModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
@@ -68,6 +70,8 @@ import dagger.Component
         NotificationModule::class,
         RoomDAOModule::class,
         SyncTaskRepositoryInterfacesModule::class,
+        SyncTaskLoggerInterfacesModule::class,
+        SyncObjectLoggerInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
         SyncObjectRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,
