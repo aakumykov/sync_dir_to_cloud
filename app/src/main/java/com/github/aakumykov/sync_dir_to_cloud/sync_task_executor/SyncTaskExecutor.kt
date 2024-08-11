@@ -100,6 +100,7 @@ class SyncTaskExecutor @Inject constructor(
                 }
 
             // Прочитать приёмник
+            // TODO: как писать в лог здесь?
             readTarget(syncTask)
 
             // Забэкапить удалённое
@@ -213,13 +214,15 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun backupDeletedFiles(syncTask: SyncTask) {
-        filesBackuperCreator.createFilesBackuperForSyncTask(syncTask)
+        filesBackuperCreator
+            .createFilesBackuperForSyncTask(syncTask, executionId)
             ?.backupDeletedFilesOfTask(syncTask)
             ?: { Log.e(TAG, "Не удалось создать бэкапер для удалённых файлов для задачи ${syncTask.description}") }
     }
 
     private suspend fun backupModifiedItems(syncTask: SyncTask) {
-        filesBackuperCreator.createFilesBackuperForSyncTask(syncTask)
+        filesBackuperCreator
+            .createFilesBackuperForSyncTask(syncTask, executionId)
             ?.backupModifiedFilesOfTask(syncTask)
             ?: { Log.e(TAG, "Не удалось создать бэкапер для изменившихся файлов для задачи ${syncTask.description}") }
     }

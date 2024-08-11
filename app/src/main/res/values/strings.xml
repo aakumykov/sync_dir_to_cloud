@@ -114,4 +114,5 @@
     <string name="SYNC_OBJECT_LOGGER_deleting_dir">Удаление каталога</string>
     <string name="SYNC_OBJECT_LOGGER_deleting_file">Удаление файла</string>
     <string name="SYNC_OBJECT_LOGGER_backuping_dir">Бекап каталога</string>
+    <string name="SYNC_OBJECT_LOGGER_backuping_file">Бекап файла</string>
 </resources>

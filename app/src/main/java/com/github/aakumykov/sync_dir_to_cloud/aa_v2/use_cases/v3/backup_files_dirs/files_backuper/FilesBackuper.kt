@@ -1,12 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper
 
+import android.content.res.Resources
 import android.util.Log
+import androidx.annotation.StringRes
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.BackupDirCreatorCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -15,7 +19,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTarge
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
+import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -28,9 +34,12 @@ import dagger.assisted.AssistedInject
 class FilesBackuper @AssistedInject constructor(
     @Assisted private val cloudReader: CloudReader,
     @Assisted private val cloudWriter: CloudWriter,
+    @Assisted private val executionId: String,
     private val syncObjectReader: SyncObjectReader,
     private val backupDirCreatorCreator: BackupDirCreatorCreator,
     private val syncObjectStateChanger: SyncObjectStateChanger,
+    private val syncObjectLogger: SyncObjectLogger,
+    private val resources: Resources,
 ) {
 
     suspend fun backupDeletedFilesOfTask(syncTask: SyncTask) {
@@ -113,14 +122,32 @@ class FilesBackuper @AssistedInject constructor(
 
                 syncObjectStateChanger.setBackupState(objectId, ExecutionState.SUCCESS)
 
+                syncObjectLogger.log(SyncObjectLogItem.createSuccess(
+                    taskId = syncObject.taskId,
+                    executionId = executionId,
+                    syncObject = syncObject,
+                    message = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file)
+                ))
+
             } catch (e: Exception) {
                 ExceptionUtils.getErrorMessage(e).also { errorMsg ->
                     syncObjectStateChanger.setBackupState(objectId, ExecutionState.ERROR, errorMsg)
                     Log.e(TAG, errorMsg, e)
+                    syncObjectLogger.log(SyncObjectLogItem.createFailed(
+                        taskId = syncObject.taskId,
+                        executionId = executionId,
+                        syncObject = syncObject,
+                        message = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file, errorMsg)
+                    ))
                 }
             }
         }
     }
+
+
+    private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
+
+    private fun getString(@StringRes stringRes: Int, vararg arguments: Any) = resources.getString(stringRes, arguments)
 
 
     companion object {
@@ -130,5 +157,9 @@ class FilesBackuper @AssistedInject constructor(
 
 @AssistedFactory
 interface FilesBackuperAssistedFactory {
-    fun createFilesBackuper(cloudReader: CloudReader, cloudWriter: CloudWriter): FilesBackuper
+    fun createFilesBackuper(
+        cloudReader: CloudReader,
+        cloudWriter: CloudWriter,
+        executionId: String
+    ): FilesBackuper
 }

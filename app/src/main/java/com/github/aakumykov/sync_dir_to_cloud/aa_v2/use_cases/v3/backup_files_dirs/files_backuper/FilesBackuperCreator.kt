@@ -12,7 +12,7 @@ class FilesBackuperCreator @Inject constructor(
     private val cloudWriterCreator: CloudWriterCreator,
     private val cloudAuthReader: CloudAuthReader
 ) {
-    suspend fun createFilesBackuperForSyncTask(syncTask: SyncTask): FilesBackuper? {
+    suspend fun createFilesBackuperForSyncTask(syncTask: SyncTask, executionId: String): FilesBackuper? {
         return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.let { targetAuth ->
 
             val targetCloudReader = cloudReaderCreator.createCloudReader(syncTask.targetStorageType, targetAuth.authToken)
@@ -20,7 +20,7 @@ class FilesBackuperCreator @Inject constructor(
 
             return if (null != targetCloudReader && null != targetCloudWriter) {
                 filesBackuperAssistedFactory
-                    .createFilesBackuper(targetCloudReader, targetCloudWriter)
+                    .createFilesBackuper(targetCloudReader, targetCloudWriter, executionId)
             } else {
                 null
             }
