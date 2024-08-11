@@ -7,8 +7,8 @@ class TaskDirsDeleterCreator @Inject constructor(
     private val taskDirsDeleterAssistedFactory: TaskDirsDeleterAssistedFactory,
     private val dirDeleterCreator: DirDeleterCreator
 ){
-    suspend fun createTaskDirsDeleterForTask(syncTask: SyncTask): TaskDirsDeleter? {
-        return dirDeleterCreator.create(syncTask)?.let { dirDeleter ->
+    suspend fun createTaskDirsDeleterForTask(syncTask: SyncTask, executionId: String): TaskDirsDeleter? {
+        return dirDeleterCreator.create(syncTask, executionId)?.let { dirDeleter ->
             taskDirsDeleterAssistedFactory.create(dirDeleter)
         }
     }

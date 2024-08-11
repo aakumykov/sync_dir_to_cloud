@@ -111,4 +111,5 @@
     <string name="SYNC_OBJECT_LOGGER_copy_never_copied_file">Копирование забытого файла</string>
     <string name="SYNC_OBJECT_LOGGER_copy_modified_file">Копирование изменённого файла</string>
     <string name="SYNC_OBJECT_LOGGER_copy_in_target_lost_file">Восстановление пропавшего файла</string>
+    <string name="SYNC_OBJECT_LOGGER_deleting_dir">Удаление каталога</string>
 </resources>

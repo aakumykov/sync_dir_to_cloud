@@ -10,10 +10,10 @@ class DirDeleterCreator @Inject constructor(
     private val cloudAuthReader: CloudAuthReader,
     private val cloudWriterCreator: CloudWriterCreator,
 ) {
-    suspend fun create(syncTask: SyncTask): DirDeleter? {
+    suspend fun create(syncTask: SyncTask, executionId: String): DirDeleter? {
         return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.authToken?.let { authToken ->
             cloudWriterCreator.createCloudWriter(syncTask.targetStorageType!!, authToken)?.let { cloudWriter ->
-                dirDeleterAssistedFactory.create(cloudWriter, syncTask.targetPath!!)
+                dirDeleterAssistedFactory.create(cloudWriter, syncTask.targetPath!!, executionId)
             }
         }
     }
