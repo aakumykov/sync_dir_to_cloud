@@ -29,7 +29,7 @@ class TaskLogEntry(
         taskId = taskId,
         entryType = entryType,
         timestamp = currentTime(),
-        errorMsg = null
+        errorMsg = errorMsg
     )
 
     enum class EntryType { START, FINISH, ERROR }
