@@ -177,9 +177,6 @@ class SyncTaskExecutor @Inject constructor(
         )
     }
 
-    private fun logExecutionFinishReal(syncTask: SyncTask, t: Throwable?) {
-
-    }
 
     // TODO: регистрировать ошибку?
     private suspend fun deleteDeletedDirs(syncTask: SyncTask) {
