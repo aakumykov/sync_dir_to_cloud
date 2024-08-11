@@ -10,18 +10,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 @Dao
 abstract class SyncObjectLogDAO {
 
-    @Transaction
-    @Insert
-    suspend fun addLogItem(executionId: String, logItem: SyncObjectLogItem) {
-        addLogItem(logItem)
-        setExecutionId(logItem.objectId, executionId)
-    }
-
     @Insert
     abstract suspend fun addLogItem(item: SyncObjectLogItem)
-
-    @Query("UPDATE sync_object_logs SET execution_id = :executionId WHERE object_id = :objectId")
-    abstract suspend fun setExecutionId(objectId:String, executionId: String)
 
 
     @Query("SELECT * FROM sync_object_logs WHERE " +

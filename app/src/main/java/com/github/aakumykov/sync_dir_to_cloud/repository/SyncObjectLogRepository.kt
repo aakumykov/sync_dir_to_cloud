@@ -17,9 +17,9 @@ class SyncObjectLogRepository @Inject constructor(
 )
     : SyncObjectLogDeleter
 {
-    suspend fun addLogItem(executionId: String, syncObjectLogItem: SyncObjectLogItem) {
+    suspend fun addLogItem(syncObjectLogItem: SyncObjectLogItem) {
         withContext(coroutineDispatcher) {
-            dao.addLogItem(executionId, syncObjectLogItem)
+            dao.addLogItem(syncObjectLogItem)
         }
     }
 

@@ -24,29 +24,22 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import javax.inject.Inject
 
 
 /**
  * Создаёт каталоги, относящиеся к SyncTask-у.
  */
-class SyncTaskDirsCreator @Inject constructor(
+class SyncTaskDirsCreator @AssistedInject constructor(
     private val resources: Resources,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectDirCreatorCreator: SyncObjectDirCreatorCreator,
+    private val syncObjectLogger: SyncObjectLogger,
+    @Assisted private val executionId: String
 ){
-    fun init(syncObjectLogger: SyncObjectLogger): SyncTaskDirsCreator {
-        _syncObjectLogger = syncObjectLogger
-        return this
-    }
-
-    private var _syncObjectLogger: SyncObjectLogger? = null
-    private val syncObjectLogger: SyncObjectLogger get() {
-        return _syncObjectLogger ?: throw IllegalStateException("You must call init(SyncObjectLogger) method before use entity of this class.")
-    }
-
-    suspend fun createNewDirs(syncTask: SyncTask, executionId: String) {
+    suspend fun createNewDirs(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isNew }
@@ -62,7 +55,7 @@ class SyncTaskDirsCreator @Inject constructor(
     }
 
     // SyncState = NEVER && StateInSource == UNCHANGED
-    suspend fun createNeverProcessedDirs(syncTask: SyncTask, executionId: String) {
+    suspend fun createNeverProcessedDirs(syncTask: SyncTask) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isNeverSynced && it.isUnchanged }
@@ -80,7 +73,7 @@ class SyncTaskDirsCreator @Inject constructor(
 
 
     // isExistsInTarget == false
-    suspend fun createInTargetLostDirs(syncTask: SyncTask, executionId: String) {
+    suspend fun createInTargetLostDirs(syncTask: SyncTask) {
          syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isSuccessSynced }
@@ -177,3 +170,8 @@ class SyncTaskDirsCreator @Inject constructor(
 }
 
 val List<SyncObject>.names: String get() = joinToString(", ") { it.name }
+
+@AssistedFactory
+interface SyncTaskDirsCreatorAssistedFactory {
+    fun create(executionId: String): SyncTaskDirsCreator
+}

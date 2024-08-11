@@ -48,13 +48,13 @@ class SyncTaskExecutor @Inject constructor(
 
     private val inTargetExistenceCheckerFactory: InTargetExistenceChecker.Factory,
 ) {
+    private val executionId: String get() = hashCode().toString()
+
     private var currentTask: SyncTask? = null
     private var storageReader: StorageReader? = null
     private var storageWriter: StorageWriter? = null
 
-    private val syncObjectLogger: SyncObjectLogger by lazy { appComponent.getSyncObjectLogger().init(executionId) }
-
-    private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreator().init(syncObjectLogger) }
+    private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(executionId) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopier() }
 
 
@@ -233,7 +233,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun createLostDirsAgain(syncTask: SyncTask) {
-        syncTaskDirCreator.createInTargetLostDirs(syncTask, executionId)
+        syncTaskDirCreator.createInTargetLostDirs(syncTask)
     }
 
     private suspend fun copyLostFilesAgain(syncTask: SyncTask) {
@@ -241,7 +241,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
-        syncTaskDirCreator.createNeverProcessedDirs(syncTask, executionId)
+        syncTaskDirCreator.createNeverProcessedDirs(syncTask)
     }
 
     private suspend fun copyNeverSyncedFiles(syncTask: SyncTask) {
@@ -257,7 +257,7 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun createNewDirs(syncTask: SyncTask) {
-        syncTaskDirCreator.createNewDirs(syncTask, executionId)
+        syncTaskDirCreator.createNewDirs(syncTask)
     }
 
 
@@ -351,6 +351,3 @@ class SyncTaskExecutor @Inject constructor(
         val TAG: String = SyncTaskExecutor::class.java.simpleName
     }
 }
-
-
-val Any.executionId: String get() = hashCode().toString()
