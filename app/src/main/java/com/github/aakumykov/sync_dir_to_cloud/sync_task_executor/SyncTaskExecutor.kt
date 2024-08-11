@@ -152,6 +152,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun logExecutionStart(syncTask: SyncTask) {
         syncTaskLogger.log(
             TaskLogEntry(
+            executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.START
         )
@@ -161,6 +162,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun logExecutionFinish(syncTask: SyncTask) {
         syncTaskLogger.log(
             TaskLogEntry(
+            executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.FINISH
         )
@@ -170,6 +172,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
         syncTaskLogger.log(
             TaskLogEntry(
+            executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.ERROR,
             errorMsg = null

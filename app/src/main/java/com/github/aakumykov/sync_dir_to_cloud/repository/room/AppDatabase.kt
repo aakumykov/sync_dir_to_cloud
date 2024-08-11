@@ -31,10 +31,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         TaskLogEntry::class,
         SyncObjectLogItem::class
    ],
-    version = 58,
+    version = 57,
     autoMigrations = [
-        AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
-        AutoMigration(from = 57, to = 58, spec = TaskLogEntry.DeleteColumnExecutionId::class),
+        AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class)
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
