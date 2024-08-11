@@ -1,12 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
+import android.content.res.Resources
 import android.util.Log
+import androidx.annotation.StringRes
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
@@ -17,19 +21,26 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExis
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import javax.inject.Inject
 
 /**
  * Выполняет копирование всех файловых SyncObject-ов указанного SyncTask,
  * меняя статус обрабатываемого SyncObject.
  */
-class SyncTaskFilesCopier @Inject constructor(
+class SyncTaskFilesCopier @AssistedInject constructor(
+    private val resources: Resources,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val syncObjectCopierCreator: SyncObjectCopierCreator
-){
+    private val syncObjectCopierCreator: SyncObjectCopierCreator,
+    private val syncObjectLogger: SyncObjectLogger,
+    @Assisted private val executionId: String,
+) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getAllObjectsForTask(syncTask.id)
@@ -38,6 +49,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .also { list ->
                 if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNewFilesForSyncTask(${list.names})")
                 copyFiles(
+                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
@@ -53,6 +65,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .also { list ->
                 if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNeverCopiedFilesOfSyncTask(${list.names})")
                 copyFiles(
+                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_never_copied_file,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
@@ -69,6 +82,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .also { list ->
                 if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyModifiedFilesForSyncTask(${list.names})")
                 copyFiles(
+                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
@@ -86,6 +100,7 @@ class SyncTaskFilesCopier @Inject constructor(
             .also { list ->
                 if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyInTargetLostFiles(${list.names})")
                 copyFiles(
+                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = false,
@@ -107,6 +122,7 @@ class SyncTaskFilesCopier @Inject constructor(
 
 
     private suspend fun copyFiles(
+        @StringRes operationName: Int,
         list: List<SyncObject>,
         syncTask: SyncTask,
         overwriteIfExists: Boolean,
@@ -128,18 +144,39 @@ class SyncTaskFilesCopier @Inject constructor(
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)
+                    syncObjectLogger.log(SyncObjectLogItem.createSuccess(
+                        taskId = syncTask.id,
+                        executionId = executionId,
+                        syncObject = syncObject,
+                        message = getString(operationName)
+                    ))
                 }
                 ?.onFailure { throwable ->
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
                         syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
-                        onSyncObjectProcessingFailed?.invoke(syncObject, throwable)
-                            ?: Log.e(TAG, errorMsg, throwable)
+                        onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
+                        syncObjectLogger.log(SyncObjectLogItem.createFailed(
+                            taskId = syncTask.id,
+                            executionId = executionId,
+                            syncObject = syncObject,
+                            message = getString(operationName, errorMsg)
+                        ))
                     }
                 }
         }
     }
 
+    private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
+
+    private fun getString(@StringRes stringRes: Int, vararg arguments: Any) = resources.getString(stringRes, arguments)
+
+
     companion object {
         val TAG: String = SyncTaskFilesCopier::class.java.simpleName
     }
+}
+
+@AssistedFactory
+interface SyncTaskFilesCopierAssistedFactory {
+    fun create(executionId: String): SyncTaskFilesCopier
 }

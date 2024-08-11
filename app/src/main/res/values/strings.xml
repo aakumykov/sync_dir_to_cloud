@@ -107,4 +107,8 @@
     <string name="SYNC_OBJECT_LOGGER_create_new_dir">Создание нового каталога</string>
     <string name="SYNC_OBJECT_LOGGER_create_never_processed_dir">Создание никогда не обрабатывавшегося каталога</string>
     <string name="SYNC_OBJECT_LOGGER_create_in_target_lost_dir">Восстановление каталога</string>
+    <string name="SYNC_OBJECT_LOGGER_copy_new_file">Копирование нового файла</string>
+    <string name="SYNC_OBJECT_LOGGER_copy_never_copied_file">Копирование забытого файла</string>
+    <string name="SYNC_OBJECT_LOGGER_copy_modified_file">Копирование изменённого файла</string>
+    <string name="SYNC_OBJECT_LOGGER_copy_in_target_lost_file">Восстановление пропавшего файла</string>
 </resources>
