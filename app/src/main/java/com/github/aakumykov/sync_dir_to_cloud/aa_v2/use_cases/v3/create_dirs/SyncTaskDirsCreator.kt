@@ -24,20 +24,28 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import javax.inject.Inject
 
 
 /**
  * Создаёт каталоги, относящиеся к SyncTask-у.
  */
-class SyncTaskDirsCreator @AssistedInject constructor(
+class SyncTaskDirsCreator @Inject constructor(
     private val resources: Resources,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectDirCreatorCreator: SyncObjectDirCreatorCreator,
-    @Assisted private val syncObjectLogger: SyncObjectLogger
 ){
+    fun init(syncObjectLogger: SyncObjectLogger): SyncTaskDirsCreator {
+        _syncObjectLogger = syncObjectLogger
+        return this
+    }
+
+    private var _syncObjectLogger: SyncObjectLogger? = null
+    private val syncObjectLogger: SyncObjectLogger get() {
+        return _syncObjectLogger ?: throw IllegalStateException("You must call init(SyncObjectLogger) method before use entity of this class.")
+    }
+
     suspend fun createNewDirs(syncTask: SyncTask, executionId: String) {
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
@@ -168,11 +176,4 @@ class SyncTaskDirsCreator @AssistedInject constructor(
     }
 }
 
-
 val List<SyncObject>.names: String get() = joinToString(", ") { it.name }
-
-
-@AssistedFactory
-interface SyncTaskDirsCreatorAssistedFactory {
-    fun create(syncObjectLogger: SyncObjectLogger): SyncTaskDirsCreator
-}

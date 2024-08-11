@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncObjectCopierCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreatorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.TaskDirsDeleterCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_deleter.TaskFilesDeleterCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
@@ -53,7 +53,7 @@ import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoH
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
-import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLoggerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
@@ -150,7 +150,7 @@ interface AppComponent {
 
     fun getSyncTaskFilesCopier(): SyncTaskFilesCopier
 
-    fun getSyncTaskDirsCreatorAssistedFactory(): SyncTaskDirsCreatorAssistedFactory
+    fun getSyncTaskDirsCreator(): SyncTaskDirsCreator
 
     fun getFilesBackuperCreator(): FilesBackuperCreator
 
@@ -160,7 +160,7 @@ interface AppComponent {
 
     fun getTaskDirDeleterCreator(): TaskDirsDeleterCreator
 
-    fun getSyncObjectLoggerAssistedFactory(): SyncObjectLoggerAssistedFactory
+    fun getSyncObjectLogger(): SyncObjectLogger
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()
