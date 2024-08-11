@@ -1,6 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -53,6 +55,8 @@ class SyncTaskExecutor @Inject constructor(
     private var storageReader: StorageReader? = null
     private var storageWriter: StorageWriter? = null
 
+    private val dirsBackuperCreator: DirsBackuperCreator by lazy { appComponent.getDirsBackuperCreator() }
+    private val filesBackuperCreator: FilesBackuperCreator by lazy { appComponent.getFilesBackuperCreator() }
     private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(executionId) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
 
@@ -194,7 +198,7 @@ class SyncTaskExecutor @Inject constructor(
     private suspend fun deleteDeletedFiles(syncTask: SyncTask) {
         appComponent
             .getTaskFilesDeleterCreator()
-            .createDeletedFilesDeleterForTask(syncTask)
+            .createDeletedFilesDeleterForTask(syncTask, executionId)
             ?.deleteDeletedFilesForTask(syncTask)
             ?: {
                 Log.e(TAG, "Не удалось создать удалятель файлов для задачи ${syncTask.description}")
@@ -202,33 +206,22 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun backupDeletedDirs(syncTask: SyncTask) {
-        appComponent
-            .getDirsBackuperCreator()
+        dirsBackuperCreator
             .createDirsBackuperForTask(syncTask)
             ?.backupDeletedDirsOfTask(syncTask)
-            ?: {
-                Log.e(TAG, "Не удалось создать бэкапер каталогов для задачи ${syncTask.description}")
-            }
+            ?: { Log.e(TAG, "Не удалось создать бэкапер каталогов для задачи ${syncTask.description}") }
     }
 
     private suspend fun backupDeletedFiles(syncTask: SyncTask) {
-        appComponent
-            .getFilesBackuperCreator()
-            .createFilesBackuperForSyncTask(syncTask)
+        filesBackuperCreator.createFilesBackuperForSyncTask(syncTask)
             ?.backupDeletedFilesOfTask(syncTask)
-            ?: {
-                Log.e(TAG, "Не удалось создать бэкапер для удалённых файлов для задачи ${syncTask.description}")
-            }
+            ?: { Log.e(TAG, "Не удалось создать бэкапер для удалённых файлов для задачи ${syncTask.description}") }
     }
 
     private suspend fun backupModifiedItems(syncTask: SyncTask) {
-        appComponent
-            .getFilesBackuperCreator()
-            .createFilesBackuperForSyncTask(syncTask)
+        filesBackuperCreator.createFilesBackuperForSyncTask(syncTask)
             ?.backupModifiedFilesOfTask(syncTask)
-            ?: {
-                Log.e(TAG, "Не удалось создать бэкапер для изменившихся файлов для задачи ${syncTask.description}")
-            }
+            ?: { Log.e(TAG, "Не удалось создать бэкапер для изменившихся файлов для задачи ${syncTask.description}") }
     }
 
     private suspend fun createLostDirsAgain(syncTask: SyncTask) {

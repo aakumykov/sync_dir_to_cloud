@@ -7,9 +7,9 @@ class TaskFilesDeleterCreator @Inject constructor(
     private val assistedFactory: TaskFilesDeleterAssistedFactory,
     private val fileDeleterCreator: FileDeleterCreator,
 ) {
-    suspend fun createDeletedFilesDeleterForTask(syncTask: SyncTask): TaskFilesDeleter? {
+    suspend fun createDeletedFilesDeleterForTask(syncTask: SyncTask, executionId: String): TaskFilesDeleter? {
         return fileDeleterCreator.createFileDeleterForTask(syncTask)?.let { fileDeleter ->
-            assistedFactory.create(fileDeleter)
+            assistedFactory.create(fileDeleter, executionId)
         }
     }
 }
