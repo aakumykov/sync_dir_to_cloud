@@ -207,7 +207,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun backupDeletedDirs(syncTask: SyncTask) {
         dirsBackuperCreator
-            .createDirsBackuperForTask(syncTask)
+            .createDirsBackuperForTask(syncTask, executionId)
             ?.backupDeletedDirsOfTask(syncTask)
             ?: { Log.e(TAG, "Не удалось создать бэкапер каталогов для задачи ${syncTask.description}") }
     }
