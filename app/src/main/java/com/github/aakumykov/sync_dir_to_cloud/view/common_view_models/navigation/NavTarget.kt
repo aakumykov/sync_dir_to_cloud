@@ -7,6 +7,8 @@ sealed class NavTarget {
     object List : NavTarget()
     object Add : NavTarget()
 
+
     data class TaskInfo(val id: String) : NavTarget()
     data class Edit(val id: String) : NavTarget()
+    data class SyncLog(val taskId: String, val executionId: String) : NavTarget()
 }

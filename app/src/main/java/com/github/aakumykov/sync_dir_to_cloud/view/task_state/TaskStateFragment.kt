@@ -22,6 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
@@ -123,7 +124,10 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
 
     private fun onTaskLogItemClicked(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
-        showToast(taskLogAdapter.getItem(i).taskId)
+//        showToast(taskLogAdapter.getItem(i).taskId)
+        taskLogAdapter.getItem(i).also { taskLogEntry: TaskLogEntry ->
+            navigationViewModel.navigateTo(NavTarget.SyncLog(taskLogEntry.taskId, taskLogEntry.executionId))
+        }
     }
 
     private fun showItemInfo(syncObject: SyncObject) {

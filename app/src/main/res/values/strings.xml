@@ -115,4 +115,6 @@
     <string name="SYNC_OBJECT_LOGGER_deleting_file">Удаление файла</string>
     <string name="SYNC_OBJECT_LOGGER_backuping_dir">Бекап каталога</string>
     <string name="SYNC_OBJECT_LOGGER_backuping_file">Бекап файла</string>
+    <string name="FRAGMENT_SYNC_LOG_page_title">Журнал синхронизации</string>
+    <string name="SYNC_LOG_error_insufficient_arguments">Недостаточно аргументов</string>
 </resources>

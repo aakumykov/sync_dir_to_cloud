@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
@@ -18,6 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewM
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateViewModel
@@ -113,5 +115,14 @@ class ViewModelsModule {
             syncTaskNotificator = syncTaskNotificator,
             syncObjectDeleter = syncObjectDeleter
         )
+    }
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(SyncLogViewModel::class)
+    fun provideSyncLogViewModel(
+        syncObjectLogReader: SyncObjectLogReader
+    ): ViewModel {
+        return SyncLogViewModel(syncObjectLogReader)
     }
 }
