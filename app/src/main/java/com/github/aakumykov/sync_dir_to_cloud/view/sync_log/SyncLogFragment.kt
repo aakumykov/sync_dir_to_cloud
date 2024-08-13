@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
@@ -35,6 +37,21 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private fun prepareListAdapter() {
         listAdapter = SyncLogListAdapter()
         binding.listView.adapter = listAdapter
+//        binding.listView.setOnItemClickListener(::onItemClicked)
+        binding.listView.isClickable = true
+        binding.listView.setOnItemClickListener { parent, view, position, id ->
+            showItemInfo(listAdapter.getItem(position))
+        }
+    }
+
+
+    private fun onItemClicked(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
+        showItemInfo(listAdapter.getItem(i))
+    }
+
+
+    private fun showItemInfo(logItem: SyncObjectLogItem) {
+        LogItemDetailsDialog.create(logItem).show(childFragmentManager)
     }
 
 

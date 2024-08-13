@@ -117,4 +117,7 @@
     <string name="SYNC_OBJECT_LOGGER_backuping_file">Бекап файла</string>
     <string name="FRAGMENT_SYNC_LOG_page_title">Журнал синхронизации</string>
     <string name="SYNC_LOG_error_insufficient_arguments">Недостаточно аргументов</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied">Не поедоставлено объекта для отображения</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_title">Детали операции</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_close_button">Закрыть</string>
 </resources>

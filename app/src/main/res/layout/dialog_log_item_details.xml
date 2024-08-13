@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/syncLogItemDetailsId"
+        style="@style/sync_log_item_details_text_row"
+        tools:text="id"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/syncLogItemDetailsMessage"
+        style="@style/sync_log_item_details_text_row"
+        tools:text="Название операции"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/syncLogItemDetailsName"
+        style="@style/sync_log_item_details_text_row"
+        tools:text="Имя файла / каталога" />
+
+    <TextView
+        android:id="@+id/syncLogItemDetailsTime"
+        style="@style/sync_log_item_details_text_row"
+        tools:text="дата и время"
+        android:textSize="12sp"/>
+
+</LinearLayout>

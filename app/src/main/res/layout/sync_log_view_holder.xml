@@ -24,7 +24,6 @@
         android:paddingStart="12dp"
         android:paddingEnd="8dp"
         android:textColor="@color/sync_log_message_color"
-        android:textIsSelectable="true"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +44,6 @@
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         android:textStyle="italic"
-        android:textIsSelectable="true"
         android:textColor="@color/sync_log_file_name_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
