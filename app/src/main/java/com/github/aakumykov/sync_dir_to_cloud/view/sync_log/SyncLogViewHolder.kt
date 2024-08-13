@@ -20,7 +20,7 @@ class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>()
     }
 
     override fun fill(item: SyncObjectLogItem, isSelected: Boolean) {
-        nameView.text = item.name
+        nameView.text = item.itemName
         messageView.text = item.operationName
         stateIconView.setImageResource(if (item.isSuccessful) R.drawable.ic_sync_log_success else R.drawable.ic_sync_log_error)
     }

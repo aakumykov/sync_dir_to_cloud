@@ -35,7 +35,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = OBJECT_ID_FIELD) val objectId: String,
     @ColumnInfo(name = EXECUTION_ID_FIELD) val executionId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
-    val name: String,
+    @ColumnInfo(name = ITEM_NAME_FILED) val itemName: String,
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean
 )
@@ -50,6 +50,7 @@ data class SyncObjectLogItem (
         const val EXECUTION_ID_FIELD = "execution_id"
         const val IS_SUCCESSFUL_FIELD = "is_successful"
         const val TIMESTAMP_FIELD = "timestamp"
+        const val ITEM_NAME_FILED = "item_name"
         const val OPERATION_NAME_FILED = "operation_name"
 
         fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
@@ -85,7 +86,7 @@ data class SyncObjectLogItem (
                 objectId = syncObject.id,
                 executionId = executionId,
                 timestamp = currentTime(),
-                name = syncObject.name,
+                itemName = syncObject.name,
                 operationName = operationName,
                 isSuccessful = isSuccessful
             )
@@ -94,4 +95,7 @@ data class SyncObjectLogItem (
 
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "message", toColumnName = OPERATION_NAME_FILED)
     class RenameColumnMessageToOperationName : AutoMigrationSpec
+
+    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "name", toColumnName = ITEM_NAME_FILED)
+    class RenameColumnNameToItemName : AutoMigrationSpec
 }
