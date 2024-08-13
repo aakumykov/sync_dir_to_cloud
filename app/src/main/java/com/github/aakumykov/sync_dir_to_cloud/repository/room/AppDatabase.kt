@@ -31,11 +31,12 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         TaskLogEntry::class,
         SyncObjectLogItem::class
    ],
-    version = 59,
+    version = 60,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
-        AutoMigration(from = 57, to = 58),
+        AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
         AutoMigration(from = 58, to = 59, spec = SyncObjectLogItem.RenameColumnMessageToOperationName::class),
+        AutoMigration(from = 59, to = 60), // SyncObjectLogItem.message типа String?
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

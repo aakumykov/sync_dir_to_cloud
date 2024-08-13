@@ -36,7 +36,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = EXECUTION_ID_FIELD) val executionId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
     val name: String,
-    @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String? = null,
+    @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean
 )
     : Parcelable
