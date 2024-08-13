@@ -1,25 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.compose.SyncLogScreen
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 
@@ -32,31 +21,25 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private val taskId: String? get() = arguments?.getString(TASK_ID)
     private val executionId: String? get() = arguments?.getString(EXECUTION_ID)
 
-    private val listState = mutableStateListOf<SyncObjectLogItem>()
+    private lateinit var listAdapter: SyncLogListAdapter
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        prepareView(view)
+        prepareLayout(view)
+        prepareListAdapter()
         prepareViewModels()
         startWork(savedInstanceState)
     }
 
+    private fun prepareListAdapter() {
+        listAdapter = SyncLogListAdapter()
+        binding.listView.adapter = listAdapter
+    }
 
-    private fun prepareView(view: View) {
 
+    private fun prepareLayout(view: View) {
         _binding = FragmentSyncLogBinding.bind(view)
-
-        binding.composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                SyncLogScreen(
-                    taskId = taskId ?: "null",
-                    executionId = executionId ?: "null",
-                    logInfoList = listState
-                )
-            }
-        }
     }
 
 
@@ -76,8 +59,8 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         viewModel.syncObjectInfoList.observe(viewLifecycleOwner, ::onListChanged)
     }
 
-    private fun onListChanged(syncObjectLogItemList: List<SyncObjectLogItem>?) {
-        syncObjectLogItemList?.also { listState.addAll(syncObjectLogItemList) }
+    private fun onListChanged(list: List<SyncObjectLogItem>?) {
+        list?.also { listAdapter.setList(list) }
     }
 
 
