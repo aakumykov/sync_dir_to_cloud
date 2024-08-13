@@ -21,7 +21,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
-import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -126,7 +125,7 @@ class FilesBackuper @AssistedInject constructor(
                     taskId = syncObject.taskId,
                     executionId = executionId,
                     syncObject = syncObject,
-                    message = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file)
+                    operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file)
                 ))
 
             } catch (e: Exception) {
@@ -137,7 +136,7 @@ class FilesBackuper @AssistedInject constructor(
                         taskId = syncObject.taskId,
                         executionId = executionId,
                         syncObject = syncObject,
-                        message = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file, errorMsg)
+                        operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file, errorMsg)
                     ))
                 }
             }

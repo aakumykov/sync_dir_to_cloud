@@ -13,7 +13,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import javax.inject.Named
 
 class DirDeleter @AssistedInject constructor(
     @Assisted private val cloudWriter: CloudWriter,
@@ -30,7 +29,7 @@ class DirDeleter @AssistedInject constructor(
                 taskId = syncObject.taskId,
                 executionId = executionId,
                 syncObject = syncObject,
-                message = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir)
+                operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir)
             ))
             Result.success(syncObject)
 
@@ -40,7 +39,7 @@ class DirDeleter @AssistedInject constructor(
                     taskId = syncObject.taskId,
                     executionId = executionId,
                     syncObject = syncObject,
-                    message = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir, errorMsg)
+                    operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir, errorMsg)
                 ))
                 Result.failure(e)
             }

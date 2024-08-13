@@ -22,7 +22,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.merge
 
 class DirsBackuper @AssistedInject constructor(
     @Assisted private val cloudWriter: CloudWriter,
@@ -82,7 +81,7 @@ class DirsBackuper @AssistedInject constructor(
                     taskId = syncTask.id,
                     executionId = executionId,
                     syncObject = syncObject,
-                    message = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir)
+                    operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir)
                 ))
             }
             catch (e: Exception) {
@@ -93,7 +92,7 @@ class DirsBackuper @AssistedInject constructor(
                         taskId = syncTask.id,
                         executionId = executionId,
                         syncObject = syncObject,
-                        message = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir, errorMsg)
+                        operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir, errorMsg)
                     ))
                 }
             }

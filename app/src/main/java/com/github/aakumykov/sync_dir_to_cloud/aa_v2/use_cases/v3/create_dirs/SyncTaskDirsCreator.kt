@@ -25,7 +25,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
 
 /**
@@ -135,7 +134,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                     taskId = syncTask.id,
                                     executionId = executionId,
                                     syncObject,
-                                    message = getString(operationName)
+                                    operationName = getString(operationName)
                                 ))
                             }
                             .onFailure { throwable ->
@@ -149,7 +148,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                         taskId = syncTask.id,
                                         executionId = executionId,
                                         syncObject,
-                                        message = getString(operationName, errorMsg)
+                                        operationName = getString(operationName, errorMsg)
                                     ))
                                 }
                             }

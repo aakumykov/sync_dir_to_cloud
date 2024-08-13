@@ -4,6 +4,8 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.RenameColumn
+import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
@@ -34,7 +36,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = EXECUTION_ID_FIELD) val executionId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
     val name: String,
-    val message: String? = null,
+    @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String? = null,
     @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean
 )
     : Parcelable
@@ -48,23 +50,24 @@ data class SyncObjectLogItem (
         const val EXECUTION_ID_FIELD = "execution_id"
         const val IS_SUCCESSFUL_FIELD = "is_successful"
         const val TIMESTAMP_FIELD = "timestamp"
+        const val OPERATION_NAME_FILED = "operation_name"
 
-        fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, message: String): SyncObjectLogItem {
+        fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
-                message = message,
+                operationName = operationName,
                 isSuccessful = true
             )
         }
 
-        fun createFailed(taskId: String, executionId: String, syncObject: SyncObject, message: String): SyncObjectLogItem {
+        fun createFailed(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
-                message = message,
+                operationName = operationName,
                 isSuccessful = false
             )
         }
@@ -74,7 +77,7 @@ data class SyncObjectLogItem (
             executionId: String,
             syncObject: SyncObject,
             isSuccessful: Boolean,
-            message: String
+            operationName: String
         ): SyncObjectLogItem {
             return SyncObjectLogItem(
                 id = UUID.randomUUID().toString(),
@@ -83,9 +86,12 @@ data class SyncObjectLogItem (
                 executionId = executionId,
                 timestamp = currentTime(),
                 name = syncObject.name,
-                message = message,
+                operationName = operationName,
                 isSuccessful = isSuccessful
             )
         }
     }
+
+    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "message", toColumnName = OPERATION_NAME_FILED)
+    class RenameColumnMessageToOperationName : AutoMigrationSpec
 }

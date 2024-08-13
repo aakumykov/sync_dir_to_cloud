@@ -27,7 +27,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
 /**
  * Выполняет копирование всех файловых SyncObject-ов указанного SyncTask,
@@ -148,7 +147,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         taskId = syncTask.id,
                         executionId = executionId,
                         syncObject = syncObject,
-                        message = getString(operationName)
+                        operationName = getString(operationName)
                     ))
                 }
                 ?.onFailure { throwable ->
@@ -159,7 +158,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             taskId = syncTask.id,
                             executionId = executionId,
                             syncObject = syncObject,
-                            message = getString(operationName, errorMsg)
+                            operationName = getString(operationName, errorMsg)
                         ))
                     }
                 }

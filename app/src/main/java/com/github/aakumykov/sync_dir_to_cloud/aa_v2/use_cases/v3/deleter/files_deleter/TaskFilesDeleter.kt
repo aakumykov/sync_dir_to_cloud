@@ -21,7 +21,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlin.math.exp
 
 class TaskFilesDeleter @AssistedInject constructor(
     @Assisted private val fileDeleter: FileDeleter,
@@ -59,7 +58,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                         taskId = syncTask.id,
                         executionId = executionId,
                         syncObject = syncObject,
-                        message = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file)
+                        operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file)
                     ))
                 }
                 .onFailure {
@@ -70,7 +69,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                             taskId = syncTask.id,
                             executionId = executionId,
                             syncObject = syncObject,
-                            message = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file, errorMsg)
+                            operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file, errorMsg)
                         ))
                     }
                 }
