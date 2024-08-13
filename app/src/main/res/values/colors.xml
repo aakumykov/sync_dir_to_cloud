@@ -27,4 +27,6 @@
     <color name="local_storage_color">#707070</color>
 
     <color name="task_list_fragment_bg">#F3F3F3</color>
+
+    <color name="sync_log_icon_error">@color/error</color>
 </resources>
