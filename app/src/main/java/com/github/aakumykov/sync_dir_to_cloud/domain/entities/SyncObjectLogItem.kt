@@ -1,31 +1,53 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
+import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 @Entity(
     tableName = SyncObjectLogItem.TABLE_NAME,
     /*primaryKeys = [
-        "task_id", "object_id", "execution_id"
+        TASK_ID_FIELD,
+        OBJECT_ID_FIELD,
+        EXECUTION_ID_FIELD,
+        TIMESTAMP_FIELD
+    ],*/
+    /*indices = [
+        Index(
+            TASK_ID_FIELD,
+            OBJECT_ID_FIELD,
+            EXECUTION_ID_FIELD,
+            TIMESTAMP_FIELD,
+            unique = true
+        )
     ]*/
 )
-@Deprecated("--> SyncObjectLogInfo")
+@Parcelize
 data class SyncObjectLogItem (
     @PrimaryKey val id: String,
-    @ColumnInfo(name = "task_id") val taskId: String,
-    @ColumnInfo(name = "object_id") val objectId: String,
-    @ColumnInfo(name = "execution_id") val executionId: String,
-    val timestamp: Long,
+    @ColumnInfo(name = TASK_ID_FIELD) val taskId: String,
+    @ColumnInfo(name = OBJECT_ID_FIELD) val objectId: String,
+    @ColumnInfo(name = EXECUTION_ID_FIELD) val executionId: String,
+    @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
     val name: String,
     val message: String,
-    @ColumnInfo(name = "is_successful") val isSuccessful: Boolean
-) {
+    @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean
+)
+    : Parcelable
+{
     companion object {
 
         const val TABLE_NAME = "sync_object_logs"
+
+        const val TASK_ID_FIELD = "task_id"
+        const val OBJECT_ID_FIELD = "object_id"
+        const val EXECUTION_ID_FIELD = "execution_id"
+        const val IS_SUCCESSFUL_FIELD = "is_successful"
+        const val TIMESTAMP_FIELD = "timestamp"
 
         fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, message: String): SyncObjectLogItem {
             return create(
