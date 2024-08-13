@@ -31,16 +31,14 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         TaskLogEntry::class,
         SyncObjectLogItem::class
    ],
-    version = 61,
+    version = 62,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
-        AutoMigration(from = 57, to = 58),
-        // SyncObjectLogItem.message типа String?
+        AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
         AutoMigration(from = 58, to = 59, spec = SyncObjectLogItem.RenameColumnMessageToOperationName::class),
-        // SyncObjectLogItem.message типа String?
-        AutoMigration(from = 59, to = 60),
-        // SyncObjectLogItem.name --> itemName
+        AutoMigration(from = 59, to = 60), // SyncObjectLogItem.message типа String?
         AutoMigration(from = 60, to = 61, spec = SyncObjectLogItem.RenameColumnNameToItemName::class),
+        AutoMigration(from = 61, to = 62), // Новое поле SyncObjectLogItem.errorMessage
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

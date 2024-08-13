@@ -148,7 +148,8 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                         taskId = syncTask.id,
                                         executionId = executionId,
                                         syncObject,
-                                        operationName = getString(operationName, errorMsg)
+                                        operationName = getString(operationName),
+                                        errorMessage = errorMsg
                                     ))
                                 }
                             }

@@ -136,7 +136,8 @@ class FilesBackuper @AssistedInject constructor(
                         taskId = syncObject.taskId,
                         executionId = executionId,
                         syncObject = syncObject,
-                        operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file, errorMsg)
+                        operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file),
+                        errorMessage = errorMsg
                     ))
                 }
             }

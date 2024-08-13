@@ -37,6 +37,15 @@ class LogItemDetailsDialog : DialogFragment() {
                 findViewById<TextView>(R.id.syncLogItemDetailsMessage).text = logItem.operationName
                 findViewById<TextView>(R.id.syncLogItemDetailsName).text = logItem.itemName
                 findViewById<TextView>(R.id.syncLogItemDetailsTime).text = CurrentDateTime.format(logItem.timestamp)
+
+                val errorView = findViewById<TextView>(R.id.syncLogItemError)
+                logItem.errorMessage?.also {
+                    errorView.text = it
+                    errorView.visibility = View.VISIBLE
+                } ?: {
+                    errorView.text = null
+                    errorView.visibility = View.GONE
+                }
             }
     }
 

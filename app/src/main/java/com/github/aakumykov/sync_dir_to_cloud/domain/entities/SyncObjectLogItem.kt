@@ -37,7 +37,8 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
     @ColumnInfo(name = ITEM_NAME_FILED) val itemName: String,
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
-    @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean
+    @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
+    @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean,
 )
     : Parcelable
 {
@@ -52,6 +53,7 @@ data class SyncObjectLogItem (
         const val TIMESTAMP_FIELD = "timestamp"
         const val ITEM_NAME_FILED = "item_name"
         const val OPERATION_NAME_FILED = "operation_name"
+        const val ERROR_MESSAGE_FIELD = "error_message"
 
         fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
@@ -59,17 +61,19 @@ data class SyncObjectLogItem (
                 executionId = executionId,
                 syncObject = syncObject,
                 operationName = operationName,
+                errorMessage =  null,
                 isSuccessful = true
             )
         }
 
-        fun createFailed(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
+        fun createFailed(taskId: String, executionId: String, syncObject: SyncObject, operationName: String, errorMessage: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
                 operationName = operationName,
-                isSuccessful = false
+                errorMessage = errorMessage,
+                isSuccessful = false,
             )
         }
 
@@ -78,7 +82,8 @@ data class SyncObjectLogItem (
             executionId: String,
             syncObject: SyncObject,
             isSuccessful: Boolean,
-            operationName: String
+            operationName: String,
+            errorMessage: String?
         ): SyncObjectLogItem {
             return SyncObjectLogItem(
                 id = UUID.randomUUID().toString(),
@@ -88,7 +93,8 @@ data class SyncObjectLogItem (
                 timestamp = currentTime(),
                 itemName = syncObject.name,
                 operationName = operationName,
-                isSuccessful = isSuccessful
+                isSuccessful = isSuccessful,
+                errorMessage = errorMessage,
             )
         }
     }

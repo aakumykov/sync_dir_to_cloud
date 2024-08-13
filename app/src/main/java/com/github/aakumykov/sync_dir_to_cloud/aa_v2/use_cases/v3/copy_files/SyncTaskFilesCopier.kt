@@ -158,7 +158,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             taskId = syncTask.id,
                             executionId = executionId,
                             syncObject = syncObject,
-                            operationName = getString(operationName, errorMsg)
+                            operationName = getString(operationName),
+                            errorMessage = errorMsg
                         ))
                     }
                 }

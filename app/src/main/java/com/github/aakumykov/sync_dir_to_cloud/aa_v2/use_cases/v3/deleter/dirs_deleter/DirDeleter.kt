@@ -39,7 +39,8 @@ class DirDeleter @AssistedInject constructor(
                     taskId = syncObject.taskId,
                     executionId = executionId,
                     syncObject = syncObject,
-                    operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir, errorMsg)
+                    operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir),
+                    errorMessage = errorMsg
                 ))
                 Result.failure(e)
             }

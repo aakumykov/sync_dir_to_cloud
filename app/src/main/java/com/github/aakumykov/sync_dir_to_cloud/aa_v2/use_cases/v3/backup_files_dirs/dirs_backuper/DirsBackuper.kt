@@ -92,7 +92,8 @@ class DirsBackuper @AssistedInject constructor(
                         taskId = syncTask.id,
                         executionId = executionId,
                         syncObject = syncObject,
-                        operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir, errorMsg)
+                        operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir),
+                        errorMessage = errorMsg
                     ))
                 }
             }

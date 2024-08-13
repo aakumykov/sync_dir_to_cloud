@@ -69,7 +69,8 @@ class TaskFilesDeleter @AssistedInject constructor(
                             taskId = syncTask.id,
                             executionId = executionId,
                             syncObject = syncObject,
-                            operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file, errorMsg)
+                            operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file),
+                            errorMessage = errorMsg
                         ))
                     }
                 }
