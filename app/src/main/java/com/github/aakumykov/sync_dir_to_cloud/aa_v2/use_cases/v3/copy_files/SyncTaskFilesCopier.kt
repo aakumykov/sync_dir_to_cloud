@@ -144,7 +144,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)
                     syncObjectLogger.log(SyncObjectLogItem.createSuccess(
-                        taskId = syncTask.id,
+                        syncTask = syncTask,
                         executionId = executionId,
                         syncObject = syncObject,
                         operationName = getString(operationName)
@@ -155,7 +155,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
                         onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
                         syncObjectLogger.log(SyncObjectLogItem.createFailed(
-                            taskId = syncTask.id,
+                            syncTask = syncTask,
                             executionId = executionId,
                             syncObject = syncObject,
                             operationName = getString(operationName),

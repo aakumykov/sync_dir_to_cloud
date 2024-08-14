@@ -27,8 +27,15 @@
             tools:text="Имя файла / каталога" />
 
         <TextView
+            android:id="@+id/syncLogItemDetailsItemParentDir"
+            style="@style/sync_log_item_details_text_row"
+            android:layout_weight="0"
+            tools:text="Родительский каталог" />
+
+        <TextView
             android:id="@+id/syncLogItemDetailsTime"
             style="@style/sync_log_item_details_text_row"
+            android:layout_marginTop="4dp"
             android:layout_weight="0"
             android:textSize="12sp"
             tools:text="дата и время" />

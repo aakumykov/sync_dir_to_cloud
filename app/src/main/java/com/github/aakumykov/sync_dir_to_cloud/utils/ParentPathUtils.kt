@@ -21,7 +21,7 @@ fun calculateRelativeParentDirPath(fsItem: FSItem, basePath: String): String {
  * Возвращает для переданного пути файла путь к его родительскому каталогу
  * (по сути, удаляя последний сегмент этого пути).
  */
-private fun pathOfParentDir(path: String): Result<String> {
+fun pathOfParentDir(path: String): Result<String> {
 
     if (path.isEmpty())
         return Result.failure(Exception("path is empty"))

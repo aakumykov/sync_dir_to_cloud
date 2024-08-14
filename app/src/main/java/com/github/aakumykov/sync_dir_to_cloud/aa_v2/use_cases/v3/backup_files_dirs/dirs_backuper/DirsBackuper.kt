@@ -78,7 +78,7 @@ class DirsBackuper @AssistedInject constructor(
 
                 syncObjectStateChanger.setBackupState(objectId, ExecutionState.SUCCESS)
                 syncObjectLogger.log(SyncObjectLogItem.createSuccess(
-                    taskId = syncTask.id,
+                    syncTask = syncTask,
                     executionId = executionId,
                     syncObject = syncObject,
                     operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir)
@@ -89,7 +89,7 @@ class DirsBackuper @AssistedInject constructor(
                     syncObjectStateChanger.setBackupState(objectId, ExecutionState.ERROR, errorMsg)
                     Log.e(TAG, errorMsg, e)
                     syncObjectLogger.log(SyncObjectLogItem.createFailed(
-                        taskId = syncTask.id,
+                        syncTask = syncTask,
                         executionId = executionId,
                         syncObject = syncObject,
                         operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir),
