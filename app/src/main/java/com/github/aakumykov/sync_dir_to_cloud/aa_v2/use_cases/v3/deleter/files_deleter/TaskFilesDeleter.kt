@@ -55,7 +55,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                     // менять "статус удаления" на "успешно" не нужно, так как запись удаляется из таблицы
                     syncObjectDeleter.deleteObjectWithDeletedState(objectId)
                     syncObjectLogger.log(SyncObjectLogItem.createSuccess(
-                        syncTask = syncTask,
+                        taskId = syncTask.id,
                         executionId = executionId,
                         syncObject = syncObject,
                         operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file)
@@ -66,7 +66,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                         syncObjectStateChanger.setDeletionState(objectId, ExecutionState.ERROR, errorMsg)
                         Log.e(TAG, errorMsg, it)
                         syncObjectLogger.log(SyncObjectLogItem.createFailed(
-                            syncTask = syncTask,
+                            taskId = syncTask.id,
                             executionId = executionId,
                             syncObject = syncObject,
                             operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file),

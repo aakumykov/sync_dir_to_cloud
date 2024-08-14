@@ -131,7 +131,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                 onSyncObjectProcessingSuccess?.invoke(syncObject)
 
                                 syncObjectLogger.log(SyncObjectLogItem.createSuccess(
-                                    syncTask = syncTask,
+                                    taskId = syncTask.id,
                                     executionId = executionId,
                                     syncObject,
                                     operationName = getString(operationName)
@@ -145,7 +145,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                     onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
 
                                     syncObjectLogger.log(SyncObjectLogItem.createFailed(
-                                        syncTask = syncTask,
+                                        taskId = syncTask.id,
                                         executionId = executionId,
                                         syncObject,
                                         operationName = getString(operationName),

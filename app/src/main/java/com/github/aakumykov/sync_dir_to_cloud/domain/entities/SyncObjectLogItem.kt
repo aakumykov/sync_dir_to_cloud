@@ -6,9 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
-import com.github.aakumykov.sync_dir_to_cloud.utils.pathOfParentDir
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
@@ -38,7 +36,6 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = EXECUTION_ID_FIELD) val executionId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
     @ColumnInfo(name = ITEM_NAME_FILED) val itemName: String,
-    @ColumnInfo(name = PARENT_DIR_FILED, defaultValue = "*unknown*") val parentDir: String,
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean,
@@ -55,13 +52,12 @@ data class SyncObjectLogItem (
         const val IS_SUCCESSFUL_FIELD = "is_successful"
         const val TIMESTAMP_FIELD = "timestamp"
         const val ITEM_NAME_FILED = "item_name"
-        const val PARENT_DIR_FILED = "parent_dir"
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
 
-        fun createSuccess(syncTask: SyncTask, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
+        fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
-                syncTask = syncTask,
+                taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
                 operationName = operationName,
@@ -70,9 +66,9 @@ data class SyncObjectLogItem (
             )
         }
 
-        fun createFailed(syncTask: SyncTask, executionId: String, syncObject: SyncObject, operationName: String, errorMessage: String): SyncObjectLogItem {
+        fun createFailed(taskId: String, executionId: String, syncObject: SyncObject, operationName: String, errorMessage: String): SyncObjectLogItem {
             return create(
-                syncTask = syncTask,
+                taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
                 operationName = operationName,
@@ -82,7 +78,7 @@ data class SyncObjectLogItem (
         }
 
         private fun create(
-            syncTask: SyncTask,
+            taskId: String,
             executionId: String,
             syncObject: SyncObject,
             isSuccessful: Boolean,
@@ -91,12 +87,11 @@ data class SyncObjectLogItem (
         ): SyncObjectLogItem {
             return SyncObjectLogItem(
                 id = UUID.randomUUID().toString(),
-                taskId = syncTask.id,
+                taskId = taskId,
                 objectId = syncObject.id,
                 executionId = executionId,
                 timestamp = currentTime(),
                 itemName = syncObject.name,
-                parentDir = pathOfParentDir(syncObject.absolutePathIn(syncTask.sourcePath!!)).getOrDefault(""),
                 operationName = operationName,
                 isSuccessful = isSuccessful,
                 errorMessage = errorMessage,

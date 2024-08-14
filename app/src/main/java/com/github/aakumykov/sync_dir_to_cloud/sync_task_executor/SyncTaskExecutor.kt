@@ -186,7 +186,7 @@ class SyncTaskExecutor @Inject constructor(
         appComponent
             .getTaskDirDeleterCreator()
             .createTaskDirsDeleterForTask(syncTask, executionId)
-            ?.deleteDeletedDirsForTask(syncTask)
+            ?.deleteDeletedDirsForTask(syncTask.id)
             ?: {
                 Log.e(TAG, "Не удалось создать удалятель каталогов для задачи ${syncTask.description}")
             }
