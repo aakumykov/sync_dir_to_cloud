@@ -23,7 +23,7 @@ class LogItemDetailsDialog : DialogFragment() {
 
         return AlertDialog.Builder(requireContext())
             .setView(view)
-//            .setTitle(R.string.LOG_ITEM_DETAILS_DIALOG_title)
+            .setTitle(R.string.LOG_ITEM_DETAILS_DIALOG_title)
 //            .setNeutralButton(R.string.LOG_ITEM_DETAILS_DIALOG_close_button) { _,_ ->}
             .setNegativeButton(R.string.LOG_ITEM_DETAILS_DIALOG_close_button) { _,_ ->}
             .create()
