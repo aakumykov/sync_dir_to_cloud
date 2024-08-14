@@ -19,7 +19,7 @@ class LogItemDetailsDialog : DialogFragment() {
 
         val syncObjectLogItem = arguments?.getParcelable<SyncObjectLogItem>(SYNC_OBJECT_LOG_ITEM)
 
-        val view: View = if (null != syncObjectLogItem) infoView(syncObjectLogItem) else errorView(R.string.LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied)
+        val view: View = if (null != syncObjectLogItem) buildInfoView(syncObjectLogItem) else buildErrorView(R.string.LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied)
 
         return AlertDialog.Builder(requireContext())
             .setView(view)
@@ -29,13 +29,13 @@ class LogItemDetailsDialog : DialogFragment() {
             .create()
     }
 
-    private fun infoView(logItem: SyncObjectLogItem): View {
+    private fun buildInfoView(logItem: SyncObjectLogItem): View {
         return requireActivity().layoutInflater
             .inflate(R.layout.dialog_log_item_details, null, false)
             .apply {
                 findViewById<TextView>(R.id.syncLogItemDetailsId).text = logItem.id
                 findViewById<TextView>(R.id.syncLogItemDetailsMessage).text = logItem.operationName
-                findViewById<TextView>(R.id.syncLogItemDetailsName).text = logItem.itemName
+                findViewById<TextView>(R.id.syncLogItemDetailsName).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_item_name_quotes, logItem.itemName)
                 findViewById<TextView>(R.id.syncLogItemDetailsTime).text = CurrentDateTime.format(logItem.timestamp)
 
                 val errorView = findViewById<TextView>(R.id.syncLogItemError)
@@ -49,7 +49,7 @@ class LogItemDetailsDialog : DialogFragment() {
             }
     }
 
-    private fun errorView(@StringRes errorMsgRes: Int): View {
+    private fun buildErrorView(@StringRes errorMsgRes: Int): View {
         return requireActivity().layoutInflater
             .inflate(R.layout.error_view, null, false)
             .apply {

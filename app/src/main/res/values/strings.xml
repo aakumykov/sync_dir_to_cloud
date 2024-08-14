@@ -120,4 +120,5 @@
     <string name="LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied">Не поедоставлено объекта для отображения</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_title">Детали операции</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_close_button">Закрыть</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_item_name_quotes">«%1$s»</string>
 </resources>
