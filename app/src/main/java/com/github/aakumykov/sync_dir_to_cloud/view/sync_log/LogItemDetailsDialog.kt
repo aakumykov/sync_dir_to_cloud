@@ -17,16 +17,18 @@ class LogItemDetailsDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        val syncObjectLogItem = arguments?.getParcelable<SyncObjectLogItem>(SYNC_OBJECT_LOG_ITEM)
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setNegativeButton(R.string.LOG_ITEM_DETAILS_DIALOG_close_button) { _,_ -> }
 
-        val view: View = if (null != syncObjectLogItem) buildInfoView(syncObjectLogItem) else buildErrorView(R.string.LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied)
+        arguments?.getParcelable<SyncObjectLogItem>(SYNC_OBJECT_LOG_ITEM)?.also { logItem ->
+            alertDialog.setView(buildInfoView(logItem))
+            alertDialog.setTitle(logItem.operationName)
+        } ?: {
+            alertDialog.setView(buildErrorView(R.string.LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied))
+            alertDialog.setTitle(R.string.LOG_ITEM_DETAILS_DIALOG_title)
+        }
 
-        return AlertDialog.Builder(requireContext())
-            .setView(view)
-            .setTitle(R.string.LOG_ITEM_DETAILS_DIALOG_title)
-//            .setNeutralButton(R.string.LOG_ITEM_DETAILS_DIALOG_close_button) { _,_ ->}
-            .setNegativeButton(R.string.LOG_ITEM_DETAILS_DIALOG_close_button) { _,_ ->}
-            .create()
+        return alertDialog.create()
     }
 
     private fun buildInfoView(logItem: SyncObjectLogItem): View {
@@ -34,8 +36,8 @@ class LogItemDetailsDialog : DialogFragment() {
             .inflate(R.layout.dialog_log_item_details, null, false)
             .apply {
                 findViewById<TextView>(R.id.syncLogItemDetailsId).text = logItem.id
-                findViewById<TextView>(R.id.syncLogItemDetailsMessage).text = logItem.operationName
-                findViewById<TextView>(R.id.syncLogItemDetailsName).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_item_name_quotes, logItem.itemName)
+//                findViewById<TextView>(R.id.syncLogItemDetailsMessage).text = logItem.operationName
+                findViewById<TextView>(R.id.syncLogItemDetailsItemName).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_item_name_quotes, logItem.itemName)
                 findViewById<TextView>(R.id.syncLogItemDetailsTime).text = CurrentDateTime.format(logItem.timestamp)
 
                 val errorView = findViewById<TextView>(R.id.syncLogItemError)
