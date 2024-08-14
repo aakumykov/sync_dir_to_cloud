@@ -9,7 +9,7 @@ import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
  */
 fun calculateRelativeParentDirPath(fsItem: FSItem, basePath: String): String {
 
-    val itemParentPath = pathOfParentDir(fsItem.absolutePath)
+    val itemParentPath = pathOfParentDir(fsItem.absolutePath).getOrThrow()
 
     return itemParentPath
         .split(FSItem.DS)
@@ -21,10 +21,18 @@ fun calculateRelativeParentDirPath(fsItem: FSItem, basePath: String): String {
  * Возвращает для переданного пути файла путь к его родительскому каталогу
  * (по сути, удаляя последний сегмент этого пути).
  */
-@Deprecated("Некорректная реализация, переписать и протестировать!")
-private fun pathOfParentDir(path: String): String {
-    return with(Uri.parse(path).pathSegments.toMutableList()) {
-        removeLast()
-        joinToString(FSItem.DS)
-    }
+private fun pathOfParentDir(path: String): Result<String> {
+
+    if (path.isEmpty())
+        return Result.failure(Exception("path is empty"))
+
+    val pathParts = path.split(FSItem.DS).toMutableList()
+    if (0 == pathParts.size)
+        return Result.failure(Exception(""))
+
+    pathParts.removeLastOrNull()
+
+    val parentDirPath = pathParts.joinToString(FSItem.DS)
+
+    return Result.success(parentDirPath)
 }
