@@ -42,7 +42,7 @@ class LogItemDetailsDialog : DialogFragment() {
 
                 val errorView = findViewById<TextView>(R.id.syncLogItemError)
                 logItem.errorMessage?.also {
-                    errorView.text = it
+                    errorView.text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_error_with_details, it)
                     errorView.visibility = View.VISIBLE
                 } ?: {
                     errorView.text = null

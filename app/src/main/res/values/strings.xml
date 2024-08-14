@@ -121,4 +121,5 @@
     <string name="LOG_ITEM_DETAILS_DIALOG_title">Детали операции</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_close_button">Закрыть</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_item_name_quotes">«%1$s»</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_error_with_details">Ошибка:\n%1$s</string>
 </resources>
