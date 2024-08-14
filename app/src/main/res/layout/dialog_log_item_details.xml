@@ -1,47 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp">
-
-    <TextView
-        android:id="@+id/syncLogItemDetailsId"
-        style="@style/sync_log_item_details_text_row"
-        tools:text="id"
-        android:textSize="12sp"/>
-
-    <TextView
-        android:id="@+id/syncLogItemDetailsMessage"
-        style="@style/sync_log_item_details_text_row"
-        android:textStyle="bold"
-        android:visibility="gone"
-        tools:text="Название операции" />
-
-    <TextView
-        android:id="@+id/syncLogItemDetailsItemName"
-        style="@style/sync_log_item_details_text_row"
-        android:textStyle="bold"
-        tools:text="Имя файла / каталога" />
-
-    <TextView
-        android:id="@+id/syncLogItemDetailsTime"
-        style="@style/sync_log_item_details_text_row"
-        tools:text="дата и время"
-        android:textSize="12sp"/>
-
-    <ScrollView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/syncLogItemDetailsMessage"
+            style="@style/sync_log_item_details_text_row"
+            android:layout_weight="0"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="Название операции" />
+
+        <TextView
+            android:id="@+id/syncLogItemDetailsItemName"
+            style="@style/sync_log_item_details_text_row"
+            android:layout_weight="0"
+            android:textStyle="bold"
+            tools:text="Имя файла / каталога" />
+
+        <TextView
+            android:id="@+id/syncLogItemDetailsTime"
+            style="@style/sync_log_item_details_text_row"
+            android:layout_weight="0"
+            android:textSize="12sp"
+            tools:text="дата и время" />
+
+        <TextView
+            android:id="@+id/syncLogItemDetailsId"
+            style="@style/sync_log_item_details_text_row"
+            android:layout_weight="0"
+            android:textSize="12sp"
+            tools:text="id" />
 
         <TextView
             android:id="@+id/syncLogItemError"
             style="@style/sync_log_item_details_text_row"
-            tools:text="Ошибка"
             android:textColor="@color/error"
-            android:textSize="12sp"/>
+            android:textSize="12sp"
+            tools:text="Ошибка" />
 
-    </ScrollView>
+    </LinearLayout>
 
-</LinearLayout>
+</ScrollView>
