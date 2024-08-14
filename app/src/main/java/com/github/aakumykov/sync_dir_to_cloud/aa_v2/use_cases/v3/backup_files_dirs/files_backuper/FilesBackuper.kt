@@ -122,7 +122,7 @@ class FilesBackuper @AssistedInject constructor(
                 syncObjectStateChanger.setBackupState(objectId, ExecutionState.SUCCESS)
 
                 syncObjectLogger.log(SyncObjectLogItem.createSuccess(
-                    syncTask = syncTask,
+                    taskId = syncObject.taskId,
                     executionId = executionId,
                     syncObject = syncObject,
                     operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file)
@@ -133,7 +133,7 @@ class FilesBackuper @AssistedInject constructor(
                     syncObjectStateChanger.setBackupState(objectId, ExecutionState.ERROR, errorMsg)
                     Log.e(TAG, errorMsg, e)
                     syncObjectLogger.log(SyncObjectLogItem.createFailed(
-                        syncTask = syncTask,
+                        taskId = syncObject.taskId,
                         executionId = executionId,
                         syncObject = syncObject,
                         operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file),
