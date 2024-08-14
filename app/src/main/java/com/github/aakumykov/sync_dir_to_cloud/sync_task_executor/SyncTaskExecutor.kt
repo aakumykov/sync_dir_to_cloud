@@ -93,11 +93,7 @@ class SyncTaskExecutor @Inject constructor(
             markAllObjectsAsDeleted(taskId)
 
             // Прочитать источник
-            readSource(syncTask)
-                .onFailure { e ->
-                    logExecutionError(syncTask, e)
-                    return // Возврат из метода doWork(), т.е. прерывание цепочки.
-                }
+            readSource(syncTask).getOrThrow()
 
             // Прочитать приёмник
             // TODO: как писать в лог здесь?
