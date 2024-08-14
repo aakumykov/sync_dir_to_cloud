@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
@@ -22,25 +23,25 @@ class TaskDirsDeleter @AssistedInject constructor(
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectDeleter: SyncObjectDeleter
 ){
-    suspend fun deleteDeletedDirsForTask(taskId: String) {
-        syncObjectReader.getAllObjectsForTask(taskId)
+    suspend fun deleteDeletedDirsForTask(syncTask: SyncTask) {
+        syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir }
             .filter { it.isDeleted }
             .filter { it.isTargetReadingOk }
             .also { list ->
                 if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "deleteDeletedDirsForTask(${list.names})")
-                processList(list)
+                processList(syncTask, list)
             }
     }
 
-    private suspend fun processList(list: List<SyncObject>) {
+    private suspend fun processList(syncTask: SyncTask, list: List<SyncObject>) {
         list.forEach { syncObject ->
 
             val objectId = syncObject.id
 
             syncObjectStateChanger.setDeletionState(objectId, ExecutionState.RUNNING)
 
-            dirDeleter.deleteDir(syncObject)
+            dirDeleter.deleteDir(syncTask, syncObject)
                 .onSuccess {
                     // менять "статус удаления" на "успешно" не нужно, так как запись удаляется из таблицы
                     syncObjectDeleter.deleteObjectWithDeletedState(objectId)

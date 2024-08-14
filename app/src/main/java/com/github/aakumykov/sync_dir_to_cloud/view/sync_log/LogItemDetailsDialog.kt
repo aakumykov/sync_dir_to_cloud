@@ -36,7 +36,7 @@ class LogItemDetailsDialog : DialogFragment() {
             .inflate(R.layout.dialog_log_item_details, null, false)
             .apply {
                 findViewById<TextView>(R.id.syncLogItemDetailsId).text = logItem.id
-//                findViewById<TextView>(R.id.syncLogItemDetailsMessage).text = logItem.operationName
+//                findViewById<TextView>(R.id.syncLogItemDetailsItemParentDir).text = logItem.
                 findViewById<TextView>(R.id.syncLogItemDetailsItemName).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_item_name_quotes, logItem.itemName)
                 findViewById<TextView>(R.id.syncLogItemDetailsTime).text = CurrentDateTime.format(logItem.timestamp)
 
