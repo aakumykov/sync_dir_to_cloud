@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
+import com.yandex.authsdk.YandexAuthResult
 import com.yandex.authsdk.YandexAuthSdkContract
 import com.yandex.authsdk.internal.strategy.LoginType
 
@@ -18,10 +19,12 @@ class YandexAuthenticator (
         val yandexAuthOptions = YandexAuthOptions(fragment.requireContext(), true)
         val yandexAuthSdkContract = YandexAuthSdkContract(yandexAuthOptions)
 
-        activityResultLauncher = fragment.registerForActivityResult(yandexAuthSdkContract) { result ->
-            result.getOrNull()?.also {
-                storageAuthenticatorCallbacks.onCloudAuthSuccess(it.value)
-            } ?: storageAuthenticatorCallbacks.onCloudAuthFailed(Throwable("Auth was cancelled or result is null."))
+        activityResultLauncher = fragment.registerForActivityResult(yandexAuthSdkContract) { result: YandexAuthResult ->
+            when (result) {
+                is YandexAuthResult.Success -> storageAuthenticatorCallbacks.onCloudAuthSuccess(result.token.value)
+                is YandexAuthResult.Failure -> storageAuthenticatorCallbacks.onCloudAuthFailed(result.exception)
+                is YandexAuthResult.Cancelled -> storageAuthenticatorCallbacks.onCloudAuthFailed(Exception("Auth was cancelled"))
+            }
         }
     }
 
