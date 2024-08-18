@@ -30,7 +30,7 @@ class YandexAuthenticator (
 
     override fun startAuth() {
         // FIXME: вынести настройку типа аутентификации куда-нибудь вовне.
-        activityResultLauncher.launch(YandexAuthLoginOptions(LoginType.NATIVE))
+        activityResultLauncher.launch(YandexAuthLoginOptions(LoginType.WEBVIEW))
     }
 
     companion object {
