@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.round
+import com.github.aakumykov.sync_dir_to_cloud.progress_holder.ProgressHolder
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import java.io.InputStream
 
@@ -16,6 +17,7 @@ import java.io.InputStream
 class SyncObjectFileCopier (
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,
     private val cloudWriter: CloudWriter,
+    private val progressHolder: ProgressHolder,
 ) {
     suspend fun copySyncObject(syncObject: SyncObject, syncTask: SyncTask, overwriteIfExists: Boolean = true): Result<String> {
 
@@ -26,9 +28,8 @@ class SyncObjectFileCopier (
             val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(sourceFilePath).getOrThrow()
 
             val countingInputStream = CountingInputStream(sourceFileStream) { readCount ->
-                /*val rawFraction = 1f*readCount / syncObject.size
-                val roundedFraction = rawFraction.round(100)
-                Log.d(TAG, "${syncObject.name}, totalReadCount ($roundedFraction): $rawFraction")*/
+                val fraction = (1f*readCount / syncObject.size).round(100)
+                progressHolder.putProgress(syncObject.id, fraction)
             }
 
             cloudWriter.putFile(countingInputStream, targetFilePath, overwriteIfExists)
