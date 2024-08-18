@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_object_to_target_writer2
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingInputStream
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -9,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriter2
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.InputStreamSupplier
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.CountingInputStream
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

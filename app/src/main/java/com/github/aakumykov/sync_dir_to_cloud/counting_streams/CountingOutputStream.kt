@@ -4,10 +4,12 @@ import java.io.OutputStream
 
 class CountingOutputStream(
     private val outputStream: OutputStream,
+    private val callbackTriggeringIntervalBytes: Long = 8192,
     private val callback: WritingCallback,
 ) : OutputStream() {
 
     private var writtenBytesCount: Long = 0
+    private var callbackTriggeringBytesCounter: Long = 0
 
     override fun write(b: Int) {
         outputStream.write(b).also {
@@ -15,22 +17,16 @@ class CountingOutputStream(
         }
     }
 
-    override fun write(b: ByteArray?) {
-        outputStream.write(b).also {
-            summarizeAndCallBack(b?.size ?: 0)
-        }
-    }
-
-    override fun write(b: ByteArray?, off: Int, len: Int) {
-        outputStream.write(b,off,len).also {
-            summarizeAndCallBack(b?.size ?: 0)
-        }
-    }
-
-
     private fun summarizeAndCallBack(count: Int) {
         writtenBytesCount += count
-        callback.onWriteCountChanged(writtenBytesCount)
+        callbackTriggeringBytesCounter += count
+
+        val isCallbackThresholdExceed = callbackTriggeringBytesCounter >= callbackTriggeringIntervalBytes
+
+        if (isCallbackThresholdExceed || count < 0) {
+            callback.onWriteCountChanged(writtenBytesCount)
+            callbackTriggeringBytesCounter = 0
+        }
     }
 
 

@@ -6,10 +6,12 @@ import kotlin.jvm.Throws
 
 class CountingInputStream(
     private val inputStream: InputStream,
-    private val readingCallback: ReadingCallback
+    private val callbackTriggeringIntervalBytes: Long = 8192,
+    private val readingCallback: ReadingCallback,
 ) : InputStream() {
 
     private var readedBytesCount: Long = 0
+    private var callbackTriggeringBytesCounter: Long = 0
 
     @Throws(IOException::class)
     override fun read(): Int {
@@ -19,24 +21,17 @@ class CountingInputStream(
         }
     }
 
-    override fun read(b: ByteArray?): Int {
-        return super.read(b).let { justReadCount ->
-            summarizeAndCallBack(justReadCount)
-            justReadCount
-        }
-    }
-
-    override fun read(b: ByteArray?, off: Int, len: Int): Int {
-        return super.read(b, off, len).let { justReadCount ->
-            summarizeAndCallBack(justReadCount)
-            justReadCount
-        }
-    }
-
 
     private fun summarizeAndCallBack(count: Int) {
         readedBytesCount += count
-        readingCallback.onReadCountChanged(readedBytesCount)
+        callbackTriggeringBytesCounter += count
+
+        val isCallbackThresholdExceed = callbackTriggeringBytesCounter >= callbackTriggeringIntervalBytes
+
+        if (isCallbackThresholdExceed || count < 0) {
+            readingCallback.onReadCountChanged(readedBytesCount)
+            callbackTriggeringBytesCounter = 0
+        }
     }
 
 
