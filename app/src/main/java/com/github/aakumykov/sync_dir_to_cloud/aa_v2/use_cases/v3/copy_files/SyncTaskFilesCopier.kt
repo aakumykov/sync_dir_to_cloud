@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectPro
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
@@ -21,7 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExis
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
@@ -37,19 +36,26 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectCopierCreator: SyncObjectCopierCreator,
-    private val syncObjectLogger: SyncObjectLogger,
+    private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     @Assisted private val executionId: String,
 ) {
+    private fun syncObjectLogger(taskId: String): SyncObjectLogger2 {
+        return syncObjectLogger2Factory.create(taskId, executionId)
+    }
+
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
             .filter { it.isNew }
             .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNewFilesForSyncTask(${list.names})")
-//                syncObjectLogger.
+
+                val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
+
+                syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
                 copyFiles(
-                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file,
+                    operationName = operationName,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
@@ -63,7 +69,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNeverSynced }
             .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNeverCopiedFilesOfSyncTask(${list.names})")
                 copyFiles(
                     operationName = R.string.SYNC_OBJECT_LOGGER_copy_never_copied_file,
                     list = list,
@@ -80,7 +85,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isModified }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyModifiedFilesForSyncTask(${list.names})")
                 copyFiles(
                     operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file,
                     list = list,
@@ -144,24 +148,26 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)
-                    syncObjectLogger.log(SyncObjectLogItem.createSuccess(
+                    syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
+                    /*syncObjectLogger.log(SyncObjectLogItem.createSuccess(
                         taskId = syncTask.id,
                         executionId = executionId,
                         syncObject = syncObject,
                         operationName = getString(operationName)
-                    ))
+                    ))*/
                 }
                 ?.onFailure { throwable ->
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
                         syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
                         onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
-                        syncObjectLogger.log(SyncObjectLogItem.createFailed(
+                        /*syncObjectLogger.log(SyncObjectLogItem.createFailed(
                             taskId = syncTask.id,
                             executionId = executionId,
                             syncObject = syncObject,
                             operationName = getString(operationName),
                             errorMessage = errorMsg
-                        ))
+                        ))*/
+                        syncObjectLogger(syncTask.id).logFail(syncObject, operationName, errorMsg)
                     }
                 }
         }

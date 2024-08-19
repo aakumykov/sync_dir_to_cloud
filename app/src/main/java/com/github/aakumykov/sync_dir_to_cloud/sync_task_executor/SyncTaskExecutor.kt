@@ -24,8 +24,10 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
@@ -53,13 +55,14 @@ class SyncTaskExecutor @Inject constructor(
 
     private var currentTask: SyncTask? = null
     private var storageReader: StorageReader? = null
+
+    @Deprecated("Не используется")
     private var storageWriter: StorageWriter? = null
 
     private val dirsBackuperCreator: DirsBackuperCreator by lazy { appComponent.getDirsBackuperCreator() }
     private val filesBackuperCreator: FilesBackuperCreator by lazy { appComponent.getFilesBackuperCreator() }
     private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(executionId) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
-
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
@@ -123,6 +126,7 @@ class SyncTaskExecutor @Inject constructor(
 
             // Скопировать новые файлы
             copyNewFiles(syncTask)
+            delay(30_000)
 
             // Скопировать никогда не копировавшиеся файлы
             copyNeverSyncedFiles(syncTask)
