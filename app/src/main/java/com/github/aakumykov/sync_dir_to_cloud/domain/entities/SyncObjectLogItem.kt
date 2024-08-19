@@ -55,6 +55,17 @@ data class SyncObjectLogItem (
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
 
+        fun createInWork(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
+            return create(
+                taskId = taskId,
+                executionId = executionId,
+                syncObject = syncObject,
+                operationName = operationName,
+                errorMessage =  null,
+                isSuccessful = true
+            )
+        }
+
         fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,

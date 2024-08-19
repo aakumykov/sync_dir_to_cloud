@@ -47,6 +47,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isNew }
             .also { list ->
                 if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyNewFilesForSyncTask(${list.names})")
+//                syncObjectLogger.
                 copyFiles(
                     operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file,
                     list = list,
