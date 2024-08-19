@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
+import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
@@ -39,6 +40,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean,
+    @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "SUCCESS") val operationState: OperationState,
 )
     : Parcelable
 {
@@ -50,6 +52,7 @@ data class SyncObjectLogItem (
         const val OBJECT_ID_FIELD = "object_id"
         const val EXECUTION_ID_FIELD = "execution_id"
         const val IS_SUCCESSFUL_FIELD = "is_successful"
+        const val OPERATION_STATE_FIELD = "operation_state"
         const val TIMESTAMP_FIELD = "timestamp"
         const val ITEM_NAME_FILED = "item_name"
         const val OPERATION_NAME_FILED = "operation_name"
@@ -62,7 +65,7 @@ data class SyncObjectLogItem (
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage =  null,
-                isSuccessful = true
+                operationState = OperationState.RUNNING
             )
         }
 
@@ -73,7 +76,7 @@ data class SyncObjectLogItem (
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage =  null,
-                isSuccessful = true
+                operationState = OperationState.SUCCESS
             )
         }
 
@@ -84,7 +87,7 @@ data class SyncObjectLogItem (
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage = errorMessage,
-                isSuccessful = false,
+                operationState = OperationState.ERROR,
             )
         }
 
@@ -92,7 +95,7 @@ data class SyncObjectLogItem (
             taskId: String,
             executionId: String,
             syncObject: SyncObject,
-            isSuccessful: Boolean,
+            operationState: OperationState,
             operationName: String,
             errorMessage: String?
         ): SyncObjectLogItem {
@@ -104,9 +107,17 @@ data class SyncObjectLogItem (
                 timestamp = currentTime(),
                 itemName = syncObject.name,
                 operationName = operationName,
-                isSuccessful = isSuccessful,
+                operationState = operationState,
+                isSuccessful = opStateToBoolean(operationState),
                 errorMessage = errorMessage,
             )
+        }
+
+        private fun opStateToBoolean(operationState: OperationState): Boolean {
+            return when(operationState) {
+                OperationState.ERROR -> false
+                else -> true
+            }
         }
     }
 
