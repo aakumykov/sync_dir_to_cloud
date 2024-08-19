@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
+import androidx.room.DeleteColumn
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
@@ -39,11 +40,12 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = ITEM_NAME_FILED) val itemName: String,
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
-    @ColumnInfo(name = IS_SUCCESSFUL_FIELD) val isSuccessful: Boolean,
-    @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "SUCCESS") val operationState: OperationState,
+    @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "WAITING") val operationState: OperationState,
 )
     : Parcelable
 {
+    val isSuccessful: Boolean get() = OperationState.SUCCESS == operationState
+
     companion object {
 
         const val TABLE_NAME = "sync_object_logs"
@@ -51,21 +53,20 @@ data class SyncObjectLogItem (
         const val TASK_ID_FIELD = "task_id"
         const val OBJECT_ID_FIELD = "object_id"
         const val EXECUTION_ID_FIELD = "execution_id"
-        const val IS_SUCCESSFUL_FIELD = "is_successful"
         const val OPERATION_STATE_FIELD = "operation_state"
         const val TIMESTAMP_FIELD = "timestamp"
         const val ITEM_NAME_FILED = "item_name"
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
 
-        fun createInWork(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
+        fun createWaiting(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage =  null,
-                operationState = OperationState.RUNNING
+                operationState = OperationState.WAITING
             )
         }
 
@@ -108,16 +109,8 @@ data class SyncObjectLogItem (
                 itemName = syncObject.name,
                 operationName = operationName,
                 operationState = operationState,
-                isSuccessful = opStateToBoolean(operationState),
                 errorMessage = errorMessage,
             )
-        }
-
-        private fun opStateToBoolean(operationState: OperationState): Boolean {
-            return when(operationState) {
-                OperationState.ERROR -> false
-                else -> true
-            }
         }
     }
 
@@ -126,4 +119,7 @@ data class SyncObjectLogItem (
 
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "name", toColumnName = ITEM_NAME_FILED)
     class RenameColumnNameToItemName : AutoMigrationSpec
+
+    @DeleteColumn(tableName = TABLE_NAME, columnName = "is_successful")
+    class DeleteColumnIsSuccessful : AutoMigrationSpec
 }
