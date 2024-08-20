@@ -23,6 +23,12 @@ class SyncObjectLogRepository @Inject constructor(
         }
     }
 
+    suspend fun updateLogItem(syncObjectLogItem: SyncObjectLogItem) {
+        withContext(coroutineDispatcher) {
+            dao.updateLogItem(syncObjectLogItem)
+        }
+    }
+
     override suspend fun deleteLogsForTask(taskId: String) {
         withContext(coroutineDispatcher) {
             dao.deleteLogItemsForTask(taskId)

@@ -13,7 +13,7 @@ class LocalSourceFileStreamSupplier @AssistedInject constructor(
 ) : SourceFileStreamSupplier
 {
     init {
-        Log.d("LSFSS", "init")
+        Log.d(TAG, "init")
     }
 
     override suspend fun getSourceFileStream(absolutePath: String): Result<FileInputStream> {
@@ -27,5 +27,9 @@ class LocalSourceFileStreamSupplier @AssistedInject constructor(
     @AssistedFactory
     interface Factory : SourceFileStreamSupplierFactory {
         override fun create(taskId: String): LocalSourceFileStreamSupplier
+    }
+
+    companion object {
+        val TAG: String = LocalSourceFileStreamSupplier::class.java.simpleName
     }
 }

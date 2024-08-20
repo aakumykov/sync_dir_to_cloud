@@ -126,7 +126,6 @@ class SyncTaskExecutor @Inject constructor(
 
             // Скопировать новые файлы
             copyNewFiles(syncTask)
-            delay(30_000)
 
             // Скопировать никогда не копировавшиеся файлы
             copyNeverSyncedFiles(syncTask)

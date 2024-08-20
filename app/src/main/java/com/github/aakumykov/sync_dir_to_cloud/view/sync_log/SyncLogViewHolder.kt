@@ -6,6 +6,7 @@ import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>() {
 
@@ -22,6 +23,10 @@ class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>()
     override fun fill(item: SyncObjectLogItem, isSelected: Boolean) {
         nameView.text = item.itemName
         messageView.text = item.operationName
-        stateIconView.setImageResource(if (item.isSuccessful) R.drawable.ic_sync_log_success else R.drawable.ic_sync_log_error)
+        stateIconView.setImageResource(when(item.operationState){
+            OperationState.SUCCESS -> R.drawable.ic_sync_log_success
+            OperationState.ERROR -> R.drawable.ic_sync_log_error
+            else -> R.drawable.ic_sync_log_busy
+        })
     }
 }

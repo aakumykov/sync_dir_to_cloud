@@ -7,7 +7,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.names
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -21,7 +20,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTarge
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -54,7 +52,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                 syncObjectLogger(syncTask.id).logWaiting(list, operationName)
 
-                copyFiles(
+                copyFilesReal(
                     operationName = operationName,
                     list = list,
                     syncTask = syncTask,
@@ -69,8 +67,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNeverSynced }
             .also { list ->
-                copyFiles(
-                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_never_copied_file,
+
+                val operationName = R.string.SYNC_OBJECT_LOGGER_copy_never_copied_file
+
+                syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                copyFilesReal(
+                    operationName = operationName,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
@@ -85,8 +88,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isModified }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                copyFiles(
-                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file,
+
+                val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
+
+                syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                copyFilesReal(
+                    operationName = operationName,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = true
@@ -102,9 +110,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.notExistsInTarget }
             .filter { it.isTargetReadingOk }
             .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "copyInTargetLostFiles(${list.names})")
-                copyFiles(
-                    operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file,
+
+                val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
+
+                syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                copyFilesReal(
+                    operationName = operationName,
                     list = list,
                     syncTask = syncTask,
                     overwriteIfExists = false,
@@ -125,7 +137,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    private suspend fun copyFiles(
+    private suspend fun copyFilesReal(
         @StringRes operationName: Int,
         list: List<SyncObject>,
         syncTask: SyncTask,
@@ -149,12 +161,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)
                     syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
-                    /*syncObjectLogger.log(SyncObjectLogItem.createSuccess(
-                        taskId = syncTask.id,
-                        executionId = executionId,
-                        syncObject = syncObject,
-                        operationName = getString(operationName)
-                    ))*/
                 }
                 ?.onFailure { throwable ->
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->

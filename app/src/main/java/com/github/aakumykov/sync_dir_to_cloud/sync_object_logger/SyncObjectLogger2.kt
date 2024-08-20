@@ -4,7 +4,6 @@ import android.content.res.Resources
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.DirDeleter.Companion.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.DirDeleter.Companion.QUALIFIER_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectLogRepository
@@ -36,7 +35,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
         syncObject: SyncObject,
         @StringRes operationNameRes: Int,
     ) {
-        syncObjectLogRepository.addLogItem(
+        syncObjectLogRepository.updateLogItem(
             SyncObjectLogItem.createSuccess(
                 taskId = taskId,
                 executionId = executionId,
@@ -51,7 +50,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
         @StringRes operationNameRes: Int,
         errorMessage: String
     ) {
-        syncObjectLogRepository.addLogItem(
+        syncObjectLogRepository.updateLogItem(
             SyncObjectLogItem.createFailed(
                 taskId = taskId,
                 executionId = executionId,

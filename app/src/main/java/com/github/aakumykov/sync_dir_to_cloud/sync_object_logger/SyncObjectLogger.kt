@@ -10,6 +10,6 @@ class SyncObjectLogger @Inject constructor(
     private val syncObjectLogRepository: SyncObjectLogRepository
 ) {
     suspend fun log(syncObjectLogItem: SyncObjectLogItem) {
-        syncObjectLogRepository.addLogItem(syncObjectLogItem)
+        syncObjectLogRepository.updateLogItem(syncObjectLogItem)
     }
 }
