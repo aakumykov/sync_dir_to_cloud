@@ -33,4 +33,8 @@ class MenuState(vararg initialMenuItems: CustomMenuItem) {
         }
         return this
     }
+
+    companion object {
+        fun noMenu(): MenuState = MenuState()
+    }
 }

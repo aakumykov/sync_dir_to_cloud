@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.core.os.bundleOf
@@ -10,15 +9,22 @@ import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 
 class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
+
+    private val menuState = MenuState.noMenu()
 
     private var _binding: FragmentSyncLogBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: SyncLogViewModel
+    private lateinit var syncLogViewModel: SyncLogViewModel
     private lateinit var pageTitleViewModel: PageTitleViewModel
+    private lateinit var navigationViewModel: NavigationViewModel
+    private lateinit var menuStateViewModel: MenuStateViewModel
 
     private val taskId: String? get() = arguments?.getString(TASK_ID)
     private val executionId: String? get() = arguments?.getString(EXECUTION_ID)
@@ -32,6 +38,11 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         prepareListAdapter()
         prepareViewModels()
         startWork(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        menuStateViewModel.sendMenuState(menuState)
     }
 
     private fun prepareListAdapter() {
@@ -62,7 +73,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 
     private fun startWork(savedInstanceState: Bundle?) {
         if (null == savedInstanceState)
-            viewModel.getListLiveData(taskId!!, executionId!!).observe(viewLifecycleOwner, ::onListChanged)
+            syncLogViewModel.getListLiveData(taskId!!, executionId!!).observe(viewLifecycleOwner, ::onListChanged)
     }
 
     private fun prepareViewModels() {
@@ -71,7 +82,11 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
             setPageTitle(getString(R.string.FRAGMENT_SYNC_LOG_page_title))
         }
 
-        viewModel = DaggerViewModelHelper.get(this, SyncLogViewModel::class.java)
+        navigationViewModel = DaggerViewModelHelper.get(requireActivity(), NavigationViewModel::class.java)
+
+        menuStateViewModel = DaggerViewModelHelper.get(requireActivity(), MenuStateViewModel::class.java)
+
+        syncLogViewModel = DaggerViewModelHelper.get(this, SyncLogViewModel::class.java)
     }
 
     private fun onListChanged(list: List<SyncObjectLogItem>?) {

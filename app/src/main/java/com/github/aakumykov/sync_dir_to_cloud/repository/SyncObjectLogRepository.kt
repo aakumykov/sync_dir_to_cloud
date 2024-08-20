@@ -35,11 +35,6 @@ class SyncObjectLogRepository @Inject constructor(
         }
     }
 
-    override suspend fun getList(taskId: String, executionId: String): List<SyncObjectLogItem> {
-        return withContext(coroutineDispatcher) {
-            dao.listAllLogItems(taskId, executionId)
-        }
-    }
 
     override fun getListAsLiveData(taskId: String, executionId: String): LiveData<List<SyncObjectLogItem>> {
         return dao.listAllLogItemsAsLiveData(taskId, executionId)
