@@ -113,6 +113,7 @@ class SyncTaskExecutor @Inject constructor(
             deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
             // Удалить удалённые каталоги
+            // TODO: логировать
             deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
