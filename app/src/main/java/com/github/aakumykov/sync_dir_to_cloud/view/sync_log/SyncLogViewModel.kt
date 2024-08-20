@@ -15,30 +15,10 @@ import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
     private val syncObjectLogReader: SyncObjectLogReader
-) : ViewModel() {
-
-    private val _errorMsg: MutableSharedFlow<TextMessage> = MutableSharedFlow()
-    val errorMsg: SharedFlow<TextMessage> get() = _errorMsg
-
-    private val _syncObjectInfoList: MutableLiveData<List<SyncObjectLogItem>> = MutableLiveData()
-    val syncObjectInfoList get(): LiveData<List<SyncObjectLogItem>> = _syncObjectInfoList
-
-
-    fun startWork(taskId: String, executionId: String) {
-        allNotNull(taskId, executionId) {
-
-            viewModelScope.launch {
-                syncObjectLogReader.getList(taskId, executionId).also {
-                    _syncObjectInfoList.value = it
-                }
-            }
-
-        } ?: {
-            sendError(TextMessage(R.string.SYNC_LOG_error_insufficient_arguments))
-        }
-    }
-
-    private fun sendError(textMessage: TextMessage) {
-        viewModelScope.launch { _errorMsg.emit(textMessage) }
+)
+    : ViewModel()
+{
+    fun getListLiveData(taskId: String, executionId: String): LiveData<List<SyncObjectLogItem>> {
+        return syncObjectLogReader.getListAsLiveData(taskId,executionId)
     }
 }

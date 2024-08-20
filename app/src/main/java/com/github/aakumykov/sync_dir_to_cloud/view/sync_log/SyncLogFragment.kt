@@ -62,7 +62,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 
     private fun startWork(savedInstanceState: Bundle?) {
         if (null == savedInstanceState)
-            viewModel.startWork(taskId!!, executionId!!)
+            viewModel.getListLiveData(taskId!!, executionId!!).observe(viewLifecycleOwner, ::onListChanged)
     }
 
     private fun prepareViewModels() {
@@ -72,8 +72,6 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         }
 
         viewModel = DaggerViewModelHelper.get(this, SyncLogViewModel::class.java)
-
-        viewModel.syncObjectInfoList.observe(viewLifecycleOwner, ::onListChanged)
     }
 
     private fun onListChanged(list: List<SyncObjectLogItem>?) {
