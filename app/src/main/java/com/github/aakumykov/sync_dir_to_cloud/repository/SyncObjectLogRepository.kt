@@ -3,8 +3,10 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -15,17 +17,28 @@ class SyncObjectLogRepository @Inject constructor(
     private val dao: SyncObjectLogDAO,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 )
-    : SyncObjectLogDeleter, SyncObjectLogReader
+    : SyncObjectLogAdder, SyncObjectLogDeleter, SyncObjectLogReader, SyncObjectLogUpdater
 {
-    suspend fun addLogItem(syncObjectLogItem: SyncObjectLogItem) {
+    override suspend fun addLogItem(syncObjectLogItem: SyncObjectLogItem) {
         withContext(coroutineDispatcher) {
             dao.addLogItem(syncObjectLogItem)
         }
     }
 
-    suspend fun updateLogItem(syncObjectLogItem: SyncObjectLogItem) {
+    override suspend fun updateLogItem(syncObjectLogItem: SyncObjectLogItem) {
         withContext(coroutineDispatcher) {
             dao.updateLogItem(syncObjectLogItem)
+        }
+    }
+
+    override suspend fun updateProgress(
+        objectId: String,
+        taskId: String,
+        executionId: String,
+        progress: Float
+    ) {
+        withContext(coroutineDispatcher) {
+            dao.updateProgress(objectId, taskId, executionId, progress)
         }
     }
 

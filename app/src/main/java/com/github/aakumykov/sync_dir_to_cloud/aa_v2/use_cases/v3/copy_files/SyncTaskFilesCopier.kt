@@ -37,10 +37,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     @Assisted private val executionId: String,
 ) {
-    private fun syncObjectLogger(taskId: String): SyncObjectLogger2 {
-        return syncObjectLogger2Factory.create(taskId, executionId)
-    }
-
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getAllObjectsForTask(syncTask.id)
@@ -156,7 +152,9 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             onSyncObjectProcessingBegin?.invoke(syncObject)
 
             syncObjectCopier
-                ?.copySyncObject(syncObject, syncTask, overwriteIfExists)
+                ?.copySyncObject(syncObject, syncTask, overwriteIfExists) { progress: Float ->
+                    syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progress)
+                }
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)
@@ -175,6 +173,11 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
 
     private fun getString(@StringRes stringRes: Int, vararg arguments: Any) = resources.getString(stringRes, arguments)
+
+
+    private fun syncObjectLogger(taskId: String): SyncObjectLogger2 {
+        return syncObjectLogger2Factory.create(taskId, executionId)
+    }
 
 
     companion object {

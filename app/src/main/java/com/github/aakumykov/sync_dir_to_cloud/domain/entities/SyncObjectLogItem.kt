@@ -41,6 +41,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "WAITING") val operationState: OperationState,
+    @ColumnInfo(name = PROGRESS_FIELD, defaultValue = "0") val progress: Float?,
 )
     : Parcelable
 {
@@ -58,6 +59,7 @@ data class SyncObjectLogItem (
         const val ITEM_NAME_FILED = "item_name"
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
+        const val PROGRESS_FIELD = "progress"
 
         fun createWaiting(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
@@ -66,7 +68,8 @@ data class SyncObjectLogItem (
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage =  null,
-                operationState = OperationState.WAITING
+                operationState = OperationState.WAITING,
+                progress = 0f
             )
         }
 
@@ -77,7 +80,8 @@ data class SyncObjectLogItem (
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage =  null,
-                operationState = OperationState.SUCCESS
+                operationState = OperationState.SUCCESS,
+                progress = 0f
             )
         }
 
@@ -89,6 +93,7 @@ data class SyncObjectLogItem (
                 operationName = operationName,
                 errorMessage = errorMessage,
                 operationState = OperationState.ERROR,
+                progress = 0f
             )
         }
 
@@ -98,7 +103,8 @@ data class SyncObjectLogItem (
             syncObject: SyncObject,
             operationState: OperationState,
             operationName: String,
-            errorMessage: String?
+            errorMessage: String?,
+            progress: Float?,
         ): SyncObjectLogItem {
             return SyncObjectLogItem(
                 id = UUID.randomUUID().toString(),
@@ -110,6 +116,7 @@ data class SyncObjectLogItem (
                 operationName = operationName,
                 operationState = operationState,
                 errorMessage = errorMessage,
+                progress = progress
             )
         }
     }

@@ -6,6 +6,10 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_de
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.DirDeleter.Companion.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectLogRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -15,14 +19,15 @@ class SyncObjectLogger2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     private val resources: Resources,
-    private val syncObjectLogRepository: SyncObjectLogRepository
+    private val syncObjectLogAdder: SyncObjectLogAdder,
+    private val syncObjectLogUpdater: SyncObjectLogUpdater,
 ) {
     suspend fun logWaiting(
         syncObjectList: List<SyncObject>,
         @StringRes operationNameRes: Int,
     ) {
         syncObjectList.forEach { syncObject ->
-            syncObjectLogRepository.addLogItem(SyncObjectLogItem.createWaiting(
+            syncObjectLogAdder.addLogItem(SyncObjectLogItem.createWaiting(
                 taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
@@ -31,11 +36,20 @@ class SyncObjectLogger2 @AssistedInject constructor(
         }
     }
 
+    suspend fun logProgress(
+        objectId: String,
+        taskId: String,
+        executionId: String,
+        progress: Float
+    ) {
+        syncObjectLogUpdater.updateProgress(objectId, taskId, executionId, progress)
+    }
+
     suspend fun logSuccess(
         syncObject: SyncObject,
         @StringRes operationNameRes: Int,
     ) {
-        syncObjectLogRepository.updateLogItem(
+        syncObjectLogUpdater.updateLogItem(
             SyncObjectLogItem.createSuccess(
                 taskId = taskId,
                 executionId = executionId,
@@ -50,7 +64,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
         @StringRes operationNameRes: Int,
         errorMessage: String
     ) {
-        syncObjectLogRepository.updateLogItem(
+        syncObjectLogUpdater.updateLogItem(
             SyncObjectLogItem.createFailed(
                 taskId = taskId,
                 executionId = executionId,

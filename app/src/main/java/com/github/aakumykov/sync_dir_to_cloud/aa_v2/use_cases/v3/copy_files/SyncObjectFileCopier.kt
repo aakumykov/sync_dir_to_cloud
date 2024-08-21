@@ -22,7 +22,8 @@ class SyncObjectFileCopier (
     suspend fun copySyncObject(
         syncObject: SyncObject,
         syncTask: SyncTask,
-        overwriteIfExists: Boolean = true
+        overwriteIfExists: Boolean = true,
+        onProgressChanged: suspend (Float) -> Unit
     ): Result<String> {
 
         val sourceFilePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
@@ -34,6 +35,7 @@ class SyncObjectFileCopier (
             val countingInputStream = CountingInputStream(sourceFileStream) { readCount ->
                 val fraction = (1f*readCount / syncObject.size).round(100)
                 progressHolder.putProgress(syncObject.id, fraction)
+                onProgressChanged.invoke(fraction)
             }
 
             cloudWriter.putFile(countingInputStream, targetFilePath, overwriteIfExists)

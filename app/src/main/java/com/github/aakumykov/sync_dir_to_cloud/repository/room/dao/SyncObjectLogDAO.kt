@@ -64,4 +64,17 @@ abstract class SyncObjectLogDAO {
             "AND execution_id = :executionId " +
             "ORDER BY timestamp ASC")
     abstract suspend fun listAllLogItems(taskId: String, executionId: String): List<SyncObjectLogItem>
+
+
+    @Query("UPDATE sync_object_logs SET " +
+            "progress = :progress " +
+            "WHERE object_id = :objectId " +
+            "AND task_id = :taskId " +
+            "AND execution_id = :executionId")
+    abstract suspend fun updateProgress(
+        objectId: String,
+        taskId: String,
+        executionId: String,
+        progress: Float
+    )
 }
