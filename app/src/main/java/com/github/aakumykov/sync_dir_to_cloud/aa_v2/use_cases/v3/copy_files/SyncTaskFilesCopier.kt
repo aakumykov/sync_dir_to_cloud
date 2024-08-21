@@ -33,7 +33,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val resources: Resources,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val syncObjectCopierCreator: SyncObjectCopierCreator,
+    private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     @Assisted private val executionId: String,
 ) {
@@ -146,7 +146,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
         onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
     ) {
-        val syncObjectCopier = syncObjectCopierCreator.createFileCopierFor(syncTask)
+        val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
         list.forEach { syncObject ->
 
@@ -166,13 +166,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
                         syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
                         onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
-                        /*syncObjectLogger.log(SyncObjectLogItem.createFailed(
-                            taskId = syncTask.id,
-                            executionId = executionId,
-                            syncObject = syncObject,
-                            operationName = getString(operationName),
-                            errorMessage = errorMsg
-                        ))*/
                         syncObjectLogger(syncTask.id).logFail(syncObject, operationName, errorMsg)
                     }
                 }

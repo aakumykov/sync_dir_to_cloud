@@ -19,7 +19,11 @@ class SyncObjectFileCopier (
     private val cloudWriter: CloudWriter,
     private val progressHolder: ProgressHolder,
 ) {
-    suspend fun copySyncObject(syncObject: SyncObject, syncTask: SyncTask, overwriteIfExists: Boolean = true): Result<String> {
+    suspend fun copySyncObject(
+        syncObject: SyncObject,
+        syncTask: SyncTask,
+        overwriteIfExists: Boolean = true
+    ): Result<String> {
 
         val sourceFilePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
         val targetFilePath = syncObject.absolutePathIn(syncTask.targetPath!!)

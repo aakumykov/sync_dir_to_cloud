@@ -10,7 +10,7 @@ import javax.inject.Inject
 /**
  * Создаёт SyncObjectFileCopier для SyncTask.
  */
-class SyncObjectCopierCreator @Inject constructor(
+class SyncObjectFileCopierCreator @Inject constructor(
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val cloudWriterCreator: CloudWriterCreator,
