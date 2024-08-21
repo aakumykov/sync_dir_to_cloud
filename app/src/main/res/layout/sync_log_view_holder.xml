@@ -30,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/syncLogStateIconView"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Название" />
+        tools:text="Название операции" />
 
     <TextView
         android:id="@+id/syncLogNameView"
@@ -39,11 +39,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/syncLogStateIconView"
         app:layout_constraintTop_toBottomOf="@+id/syncLogMessageView"
-        tools:text="сообщение"
+        tools:text="имя объекта"
         android:paddingStart="12dp"
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         android:textStyle="italic"
         android:textColor="@color/sync_log_file_name_color" />
+
+    <ProgressBar
+        android:id="@+id/syncLogProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/syncLogNameView"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
