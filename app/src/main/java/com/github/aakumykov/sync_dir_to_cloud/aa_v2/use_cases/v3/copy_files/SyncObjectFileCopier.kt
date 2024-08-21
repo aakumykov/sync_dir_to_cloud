@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
+import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingInputStream
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -21,8 +22,7 @@ class SyncObjectFileCopier (
     suspend fun copySyncObject(
         syncObject: SyncObject,
         syncTask: SyncTask,
-        overwriteIfExists: Boolean = true,
-        onProgressChanged: (progressFraction: Float) -> Unit
+        overwriteIfExists: Boolean = true
     ): Result<String> {
 
         val sourceFilePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
