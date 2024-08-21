@@ -59,6 +59,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogListAdapter
 import com.google.gson.Gson
 import dagger.Component
 
@@ -161,6 +162,8 @@ interface AppComponent {
     fun getTaskDirDeleterCreator(): TaskDirsDeleterCreator
 
     fun getSyncObjectLogger(): SyncObjectLogger
+
+    fun getSyncLogListAdapter(): SyncLogListAdapter
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

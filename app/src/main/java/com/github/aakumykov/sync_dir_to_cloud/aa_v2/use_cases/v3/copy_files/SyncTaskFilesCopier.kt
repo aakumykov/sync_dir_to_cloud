@@ -19,6 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExis
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.progress_holder.ProgressHolder
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
@@ -35,6 +36,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
+    private val progressHolder: ProgressHolder,
     @Assisted private val executionId: String,
 ) {
     private fun syncObjectLogger(taskId: String): SyncObjectLogger2 {
@@ -156,7 +158,9 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             onSyncObjectProcessingBegin?.invoke(syncObject)
 
             syncObjectCopier
-                ?.copySyncObject(syncObject, syncTask, overwriteIfExists)
+                ?.copySyncObject(syncObject, syncTask, overwriteIfExists) { progressFraction: Float ->
+                    progressHolder.putProgress(syncObject.id, progressFraction)
+                }
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)

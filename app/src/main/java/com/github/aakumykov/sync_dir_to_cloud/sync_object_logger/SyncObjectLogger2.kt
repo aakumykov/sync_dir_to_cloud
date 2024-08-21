@@ -31,6 +31,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
         }
     }
 
+
     suspend fun logSuccess(
         syncObject: SyncObject,
         @StringRes operationNameRes: Int,
@@ -44,6 +45,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
             )
         )
     }
+
 
     suspend fun logFail(
         syncObject: SyncObject,
@@ -60,6 +62,8 @@ class SyncObjectLogger2 @AssistedInject constructor(
             )
         )
     }
+
+
 
 
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)

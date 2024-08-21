@@ -7,8 +7,9 @@ import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
+import com.github.aakumykov.sync_dir_to_cloud.progress_holder.ProgressHolder
 
-class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>() {
+class SyncLogViewHolder(progressHolder: ProgressHolder) : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>() {
 
     private lateinit var nameView: TextView
     private lateinit var messageView: TextView
