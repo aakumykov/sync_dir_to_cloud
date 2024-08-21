@@ -7,8 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.round
-import com.github.aakumykov.sync_dir_to_cloud.progress_holder.ProgressHolder
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,8 +20,10 @@ import java.io.InputStream
 class SyncObjectFileCopier (
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,
     private val cloudWriter: CloudWriter,
-    private val progressHolder: ProgressHolder,
+    private val progressCallbackCoroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
+    private var lastProgressValue: Float = 0f
+
     suspend fun copySyncObject(
         syncObject: SyncObject,
         syncTask: SyncTask,
@@ -37,13 +39,12 @@ class SyncObjectFileCopier (
 
             val countingInputStream = CountingInputStream(sourceFileStream) { readCount ->
 
-                val fraction = (1f*readCount / syncObject.size).round(100)
-                Log.d(TAG, "progress: ${syncObject.name} - $fraction")
+                val progress = (1f*readCount / syncObject.size).round(100)
 
-                progressHolder.putProgress(syncObject.id, fraction)
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    onProgressChanged.invoke(fraction)
+                if (lastProgressValue != progress) {
+                    Log.d(TAG, "progress: ${syncObject.name} - $progress")
+                    lastProgressValue = progress
+                    CoroutineScope(progressCallbackCoroutineDispatcher).launch { onProgressChanged.invoke(progress) }
                 }
             }
 
