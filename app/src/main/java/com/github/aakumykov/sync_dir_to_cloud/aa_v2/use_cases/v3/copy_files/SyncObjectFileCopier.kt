@@ -9,6 +9,9 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.round
 import com.github.aakumykov.sync_dir_to_cloud.progress_holder.ProgressHolder
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.InputStream
 
 /**
@@ -33,9 +36,15 @@ class SyncObjectFileCopier (
             val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(sourceFilePath).getOrThrow()
 
             val countingInputStream = CountingInputStream(sourceFileStream) { readCount ->
+
                 val fraction = (1f*readCount / syncObject.size).round(100)
+                Log.d(TAG, "progress: ${syncObject.name} - $fraction")
+
                 progressHolder.putProgress(syncObject.id, fraction)
-                onProgressChanged.invoke(fraction)
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    onProgressChanged.invoke(fraction)
+                }
             }
 
             cloudWriter.putFile(countingInputStream, targetFilePath, overwriteIfExists)
