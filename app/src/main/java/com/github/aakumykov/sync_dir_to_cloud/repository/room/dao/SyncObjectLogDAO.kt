@@ -19,14 +19,12 @@ abstract class SyncObjectLogDAO {
             objectId = item.objectId,
             taskId = item.taskId,
             executionId = item.executionId,
-            timestamp = item.timestamp,
             operationState = item.operationState,
             errorMessage = item.errorMessage
         )
     }
 
     @Query("UPDATE sync_object_logs SET " +
-            "timestamp = :timestamp, " +
             "operation_state = :operationState, " +
             "error_message = :errorMessage " +
             "WHERE object_id = :objectId " +
@@ -35,7 +33,6 @@ abstract class SyncObjectLogDAO {
     protected abstract fun updateLogItemReal(objectId: String,
                                     taskId: String,
                                     executionId: String,
-                                    timestamp: Long,
                                     operationState: OperationState,
                                     errorMessage: String?)
 
