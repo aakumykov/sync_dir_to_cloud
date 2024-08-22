@@ -197,4 +197,8 @@ class SyncObjectRepository @Inject constructor(
         syncObjectBadStateResettingDAO.resetRestorationBadState(taskId)
     }
 
+    override suspend fun resetSyncBadState(taskId: String) {
+        syncObjectBadStateResettingDAO.resetSyncBadState(taskId)
+    }
+
 }

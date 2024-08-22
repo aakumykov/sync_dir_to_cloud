@@ -10,4 +10,5 @@ interface SyncObjectStateResetter {
     suspend fun resetBackupBadState(taskId: String)
     suspend fun resetDeletionBadState(taskId: String)
     suspend fun resetRestorationBadState(taskId: String)
+    suspend fun resetSyncBadState(taskId: String)
 }

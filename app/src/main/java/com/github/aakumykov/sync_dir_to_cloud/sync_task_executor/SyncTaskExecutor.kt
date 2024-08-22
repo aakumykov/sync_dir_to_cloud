@@ -77,7 +77,10 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
-
+    /**
+     * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
+     * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
+     */
     private suspend fun doWork(syncTask: SyncTask) {
 
         val taskId = syncTask.id
@@ -265,7 +268,7 @@ class SyncTaskExecutor @Inject constructor(
         syncObjectStateResetter.resetBackupBadState(taskId)
         syncObjectStateResetter.resetBackupBadState(taskId)
         syncObjectStateResetter.resetDeletionBadState(taskId)
-
+        syncObjectStateResetter.resetSyncBadState(taskId)
     }
 
 

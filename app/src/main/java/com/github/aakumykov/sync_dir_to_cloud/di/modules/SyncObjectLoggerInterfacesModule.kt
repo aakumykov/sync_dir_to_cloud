@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectLogRepository
 import dagger.Binds
 import dagger.Module
@@ -23,4 +24,7 @@ interface SyncObjectLoggerInterfacesModule {
 
     @Binds
     fun bindSyncObjectLogUpdater(syncObjectLogRepository: SyncObjectLogRepository): SyncObjectLogUpdater
+
+    @Binds
+    fun bindSyncObjectProgressUpdater(syncObjectLogRepository: SyncObjectLogRepository): SyncObjectProgressUpdater
 }
