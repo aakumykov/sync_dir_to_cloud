@@ -42,6 +42,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "WAITING") val operationState: OperationState,
     @ColumnInfo(name = PROGRESS_FIELD, defaultValue = "0") val progress: Float?,
+    @ColumnInfo(name = PROGRESS_AS_PART_OF_100_FIELD, defaultValue = "0") val progress_as_part_of_100: Int?,
 )
     : Parcelable
 {
@@ -60,6 +61,7 @@ data class SyncObjectLogItem (
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
         const val PROGRESS_FIELD = "progress"
+        const val PROGRESS_AS_PART_OF_100_FIELD = "progress_as_part_of_100"
 
         fun createWaiting(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
@@ -69,7 +71,8 @@ data class SyncObjectLogItem (
                 operationName = operationName,
                 errorMessage =  null,
                 operationState = OperationState.WAITING,
-                progress = 0f
+                progress = 0f,
+                progress_as_part_of_100 = 0
             )
         }
 
@@ -81,7 +84,8 @@ data class SyncObjectLogItem (
                 operationName = operationName,
                 errorMessage =  null,
                 operationState = OperationState.SUCCESS,
-                progress = 0f
+                progress = 0f,
+                progress_as_part_of_100 = 0
             )
         }
 
@@ -93,7 +97,8 @@ data class SyncObjectLogItem (
                 operationName = operationName,
                 errorMessage = errorMessage,
                 operationState = OperationState.ERROR,
-                progress = 0f
+                progress = 0f,
+                progress_as_part_of_100 = 0
             )
         }
 
@@ -105,6 +110,7 @@ data class SyncObjectLogItem (
             operationName: String,
             errorMessage: String?,
             progress: Float?,
+            progress_as_part_of_100: Int?
         ): SyncObjectLogItem {
             return SyncObjectLogItem(
                 id = UUID.randomUUID().toString(),
@@ -116,7 +122,8 @@ data class SyncObjectLogItem (
                 operationName = operationName,
                 operationState = operationState,
                 errorMessage = errorMessage,
-                progress = progress
+                progress = progress,
+                progress_as_part_of_100 = progress_as_part_of_100
             )
         }
     }

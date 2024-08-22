@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
-import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingInputStream
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -28,7 +27,7 @@ class SyncObjectFileCopier (
         syncObject: SyncObject,
         syncTask: SyncTask,
         overwriteIfExists: Boolean = true,
-        onProgressChanged: suspend (Float) -> Unit
+        onProgressChanged: suspend (Int) -> Unit
     ): Result<String> {
 
         val sourceFilePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
@@ -39,12 +38,13 @@ class SyncObjectFileCopier (
 
             val countingInputStream = CountingInputStream(sourceFileStream) { readCount ->
 
-                val progress = (1f*readCount / syncObject.size).round(100)
+                val progress = (1f*readCount / syncObject.size).round(2)
+                val progressAsPartOf100 = Math.round(progress * 100)
 
                 if (lastProgressValue != progress) {
-                    Log.d(TAG, "progress: ${syncObject.name} - $progress")
+//                    Log.d(TAG, "progress: ${syncObject.name} - $progress ($progressAsPartOf100)")
                     lastProgressValue = progress
-                    CoroutineScope(progressCallbackCoroutineDispatcher).launch { onProgressChanged.invoke(progress) }
+                    CoroutineScope(progressCallbackCoroutineDispatcher).launch { onProgressChanged.invoke(progressAsPartOf100) }
                 }
             }
 

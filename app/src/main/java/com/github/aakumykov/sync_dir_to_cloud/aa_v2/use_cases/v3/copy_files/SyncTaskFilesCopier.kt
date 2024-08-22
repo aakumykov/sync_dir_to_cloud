@@ -152,8 +152,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             onSyncObjectProcessingBegin?.invoke(syncObject)
 
             syncObjectCopier
-                ?.copySyncObject(syncObject, syncTask, overwriteIfExists) { progress: Float ->
-                    syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progress)
+                ?.copySyncObject(syncObject, syncTask, overwriteIfExists) { progressAsPartOf100: Int ->
+                    syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
                 }
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)

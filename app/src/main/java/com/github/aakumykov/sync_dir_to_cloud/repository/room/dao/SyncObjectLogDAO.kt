@@ -67,7 +67,7 @@ abstract class SyncObjectLogDAO {
 
 
     @Query("UPDATE sync_object_logs SET " +
-            "progress = :progress " +
+            "progress_as_part_of_100 = :progressAsPartOf100 " +
             "WHERE object_id = :objectId " +
             "AND task_id = :taskId " +
             "AND execution_id = :executionId")
@@ -75,6 +75,6 @@ abstract class SyncObjectLogDAO {
         objectId: String,
         taskId: String,
         executionId: String,
-        progress: Float
+        progressAsPartOf100: Int
     )
 }

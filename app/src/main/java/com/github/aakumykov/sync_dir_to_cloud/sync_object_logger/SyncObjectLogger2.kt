@@ -42,9 +42,9 @@ class SyncObjectLogger2 @AssistedInject constructor(
         objectId: String,
         taskId: String,
         executionId: String,
-        progress: Float
+        progressAsPartOf100: Int
     ) {
-        syncObjectProgressUpdater.updateProgress(objectId, taskId, executionId, progress)
+        syncObjectProgressUpdater.updateProgress(objectId, taskId, executionId, progressAsPartOf100)
     }
 
     suspend fun logSuccess(
