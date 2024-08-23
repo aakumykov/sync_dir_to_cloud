@@ -31,7 +31,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         TaskLogEntry::class,
         SyncObjectLogItem::class
    ],
-    version = 70,
+    version = 71,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -46,7 +46,8 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 66, to = 67, spec = SyncObjectLogItem.DeleteColumnProgress::class),
         AutoMigration(from = 67, to = 68), // Добавление поля qwerty
         AutoMigration(from = 68, to = 69, spec = SyncObjectLogItem.RenameColumnFromQwertyToAbc::class),
-        AutoMigration(from = 69, to = 70, spec = SyncObjectLogItem.RenameColumnProgressAsPartOf100ToProgress::class)
+        AutoMigration(from = 69, to = 70, spec = SyncObjectLogItem.RenameColumnProgressAsPartOf100ToProgress::class),
+        AutoMigration(from = 70, to = 71, spec = SyncObjectLogItem.DeleteColumnAbc::class),
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

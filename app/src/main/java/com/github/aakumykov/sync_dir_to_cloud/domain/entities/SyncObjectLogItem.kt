@@ -43,7 +43,6 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "WAITING") val operationState: OperationState,
     @ColumnInfo(name = PROGRESS_FIELD, defaultValue = "0") val progress: Int?, // FIXME: убрать nullable
-    @ColumnInfo(name = ABC_FIELD, defaultValue = "abc-default") val abc: String,
 )
     : Parcelable
 {
@@ -62,7 +61,6 @@ data class SyncObjectLogItem (
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
         const val PROGRESS_FIELD = "progress"
-        const val ABC_FIELD = "abc"
 
         fun createWaiting(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
@@ -120,7 +118,6 @@ data class SyncObjectLogItem (
                 operationState = operationState,
                 errorMessage = errorMessage,
                 progress = progress,
-                abc = "abc-"+Random.nextInt(100)
             )
         }
     }
@@ -137,9 +134,12 @@ data class SyncObjectLogItem (
     @DeleteColumn(tableName = TABLE_NAME, columnName = "progress")
     class DeleteColumnProgress : AutoMigrationSpec
 
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "qwerty", toColumnName = ABC_FIELD)
+    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "qwerty", toColumnName = "abc")
     class RenameColumnFromQwertyToAbc : AutoMigrationSpec
 
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "progress_as_part_of_100", toColumnName = PROGRESS_FIELD)
     class RenameColumnProgressAsPartOf100ToProgress : AutoMigrationSpec
+
+    @DeleteColumn(tableName = TABLE_NAME, columnName = "abc")
+    class DeleteColumnAbc : AutoMigrationSpec
 }
