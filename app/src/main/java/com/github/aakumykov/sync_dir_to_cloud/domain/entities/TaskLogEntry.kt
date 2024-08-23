@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
@@ -16,7 +17,7 @@ class TaskLogEntry(
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "entry_type") val entryType: EntryType,
     @ColumnInfo(name = "execution_id") val executionId: String,
-    @ColumnInfo(name = "timestamp") val timestamp: Long,
+    @ColumnInfo(name = "start_time") val startTime: Long,
     @ColumnInfo(name = "error_msg") val errorMsg: String?,
 ) {
     constructor(
@@ -29,14 +30,14 @@ class TaskLogEntry(
         executionId = executionId,
         taskId = taskId,
         entryType = entryType,
-        timestamp = currentTime(),
+        startTime = currentTime(),
         errorMsg = errorMsg
     )
 
     enum class EntryType { START, FINISH, ERROR }
 
     override fun toString(): String {
-        return "TaskLogEntry(id='$id', taskId='$taskId', entryType=$entryType, executionId='$executionId', timestamp=$timestamp, errorMsg=$errorMsg)"
+        return "TaskLogEntry(id='$id', taskId='$taskId', entryType=$entryType, executionId='$executionId', timestamp=$startTime, errorMsg=$errorMsg)"
     }
 
     companion object {
@@ -46,4 +47,7 @@ class TaskLogEntry(
 
     @RenameTable(fromTableName = OLD_TABLE_NAME, toTableName = TABLE_NAME)
     class RenameTableFromTaskLogsToSyncTaskLogs : AutoMigrationSpec
+
+    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "timestamp", toColumnName = "start_time")
+    class RenameColumnFromTimestampToStartTime : AutoMigrationSpec
 }

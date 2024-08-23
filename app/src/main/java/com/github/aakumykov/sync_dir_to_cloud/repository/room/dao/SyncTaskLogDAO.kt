@@ -18,6 +18,6 @@ interface SyncTaskLogDAO {
     @Query("SELECT * FROM ${TaskLogEntry.TABLE_NAME} WHERE task_id = :taskId")
     suspend fun listLogsForTask(taskId: String): List<TaskLogEntry>
 
-    @Query("SELECT * FROM ${TaskLogEntry.TABLE_NAME} WHERE task_id = :taskId ORDER BY timestamp DESC")
+    @Query("SELECT * FROM ${TaskLogEntry.TABLE_NAME} WHERE task_id = :taskId ORDER BY start_time DESC")
     fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>>
 }
