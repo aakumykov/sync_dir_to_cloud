@@ -18,6 +18,7 @@ class TaskLogEntry(
     @ColumnInfo(name = "entry_type") val entryType: EntryType,
     @ColumnInfo(name = "execution_id") val executionId: String,
     @ColumnInfo(name = "start_time") val startTime: Long,
+    @ColumnInfo(name = "finish_time", defaultValue = "0") val finishTime: Long,
     @ColumnInfo(name = "error_msg") val errorMsg: String?,
 ) {
     constructor(
@@ -31,13 +32,14 @@ class TaskLogEntry(
         taskId = taskId,
         entryType = entryType,
         startTime = currentTime(),
+        finishTime = 0L,
         errorMsg = errorMsg
     )
 
     enum class EntryType { START, FINISH, ERROR }
 
     override fun toString(): String {
-        return "TaskLogEntry(id='$id', taskId='$taskId', entryType=$entryType, executionId='$executionId', timestamp=$startTime, errorMsg=$errorMsg)"
+        return "TaskLogEntry(id='$id', taskId='$taskId', entryType=$entryType, executionId='$executionId', startTime=$startTime, finishTime=$finishTime, errorMsg=$errorMsg)"
     }
 
     companion object {
