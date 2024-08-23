@@ -1,10 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_object_to_target_writer2
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingInputStream
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
@@ -65,7 +65,7 @@ class SyncObjectToTargetWriter2 @AssistedInject constructor(
 
                     progressInfoHolder.addProgressInfo(syncObject.toProgressInfo())
 
-                    val countingInputStream = CountingInputStream(inputStream) { count ->
+                    val countingInputStream = CountingBufferedInputStream(inputStream) { count ->
                         Log.d(
                             "CountingInputStream",
                             "Файл '${syncObject.name}'" +

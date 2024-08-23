@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingInputStream
+import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
@@ -36,7 +36,7 @@ class SyncObjectFileCopier (
         try {
             val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(sourceFilePath).getOrThrow()
 
-            val countingInputStream = CountingInputStream(sourceFileStream) { readCount ->
+            val countingInputStream = CountingBufferedInputStream(sourceFileStream) { readCount ->
 
                 val progress = (1f*readCount / syncObject.size).round(2)
                 val progressAsPartOf100 = Math.round(progress * 100)
