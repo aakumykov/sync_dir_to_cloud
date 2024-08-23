@@ -40,7 +40,7 @@ class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>()
         })
 
         progressBar.apply {
-            progress = item.progress_as_part_of_100 ?: 0
+            progress = item.progress ?: 0
             visibility = View.VISIBLE
         }
     }
