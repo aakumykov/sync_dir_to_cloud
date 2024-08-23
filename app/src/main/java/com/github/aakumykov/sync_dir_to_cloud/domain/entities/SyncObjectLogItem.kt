@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
+import kotlin.random.Random
 
 @Entity(
     tableName = SyncObjectLogItem.TABLE_NAME,
@@ -42,6 +43,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "WAITING") val operationState: OperationState,
     @ColumnInfo(name = PROGRESS_AS_PART_OF_100_FIELD, defaultValue = "0") val progress_as_part_of_100: Int?,
+    @ColumnInfo(name = QWERTY_FIELD, defaultValue = "qwerty-default") val qwerty: String,
 )
     : Parcelable
 {
@@ -60,6 +62,7 @@ data class SyncObjectLogItem (
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
         const val PROGRESS_AS_PART_OF_100_FIELD = "progress_as_part_of_100"
+        const val QWERTY_FIELD = "qwerty"
 
         fun createWaiting(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
@@ -116,7 +119,8 @@ data class SyncObjectLogItem (
                 operationName = operationName,
                 operationState = operationState,
                 errorMessage = errorMessage,
-                progress_as_part_of_100 = progress_as_part_of_100
+                progress_as_part_of_100 = progress_as_part_of_100,
+                qwerty = "qwerty-"+Random.nextInt(100)
             )
         }
     }
