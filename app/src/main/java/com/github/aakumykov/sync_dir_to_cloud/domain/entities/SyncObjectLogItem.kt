@@ -46,8 +46,6 @@ data class SyncObjectLogItem (
 )
     : Parcelable
 {
-    val isSuccessful: Boolean get() = OperationState.SUCCESS == operationState
-
     companion object {
 
         const val TABLE_NAME = "sync_object_logs"
