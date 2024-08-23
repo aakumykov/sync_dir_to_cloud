@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
 import kotlinx.coroutines.launch
 
@@ -16,6 +17,7 @@ class TaskStateViewModel(
     private val syncObjectReader: SyncObjectReader,
     private val startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
     private val syncTaskLogRepository: SyncTaskLogRepository,
+    private val taskStateLogger: TaskStateLogger
 
     ) : ViewModel() {
 

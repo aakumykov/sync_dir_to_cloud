@@ -24,6 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
@@ -41,6 +42,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskNotificator: SyncTaskNotificator,
 
     private val syncTaskLogger: SyncTaskLogger,
+    private val taskStateLogger: TaskStateLogger,
 
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
@@ -157,34 +159,28 @@ class SyncTaskExecutor @Inject constructor(
     }
 
     private suspend fun logExecutionStart(syncTask: SyncTask) {
-        syncTaskLogger.log(
-            TaskLogEntry(
+        taskStateLogger.logRunning(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.START
-        )
-        )
+        ))
     }
 
     private suspend fun logExecutionFinish(syncTask: SyncTask) {
-        syncTaskLogger.log(
-            TaskLogEntry(
+        taskStateLogger.logSuccess(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.FINISH
-        )
-        )
+        ))
     }
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
-        syncTaskLogger.log(
-            TaskLogEntry(
+        taskStateLogger.logError(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = TaskLogEntry.EntryType.ERROR,
             errorMsg = null
-        )
-        )
+        ))
     }
 
 

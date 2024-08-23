@@ -21,6 +21,8 @@ class TaskLogEntry(
     @ColumnInfo(name = "finish_time", defaultValue = "0") val finishTime: Long,
     @ColumnInfo(name = "error_msg") val errorMsg: String?,
 ) {
+    val executionLength: Long get() = finishTime - startTime
+
     constructor(
         taskId: String,
         executionId: String,
@@ -32,11 +34,15 @@ class TaskLogEntry(
         taskId = taskId,
         entryType = entryType,
         startTime = currentTime(),
-        finishTime = 0L,
+        finishTime = currentTime(),
         errorMsg = errorMsg
     )
 
-    enum class EntryType { START, FINISH, ERROR }
+    enum class EntryType {
+        @Deprecated("Не START, а RUNNING") START,
+        FINISH,
+        ERROR
+    }
 
     override fun toString(): String {
         return "TaskLogEntry(id='$id', taskId='$taskId', entryType=$entryType, executionId='$executionId', startTime=$startTime, finishTime=$finishTime, errorMsg=$errorMsg)"

@@ -12,7 +12,7 @@ class DatabaseSyncTaskLogger (
 
     override suspend fun log(taskLogEntry: TaskLogEntry) {
         Log.d(TAG, "log() called with: taskLogEntry = $taskLogEntry")
-        syncTaskLogRepository.addLogEntry(taskLogEntry)
+//        syncTaskLogRepository.addLogEntry(taskLogEntry)
     }
 
     companion object {

@@ -122,4 +122,7 @@
     <string name="LOG_ITEM_DETAILS_DIALOG_close_button">Закрыть</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_item_name_quotes">«%1$s»</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_error_with_details">Ошибка:\n%1$s</string>
+    <string name="TASK_STATE_running">Выполняется с %1$s</string>
+    <string name="TASK_STATE_finished">Выполнено. Начало: %1$s, длительность: %2$s</string>
+    <string name="TASK_STATE_error">Ошибка: %1$s; начало: %2$s, выполнялось: %3$s</string>
 </resources>

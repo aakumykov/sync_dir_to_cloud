@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -56,7 +55,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
 
-    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskLogViewHolder>
+    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskStateViewHolder>
 
     private lateinit var currentTaskId: String
 
@@ -117,7 +116,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     }
 
     private fun prepareListAdapter() {
-        taskLogAdapter = TaskLogAdapter()
+        taskLogAdapter = TaskStateAdapter()
         binding.listView.adapter = taskLogAdapter
         binding.listView.setOnItemClickListener(::onTaskLogItemClicked)
     }
@@ -276,24 +275,5 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         fun create(intent: Intent): TaskStateFragment {
             return create(intent.getStringExtra(KEY_TASK_ID))
         }
-    }
-}
-
-class TaskLogAdapter : ListHoldingListAdapter<TaskLogEntry, TaskLogViewHolder>(R.layout.task_log_item) {
-    override fun createViewHolder(): ViewHolder<TaskLogEntry> {
-        return TaskLogViewHolder()
-    }
-}
-
-class TaskLogViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
-
-    private lateinit var titleView: TextView
-
-    override fun fill(taskLogEntry: TaskLogEntry, isSelected: Boolean) {
-        titleView.text = taskLogEntry.entryType.name +": "+CurrentDateTime.format(taskLogEntry.timestamp)
-    }
-
-    override fun init(itemView: View) {
-        titleView = itemView.findViewById(R.id.titleView)
     }
 }
