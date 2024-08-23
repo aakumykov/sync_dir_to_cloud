@@ -42,7 +42,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "WAITING") val operationState: OperationState,
-    @ColumnInfo(name = PROGRESS_FIELD, defaultValue = "0") val progress: Int?, // FIXME: убрать nullable
+    @ColumnInfo(name = PROGRESS_FIELD, defaultValue = "0") val progress: Int,
 )
     : Parcelable
 {
@@ -105,7 +105,7 @@ data class SyncObjectLogItem (
             operationState: OperationState,
             operationName: String,
             errorMessage: String?,
-            progress: Int?,
+            progress: Int,
         ): SyncObjectLogItem {
             return SyncObjectLogItem(
                 id = UUID.randomUUID().toString(),
@@ -142,4 +142,6 @@ data class SyncObjectLogItem (
 
     @DeleteColumn(tableName = TABLE_NAME, columnName = "abc")
     class DeleteColumnAbc : AutoMigrationSpec
+
+
 }
