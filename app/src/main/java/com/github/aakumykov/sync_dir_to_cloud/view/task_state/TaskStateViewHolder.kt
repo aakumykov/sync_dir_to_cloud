@@ -50,5 +50,8 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
         titleView = itemView.findViewById(R.id.titleView)
     }
 
-    fun getString(@StringRes stringRes: Int, vararg args: Any): String = titleView.getString(stringRes, args)
+    fun getString(@StringRes stringRes: Int, vararg args: Any): String {
+        val res = titleView.getString(stringRes, args)
+        return res
+    }
 }
