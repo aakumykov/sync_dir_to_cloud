@@ -23,25 +23,34 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
 
 
     private fun startText(taskLogEntry: TaskLogEntry): String {
-        return getString(R.string.TASK_STATE_running, CurrentDateTime.format(taskLogEntry.startTime))
+        return titleView.resources.getString(
+            R.string.TASK_STATE_running,
+            CurrentDateTime.format(taskLogEntry.startTime)
+        )
     }
 
     private fun finishText(taskLogEntry: TaskLogEntry): String {
-        val timeDiff = taskLogEntry.finishTime - taskLogEntry.startTime
-        return getString(
+
+        val startTime = CurrentDateTime.format(taskLogEntry.startTime)
+        val timeDiff = CurrentDateTime.format(taskLogEntry.finishTime - taskLogEntry.startTime)
+
+        return titleView.resources.getString(
             R.string.TASK_STATE_finished,
-            taskLogEntry.startTime,
-            CurrentDateTime.format(timeDiff)
+            startTime,
+            timeDiff
         )
     }
 
     private fun errorText(taskLogEntry: TaskLogEntry): String {
-        val timeDiff = taskLogEntry.finishTime - taskLogEntry.startTime
+
+        val startTime = CurrentDateTime.format(taskLogEntry.startTime)
+        val timeDiff = CurrentDateTime.format(taskLogEntry.finishTime - taskLogEntry.startTime)
+
         return getString(
             R.string.TASK_STATE_error,
             taskLogEntry.errorMsg ?: "-",
-            taskLogEntry.startTime,
-            CurrentDateTime.format(timeDiff)
+            startTime,
+            timeDiff
         )
     }
 
