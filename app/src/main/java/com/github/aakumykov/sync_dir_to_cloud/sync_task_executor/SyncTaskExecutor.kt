@@ -88,7 +88,7 @@ class SyncTaskExecutor @Inject constructor(
         val taskId = syncTask.id
         val notificationId = syncTask.notificationId
 
-        showReadingSourceNotification(syncTask)
+//        showReadingSourceNotification(syncTask)
 
         logExecutionStart(syncTask);
 
@@ -154,7 +154,7 @@ class SyncTaskExecutor @Inject constructor(
             logExecutionError(syncTask, t)
         }
         finally {
-            syncTaskNotificator.hideNotification(taskId, notificationId)
+//            syncTaskNotificator.hideNotification(taskId, notificationId)
         }
     }
 

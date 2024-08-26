@@ -31,6 +31,8 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
     override fun doWork(): Result {
         MyLogger.d(TAG, "[${classNameWithHash()}] doWork() начался")
 
+
+
         taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
 
