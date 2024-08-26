@@ -1,9 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
+import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.round
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
@@ -38,11 +40,11 @@ class SyncObjectFileCopier (
 
             val countingInputStream = CountingBufferedInputStream(sourceFileStream) { readCount ->
 
-                val progress = (1f*readCount / syncObject.size).round(2)
+                val progress = (1f*readCount / syncObject.actualSize).round(2)
                 val progressAsPartOf100 = Math.round(progress * 100)
 
                 if (lastProgressValue != progress) {
-//                    Log.d(TAG, "progress: ${syncObject.name} - $progress ($progressAsPartOf100)")
+                    Log.d(TAG, "progress: ${syncObject.name} - $progress ($progressAsPartOf100) [$readCount / ${syncObject.actualSize}]")
                     lastProgressValue = progress
                     CoroutineScope(progressCallbackCoroutineDispatcher).launch { onProgressChanged.invoke(progressAsPartOf100) }
                 }

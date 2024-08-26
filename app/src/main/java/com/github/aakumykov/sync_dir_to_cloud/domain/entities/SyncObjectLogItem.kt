@@ -7,11 +7,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
-import kotlin.random.Random
 
 @Entity(
     tableName = SyncObjectLogItem.TABLE_NAME,
@@ -114,7 +114,7 @@ data class SyncObjectLogItem (
                 executionId = executionId,
                 timestamp = currentTime(),
                 itemName = syncObject.name,
-                size = syncObject.size,
+                size = syncObject.actualSize,
                 operationName = operationName,
                 operationState = operationState,
                 errorMessage = errorMessage,
@@ -143,6 +143,4 @@ data class SyncObjectLogItem (
 
     @DeleteColumn(tableName = TABLE_NAME, columnName = "abc")
     class DeleteColumnAbc : AutoMigrationSpec
-
-
 }
