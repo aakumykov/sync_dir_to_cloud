@@ -39,6 +39,7 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = EXECUTION_ID_FIELD) val executionId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
     @ColumnInfo(name = ITEM_NAME_FILED) val itemName: String,
+    @ColumnInfo(name = ITEM_SIZE_FIELD, defaultValue = "0") val size: Long,
     @ColumnInfo(name = OPERATION_NAME_FILED) val operationName: String,
     @ColumnInfo(name = ERROR_MESSAGE_FIELD, defaultValue = "null") val errorMessage: String? = null,
     @ColumnInfo(name = OPERATION_STATE_FIELD, defaultValue = "WAITING") val operationState: OperationState,
@@ -56,6 +57,7 @@ data class SyncObjectLogItem (
         const val OPERATION_STATE_FIELD = "operation_state"
         const val TIMESTAMP_FIELD = "timestamp"
         const val ITEM_NAME_FILED = "item_name"
+        const val ITEM_SIZE_FIELD = "size"
         const val OPERATION_NAME_FILED = "operation_name"
         const val ERROR_MESSAGE_FIELD = "error_message"
         const val PROGRESS_FIELD = "progress"
@@ -112,6 +114,7 @@ data class SyncObjectLogItem (
                 executionId = executionId,
                 timestamp = currentTime(),
                 itemName = syncObject.name,
+                size = syncObject.size,
                 operationName = operationName,
                 operationState = operationState,
                 errorMessage = errorMessage,
