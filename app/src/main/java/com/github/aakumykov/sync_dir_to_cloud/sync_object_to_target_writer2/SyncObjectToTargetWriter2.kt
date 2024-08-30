@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_object_to_target_writer2
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.counting_streams.CountingBufferedInputStream
+import com.github.aakumykov.sync_dir_to_cloud.utils.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
