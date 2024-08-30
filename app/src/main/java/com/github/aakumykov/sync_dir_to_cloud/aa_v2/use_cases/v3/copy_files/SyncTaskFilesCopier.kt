@@ -17,6 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
@@ -151,8 +152,12 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
             onSyncObjectProcessingBegin?.invoke(syncObject)
 
+            // FIXME: избавиться от "!!"
+            val sourcePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
+            val targetPath = syncObject.absolutePathIn(syncTask.targetPath!!)
+
             syncObjectCopier
-                ?.copySyncObject(syncObject, syncTask, overwriteIfExists) { progressAsPartOf100: Int ->
+                ?.copySyncObject(syncObject, sourcePath, targetPath, overwriteIfExists) { progressAsPartOf100: Int ->
                     syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
                 }
                 ?.onSuccess {

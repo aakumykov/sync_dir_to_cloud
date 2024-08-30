@@ -27,16 +27,15 @@ class SyncObjectFileCopier (
 
     suspend fun copySyncObject(
         syncObject: SyncObject,
-        syncTask: SyncTask,
+        absoluteSourceFilePath: String,
+        absoluteTargetFilePath: String,
         overwriteIfExists: Boolean = true,
         onProgressChanged: suspend (Int) -> Unit
-    ): Result<String> {
-
-        val sourceFilePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
-        val targetFilePath = syncObject.absolutePathIn(syncTask.targetPath!!)
+    )
+    : Result<String> {
 
         try {
-            val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(sourceFilePath).getOrThrow()
+            val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(absoluteSourceFilePath).getOrThrow()
 
             val countingInputStream = CountingBufferedInputStream(sourceFileStream) { readCount ->
 
@@ -55,8 +54,9 @@ class SyncObjectFileCopier (
                 }
             }
 
-            cloudWriter.putFile(countingInputStream, targetFilePath, overwriteIfExists)
-            return Result.success(targetFilePath)
+            cloudWriter.putFile(countingInputStream, absoluteTargetFilePath, overwriteIfExists)
+
+            return Result.success(absoluteTargetFilePath)
         }
         catch (e: Exception) {
             return Result.failure(e)
