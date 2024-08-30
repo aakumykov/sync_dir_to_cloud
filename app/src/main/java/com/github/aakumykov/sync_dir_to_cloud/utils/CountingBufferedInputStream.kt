@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.InputStream
 
 class CountingBufferedInputStream(
-    inputStream: InputStream,
+    private val inputStream: InputStream,
     bufferSize: Int = DEFAULT_BUFFER_SIZE,
     private val callbackTriggeringIntervalBytes: Int = DEFAULT_BUFFER_SIZE,
     private val readingCallback: ReadingCallback,
@@ -23,7 +23,18 @@ class CountingBufferedInputStream(
     }
 
 
+    override fun close() {
+        super.close()
+        inputStream.close()
+    }
+
+
     private fun summarizeAndCallBack(count: Int) {
+
+        if (-1 == count) {
+            invokeCallback()
+            return
+        }
 
         readedBytesCount += count
         callbackTriggeringBytesCounter += count
@@ -31,9 +42,14 @@ class CountingBufferedInputStream(
         val isCallbackThresholdExceed = callbackTriggeringBytesCounter >= callbackTriggeringIntervalBytes
 
         if (isCallbackThresholdExceed || count < 0) {
-            readingCallback.onReadCountChanged(readedBytesCount)
             callbackTriggeringBytesCounter = 0
+            invokeCallback()
         }
+    }
+
+
+    private fun invokeCallback() {
+        readingCallback.onReadCountChanged(readedBytesCount)
     }
 
 
