@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectPro
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
@@ -21,6 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
+import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -156,8 +158,15 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             val sourcePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
             val targetPath = syncObject.absolutePathIn(syncTask.targetPath!!)
 
+            val progressCalculator = ProgressCalculator(syncObject.actualSize)
+
             syncObjectCopier
-                ?.copySyncObject(syncObject, sourcePath, targetPath, overwriteIfExists) { progressAsPartOf100: Int ->
+                ?.copySyncObject(
+                    absoluteSourceFilePath = sourcePath,
+                    absoluteTargetFilePath = targetPath,
+                    overwriteIfExists = overwriteIfExists,
+                    progressCalculator = progressCalculator
+                ) { progressAsPartOf100: Int ->
                     syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
                 }
                 ?.onSuccess {
