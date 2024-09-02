@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import com.github.aakumykov.cloud_writer.CloudWriter
+import com.github.aakumykov.kotlin_playground.counting_buffered_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
-import com.github.aakumykov.sync_dir_to_cloud.utils.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

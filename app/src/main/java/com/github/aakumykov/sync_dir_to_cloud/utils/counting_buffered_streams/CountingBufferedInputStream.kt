@@ -1,18 +1,16 @@
-package com.github.aakumykov.sync_dir_to_cloud.utils
+package com.github.aakumykov.kotlin_playground.counting_buffered_streams
 
 import java.io.BufferedInputStream
 import java.io.InputStream
 
-class CountingBufferedInputStream(
+open class CountingBufferedInputStream(
     private val inputStream: InputStream,
     bufferSize: Int = DEFAULT_BUFFER_SIZE,
-    private val callbackTriggeringIntervalBytes: Int = DEFAULT_BUFFER_SIZE,
     private val readingCallback: ReadingCallback,
 )
     : BufferedInputStream(inputStream, bufferSize)
 {
     private var readedBytesCount: Long = 0
-    private var callbackTriggeringBytesCounter: Long = 0
 
 
     override fun read(b: ByteArray?, off: Int, len: Int): Int {
@@ -28,7 +26,6 @@ class CountingBufferedInputStream(
         inputStream.close()
     }
 
-
     private fun summarizeAndCallBack(count: Int) {
 
         if (-1 == count) {
@@ -37,16 +34,9 @@ class CountingBufferedInputStream(
         }
 
         readedBytesCount += count
-        callbackTriggeringBytesCounter += count
 
-        val isCallbackThresholdExceed = callbackTriggeringBytesCounter >= callbackTriggeringIntervalBytes
-
-        if (isCallbackThresholdExceed || count < 0) {
-            callbackTriggeringBytesCounter = 0
-            invokeCallback()
-        }
+        invokeCallback()
     }
-
 
     private fun invokeCallback() {
         readingCallback.onReadCountChanged(readedBytesCount)
