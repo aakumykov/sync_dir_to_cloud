@@ -10,6 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.InputStream
 
+/**
+ * Копирует данные SyncObject-а из источника в приёмник указанный в SyncTask.
+ */
 class SyncObjectFileCopier (
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,
     private val cloudWriter: CloudWriter,
