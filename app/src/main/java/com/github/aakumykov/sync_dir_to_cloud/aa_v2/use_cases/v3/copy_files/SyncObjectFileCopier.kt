@@ -4,6 +4,7 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.kotlin_playground.counting_buffered_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
+import com.github.aakumykov.sync_dir_to_cloud.utils.counting_buffered_streams.DelayedInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,11 @@ class SyncObjectFileCopier (
         try {
             val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(absoluteSourceFilePath).getOrThrow()
 
-            val countingInputStream = CountingBufferedInputStream(sourceFileStream) { readedCount ->
+            val countingInputStream = DelayedInputStream(
+                100L,
+                inputStream = sourceFileStream,
+                coroutineScope = CoroutineScope(Dispatchers.IO),
+            ) { readedCount ->
 
                 val progress = progressCalculator.calcProgress(readedCount)
 

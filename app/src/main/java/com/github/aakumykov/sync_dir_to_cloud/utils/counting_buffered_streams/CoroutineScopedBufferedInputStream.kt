@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import java.io.InputStream
 
-class CoroutineScopedBufferedInputStream(
+open class CoroutineScopedBufferedInputStream(
     private val inputStream: InputStream,
     private val coroutineScope: CoroutineScope,
     readingCallback: ReadingCallback,
