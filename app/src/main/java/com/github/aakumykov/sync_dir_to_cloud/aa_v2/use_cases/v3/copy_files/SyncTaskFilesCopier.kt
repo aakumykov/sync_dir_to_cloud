@@ -162,6 +162,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
             syncObjectCopier
                 ?.copySyncObject(
+                    operationId(syncTask.id, syncObject.id, executionId),
                     absoluteSourceFilePath = sourcePath,
                     absoluteTargetFilePath = targetPath,
                     overwriteIfExists = overwriteIfExists,
@@ -182,6 +183,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         }
+    }
+
+    private fun operationId(taskId: String, objectId: String, executionId: String): String {
+        return "${taskId}_${objectId}_${executionId}"
     }
 
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
