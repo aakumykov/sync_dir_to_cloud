@@ -46,7 +46,7 @@ class SyncObjectFileCopier (
             val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(absoluteSourceFilePath).getOrThrow()
 
             val countingInputStream = DelayedInputStream(
-                100L,
+                0L,
                 inputStream = sourceFileStream,
                 coroutineScope = CoroutineScope(Dispatchers.IO),
             ) { readedCount ->

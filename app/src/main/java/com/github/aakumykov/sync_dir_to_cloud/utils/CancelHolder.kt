@@ -12,4 +12,8 @@ class CancelHolder @Inject constructor() {
     fun putCancelHandler(operationId: String, operationScope: CoroutineScope) {
         map[operationId] = operationScope
     }
+
+    fun getCancelHandler(operationId: String): CoroutineScope? {
+        return map[operationId]
+    }
 }

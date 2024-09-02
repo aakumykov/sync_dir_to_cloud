@@ -50,8 +50,9 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         binding.listView.adapter = listAdapter
 //        binding.listView.setOnItemClickListener(::onItemClicked)
         binding.listView.isClickable = true
+
         binding.listView.setOnItemClickListener { parent, view, position, id ->
-            showItemInfo(listAdapter.getItem(position))
+            syncLogViewModel.cancelOperation(listAdapter.getItem(position).operationId)
         }
     }
 

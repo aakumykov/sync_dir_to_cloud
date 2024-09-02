@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.DeleteColumn
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
@@ -47,6 +48,8 @@ data class SyncObjectLogItem (
 )
     : Parcelable
 {
+    val operationId: String get() = "${taskId}_${objectId}_${executionId}"
+
     companion object {
 
         const val TABLE_NAME = "sync_object_logs"

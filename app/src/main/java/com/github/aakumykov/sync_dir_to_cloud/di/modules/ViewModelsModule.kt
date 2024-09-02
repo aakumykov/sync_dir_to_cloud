@@ -15,6 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.utils.CancelHolder
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEditViewModel
@@ -124,8 +125,9 @@ class ViewModelsModule {
     @IntoMap
     @ViewModelKey(SyncLogViewModel::class)
     fun provideSyncLogViewModel(
-        syncObjectLogReader: SyncObjectLogReader
+        syncObjectLogReader: SyncObjectLogReader,
+        cancelHolder: CancelHolder,
     ): ViewModel {
-        return SyncLogViewModel(syncObjectLogReader)
+        return SyncLogViewModel(syncObjectLogReader, cancelHolder)
     }
 }
