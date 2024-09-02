@@ -3,16 +3,18 @@ package com.github.aakumykov.sync_dir_to_cloud.utils
 import com.github.aakumykov.sync_dir_to_cloud.extensions.round
 
 /**
- * Копирует данные SyncObject-а из источника в приёмник указанный в SyncTask.
+ * @param fileSize Размер файла, участвующего в расчётах.
+ * @param failOnWrongFileSize Бросать исключение, если прочитано больше 0 (нуля) данных
+ * на файле нулевого размера.
  */
-// TODO: внедрять объект-считатель прогресса
-
-class ProgressCalculator(private val fullFileSize: Long) {
+class ProgressCalculator(private val fileSize: Long, private val failOnWrongFileSize: Boolean = false) {
 
     fun calcProgress(readedBytes: Long): Float {
-        // Если размер файла 0, приходит "считано 0" и прогресс сразу становится 100%.
-        return if (0L == readedBytes && 0L == fullFileSize) 1.0f
-        else (1f*readedBytes / fullFileSize).round(2)
+        return if (0L == fileSize) {
+            if (!failOnWrongFileSize) 1.0f
+            else throw IllegalArgumentException("Read more than zero bytes ($readedBytes) on zero-size file.")
+        }
+        else (1f*readedBytes / fileSize).round(2)
     }
 
     fun progressAsPartOf100(progress: Float): Int = Math.round(progress * 100)
