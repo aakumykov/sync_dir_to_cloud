@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.kotlin_playground.counting_buffered_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.utils.CancelHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
@@ -12,13 +11,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.withContext
 import java.io.InputStream
-import java.util.UUID
 import kotlin.coroutines.coroutineContext
 
 /**
@@ -45,10 +40,12 @@ class SyncObjectFileCopier (
         try {
             val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(absoluteSourceFilePath).getOrThrow()
 
+            val coroutineScope = CoroutineScope(Dispatchers.IO)
+
             val countingInputStream = DelayedInputStream(
-                0L,
+                10L,
                 inputStream = sourceFileStream,
-                coroutineScope = CoroutineScope(Dispatchers.IO),
+                coroutineScope = coroutineScope,
             ) { readedCount ->
 
                 val progress = progressCalculator.calcProgress(readedCount)
@@ -62,7 +59,7 @@ class SyncObjectFileCopier (
                 }
             }
 
-            val operationScope = CoroutineScope(coroutineContext).apply {
+            val operationJob = coroutineScope.launch (Dispatchers.IO) {
                 try {
 //                    countingInputStream.use {
                         cloudWriter.putFile(countingInputStream, absoluteTargetFilePath, overwriteIfExists)
@@ -71,9 +68,12 @@ class SyncObjectFileCopier (
                 catch (e: CancellationException) {
                     Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
                 }
+                catch (e: Exception) {
+                    Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+                }
             }
 
-            cancelHolder.putCancelHandler(operationId, operationScope)
+            cancelHolder.putCancelHandler(operationId, operationJob)
 
             return Result.success(absoluteTargetFilePath)
         }
