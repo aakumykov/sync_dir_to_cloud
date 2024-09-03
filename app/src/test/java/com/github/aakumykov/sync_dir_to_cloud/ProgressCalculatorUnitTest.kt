@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
+import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import junit.framework.TestCase.assertEquals
@@ -26,13 +27,19 @@ class ProgressCalculatorUnitTest {
 
     @Test
     fun when_work_with_non_zero_size_file_then_progress_grows_due_to_readed_bytes_count() {
+
         val fileSize = 100L
         val progressCalculator = ProgressCalculator(fileSize)
-        for (readedBytes in 0..1000) {
+
+        for (readedBytes in 0..fileSize.toInt()) {
+
             val progress = progressCalculator.calcProgress(readedBytes.toLong())
             assertEquals(readedBytes/100f, progress)
+
             val progressAsPartOf100 = progressCalculator.progressAsPartOf100(progress)
             assertEquals(readedBytes, progressAsPartOf100)
+
+            println("прочитано: $readedBytes из $fileSize, прогресс: $progress | ${progressAsPartOf100}%")
         }
     }
 
@@ -62,6 +69,4 @@ class ProgressCalculatorUnitTest {
         ProgressCalculator(fileSize = 0, failOnWrongReadedSize = false)
             .calcProgress(1)
     }
-
-
 }
