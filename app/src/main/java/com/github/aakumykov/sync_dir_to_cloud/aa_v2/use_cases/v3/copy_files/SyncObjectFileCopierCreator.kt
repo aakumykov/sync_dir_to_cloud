@@ -4,7 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
-import com.github.aakumykov.sync_dir_to_cloud.utils.counting_buffered_streams.CancelableInputStream
 import javax.inject.Inject
 
 /**
@@ -15,10 +14,7 @@ class SyncObjectFileCopierCreator @Inject constructor(
     private val cloudAuthReader: CloudAuthReader,
     private val cloudWriterCreator: CloudWriterCreator,
 ) {
-    suspend fun createFileCopierFor(
-        syncTask: SyncTask,
-        cancellationMarker: CancelableInputStream.CancellationMarker
-    ): SyncObjectFileCopier? {
+    suspend fun createFileCopierFor(syncTask: SyncTask): SyncObjectFileCopier? {
 
         val sourceFileStreamSupplier = sourceFileStreamSupplierCreator.create(
             syncTask.id,
@@ -32,9 +28,8 @@ class SyncObjectFileCopierCreator @Inject constructor(
 
         return if (null != sourceFileStreamSupplier && null != targetCloudWriter) {
             SyncObjectFileCopier(
-                sourceFileStreamSupplier = sourceFileStreamSupplier,
-                cloudWriter = targetCloudWriter,
-                cancellationMarker = cancellationMarker,
+                sourceFileStreamSupplier,
+                targetCloudWriter,
             )
         } else {
             null

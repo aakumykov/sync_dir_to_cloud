@@ -1,10 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import com.github.aakumykov.cloud_writer.CloudWriter
+import com.github.aakumykov.kotlin_playground.counting_buffered_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
-import com.github.aakumykov.sync_dir_to_cloud.utils.CancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
-import com.github.aakumykov.sync_dir_to_cloud.utils.counting_buffered_streams.CancelableInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +17,6 @@ class SyncObjectFileCopier (
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,
     private val cloudWriter: CloudWriter,
     private val progressCallbackCoroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val cancellationMarker: CancelableInputStream.CancellationMarker,
-    private val cancellationHolder: CancellationHolder,
 ) {
     private var lastProgressValue: Float = 0f
 
@@ -28,8 +25,6 @@ class SyncObjectFileCopier (
         absoluteTargetFilePath: String,
         progressCalculator: ProgressCalculator,
         overwriteIfExists: Boolean = true,
-        cancellationMarker: CancelableInputStream.CancellationMarker,
-        executionId: String,
         onProgressChanged: suspend (Int) -> Unit
     )
     : Result<String> {
@@ -37,10 +32,7 @@ class SyncObjectFileCopier (
         try {
             val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(absoluteSourceFilePath).getOrThrow()
 
-            val inputStream = CancelableInputStream(
-                inputStream = sourceFileStream,
-                cancellationMarker =cancellationMarker,
-            ) { readedCount ->
+            val countingInputStream = CountingBufferedInputStream(sourceFileStream) { readedCount ->
 
                 val progress = progressCalculator.calcProgress(readedCount)
 
@@ -53,11 +45,7 @@ class SyncObjectFileCopier (
                 }
             }
 
-            cancellationHolder.putCancellationMarker(
-                CancellationHolder.idFor()
-            )
-
-            cloudWriter.putFile(inputStream, absoluteTargetFilePath, overwriteIfExists)
+            cloudWriter.putFile(countingInputStream, absoluteTargetFilePath, overwriteIfExists)
 
             return Result.success(absoluteTargetFilePath)
         }

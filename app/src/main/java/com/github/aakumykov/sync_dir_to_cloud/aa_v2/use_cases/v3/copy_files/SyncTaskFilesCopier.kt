@@ -23,7 +23,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
-import com.github.aakumykov.sync_dir_to_cloud.utils.counting_buffered_streams.CancelableInputStream
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -146,12 +145,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
         onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
     ) {
-        val cancellationMarker = object: CancelableInputStream.CancellationMarker(){}
-
-        val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(
-            syncTask = syncTask,
-            cancellationMarker = cancellationMarker,
-        )
+        val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
         list.forEach { syncObject ->
 
@@ -171,9 +165,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     absoluteSourceFilePath = sourcePath,
                     absoluteTargetFilePath = targetPath,
                     overwriteIfExists = overwriteIfExists,
-                    progressCalculator = progressCalculator,
-                    cancellationMarker = cancellationMarker,
-                    executionId = executionId,
+                    progressCalculator = progressCalculator
                 ) { progressAsPartOf100: Int ->
                     syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
                 }
