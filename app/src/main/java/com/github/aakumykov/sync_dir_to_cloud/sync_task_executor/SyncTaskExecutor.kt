@@ -5,6 +5,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuffHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -66,6 +68,8 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(executionId) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
 
+    private val syncStaffHolder: SyncStuffHolder by lazy { appComponent.getSyncStaffHolder() }
+
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
@@ -89,6 +93,8 @@ class SyncTaskExecutor @Inject constructor(
         val notificationId = syncTask.notificationId
 
 //        showReadingSourceNotification(syncTask)
+
+        syncStaffHolder.put(taskId, appComponent.getSyncStuff().prepareFor(syncTask, executionId))
 
         logExecutionStart(syncTask);
 

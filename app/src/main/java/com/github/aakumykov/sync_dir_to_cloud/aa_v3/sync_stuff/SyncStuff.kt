@@ -28,7 +28,7 @@ class SyncStuff @Inject constructor(
     val backupDirSpec: BackupDirSpec get() = _backupDirSpec!!
     val syncObjectLogger: SyncObjectLogger get() = _syncObjectLogger!!
 
-    suspend fun prepareFor(syncTask: SyncTask, executionId: String) {
+    suspend fun prepareFor(syncTask: SyncTask, executionId: String): SyncStuff {
 
         val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
         val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
@@ -37,5 +37,7 @@ class SyncStuff @Inject constructor(
         _cloudWriter = cloudWriterCreator.createCloudWriter(syncTask.targetStorageType, targetAuth?.authToken)
         _backupDirSpec = backupDirNamer.createBackupDirSpec(syncTask)
         _syncObjectLogger = syncObjectLoggerFactory.create(syncTask.id, executionId)
+
+        return this
     }
 }

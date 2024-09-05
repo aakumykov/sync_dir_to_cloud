@@ -8,8 +8,8 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class SyncObjectLogger @AssistedInject constructor(
-    @Assisted private val executionId: String,
-    @Assisted private val taskId: String,
+    @Assisted("execution_id") private val executionId: String,
+    @Assisted("task_id") private val taskId: String,
     private val syncLogRepository: SyncObjectLogRepository
 ){
     suspend fun logWaiting(syncObject: SyncObject, @StringRes operationName: Int) {
@@ -28,5 +28,5 @@ class SyncObjectLogger @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncObjectLoggerAssistedFactory {
-    fun create(taskId: String, executionId: String): SyncObjectLogger
+    fun create(@Assisted("task_id") taskId: String, @Assisted("execution_id") executionId: String): SyncObjectLogger
 }

@@ -5,8 +5,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+import javax.inject.Inject
 
-class BackupDirNamer {
+class BackupDirNamer @Inject constructor() {
 
     fun createBackupDirSpec(syncTask: SyncTask): BackupDirSpec {
 
