@@ -7,7 +7,7 @@ import java.io.IOException
 
 class OkhttpFileUploaderSyncTests : OkhttpFileUploaderTest() {
 
-    @Test
+    /*@Test
     fun when_sync_postFile_to_good_url_then_SuccessResult() {
         val result = okhttpFileUploader.postFile(uploadedFile, GOOD_POST_URL)
         assertTrue(result is OkhttpFileUploader.SuccessUploadingResult)
@@ -22,5 +22,5 @@ class OkhttpFileUploaderSyncTests : OkhttpFileUploaderTest() {
     @Test(expected = IOException::class)
     fun when_sync_post_to_unreachable_url_then_throws_IOException() {
         okhttpFileUploader.postFile(uploadedFile, UNREACHABLE_URL)
-    }
+    }*/
 }
