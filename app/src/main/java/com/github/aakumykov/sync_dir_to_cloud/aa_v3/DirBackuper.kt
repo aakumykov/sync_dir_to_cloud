@@ -6,12 +6,9 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuffHolder
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +34,9 @@ class DirBackuper @Inject constructor(
 
         _syncStuff = syncStuffHolder.get(syncTask.id)!!
 
+        val operationName = R.string.SYNC_OPERATION_create_backup_dir
+
+
         coroutineScope.launch (coroutineDispatcher) {
 
             syncObjectReader.getAllObjectsForTask(syncTask.id)
@@ -45,38 +45,44 @@ class DirBackuper @Inject constructor(
                 .let { it }
                 .forEach { syncObject ->
                     try {
-                        logOperationStarts(syncTask.id, syncObject)
+                        logOperationStarts(syncObject, operationName)
                          createDir(syncStuff.backupDirSpec, syncObject.name)
-                        logOperationSuccess(syncTask.id, syncObject)
+                        logOperationSuccess(syncObject, operationName)
                     }
                     catch (e: Exception) {
-                        logOperationError(syncTask.id, syncObject, e)
+                        logOperationError(syncObject, operationName, e)
                     }
                 }
         }
     }
 
-    private suspend fun logOperationStarts(taskId: String, syncObject: SyncObject) {
+    private suspend fun logOperationStarts(
+        syncObject: SyncObject,
+        operationName: Int
+    ) {
         syncObjectLogger.apply {
-            logWaiting(syncObject = syncObject,
-                operationName = R.string.SYNC_OPERATION_create_backup_dir
-            )
+            logWaiting(syncObject = syncObject, operationName = operationName)
         }
     }
 
-    private suspend fun logOperationSuccess(taskId: String, syncObject: SyncObject) {
+    private suspend fun logOperationSuccess(
+        syncObject: SyncObject,
+        operationName: Int
+    ) {
         syncObjectLogger.apply {
-            logSuccess(syncObject = syncObject,
-                operationName = R.string.SYNC_OPERATION_create_backup_dir
-            )
+            logSuccess(syncObject = syncObject, operationName = operationName)
         }
     }
 
-    private suspend fun logOperationError(id: String, syncObject: SyncObject, e: Exception) {
+    private suspend fun logOperationError(
+        syncObject: SyncObject,
+        operationName: Int,
+        e: Exception
+    ) {
         syncObjectLogger.apply {
             logError(
                 syncObject = syncObject,
-                operationName = R.string.SYNC_OPERATION_create_backup_dir,
+                operationName = operationName,
                 errorMsg = ExceptionUtils.getErrorMessage(e)
             )
         }
