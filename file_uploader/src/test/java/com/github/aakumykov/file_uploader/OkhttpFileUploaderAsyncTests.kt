@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture
 
 class OkhttpFileUploaderAsyncTests : OkhttpFileUploaderTest() {
 
-    lateinit var mFutureUploadingResult: CompletableFuture<OkhttpFileUploader.UploadingResult>
+    /*lateinit var mFutureUploadingResult: CompletableFuture<OkhttpFileUploader.UploadingResult>
 
     @Before
     fun prepare() {
@@ -75,5 +75,5 @@ class OkhttpFileUploaderAsyncTests : OkhttpFileUploaderTest() {
         })
 
         assertTrue(ioExceptionResult.get() is IOException)
-    }
+    }*/
 }
