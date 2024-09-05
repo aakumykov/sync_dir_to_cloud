@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.BackupDirSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuffHolder
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -23,7 +24,7 @@ class DirBackuper @Inject constructor(
     private val syncStuffHolder: SyncStuffHolder,
     private val syncObjectReader: SyncObjectReader,
     private val coroutineScope: CoroutineScope,
-    private val coroutineDispatcher: CoroutineDispatcher,
+    @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
 ) {
     private var _syncStuff: SyncStuff? = null
     private val syncStuff get() = _syncStuff!!
@@ -41,6 +42,7 @@ class DirBackuper @Inject constructor(
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isDir }
                 .filter { it.isDeleted }
+                .let { it }
                 .forEach { syncObject ->
                     try {
                         logOperationStarts(syncTask.id, syncObject)

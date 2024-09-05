@@ -70,6 +70,10 @@ class SyncTaskExecutor @Inject constructor(
 
     private val syncStaffHolder: SyncStuffHolder by lazy { appComponent.getSyncStaffHolder() }
 
+    private var _currentSyncStuff: SyncStuff? = null
+    private val currentSyncStuff: SyncStuff get() = _currentSyncStuff!!
+
+
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
@@ -94,11 +98,11 @@ class SyncTaskExecutor @Inject constructor(
 
 //        showReadingSourceNotification(syncTask)
 
-        syncStaffHolder.put(taskId, appComponent.getSyncStuff().prepareFor(syncTask, executionId))
-
         logExecutionStart(syncTask);
 
         try {
+            prepareSyncStuff(syncTask)
+
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
             // Выполнить подготовку
@@ -114,7 +118,8 @@ class SyncTaskExecutor @Inject constructor(
             readTarget(syncTask)
 
             // Забэкапить удалённое
-            backupDeletedDirs(syncTask)
+//            backupDeletedDirs(syncTask)
+            appComponent.getDirBackuper().backupDeletedDirs(syncTask)
             backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
@@ -162,6 +167,11 @@ class SyncTaskExecutor @Inject constructor(
         finally {
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
         }
+    }
+
+    private suspend fun prepareSyncStuff(syncTask: SyncTask) {
+        _currentSyncStuff = appComponent.getSyncStuff().prepareFor(syncTask, executionId)
+        syncStaffHolder.put(syncTask.id, currentSyncStuff)
     }
 
     private suspend fun logExecutionStart(syncTask: SyncTask) {
