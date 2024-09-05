@@ -1,9 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff
 
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import javax.inject.Inject
 
-class SyncStuffHolder {
+@ExecutionScope
+class SyncStuffHolder @Inject constructor() {
 
     private val map: ConcurrentMap<String, SyncStuff> = ConcurrentHashMap()
 

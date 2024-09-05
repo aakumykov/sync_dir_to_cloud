@@ -28,7 +28,7 @@ class DirBackuper @Inject constructor(
     private var _syncStuff: SyncStuff? = null
     private val syncStuff get() = _syncStuff!!
 
-    private val syncObjectLogger get() = syncStuff.syncObjectLogger
+    private val syncObjectLogger: SyncObjectLogger get() = syncStuff.syncObjectLogger
 
 
     @Throws(NullPointerException::class)
@@ -44,7 +44,7 @@ class DirBackuper @Inject constructor(
                 .forEach { syncObject ->
                     try {
                         logOperationStarts(syncTask.id, syncObject)
-                        createDir(syncStuff.backupDirSpec, syncObject.name)
+                         createDir(syncStuff.backupDirSpec, syncObject.name)
                         logOperationSuccess(syncTask.id, syncObject)
                     }
                     catch (e: Exception) {
@@ -54,37 +54,29 @@ class DirBackuper @Inject constructor(
         }
     }
 
-    private fun logOperationStarts(taskId: String, syncObject: SyncObject) {
+    private suspend fun logOperationStarts(taskId: String, syncObject: SyncObject) {
         syncObjectLogger.apply {
-            addLogItem(LogItem.createWaiting(
-                executionId = this.executionId,
-                taskId = taskId,
-                syncObject = syncObject,
+            logWaiting(syncObject = syncObject,
                 operationName = R.string.SYNC_OPERATION_create_backup_dir
-            ))
+            )
         }
     }
 
-    private fun logOperationSuccess(taskId: String, syncObject: SyncObject) {
+    private suspend fun logOperationSuccess(taskId: String, syncObject: SyncObject) {
         syncObjectLogger.apply {
-            addLogItem(LogItem.createSuccess(
-                executionId = this.executionId,
-                taskId = taskId,
-                syncObject = syncObject,
+            logSuccess(syncObject = syncObject,
                 operationName = R.string.SYNC_OPERATION_create_backup_dir
-            ))
+            )
         }
     }
 
-    private fun logOperationError(id: String, syncObject: SyncObject, e: Exception) {
+    private suspend fun logOperationError(id: String, syncObject: SyncObject, e: Exception) {
         syncObjectLogger.apply {
-            addLogItem(LogItem.createFailed(
-                executionId = this.executionId,
-                taskId = taskId,
+            logError(
                 syncObject = syncObject,
                 operationName = R.string.SYNC_OPERATION_create_backup_dir,
                 errorMsg = ExceptionUtils.getErrorMessage(e)
-            ))
+            )
         }
     }
 
