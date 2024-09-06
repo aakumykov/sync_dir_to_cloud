@@ -37,9 +37,6 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
     override fun doWork(): Result {
         MyLogger.d(TAG, "[${classNameWithHash()}] doWork() начался")
 
-        val workerId = UUID.randomUUID().toString()
-        appComponent.getCancellationHolder().addScope(workerId, scope!!)
-
         taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))
 
@@ -48,6 +45,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
         try {
             runBlocking {
                 scope = this
+
+                // FIXME: избавиться от "!!"
+                appComponent.getCancellationHolder().addScope(taskId!!, scope!!)
 
                 syncTaskRunningTimeUpdater.updateStartTime(taskId!!)
                 syncTaskRunningTimeUpdater.clearFinishTime(taskId!!)

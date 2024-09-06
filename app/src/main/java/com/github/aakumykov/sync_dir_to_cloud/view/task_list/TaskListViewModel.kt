@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.CancellationHolder
@@ -11,7 +12,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class TaskListViewModel(
@@ -30,11 +33,21 @@ class TaskListViewModel(
 
 
     fun startStopTask(taskId: String) {
-        /*viewModelScope.launch {
-            syncTaskStartStopUseCase.startStopSyncTask(taskId)
-        }*/
+        viewModelScope.launch {
+//            syncTaskStartStopUseCase.startStopSyncTask(taskId)
 
-        cancellationHolder.getScope()
+            if (syncTaskStartStopUseCase.isRunning(taskId)) {
+
+                cancellationHolder.getScope(taskId)?.also {
+                    cancel(CancellationException("Прервано пользователем"))
+                } ?: {
+                    Log.e(TAG, "CoroutineScope не найден для задачи '$taskId'")
+                }
+
+            } else {
+                syncTaskStartStopUseCase.startStopSyncTask(taskId)
+            }
+        }
     }
 
     fun changeTaskEnabled(taskId: String) {
@@ -58,5 +71,9 @@ class TaskListViewModel(
             syncTaskManagingUseCase.resetSyncTask(taskId)
             syncObjectDeleter.deleteAllObjectsForTask(taskId)
         }
+    }
+
+    companion object {
+        val TAG: String = TaskListViewModel::class.java.simpleName
     }
 }

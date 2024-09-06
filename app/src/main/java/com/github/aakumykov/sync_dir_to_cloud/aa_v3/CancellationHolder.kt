@@ -17,7 +17,7 @@ class CancellationHolder @Inject constructor() {
     fun getJob(operationId: String): Job? = jobMap[operationId]
     fun removeJob(operationId: String) = jobMap.remove(operationId)
 
-    fun addScope(workerId: String, coroutineScope: CoroutineScope) { scopeMap[workerId] = coroutineScope }
-    fun getScope(workerId: String): CoroutineScope? = scopeMap[workerId]
-    fun removeScope(workerId: String) = scopeMap.remove(workerId)
+    fun addScope(taskId: String, coroutineScope: CoroutineScope) { scopeMap[taskId] = coroutineScope }
+    fun getScope(taskId: String): CoroutineScope? = scopeMap[taskId]
+    fun removeScope(taskId: String) = scopeMap.remove(taskId)
 }

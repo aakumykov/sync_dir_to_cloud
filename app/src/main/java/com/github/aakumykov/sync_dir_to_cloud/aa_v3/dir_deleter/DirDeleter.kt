@@ -3,9 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_deleter
 import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_creator.DirCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_creator.DirCreator.Companion
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -18,8 +16,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.cancellation.CancellationException
 
 class DirDeleter @AssistedInject constructor(
     @Assisted private val syncStuff: SyncStuff,
@@ -37,25 +37,42 @@ class DirDeleter @AssistedInject constructor(
 
         coroutineScope.launch (coroutineDispatcher) {
 
-            syncObjectReader.getAllObjectsForTask(syncTask.id)
-                .filter { it.isDir }
-                .filter { it.isDeleted }
-                .forEach { syncObject ->
-                    try {
-                        operationLogger.logOperationStarts(syncObject, operationName)
-
-                        cloudWriter.deleteFile(
-                            syncObject.absolutePathIn(syncTask.sourcePath!!),
-                            syncObject.name)
-
-                        operationLogger.logOperationSuccess(syncObject, operationName)
-                    }
-                    catch(e: Exception) {
-                        operationLogger.logOperationError(syncObject, operationName, e)
-                        Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
-                    }
+            try {
+                runBlocking {
+                    deleteDirs(syncTask, operationName)
                 }
+            }
+            catch (e: CancellationException) {
+                Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+            }
         }
+    }
+
+    private suspend fun deleteDirs(syncTask: SyncTask, operationName: Int) {
+
+        syncObjectReader.getAllObjectsForTask(syncTask.id)
+            .filter { it.isDir }
+            .filter { it.isDeleted }
+            .forEach { syncObject ->
+                try {
+                    operationLogger.logOperationStarts(syncObject, operationName)
+
+                    repeat(5) { i ->
+                        Log.d(DirCreator.TAG, "Ожидание удаления каталога «${syncObject.name}» ...$i")
+                        delay(1000)
+                    }
+
+                    cloudWriter.deleteFile(
+                        syncObject.absolutePathIn(syncTask.sourcePath!!),
+                        syncObject.name)
+
+                    operationLogger.logOperationSuccess(syncObject, operationName)
+                }
+                catch(e: Exception) {
+                    operationLogger.logOperationError(syncObject, operationName, e)
+                    Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+                }
+            }
     }
 
     companion object {

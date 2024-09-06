@@ -19,6 +19,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class DirCreator @AssistedInject constructor(
     @Assisted private val syncStuff: SyncStuff,
@@ -37,7 +38,9 @@ class DirCreator @AssistedInject constructor(
         cancellationHolder.addJob("qwerty",
             coroutineScope.launch (coroutineDispatcher) {
                 try {
-                    createDirs(syncTask, operationName)
+                    runBlocking {
+                        createDirs(syncTask, operationName)
+                    }
                 }
                 catch (e: CancellationException) {
                     Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)

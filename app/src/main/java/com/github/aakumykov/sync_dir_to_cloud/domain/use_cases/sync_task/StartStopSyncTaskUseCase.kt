@@ -33,6 +33,10 @@ class StartStopSyncTaskUseCase @Inject constructor(
         syncTaskStarterStopper.stopSyncTask(syncTask)
     }
 
+    suspend fun isRunning(taskId: String): Boolean {
+        return syncTaskReader.getSyncTask(taskId).executionState == ExecutionState.RUNNING
+    }
+
 
     companion object {
         val TAG: String = StartStopSyncTaskUseCase::class.java.simpleName
