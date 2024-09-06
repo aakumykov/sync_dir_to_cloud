@@ -122,7 +122,7 @@ class SyncTaskExecutor @Inject constructor(
 
             // Удалить удалённые каталоги
             appComponent.getDirDeleterAssistedFactory().create(syncStuff).deleteDeletedDirs(syncTask)
-            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
+//            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
