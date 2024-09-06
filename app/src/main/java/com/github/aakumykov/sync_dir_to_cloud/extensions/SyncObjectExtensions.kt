@@ -8,5 +8,9 @@ fun SyncObject.absolutePathIn(dirPath: String): String {
     return (dirPath + CloudWriter.DS + relativeParentDirPath + CloudWriter.DS + name).stripMultiSlash()
 }
 
+fun SyncObject.basePathIn(dirPath: String): String {
+    return (dirPath + CloudWriter.DS + relativeParentDirPath).stripMultiSlash()
+}
+
 val SyncObject.relativePath: String
     get() = relativeParentDirPath + FSItem.DS + name

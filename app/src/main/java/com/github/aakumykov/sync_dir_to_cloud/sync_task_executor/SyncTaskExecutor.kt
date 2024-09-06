@@ -127,7 +127,8 @@ class SyncTaskExecutor @Inject constructor(
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
             // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
-            createNewDirs(syncTask)
+//            createNewDirs(syncTask)
+            appComponent.getDirCreatorAssistedFactory().create(syncStuff).createNewDirs(syncTask)
             createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...

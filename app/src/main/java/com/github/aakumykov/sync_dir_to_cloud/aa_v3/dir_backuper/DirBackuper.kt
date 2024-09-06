@@ -1,13 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLogger
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.BackupDirSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -18,7 +16,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
-import kotlin.jvm.Throws
 
 class DirBackuper @AssistedInject constructor(
     @Assisted private val syncStuff: SyncStuff,
@@ -28,7 +25,7 @@ class DirBackuper @AssistedInject constructor(
 ) {
     private val operationLogger: OperationLogger get() = syncStuff.operationLogger
 
-
+    // TODO: убрать @Throws
     @Throws(NullPointerException::class)
     suspend fun backupDeletedDirs(syncTask: SyncTask) {
 
@@ -47,6 +44,7 @@ class DirBackuper @AssistedInject constructor(
                     }
                     catch (e: Exception) {
                         operationLogger.logOperationError(syncObject, operationName, e)
+                        Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
                     }
                 }
         }
@@ -57,6 +55,10 @@ class DirBackuper @AssistedInject constructor(
             File(backupDirSpec.parentDirPath, backupDirSpec.backupDirName).absolutePath,
             dirName
         )
+    }
+
+    companion object {
+        val TAG: String = DirBackuper::class.java.simpleName
     }
 }
 
