@@ -11,7 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_de
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_deleter.TaskFilesDeleterCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuper
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_creator.DirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_deleter.DirDeleterAssistedFactory
@@ -60,7 +59,7 @@ import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factor
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
@@ -118,7 +117,7 @@ interface AppComponent {
 
     fun getCloudAuthReader(): CloudAuthReader
 
-    fun getSyncTaskExecutor(): SyncTaskExecutor
+    fun getSyncTaskExecutorAssistedFactory(): SyncTaskExecutorAssistedFactory
 
     fun getSyncTaskNotificator(): SyncTaskNotificator
 

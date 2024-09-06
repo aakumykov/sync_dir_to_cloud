@@ -22,8 +22,8 @@ import kotlinx.coroutines.launch
 
 class DirCreator @AssistedInject constructor(
     @Assisted private val syncStuff: SyncStuff,
+    @Assisted private val coroutineScope: CoroutineScope,
     private val syncObjectReader: SyncObjectReader,
-    private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
     private val cancellationHolder: CancellationHolder,
 ) {

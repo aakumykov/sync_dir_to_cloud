@@ -23,8 +23,8 @@ import kotlinx.coroutines.launch
 
 class DirDeleter @AssistedInject constructor(
     @Assisted private val syncStuff: SyncStuff,
+    @Assisted private val coroutineScope: CoroutineScope,
     private val syncObjectReader: SyncObjectReader,
-    private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
 ) {
     private val operationLogger: OperationLogger get() = syncStuff.operationLogger

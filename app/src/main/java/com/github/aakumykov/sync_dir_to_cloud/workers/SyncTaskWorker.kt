@@ -19,7 +19,11 @@ import java.util.concurrent.CancellationException
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
     // TODO: OutputData: краткая сводка о выполненной работе
 
-    private val syncTaskExecutor: SyncTaskExecutor by lazy { App.getAppComponent().getSyncTaskExecutor() }
+    private val syncTaskExecutor: SyncTaskExecutor by lazy {
+        App.getAppComponent().getSyncTaskExecutorAssistedFactory()
+            .create(scope!!)
+    }
+
     private val syncTaskReader: SyncTaskReader by lazy { App.getAppComponent().getSyncTaskReader() }
     private val syncTaskStateChanger by lazy { App.getAppComponent().getSyncTaskStateChanger() }
     private val syncTaskRunningTimeUpdater by lazy { App.getAppComponent().getSyncTaskRunningTimeUpdater() }

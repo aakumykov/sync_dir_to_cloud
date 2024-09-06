@@ -28,9 +28,15 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
-class SyncTaskExecutor @Inject constructor(
+class SyncTaskExecutor @AssistedInject constructor(
+
+    @Assisted private val coroutineScope: CoroutineScope,
+
     private val storageReaderCreator: StorageReaderCreator,
     private val storageWriterCreator: StorageWriterCreator,
 
@@ -121,14 +127,14 @@ class SyncTaskExecutor @Inject constructor(
             deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
             // Удалить удалённые каталоги
-            appComponent.getDirDeleterAssistedFactory().create(syncStuff).deleteDeletedDirs(syncTask)
+            appComponent.getDirDeleterAssistedFactory().create(syncStuff, coroutineScope).deleteDeletedDirs(syncTask)
 //            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
             // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
 //            createNewDirs(syncTask)
-            appComponent.getDirCreatorAssistedFactory().create(syncStuff).createNewDirs(syncTask)
+            appComponent.getDirCreatorAssistedFactory().create(syncStuff, coroutineScope).createNewDirs(syncTask)
             createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
