@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuper
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_deleter.DirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -168,6 +169,7 @@ interface AppComponent {
     fun getSyncStuff(): SyncStuff
 
     fun getDirBackuperAssistedFactory(): DirBackuperAssistedFactory
+    fun getDirDeleterAssistedFactory(): DirDeleterAssistedFactory
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

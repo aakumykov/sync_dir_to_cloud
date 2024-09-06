@@ -5,6 +5,8 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.BackupDirCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncObjectLoggerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLogger
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
@@ -17,16 +19,18 @@ class SyncStuff @Inject constructor(
     private val cloudWriterCreator: CloudWriterCreator,
     private val backupDirNamer: BackupDirNamer,
     private val syncObjectLoggerFactory: SyncObjectLoggerAssistedFactory,
+    private val operationLoggerAssistedFactory: OperationLoggerAssistedFactory,
 ) {
     private var _cloudReader: CloudReader? = null
     private var _cloudWriter: CloudWriter? = null
     private var _backupDirSpec: BackupDirSpec? = null
-    private var _syncObjectLogger: SyncObjectLogger? = null
+    private var _operationLogger: OperationLogger? = null
 
     val cloudReader: CloudReader get() = _cloudReader!!
     val cloudWriter: CloudWriter get() = _cloudWriter!!
     val backupDirSpec: BackupDirSpec get() = _backupDirSpec!!
-    val syncObjectLogger: SyncObjectLogger get() = _syncObjectLogger!!
+    val operationLogger: OperationLogger get() = _operationLogger!!
+
 
     suspend fun prepareFor(syncTask: SyncTask, executionId: String): SyncStuff {
 
@@ -36,7 +40,7 @@ class SyncStuff @Inject constructor(
         _cloudReader = cloudReaderCreator.createCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken)
         _cloudWriter = cloudWriterCreator.createCloudWriter(syncTask.targetStorageType, targetAuth?.authToken)
         _backupDirSpec = backupDirNamer.createBackupDirSpec(syncTask)
-        _syncObjectLogger = syncObjectLoggerFactory.create(syncTask.id, executionId)
+        _operationLogger = operationLoggerAssistedFactory.create(syncObjectLoggerFactory.create(syncTask.id, executionId))
 
         return this
     }

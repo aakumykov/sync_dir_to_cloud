@@ -1,0 +1,45 @@
+package com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger
+
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncObjectLogger
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+
+class OperationLogger @AssistedInject constructor(
+    @Assisted private val syncObjectLogger: SyncObjectLogger
+) {
+    suspend fun logOperationStarts(
+        syncObject: SyncObject,
+        operationName: Int
+    ) {
+        syncObjectLogger.apply {
+            logWaiting(syncObject = syncObject, operationName = operationName)
+        }
+    }
+
+
+    suspend fun logOperationSuccess(
+        syncObject: SyncObject,
+        operationName: Int
+    ) {
+        syncObjectLogger.apply {
+            logSuccess(syncObject = syncObject, operationName = operationName)
+        }
+    }
+
+
+    suspend fun logOperationError(
+        syncObject: SyncObject,
+        operationName: Int,
+        e: Exception
+    ) {
+        syncObjectLogger.apply {
+            logError(
+                syncObject = syncObject,
+                operationName = operationName,
+                errorMsg = ExceptionUtils.getErrorMessage(e)
+            )
+        }
+    }
+}
