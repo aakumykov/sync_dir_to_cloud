@@ -5,6 +5,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
@@ -14,6 +15,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import java.util.UUID
 import java.util.concurrent.CancellationException
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
@@ -35,7 +37,8 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
     override fun doWork(): Result {
         MyLogger.d(TAG, "[${classNameWithHash()}] doWork() начался")
 
-
+        val workerId = UUID.randomUUID().toString()
+        appComponent.getCancellationHolder().addScope(workerId, scope!!)
 
         taskId = inputData.getString(TASK_ID)
             ?: return Result.failure(errorData("TASK_ID не найден во входящих данных."))

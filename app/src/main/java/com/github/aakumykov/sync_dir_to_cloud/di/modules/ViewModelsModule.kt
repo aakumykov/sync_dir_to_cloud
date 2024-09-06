@@ -109,7 +109,8 @@ class ViewModelsModule {
                                  syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
                                  syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
                                  syncTaskNotificator: SyncTaskNotificator,
-                                 syncObjectDeleter: SyncObjectDeleter
+                                 syncObjectDeleter: SyncObjectDeleter,
+                                 cancellationHolder: CancellationHolder,
     ): ViewModel {
         return TaskListViewModel(
             application = application,
@@ -117,7 +118,8 @@ class ViewModelsModule {
             syncTaskStartStopUseCase = syncTaskStartStopUseCase,
             syncTaskSchedulingUseCase = syncTaskSchedulingUseCase,
             syncTaskNotificator = syncTaskNotificator,
-            syncObjectDeleter = syncObjectDeleter
+            syncObjectDeleter = syncObjectDeleter,
+            cancellationHolder = cancellationHolder,
         )
     }
 

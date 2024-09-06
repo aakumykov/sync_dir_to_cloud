@@ -34,7 +34,7 @@ class DirCreator @AssistedInject constructor(
 
         val operationName = R.string.SYNC_OPERATION_creating_new_dir
 
-        cancellationHolder.add("qwerty",
+        cancellationHolder.addJob("qwerty",
             coroutineScope.launch (coroutineDispatcher) {
                 try {
                     createDirs(syncTask, operationName)

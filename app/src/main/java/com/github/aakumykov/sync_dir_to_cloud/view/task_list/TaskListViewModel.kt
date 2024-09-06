@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.CancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
@@ -19,7 +20,8 @@ class TaskListViewModel(
     private val syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
     private val syncTaskNotificator: SyncTaskNotificator,
-    private val syncObjectDeleter: SyncObjectDeleter
+    private val syncObjectDeleter: SyncObjectDeleter,
+    private val cancellationHolder: CancellationHolder,
 )
     : PageOpStateViewModel(application)
 {
@@ -28,9 +30,11 @@ class TaskListViewModel(
 
 
     fun startStopTask(taskId: String) {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             syncTaskStartStopUseCase.startStopSyncTask(taskId)
-        }
+        }*/
+
+        cancellationHolder.getScope()
     }
 
     fun changeTaskEnabled(taskId: String) {
