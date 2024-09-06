@@ -17,6 +17,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class DirCreator @AssistedInject constructor(
@@ -41,6 +42,11 @@ class DirCreator @AssistedInject constructor(
 
                     try {
                         operationLogger.logOperationStarts(syncObject, operationName)
+
+                        repeat(5) { i ->
+                            Log.d(TAG, "Ожидание создания каталога «${syncObject.name}» ...$i")
+                            delay(1000)
+                        }
 
                         cloudWriter.createDir(
                             syncObject.basePathIn(syncTask.targetPath!!),
