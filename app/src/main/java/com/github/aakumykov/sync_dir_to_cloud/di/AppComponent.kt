@@ -11,9 +11,9 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_de
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_deleter.TaskFilesDeleterCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.DirBackuper
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuper
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuffHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
@@ -165,11 +165,9 @@ interface AppComponent {
 
     fun getSyncObjectLogger(): SyncObjectLogger
 
-    fun getSyncStaffHolder(): SyncStuffHolder
-
     fun getSyncStuff(): SyncStuff
 
-    fun getDirBackuper(): DirBackuper
+    fun getDirBackuperAssistedFactory(): DirBackuperAssistedFactory
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

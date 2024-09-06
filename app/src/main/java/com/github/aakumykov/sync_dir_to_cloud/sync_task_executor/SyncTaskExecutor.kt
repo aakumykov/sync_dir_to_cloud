@@ -6,7 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuffHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -27,10 +26,8 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class SyncTaskExecutor @Inject constructor(
@@ -68,11 +65,6 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(executionId) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
 
-    private val syncStaffHolder: SyncStuffHolder by lazy { appComponent.getSyncStaffHolder() }
-
-    private var _currentSyncStuff: SyncStuff? = null
-    private val currentSyncStuff: SyncStuff get() = _currentSyncStuff!!
-
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
@@ -101,7 +93,7 @@ class SyncTaskExecutor @Inject constructor(
         logExecutionStart(syncTask);
 
         try {
-            prepareSyncStuff(syncTask)
+            val syncStuff = appComponent.getSyncStuff().prepareFor(syncTask, executionId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
@@ -119,7 +111,7 @@ class SyncTaskExecutor @Inject constructor(
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
-            appComponent.getDirBackuper().backupDeletedDirs(syncTask)
+            appComponent.getDirBackuperAssistedFactory().create(syncStuff).backupDeletedDirs(syncTask)
             backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
@@ -169,10 +161,6 @@ class SyncTaskExecutor @Inject constructor(
         }
     }
 
-    private suspend fun prepareSyncStuff(syncTask: SyncTask) {
-        _currentSyncStuff = appComponent.getSyncStuff().prepareFor(syncTask, executionId)
-        syncStaffHolder.put(syncTask.id, currentSyncStuff)
-    }
 
     private suspend fun logExecutionStart(syncTask: SyncTask) {
         taskStateLogger.logRunning(TaskLogEntry(
