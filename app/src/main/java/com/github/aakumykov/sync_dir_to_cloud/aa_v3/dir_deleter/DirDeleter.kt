@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
+import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -28,7 +29,7 @@ class DirDeleter @AssistedInject constructor(
 
     fun deleteDeletedDirs(syncTask: SyncTask) {
 
-        /*val operationName = R.string.SYNC_OPERATION_deleting_deleted_dir
+        val operationName = R.string.SYNC_OPERATION_deleting_deleted_dir
 
         coroutineScope.launch (coroutineDispatcher) {
 
@@ -37,12 +38,18 @@ class DirDeleter @AssistedInject constructor(
                 .filter { it.isDeleted }
                 .forEach { syncObject ->
                     try {
+                        operationLogger.logOperationStarts(syncObject, operationName)
 
+                        cloudWriter.deleteFile(
+                            syncObject.absolutePathIn(syncTask.sourcePath!!),
+                            syncObject.name)
+
+                        operationLogger.logOperationSuccess(syncObject, operationName)
                     }
                     catch(e: Exception) {
-
+                        operationLogger.logOperationError(syncObject, operationName, e)
                     }
                 }
-        }*/
+        }
     }
 }
