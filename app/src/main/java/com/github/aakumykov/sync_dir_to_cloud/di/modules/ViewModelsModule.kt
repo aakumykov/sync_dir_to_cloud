@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.CancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ViewModelKey
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
@@ -124,8 +125,9 @@ class ViewModelsModule {
     @IntoMap
     @ViewModelKey(SyncLogViewModel::class)
     fun provideSyncLogViewModel(
-        syncObjectLogReader: SyncObjectLogReader
+        syncObjectLogReader: SyncObjectLogReader,
+        cancellationHolder: CancellationHolder
     ): ViewModel {
-        return SyncLogViewModel(syncObjectLogReader)
+        return SyncLogViewModel(syncObjectLogReader, cancellationHolder)
     }
 }

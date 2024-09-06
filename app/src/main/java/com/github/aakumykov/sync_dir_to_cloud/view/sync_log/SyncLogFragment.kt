@@ -51,18 +51,14 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 //        binding.listView.setOnItemClickListener(::onItemClicked)
         binding.listView.isClickable = true
         binding.listView.setOnItemClickListener { parent, view, position, id ->
-            showItemInfo(listAdapter.getItem(position))
+            onItemClicked(listAdapter.getItem(position))
         }
     }
 
 
-    private fun onItemClicked(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
-        showItemInfo(listAdapter.getItem(i))
-    }
-
-
-    private fun showItemInfo(logItem: SyncObjectLogItem) {
-        LogItemDetailsDialog.create(logItem).show(childFragmentManager)
+    private fun onItemClicked(logItem: SyncObjectLogItem) {
+//        LogItemDetailsDialog.create(logItem).show(childFragmentManager)
+        syncLogViewModel.cancelJob("qwerty")
     }
 
 
