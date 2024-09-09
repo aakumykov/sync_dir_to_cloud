@@ -144,7 +144,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             createNeverSyncedDirs(syncTask)
 
             // Скопировать новые файлы
-            copyNewFiles(syncTask)
+//            copyNewFiles(syncTask)
+            appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
             // Скопировать никогда не копировавшиеся файлы
             copyNeverSyncedFiles(syncTask)

@@ -6,9 +6,11 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLo
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.BackupDirSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -20,6 +22,7 @@ import java.io.File
 class DirBackuper @AssistedInject constructor(
     @Assisted private val syncStuff: SyncStuff,
     private val syncObjectReader: SyncObjectReader,
+    private val syncObjectStateChanger: SyncObjectStateChanger,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
 ) {
@@ -37,18 +40,29 @@ class DirBackuper @AssistedInject constructor(
                 .filter { it.isDir }
                 .filter { it.isDeleted }
                 .forEach { syncObject ->
-                    try {
-                        operationLogger.logOperationStarts(syncObject, operationName)
-                         createDir(syncStuff.backupDirSpec, syncObject.name)
-                        operationLogger.logOperationSuccess(syncObject, operationName)
-                    }
-                    catch (e: Exception) {
-                        operationLogger.logOperationError(syncObject, operationName, e)
-                        Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
-                    }
+                    backupOneDir(syncObject, syncTask, operationName)
                 }
         }
     }
+
+
+    private suspend fun backupOneDir(syncObject: SyncObject, syncTask: SyncTask, operationName: Int) {
+        try {
+            operationLogger.logOperationStarts(syncObject, operationName)
+            syncObjectStateChanger.markAsBusy(syncObject.id)
+
+            createDir(syncStuff.backupDirSpec, syncObject.name)
+
+            syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
+            operationLogger.logOperationSuccess(syncObject, operationName)
+        }
+        catch (e: Exception) {
+            Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+            syncObjectStateChanger.markAsError(syncObject.id, e)
+            operationLogger.logOperationError(syncObject, operationName, e)
+        }
+    }
+
 
     private fun createDir(backupDirSpec: BackupDirSpec, dirName: String) {
         syncStuff.cloudWriter.createDir(
@@ -56,6 +70,7 @@ class DirBackuper @AssistedInject constructor(
             dirName
         )
     }
+
 
     companion object {
         val TAG: String = DirBackuper::class.java.simpleName

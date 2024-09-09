@@ -2,6 +2,7 @@ package com.github.aakumykov.kotlin_playground.counting_buffered_streams
 
 import java.io.BufferedInputStream
 import java.io.InputStream
+import java.util.concurrent.TimeUnit
 
 open class CountingBufferedInputStream(
     private val inputStream: InputStream,
@@ -16,6 +17,7 @@ open class CountingBufferedInputStream(
     override fun read(b: ByteArray?, off: Int, len: Int): Int {
         return super.read(b, off, len).let { count ->
             summarizeAndCallBack(count)
+            TimeUnit.MILLISECONDS.sleep(50)
             count
         }
     }

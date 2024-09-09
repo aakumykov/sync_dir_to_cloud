@@ -44,6 +44,18 @@ class SyncObjectLogger @AssistedInject constructor(
         ))
     }
 
+    suspend fun logProgress(objectId: String,
+                            taskId: String,
+                            executionId: String,
+                            progressAsPartOf100: Int) {
+        syncLogRepository.updateProgress(
+            objectId = objectId,
+            taskId = taskId,
+            executionId = executionId,
+            progressAsPartOf100 = progressAsPartOf100
+        )
+    }
+
     private fun getString(@StringRes strRes: Int): String = resources.getString(strRes)
 }
 

@@ -36,4 +36,7 @@ val SyncObject.isModified: Boolean get() = (StateInSource.MODIFIED == stateInSou
 
 val SyncObject.isDeleted: Boolean get() = StateInSource.DELETED == stateInSource
 
+/**
+ * Возвращает значение newSize, если оно есть, иначе значение поля size.
+ */
 val SyncObject.actualSize: Long get() = this.newSize ?: this.size

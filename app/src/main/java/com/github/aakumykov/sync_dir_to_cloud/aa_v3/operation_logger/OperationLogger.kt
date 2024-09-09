@@ -42,4 +42,20 @@ class OperationLogger @AssistedInject constructor(
             )
         }
     }
+
+    suspend fun logProgress(
+        objectId: String,
+        taskId: String,
+        executionId: String,
+        progressAsPartOf100: Int
+    ) {
+        syncObjectLogger.apply {
+            logProgress(
+                objectId = objectId,
+                taskId = taskId,
+                executionId = executionId,
+                progressAsPartOf100 = progressAsPartOf100
+            )
+        }
+    }
 }

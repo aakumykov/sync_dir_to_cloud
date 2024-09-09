@@ -128,4 +128,5 @@
     <string name="SYNC_OPERATION_backuping_deleted_dir">Бекап удалённого каталога</string>
     <string name="SYNC_OPERATION_deleting_deleted_dir">Удаление каталога</string>
     <string name="SYNC_OPERATION_creating_new_dir">Создание нового каталога</string>
+    <string name="SYNC_OPERATION_copy_new_file">Копируется новый файл</string>
 </resources>

@@ -21,6 +21,7 @@ interface SyncObjectStateChanger {
     suspend fun markAsSuccessfullySynced(objectId: String)
     suspend fun markAsBusy(objectId: String)
     suspend fun markAsError(objectId: String, errorMsg: String)
+    suspend fun markAsError(objectId: String, t: Throwable)
 
     suspend fun setTargetReadingState(objectId: String, state: ExecutionState, errorMsg: String = "")
     suspend fun setBackupState(objectId: String, state: ExecutionState, errorMsg: String = "")

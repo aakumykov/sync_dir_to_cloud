@@ -16,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
+import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 @AppScope
@@ -133,6 +134,10 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun markAsError(objectId: String, errorMsg: String) {
         changeSyncState(objectId, ExecutionState.ERROR, errorMsg)
+    }
+
+    override suspend fun markAsError(objectId: String, t: Throwable) {
+        markAsError(objectId, ExceptionUtils.getErrorMessage(t))
     }
 
 
