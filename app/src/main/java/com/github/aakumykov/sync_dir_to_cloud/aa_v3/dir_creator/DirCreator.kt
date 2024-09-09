@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_creator
 import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.CancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -26,7 +26,7 @@ class DirCreator @AssistedInject constructor(
     @Assisted private val coroutineScope: CoroutineScope,
     private val syncObjectReader: SyncObjectReader,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
-    private val cancellationHolder: CancellationHolder,
+    private val operationCancellationHolder: OperationCancellationHolder,
 ) {
     private val operationLogger: OperationLogger get() = syncStuff.operationLogger
     private val cloudWriter: CloudWriter get() = syncStuff.cloudWriter
@@ -35,7 +35,7 @@ class DirCreator @AssistedInject constructor(
 
         val operationName = R.string.SYNC_OPERATION_creating_new_dir
 
-        cancellationHolder.addJob("qwerty",
+        operationCancellationHolder.addJob("qwerty",
             coroutineScope.launch (coroutineDispatcher) {
                 try {
                     runBlocking {

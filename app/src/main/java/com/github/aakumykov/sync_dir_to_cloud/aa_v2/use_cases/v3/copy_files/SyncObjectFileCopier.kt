@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.InputStream
 

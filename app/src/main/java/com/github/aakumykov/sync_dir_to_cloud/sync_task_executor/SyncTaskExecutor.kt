@@ -25,6 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
@@ -70,7 +71,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val filesBackuperCreator: FilesBackuperCreator by lazy { appComponent.getFilesBackuperCreator() }
     private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(executionId) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
-
+    private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
@@ -99,6 +100,8 @@ class SyncTaskExecutor @AssistedInject constructor(
         logExecutionStart(syncTask);
 
         try {
+            syncTaskRunningTimeUpdater.updateStartTime(taskId)
+
             val syncStuff = appComponent.getSyncStuff().prepareFor(syncTask, executionId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
@@ -165,6 +168,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         }
         finally {
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
+            syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
     }
 

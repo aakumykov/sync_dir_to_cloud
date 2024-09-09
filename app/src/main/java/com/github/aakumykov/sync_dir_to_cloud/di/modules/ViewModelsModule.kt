@@ -2,7 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.CancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ViewModelKey
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
@@ -110,7 +111,7 @@ class ViewModelsModule {
                                  syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
                                  syncTaskNotificator: SyncTaskNotificator,
                                  syncObjectDeleter: SyncObjectDeleter,
-                                 cancellationHolder: CancellationHolder,
+                                 taskCancellationHolder: TaskCancellationHolder,
     ): ViewModel {
         return TaskListViewModel(
             application = application,
@@ -119,7 +120,7 @@ class ViewModelsModule {
             syncTaskSchedulingUseCase = syncTaskSchedulingUseCase,
             syncTaskNotificator = syncTaskNotificator,
             syncObjectDeleter = syncObjectDeleter,
-            cancellationHolder = cancellationHolder,
+            taskCancellationHolder = taskCancellationHolder,
         )
     }
 
@@ -128,8 +129,8 @@ class ViewModelsModule {
     @ViewModelKey(SyncLogViewModel::class)
     fun provideSyncLogViewModel(
         syncObjectLogReader: SyncObjectLogReader,
-        cancellationHolder: CancellationHolder
+        operationCancellationHolder: OperationCancellationHolder
     ): ViewModel {
-        return SyncLogViewModel(syncObjectLogReader, cancellationHolder)
+        return SyncLogViewModel(syncObjectLogReader, operationCancellationHolder)
     }
 }

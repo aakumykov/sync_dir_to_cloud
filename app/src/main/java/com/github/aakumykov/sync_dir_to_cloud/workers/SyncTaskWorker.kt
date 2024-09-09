@@ -1,40 +1,56 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
 import android.content.Context
+import android.util.Log
+import androidx.work.CoroutineWorker
 import androidx.work.Data
-import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.github.aakumykov.sync_dir_to_cloud.App
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
-import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.runBlocking
-import java.util.UUID
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.concurrent.CancellationException
 
-class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
+class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
     // TODO: OutputData: краткая сводка о выполненной работе
 
-    private val syncTaskExecutor: SyncTaskExecutor by lazy {
-        App.getAppComponent().getSyncTaskExecutorAssistedFactory()
-            .create(scope!!)
-    }
+    private val coroutineDispatcher = Dispatchers.IO
 
-    private val syncTaskReader: SyncTaskReader by lazy { App.getAppComponent().getSyncTaskReader() }
-    private val syncTaskStateChanger by lazy { App.getAppComponent().getSyncTaskStateChanger() }
-    private val syncTaskRunningTimeUpdater by lazy { App.getAppComponent().getSyncTaskRunningTimeUpdater() }
+    private val taskCancellationHolder: TaskCancellationHolder by lazy { appComponent.getTaskCancellationHolder() }
+
+    private val syncTaskReader: SyncTaskReader by lazy { appComponent.getSyncTaskReader() }
+    private val syncTaskStateChanger by lazy { appComponent.getSyncTaskStateChanger() }
+    private val syncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
     private var taskSummary: String? = null
     private val hashCode: String = hashCode().toString()
-    private var scope: CoroutineScope? = null
-    private var taskId: String? = null
 
-    override fun doWork(): Result {
+    private val taskId: String get() = inputData.getString(TASK_ID)!!
+
+    override suspend fun doWork(): Result {
+        return withContext(coroutineDispatcher) {
+            try {
+                appComponent.getSyncTaskExecutorAssistedFactory().create(this).also { syncTaskExecutor ->
+                    taskCancellationHolder.addScope(taskId, this)
+                    Log.d(TAG, "[$hashCode] Задача '$taskId' начала выполнение")
+                    syncTaskExecutor.executeSyncTask(taskId)
+                    Log.d(TAG, "[$hashCode] Задача '$taskId' завершила выполнение")
+                }
+                Result.success()
+            }
+            catch (e: CancellationException) {
+                Log.d(TAG, "[$hashCode] Задача '$taskId' прервана пользователем")
+                return@withContext Result.success()
+            }
+            catch (e: Exception) {
+                Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
+                return@withContext Result.failure()
+            }
+        }
+    }
+
+    /*override fun doWork(): Result {
         MyLogger.d(TAG, "[${classNameWithHash()}] doWork() начался")
 
         taskId = inputData.getString(TASK_ID)
@@ -76,9 +92,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
 
         MyLogger.d(TAG, "[${classNameWithHash()}] doWork() завершился.") //  ($taskSummary)
         return Result.success(successData(taskSummary!!))
-    }
+    }*/
 
-    override fun onStopped() {
+    /*override fun onStopped() {
         super.onStopped()
         runBlocking {
             syncTaskExecutor.stopExecutingTask(taskId!!)
@@ -87,7 +103,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Wor
         scope?.cancel(CancellationException("ОСТАНОВЛЕНО ВРУЧНУЮ"))
         val taskId: String? = inputData.getString(TASK_ID)
         MyLogger.d(TAG, "onStopped() [${hashCode}], taskId: $taskId")
-    }
+    }*/
 
 
     private suspend fun fetchTaskSummary(taskId: String) {

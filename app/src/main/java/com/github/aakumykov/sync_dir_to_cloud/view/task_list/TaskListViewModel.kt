@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.CancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
@@ -24,7 +24,7 @@ class TaskListViewModel(
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
     private val syncTaskNotificator: SyncTaskNotificator,
     private val syncObjectDeleter: SyncObjectDeleter,
-    private val cancellationHolder: CancellationHolder,
+    private val taskCancellationHolder: TaskCancellationHolder,
 )
     : PageOpStateViewModel(application)
 {
@@ -38,7 +38,7 @@ class TaskListViewModel(
 
             if (syncTaskStartStopUseCase.isRunning(taskId)) {
 
-                cancellationHolder.getScope(taskId)?.also {
+                taskCancellationHolder.getScope(taskId)?.also {
                     cancel(CancellationException("Прервано пользователем"))
                 } ?: {
                     Log.e(TAG, "CoroutineScope не найден для задачи '$taskId'")

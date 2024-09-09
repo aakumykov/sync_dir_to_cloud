@@ -1,21 +1,16 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v3
+package com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders
 
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import javax.inject.Inject
 
-@ExecutionScope
-class CancellationHolder @Inject constructor() {
+@AppScope
+class TaskCancellationHolder @Inject constructor() {
 
-    private val jobMap: ConcurrentMap<String, Job> = ConcurrentHashMap()
     private val scopeMap: ConcurrentMap<String, CoroutineScope> = ConcurrentHashMap()
-
-    fun addJob(operationId: String, job: Job) { jobMap[operationId] = job }
-    fun getJob(operationId: String): Job? = jobMap[operationId]
-    fun removeJob(operationId: String) = jobMap.remove(operationId)
 
     fun addScope(taskId: String, coroutineScope: CoroutineScope) { scopeMap[taskId] = coroutineScope }
     fun getScope(taskId: String): CoroutineScope? = scopeMap[taskId]
