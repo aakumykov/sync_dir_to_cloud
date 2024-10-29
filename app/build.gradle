@@ -28,6 +28,40 @@ android {
         manifestPlaceholders = [YANDEX_CLIENT_ID:"87e03664d7e24970ba8b7661d25c7dcc"]
     }
 
+
+    def keystorePropertiesFileName = "../local.properties"
+    def keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(file(keystorePropertiesFileName)))
+
+    def keystoreFile = keystoreProperties['storeFile']
+    if (null == keystoreFile) throw new NullPointerException("There is no 'storeFile' field in "+keystorePropertiesFileName)
+
+    def keystorePassword = keystoreProperties['storePassword']
+    if (null == keystorePassword) throw new NullPointerException("There is no 'storePassword' field in "+keystorePropertiesFileName)
+
+    /* Не называй переменную 'keyAlias' - это нарушает работу скрипта. */
+    def keystoreKeyAlias = keystoreProperties['keyAlias']
+    if (null == keystoreKeyAlias) throw new NullPointerException("There is no 'keyAlias' field in "+keystorePropertiesFileName)
+
+    def keystoreKeyPassword = keystoreProperties['keyPassword']
+    if (null == keystoreKeyPassword) throw new NullPointerException("There is no 'keyPassword' field in "+keystorePropertiesFileName)
+
+    signingConfigs {
+        release {
+            storeFile = file(keystoreFile)
+            storePassword = keystorePassword
+            keyAlias = keystoreKeyAlias
+            keyPassword = keystoreKeyPassword
+        }
+        debug {
+            storeFile = file(keystoreFile)
+            storePassword = keystorePassword
+            keyAlias = keystoreKeyAlias
+            keyPassword = keystoreKeyPassword
+        }
+    }
+
+
     buildFeatures {
         viewBinding true
 //        compose true
@@ -36,6 +70,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
