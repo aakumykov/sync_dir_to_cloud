@@ -130,7 +130,7 @@ dependencies {
 
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
-    def fileListerNavigatorSelectorVersion = '10.0.5-alpha'
+    def fileListerNavigatorSelectorVersion = 'd15f303601'
     implementation "com.github.aakumykov:file_lister_navigator_selector_2:$fileListerNavigatorSelectorVersion"
 //    implementation "com.github.aakumykov:local_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"
 //    implementation "com.github.aakumykov:yandex_disk_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"
