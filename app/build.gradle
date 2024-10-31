@@ -33,10 +33,10 @@ android {
     def keystoreProperties = new Properties()
     keystoreProperties.load(new FileInputStream(file(keystorePropertiesFileName)))
 
-    def keystoreFile = keystoreProperties['storeFile']
+    def keystoreFile = keystoreProperties['keystoreFile']
     if (null == keystoreFile) throw new NullPointerException("There is no 'storeFile' field in "+keystorePropertiesFileName)
 
-    def keystorePassword = keystoreProperties['storePassword']
+    def keystorePassword = keystoreProperties['keystorePassword']
     if (null == keystorePassword) throw new NullPointerException("There is no 'storePassword' field in "+keystorePropertiesFileName)
 
     /* Не называй переменную 'keyAlias' - это нарушает работу скрипта. */
