@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <plurals name="minutes">
-        <item quantity="zero">минут</item>
-        <item quantity="one">минута</item>
-        <item quantity="two">минуты</item>
-        <item quantity="few">минуты</item>
-        <item quantity="many">минут</item>
-        <item quantity="other">минут</item>
+        <item quantity="zero">minutes</item>
+        <item quantity="other">minutes</item>
     </plurals>
 </resources>
