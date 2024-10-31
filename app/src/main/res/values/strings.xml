@@ -98,11 +98,11 @@
     <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_message">The WebView component required to display the authorization page was not found in your system.</string>
     <string name="DIALOG_WEBVIEW_NOT_AVAILABLE_neutral_button">Got it</string>
     <string name="MENU_ITEM_action_edit_task">Edit task</string>
-    <string name="MENU_ITEM_action_enabling_toggle">Turn of/off</string>
-    <string name="task_is_enabled">Is scheduled</string>
+    <string name="MENU_ITEM_action_enabling_toggle">Enable/disable</string>
+    <string name="task_is_enabled">Scheduled</string>
     <string name="task_is_disabled">Disabled</string>
     <string name="MENU_ITEM_action_reset">Reset</string>
-    <string name="SYNC_OBJECT_LOG_lost_dir_creation_success">Missing dir was created</string>
+    <string name="SYNC_OBJECT_LOG_lost_dir_creation_success">Missindir was created</string>
     <string name="SYNC_OBJECT_LOG_lost_dir_creation_error">Error creating missing dir: %1$s</string>
     <string name="SYNC_OBJECT_LOGGER_create_new_dir">Creating new dir</string>
     <string name="SYNC_OBJECT_LOGGER_create_never_processed_dir">Creating never processed dir</string>
