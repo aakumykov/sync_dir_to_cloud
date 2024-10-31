@@ -78,7 +78,7 @@
     <string name="last_finish_info">Finished at: %1$s</string>
     <string name="sync_object_info_dialog_title">Object info</string>
     <string name="DIALOG_BUTTON_close">Close</string>
-    <string name="EXECUTION_STATE_success">Is synced</string>
+    <string name="EXECUTION_STATE_success">Synced</string>
     <string name="MENU_ITEM_action_start_stop_task">Start or stop task</string>
     <string name="MENU_ITEM_action_probe_change_task_state">Sample task state toggling</string>
     <string name="SPINNER_storage_type_default_value">Storage type</string>
