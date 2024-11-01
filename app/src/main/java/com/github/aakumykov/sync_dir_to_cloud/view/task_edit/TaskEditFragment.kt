@@ -28,11 +28,13 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIc
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setError
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -362,7 +364,32 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     private fun onSaveButtonClicked() {
-        taskEditViewModel.saveSyncTask()
+
+        // TODO: нормальная валидация
+
+        val errors: MutableList<String> = mutableListOf()
+
+        binding.sourcePathInput.apply {
+            if (text.isNullOrEmpty()) {
+                error = resources.getString(R.string.VALIDATION_cannot_be_empty)
+                errors.add(this.id.toString())
+            } else {
+                errors.remove(this.id.toString())
+            }
+        }
+
+        binding.targetPathInput.apply {
+            if (text.isNullOrEmpty()) {
+                error = resources.getString(R.string.VALIDATION_cannot_be_empty)
+                errors.add(this.id.toString())
+            } else {
+                errors.remove(this.id.toString())
+            }
+        }
+
+        if (errors.isEmpty()) {
+            taskEditViewModel.saveSyncTask()
+        }
     }
 
     private fun onCancelButtonClicked() {
