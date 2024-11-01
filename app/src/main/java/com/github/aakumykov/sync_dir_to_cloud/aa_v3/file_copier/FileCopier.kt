@@ -25,7 +25,6 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.cancellation.CancellationException
 
 class FileCopier @AssistedInject constructor(
@@ -49,7 +48,7 @@ class FileCopier @AssistedInject constructor(
         operationCancellationHolder.addJob("copy_new_file",
             coroutineScope.launch (coroutineDispatcher) {
                 try {
-                    copyFiles(syncTask, operationName)
+                    copyNewFilesReal(syncTask, operationName)
                 }
                 catch (e: CancellationException) {
                     Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
@@ -59,7 +58,7 @@ class FileCopier @AssistedInject constructor(
     }
 
 
-    private suspend fun copyFiles(syncTask: SyncTask, operationName: Int) {
+    private suspend fun copyNewFilesReal(syncTask: SyncTask, operationName: Int) {
 
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
