@@ -137,6 +137,14 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     }
 
     private fun onSaveButtonClicked() {
+
+        binding.nameView.apply {
+            if (text.isNullOrEmpty()) {
+                error = resources.getString(R.string.VALIDATION_cannot_be_empty)
+                return
+            }
+        }
+
         cloudAuthToken?.also { token ->
             hideError()
             disableForm()
