@@ -23,7 +23,6 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogge
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 
@@ -171,7 +170,3 @@ class SyncTaskDirsCreator @AssistedInject constructor(
 
 val List<SyncObject>.names: String get() = joinToString(", ") { it.name }
 
-@AssistedFactory
-interface SyncTaskDirsCreatorAssistedFactory {
-    fun create(executionId: String): SyncTaskDirsCreator
-}
