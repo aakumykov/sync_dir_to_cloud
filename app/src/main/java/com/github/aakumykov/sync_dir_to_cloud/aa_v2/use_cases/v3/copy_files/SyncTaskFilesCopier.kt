@@ -59,14 +59,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         }
     }
 
-    suspend fun copyNeverCopiedFilesOfSyncTask(syncTask: SyncTask) {
+    suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
         syncObjectReader
             .getAllObjectsForTask(syncTask.id)
             .filter { it.isFile }
             .filter { it.isNeverSynced }
             .also { list ->
 
-                val operationName = R.string.SYNC_OBJECT_LOGGER_copy_never_copied_file
+                val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
 
                 syncObjectLogger(syncTask.id).logWaiting(list, operationName)
 

@@ -108,7 +108,7 @@
     <string name="SYNC_OBJECT_LOGGER_create_never_processed_dir">Creating never processed dir</string>
     <string name="SYNC_OBJECT_LOGGER_create_in_target_lost_dir">Restoring dir</string>
     <string name="SYNC_OBJECT_LOGGER_copy_new_file">Copying new file</string>
-    <string name="SYNC_OBJECT_LOGGER_copy_never_copied_file">Copying forgotten file</string>
+    <string name="SYNC_OBJECT_LOGGER_copy_previously_forgotten_file">Copying previously forgotten file</string>
     <string name="SYNC_OBJECT_LOGGER_copy_modified_file">Copying changed file</string>
     <string name="SYNC_OBJECT_LOGGER_copy_in_target_lost_file">Restoring missing file</string>
     <string name="SYNC_OBJECT_LOGGER_deleting_dir">Dir deleting</string>

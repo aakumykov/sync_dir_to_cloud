@@ -5,7 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -32,7 +31,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import javax.inject.Inject
 
 class SyncTaskExecutor @AssistedInject constructor(
 
@@ -147,8 +145,8 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            copyNewFiles(syncTask)
             appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
-            // Скопировать никогда не копировавшиеся файлы
-            copyNeverSyncedFiles(syncTask)
+            // Скопировать забытые с прошлого раза файлы
+            copyPreviouslyForgottenFiles(syncTask)
 
             // Скопировать изменившееся
             copyModifiedFiles(syncTask)
@@ -254,8 +252,8 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskDirCreator.createNeverProcessedDirs(syncTask)
     }
 
-    private suspend fun copyNeverSyncedFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyNeverCopiedFilesOfSyncTask(syncTask)
+    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask) {
+        syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
     }
 
     private suspend fun copyModifiedFiles(syncTask: SyncTask) {
