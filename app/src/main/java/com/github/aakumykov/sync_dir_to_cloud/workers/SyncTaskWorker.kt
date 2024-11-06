@@ -26,10 +26,13 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     private var taskSummary: String? = null
     private val hashCode: String = hashCode().toString()
 
+    // FIXME: как быть с null? По идее, нужно регистрировать это как ошибку и завершать
+    // задачу как "успешную", чтобы бессмысленно не пытаться выполнить её много раз.
+    // Т.е. нужен доп статус спец. для этой ситуации...
     private val taskId: String get() = inputData.getString(TASK_ID)!!
 
     override suspend fun doWork(): Result {
-        return withContext(coroutineDispatcher) {
+        /*return withContext(coroutineDispatcher) {
             try {
                 appComponent.getSyncTaskExecutorAssistedFactory().create(this).also { syncTaskExecutor ->
                     taskCancellationHolder.addScope(taskId, this)
@@ -47,7 +50,10 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
                 return@withContext Result.failure()
             }
-        }
+        }*/
+
+        appComponent.getBetterTaskExecutor().executeSyncTask(taskId)
+        return Result.success()
     }
 
     /*override fun doWork(): Result {
