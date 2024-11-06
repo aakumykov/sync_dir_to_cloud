@@ -19,6 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_deleter.DirDeleterAssist
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.FileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.BetterTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
@@ -101,6 +102,8 @@ import dagger.Component
 @AppScope
 @ExecutionScope
 interface AppComponent {
+
+    fun getBetterTaskExecutor(): BetterTaskExecutor
 
     fun getViewModelFactory(): ViewModelFactory
 
