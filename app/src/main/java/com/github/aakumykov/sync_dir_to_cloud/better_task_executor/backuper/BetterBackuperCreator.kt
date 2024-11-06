@@ -7,6 +7,6 @@ class BetterBackuperCreator @Inject constructor(
     private val betterBackuperAssistedFactory: BetterBackuperAssistedFactory
 ) {
     fun createBackuper(syncTask: SyncTask): BetterBackuper {
-        return betterBackuperAssistedFactory.createBackuper(syncTask)
+        return betterBackuperAssistedFactory.create(syncTask)
     }
 }

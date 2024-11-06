@@ -5,5 +5,5 @@ import dagger.assisted.AssistedFactory
 
 @AssistedFactory
 interface BetterBackuperAssistedFactory {
-    fun createBackuper(syncTask: SyncTask): BetterBackuper
+    fun create(syncTask: SyncTask): BetterBackuper
 }

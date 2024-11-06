@@ -12,7 +12,7 @@ class BetterSourceReader @AssistedInject constructor(
     private val syncObjectAdder: SyncObjectAdder,
     private val syncTaskStateChanger: SyncTaskStateChanger,
 ) {
-    @Throws(TaskExecutionException.SourceReadingException::class)
+    @Throws(TaskExecutionException.CriticalException.SourceReadingException::class)
     suspend fun readSource() {
 
     }
