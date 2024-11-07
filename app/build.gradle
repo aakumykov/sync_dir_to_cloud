@@ -66,13 +66,31 @@ android {
         viewBinding true
 //        compose true
     }
+
     buildTypes {
+        debug {
+            getIsDefault().set(true)
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions 'stability'
+
+    productFlavors {
+        working {
+            dimension 'stability'
+            getIsDefault().set(true)
+        }
+        experimental {
+            dimension 'stability'
+            applicationIdSuffix '.experimental'
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
