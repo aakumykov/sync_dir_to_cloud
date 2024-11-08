@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskResetter
@@ -83,6 +84,20 @@ class SyncTaskRepository @Inject constructor(
     override suspend fun resetSourceReadingBadState(taskId: String) {
         syncTaskStateDAO.resetSourceReadingBadState(taskId)
     }
+
+
+    override suspend fun setSuccessState(taskId: String) {
+        syncTaskStateDAO.setSyncState(taskId, ExecutionState.SUCCESS)
+    }
+
+    override suspend fun setRunningState(taskId: String) {
+        syncTaskStateDAO.setSyncState(taskId, ExecutionState.RUNNING)
+    }
+
+    override suspend fun setErrorState(taskId: String, exception: Exception) {
+        changeExecutionState(taskId, ExecutionState.ERROR, exception.errorMsg)
+    }
+
 
     override suspend fun changeSchedulingState(taskId: String, newState: ExecutionState, errorMsg: String) {
         changeExecutionState(syncTaskSchedulingStateDAO, taskId, newState, errorMsg)
