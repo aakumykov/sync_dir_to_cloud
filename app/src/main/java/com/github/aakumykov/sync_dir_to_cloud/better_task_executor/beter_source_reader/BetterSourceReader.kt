@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.better_task_executor.source_reader
+package com.github.aakumykov.sync_dir_to_cloud.better_task_executor.beter_source_reader
 
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.TaskExecutionException
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask

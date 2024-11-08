@@ -1,20 +1,24 @@
 package com.github.aakumykov.sync_dir_to_cloud.better_task_executor
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.backuper.BetterBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_dir_creator.BetterDirCreatorCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_backuper.BetterBackuperCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_dir_maker.BetterDirMakerCreator
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_copier.BetterFileCopierCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_target_reader.BetterTargetReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.TaskExecutionException
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.source_reader.BetterSourceReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.beter_source_reader.BetterSourceReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import javax.inject.Inject
 
 class BetterTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
+    private val syncTaskStateChanger: SyncTaskStateChanger,
     private val sourceReaderCreator: BetterSourceReaderCreator,
+    private val targetReaderCreator: BetterTargetReaderCreator,
     private val backuperCreator: BetterBackuperCreator,
-    private val dirCreatorCreator: BetterDirCreatorCreator,
+    private val dirCreatorCreator: BetterDirMakerCreator,
     private val fileCopierCreator: BetterFileCopierCreator,
 ) {
     suspend fun executeSyncTask(taskId: String) {
@@ -32,6 +36,9 @@ class BetterTaskExecutor @Inject constructor(
 
             // прочитать источник
             sourceReaderCreator.createSourceReader(syncTask).readSource()
+
+            // прочитать приёмник
+            targetReaderCreator.createTargetReader(syncTask).readTarget()
 
             // забекапить изменённое/удалённое
             backuperCreator.createBackuper(syncTask).backupItems()
