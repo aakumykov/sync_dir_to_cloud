@@ -32,7 +32,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     private val taskId: String get() = inputData.getString(TASK_ID)!!
 
     override suspend fun doWork(): Result {
-        return withContext(coroutineDispatcher) {
+        /*return withContext(coroutineDispatcher) {
             try {
                 appComponent.getSyncTaskExecutorAssistedFactory().create(this).also { syncTaskExecutor ->
                     taskCancellationHolder.addScope(taskId, this)
@@ -50,7 +50,10 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
                 return@withContext Result.failure()
             }
-        }
+        }*/
+
+        appComponent.getBetterTaskExecutor().executeSyncTask(taskId)
+        return Result.success()
     }
 
     /*override fun doWork(): Result {
@@ -124,7 +127,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
     companion object {
         fun dataWithTaskId(taskId: String): Data
-            = Data.Builder().putString(TASK_ID, taskId).build()
+                = Data.Builder().putString(TASK_ID, taskId).build()
 
         val TAG: String = SyncTaskWorker::class.java.simpleName
 
