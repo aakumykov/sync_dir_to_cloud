@@ -27,6 +27,7 @@ class BetterTaskExecutor @Inject constructor(
     suspend fun executeSyncTask(taskId: String) {
 
         try {
+            // установка состояния "выполняется"
             syncTaskStateChanger.setRunningState(taskId)
 
             //
@@ -55,6 +56,7 @@ class BetterTaskExecutor @Inject constructor(
             // скопировать файлы
             fileCopierCreator.create(syncTask).copyFiles()
 
+            // установка состояния "успешно выполнено"
             syncTaskStateChanger.setSuccessState(taskId)
         }
         catch (e: TaskExecutionException.NonCriticalException) {
@@ -62,7 +64,9 @@ class BetterTaskExecutor @Inject constructor(
             Log.e(TAG, e.errorMsg)
         }
         catch (e: Exception) {
+            // установка состояния "успешно выполнено"
             syncTaskStateChanger.setErrorState(taskId, e)
+
             // Выбрасываю исключение, чтобы оно ушло Worker-у
             throw e
         }
