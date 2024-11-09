@@ -7,7 +7,7 @@ import dagger.assisted.AssistedInject
 class BetterTargetReader @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
 ) {
-    fun readTarget() {
+    fun readTargetFilesState() {
 
     }
 }

@@ -7,7 +7,6 @@ import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_c
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_target_reader.BetterTargetReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.TaskExecutionException
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.beter_source_reader.BetterSourceReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -42,10 +41,14 @@ class BetterTaskExecutor @Inject constructor(
             delay(Random.nextLong(3000,5000))
 
             // прочитать источник
-            sourceReaderCreator.createSourceReader(syncTask).readSource()
+            // fixme: отразить в названии то, что не просто читается состояние файлов источника,
+            //  а идёт их сравнение с существующими файлами (точнее, записями о них в БД)
+            sourceReaderCreator.createSourceReader(syncTask).readSourceFilesState()
 
             // прочитать приёмник
-            targetReaderCreator.createTargetReader(syncTask).readTarget()
+            // fixme: отразить в названии то, что не просто читается состояние файлов приёмника,
+            //  а идёт их сравнение с существующими файлами (точнее, записями о них в БД)
+            targetReaderCreator.createTargetReader(syncTask).readTargetFilesState()
 
             // забекапить изменённое/удалённое
             backuperCreator.createBackuper(syncTask).backupItems()
