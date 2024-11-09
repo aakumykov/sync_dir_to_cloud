@@ -33,18 +33,22 @@ android {
     def keystoreProperties = new Properties()
     keystoreProperties.load(new FileInputStream(file(keystorePropertiesFileName)))
 
-    def keystoreFile = keystoreProperties['keystoreFile']
-    if (null == keystoreFile) throw new NullPointerException("There is no 'storeFile' field in "+keystorePropertiesFileName)
+    def keystoreFileKey = 'keystoreFile'
+    def keystoreFile = keystoreProperties[keystoreFileKey]
+    if (null == keystoreFile) throw new NullPointerException("There is no '"+keystoreFileKey+"' field in "+keystorePropertiesFileName)
 
-    def keystorePassword = keystoreProperties['keystorePassword']
-    if (null == keystorePassword) throw new NullPointerException("There is no 'storePassword' field in "+keystorePropertiesFileName)
+    def keystorePasswordKey = 'keystorePassword'
+    def keystorePassword = keystoreProperties[keystorePasswordKey]
+    if (null == keystorePassword) throw new NullPointerException("There is no '"+keystorePasswordKey+"' field in "+keystorePropertiesFileName)
 
     /* Не называй переменную 'keyAlias' - это нарушает работу скрипта. */
-    def keystoreKeyAlias = keystoreProperties['keyAlias']
-    if (null == keystoreKeyAlias) throw new NullPointerException("There is no 'keyAlias' field in "+keystorePropertiesFileName)
+    def keyAliasKey = 'keyAlias'
+    def keystoreKeyAlias = keystoreProperties[keyAliasKey]
+    if (null == keystoreKeyAlias) throw new NullPointerException("There is no '"+keyAliasKey+"' field in "+keystorePropertiesFileName)
 
-    def keystoreKeyPassword = keystoreProperties['keyPassword']
-    if (null == keystoreKeyPassword) throw new NullPointerException("There is no 'keyPassword' field in "+keystorePropertiesFileName)
+    def keyPasswordKey = 'keyPassword'
+    def keystoreKeyPassword = keystoreProperties[keyPasswordKey]
+    if (null == keystoreKeyPassword) throw new NullPointerException("There is no '"+keyPassword+"' field in "+keystorePropertiesFileName)
 
     signingConfigs {
         release {
