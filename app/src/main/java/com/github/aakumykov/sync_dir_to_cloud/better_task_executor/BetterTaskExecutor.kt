@@ -8,7 +8,9 @@ import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.beter_source_
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_backuper.BetterBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_dir_maker.BetterDirMakerCreator
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_copier.BetterFileCopierCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_deleter.BetterFileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_target_reader.BetterTargetReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.dir_deleter_creator.BetterDirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.TaskExecutionException
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.sync_state_logger.SyncStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
@@ -29,6 +31,10 @@ class BetterTaskExecutor @Inject constructor(
     private val targetReaderCreator: BetterTargetReaderCreator,
 
     private val backuperCreator: BetterBackuperCreator,
+
+    private val fileDeleterCreator: BetterFileDeleterAssistedFactory,
+    private val dirDeleterCreator: BetterDirDeleterAssistedFactory,
+
     private val dirCreatorCreator: BetterDirMakerCreator,
     private val fileCopierCreator: BetterFileCopierCreator,
 ) {
@@ -84,6 +90,13 @@ class BetterTaskExecutor @Inject constructor(
             // забекапить изменённое/удалённое
             logSyncState(R.string.SYNC_OBJECT_LOGGER_backuping_modified_deleted)
             backuperCreator.createBackuper(syncTask).backupItems()
+
+
+            // удалить удалённые файлы (делать это перед удалением каталогов!)
+            fileDeleterCreator.create(syncTask).deleteDeletedFiles()
+
+            // удалить удалённые каталоги (делать это после удалением файлов!)
+            dirDeleterCreator.create(syncTask).deleteDeletedDirs()
 
 
             // создать каталоги
