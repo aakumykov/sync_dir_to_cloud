@@ -3,9 +3,9 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_d
 import android.content.res.Resources
 import androidx.annotation.StringRes
 import com.github.aakumykov.cloud_writer.CloudWriter
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TARGET_DIR
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.DirDeleter.Companion.QUALIFIER_EXECUTION_ID
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.DirDeleter.Companion.QUALIFIER_TARGET_DIR
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
@@ -50,12 +50,6 @@ class DirDeleter @AssistedInject constructor(
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
 
     private fun getString(@StringRes stringRes: Int, vararg arguments: Any) = resources.getString(stringRes, arguments)
-
-    companion object {
-        const val QUALIFIER_TARGET_DIR = "TARGET_DIR"
-        const val QUALIFIER_EXECUTION_ID = "EXECUTION_ID"
-        const val QUALIFIER_TASK_ID = "TASK_ID"
-    }
 }
 
 

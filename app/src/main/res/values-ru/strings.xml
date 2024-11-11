@@ -129,4 +129,8 @@
     <string name="SYNC_OPERATION_deleting_deleted_dir">Удаление каталога</string>
     <string name="SYNC_OPERATION_creating_new_dir">Создание нового каталога</string>
     <string name="SYNC_OPERATION_copy_new_file">Копируется новый файл</string>
+    <string name="SYNC_OBJECT_LOGGER_resetting_bad_sates">Сброс ошибочных статусов</string>
+    <string name="SYNC_OBJECT_LOGGER_reading_source">Чтение источника</string>
+    <string name="SYNC_OBJECT_LOGGER_reading_target">Чтение приёника</string>
+    <string name="SYNC_OBJECT_LOGGER_backuping_modified_deleted">Бекап изменённого, удалённого</string>
 </resources>

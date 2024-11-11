@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit
     ],
     indices = [ Index("source_auth_id"), Index("target_auth_id") ]*/
 )
+// TODO: сделать класс read-only?
 class SyncTask {
 
     // FIXME: var|val

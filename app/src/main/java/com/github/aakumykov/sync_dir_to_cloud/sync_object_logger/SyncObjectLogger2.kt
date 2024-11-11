@@ -2,16 +2,14 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_object_logger
 
 import android.content.res.Resources
 import androidx.annotation.StringRes
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.DirDeleter.Companion.QUALIFIER_EXECUTION_ID
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.DirDeleter.Companion.QUALIFIER_TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectProgressUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectLogRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -36,6 +34,16 @@ class SyncObjectLogger2 @AssistedInject constructor(
                 operationName = getString(operationNameRes)
             ))
         }
+    }
+
+    suspend fun logResettingBadStates(taskId: String, executionId: String) {
+        syncObjectLogAdder.addLogItem(
+            SyncObjectLogItem.createResettingBadState(
+                taskId = taskId,
+                executionId = executionId,
+                operationName = getString(R.string.SYNC_OBJECT_LOGGER_resetting_bad_sates)
+            )
+        )
     }
 
     suspend fun logProgress(

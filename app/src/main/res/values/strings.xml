@@ -129,4 +129,8 @@
     <string name="SYNC_OPERATION_deleting_deleted_dir">Deleting dir</string>
     <string name="SYNC_OPERATION_creating_new_dir">Creating new dir</string>
     <string name="SYNC_OPERATION_copy_new_file">Copying new file</string>
+    <string name="SYNC_OBJECT_LOGGER_resetting_bad_sates">Resetting bad states</string>
+    <string name="SYNC_OBJECT_LOGGER_reading_source">Reading source</string>
+    <string name="SYNC_OBJECT_LOGGER_reading_target">Reading target</string>
+    <string name="SYNC_OBJECT_LOGGER_backuping_modified_deleted">Backing modified, deleted items</string>
 </resources>
