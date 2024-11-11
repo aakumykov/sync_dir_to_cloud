@@ -57,8 +57,8 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 
 
     private fun onItemClicked(logItem: SyncObjectLogItem) {
-//        LogItemDetailsDialog.create(logItem).show(childFragmentManager)
-        syncLogViewModel.cancelJob("qwerty")
+        LogItemDetailsDialog.create(logItem).show(childFragmentManager)
+//        syncLogViewModel.cancelJob("qwerty")
     }
 
 
