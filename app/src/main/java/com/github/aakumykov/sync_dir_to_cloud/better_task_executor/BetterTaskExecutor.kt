@@ -93,6 +93,7 @@ class BetterTaskExecutor @Inject constructor(
 
 
             // удалить удалённые файлы (делать это перед удалением каталогов!)
+            logSyncState(R.string.SYNC_OBJECT_LOGGER_deleting_file)
             fileDeleterCreator.create(syncTask).deleteDeletedFiles()
 
             // удалить удалённые каталоги (делать это после удалением файлов!)
