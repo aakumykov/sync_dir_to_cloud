@@ -4,7 +4,9 @@ sealed class TaskExecutionException(errorMsg: String) : Exception(errorMsg) {
 
     sealed class CriticalException(errorMsg: String) : TaskExecutionException(errorMsg) {
         class TaskNotFoundException(errorMsg: String) : CriticalException(errorMsg)
+        class ResettingBadStatesException(errorMsg: String) : CriticalException(errorMsg)
         class SourceReadingException(errorMsg: String) : CriticalException(errorMsg)
+        class TargetReadingException(errorMsg: String) : CriticalException(errorMsg)
         class BackingUpException(errorMsg: String) : CriticalException(errorMsg)
     }
 

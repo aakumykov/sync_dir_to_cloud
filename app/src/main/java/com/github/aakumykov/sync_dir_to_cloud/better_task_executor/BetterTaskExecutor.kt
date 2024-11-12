@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.better_task_executor
 import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.bas_state_resetter.BadDateResetter
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.bas_state_resetter.BadStatesResetter
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.beter_source_reader.BetterSourceReaderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_backuper.BetterBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_dir_maker.BetterDirMakerAssistedFactory
@@ -25,7 +25,7 @@ class BetterTaskExecutor @Inject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncStateLogger: SyncStateLogger,
 
-    private val badStateResetter: BadDateResetter,
+    private val badStateResetter: BadStatesResetter,
 
     private val sourceReaderFactory: BetterSourceReaderAssistedFactory,
     private val targetReaderFactory: BetterTargetReaderAssistedFactory,
@@ -74,15 +74,11 @@ class BetterTaskExecutor @Inject constructor(
 
 
             // прочитать источник
-            // fixme: отразить в названии то, что не просто читается состояние файлов источника,
-            //  а идёт их сравнение с существующими файлами (точнее, записями о них в БД)
             logSyncState(R.string.SYNC_OBJECT_LOGGER_reading_source)
             sourceReaderFactory.create(syncTask).readSourceFilesState()
 
 
             // прочитать приёмник
-            // fixme: отразить в названии то, что не просто читается состояние файлов приёмника,
-            //  а идёт их сравнение с существующими файлами (точнее, записями о них в БД)
             logSyncState(R.string.SYNC_OBJECT_LOGGER_reading_target)
             targetReaderFactory.create(syncTask).readTargetFilesState()
 
@@ -101,14 +97,9 @@ class BetterTaskExecutor @Inject constructor(
 
 
             // создать каталоги
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_create_new_dir)
-            dirCreatorFactory.create(syncTask).createDirs()
-
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_create_never_processed_dir)
-//            createNeverSyncedDirs(syncTask)
-
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_create_in_target_lost_dir)
-//            createLostDirsAgain(syncTask)
+            dirCreatorFactory.create(syncTask).createNewDirs()
+            dirCreatorFactory.create(syncTask).createNeverSyncedDirs()
+            dirCreatorFactory.create(syncTask).createLostDirsAgain()
 
 
             // скопировать файлы

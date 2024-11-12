@@ -7,7 +7,15 @@ import dagger.assisted.AssistedInject
 class BetterDirMaker @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
 ) {
-    suspend fun createDirs() {
+    suspend fun createNewDirs() {
+
+    }
+
+    fun createNeverSyncedDirs() {
+
+    }
+
+    fun createLostDirsAgain() {
 
     }
 }
