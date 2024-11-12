@@ -10,9 +10,9 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import java.util.UUID
 
 @Entity(
-    tableName = TaskLogEntry.TABLE_NAME
+    tableName = ExecutionLogItem.TABLE_NAME
 )
-class TaskLogEntry(
+class ExecutionLogItem(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "entry_type") val entryType: EntryType,
@@ -49,13 +49,18 @@ class TaskLogEntry(
     }
 
     companion object {
-        const val TABLE_NAME = "sync_task_logs"
+        const val NEW_TABLE_NAME_2 = "execution_logs"
+        const val NEW_TABLE_NAME = "sync_task_logs"
         const val OLD_TABLE_NAME = "task_logs"
+        const val TABLE_NAME = NEW_TABLE_NAME_2
     }
 
-    @RenameTable(fromTableName = OLD_TABLE_NAME, toTableName = TABLE_NAME)
+    @RenameTable(fromTableName = OLD_TABLE_NAME, toTableName = NEW_TABLE_NAME)
     class RenameTableFromTaskLogsToSyncTaskLogs : AutoMigrationSpec
 
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "timestamp", toColumnName = "start_time")
+    @RenameColumn(tableName = NEW_TABLE_NAME, fromColumnName = "timestamp", toColumnName = "start_time")
     class RenameColumnFromTimestampToStartTime : AutoMigrationSpec
+
+    @RenameTable(fromTableName = NEW_TABLE_NAME, toTableName = NEW_TABLE_NAME_2)
+    class RenameTableFromTaskLogEntryToExecutionLogItem : AutoMigrationSpec
 }

@@ -19,7 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedu
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 
 
@@ -28,12 +28,12 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncTask::class,
         SyncObject::class,
         CloudAuth::class,
-        TaskLogEntry::class,
+        ExecutionLogItem::class,
         SyncObjectLogItem::class
    ],
-    version = 75,
+    version = 76,
     autoMigrations = [
-        AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
+        AutoMigration(from = 56, to = 57, spec = ExecutionLogItem.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
         AutoMigration(from = 58, to = 59, spec = SyncObjectLogItem.RenameColumnMessageToOperationName::class),
         AutoMigration(from = 59, to = 60), // SyncObjectLogItem.message типа String?
@@ -49,9 +49,10 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 69, to = 70, spec = SyncObjectLogItem.RenameColumnProgressAsPartOf100ToProgress::class),
         AutoMigration(from = 70, to = 71, spec = SyncObjectLogItem.DeleteColumnAbc::class),
         AutoMigration(from = 71, to = 72),
-        AutoMigration(from = 72, to = 73, spec = TaskLogEntry.RenameColumnFromTimestampToStartTime::class),
+        AutoMigration(from = 72, to = 73, spec = ExecutionLogItem.RenameColumnFromTimestampToStartTime::class),
         AutoMigration(from = 73, to = 74), // Добавление поля TaskLogEntry.finishTime
         AutoMigration(from = 74, to = 75), // Добавление поля TaskLogEntry.size
+        AutoMigration(from = 75, to = 76, spec = ExecutionLogItem.RenameTableFromTaskLogEntryToExecutionLogItem::class),
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

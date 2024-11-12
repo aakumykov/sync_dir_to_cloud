@@ -4,22 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 
 @Dao
 interface SyncTaskLogDAO {
 
     @Insert
-    suspend fun addTaskLog(taskLogEntry: TaskLogEntry)
+    suspend fun addTaskLog(executionLogItem: ExecutionLogItem)
 
     @Query("DELETE FROM ${TABLE_NAME} WHERE task_id = :taskId")
     suspend fun deleteEntriesForTask(taskId: String)
 
     @Query("SELECT * FROM ${TABLE_NAME} WHERE task_id = :taskId")
-    suspend fun listLogsForTask(taskId: String): List<TaskLogEntry>
+    suspend fun listLogsForTask(taskId: String): List<ExecutionLogItem>
 
     @Query("SELECT * FROM ${TABLE_NAME} WHERE task_id = :taskId ORDER BY start_time DESC")
-    fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>>
+    fun getLogsForTask(taskId: String): LiveData<List<ExecutionLogItem>>
 
 
     @Query("UPDATE $TABLE_NAME " +
@@ -44,6 +44,6 @@ interface SyncTaskLogDAO {
 
 
     companion object {
-        const val TABLE_NAME = TaskLogEntry.TABLE_NAME
+        const val TABLE_NAME = ExecutionLogItem.TABLE_NAME
     }
 }

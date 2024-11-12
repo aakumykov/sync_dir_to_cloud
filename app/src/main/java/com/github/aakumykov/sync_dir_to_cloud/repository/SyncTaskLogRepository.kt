@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.SyncTaskLogDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
@@ -18,7 +18,7 @@ class SyncTaskLogRepository @Inject constructor(
 )
     : SyncTaskLogDeleter, TaskStateLogger
 {
-    fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>> {
+    fun getLogsForTask(taskId: String): LiveData<List<ExecutionLogItem>> {
         return syncTaskLogDAO.getLogsForTask(taskId)
     }
 
@@ -30,29 +30,29 @@ class SyncTaskLogRepository @Inject constructor(
     }
 
 
-    override suspend fun logRunning(taskLogEntry: TaskLogEntry) {
+    override suspend fun logRunning(executionLogItem: ExecutionLogItem) {
         withContext(coroutineDispatcher) {
-            syncTaskLogDAO.addTaskLog(taskLogEntry)
+            syncTaskLogDAO.addTaskLog(executionLogItem)
         }
     }
 
-    override suspend fun logSuccess(taskLogEntry: TaskLogEntry) {
+    override suspend fun logSuccess(executionLogItem: ExecutionLogItem) {
         withContext(coroutineDispatcher) {
             syncTaskLogDAO.updateAsSuccess(
-                taskLogEntry.taskId,
-                taskLogEntry.executionId,
+                executionLogItem.taskId,
+                executionLogItem.executionId,
                 currentTime(),
             )
         }
     }
 
-    override suspend fun logError(taskLogEntry: TaskLogEntry) {
+    override suspend fun logError(executionLogItem: ExecutionLogItem) {
         withContext(coroutineDispatcher) {
             syncTaskLogDAO.updateAsError(
-                taskLogEntry.taskId,
-                taskLogEntry.executionId,
+                executionLogItem.taskId,
+                executionLogItem.executionId,
                 finishTime = currentTime(),
-                errorMsg = taskLogEntry.errorMsg,
+                errorMsg = executionLogItem.errorMsg,
             )
         }
     }

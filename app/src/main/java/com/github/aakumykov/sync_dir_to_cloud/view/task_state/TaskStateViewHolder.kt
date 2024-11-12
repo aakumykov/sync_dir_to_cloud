@@ -5,34 +5,34 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.extensions.getString
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 
-class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
+class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<ExecutionLogItem>() {
 
     private lateinit var titleView: TextView
 
-    override fun fill(taskLogEntry: TaskLogEntry, isSelected: Boolean) {
-        titleView.text = when(taskLogEntry.entryType) {
-            TaskLogEntry.EntryType.START -> startText(taskLogEntry)
-            TaskLogEntry.EntryType.FINISH -> finishText(taskLogEntry)
-            TaskLogEntry.EntryType.ERROR -> errorText(taskLogEntry)
+    override fun fill(executionLogItem: ExecutionLogItem, isSelected: Boolean) {
+        titleView.text = when(executionLogItem.entryType) {
+            ExecutionLogItem.EntryType.START -> startText(executionLogItem)
+            ExecutionLogItem.EntryType.FINISH -> finishText(executionLogItem)
+            ExecutionLogItem.EntryType.ERROR -> errorText(executionLogItem)
         }
     }
 
 
-    private fun startText(taskLogEntry: TaskLogEntry): String {
+    private fun startText(executionLogItem: ExecutionLogItem): String {
         return titleView.resources.getString(
             R.string.TASK_STATE_running,
-            CurrentDateTime.format(taskLogEntry.startTime)
+            CurrentDateTime.format(executionLogItem.startTime)
         )
     }
 
-    private fun finishText(taskLogEntry: TaskLogEntry): String {
+    private fun finishText(executionLogItem: ExecutionLogItem): String {
 
-        val startTime = CurrentDateTime.format(taskLogEntry.startTime)
-        val timeDiff = CurrentDateTime.format(taskLogEntry.finishTime - taskLogEntry.startTime)
+        val startTime = CurrentDateTime.format(executionLogItem.startTime)
+        val timeDiff = CurrentDateTime.format(executionLogItem.finishTime - executionLogItem.startTime)
 
         return titleView.resources.getString(
             R.string.TASK_STATE_finished,
@@ -41,14 +41,14 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
         )
     }
 
-    private fun errorText(taskLogEntry: TaskLogEntry): String {
+    private fun errorText(executionLogItem: ExecutionLogItem): String {
 
-        val startTime = CurrentDateTime.format(taskLogEntry.startTime)
-        val timeDiff = CurrentDateTime.format(taskLogEntry.finishTime - taskLogEntry.startTime)
+        val startTime = CurrentDateTime.format(executionLogItem.startTime)
+        val timeDiff = CurrentDateTime.format(executionLogItem.finishTime - executionLogItem.startTime)
 
         return getString(
             R.string.TASK_STATE_error,
-            taskLogEntry.errorMsg ?: "-",
+            executionLogItem.errorMsg ?: "-",
             startTime,
             timeDiff
         )

@@ -23,7 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -173,26 +173,26 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun logExecutionStart(syncTask: SyncTask) {
-        taskStateLogger.logRunning(TaskLogEntry(
+        taskStateLogger.logRunning(ExecutionLogItem(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
-            entryType = TaskLogEntry.EntryType.START
+            entryType = ExecutionLogItem.EntryType.START
         ))
     }
 
     private suspend fun logExecutionFinish(syncTask: SyncTask) {
-        taskStateLogger.logSuccess(TaskLogEntry(
+        taskStateLogger.logSuccess(ExecutionLogItem(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
-            entryType = TaskLogEntry.EntryType.FINISH
+            entryType = ExecutionLogItem.EntryType.FINISH
         ))
     }
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
-        taskStateLogger.logError(TaskLogEntry(
+        taskStateLogger.logError(ExecutionLogItem(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
-            entryType = TaskLogEntry.EntryType.ERROR,
+            entryType = ExecutionLogItem.EntryType.ERROR,
             errorMsg = null
         ))
     }

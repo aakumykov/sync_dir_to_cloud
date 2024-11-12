@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -55,7 +55,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
 
-    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskStateViewHolder>
+    private lateinit var taskLogAdapter: ListHoldingListAdapter<ExecutionLogItem, TaskStateViewHolder>
 
     private lateinit var currentTaskId: String
 
@@ -107,7 +107,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         }
     }
 
-    private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
+    private fun onTaskLogListChanged(taskLogEntries: List<ExecutionLogItem>?) {
         taskLogEntries?.also { taskLogAdapter.setList(it) }
     }
 
@@ -124,8 +124,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun onTaskLogItemClicked(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
 //        showToast(taskLogAdapter.getItem(i).taskId)
-        taskLogAdapter.getItem(i).also { taskLogEntry: TaskLogEntry ->
-            navigationViewModel.navigateTo(NavTarget.SyncLog(taskLogEntry.taskId, taskLogEntry.executionId))
+        taskLogAdapter.getItem(i).also { executionLogItem: ExecutionLogItem ->
+            navigationViewModel.navigateTo(NavTarget.SyncLog(executionLogItem.taskId, executionLogItem.executionId))
         }
     }
 
