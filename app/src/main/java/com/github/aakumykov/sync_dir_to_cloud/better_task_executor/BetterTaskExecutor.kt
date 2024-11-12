@@ -4,12 +4,12 @@ import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.bas_state_resetter.BadDateResetter
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.beter_source_reader.BetterSourceReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_backuper.BetterBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_dir_maker.BetterDirMakerCreator
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_copier.BetterFileCopierCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.beter_source_reader.BetterSourceReaderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_backuper.BetterBackuperAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_dir_maker.BetterDirMakerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_copier.BetterFileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_deleter.BetterFileDeleterAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_target_reader.BetterTargetReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_target_reader.BetterTargetReaderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.dir_deleter_creator.BetterDirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.TaskExecutionException
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.sync_state_logger.SyncStateLogger
@@ -27,16 +27,16 @@ class BetterTaskExecutor @Inject constructor(
 
     private val badStateResetter: BadDateResetter,
 
-    private val sourceReaderCreator: BetterSourceReaderCreator,
-    private val targetReaderCreator: BetterTargetReaderCreator,
+    private val sourceReaderFactory: BetterSourceReaderAssistedFactory,
+    private val targetReaderFactory: BetterTargetReaderAssistedFactory,
 
-    private val backuperCreator: BetterBackuperCreator,
+    private val backuperFactory: BetterBackuperAssistedFactory,
 
     private val fileDeleterCreator: BetterFileDeleterAssistedFactory,
     private val dirDeleterCreator: BetterDirDeleterAssistedFactory,
 
-    private val dirCreatorCreator: BetterDirMakerCreator,
-    private val fileCopierCreator: BetterFileCopierCreator,
+    private val dirCreatorFactory: BetterDirMakerAssistedFactory,
+    private val fileCopierFactory: BetterFileCopierAssistedFactory,
 ) {
     //
     // Код, чтобы отличать один запуск от другого.
@@ -77,19 +77,19 @@ class BetterTaskExecutor @Inject constructor(
             // fixme: отразить в названии то, что не просто читается состояние файлов источника,
             //  а идёт их сравнение с существующими файлами (точнее, записями о них в БД)
             logSyncState(R.string.SYNC_OBJECT_LOGGER_reading_source)
-            sourceReaderCreator.createSourceReader(syncTask).readSourceFilesState()
+            sourceReaderFactory.create(syncTask).readSourceFilesState()
 
 
             // прочитать приёмник
             // fixme: отразить в названии то, что не просто читается состояние файлов приёмника,
             //  а идёт их сравнение с существующими файлами (точнее, записями о них в БД)
             logSyncState(R.string.SYNC_OBJECT_LOGGER_reading_target)
-            targetReaderCreator.createTargetReader(syncTask).readTargetFilesState()
+            targetReaderFactory.create(syncTask).readTargetFilesState()
 
 
             // забекапить изменённое/удалённое
             logSyncState(R.string.SYNC_OBJECT_LOGGER_backuping_modified_deleted)
-            backuperCreator.createBackuper(syncTask).backupItems()
+            backuperFactory.create(syncTask).backupItems()
 
 
             // удалить удалённые файлы (делать это перед удалением каталогов!)
@@ -102,7 +102,7 @@ class BetterTaskExecutor @Inject constructor(
 
             // создать каталоги
             logSyncState(R.string.SYNC_OBJECT_LOGGER_create_new_dir)
-            dirCreatorCreator.create(syncTask).createDirs()
+            dirCreatorFactory.create(syncTask).createDirs()
 
             logSyncState(R.string.SYNC_OBJECT_LOGGER_create_never_processed_dir)
 //            createNeverSyncedDirs(syncTask)
@@ -113,7 +113,7 @@ class BetterTaskExecutor @Inject constructor(
 
             // скопировать файлы
             logSyncState(R.string.SYNC_OBJECT_LOGGER_copy_new_file)
-            fileCopierCreator.create(syncTask).copyFiles()
+            fileCopierFactory.create(syncTask).copyFiles()
 
             logSyncState(R.string.SYNC_OBJECT_LOGGER_copy_modified_file)
 //            copyModifiedFiles(syncTask)
