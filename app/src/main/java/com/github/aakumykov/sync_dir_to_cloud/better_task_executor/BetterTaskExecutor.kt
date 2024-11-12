@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_c
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_deleter.BetterFileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_target_reader.BetterTargetReaderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.dir_deleter_creator.BetterDirDeleterAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.SyncObjectErrorRegistration
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.TaskExecutionException
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.sync_state_logger.SyncStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
@@ -69,27 +70,27 @@ class BetterTaskExecutor @Inject constructor(
 
 
             // сбросить ошибочные статусы, оставшиеся при аварийном завершении программы
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_resetting_bad_sates)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_resetting_bad_sates)
             badStateResetter.resetBadStates(syncTask)
 
 
             // прочитать источник
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_reading_source)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_reading_source)
             sourceReaderFactory.create(syncTask).readSourceFilesState()
 
 
             // прочитать приёмник
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_reading_target)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_reading_target)
             targetReaderFactory.create(syncTask).readTargetFilesState()
 
 
             // забекапить изменённое/удалённое
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_backuping_modified_deleted)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_backuping_modified_deleted)
             backuperFactory.create(syncTask).backupItems()
 
 
             // удалить удалённые файлы (делать это перед удалением каталогов!)
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_deleting_file)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_deleting_file)
             fileDeleterCreator.create(syncTask).deleteDeletedFiles()
 
             // удалить удалённые каталоги (делать это после удалением файлов!)
@@ -103,36 +104,43 @@ class BetterTaskExecutor @Inject constructor(
 
 
             // скопировать файлы
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_copy_new_file)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_copy_new_file)
             fileCopierFactory.create(syncTask).copyFiles()
 
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_copy_modified_file)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_copy_modified_file)
 //            copyModifiedFiles(syncTask)
 
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file)
 //            copyPreviouslyForgottenFiles(syncTask)
 
-            logSyncState(R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file)
+            logExecutionState(R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file)
 //            copyLostFilesAgain(syncTask )
 
 
             // установка состояния "успешно выполнено"
             syncTaskStateChanger.setSuccessState(taskId)
         }
+        catch (e: SyncObjectErrorRegistration) {
+            // TODO: изменить состояние SyncObject
+        }
         catch (e: TaskExecutionException.NonCriticalException) {
-            // TODO: регистрировать здесь или в классе, который это делает?
+            // TODO: куда записать?
             Log.e(TAG, e.errorMsg)
         }
-        catch (e: Exception) {
+        catch (e: TaskExecutionException.CriticalException) {
             // установка состояния "успешно выполнено"
             syncTaskStateChanger.setErrorState(taskId, e)
 
             // Выбрасываю исключение, чтобы оно ушло Worker-у
             throw e
         }
+        catch (e: Exception) {
+            // Выбрасываю исключение, чтобы оно ушло Worker-у
+            throw e
+        }
     }
 
-    private fun logSyncState(@StringRes stringRes: Int) {
+    private fun logExecutionState(@StringRes stringRes: Int) {
         syncStateLogger.logSyncState(taskId, executionId, TextMessage(stringRes))
     }
 
