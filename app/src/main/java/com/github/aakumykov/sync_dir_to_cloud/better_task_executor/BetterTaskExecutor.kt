@@ -11,20 +11,22 @@ import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_c
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_file_deleter.BetterFileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.better_target_reader.BetterTargetReaderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.dir_deleter_creator.BetterDirDeleterAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.SyncObjectErrorRegistration
+import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.SyncObjectError
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.exceptions.TaskExecutionException
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.sync_state_logger.SyncStateLogger
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.ExecutionLogger
 import javax.inject.Inject
 
 class BetterTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
 
     private val syncTaskStateChanger: SyncTaskStateChanger,
-    private val syncStateLogger: SyncStateLogger,
+    private val executionLogger: ExecutionLogger,
+    private val syncObjectLogger: SyncObjectLogger2,
 
     private val badStateResetter: BadStatesResetter,
 
@@ -120,28 +122,24 @@ class BetterTaskExecutor @Inject constructor(
             // установка состояния "успешно выполнено"
             syncTaskStateChanger.setSuccessState(taskId)
         }
-        catch (e: SyncObjectErrorRegistration) {
-            // TODO: изменить состояние SyncObject
-        }
-        catch (e: TaskExecutionException.NonCriticalException) {
-            // TODO: куда записать?
-            Log.e(TAG, e.errorMsg)
-        }
-        catch (e: TaskExecutionException.CriticalException) {
-            // установка состояния "успешно выполнено"
-            syncTaskStateChanger.setErrorState(taskId, e)
-
-            // Выбрасываю исключение, чтобы оно ушло Worker-у
-            throw e
-        }
         catch (e: Exception) {
-            // Выбрасываю исключение, чтобы оно ушло Worker-у
-            throw e
+            when(e) {
+                is SyncObjectError -> {
+                    syncObjectLogger.logFail(e.syncObject, e.operationName, e.errorMsg)
+                }
+                is TaskExecutionException.NonCriticalException -> {
+                    executionLogger.log(ExecutionLogItem(taskId, executionId, ExecutionLogItem.EntryType.ERROR, e.errorMsg))
+                }
+                else -> {
+                    syncTaskStateChanger.setErrorState(taskId, e)
+                    throw e
+                }
+            }
         }
     }
 
     private fun logExecutionState(@StringRes stringRes: Int) {
-        syncStateLogger.logSyncState(taskId, executionId, TextMessage(stringRes))
+//        executionLogger.log()
     }
 
 
