@@ -22,7 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
@@ -45,7 +45,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
 
-    private val syncTaskLogger: SyncTaskLogger,
+    private val executionLogger: ExecutionLogger,
     private val taskStateLogger: TaskStateLogger,
 
     private val syncObjectReader: SyncObjectReader,

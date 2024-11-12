@@ -6,9 +6,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
 
 @ExecutionScope
-class DatabaseSyncTaskLogger (
+class DatabaseExecutionLogger (
     private val syncTaskLogRepository: SyncTaskLogRepository
-): SyncTaskLogger {
+): ExecutionLogger {
 
     override suspend fun log(executionLogItem: ExecutionLogItem) {
         Log.d(TAG, "log() called with: taskLogEntry = $executionLogItem")
@@ -16,6 +16,6 @@ class DatabaseSyncTaskLogger (
     }
 
     companion object {
-        val TAG: String = DatabaseSyncTaskLogger::class.java.simpleName
+        val TAG: String = DatabaseExecutionLogger::class.java.simpleName
     }
 }

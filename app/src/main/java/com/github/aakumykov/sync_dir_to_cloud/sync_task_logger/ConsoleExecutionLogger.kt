@@ -5,9 +5,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import javax.inject.Inject
 
 @ExecutionScope
-class ConsoleSyncTaskLogger @Inject constructor(
+class ConsoleExecutionLogger @Inject constructor(
     private val logTag: String
-): SyncTaskLogger {
+): ExecutionLogger {
     override suspend fun log(executionLogItem: ExecutionLogItem) {
 
     }

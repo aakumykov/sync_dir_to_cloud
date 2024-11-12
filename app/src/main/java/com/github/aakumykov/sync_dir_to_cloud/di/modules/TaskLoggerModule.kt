@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.DatabaseSyncTaskLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.DatabaseExecutionLogger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.ExecutionLogger
 import dagger.Module
 import dagger.Provides
 
@@ -14,7 +14,7 @@ class TaskLoggerModule {
         = DatabaseSyncTaskLogger(taskLogRepository)*/
 
     @Provides
-    fun provideDatabaseSyncTaskLogger(syncTaskLogRepository: SyncTaskLogRepository): SyncTaskLogger {
-        return DatabaseSyncTaskLogger(syncTaskLogRepository)
+    fun provideDatabaseSyncTaskLogger(syncTaskLogRepository: SyncTaskLogRepository): ExecutionLogger {
+        return DatabaseExecutionLogger(syncTaskLogRepository)
     }
 }
