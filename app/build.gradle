@@ -13,8 +13,8 @@ android {
         applicationId "com.github.aakumykov.sync_dir_to_cloud"
         minSdk 21
         targetSdk 34
-        versionCode 4
-        versionName "0.0.4-alpha"
+        versionCode 5
+        versionName "0.0.5-alpha"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
