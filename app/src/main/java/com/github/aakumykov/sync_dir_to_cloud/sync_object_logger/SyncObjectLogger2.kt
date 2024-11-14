@@ -37,13 +37,13 @@ class SyncObjectLogger2 @AssistedInject constructor(
     }
 
     suspend fun logResettingBadStates(taskId: String, executionId: String) {
-        syncObjectLogAdder.addLogItem(
+        /*syncObjectLogAdder.addLogItem(
             SyncObjectLogItem.createResettingBadState(
                 taskId = taskId,
                 executionId = executionId,
                 operationName = getString(R.string.SYNC_OBJECT_LOGGER_resetting_bad_sates)
             )
-        )
+        )*/
     }
 
     suspend fun logProgress(
