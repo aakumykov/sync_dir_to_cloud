@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 75,
-    "identityHash": "cecfe55f62674c25d3b7cbe1ec6b6582",
+    "identityHash": "b58b9908d09e8127882e9f1d21fe6504",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -430,7 +430,7 @@
       },
       {
         "tableName": "sync_object_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `object_id` TEXT, `item_name` TEXT, `size` INTEGER DEFAULT 0, `operation_name` TEXT NOT NULL, `error_message` TEXT DEFAULT null, `operation_state` TEXT NOT NULL DEFAULT 'WAITING', `progress` INTEGER NOT NULL DEFAULT 0, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `object_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `item_name` TEXT NOT NULL, `size` INTEGER NOT NULL DEFAULT 0, `operation_name` TEXT NOT NULL, `error_message` TEXT DEFAULT null, `operation_state` TEXT NOT NULL DEFAULT 'WAITING', `progress` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -445,28 +445,34 @@
             "notNull": true
           },
           {
+            "fieldPath": "objectId",
+            "columnName": "object_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "executionId",
             "columnName": "execution_id",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "objectId",
-            "columnName": "object_id",
-            "affinity": "TEXT",
-            "notNull": false
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "itemName",
             "columnName": "item_name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "size",
             "columnName": "size",
             "affinity": "INTEGER",
-            "notNull": false,
+            "notNull": true,
             "defaultValue": "0"
           },
           {
@@ -495,12 +501,6 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
-          },
-          {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -516,7 +516,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cecfe55f62674c25d3b7cbe1ec6b6582')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b58b9908d09e8127882e9f1d21fe6504')"
     ]
   }
 }
