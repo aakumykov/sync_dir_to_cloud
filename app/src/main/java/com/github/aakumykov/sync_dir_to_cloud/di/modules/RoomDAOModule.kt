@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
@@ -75,5 +76,10 @@ class RoomDAOModule(private val appDatabase: AppDatabase) {
     @Provides
     fun provideSyncObjectLogDAO(): SyncObjectLogDAO {
         return appDatabase.getSyncObjectLogDAO()
+    }
+
+    @Provides
+    fun provideExecutionLogDAO(): ExecutionLogDAO {
+        return appDatabase.getExecutionLogDAO()
     }
 }

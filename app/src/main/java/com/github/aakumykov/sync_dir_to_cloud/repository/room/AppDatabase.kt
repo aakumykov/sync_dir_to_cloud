@@ -4,6 +4,7 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -20,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 
 
@@ -29,9 +31,10 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncObject::class,
         CloudAuth::class,
         TaskLogEntry::class,
-        SyncObjectLogItem::class
+        SyncObjectLogItem::class,
+        ExecutionLogItem::class,
    ],
-    version = 75,
+    version = 76,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -52,6 +55,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 72, to = 73, spec = TaskLogEntry.RenameColumnFromTimestampToStartTime::class),
         AutoMigration(from = 73, to = 74), // Добавление поля TaskLogEntry.finishTime
         AutoMigration(from = 74, to = 75), // Добавление поля TaskLogEntry.size
+        AutoMigration(from = 75, to = 76), // добавилось ExecutionLogItem
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -69,4 +73,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskResettingDAO(): SyncTaskResettingDAO
     abstract fun getTaskLogDAO(): SyncTaskLogDAO
     abstract fun getSyncObjectLogDAO(): SyncObjectLogDAO
+    abstract fun getExecutionLogDAO(): ExecutionLogDAO
 }
