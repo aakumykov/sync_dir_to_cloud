@@ -24,6 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -176,7 +177,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         taskStateLogger.logRunning(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
-            entryType = TaskLogEntry.EntryType.START
+            entryType = ExecutionLogItemType.START
         ))
     }
 
@@ -184,7 +185,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         taskStateLogger.logSuccess(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
-            entryType = TaskLogEntry.EntryType.FINISH
+            entryType = ExecutionLogItemType.FINISH
         ))
     }
 
@@ -192,7 +193,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         taskStateLogger.logError(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
-            entryType = TaskLogEntry.EntryType.ERROR,
+            entryType = ExecutionLogItemType.ERROR,
             errorMsg = null
         ))
     }

@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.migration.AutoMigrationSpec
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import java.util.UUID
 
@@ -15,7 +16,7 @@ import java.util.UUID
 class TaskLogEntry(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
-    @ColumnInfo(name = "entry_type") val entryType: EntryType,
+    @ColumnInfo(name = "entry_type") val entryType: ExecutionLogItemType,
     @ColumnInfo(name = "execution_id") val executionId: String,
     @ColumnInfo(name = "start_time") val startTime: Long,
     @ColumnInfo(name = "finish_time", defaultValue = "0") val finishTime: Long,
@@ -26,7 +27,7 @@ class TaskLogEntry(
     constructor(
         taskId: String,
         executionId: String,
-        entryType: EntryType,
+        entryType: ExecutionLogItemType,
         errorMsg: String? = null
     ) : this(
         id = UUID.randomUUID().toString(),
@@ -37,12 +38,6 @@ class TaskLogEntry(
         finishTime = currentTime(),
         errorMsg = errorMsg
     )
-
-    enum class EntryType {
-        @Deprecated("Не START, а RUNNING") START,
-        FINISH,
-        ERROR
-    }
 
     override fun toString(): String {
         return "TaskLogEntry(id='$id', taskId='$taskId', entryType=$entryType, executionId='$executionId', startTime=$startTime, finishTime=$finishTime, errorMsg=$errorMsg)"
