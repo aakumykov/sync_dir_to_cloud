@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.getString
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 
@@ -15,9 +16,9 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
 
     override fun fill(taskLogEntry: TaskLogEntry, isSelected: Boolean) {
         titleView.text = when(taskLogEntry.entryType) {
-            TaskLogEntry.EntryType.START -> startText(taskLogEntry)
-            TaskLogEntry.EntryType.FINISH -> finishText(taskLogEntry)
-            TaskLogEntry.EntryType.ERROR -> errorText(taskLogEntry)
+            ExecutionLogItemType.START -> startText(taskLogEntry)
+            ExecutionLogItemType.FINISH -> finishText(taskLogEntry)
+            ExecutionLogItemType.ERROR -> errorText(taskLogEntry)
         }
     }
 
