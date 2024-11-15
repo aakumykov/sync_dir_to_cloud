@@ -297,6 +297,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             .readFromPath(
                 pathReadingFrom = syncTask.sourcePath,
                 taskId = syncTask.id,
+                executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId),
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )

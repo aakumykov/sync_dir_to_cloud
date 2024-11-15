@@ -34,7 +34,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncObjectLogItem::class,
         ExecutionLogItem::class,
    ],
-    version = 76,
+    version = 77,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -56,6 +56,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 73, to = 74), // Добавление поля TaskLogEntry.finishTime
         AutoMigration(from = 74, to = 75), // Добавление поля TaskLogEntry.size
         AutoMigration(from = 75, to = 76), // добавилось ExecutionLogItem
+        AutoMigration(from = 76, to = 77, spec = ExecutionLogItem.RenameColumnsAutoMigrationSpec1::class), // добавилось ExecutionLogItem
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
