@@ -306,11 +306,21 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun readTarget(syncTask: SyncTask) {
         // TODO: вынести в отдельный класс по примеру других aa_v2-методов
-        syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
+        return appComponent
+            .getInTargetItemsChecker()
+            .checkItemsInTarget(
+                syncTask.id,
+                executionId,
+                syncTask.targetPath,
+                syncTask.targetStorageType!!,
+                cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
+            )
+
+        /*syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
             inTargetExistenceCheckerFactory
                 .create(syncTask)
                 .checkObjectExists(syncObject)
-        }
+        }*/
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {

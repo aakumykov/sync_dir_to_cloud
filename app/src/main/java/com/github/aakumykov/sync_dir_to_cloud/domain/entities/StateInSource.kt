@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
-@Deprecated("Переименовать в SourceState")
+@Deprecated("Переименовать в StateInStorage")
 enum class StateInSource {
     NEW,
     DELETED,

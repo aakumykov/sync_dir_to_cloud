@@ -127,4 +127,15 @@ class SyncObject (
         }
     }
 
+    /*override fun equals(other: Any?): Boolean {
+        return when (other) {
+            null -> false
+            !is SyncObject -> false
+            else -> {
+                return (mTime != other.mTime) ||
+                        (size != other.size) ||
+                        (stateInSource != other.stateInSource)
+            }
+        }
+    }*/
 }
