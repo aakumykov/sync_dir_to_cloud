@@ -1,11 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source
 
+import android.content.res.Resources
 import android.util.Log
+import androidx.annotation.StringRes
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
@@ -21,15 +26,24 @@ class StorageToDatabaseLister @Inject constructor(
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
     private val syncTaskStateChanger: SyncTaskStateChanger,
+    private val executionLogger: ExecutionLogger,
+    private val resources: Resources,
 ) {
     suspend fun readFromPath(
         pathReadingFrom: String?,
         changesDetectionStrategy: ChangesDetectionStrategy,
         cloudAuth: CloudAuth?,
-        taskId: String
+        taskId: String,
+        executionId: String,
     ): Result<Boolean> {
 
         return try {
+            executionLogger.addLogItem(ExecutionLogItem.createStartingItem(
+                taskId = taskId,
+                executionId = executionId,
+                message = getString(R.string.EXECUTION_LOG_reading_source)
+            ))
+
             if (null == pathReadingFrom)
                 throw IllegalArgumentException("path argument is null")
 
@@ -50,16 +64,32 @@ class StorageToDatabaseLister @Inject constructor(
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
 
+
+            /*executionLogger.addLogItem(ExecutionLogItem.createFinishingItem(
+                taskId = taskId,
+                executionId = executionId,
+                message = getString(R.string.EXECUTION_LOG_reading_source)
+            ))*/
+
             Result.success(true)
 
         } catch (e: Exception) {
             ExceptionUtils.getErrorMessage(e).also { errorMsg ->
+
                 syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
+
                 Log.e(TAG, errorMsg, e)
+
+                executionLogger.addLogItem(ExecutionLogItem.createErrorItem(
+                    taskId = taskId,
+                    executionId = executionId,
+                    message = errorMsg
+                ))
             }
             Result.failure(e)
         }
     }
+
 
     private suspend fun addOrUpdateFileListItem(
         fileListItem: RecursiveDirReader.FileListItem,
@@ -94,6 +124,11 @@ class StorageToDatabaseLister @Inject constructor(
                 )
             )
         }
+    }
+
+
+    private fun getString(@StringRes stringResId: Int): String {
+        return resources.getString(stringResId)
     }
 
     companion object {
