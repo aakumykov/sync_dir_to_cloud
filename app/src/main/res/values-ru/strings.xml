@@ -135,4 +135,5 @@
     <string name="SYNC_OBJECT_LOGGER_backuping_modified_deleted">Бекап изменённого, удалённого</string>
     <string name="EXECUTION_LOG_reading_source">Чтение источника</string>
     <string name="EXECUTION_LOG_reading_target">Чтение приёмника</string>
+    <string name="EXECUTION_LOG_backing_up_dirs_in_target">Бекап каталогов в приёмнике</string>
 </resources>

@@ -7,13 +7,16 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.BackupDirCreatorCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.names
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
@@ -29,18 +32,41 @@ class DirsBackuper @AssistedInject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val backupDirCreatorCreator: BackupDirCreatorCreator,
+    private val executionLogger: ExecutionLogger,
     private val syncObjectLogger: SyncObjectLogger,
     private val resources: Resources,
 ){
+    @Deprecated("Выбрасывать критическое исключение")
     suspend fun backupDeletedDirsOfTask(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isDir }
-            .filter { it.isDeleted }
-            .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupDeletedDirsOfTask(${list.names})")
-                processList(list, syncTask)
+        try {
+            executionLogger.log(ExecutionLogItem.createStartingItem(
+                syncTask.id,
+                executionId,
+                resources.getString(R.string.EXECUTION_LOG_backing_up_dirs_in_target)
+            ))
+
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isDir }
+                .filter { it.isDeleted }
+                .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
+                .also { list ->
+                    if (list.isNotEmpty()) Log.d(
+                        TAG + "_" + SyncTaskExecutor.TAG,
+                        "backupDeletedDirsOfTask(${list.names})"
+                    )
+                    processList(list, syncTask)
+                }
+
+        } catch (e: Exception) {
+            e.errorMsg.also { errorMessage ->
+                Log.e(TAG, errorMessage, e)
+                executionLogger.log(ExecutionLogItem.createErrorItem(
+                    syncTask.id,
+                    executionId,
+                    errorMessage
+                ))
             }
+        }
     }
 
 
