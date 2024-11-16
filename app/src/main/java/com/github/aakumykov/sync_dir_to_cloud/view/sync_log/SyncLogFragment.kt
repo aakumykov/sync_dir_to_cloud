@@ -26,10 +26,11 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
 
-    private val taskId: String? get() = arguments?.getString(TASK_ID)
-    private val executionId: String? get() = arguments?.getString(EXECUTION_ID)
+    private val taskId: String get() = arguments?.getString(TASK_ID)!!
+    private val executionId: String get() = arguments?.getString(EXECUTION_ID)!!
 
-    private lateinit var listAdapter: SyncLogListAdapter
+//    private lateinit var listAdapter: SyncLogListAdapter
+    private lateinit var listAdapter: LogOfSyncAdapter
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,13 +47,16 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     }
 
     private fun prepareListAdapter() {
-        listAdapter = SyncLogListAdapter()
+        /*listAdapter = SyncLogListAdapter()
         binding.listView.adapter = listAdapter
 //        binding.listView.setOnItemClickListener(::onItemClicked)
         binding.listView.isClickable = true
         binding.listView.setOnItemClickListener { parent, view, position, id ->
             onItemClicked(listAdapter.getItem(position))
-        }
+        }*/
+
+        listAdapter = LogOfSyncAdapter()
+        binding.listView.adapter = listAdapter
     }
 
 
@@ -68,8 +72,12 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 
 
     private fun startWork(savedInstanceState: Bundle?) {
-        if (null == savedInstanceState)
-            syncLogViewModel.getListLiveData(taskId!!, executionId!!).observe(viewLifecycleOwner, ::onListChanged)
+        if (null == savedInstanceState) {
+            syncLogViewModel.startWorking(taskId,executionId)
+            syncLogViewModel.getLogOfSync().observe(viewLifecycleOwner, ::onLogOfSyncChanged)
+//            syncLogViewModel.getListLiveData(taskId!!, executionId!!)
+//                .observe(viewLifecycleOwner, ::onListChanged)
+        }
     }
 
     private fun prepareViewModels() {
@@ -85,10 +93,13 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         syncLogViewModel = DaggerViewModelHelper.get(this, SyncLogViewModel::class.java)
     }
 
-    private fun onListChanged(list: List<SyncObjectLogItem>?) {
+//    private fun onListChanged(list: List<SyncObjectLogItem>?) {
+//        list?.also { listAdapter.setList(list) }
+//    }
+
+    private fun onLogOfSyncChanged(list: List<LogOfSync>?) {
         list?.also { listAdapter.setList(list) }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
