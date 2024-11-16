@@ -114,7 +114,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             readSource(syncTask).getOrThrow()
 
             // Прочитать приёмник
-            // TODO: как писать в лог здесь?
             readTarget(syncTask)
 
             // Забэкапить удалённое
@@ -305,22 +304,11 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        // TODO: вынести в отдельный класс по примеру других aa_v2-методов
-        return appComponent
-            .getInTargetItemsChecker()
-            .checkItemsInTarget(
-                syncTask.id,
-                executionId,
-                syncTask.targetPath,
-                syncTask.targetStorageType!!,
-                cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
-            )
-
-        /*syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
+        syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
             inTargetExistenceCheckerFactory
                 .create(syncTask)
                 .checkObjectExists(syncObject)
-        }*/
+        }
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {
