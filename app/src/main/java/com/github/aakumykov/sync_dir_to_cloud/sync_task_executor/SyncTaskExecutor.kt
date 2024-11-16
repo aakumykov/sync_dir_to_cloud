@@ -55,8 +55,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val changesDetectionStrategy: ChangesDetectionStrategy.SizeAndModificationTime, // FIXME: это не нужно передавать через конструктор
 
     private val syncObjectToTargetWriter2Creator: SyncObjectToTargetWriter2Creator,
-
-    private val inTargetExistenceCheckerFactory: InTargetExistenceChecker.Factory,
 ) {
     private val executionId: String get() = hashCode().toString()
 
@@ -304,11 +302,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
-            inTargetExistenceCheckerFactory
-                .create(syncTask)
-                .checkObjectExists(syncObject)
-        }
+        appComponent.getTargetReader().readWithCheckFromTarget(syncTask, executionId)
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {

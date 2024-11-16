@@ -11,7 +11,7 @@ class ExecutionLogRepository @Inject constructor(
 )
     : ExecutionLogger
 {
-    override suspend fun addLogItem(executionLogItem: ExecutionLogItem) {
+    override suspend fun log(executionLogItem: ExecutionLogItem) {
         executionLogDAO.addItem(executionLogItem)
     }
 }
