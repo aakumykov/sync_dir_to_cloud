@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -27,6 +28,7 @@ class StorageToDatabaseLister @Inject constructor(
     private val syncObjectUpdater: SyncObjectUpdater,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val executionLogger: ExecutionLogger,
+    private val executionLogCleaner: ExecutionLogCleaner,
     private val resources: Resources,
 ) {
     suspend fun readFromPath(
@@ -39,6 +41,7 @@ class StorageToDatabaseLister @Inject constructor(
 
         return try {
 
+            executionLogCleaner.clearExecutionLog()
             logExecutionStarts(taskId,executionId)
 
             if (null == pathReadingFrom)
@@ -75,7 +78,7 @@ class StorageToDatabaseLister @Inject constructor(
 
 
     private suspend fun logExecutionError(taskId: String, executionId: String, errorMsg: String) {
-        executionLogger.log(ExecutionLogItem.createStartingItem(
+        executionLogger.log(ExecutionLogItem.createErrorItem(
             taskId = taskId,
             executionId = executionId,
             message = errorMsg

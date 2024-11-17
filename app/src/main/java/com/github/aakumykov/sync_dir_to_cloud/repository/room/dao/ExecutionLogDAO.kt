@@ -14,4 +14,7 @@ interface ExecutionLogDAO {
 
     @Query("SELECT * FROM execution_log WHERE task_id = :taskId AND execution_id = :executionId")
     fun getLogsAsLiveData(taskId: String, executionId: String): LiveData<List<ExecutionLogItem>>
+
+    @Query("DELETE FROM execution_log")
+    fun clear()
 }
