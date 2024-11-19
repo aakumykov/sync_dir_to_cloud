@@ -64,7 +64,7 @@ class FilesBackuper @AssistedInject constructor(
 
     suspend fun backupModifiedFilesOfTask(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_deleted_files)
+            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_modified_files)
 
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
