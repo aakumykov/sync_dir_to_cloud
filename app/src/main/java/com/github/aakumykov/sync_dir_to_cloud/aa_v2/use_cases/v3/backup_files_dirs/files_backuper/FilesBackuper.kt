@@ -17,6 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
+import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
@@ -30,6 +31,7 @@ import dagger.assisted.AssistedInject
 /**
  * cloudReader и cloudWriter оба должны быть созданы на основе типа приёмника.
  */
+// TODO: можно добавить taskId в @Assisted-аргументы
 class FilesBackuper @AssistedInject constructor(
     @Assisted private val cloudReader: CloudReader,
     @Assisted private val cloudWriter: CloudWriter,
@@ -37,30 +39,48 @@ class FilesBackuper @AssistedInject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val backupDirCreatorCreator: BackupDirCreatorCreator,
     private val syncObjectStateChanger: SyncObjectStateChanger,
+    private val executionLoggerHelper: ExecutionLoggerHelper,
     private val syncObjectLogger: SyncObjectLogger,
     private val resources: Resources,
 ) {
-
+    @Deprecated("Выбрасывать критическое исключение")
     suspend fun backupDeletedFilesOfTask(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isFile }
-            .filter { it.isDeleted }
-            .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupDeletedFilesOfTask(${list.names})")
-                processDeletedFilesList(list, syncTask)
-            }
+        try {
+            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_deleted_files)
+
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isFile }
+                .filter { it.isDeleted }
+                .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
+                .also { list ->
+                    if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupDeletedFilesOfTask(${list.names})")
+                    processDeletedFilesList(list, syncTask)
+                }
+
+        } catch (e: Exception) {
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+        }
     }
 
     suspend fun backupModifiedFilesOfTask(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isFile }
-            .filter { it.isModified }
-            .filter { it.isTargetReadingOk }
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupModifiedFilesOfTask(${list.names})")
-                processModifiedFilesList(list, syncTask)
-            }
+        try {
+            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_deleted_files)
+
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isFile }
+                .filter { it.isModified }
+                .filter { it.isTargetReadingOk }
+                .also { list ->
+                    if (list.isNotEmpty()) Log.d(
+                        TAG + "_" + SyncTaskExecutor.TAG,
+                        "backupModifiedFilesOfTask(${list.names})"
+                    )
+                    processModifiedFilesList(list, syncTask)
+                }
+
+        } catch (e: Exception) {
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+        }
     }
 
 

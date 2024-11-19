@@ -136,4 +136,6 @@
     <string name="EXECUTION_LOG_reading_source">Чтение источника</string>
     <string name="EXECUTION_LOG_reading_target">Чтение приёмника</string>
     <string name="EXECUTION_LOG_backing_up_dirs_in_target">Бекап каталогов в приёмнике</string>
+    <string name="EXECUTION_LOG_backing_up_deleted_files">Бекап удалённых файлов</string>
+    <string name="EXECUTION_LOG_backing_up_modified_files">Бекап изменённых файлов</string>
 </resources>
