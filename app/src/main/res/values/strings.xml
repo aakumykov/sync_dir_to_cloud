@@ -141,4 +141,8 @@
     <string name="EXECUTION_LOG_creating_new_dirs">Creating new dirs</string>
     <string name="EXECUTION_LOG_creating_never_processed_dirs">Creating forgotten dirs</string>
     <string name="EXECUTION_LOG_creating_in_target_lost_dirs">Creating in target lost dirs</string>
+    <string name="EXECUTION_LOG_copying_new_files">Copying new files</string>
+    <string name="EXECUTION_LOG_copying_previously_forgotten_files">Copying previously forgotten files</string>
+    <string name="EXECUTION_LOG_copying_modified_files">Copying modified files</string>
+    <string name="EXECUTION_LOG_copying_in_target_lost_files">Copying in target lost files</string>
 </resources>

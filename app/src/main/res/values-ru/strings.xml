@@ -141,4 +141,8 @@
     <string name="EXECUTION_LOG_creating_new_dirs">Создаю новые каталоги</string>
     <string name="EXECUTION_LOG_creating_never_processed_dirs">Создаю забатые каталоги</string>
     <string name="EXECUTION_LOG_creating_in_target_lost_dirs">Воссоздаю утраченые в приёмнике каталоги</string>
+    <string name="EXECUTION_LOG_copying_new_files">Копирую новые файлы</string>
+    <string name="EXECUTION_LOG_copying_previously_forgotten_files">Копирую забытые файлы</string>
+    <string name="EXECUTION_LOG_copying_modified_files">Копирую изменившиеся файлы</string>
+    <string name="EXECUTION_LOG_copying_in_target_lost_files">Копирую утраченные в приёмнике файлы</string>
 </resources>
