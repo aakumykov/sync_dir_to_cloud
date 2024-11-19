@@ -28,7 +28,6 @@ class StorageToDatabaseLister @Inject constructor(
     private val syncObjectUpdater: SyncObjectUpdater,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val executionLogger: ExecutionLogger,
-    private val executionLogCleaner: ExecutionLogCleaner,
     private val resources: Resources,
 ) {
     suspend fun readFromPath(
@@ -41,7 +40,6 @@ class StorageToDatabaseLister @Inject constructor(
 
         return try {
 
-            executionLogCleaner.clearExecutionLog()
             logExecutionStarts(taskId,executionId)
 
             if (null == pathReadingFrom)

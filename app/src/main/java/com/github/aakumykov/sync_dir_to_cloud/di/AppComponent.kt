@@ -55,6 +55,7 @@ import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.CloudAuthen
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
@@ -188,6 +189,8 @@ interface AppComponent {
     fun getTaskCancellationHolder(): TaskCancellationHolder
 
     fun getTargetReader(): TargetReader
+
+    fun getExecutionLogCleaner(): ExecutionLogCleaner
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

@@ -103,6 +103,8 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
+            appComponent.getExecutionLogCleaner().clearExecutionLog()
+
             // Выполнить подготовку
             resetTaskBadStates(taskId)
             resetObjectsBadState(taskId)
