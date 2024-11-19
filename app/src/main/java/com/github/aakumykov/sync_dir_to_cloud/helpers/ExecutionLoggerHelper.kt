@@ -30,7 +30,7 @@ class ExecutionLoggerHelper @Inject constructor(
                 ExecutionLogItem.createErrorItem(
                     taskId = taskId,
                     executionId = executionId,
-                    resources.getString(R.string.EXECUTION_LOG_backing_up_deleted_files)
+                    message = errorMessage,
                 )
             )
         }
