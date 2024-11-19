@@ -16,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDelet
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
+import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -32,18 +33,18 @@ class DirsBackuper @AssistedInject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val backupDirCreatorCreator: BackupDirCreatorCreator,
-    private val executionLogger: ExecutionLogger,
+    private val executionLoggerHelper: ExecutionLoggerHelper,
     private val syncObjectLogger: SyncObjectLogger,
     private val resources: Resources,
 ){
     @Deprecated("Выбрасывать критическое исключение")
     suspend fun backupDeletedDirsOfTask(syncTask: SyncTask) {
         try {
-            executionLogger.log(ExecutionLogItem.createStartingItem(
+            executionLoggerHelper.logStart(
                 syncTask.id,
                 executionId,
-                resources.getString(R.string.EXECUTION_LOG_backing_up_dirs_in_target)
-            ))
+                R.string.EXECUTION_LOG_backing_up_dirs_in_target
+            )
 
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isDir }
@@ -58,14 +59,7 @@ class DirsBackuper @AssistedInject constructor(
                 }
 
         } catch (e: Exception) {
-            e.errorMsg.also { errorMessage ->
-                Log.e(TAG, errorMessage, e)
-                executionLogger.log(ExecutionLogItem.createErrorItem(
-                    syncTask.id,
-                    executionId,
-                    errorMessage
-                ))
-            }
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
         }
     }
 
