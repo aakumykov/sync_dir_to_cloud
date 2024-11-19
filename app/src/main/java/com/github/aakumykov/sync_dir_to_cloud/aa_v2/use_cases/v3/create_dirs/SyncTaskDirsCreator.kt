@@ -122,6 +122,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                  }
          } catch (e: Exception) {
              executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+             throw e
          }
     }
 
