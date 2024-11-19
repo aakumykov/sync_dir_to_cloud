@@ -18,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTarge
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
@@ -36,69 +37,92 @@ class SyncTaskDirsCreator @AssistedInject constructor(
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectDirCreatorCreator: SyncObjectDirCreatorCreator,
     private val syncObjectLogger: SyncObjectLogger,
+    private val executionLoggerHelper: ExecutionLoggerHelper,
     @Assisted private val executionId: String
 ){
     suspend fun createNewDirs(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isDir }
-            .filter { it.isNew }
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNewDirs(${list.names})")
-                createDirs(
-                    operationName = R.string.SYNC_OBJECT_LOGGER_create_new_dir,
-                    dirList = list,
-                    syncTask = syncTask,
-                    executionId = executionId,
-                )
-            }
+        try {
+            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_creating_new_dirs)
+
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isDir }
+                .filter { it.isNew }
+                .also { list ->
+                    if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNewDirs(${list.names})")
+                    createDirs(
+                        operationName = R.string.SYNC_OBJECT_LOGGER_create_new_dir,
+                        dirList = list,
+                        syncTask = syncTask,
+                        executionId = executionId,
+                    )
+                }
+        }
+        catch (e: Exception) {
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            throw e
+        }
     }
 
     // SyncState = NEVER && StateInSource == UNCHANGED
     suspend fun createNeverProcessedDirs(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isDir }
-            .filter { it.isNeverSynced && it.isUnchanged }
-            .filter { it.isTargetReadingOk }
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNeverProcessedDirs(${list.names})")
-                createDirs(
-                    operationName = R.string.SYNC_OBJECT_LOGGER_create_never_processed_dir,
-                    dirList = list,
-                    syncTask = syncTask,
-                    executionId = executionId,
-                )
-            }
+        try {
+            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_creating_never_processed_dirs)
+
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isDir }
+                .filter { it.isNeverSynced && it.isUnchanged }
+                .filter { it.isTargetReadingOk }
+                .also { list ->
+                    if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createNeverProcessedDirs(${list.names})")
+                    createDirs(
+                        operationName = R.string.SYNC_OBJECT_LOGGER_create_never_processed_dir,
+                        dirList = list,
+                        syncTask = syncTask,
+                        executionId = executionId,
+                    )
+                }
+        }
+        catch (e: Exception) {
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            throw e
+        }
     }
 
 
     // isExistsInTarget == false
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
-         syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isDir }
-            .filter { it.isSuccessSynced }
-            .filter { it.notExistsInTarget }
-            .filter { it.isTargetReadingOk }
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createInTargetLostDirs(${list.names})")
-                createDirs(
-                    operationName = R.string.SYNC_OBJECT_LOGGER_create_in_target_lost_dir,
-                    dirList = list,
-                    syncTask = syncTask,
-                    executionId = executionId,
-                    onSyncObjectProcessingBegin = { syncObject ->
-                        syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING)
-                    },
-                    onSyncObjectProcessingSuccess = { syncObject ->
-                        syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.SUCCESS)
-                    },
-                    onSyncObjectProcessingFailed = { syncObject, throwable ->
-                        ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                            syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING, errorMsg)
-                            Log.e(TAG, errorMsg, throwable)
-                        }
-                    }
-                )
-            }
+         try {
+             executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_creating_in_target_lost_dirs)
+
+             syncObjectReader.getAllObjectsForTask(syncTask.id)
+                 .filter { it.isDir }
+                 .filter { it.isSuccessSynced }
+                 .filter { it.notExistsInTarget }
+                 .filter { it.isTargetReadingOk }
+                 .also { list ->
+                     if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "createInTargetLostDirs(${list.names})")
+                     createDirs(
+                         operationName = R.string.SYNC_OBJECT_LOGGER_create_in_target_lost_dir,
+                         dirList = list,
+                         syncTask = syncTask,
+                         executionId = executionId,
+                         onSyncObjectProcessingBegin = { syncObject ->
+                             syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING)
+                         },
+                         onSyncObjectProcessingSuccess = { syncObject ->
+                             syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.SUCCESS)
+                         },
+                         onSyncObjectProcessingFailed = { syncObject, throwable ->
+                             ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
+                                 syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING, errorMsg)
+                                 Log.e(TAG, errorMsg, throwable)
+                             }
+                         }
+                     )
+                 }
+         } catch (e: Exception) {
+             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+         }
     }
 
 

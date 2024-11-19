@@ -138,4 +138,7 @@
     <string name="EXECUTION_LOG_backing_up_dirs_in_target">Бекап каталогов в приёмнике</string>
     <string name="EXECUTION_LOG_backing_up_deleted_files">Бекап удалённых файлов</string>
     <string name="EXECUTION_LOG_backing_up_modified_files">Бекап изменённых файлов</string>
+    <string name="EXECUTION_LOG_creating_new_dirs">Создаю новые каталоги</string>
+    <string name="EXECUTION_LOG_creating_never_processed_dirs">Создаю забатые каталоги</string>
+    <string name="EXECUTION_LOG_creating_in_target_lost_dirs">Воссоздаю утраченые в приёмнике каталоги</string>
 </resources>

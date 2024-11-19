@@ -138,4 +138,7 @@
     <string name="EXECUTION_LOG_backing_up_dirs_in_target">Backing up dirs in target</string>
     <string name="EXECUTION_LOG_backing_up_deleted_files">Backing up deleted files</string>
     <string name="EXECUTION_LOG_backing_up_modified_files">Backing up modified files</string>
+    <string name="EXECUTION_LOG_creating_new_dirs">Creating new dirs</string>
+    <string name="EXECUTION_LOG_creating_never_processed_dirs">Creating forgotten dirs</string>
+    <string name="EXECUTION_LOG_creating_in_target_lost_dirs">Creating in target lost dirs</string>
 </resources>
