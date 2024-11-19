@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
@@ -74,7 +73,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private fun startWork(savedInstanceState: Bundle?) {
         if (null == savedInstanceState) {
             syncLogViewModel.startWorking(taskId,executionId)
-            syncLogViewModel.getLogOfSync().observe(viewLifecycleOwner, ::onLogOfSyncChanged)
+            syncLogViewModel.logOfSync.observe(viewLifecycleOwner, ::onLogOfSyncChanged)
 //            syncLogViewModel.getListLiveData(taskId!!, executionId!!)
 //                .observe(viewLifecycleOwner, ::onListChanged)
         }

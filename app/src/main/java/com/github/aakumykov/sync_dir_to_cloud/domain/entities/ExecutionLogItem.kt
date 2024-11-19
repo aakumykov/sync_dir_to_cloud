@@ -86,7 +86,12 @@ class ExecutionLogItem (
     }
 
 
+
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "executionId", toColumnName = EXECUTION_ID_FIELD_NAME)
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "taskId", toColumnName = TASK_ID_FIELD_NAME)
     class RenameColumnsAutoMigrationSpec1 : AutoMigrationSpec
+
+    override fun toString(): String {
+        return "ExecutionLogItem(message='$message', type=$type)"
+    }
 }

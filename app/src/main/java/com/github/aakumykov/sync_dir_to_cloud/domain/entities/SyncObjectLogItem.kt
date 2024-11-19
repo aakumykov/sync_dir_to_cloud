@@ -123,6 +123,8 @@ data class SyncObjectLogItem (
         }
     }
 
+
+
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "message", toColumnName = OPERATION_NAME_FILED)
     class RenameColumnMessageToOperationName : AutoMigrationSpec
 
@@ -143,4 +145,8 @@ data class SyncObjectLogItem (
 
     @DeleteColumn(tableName = TABLE_NAME, columnName = "abc")
     class DeleteColumnAbc : AutoMigrationSpec
+
+    override fun toString(): String {
+        return "SyncObjectLogItem(itemName='$itemName', operationName='$operationName')"
+    }
 }
