@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectLogRepository
 import javax.inject.Inject
 
 @ExecutionScope
+@Deprecated("Сделать SyncObjectLoggerHelper")
 class SyncObjectLogger @Inject constructor(
     private val syncObjectLogRepository: SyncObjectLogRepository
 ) {
