@@ -13,6 +13,7 @@ class ExecutionLoggerHelper @Inject constructor(
     private val executionLogger: ExecutionLogger,
     private val resources: Resources,
 ) {
+    @Deprecated("Добавить TAG и писать в консоль")
     suspend fun logStart(taskId: String, executionId: String, @StringRes messageRes: Int) {
         executionLogger.log(
             ExecutionLogItem.createStartingItem(

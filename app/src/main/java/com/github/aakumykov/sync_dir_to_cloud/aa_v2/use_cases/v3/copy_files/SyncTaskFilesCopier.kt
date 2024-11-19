@@ -46,23 +46,22 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_new_files)
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isNew }
                 .also { list ->
-
-                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
-
-                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-
-                    copyFilesReal(
-                        operationName = operationName,
-                        list = list,
-                        syncTask = syncTask,
-                        overwriteIfExists = true
-                    )
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_new_files)
+                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
+                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+                        copyFilesReal(
+                            operationName = operationName,
+                            list = list,
+                            syncTask = syncTask,
+                            overwriteIfExists = true
+                        )
+                    }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
@@ -71,23 +70,22 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isNeverSynced }
                 .also { list ->
-
-                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
-
-                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-
-                    copyFilesReal(
-                        operationName = operationName,
-                        list = list,
-                        syncTask = syncTask,
-                        overwriteIfExists = true
-                    )
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
+                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
+                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+                        copyFilesReal(
+                            operationName = operationName,
+                            list = list,
+                            syncTask = syncTask,
+                            overwriteIfExists = true
+                        )
+                    }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
@@ -96,24 +94,23 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isModified }
                 .filter { it.isTargetReadingOk }
                 .also { list ->
-
-                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
-
-                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-
-                    copyFilesReal(
-                        operationName = operationName,
-                        list = list,
-                        syncTask = syncTask,
-                        overwriteIfExists = true
-                    )
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
+                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
+                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+                        copyFilesReal(
+                            operationName = operationName,
+                            list = list,
+                            syncTask = syncTask,
+                            overwriteIfExists = true
+                        )
+                    }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
@@ -122,7 +119,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     suspend fun copyInTargetLostFiles(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_in_target_lost_files)
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
@@ -130,29 +126,29 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.notExistsInTarget }
                 .filter { it.isTargetReadingOk }
                 .also { list ->
-
-                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
-
-                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-
-                    copyFilesReal(
-                        operationName = operationName,
-                        list = list,
-                        syncTask = syncTask,
-                        overwriteIfExists = false,
-                        onSyncObjectProcessingBegin = { syncObject ->
-                            syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING)
-                        },
-                        onSyncObjectProcessingSuccess = { syncObject ->
-                            syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.SUCCESS)
-                        },
-                        onSyncObjectProcessingFailed = { syncObject, throwable ->
-                            ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                                syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.ERROR, errorMsg)
-                                Log.e(TAG, errorMsg, throwable)
+                    if (list.isEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id,executionId,R.string.EXECUTION_LOG_copying_in_target_lost_files)
+                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
+                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+                        copyFilesReal(
+                            operationName = operationName,
+                            list = list,
+                            syncTask = syncTask,
+                            overwriteIfExists = false,
+                            onSyncObjectProcessingBegin = { syncObject ->
+                                syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.RUNNING)
+                            },
+                            onSyncObjectProcessingSuccess = { syncObject ->
+                                syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.SUCCESS)
+                            },
+                            onSyncObjectProcessingFailed = { syncObject, throwable ->
+                                ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
+                                    syncObjectStateChanger.setRestorationState(syncObject.id, ExecutionState.ERROR, errorMsg)
+                                    Log.e(TAG, errorMsg, throwable)
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)

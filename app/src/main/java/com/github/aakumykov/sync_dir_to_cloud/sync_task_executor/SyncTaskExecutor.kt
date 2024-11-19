@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
-import com.github.aakumykov.sync_dir_to_cloud.in_target_existence_checker.InTargetExistenceChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -122,7 +121,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
-            backupModifiedItems(syncTask)
+            backupModifiedFiles(syncTask)
 
             // Удалить удалённые файлы
             deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
@@ -233,7 +232,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             ?: { Log.e(TAG, "Не удалось создать бэкапер для удалённых файлов для задачи ${syncTask.description}") }
     }
 
-    private suspend fun backupModifiedItems(syncTask: SyncTask) {
+    private suspend fun backupModifiedFiles(syncTask: SyncTask) {
         filesBackuperCreator
             .createFilesBackuperForSyncTask(syncTask, executionId)
             ?.backupModifiedFilesOfTask(syncTask)

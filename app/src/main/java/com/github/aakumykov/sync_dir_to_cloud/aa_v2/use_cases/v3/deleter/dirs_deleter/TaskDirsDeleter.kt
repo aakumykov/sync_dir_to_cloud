@@ -1,11 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.names
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -17,20 +19,28 @@ import dagger.assisted.AssistedInject
 
 // TODO: помечать объект как "удаляется"
 class TaskDirsDeleter @AssistedInject constructor(
+    @Assisted private val executionId: String,
     @Assisted private val dirDeleter: DirDeleter,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val syncObjectDeleter: SyncObjectDeleter
+    private val syncObjectDeleter: SyncObjectDeleter,
+    private val executionLoggerHelper: ExecutionLoggerHelper,
 ){
     suspend fun deleteDeletedDirsForTask(taskId: String) {
-        syncObjectReader.getAllObjectsForTask(taskId)
-            .filter { it.isDir }
-            .filter { it.isDeleted }
-            .filter { it.isTargetReadingOk }
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "deleteDeletedDirsForTask(${list.names})")
-                processList(list)
-            }
+        try {
+            syncObjectReader.getAllObjectsForTask(taskId)
+                .filter { it.isDir }
+                .filter { it.isDeleted }
+                .filter { it.isTargetReadingOk }
+                .also { list ->
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(taskId, executionId, R.string.EXECUTION_LOG_deleting_deleted_dirs)
+                        processList(list)
+                    }
+                }
+        } catch (e: Exception) {
+            executionLoggerHelper.logError(taskId, executionId, TAG, e)
+        }
     }
 
     private suspend fun processList(list: List<SyncObject>) {
@@ -62,5 +72,5 @@ class TaskDirsDeleter @AssistedInject constructor(
 
 @AssistedFactory
 interface TaskDirsDeleterAssistedFactory {
-    fun create(dirDeleter: DirDeleter): TaskDirsDeleter
+    fun create(executionId: String, dirDeleter: DirDeleter): TaskDirsDeleter
 }

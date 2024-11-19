@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -30,16 +31,23 @@ class TaskFilesDeleter @AssistedInject constructor(
     private val syncObjectDeleter: SyncObjectDeleter,
     private val syncObjectLogger: SyncObjectLogger,
     private val resources: Resources,
+    private val executionLoggerHelper: ExecutionLoggerHelper,
 ) {
     suspend fun deleteDeletedFilesForTask(syncTask: SyncTask) {
-        syncObjectReader.getAllObjectsForTask(syncTask.id)
-            .filter { it.isFile }
-            .filter { it.isDeleted }
-            .filter { it.isTargetReadingOk }
-            .also { list ->
-                if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "deleteDeletedFilesForTask(${list.names})")
-                processList(list, syncTask)
-            }
+        try {
+            syncObjectReader.getAllObjectsForTask(syncTask.id)
+                .filter { it.isFile }
+                .filter { it.isDeleted }
+                .filter { it.isTargetReadingOk }
+                .also { list ->
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id,executionId, R.string.EXECUTION_LOG_deleting_deleted_files)
+                        processList(list, syncTask)
+                    }
+                }
+        } catch (e: Exception) {
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+        }
     }
 
     // TODO: специальный статус "удаляется"

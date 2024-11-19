@@ -46,15 +46,15 @@ class FilesBackuper @AssistedInject constructor(
     @Deprecated("Выбрасывать критическое исключение")
     suspend fun backupDeletedFilesOfTask(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_deleted_files)
-
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isDeleted }
                 .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
                 .also { list ->
-                    if (list.isNotEmpty()) Log.d(TAG + "_" + SyncTaskExecutor.TAG, "backupDeletedFilesOfTask(${list.names})")
-                    processDeletedFilesList(list, syncTask)
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_deleted_files)
+                        processDeletedFilesList(list, syncTask)
+                    }
                 }
 
         } catch (e: Exception) {
@@ -64,18 +64,15 @@ class FilesBackuper @AssistedInject constructor(
 
     suspend fun backupModifiedFilesOfTask(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_modified_files)
-
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isModified }
                 .filter { it.isTargetReadingOk }
                 .also { list ->
-                    if (list.isNotEmpty()) Log.d(
-                        TAG + "_" + SyncTaskExecutor.TAG,
-                        "backupModifiedFilesOfTask(${list.names})"
-                    )
-                    processModifiedFilesList(list, syncTask)
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_modified_files)
+                        processModifiedFilesList(list, syncTask)
+                    }
                 }
 
         } catch (e: Exception) {

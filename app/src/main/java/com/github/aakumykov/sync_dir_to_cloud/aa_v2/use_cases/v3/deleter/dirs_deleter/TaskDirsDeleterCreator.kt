@@ -9,7 +9,7 @@ class TaskDirsDeleterCreator @Inject constructor(
 ){
     suspend fun createTaskDirsDeleterForTask(syncTask: SyncTask, executionId: String): TaskDirsDeleter? {
         return dirDeleterCreator.create(syncTask, executionId)?.let { dirDeleter ->
-            taskDirsDeleterAssistedFactory.create(dirDeleter)
+            taskDirsDeleterAssistedFactory.create(executionId, dirDeleter)
         }
     }
 }

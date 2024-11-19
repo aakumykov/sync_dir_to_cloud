@@ -40,22 +40,16 @@ class DirsBackuper @AssistedInject constructor(
     @Deprecated("Выбрасывать критическое исключение")
     suspend fun backupDeletedDirsOfTask(syncTask: SyncTask) {
         try {
-            executionLoggerHelper.logStart(
-                syncTask.id,
-                executionId,
-                R.string.EXECUTION_LOG_backing_up_dirs_in_target
-            )
 
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isDir }
                 .filter { it.isDeleted }
                 .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
                 .also { list ->
-                    if (list.isNotEmpty()) Log.d(
-                        TAG + "_" + SyncTaskExecutor.TAG,
-                        "backupDeletedDirsOfTask(${list.names})"
-                    )
-                    processList(list, syncTask)
+                    if (list.isNotEmpty()) {
+                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_dirs_in_target)
+                        processList(list, syncTask)
+                    }
                 }
 
         } catch (e: Exception) {

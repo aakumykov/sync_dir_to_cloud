@@ -145,4 +145,6 @@
     <string name="EXECUTION_LOG_copying_previously_forgotten_files">Копирую забытые файлы</string>
     <string name="EXECUTION_LOG_copying_modified_files">Копирую изменившиеся файлы</string>
     <string name="EXECUTION_LOG_copying_in_target_lost_files">Копирую утраченные в приёмнике файлы</string>
+    <string name="EXECUTION_LOG_deleting_deleted_dirs">Удаление удалённых каталогов</string>
+    <string name="EXECUTION_LOG_deleting_deleted_files">Удаление удалённых файлов</string>
 </resources>
