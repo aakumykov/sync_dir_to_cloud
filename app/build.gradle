@@ -13,8 +13,8 @@ android {
         applicationId "com.github.aakumykov.sync_dir_to_cloud"
         minSdk 21
         targetSdk 34
-        versionCode 6
-        versionName "0.0.6-alpha"
+        versionCode 7
+        versionName "0.0.7-alpha"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -73,11 +73,13 @@ android {
 
     buildTypes {
         debug {
-            getIsDefault().set(true)
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'retrofit2.pro'
+            signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'retrofit2.pro'
             signingConfig signingConfigs.release
         }
     }
