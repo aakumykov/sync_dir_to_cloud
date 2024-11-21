@@ -14,3 +14,9 @@
 .cxx
 local.properties
 /app/release
+#
+*.aab
+*.apk
+
+# VIM text editor swap file
+*.swp
