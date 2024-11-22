@@ -76,6 +76,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'retrofit2.pro'
             signingConfig signingConfigs.debug
+            applicationIdSuffix '.debug'
         }
         release {
             minifyEnabled true
@@ -84,7 +85,7 @@ android {
         }
     }
 
-    flavorDimensions 'stability'
+    flavorDimensions 'stability', 'installation_source'
 
     productFlavors {
         working {
@@ -94,6 +95,13 @@ android {
         experimental {
             dimension 'stability'
             applicationIdSuffix '.experimental'
+        }
+        local {
+            dimension 'installation_source'
+            applicationIdSuffix '.local'
+        }
+        google {
+            dimension 'installation_source'
         }
     }
 
