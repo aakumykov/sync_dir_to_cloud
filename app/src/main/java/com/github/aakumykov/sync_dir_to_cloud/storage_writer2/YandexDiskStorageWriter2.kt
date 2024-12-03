@@ -34,7 +34,7 @@ class YandexDiskStorageWriter2 @AssistedInject constructor(
         overwriteIfExists: Boolean
     ): Result<String> {
         return try {
-            cloudWriter?.putFile(sourceFileInputStream!!, targetFilePath!!, overwriteIfExists)
+            cloudWriter?.putStream(sourceFileInputStream!!, targetFilePath!!, overwriteIfExists)
             Result.success(targetFilePath!!)
         }
         catch (e: Exception) {

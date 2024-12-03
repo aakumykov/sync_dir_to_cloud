@@ -103,7 +103,7 @@ class FileCopier @AssistedInject constructor(
                 }
             }
 
-            cloudWriter.putFile(
+            cloudWriter.putStream(
                 countingInputStream,
                 syncObject.absolutePathIn(syncTask.targetPath!!),
                 true

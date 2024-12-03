@@ -34,7 +34,7 @@ class LocalStorageWriter2 @AssistedInject constructor(
 
         return try {
             cloudWriterCreator.createCloudWriter(targetStorageType, targetAuthToken)
-                ?.putFile(sourceFileInputStream!!, targetFilePath!!, overwriteIfExists)
+                ?.putStream(sourceFileInputStream!!, targetFilePath!!, overwriteIfExists)
             return Result.success(targetFilePath!!)
         }
         catch (e: Exception) {

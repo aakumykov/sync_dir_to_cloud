@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
+import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.kotlin_playground.counting_buffered_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
@@ -46,7 +47,13 @@ class SyncObjectFileCopier (
                 }
             }
 
-            cloudWriter.putFile(countingInputStream, absoluteTargetFilePath, overwriteIfExists)
+            cloudWriter.putStream(
+                inputStream = countingInputStream,
+                targetPath = absoluteTargetFilePath,
+                overwriteIfExists = overwriteIfExists
+            ) { writtenBytesCount: Long ->
+                Log.d(TAG, "записано байт: $writtenBytesCount")
+            }
 
             return Result.success(absoluteTargetFilePath)
         }

@@ -133,7 +133,7 @@ class FilesBackuper @AssistedInject constructor(
                 cloudReader.getFileInputStream(sourceFilePath)
                     .getOrThrow()
                     .also { inputStream ->
-                        cloudWriter.putFile(inputStream, backupFilePath)
+                        cloudWriter.putStream(inputStream, backupFilePath)
                     }
 
                 syncObjectStateChanger.setBackupState(objectId, ExecutionState.SUCCESS)

@@ -125,7 +125,7 @@ abstract class BasicStorageWriter (
 
     private fun writeFromInputStreamToTarget(inputStream: InputStream?, pathInTarget: String, overwriteIfExists: Boolean) {
         inputStream?.use {
-            cloudWriter?.putFile(
+            cloudWriter?.putStream(
                 inputStream,
                 pathInTarget,
                 overwriteIfExists
