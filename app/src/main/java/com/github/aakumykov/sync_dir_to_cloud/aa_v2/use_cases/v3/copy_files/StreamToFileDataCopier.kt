@@ -24,7 +24,7 @@ class StreamToFileDataCopier (
 ) {
     private var lastProgressValue: Float = 0f
 
-    suspend fun copySyncObject(
+    suspend fun copyDataFromPathToPath(
         absoluteSourceFilePath: String,
         absoluteTargetFilePath: String,
         progressCalculator: ProgressCalculator,

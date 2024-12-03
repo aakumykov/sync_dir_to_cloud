@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
-import android.content.res.Resources
 import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -28,9 +27,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-interface EEL {
-    suspend fun logError(e: Exception)
-}
 
 /**
  * Выполняет копирование всех файловых SyncObject-ов указанного SyncTask,
@@ -181,13 +177,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             val progressCalculator = ProgressCalculator(syncObject.actualSize)
 
             syncObjectCopier
-                ?.copySyncObject(
+                ?.copyDataFromPathToPath(
                     absoluteSourceFilePath = sourcePath,
                     absoluteTargetFilePath = targetPath,
                     overwriteIfExists = overwriteIfExists,
                     progressCalculator = progressCalculator
                 ) { progressAsPartOf100: Int ->
-                    syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
+                    syncObjectLogger(syncTask.id)
+                        .logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
                 }
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
