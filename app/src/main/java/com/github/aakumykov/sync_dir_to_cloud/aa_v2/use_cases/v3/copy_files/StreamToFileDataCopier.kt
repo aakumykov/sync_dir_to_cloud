@@ -8,14 +8,16 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.InputStream
 
 /**
- * Копирует данные SyncObject-а из источника в приёмник указанный в SyncTask.
+ * Копирует данные из файла, расположенному по пути источника в файл по пути приёмника.
+ * Читает данные из потока чтения (который получает от [SourceFileStreamSupplier]-а.
+ * Пишет в файл с помощью [CloudWriter]-а.
+ * Возвращает данные о количестве переданных байт через коллбек.
  */
-class SyncObjectFileCopier (
+class StreamToFileDataCopier (
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,
     private val cloudWriter: CloudWriter,
     private val progressCallbackCoroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -63,6 +65,6 @@ class SyncObjectFileCopier (
     }
 
     companion object {
-        val TAG: String = SyncObjectFileCopier::class.java.simpleName
+        val TAG: String = StreamToFileDataCopier::class.java.simpleName
     }
 }

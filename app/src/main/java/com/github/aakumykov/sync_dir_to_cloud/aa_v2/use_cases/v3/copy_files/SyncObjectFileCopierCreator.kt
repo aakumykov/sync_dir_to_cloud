@@ -14,7 +14,7 @@ class SyncObjectFileCopierCreator @Inject constructor(
     private val cloudAuthReader: CloudAuthReader,
     private val cloudWriterCreator: CloudWriterCreator,
 ) {
-    suspend fun createFileCopierFor(syncTask: SyncTask): SyncObjectFileCopier? {
+    suspend fun createFileCopierFor(syncTask: SyncTask): StreamToFileDataCopier? {
 
         val sourceFileStreamSupplier = sourceFileStreamSupplierCreator.create(
             syncTask.id,
@@ -27,7 +27,7 @@ class SyncObjectFileCopierCreator @Inject constructor(
         )
 
         return if (null != sourceFileStreamSupplier && null != targetCloudWriter) {
-            SyncObjectFileCopier(
+            StreamToFileDataCopier(
                 sourceFileStreamSupplier,
                 targetCloudWriter,
             )
