@@ -2,11 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 data class LogOfSync(
     val text: String,
     val subText: String,
     val timestamp: Long,
+    val  operationState: OperationState,
 ) {
     companion object {
 
@@ -15,6 +17,7 @@ data class LogOfSync(
                 text = executionLogItem.message,
                 subText = executionLogItem.type.name,
                 timestamp = executionLogItem.timestamp,
+                operationState = executionLogItem.operationState,
             )
         }
 
@@ -22,7 +25,8 @@ data class LogOfSync(
             return LogOfSync(
                 text = syncObjectLogItem.operationName,
                 timestamp = syncObjectLogItem.timestamp,
-                subText = syncObjectLogItem.operationName,
+                subText = syncObjectLogItem.itemName,
+                operationState = syncObjectLogItem.operationState,
             )
         }
     }
