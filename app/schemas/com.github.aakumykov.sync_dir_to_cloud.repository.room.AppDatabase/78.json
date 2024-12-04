@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 78,
-    "identityHash": "66572848868e479faf03162e040ff95a",
+    "identityHash": "d0a6c3d398d2fca7c641ec7dc816a4cf",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -514,7 +514,7 @@
       },
       {
         "tableName": "execution_log",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `type` TEXT NOT NULL, `operation_state` TEXT NOT NULL DEFAULT 'success', `message` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `type` TEXT NOT NULL, `operation_state` TEXT NOT NULL DEFAULT 'SUCCESS', `message` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -551,7 +551,7 @@
             "columnName": "operation_state",
             "affinity": "TEXT",
             "notNull": true,
-            "defaultValue": "'success'"
+            "defaultValue": "'SUCCESS'"
           },
           {
             "fieldPath": "message",
@@ -573,7 +573,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '66572848868e479faf03162e040ff95a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd0a6c3d398d2fca7c641ec7dc816a4cf')"
     ]
   }
 }

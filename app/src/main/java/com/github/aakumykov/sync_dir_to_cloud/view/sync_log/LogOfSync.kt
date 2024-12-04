@@ -8,7 +8,7 @@ data class LogOfSync(
     val text: String,
     val subText: String,
     val timestamp: Long,
-    val  operationState: OperationState,
+    val operationState: OperationState,
 ) {
     companion object {
 

@@ -32,6 +32,12 @@ class TargetReader @Inject constructor(
                     .checkObjectExists(syncObject)
             }
 
+            executionLogger.log(ExecutionLogItem.createFinishingItem(
+                syncTask.id,
+                executionId,
+                resources.getString(R.string.EXECUTION_LOG_reading_target)
+            ))
+
         }  catch (e: Exception) {
             e.errorMsg.also { errorMessage ->
                 Log.e(TAG, errorMessage, e)

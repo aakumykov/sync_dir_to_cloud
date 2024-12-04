@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -40,7 +39,7 @@ class StorageToDatabaseLister @Inject constructor(
 
         return try {
 
-            logExecutionStarts(taskId,executionId)
+            logExecutionStarted(taskId,executionId)
 
             if (null == pathReadingFrom)
                 throw IllegalArgumentException("path argument is null")
@@ -61,6 +60,8 @@ class StorageToDatabaseLister @Inject constructor(
                 ?.forEach { fileListItem ->
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
+
+            logExecutionFinished(taskId,executionId)
 
             Result.success(true)
 
@@ -84,8 +85,17 @@ class StorageToDatabaseLister @Inject constructor(
     }
 
 
-    private suspend fun logExecutionStarts(taskId: String, executionId: String) {
+    private suspend fun logExecutionStarted(taskId: String, executionId: String) {
         executionLogger.log(ExecutionLogItem.createStartingItem(
+            taskId = taskId,
+            executionId = executionId,
+            message = getString(R.string.EXECUTION_LOG_reading_source)
+        ))
+    }
+
+
+    private suspend fun logExecutionFinished(taskId: String, executionId: String) {
+        executionLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = getString(R.string.EXECUTION_LOG_reading_source)
