@@ -48,7 +48,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isNew }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_new_files)
+                        // Выводить сообщение "Копирую новые файлы" не нужно,
+                        // так как будет сообщение для каждого файла отдельно.
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
                         copyFilesReal(
