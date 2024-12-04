@@ -122,7 +122,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.notExistsInTarget }
                 .filter { it.isTargetReadingOk }
                 .also { list ->
-                    if (list.isEmpty()) {
+                    if (list.isNotEmpty()) {
                         executionLoggerHelper.logStart(syncTask.id,executionId,R.string.EXECUTION_LOG_copying_in_target_lost_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
