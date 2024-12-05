@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
+import android.media.VolumeShaper.Operation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 data class LogOfSync(
@@ -17,8 +19,16 @@ data class LogOfSync(
                 text = executionLogItem.message,
                 subText = executionLogItem.type.name,
                 timestamp = executionLogItem.timestamp,
-                operationState = executionLogItem.operationState,
+                operationState = executionLogItemTypeToOperationState(executionLogItem.type),
             )
+        }
+
+        private fun executionLogItemTypeToOperationState(executionLogItemType: ExecutionLogItemType): OperationState {
+            return when(executionLogItemType) {
+                ExecutionLogItemType.FINISH-> OperationState.SUCCESS
+                ExecutionLogItemType.ERROR-> OperationState.ERROR
+                else -> OperationState.RUNNING
+            }
         }
 
         fun from(syncObjectLogItem: SyncObjectLogItem): LogOfSync {

@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
+import androidx.room.DeleteColumn
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
@@ -29,7 +30,6 @@ class ExecutionLogItem (
     @ColumnInfo(name = EXECUTION_ID_FIELD_NAME) val executionId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD_NAME) val timestamp: Long,
     @ColumnInfo(name = TYPE_FIELD_NAME) val type: ExecutionLogItemType,
-    @ColumnInfo(name = OPERATION_STATE_FIELD_NAME, defaultValue = "SUCCESS") val operationState: OperationState,
     val message: String,
 ) {
     companion object {
@@ -42,7 +42,6 @@ class ExecutionLogItem (
             executionId = executionId,
             itemType = ExecutionLogItemType.START,
             message = message,
-            operationState = OperationState.RUNNING,
         )
 
 
@@ -54,7 +53,6 @@ class ExecutionLogItem (
             executionId = executionId,
             itemType = ExecutionLogItemType.FINISH,
             message = message,
-            operationState = OperationState.SUCCESS,
         )
 
 
@@ -66,14 +64,12 @@ class ExecutionLogItem (
             executionId = executionId,
             itemType = ExecutionLogItemType.ERROR,
             message = message,
-            operationState = OperationState.ERROR,
         )
 
 
         private fun create(taskId: String,
                            executionId: String,
                            itemType: ExecutionLogItemType,
-                           operationState: OperationState,
                            message: String,
         ): ExecutionLogItem = ExecutionLogItem(
             id = UUID.randomUUID().toString(),
@@ -82,7 +78,6 @@ class ExecutionLogItem (
             timestamp = Date().time,
             type = itemType,
             message = message,
-            operationState = operationState,
         )
 
         const val TABLE_NAME = "execution_log"
@@ -102,4 +97,7 @@ class ExecutionLogItem (
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "executionId", toColumnName = EXECUTION_ID_FIELD_NAME)
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "taskId", toColumnName = TASK_ID_FIELD_NAME)
     class RenameColumnsAutoMigrationSpec1 : AutoMigrationSpec
+
+    @DeleteColumn(tableName = TABLE_NAME, columnName = OPERATION_STATE_FIELD_NAME)
+    class RemoveOperationStateFieldSpec : AutoMigrationSpec
 }
