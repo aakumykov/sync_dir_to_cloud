@@ -43,7 +43,7 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
         stateIconView.setImageResource(when(item.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success
             OperationState.ERROR -> R.drawable.ic_sync_log_error
-            else -> R.drawable.ic_sync_log_busy
+            else -> R.drawable.ic_sync_log_waiting
         })
 
         /*progressBar.apply {
