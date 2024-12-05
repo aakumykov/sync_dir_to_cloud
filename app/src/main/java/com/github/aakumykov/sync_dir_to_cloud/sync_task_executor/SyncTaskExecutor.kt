@@ -1,11 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import android.content.res.Resources
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
@@ -24,6 +27,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
@@ -31,6 +35,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 
 class SyncTaskExecutor @AssistedInject constructor(
 
@@ -47,6 +52,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private val syncTaskLogger: SyncTaskLogger,
     private val taskStateLogger: TaskStateLogger,
+    private val executionLogger: ExecutionLogger,
+
+    private val resources: Resources,
 
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
@@ -93,7 +101,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 //        showReadingSourceNotification(syncTask)
 
-        logExecutionStart(syncTask);
+        logExecutionStart(syncTask, executionId)
 
         try {
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
@@ -171,7 +179,14 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun logExecutionStart(syncTask: SyncTask) {
+    private suspend fun logExecutionStart(syncTask: SyncTask, executionId: String) {
+
+        executionLogger.log(ExecutionLogItem.createFinishingItem(
+            taskId = syncTask.id,
+            executionId = executionId,
+            message = resources.getString(R.string.EXECUTION_LOG_work_begins)
+        ))
+
         taskStateLogger.logRunning(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
@@ -180,6 +195,13 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
     private suspend fun logExecutionFinish(syncTask: SyncTask) {
+
+        executionLogger.log(ExecutionLogItem.createFinishingItem(
+            taskId = syncTask.id,
+            executionId = executionId,
+            message = resources.getString(R.string.EXECUTION_LOG_work_ends)
+        ))
+
         taskStateLogger.logSuccess(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
@@ -188,6 +210,13 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
+
+        executionLogger.log(ExecutionLogItem.createErrorItem(
+            taskId = syncTask.id,
+            executionId = executionId,
+            message = resources.getString(R.string.EXECUTION_LOG_work_error)
+        ))
+
         taskStateLogger.logError(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,

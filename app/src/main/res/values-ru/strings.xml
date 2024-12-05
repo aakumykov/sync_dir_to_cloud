@@ -147,4 +147,7 @@
     <string name="EXECUTION_LOG_copying_in_target_lost_files">Копирую утраченные в приёмнике файлы</string>
     <string name="EXECUTION_LOG_deleting_deleted_dirs">Удаление удалённых каталогов</string>
     <string name="EXECUTION_LOG_deleting_deleted_files">Удаление удалённых файлов</string>
+    <string name="EXECUTION_LOG_work_begins">Начало работы</string>
+    <string name="EXECUTION_LOG_work_ends">Завершение работы</string>
+    <string name="EXECUTION_LOG_work_error">Работа завершилась в ошибкой</string>
 </resources>

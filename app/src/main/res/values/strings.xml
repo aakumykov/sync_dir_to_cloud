@@ -147,4 +147,7 @@
     <string name="EXECUTION_LOG_copying_in_target_lost_files">Copying in target lost files</string>
     <string name="EXECUTION_LOG_deleting_deleted_dirs">Deleting dirs</string>
     <string name="EXECUTION_LOG_deleting_deleted_files">Deleting files</string>
+    <string name="EXECUTION_LOG_work_begins">Work started</string>
+    <string name="EXECUTION_LOG_work_ends">Work finished</string>
+    <string name="EXECUTION_LOG_work_error">Work error</string>
 </resources>
