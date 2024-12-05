@@ -23,14 +23,6 @@ data class LogOfSync(
             )
         }
 
-        private fun executionLogItemTypeToOperationState(executionLogItemType: ExecutionLogItemType): OperationState {
-            return when(executionLogItemType) {
-                ExecutionLogItemType.FINISH-> OperationState.SUCCESS
-                ExecutionLogItemType.ERROR-> OperationState.ERROR
-                else -> OperationState.RUNNING
-            }
-        }
-
         fun from(syncObjectLogItem: SyncObjectLogItem): LogOfSync {
             return LogOfSync(
                 text = syncObjectLogItem.operationName,
@@ -38,6 +30,14 @@ data class LogOfSync(
                 subText = syncObjectLogItem.itemName,
                 operationState = syncObjectLogItem.operationState,
             )
+        }
+
+        private fun executionLogItemTypeToOperationState(executionLogItemType: ExecutionLogItemType): OperationState {
+            return when(executionLogItemType) {
+                ExecutionLogItemType.FINISH-> OperationState.SUCCESS
+                ExecutionLogItemType.ERROR-> OperationState.ERROR
+                else -> OperationState.RUNNING
+            }
         }
     }
 

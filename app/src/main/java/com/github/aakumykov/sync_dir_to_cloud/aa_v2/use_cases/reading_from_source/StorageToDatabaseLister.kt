@@ -76,20 +76,20 @@ class StorageToDatabaseLister @Inject constructor(
     }
 
 
-    private suspend fun logExecutionError(taskId: String, executionId: String, errorMsg: String) {
-        executionLogger.updateLog(ExecutionLogItem.createErrorItem(
-            taskId = taskId,
-            executionId = executionId,
-            message = errorMsg
-        ))
-    }
-
-
     private suspend fun logExecutionStarted(taskId: String, executionId: String) {
         executionLogger.log(ExecutionLogItem.createStartingItem(
             taskId = taskId,
             executionId = executionId,
             message = getString(R.string.EXECUTION_LOG_reading_source)
+        ))
+    }
+
+
+    private suspend fun logExecutionError(taskId: String, executionId: String, errorMsg: String) {
+        executionLogger.updateLog(ExecutionLogItem.createErrorItem(
+            taskId = taskId,
+            executionId = executionId,
+            message = errorMsg
         ))
     }
 

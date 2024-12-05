@@ -89,9 +89,11 @@ class ExecutionLogItem (
     }
 
 
-    override fun toString(): String {
+    /*override fun toString(): String {
         return "ExecutionLogItem(message='$message', type=$type)"
-    }
+    }*/
+
+
 
 
     @RenameColumn(tableName = TABLE_NAME, fromColumnName = "executionId", toColumnName = EXECUTION_ID_FIELD_NAME)
@@ -100,4 +102,8 @@ class ExecutionLogItem (
 
     @DeleteColumn(tableName = TABLE_NAME, columnName = OPERATION_STATE_FIELD_NAME)
     class RemoveOperationStateFieldSpec : AutoMigrationSpec
+
+    override fun toString(): String {
+        return "ExecutionLogItem(id='$id', taskId='$taskId', executionId='$executionId', timestamp=$timestamp, type=$type, message='$message')"
+    }
 }
