@@ -6,30 +6,36 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
+import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
-import com.github.aakumykov.sync_dir_to_cloud.utils.FileSizeHelper
 
-class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
-
+class LogOfSyncViewHolder(
+    private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
+) :
+    ListHoldingListAdapter.ViewHolder<LogOfSync>()
+{
     private lateinit var nameView: TextView
-    private lateinit var sizeView: TextView
+    private lateinit var percentView: TextView
     private lateinit var messageView: TextView
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
+    private lateinit var cancelButton: ImageView
 
     private val context: Context get() = nameView.context
 
     override fun init(itemView: View) {
         nameView = itemView.findViewById(R.id.syncLogNameView)
-        sizeView = itemView.findViewById(R.id.syncLogSizeView)
-        messageView = itemView.findViewById(R.id.syncLogMessageView)
+        percentView = itemView.findViewById(R.id.syncLogPercentView)
+        messageView = itemView.findViewById(R.id.syncLogOperationNameView)
         stateIconView = itemView.findViewById(R.id.syncLogStateIconView)
 
         progressBar = itemView.findViewById<ProgressBar>(R.id.syncLogProgressBar).apply {
             max = 100
             visibility = View.INVISIBLE
         }
+
+        cancelButton = itemView.findViewById(R.id.syncOperationCancelButton)
     }
 
     override fun fill(item: LogOfSync, isSelected: Boolean) {
@@ -43,12 +49,50 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
         stateIconView.setImageResource(when(item.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success
             OperationState.ERROR -> R.drawable.ic_sync_log_error
-            else -> R.drawable.ic_sync_log_waiting
+            OperationState.WAITING -> R.drawable.ic_sync_log_waiting
+            OperationState.RUNNING -> R.drawable.ic_sync_log_running
+            OperationState.PAUSED -> R.drawable.ic_sync_log_paused
+            else -> R.drawable.ic_sync_log_unknown
         })
 
-        /*progressBar.apply {
-            progress = item.progress ?: 0
-            visibility = View.VISIBLE
-        }*/
+
+        item.progress?.also { progressValue: Int ->
+            progressBar.apply {
+                progress = progressValue
+                visibility = View.VISIBLE
+            }
+            percentView.apply {
+                text = "(${progressValue}%)"
+                visibility = View.VISIBLE
+            }
+        } ?: run {
+            progressBar.visibility = View.INVISIBLE
+            percentView.visibility = View.INVISIBLE
+        }
+
+
+        if (item.isCancelable) {
+            when(item.operationState) {
+                in arrayOf(OperationState.WAITING, OperationState.RUNNING) -> {
+                    cancelButton.visibility = View.VISIBLE
+
+                    cancelButton.setOnClickListener {
+                        syncLogViewHolderClickCallbacks.onSyncingOperationCancelButtonClicked(item.operationId)
+                    }
+                }
+                else -> {
+                    disableCancelationButton()
+                }
+            }
+        } else {
+            disableCancelationButton()
+        }
+    }
+
+    private fun disableCancelationButton() {
+        cancelButton.apply {
+            visibility = View.GONE
+            setOnClickListener(null)
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileCopyingScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineMainScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import dagger.Module
@@ -15,6 +16,7 @@ import kotlin.coroutines.CoroutineContext
 @Module
 class CoroutineModule {
 
+    // TODO: "DefaultJob"
     @Deprecated("Передавать Dispatchers.IO")
     @Provides
     fun provideJob(): Job {
@@ -37,4 +39,9 @@ class CoroutineModule {
     @Provides
     @CoroutineMainScope
     fun provideMainCoroutineScope(): CoroutineScope = MainScope()
+
+    @Provides
+    @CoroutineFileCopyingScope
+    fun provideFileCopyingScope(@DispatcherIO ioDispatcher: CoroutineDispatcher): CoroutineScope
+        = CoroutineScope(ioDispatcher + Job())
 }

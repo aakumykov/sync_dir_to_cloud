@@ -5,3 +5,7 @@ import javax.inject.Qualifier
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class CoroutineMainScope()
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CoroutineFileCopyingScope()

@@ -5,5 +5,5 @@ import kotlinx.coroutines.CoroutineScope
 
 @AssistedFactory
 interface SyncTaskExecutorAssistedFactory {
-    fun create(coroutineScope: CoroutineScope): SyncTaskExecutor
+    fun create(taskExecutingScope: CoroutineScope): SyncTaskExecutor
 }

@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectProgressUpdater
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.NO_OPERATION_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,6 +23,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
     private val syncObjectLogUpdater: SyncObjectLogUpdater,
     private val syncObjectProgressUpdater: SyncObjectProgressUpdater,
 ) {
+    @Deprecated("Используй индивидуальный метод или переделай на WrappedSyncObject")
     suspend fun logWaiting(
         syncObjectList: List<SyncObject>,
         @StringRes operationNameRes: Int,
@@ -31,9 +33,22 @@ class SyncObjectLogger2 @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 syncObject = syncObject,
-                operationName = getString(operationNameRes)
+                operationName = getString(operationNameRes),
+                operationId = NO_OPERATION_ID,
             ))
         }
+    }
+
+    suspend fun logWaiting(syncObject: SyncObject,
+                           @StringRes operationName: Int,
+                           operationId: String) {
+        syncObjectLogAdder.addLogItem(SyncObjectLogItem.createWaiting(
+            taskId = taskId,
+            executionId = executionId,
+            syncObject = syncObject,
+            operationName = getString(operationName),
+            operationId = operationId,
+        ))
     }
 
     suspend fun logResettingBadStates(taskId: String, executionId: String) {
@@ -72,12 +87,14 @@ class SyncObjectLogger2 @AssistedInject constructor(
     suspend fun logFail(
         syncObject: SyncObject,
         @StringRes operationNameRes: Int,
+        operationId: String,
         errorMessage: String
     ) {
         syncObjectLogUpdater.updateLogItem(
             SyncObjectLogItem.createFailed(
                 taskId = taskId,
                 executionId = executionId,
+                operationId = operationId,
                 syncObject = syncObject,
                 operationName = getString(operationNameRes),
                 errorMessage = errorMessage

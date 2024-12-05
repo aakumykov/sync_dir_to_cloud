@@ -14,23 +14,33 @@ class ExecutionLoggerHelper @Inject constructor(
     private val resources: Resources,
 ) {
     @Deprecated("Добавить TAG и писать в консоль")
-    suspend fun logStart(taskId: String, executionId: String, @StringRes messageRes: Int) {
+    // FIXME: убрать значение по умолчанию isCancelable
+    suspend fun logStart(
+        taskId: String,
+        executionId: String,
+        operationId: String,
+        @StringRes messageRes: Int,
+        isCancelable: Boolean = false,
+    ) {
         executionLogger.log(
             ExecutionLogItem.createStartingItem(
                 taskId = taskId,
                 executionId = executionId,
+                operationId = operationId,
                 message = resources.getString(messageRes),
+                isCancelable = isCancelable,
             )
         )
     }
 
-    suspend fun logError(taskId: String, executionId: String, tag: String, e: Exception) {
+    suspend fun logError(taskId: String, executionId: String, operationId: String, tag: String, e: Exception) {
         e.errorMsg.also {  errorMessage ->
             Log.e(tag, errorMessage, e)
             executionLogger.log(
                 ExecutionLogItem.createErrorItem(
                     taskId = taskId,
                     executionId = executionId,
+                    operationId = operationId,
                     message = errorMessage,
                 )
             )

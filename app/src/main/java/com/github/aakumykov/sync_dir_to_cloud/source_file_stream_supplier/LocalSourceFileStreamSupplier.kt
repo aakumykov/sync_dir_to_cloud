@@ -7,6 +7,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.io.File
 import java.io.FileInputStream
+import java.io.InputStream
 
 class LocalSourceFileStreamSupplier @AssistedInject constructor(
     @Assisted private val unusedTaskId: String,
@@ -16,7 +17,13 @@ class LocalSourceFileStreamSupplier @AssistedInject constructor(
         Log.d(TAG, "init")
     }
 
+    @Deprecated("Возвращать InputStream, как в контракте!")
     override suspend fun getSourceFileStream(absolutePath: String): Result<FileInputStream> {
+        return getSourceFileStreamSimple(absolutePath)
+    }
+
+    @Deprecated("Возвращать InputStream, как в контракте!")
+    override fun getSourceFileStreamSimple(absolutePath: String): Result<FileInputStream> {
         return try {
             Result.success(File(absolutePath).inputStream())
         } catch (e: Exception) {

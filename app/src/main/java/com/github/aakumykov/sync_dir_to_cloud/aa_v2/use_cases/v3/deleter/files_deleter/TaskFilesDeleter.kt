@@ -22,6 +22,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.util.UUID
 
 class TaskFilesDeleter @AssistedInject constructor(
     @Assisted private val fileDeleter: FileDeleter,
@@ -34,6 +35,9 @@ class TaskFilesDeleter @AssistedInject constructor(
     private val executionLoggerHelper: ExecutionLoggerHelper,
 ) {
     suspend fun deleteDeletedFilesForTask(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
@@ -41,12 +45,12 @@ class TaskFilesDeleter @AssistedInject constructor(
                 .filter { it.isTargetReadingOk }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id,executionId, R.string.EXECUTION_LOG_deleting_deleted_files)
+                        executionLoggerHelper.logStart(syncTask.id, executionId, operationId, R.string.EXECUTION_LOG_deleting_deleted_files)
                         processList(list, syncTask)
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 

@@ -53,6 +53,10 @@ class SyncTaskRepository @Inject constructor(
         return syncTaskDAO.get(id)
     }
 
+    override fun getSyncTaskSimple(id: String): SyncTask {
+        return syncTaskDAO.getSimple(id)
+    }
+
     override suspend fun getSyncTaskAsLiveData(taskId: String): LiveData<SyncTask> {
         return syncTaskDAO.getAsLiveData(taskId)
     }

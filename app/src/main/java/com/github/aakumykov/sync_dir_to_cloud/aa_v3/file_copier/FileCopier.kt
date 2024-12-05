@@ -65,15 +65,26 @@ class FileCopier @AssistedInject constructor(
             .filter { it.isNew }
             // TODO: фильтровать те, которые сейчас не в работе...
             .forEach { syncObject ->
-                copyOneFile(syncObject, syncTask, operationName)
+                copyOneFile(
+                    syncObject = syncObject,
+                    syncTask = syncTask,
+                    operationName = operationName,
+                    operationId = createOperationId()
+                )
             }
     }
 
 
-    private suspend fun copyOneFile(syncObject: SyncObject, syncTask: SyncTask, operationName: Int) {
+    private suspend fun copyOneFile(syncObject: SyncObject, syncTask: SyncTask,
+                                    operationName: Int, operationId: String) {
 
         try {
-            operationLogger.logOperationStarts(syncObject, operationName)
+            operationLogger.logOperationStarts(
+                syncObject = syncObject,
+                operationName = operationName,
+                operationId = operationId,
+            )
+
             syncObjectStateChanger.markAsBusy(syncObject.id)
 
             val inputStream = cloudReader

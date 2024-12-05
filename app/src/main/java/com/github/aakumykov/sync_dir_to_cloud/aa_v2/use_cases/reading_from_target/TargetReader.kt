@@ -9,7 +9,14 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.in_target_existence_checker.InTargetExistenceChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.UUID
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class TargetReader @Inject constructor(
     private val syncObjectReader: SyncObjectReader,
@@ -17,38 +24,53 @@ class TargetReader @Inject constructor(
     private val executionLogger: ExecutionLogger,
     private val resources: Resources,
 ) {
-    suspend fun readWithCheckFromTarget(syncTask: SyncTask, executionId: String) {
-        try {
+    fun readWithCheckFromTarget(
+        scope: CoroutineScope,
+        syncTask: SyncTask,
+        executionId: String
+    ): Job {
+        return scope.launch {
 
-            executionLogger.log(ExecutionLogItem.createStartingItem(
-                syncTask.id,
-                executionId,
-                resources.getString(R.string.EXECUTION_LOG_reading_target)
-            ))
+            val operationId = UUID.randomUUID().toString()
+            val inTargetChecker = inTargetExistenceCheckerFactory.create(syncTask)
 
-            syncObjectReader.getAllObjectsForTask(syncTask.id).forEach { syncObject ->
-                inTargetExistenceCheckerFactory
-                    .create(syncTask)
-                    .checkObjectExists(syncObject)
-            }
+            try {
+                executionLogger.log(ExecutionLogItem.createStartingItem(
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    operationId = operationId,
+                    message = resources.getString(R.string.EXECUTION_LOG_reading_target),
+                    isCancelable = true,
+                ))
 
-            executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
-                syncTask.id,
-                executionId,
-                resources.getString(R.string.EXECUTION_LOG_reading_target)
-            ))
+                syncObjectReader
+                    .getAllObjectsForTask(syncTask.id).forEach { syncObject ->
+                        if (isActive) inTargetChecker.checkObjectExists(syncObject)
+                        else return@forEach
+                    }
 
-        }  catch (e: Exception) {
-            e.errorMsg.also { errorMessage ->
-                Log.e(TAG, errorMessage, e)
-                executionLogger.updateLog(ExecutionLogItem.createErrorItem(
+                executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
                     syncTask.id,
                     executionId,
-                    errorMessage,
+                    operationId,
+                    resources.getString(R.string.EXECUTION_LOG_reading_target)
                 ))
+
+            }
+            catch (e: Exception) {
+                e.errorMsg.also { errorMessage ->
+                    Log.e(TAG, errorMessage, e)
+                    executionLogger.updateLog(ExecutionLogItem.createErrorItem(
+                        syncTask.id,
+                        executionId,
+                        operationId,
+                        errorMessage,
+                    ))
+                }
             }
         }
     }
+
 
     companion object {
         val TAG: String = TargetReader::class.java.simpleName

@@ -33,7 +33,7 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
         val manualSyncStartWorkRequest: OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
                 .setInputData(inputData)
-                .setConstraints(networkConstraints)
+//                .setConstraints(networkConstraints)
 //            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно
 //            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()

@@ -1,19 +1,22 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 
-class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
+class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncLogViewHolderClickCallbacks {
 
     private val menuState = MenuState.noMenu()
 
@@ -29,13 +32,13 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private val executionId: String get() = arguments?.getString(EXECUTION_ID)!!
 
 //    private lateinit var listAdapter: SyncLogListAdapter
-    private lateinit var listAdapter: LogOfSyncAdapter
+    private lateinit var adapter: LogOfSyncAdapterRV
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareLayout(view)
-        prepareListAdapter()
+        prepareRecyclerView()
         prepareViewModels()
         startWork(savedInstanceState)
     }
@@ -45,22 +48,17 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         menuStateViewModel.sendMenuState(menuState)
     }
 
-    private fun prepareListAdapter() {
-        /*listAdapter = SyncLogListAdapter()
-        binding.listView.adapter = listAdapter
-//        binding.listView.setOnItemClickListener(::onItemClicked)
-        binding.listView.isClickable = true
-        binding.listView.setOnItemClickListener { parent, view, position, id ->
-            onItemClicked(listAdapter.getItem(position))
-        }*/
+    private fun prepareRecyclerView() {
+        adapter = LogOfSyncAdapterRV(this)
 
-        listAdapter = LogOfSyncAdapter()
-        binding.listView.adapter = listAdapter
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
     }
 
 
-    private fun onItemClicked(logItem: SyncObjectLogItem) {
-        LogItemDetailsDialog.create(logItem).show(childFragmentManager)
+    private fun onItemClicked(logOfSyncItem: LogOfSync) {
+        LogItemDetailsDialog.create(logOfSyncItem.toSyncLogDialogInfo()).show(childFragmentManager)
 //        syncLogViewModel.cancelJob("qwerty")
     }
 
@@ -97,7 +95,11 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 //    }
 
     private fun onLogOfSyncChanged(list: List<LogOfSync>?) {
-        list?.also { listAdapter.setList(list) }
+        list?.also {
+//            Log.d(TAG, "-------------------- List to submit -------------------")
+//            list.forEach { Log.d(TAG, it.toString()) }
+            adapter.submitList(list)
+        }
     }
 
     override fun onDestroyView() {
@@ -118,5 +120,14 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
                 )
             }
         }
+    }
+
+
+    override fun onSyncLogInfoButtonClicked(logOfSync: LogOfSync) {
+        LogItemDetailsDialog.create(logOfSync.toSyncLogDialogInfo()).show(childFragmentManager)
+    }
+
+    override fun onSyncingOperationCancelButtonClicked(operationId: String) {
+        syncLogViewModel.cancelOperation(operationId)
     }
 }

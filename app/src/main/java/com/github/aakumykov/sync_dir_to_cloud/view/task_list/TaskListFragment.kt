@@ -276,7 +276,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
 
 
     private fun onListChanged(list: List<SyncTask>) {
-        taskListAdapter?.setList(list)
+        taskListAdapter?.submitList(list)
     }
 
 

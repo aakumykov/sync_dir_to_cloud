@@ -16,6 +16,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.util.UUID
 
 // TODO: помечать объект как "удаляется"
 class TaskDirsDeleter @AssistedInject constructor(
@@ -27,6 +28,9 @@ class TaskDirsDeleter @AssistedInject constructor(
     private val executionLoggerHelper: ExecutionLoggerHelper,
 ){
     suspend fun deleteDeletedDirsForTask(taskId: String) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader.getAllObjectsForTask(taskId)
                 .filter { it.isDir }
@@ -34,12 +38,12 @@ class TaskDirsDeleter @AssistedInject constructor(
                 .filter { it.isTargetReadingOk }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(taskId, executionId, R.string.EXECUTION_LOG_deleting_deleted_dirs)
+                        executionLoggerHelper.logStart(taskId, executionId, operationId, R.string.EXECUTION_LOG_deleting_deleted_dirs)
                         processList(list)
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(taskId, executionId, TAG, e)
+            executionLoggerHelper.logError(taskId, executionId, operationId, TAG, e)
         }
     }
 

@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.github.aakumykov.sync_dir_to_cloud'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.github.aakumykov.sync_dir_to_cloud"
         minSdk 21
-        targetSdk 34
+        targetSdk 35
         versionCode 7
         versionName "0.0.7-alpha"
 
@@ -98,6 +98,7 @@ android {
         local {
             dimension 'installation_source'
             applicationIdSuffix '.local'
+            getIsDefault().set(true)
         }
         google {
             dimension 'installation_source'
@@ -127,16 +128,16 @@ dependencies {
         }
     }*/
 
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
 
 //    implementation 'androidx.fragment:fragment:1.6.2'
 
-    implementation "androidx.fragment:fragment-ktx:1.6.2"
-    implementation "androidx.activity:activity-ktx:1.8.2"
+    implementation "androidx.fragment:fragment-ktx:1.8.5"
+    implementation "androidx.activity:activity-ktx:1.9.3"
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
@@ -164,7 +165,7 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
-    implementation "androidx.work:work-runtime-ktx:2.9.0"
+    implementation "androidx.work:work-runtime-ktx:2.10.0"
 
     implementation 'com.google.dagger:dagger:2.48.1'
     kapt 'com.google.dagger:dagger-compiler:2.48.1'
@@ -191,12 +192,12 @@ dependencies {
 
     implementation "com.github.permissions-dispatcher:ktx:1.1.4"
 
-    implementation 'com.github.aakumykov:cloud_reader_2:3.1.0-alpha'
+    implementation 'com.github.aakumykov:cloud_reader_2:3.2.0-alpha'
     implementation 'com.github.aakumykov:cloud_writer_2:5.1.0-alpha'
 
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
-    def fileListerNavigatorSelectorVersion = '10.0.6-alpha'
+    def fileListerNavigatorSelectorVersion = '7900d8611e'
     implementation "com.github.aakumykov:file_lister_navigator_selector_2:$fileListerNavigatorSelectorVersion"
 //    implementation "com.github.aakumykov:local_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"
 //    implementation "com.github.aakumykov:yandex_disk_file_lister_navigator_selector:$fileListerNavigatorSelectorVersion"

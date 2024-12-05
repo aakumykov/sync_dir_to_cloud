@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
@@ -9,8 +10,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
 
 class SyncLogViewModel(
     private val syncObjectLogReader: SyncObjectLogReader,
@@ -38,15 +41,15 @@ class SyncLogViewModel(
 
     private fun prepareMediatorLiveData(taskId: String, executionId: String) {
 
-        mediatorLiveData.addSource(syncObjectLogReader.getListAsLiveData(taskId, executionId)) { list ->
+        mediatorLiveData.addSource(syncObjectLogReader.getListAsLiveData(taskId, executionId)) { syncObjectLogItemList ->
             currentSyncObjectLogItemList.clear()
-            currentSyncObjectLogItemList.addAll(list)
+            currentSyncObjectLogItemList.addAll(syncObjectLogItemList)
             processAndPublishCompiundLog()
         }
 
-        mediatorLiveData.addSource(executionLogReader.getExecutionLog(taskId,executionId)) { list ->
+        mediatorLiveData.addSource(executionLogReader.getExecutionLog(taskId,executionId)) { executionLogItemList ->
             currentExecutionLogItemList.clear()
-            currentExecutionLogItemList.addAll(list)
+            currentExecutionLogItemList.addAll(executionLogItemList)
             processAndPublishCompiundLog()
         }
     }
@@ -63,7 +66,10 @@ class SyncLogViewModel(
 
             sortBy { it.timestamp }
 
-            mediatorLiveData.value = this
+            // В RecyclerView.ListAdapter необходимо каждый раз отправлять новый список,
+            // иначе он не обновляется.
+            // https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
+            mediatorLiveData.value = this.toList()
         }
     }
 
@@ -74,8 +80,24 @@ class SyncLogViewModel(
 
     fun cancelJob(id: String) {
         // FIXME: не ViewMdodelScope, а "application scope" (!)
+
+    }
+
+    fun cancelOperation(operationId: String) {
+        // FIXME: не ViewMdodelScope, а "application scope" (!)
         viewModelScope.launch {
-            operationCancellationHolder.getJob(id)?.cancelAndJoin()
+            operationCancellationHolder.getJob(operationId).also { operationJob ->
+                Log.d(TAG, "operationJob: $operationJob")
+                operationJob?.cancel(CancellationException("Отменено пользователем"))
+                    ?: run {
+                        Log.e(TAG, "задача не найдена")
+                    }
+                // TODO: как сообщать, что операция не найдена?
+            }
         }
+    }
+
+    companion object {
+        val TAG: String = SyncLogViewModel::class.java.simpleName
     }
 }

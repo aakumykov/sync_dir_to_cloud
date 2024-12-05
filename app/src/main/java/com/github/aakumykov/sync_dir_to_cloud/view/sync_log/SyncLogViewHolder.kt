@@ -15,7 +15,7 @@ class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>()
 
     private lateinit var nameView: TextView
     private lateinit var sizeView: TextView
-    private lateinit var messageView: TextView
+    private lateinit var operationNameView: TextView
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
 
@@ -23,8 +23,8 @@ class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>()
 
     override fun init(itemView: View) {
         nameView = itemView.findViewById(R.id.syncLogNameView)
-        sizeView = itemView.findViewById(R.id.syncLogSizeView)
-        messageView = itemView.findViewById(R.id.syncLogMessageView)
+        sizeView = itemView.findViewById(R.id.syncLogPercentView)
+        operationNameView = itemView.findViewById(R.id.syncLogOperationNameView)
         stateIconView = itemView.findViewById(R.id.syncLogStateIconView)
 
         progressBar = itemView.findViewById<ProgressBar>(R.id.syncLogProgressBar).apply {
@@ -39,7 +39,7 @@ class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>()
 
         sizeView.text = FileSizeHelper.bytes2size(context, item.size)
 
-        messageView.text = item.operationName
+        operationNameView.text = item.operationName
 
         stateIconView.setImageResource(when(item.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success

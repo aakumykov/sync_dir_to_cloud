@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.NO_OPERATION_ID
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -11,10 +12,15 @@ class OperationLogger @AssistedInject constructor(
 ) {
     suspend fun logOperationStarts(
         syncObject: SyncObject,
-        operationName: Int
+        operationName: Int,
+        operationId: String = NO_OPERATION_ID,
     ) {
         syncObjectLogger.apply {
-            logWaiting(syncObject = syncObject, operationName = operationName)
+            logWaiting(
+                syncObject = syncObject,
+                operationName = operationName,
+                operationId = operationId,
+            )
         }
     }
 

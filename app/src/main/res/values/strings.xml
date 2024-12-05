@@ -110,7 +110,7 @@
     <string name="SYNC_OBJECT_LOGGER_copy_new_file">Copying new file</string>
     <string name="SYNC_OBJECT_LOGGER_copy_previously_forgotten_file">Copying previously forgotten file</string>
     <string name="SYNC_OBJECT_LOGGER_copy_modified_file">Copying changed file</string>
-    <string name="SYNC_OBJECT_LOGGER_copy_in_target_lost_file">Restoring missing file</string>
+    <string name="SYNC_OBJECT_LOGGER_copy_in_target_lost_file">Restoring in target missing file</string>
     <string name="SYNC_OBJECT_LOGGER_deleting_dir">Dir deleting</string>
     <string name="SYNC_OBJECT_LOGGER_deleting_file">File deleting</string>
     <string name="SYNC_OBJECT_LOGGER_backuping_dir">Dir backup</string>
@@ -150,4 +150,6 @@
     <string name="EXECUTION_LOG_work_begins">Work started</string>
     <string name="EXECUTION_LOG_work_ends">Work finished</string>
     <string name="EXECUTION_LOG_work_error">Work error</string>
+    <string name="description_sync_log_operation_state_icon">Operation state icon</string>
+    <string name="description_sync_operation_cancel_button">Operation cancellation button</string>
 </resources>

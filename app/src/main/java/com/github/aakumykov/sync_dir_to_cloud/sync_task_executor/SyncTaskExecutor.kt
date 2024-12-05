@@ -34,12 +34,15 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class SyncTaskExecutor @AssistedInject constructor(
 
-    @Assisted private val coroutineScope: CoroutineScope,
+    @Assisted private val taskExecutionScope: CoroutineScope,
 
     private val storageReaderCreator: StorageReaderCreator,
     private val storageWriterCreator: StorageWriterCreator,
@@ -50,7 +53,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
 
-    private val syncTaskLogger: SyncTaskLogger,
     private val taskStateLogger: TaskStateLogger,
     private val executionLogger: ExecutionLogger,
 
@@ -77,6 +79,10 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
+    // TODO: внедрять
+    private val taskExecutionDispatcher = Dispatchers.IO
+
+
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
@@ -101,76 +107,83 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 //        showReadingSourceNotification(syncTask)
 
-        logExecutionStart(syncTask, executionId)
+        taskExecutionScope.launch (taskExecutionDispatcher) {
 
-        try {
-            syncTaskRunningTimeUpdater.updateStartTime(taskId)
+            try {
+                logExecutionStart(syncTask, executionId)
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
+                syncTaskRunningTimeUpdater.updateStartTime(taskId)
 
-            // Выполнить подготовку
-            resetTaskBadStates(taskId)
-            resetObjectsBadState(taskId)
-            markAllObjectsAsDeleted(taskId)
+                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            // Прочитать источник
-            readSource(syncTask).getOrThrow()
+                // Выполнить подготовку
+                resetTaskBadStates(taskId)
+                resetObjectsBadState(taskId)
+                markAllObjectsAsDeleted(taskId)
 
-            // Прочитать приёмник
-            readTarget(syncTask)
+                // Прочитать источник
+                readSource(syncTask).join()
 
-            // Забэкапить удалённое
-            backupDeletedDirs(syncTask)
+                // Прочитать приёмник
+                readTarget(syncTask).join()
+
+                // Забэкапить удалённое
+                backupDeletedDirs(syncTask)
 //            appComponent.getDirBackuperAssistedFactory().create(syncStuff).backupDeletedDirs(syncTask)
-            backupDeletedFiles(syncTask)
+                backupDeletedFiles(syncTask)
 
-            // Забэкапить изменившееся
-            backupModifiedFiles(syncTask)
+                // Забэкапить изменившееся
+                backupModifiedFiles(syncTask)
 
-            // Удалить удалённые файлы
-            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
+                // Удалить удалённые файлы
+                deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
-            // Удалить удалённые каталоги
+                // Удалить удалённые каталоги
 //            appComponent.getDirDeleterAssistedFactory().create(syncStuff, coroutineScope).deleteDeletedDirs(syncTask)
-            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
+                deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
-            // TODO: очистка БД от удалённых элементов как отдельный этап?
+                // TODO: очистка БД от удалённых элементов как отдельный этап?
 
-            // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
-            createNewDirs(syncTask)
+                // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
+                createNewDirs(syncTask)
 //            appComponent.getDirCreatorAssistedFactory().create(syncStuff, coroutineScope).createNewDirs(syncTask)
-            createLostDirsAgain(syncTask)
+                createLostDirsAgain(syncTask)
 
-            // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
-            createNeverSyncedDirs(syncTask)
+                // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
+                createNeverSyncedDirs(syncTask)
 
-            // Скопировать новые файлы
-            copyNewFiles(syncTask)
+                // Скопировать новые файлы
+                copyNewFiles(syncTask)?.join()
 //            appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
-            // Скопировать забытые с прошлого раза файлы
-            copyPreviouslyForgottenFiles(syncTask)
+                // Скопировать забытые с прошлого раза файлы
+                copyPreviouslyForgottenFiles(syncTask)?.join()
 
-            // Скопировать изменившееся
-            copyModifiedFiles(syncTask)
+                // Скопировать изменившееся
+                copyModifiedFiles(syncTask)?.join()
 
-            // Восстановить утраченные файлы
-            copyLostFilesAgain(syncTask)
+                // Восстановить файлы, утраченные в приёмнике
+                copyLostFilesAgain(syncTask)?.join()
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
+                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
-            logExecutionFinish(syncTask)
-        }
-        catch (t: Throwable) {
-            ExceptionUtils.getErrorMessage(t).also { errorMsg ->
-                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
-                Log.e(TAG, errorMsg, t)
+                logExecutionFinish(syncTask)
             }
-            logExecutionError(syncTask, t)
-        }
-        finally {
+            catch (e: CancellationException) {
+                Log.d(TAG, "CancellationException")
+            }
+            catch (t: Throwable) {
+                ExceptionUtils.getErrorMessage(t).also { errorMsg ->
+                    syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
+                    Log.e(TAG, errorMsg, t)
+                }
+                logExecutionError(syncTask, t)
+            }
+            finally {
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
-            syncTaskRunningTimeUpdater.updateFinishTime(taskId)
+                syncTaskRunningTimeUpdater.updateFinishTime(taskId)
+            }
+
         }
     }
 
@@ -180,6 +193,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         executionLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = syncTask.id,
             executionId = executionId,
+            operationId = NO_OPERATION_ID,
             message = resources.getString(R.string.EXECUTION_LOG_work_begins)
         ))
 
@@ -195,6 +209,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         executionLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = syncTask.id,
             executionId = executionId,
+            operationId = NO_OPERATION_ID,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
         ))
 
@@ -210,6 +225,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         executionLogger.log(ExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
+            operationId = NO_OPERATION_ID,
             message = resources.getString(R.string.EXECUTION_LOG_work_error)
         ))
 
@@ -268,24 +284,24 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskDirCreator.createInTargetLostDirs(syncTask)
     }
 
-    private suspend fun copyLostFilesAgain(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyInTargetLostFiles(syncTask)
+    private suspend fun copyLostFilesAgain(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyInTargetLostFiles(syncTask)
     }
 
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
         syncTaskDirCreator.createNeverProcessedDirs(syncTask)
     }
 
-    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
+    private suspend fun copyModifiedFiles(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
     }
 
-    private suspend fun copyModifiedFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
+    private suspend fun copyNewFiles(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask, scope = taskExecutionScope)
     }
 
-    private suspend fun copyNewFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
+    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
     }
 
     private suspend fun createNewDirs(syncTask: SyncTask) {
@@ -314,10 +330,11 @@ class SyncTaskExecutor @AssistedInject constructor(
     /**
      * @return Флаг успешности чтения источника.
      */
-    private suspend fun readSource(syncTask: SyncTask): Result<Boolean> {
+    private suspend fun readSource(syncTask: SyncTask): Job {
         return appComponent
-            .getStorageToDatabaseLister()
+            .getSourceToDatabaseLister()
             .readFromPath(
+                scope = taskExecutionScope,
                 pathReadingFrom = syncTask.sourcePath,
                 taskId = syncTask.id,
                 executionId = executionId,
@@ -327,8 +344,14 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun readTarget(syncTask: SyncTask) {
-        appComponent.getTargetReader().readWithCheckFromTarget(syncTask, executionId)
+    private suspend fun readTarget(syncTask: SyncTask): Job {
+        return appComponent
+            .getTargetReader()
+            .readWithCheckFromTarget(
+                scope = taskExecutionScope,
+                syncTask = syncTask,
+                executionId = executionId,
+            )
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {

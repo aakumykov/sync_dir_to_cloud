@@ -1,11 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.SourceToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_target.TargetReader
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncObjectFileCopierCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncObjectDataCopierCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.TaskDirsDeleterCreator
@@ -56,7 +56,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -153,15 +155,14 @@ interface AppComponent {
 
     fun getProgressInfoHolder(): ProgressInfoHolder
 
-    @Deprecated("Переименовать в SourceToDatabaseLister")
-    fun getStorageToDatabaseLister(): StorageToDatabaseLister
+    fun getSourceToDatabaseLister(): SourceToDatabaseLister
 
     @Deprecated("Возвращает устаревший класс")
     fun getDatabaseToStorageWriterOld(): DatabaseToStorageWriterOld
 
     fun getDatabaseToStorageWriter(): DatabaseToStorageWriter
 
-    fun getFileCopierCreator(): SyncObjectFileCopierCreator
+    fun getFileCopierCreator(): SyncObjectDataCopierCreator
 
     fun getSyncTaskFilesCopierAssistedFactory(): SyncTaskFilesCopierAssistedFactory
 
@@ -191,6 +192,9 @@ interface AppComponent {
     fun getTargetReader(): TargetReader
 
     fun getExecutionLogCleaner(): ExecutionLogCleaner
+    fun getExecutionLogReader(): ExecutionLogReader
+
+    fun getSyncObjectLogReader(): SyncObjectLogReader
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()
