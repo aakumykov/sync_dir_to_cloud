@@ -29,5 +29,6 @@ abstract class ExecutionLogDAO {
     abstract fun getLogsAsLiveData(taskId: String, executionId: String): LiveData<List<ExecutionLogItem>>
 
     @Query("DELETE FROM execution_log")
+    @Deprecated("удалить")
     abstract fun clear()
 }

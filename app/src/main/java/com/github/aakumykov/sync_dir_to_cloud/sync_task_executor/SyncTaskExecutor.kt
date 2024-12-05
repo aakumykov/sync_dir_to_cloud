@@ -106,11 +106,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         try {
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
 
-            val syncStuff = appComponent.getSyncStuff().prepareFor(syncTask, executionId)
-
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
-
-            appComponent.getExecutionLogCleaner().clearExecutionLog()
 
             // Выполнить подготовку
             resetTaskBadStates(taskId)
