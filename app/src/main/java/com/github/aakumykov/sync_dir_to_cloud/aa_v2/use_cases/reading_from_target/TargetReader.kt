@@ -32,7 +32,7 @@ class TargetReader @Inject constructor(
                     .checkObjectExists(syncObject)
             }
 
-            executionLogger.log(ExecutionLogItem.createFinishingItem(
+            executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
                 syncTask.id,
                 executionId,
                 resources.getString(R.string.EXECUTION_LOG_reading_target)
@@ -41,7 +41,7 @@ class TargetReader @Inject constructor(
         }  catch (e: Exception) {
             e.errorMsg.also { errorMessage ->
                 Log.e(TAG, errorMessage, e)
-                executionLogger.log(ExecutionLogItem.createErrorItem(
+                executionLogger.updateLog(ExecutionLogItem.createErrorItem(
                     syncTask.id,
                     executionId,
                     errorMessage,

@@ -18,6 +18,10 @@ class ExecutionLogRepository @Inject constructor(
         executionLogDAO.addItem(executionLogItem)
     }
 
+    override suspend fun updateLog(executionLogItem: ExecutionLogItem) {
+        executionLogDAO.updateItem(executionLogItem)
+    }
+
     override fun getExecutionLog(taskId: String, executionId: String): LiveData<List<ExecutionLogItem>> {
         return executionLogDAO.getLogsAsLiveData(taskId, executionId)
     }
