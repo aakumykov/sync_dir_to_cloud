@@ -46,9 +46,13 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
             else -> R.drawable.ic_sync_log_waiting
         })
 
-        /*progressBar.apply {
-            progress = item.progress ?: 0
-            visibility = View.VISIBLE
-        }*/
+        item.progress?.also { progressValue: Int ->
+            progressBar.apply {
+                progress = progressValue
+                visibility = View.VISIBLE
+            }
+        } ?: run {
+            progressBar.visibility = View.INVISIBLE
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
-import android.media.VolumeShaper.Operation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
@@ -11,6 +10,7 @@ data class LogOfSync(
     val subText: String,
     val timestamp: Long,
     val operationState: OperationState,
+    val progress: Int? = null,
 ) {
     companion object {
 
@@ -29,6 +29,7 @@ data class LogOfSync(
                 timestamp = syncObjectLogItem.timestamp,
                 subText = syncObjectLogItem.itemName,
                 operationState = syncObjectLogItem.operationState,
+                progress = syncObjectLogItem.progress,
             )
         }
 
