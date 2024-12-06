@@ -26,6 +26,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.util.UUID
 
 class DirsBackuper @AssistedInject constructor(
     @Assisted private val cloudWriter: CloudWriter,
@@ -39,6 +40,9 @@ class DirsBackuper @AssistedInject constructor(
 ){
     @Deprecated("Выбрасывать критическое исключение")
     suspend fun backupDeletedDirsOfTask(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
 
             syncObjectReader.getAllObjectsForTask(syncTask.id)
@@ -47,13 +51,23 @@ class DirsBackuper @AssistedInject constructor(
                 .filter { it.isTargetReadingOk } // Можно обрабатывать только те элементы, состояние которых в приёмнике известно.
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_backing_up_dirs_in_target)
+                        executionLoggerHelper.logStart(
+                            syncTask.id,
+                            executionId,
+                            operationId,
+                            R.string.EXECUTION_LOG_backing_up_dirs_in_target
+                        )
                         processList(list, syncTask)
                     }
                 }
 
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(
+                syncTask.id,
+                executionId,
+                operationId,
+                TAG,
+                e)
         }
     }
 

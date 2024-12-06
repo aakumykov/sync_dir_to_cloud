@@ -18,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import java.util.UUID
 import javax.inject.Inject
 
 class StorageToDatabaseLister @Inject constructor(
@@ -37,9 +38,11 @@ class StorageToDatabaseLister @Inject constructor(
         executionId: String,
     ): Result<Boolean> {
 
+        val operationId = UUID.randomUUID().toString()
+
         return try {
 
-            logExecutionStarted(taskId,executionId)
+            logExecutionStarted(taskId, executionId, operationId)
 
             if (null == pathReadingFrom)
                 throw IllegalArgumentException("path argument is null")
@@ -61,7 +64,7 @@ class StorageToDatabaseLister @Inject constructor(
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
 
-            logExecutionFinished(taskId,executionId)
+            logExecutionFinished(taskId, executionId, operationId)
 
             Result.success(true)
 
@@ -69,35 +72,51 @@ class StorageToDatabaseLister @Inject constructor(
             ExceptionUtils.getErrorMessage(e).also { errorMsg ->
                 syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
                 Log.e(TAG, errorMsg, e)
-                logExecutionError(taskId,executionId,errorMsg)
+                logExecutionError(taskId, executionId, operationId, errorMsg)
             }
             Result.failure(e)
         }
     }
 
 
-    private suspend fun logExecutionStarted(taskId: String, executionId: String) {
+    private suspend fun logExecutionStarted(
+        taskId: String,
+        executionId: String,
+        operationId: String,
+    ) {
         executionLogger.log(ExecutionLogItem.createStartingItem(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             message = getString(R.string.EXECUTION_LOG_reading_source)
         ))
     }
 
 
-    private suspend fun logExecutionError(taskId: String, executionId: String, errorMsg: String) {
+    private suspend fun logExecutionError(
+        taskId: String,
+        executionId: String,
+        operationId: String,
+        errorMsg: String,
+    ) {
         executionLogger.updateLog(ExecutionLogItem.createErrorItem(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             message = errorMsg
         ))
     }
 
 
-    private suspend fun logExecutionFinished(taskId: String, executionId: String) {
+    private suspend fun logExecutionFinished(
+        taskId: String,
+        executionId: String,
+        operationId: String,
+    ) {
         executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             message = getString(R.string.EXECUTION_LOG_reading_source)
         ))
     }

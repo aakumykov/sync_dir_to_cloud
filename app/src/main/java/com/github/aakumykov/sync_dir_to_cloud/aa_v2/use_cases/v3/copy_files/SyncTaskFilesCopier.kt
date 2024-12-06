@@ -26,6 +26,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.util.UUID
 
 
 /**
@@ -41,6 +42,9 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     @Assisted private val executionId: String,
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
@@ -61,11 +65,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 
     suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
@@ -85,11 +92,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 
     suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
@@ -110,11 +120,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 
     suspend fun copyInTargetLostFiles(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
@@ -148,7 +161,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 

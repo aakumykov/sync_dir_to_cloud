@@ -35,7 +35,6 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 
 class SyncTaskExecutor @AssistedInject constructor(
 
@@ -180,6 +179,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         executionLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = syncTask.id,
             executionId = executionId,
+            operationId = NO_OPERATION_ID,
             message = resources.getString(R.string.EXECUTION_LOG_work_begins)
         ))
 
@@ -195,6 +195,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         executionLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = syncTask.id,
             executionId = executionId,
+            operationId = NO_OPERATION_ID,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
         ))
 
@@ -210,6 +211,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         executionLogger.log(ExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
+            operationId = NO_OPERATION_ID,
             message = resources.getString(R.string.EXECUTION_LOG_work_error)
         ))
 

@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.in_target_existence_checker.InTargetExistenceChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import java.util.UUID
 import javax.inject.Inject
 
 class TargetReader @Inject constructor(
@@ -18,11 +19,15 @@ class TargetReader @Inject constructor(
     private val resources: Resources,
 ) {
     suspend fun readWithCheckFromTarget(syncTask: SyncTask, executionId: String) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
 
             executionLogger.log(ExecutionLogItem.createStartingItem(
                 syncTask.id,
                 executionId,
+                operationId,
                 resources.getString(R.string.EXECUTION_LOG_reading_target)
             ))
 
@@ -35,6 +40,7 @@ class TargetReader @Inject constructor(
             executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
                 syncTask.id,
                 executionId,
+                operationId,
                 resources.getString(R.string.EXECUTION_LOG_reading_target)
             ))
 
@@ -44,6 +50,7 @@ class TargetReader @Inject constructor(
                 executionLogger.updateLog(ExecutionLogItem.createErrorItem(
                     syncTask.id,
                     executionId,
+                    operationId,
                     errorMessage,
                 ))
             }

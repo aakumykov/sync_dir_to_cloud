@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
-import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.NO_OPERATION_ID
 import java.util.Date
 import java.util.UUID
 
@@ -28,6 +28,7 @@ class ExecutionLogItem (
     @PrimaryKey val id: String,
     @ColumnInfo(name = TASK_ID_FIELD_NAME) val taskId: String,
     @ColumnInfo(name = EXECUTION_ID_FIELD_NAME) val executionId: String,
+    @ColumnInfo(name = OPERATION_ID_FIELD_NAME, defaultValue = NO_OPERATION_ID) val operationId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD_NAME) val timestamp: Long,
     @ColumnInfo(name = TYPE_FIELD_NAME) val type: ExecutionLogItemType,
     val message: String,
@@ -35,11 +36,13 @@ class ExecutionLogItem (
     companion object {
 
         fun createStartingItem(taskId: String,
-                            executionId: String,
-                            message: String,
+                               executionId: String,
+                               operationId: String,
+                               message: String,
         ): ExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             itemType = ExecutionLogItemType.START,
             message = message,
         )
@@ -47,10 +50,12 @@ class ExecutionLogItem (
 
         fun createFinishingItem(taskId: String,
                                 executionId: String,
+                                operationId: String,
                                 message: String,
         ): ExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             itemType = ExecutionLogItemType.FINISH,
             message = message,
         )
@@ -58,10 +63,12 @@ class ExecutionLogItem (
 
         fun createErrorItem(taskId: String,
                             executionId: String,
+                            operationId: String,
                             message: String,
         ): ExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             itemType = ExecutionLogItemType.ERROR,
             message = message,
         )
@@ -69,12 +76,14 @@ class ExecutionLogItem (
 
         private fun create(taskId: String,
                            executionId: String,
+                           operationId: String,
                            itemType: ExecutionLogItemType,
                            message: String,
         ): ExecutionLogItem = ExecutionLogItem(
             id = UUID.randomUUID().toString(),
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             timestamp = Date().time,
             type = itemType,
             message = message,
@@ -83,6 +92,7 @@ class ExecutionLogItem (
         const val TABLE_NAME = "execution_log"
         const val TASK_ID_FIELD_NAME = "task_id"
         const val EXECUTION_ID_FIELD_NAME = "execution_id"
+        const val OPERATION_ID_FIELD_NAME = "operation_id"
         const val TIMESTAMP_FIELD_NAME = "timestamp"
         const val TYPE_FIELD_NAME = "type"
         const val OPERATION_STATE_FIELD_NAME = "operation_state"

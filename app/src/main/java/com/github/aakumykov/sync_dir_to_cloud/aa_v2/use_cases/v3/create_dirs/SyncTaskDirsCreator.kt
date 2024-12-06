@@ -26,6 +26,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.util.UUID
 
 
 /**
@@ -41,13 +42,16 @@ class SyncTaskDirsCreator @AssistedInject constructor(
     @Assisted private val executionId: String
 ){
     suspend fun createNewDirs(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isDir }
                 .filter { it.isNew }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_creating_new_dirs)
+                        executionLoggerHelper.logStart(syncTask.id, executionId, operationId,  R.string.EXECUTION_LOG_creating_new_dirs)
                         createDirs(
                             operationName = R.string.SYNC_OBJECT_LOGGER_create_new_dir,
                             dirList = list,
@@ -58,13 +62,16 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                 }
         }
         catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
             throw e
         }
     }
 
     // SyncState = NEVER && StateInSource == UNCHANGED
     suspend fun createNeverProcessedDirs(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader.getAllObjectsForTask(syncTask.id)
                 .filter { it.isDir }
@@ -72,7 +79,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                 .filter { it.isTargetReadingOk }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_creating_never_processed_dirs)
+                        executionLoggerHelper.logStart(syncTask.id, executionId, operationId, R.string.EXECUTION_LOG_creating_never_processed_dirs)
                         createDirs(
                             operationName = R.string.SYNC_OBJECT_LOGGER_create_never_processed_dir,
                             dirList = list,
@@ -83,7 +90,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                 }
         }
         catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
             throw e
         }
     }
@@ -91,6 +98,9 @@ class SyncTaskDirsCreator @AssistedInject constructor(
 
     // isExistsInTarget == false
     suspend fun createInTargetLostDirs(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
          try {
              syncObjectReader.getAllObjectsForTask(syncTask.id)
                  .filter { it.isDir }
@@ -99,7 +109,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                  .filter { it.isTargetReadingOk }
                  .also { list ->
                      if (list.isNotEmpty()) {
-                         executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_creating_in_target_lost_dirs)
+                         executionLoggerHelper.logStart(syncTask.id, executionId, operationId, R.string.EXECUTION_LOG_creating_in_target_lost_dirs)
                          createDirs(
                              operationName = R.string.SYNC_OBJECT_LOGGER_create_in_target_lost_dir,
                              dirList = list,
@@ -131,7 +141,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                      }
                  }
          } catch (e: Exception) {
-             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
              throw e
          }
     }
