@@ -73,7 +73,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isNeverSynced }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
+//                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
                         copyFilesReal(
@@ -98,7 +98,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isTargetReadingOk }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
+//                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
                         copyFilesReal(
@@ -124,7 +124,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isTargetReadingOk }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id,executionId,R.string.EXECUTION_LOG_copying_in_target_lost_files)
+//                        executionLoggerHelper.logStart(syncTask.id,executionId,R.string.EXECUTION_LOG_copying_in_target_lost_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
                         copyFilesReal(
