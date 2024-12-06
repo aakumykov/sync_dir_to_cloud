@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 80,
-    "identityHash": "d0e05ca839d9337e1d794a2459a87891",
+    "version": 82,
+    "identityHash": "137e2a65b7d404371e78f47edfabe0ee",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -430,7 +430,7 @@
       },
       {
         "tableName": "sync_object_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `object_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `operation_id` TEXT NOT NULL DEFAULT 'NO_OPERATION_ID', `timestamp` INTEGER NOT NULL, `item_name` TEXT NOT NULL, `size` INTEGER NOT NULL DEFAULT 0, `operation_name` TEXT NOT NULL, `error_message` TEXT DEFAULT null, `operation_state` TEXT NOT NULL DEFAULT 'WAITING', `progress` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `object_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `item_name` TEXT NOT NULL, `size` INTEGER NOT NULL DEFAULT 0, `operation_name` TEXT NOT NULL, `error_message` TEXT DEFAULT null, `operation_state` TEXT NOT NULL DEFAULT 'WAITING', `progress` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -455,13 +455,6 @@
             "columnName": "execution_id",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "operationId",
-            "columnName": "operation_id",
-            "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "'NO_OPERATION_ID'"
           },
           {
             "fieldPath": "timestamp",
@@ -580,7 +573,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd0e05ca839d9337e1d794a2459a87891')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '137e2a65b7d404371e78f47edfabe0ee')"
     ]
   }
 }

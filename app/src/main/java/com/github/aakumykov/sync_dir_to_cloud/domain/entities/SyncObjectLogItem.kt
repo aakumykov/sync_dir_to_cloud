@@ -149,4 +149,8 @@ data class SyncObjectLogItem (
     override fun toString(): String {
         return "SyncObjectLogItem(itemName='$itemName', operationName='$operationName')"
     }
+
+
+    @DeleteColumn(tableName = TABLE_NAME, columnName = "operation_id")
+    class RemoveOperationIdFieldSpec : AutoMigrationSpec
 }
