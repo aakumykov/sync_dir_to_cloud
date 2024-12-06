@@ -30,7 +30,7 @@ class SyncStuff @Inject constructor(
     val operationLogger: OperationLogger get() = _operationLogger!!
 
 
-    suspend fun prepareFor(syncTask: SyncTask, executionId: String): SyncStuff {
+    suspend fun prepareFor(syncTask: SyncTask, executionId: String, operationId: String): SyncStuff {
 
         val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
         val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
@@ -38,7 +38,11 @@ class SyncStuff @Inject constructor(
         _cloudReader = cloudReaderCreator.createCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken)
         _cloudWriter = cloudWriterCreator.createCloudWriter(syncTask.targetStorageType, targetAuth?.authToken)
         _backupDirSpec = backupDirNamer.createBackupDirSpec(syncTask)
-        _operationLogger = operationLoggerAssistedFactory.create(syncObjectLoggerFactory.create(syncTask.id, executionId))
+        _operationLogger = operationLoggerAssistedFactory.create(syncObjectLoggerFactory.create(
+            taskId = syncTask.id,
+            executionId = executionId,
+            operationId = operationId,
+        ))
 
         return this
     }

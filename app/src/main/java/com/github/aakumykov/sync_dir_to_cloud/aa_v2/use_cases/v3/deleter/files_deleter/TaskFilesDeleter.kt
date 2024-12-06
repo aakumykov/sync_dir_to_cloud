@@ -59,6 +59,7 @@ class TaskFilesDeleter @AssistedInject constructor(
         list.forEach { syncObject ->
 
             val objectId = syncObject.id
+            val operationId = UUID.randomUUID().toString()
 
             syncObjectStateChanger.setDeletionState(objectId, ExecutionState.RUNNING)
 
@@ -69,6 +70,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                     syncObjectLogger.log(SyncObjectLogItem.createSuccess(
                         taskId = syncTask.id,
                         executionId = executionId,
+                        operationId = operationId,
                         syncObject = syncObject,
                         operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file)
                     ))
@@ -80,6 +82,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                         syncObjectLogger.log(SyncObjectLogItem.createFailed(
                             taskId = syncTask.id,
                             executionId = executionId,
+                            operationId = operationId,
                             syncObject = syncObject,
                             operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_file),
                             errorMessage = errorMsg

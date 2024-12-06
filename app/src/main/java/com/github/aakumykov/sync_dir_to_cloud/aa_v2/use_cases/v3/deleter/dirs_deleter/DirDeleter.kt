@@ -13,6 +13,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.util.UUID
 
 class DirDeleter @AssistedInject constructor(
     @Assisted private val cloudWriter: CloudWriter,
@@ -23,11 +24,15 @@ class DirDeleter @AssistedInject constructor(
 ){
     // TODO: сделать метод, удаляющий единичный каталог?
     suspend fun deleteDir(syncObject: SyncObject): Result<SyncObject> {
+
+        val operationId = UUID.randomUUID().toString()
+
         return try {
             cloudWriter.deleteDirRecursively(targetDir, syncObject.name)
             syncObjectLogger.log(SyncObjectLogItem.createSuccess(
                 taskId = syncObject.taskId,
                 executionId = executionId,
+                operationId = operationId,
                 syncObject = syncObject,
                 operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir)
             ))
@@ -38,6 +43,7 @@ class DirDeleter @AssistedInject constructor(
                 syncObjectLogger.log(SyncObjectLogItem.createFailed(
                     taskId = syncObject.taskId,
                     executionId = executionId,
+                    operationId = operationId,
                     syncObject = syncObject,
                     operationName = getString(R.string.SYNC_OBJECT_LOGGER_deleting_dir),
                     errorMessage = errorMsg

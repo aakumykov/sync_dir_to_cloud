@@ -144,6 +144,7 @@ class FilesBackuper @AssistedInject constructor(
         list.forEach { syncObject ->
 
             val objectId = syncObject.id
+            val operationId = UUID.randomUUID().toString()
 
             try {
 
@@ -163,6 +164,7 @@ class FilesBackuper @AssistedInject constructor(
                 syncObjectLogger.log(SyncObjectLogItem.createSuccess(
                     taskId = syncObject.taskId,
                     executionId = executionId,
+                    operationId = operationId,
                     syncObject = syncObject,
                     operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file)
                 ))
@@ -174,6 +176,7 @@ class FilesBackuper @AssistedInject constructor(
                     syncObjectLogger.log(SyncObjectLogItem.createFailed(
                         taskId = syncObject.taskId,
                         executionId = executionId,
+                        operationId = operationId,
                         syncObject = syncObject,
                         operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_file),
                         errorMessage = errorMsg

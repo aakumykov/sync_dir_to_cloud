@@ -180,6 +180,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         list.forEach { syncObject ->
 
             val objectId = syncObject.id
+            val operationId = UUID.randomUUID().toString()
 
             syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
             onSyncObjectProcessingBegin?.invoke(syncObject)
@@ -203,13 +204,20 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                     onSyncObjectProcessingSuccess?.invoke(syncObject)
-                    syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
+                    syncObjectLogger(syncTask.id).logSuccess(
+                        syncObject = syncObject,
+                        operationNameRes = operationName,
+                        operationId = operationId)
                 }
                 ?.onFailure { throwable ->
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
                         syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
                         onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
-                        syncObjectLogger(syncTask.id).logFail(syncObject, operationName, errorMsg)
+                        syncObjectLogger(syncTask.id).logFail(
+                            syncObject = syncObject,
+                            operationNameRes = operationName,
+                            operationId = operationId,
+                            errorMessage = errorMsg)
                     }
                 }
         }

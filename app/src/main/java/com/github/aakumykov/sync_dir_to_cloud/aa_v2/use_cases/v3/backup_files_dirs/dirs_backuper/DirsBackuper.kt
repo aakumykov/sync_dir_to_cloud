@@ -96,6 +96,7 @@ class DirsBackuper @AssistedInject constructor(
         list.forEach { syncObject ->
 
             val objectId = syncObject.id
+            val operationId = UUID.randomUUID().toString()
 
             try {
                 syncObjectStateChanger.setBackupState(objectId, ExecutionState.RUNNING)
@@ -108,6 +109,7 @@ class DirsBackuper @AssistedInject constructor(
                 syncObjectLogger.log(SyncObjectLogItem.createSuccess(
                     taskId = syncTask.id,
                     executionId = executionId,
+                    operationId = operationId,
                     syncObject = syncObject,
                     operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir)
                 ))
@@ -119,6 +121,7 @@ class DirsBackuper @AssistedInject constructor(
                     syncObjectLogger.log(SyncObjectLogItem.createFailed(
                         taskId = syncTask.id,
                         executionId = executionId,
+                        operationId = operationId,
                         syncObject = syncObject,
                         operationName = getString(R.string.SYNC_OBJECT_LOGGER_backuping_dir),
                         errorMessage = errorMsg
