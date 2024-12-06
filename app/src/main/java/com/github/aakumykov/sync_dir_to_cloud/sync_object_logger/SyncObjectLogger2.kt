@@ -13,7 +13,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import java.util.UUID
 
 class SyncObjectLogger2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -28,13 +27,9 @@ class SyncObjectLogger2 @AssistedInject constructor(
         @StringRes operationNameRes: Int,
     ) {
         syncObjectList.forEach { syncObject ->
-
-            val operationId = UUID.randomUUID().toString()
-
             syncObjectLogAdder.addLogItem(SyncObjectLogItem.createWaiting(
                 taskId = taskId,
                 executionId = executionId,
-                operationId = operationId,
                 syncObject = syncObject,
                 operationName = getString(operationNameRes)
             ))
@@ -63,13 +58,11 @@ class SyncObjectLogger2 @AssistedInject constructor(
     suspend fun logSuccess(
         syncObject: SyncObject,
         @StringRes operationNameRes: Int,
-        operationId: String,
     ) {
         syncObjectLogUpdater.updateLogItem(
             SyncObjectLogItem.createSuccess(
                 taskId = taskId,
                 executionId = executionId,
-                operationId = operationId,
                 syncObject = syncObject,
                 operationName = getString(operationNameRes)
             )
@@ -79,14 +72,12 @@ class SyncObjectLogger2 @AssistedInject constructor(
     suspend fun logFail(
         syncObject: SyncObject,
         @StringRes operationNameRes: Int,
-        operationId: String,
         errorMessage: String
     ) {
         syncObjectLogUpdater.updateLogItem(
             SyncObjectLogItem.createFailed(
                 taskId = taskId,
                 executionId = executionId,
-                operationId = operationId,
                 syncObject = syncObject,
                 operationName = getString(operationNameRes),
                 errorMessage = errorMessage

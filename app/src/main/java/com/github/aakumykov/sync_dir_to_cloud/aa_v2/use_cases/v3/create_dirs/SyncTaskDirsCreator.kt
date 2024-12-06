@@ -165,7 +165,6 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                     dirList.forEach { syncObject ->
 
                         val objectId = syncObject.id
-                        val operationId = UUID.randomUUID().toString()
 
                         syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
                         onSyncObjectProcessingBegin?.invoke(syncObject)
@@ -179,8 +178,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                 syncObjectLogger.log(SyncObjectLogItem.createSuccess(
                                     taskId = syncTask.id,
                                     executionId = executionId,
-                                    operationId = operationId,
-                                    syncObject = syncObject,
+                                    syncObject,
                                     operationName = getString(operationName)
                                 ))
                             }
@@ -194,8 +192,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                     syncObjectLogger.log(SyncObjectLogItem.createFailed(
                                         taskId = syncTask.id,
                                         executionId = executionId,
-                                        operationId = operationId,
-                                        syncObject = syncObject,
+                                        syncObject,
                                         operationName = getString(operationName),
                                         errorMessage = errorMsg
                                     ))

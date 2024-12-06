@@ -9,7 +9,6 @@ import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.NO_OPERATION_ID
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
@@ -38,7 +37,6 @@ data class SyncObjectLogItem (
     @ColumnInfo(name = TASK_ID_FIELD) val taskId: String,
     @ColumnInfo(name = OBJECT_ID_FIELD) val objectId: String,
     @ColumnInfo(name = EXECUTION_ID_FIELD) val executionId: String,
-    @ColumnInfo(name = OPERATION_ID_FIELD, defaultValue = NO_OPERATION_ID) val operationId: String,
     @ColumnInfo(name = TIMESTAMP_FIELD) val timestamp: Long,
     @ColumnInfo(name = ITEM_NAME_FILED) val itemName: String,
     @ColumnInfo(name = ITEM_SIZE_FIELD, defaultValue = "0") val size: Long,
@@ -56,7 +54,6 @@ data class SyncObjectLogItem (
         const val TASK_ID_FIELD = "task_id"
         const val OBJECT_ID_FIELD = "object_id"
         const val EXECUTION_ID_FIELD = "execution_id"
-        const val OPERATION_ID_FIELD = "operation_id"
         const val OPERATION_STATE_FIELD = "operation_state"
         const val TIMESTAMP_FIELD = "timestamp"
         const val ITEM_NAME_FILED = "item_name"
@@ -65,12 +62,10 @@ data class SyncObjectLogItem (
         const val ERROR_MESSAGE_FIELD = "error_message"
         const val PROGRESS_FIELD = "progress"
 
-        fun createWaiting(taskId: String, executionId: String, operationId: String,
-                          syncObject: SyncObject, operationName: String): SyncObjectLogItem {
+        fun createWaiting(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
                 executionId = executionId,
-                operationId = operationId,
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage =  null,
@@ -79,12 +74,10 @@ data class SyncObjectLogItem (
             )
         }
 
-        fun createSuccess(taskId: String, executionId: String, operationId: String,
-                          syncObject: SyncObject, operationName: String): SyncObjectLogItem {
+        fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
                 executionId = executionId,
-                operationId = operationId,
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage =  null,
@@ -93,12 +86,10 @@ data class SyncObjectLogItem (
             )
         }
 
-        fun createFailed(taskId: String, executionId: String, operationId: String,
-                         syncObject: SyncObject, operationName: String, errorMessage: String): SyncObjectLogItem {
+        fun createFailed(taskId: String, executionId: String, syncObject: SyncObject, operationName: String, errorMessage: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
                 executionId = executionId,
-                operationId = operationId,
                 syncObject = syncObject,
                 operationName = operationName,
                 errorMessage = errorMessage,
@@ -110,7 +101,6 @@ data class SyncObjectLogItem (
         private fun create(
             taskId: String,
             executionId: String,
-            operationId: String,
             syncObject: SyncObject,
             operationState: OperationState,
             operationName: String,
@@ -122,7 +112,6 @@ data class SyncObjectLogItem (
                 taskId = taskId,
                 objectId = syncObject.id,
                 executionId = executionId,
-                operationId = operationId,
                 timestamp = currentTime(),
                 itemName = syncObject.name,
                 size = syncObject.actualSize,
