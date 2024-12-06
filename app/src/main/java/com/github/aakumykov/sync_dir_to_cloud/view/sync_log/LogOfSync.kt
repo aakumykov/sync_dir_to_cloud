@@ -11,6 +11,7 @@ data class LogOfSync(
     val timestamp: Long,
     val operationState: OperationState,
     val progress: Int? = null,
+    val isCancelable: Boolean,
 ) {
     companion object {
 
@@ -20,6 +21,7 @@ data class LogOfSync(
                 subText = executionLogItem.type.name,
                 timestamp = executionLogItem.timestamp,
                 operationState = executionLogItemTypeToOperationState(executionLogItem.type),
+                isCancelable = false,
             )
         }
 
@@ -30,6 +32,7 @@ data class LogOfSync(
                 subText = syncObjectLogItem.itemName,
                 operationState = syncObjectLogItem.operationState,
                 progress = syncObjectLogItem.progress,
+                isCancelable = true,
             )
         }
 
