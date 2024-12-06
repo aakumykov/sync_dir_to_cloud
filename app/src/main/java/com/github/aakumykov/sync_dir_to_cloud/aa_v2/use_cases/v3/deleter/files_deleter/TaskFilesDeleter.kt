@@ -50,7 +50,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
         }
     }
 
@@ -75,7 +75,7 @@ class TaskFilesDeleter @AssistedInject constructor(
                 }
                 .onFailure {
                     ExceptionUtils.getErrorMessage(it).also { errorMsg ->
-                        syncObjectStateChanger.setDeletionState(objectId, ExecutionState.ERROR, errorMsg)
+                        syncObjectStateChanger.setDeletionState(objectId,   ExecutionState.ERROR, errorMsg)
                         Log.e(TAG, errorMsg, it)
                         syncObjectLogger.log(SyncObjectLogItem.createFailed(
                             taskId = syncTask.id,

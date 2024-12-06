@@ -70,7 +70,6 @@ class FilesBackuper @AssistedInject constructor(
             executionLoggerHelper.logError(
                 syncTask.id,
                 executionId,
-                operationId,
                 TAG,
                 e)
         }
@@ -98,7 +97,7 @@ class FilesBackuper @AssistedInject constructor(
                 }
 
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
         }
     }
 
