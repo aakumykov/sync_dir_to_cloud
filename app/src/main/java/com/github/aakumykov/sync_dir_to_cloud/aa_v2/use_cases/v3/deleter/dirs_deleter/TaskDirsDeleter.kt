@@ -43,7 +43,7 @@ class TaskDirsDeleter @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(taskId, executionId, TAG, e)
+            executionLoggerHelper.logError(taskId, executionId, operationId, TAG, e)
         }
     }
 

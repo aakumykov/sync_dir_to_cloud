@@ -6,7 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
-import com.github.aakumykov.sync_dir_to_cloud.createOperationId
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -43,6 +42,9 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     @Assisted private val executionId: String,
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
+
         try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
@@ -63,11 +65,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 
     suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
+
+        val operationId = UUID.randomUUID().toString()
 
         try {
             syncObjectReader
@@ -88,7 +92,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 
@@ -116,7 +120,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 
@@ -157,7 +161,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     }
                 }
         } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
 
@@ -176,7 +180,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         list.forEach { syncObject ->
 
             val objectId = syncObject.id
-            val operationId = createOperationId()
 
             syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
             onSyncObjectProcessingBegin?.invoke(syncObject)
@@ -187,19 +190,15 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
             val progressCalculator = ProgressCalculator(syncObject.actualSize)
 
-            syncObjectCopier?.copyDataFromPathToPath(
+            syncObjectCopier
+                ?.copyDataFromPathToPath(
                     absoluteSourceFilePath = sourcePath,
                     absoluteTargetFilePath = targetPath,
                     overwriteIfExists = overwriteIfExists,
                     progressCalculator = progressCalculator
                 ) { progressAsPartOf100: Int ->
-                    syncObjectLogger(syncTask.id).logProgress(
-                            syncObject.id,
-                            syncTask.id,
-                            executionId,
-                            operationId,
-                            progressAsPartOf100
-                        )
+                    syncObjectLogger(syncTask.id)
+                        .logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
                 }
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)

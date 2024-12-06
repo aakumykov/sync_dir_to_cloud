@@ -60,7 +60,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                 }
         }
         catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
             throw e
         }
     }
@@ -88,7 +88,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                 }
         }
         catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+            executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
             throw e
         }
     }
@@ -139,7 +139,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                      }
                  }
          } catch (e: Exception) {
-             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
              throw e
          }
     }

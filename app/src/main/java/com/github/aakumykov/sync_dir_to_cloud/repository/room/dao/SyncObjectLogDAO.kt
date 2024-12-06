@@ -67,13 +67,11 @@ abstract class SyncObjectLogDAO {
             "progress = :progress " +
             "WHERE object_id = :objectId " +
             "AND task_id = :taskId " +
-            "AND execution_id = :executionId " +
-            "AND operation_id = :operationId")
+            "AND execution_id = :executionId")
     abstract suspend fun updateProgress(
         objectId: String,
         taskId: String,
         executionId: String,
-        operationId: String,
         progress: Int
     )
 }

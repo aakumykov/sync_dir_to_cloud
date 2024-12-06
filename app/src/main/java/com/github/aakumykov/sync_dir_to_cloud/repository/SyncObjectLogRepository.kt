@@ -40,17 +40,10 @@ class SyncObjectLogRepository @Inject constructor(
         objectId: String,
         taskId: String,
         executionId: String,
-        operationId: String,
         progressAsPartOf100: Int
     ) {
         withContext(coroutineDispatcher) {
-            dao.updateProgress(
-                objectId = objectId,
-                taskId = taskId,
-                executionId = executionId,
-                operationId = operationId,
-                progress = progressAsPartOf100
-            )
+            dao.updateProgress(objectId, taskId, executionId, progressAsPartOf100)
         }
     }
 

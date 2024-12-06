@@ -7,7 +7,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.NO_OPERATION_ID
 import javax.inject.Inject
 
 class ExecutionLoggerHelper @Inject constructor(
@@ -26,14 +25,14 @@ class ExecutionLoggerHelper @Inject constructor(
         )
     }
 
-    suspend fun logError(taskId: String, executionId: String, tag: String, e: Exception) {
+    suspend fun logError(taskId: String, executionId: String, operationId: String, tag: String, e: Exception) {
         e.errorMsg.also {  errorMessage ->
             Log.e(tag, errorMessage, e)
             executionLogger.log(
                 ExecutionLogItem.createErrorItem(
                     taskId = taskId,
                     executionId = executionId,
-                    operationId = NO_OPERATION_ID,
+                    operationId = operationId,
                     message = errorMessage,
                 )
             )

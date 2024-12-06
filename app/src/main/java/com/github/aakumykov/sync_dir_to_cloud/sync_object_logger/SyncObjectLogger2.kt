@@ -4,6 +4,7 @@ import android.content.res.Resources
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
@@ -49,16 +50,9 @@ class SyncObjectLogger2 @AssistedInject constructor(
         objectId: String,
         taskId: String,
         executionId: String,
-        operationId: String,
         progressAsPartOf100: Int
     ) {
-        syncObjectProgressUpdater.updateProgress(
-            objectId = objectId,
-            taskId = taskId,
-            executionId = executionId,
-            progressAsPartOf100 = progressAsPartOf100,
-            operationId = operationId
-        )
+        syncObjectProgressUpdater.updateProgress(objectId, taskId, executionId, progressAsPartOf100)
     }
 
     suspend fun logSuccess(

@@ -65,6 +65,7 @@ class DirsBackuper @AssistedInject constructor(
             executionLoggerHelper.logError(
                 syncTask.id,
                 executionId,
+                operationId,
                 TAG,
                 e)
         }

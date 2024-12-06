@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.NO_OPERATION_ID
+import com.yandex.disk.rest.json.Resource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -55,14 +56,12 @@ class SyncObjectLogger @AssistedInject constructor(
     suspend fun logProgress(objectId: String,
                             taskId: String,
                             executionId: String,
-                            operationId: String,
                             progressAsPartOf100: Int) {
         syncLogRepository.updateProgress(
             objectId = objectId,
             taskId = taskId,
             executionId = executionId,
-            operationId = operationId,
-            progressAsPartOf100 = progressAsPartOf100,
+            progressAsPartOf100 = progressAsPartOf100
         )
     }
 
