@@ -7,7 +7,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.names
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -22,7 +21,6 @@ import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -178,7 +176,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                 syncObjectLogger.log(SyncObjectLogItem.createSuccess(
                                     taskId = syncTask.id,
                                     executionId = executionId,
-                                    syncObject,
+                                    syncObject = syncObject,
                                     operationName = getString(operationName)
                                 ))
                             }
@@ -192,7 +190,7 @@ class SyncTaskDirsCreator @AssistedInject constructor(
                                     syncObjectLogger.log(SyncObjectLogItem.createFailed(
                                         taskId = syncTask.id,
                                         executionId = executionId,
-                                        syncObject,
+                                        syncObject = syncObject,
                                         operationName = getString(operationName),
                                         errorMessage = errorMsg
                                     ))

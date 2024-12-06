@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.NO_OPERATION_ID
 import com.yandex.disk.rest.json.Resource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -16,28 +17,36 @@ class SyncObjectLogger @AssistedInject constructor(
     private val syncLogRepository: SyncObjectLogRepository,
     private val resources: Resources,
 ){
-    suspend fun logWaiting(syncObject: SyncObject, @StringRes operationName: Int) {
+    suspend fun logWaiting(syncObject: SyncObject, @StringRes operationName: Int,
+                           operationId: String = NO_OPERATION_ID) {
         syncLogRepository.addLogItem(SyncObjectLogItem.createWaiting(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             syncObject = syncObject,
             operationName = getString(operationName)
         ))
     }
 
-    suspend fun logSuccess(syncObject: SyncObject, @StringRes operationName: Int) {
+    suspend fun logSuccess(syncObject: SyncObject, @StringRes operationName: Int,
+                           operationId: String = NO_OPERATION_ID) {
         syncLogRepository.updateLogItem(SyncObjectLogItem.createSuccess(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             syncObject = syncObject,
             operationName = getString(operationName)
         ))
     }
 
-    suspend fun logError(syncObject: SyncObject, @StringRes operationName: Int, errorMsg: String) {
+    suspend fun logError(syncObject: SyncObject,
+                         @StringRes operationName: Int,
+                         operationId: String = NO_OPERATION_ID,
+                         errorMsg: String) {
         syncLogRepository.updateLogItem(SyncObjectLogItem.createFailed(
             taskId = taskId,
             executionId = executionId,
+            operationId = operationId,
             syncObject = syncObject,
             operationName = getString(operationName),
             errorMessage = errorMsg,
