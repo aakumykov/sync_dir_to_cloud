@@ -17,6 +17,7 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
     private lateinit var messageView: TextView
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
+    private lateinit var cancelButton: ImageView
 
     private val context: Context get() = nameView.context
 
@@ -30,6 +31,8 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
             max = 100
             visibility = View.INVISIBLE
         }
+
+        cancelButton = itemView.findViewById<ImageView>(R.id.syncOperationCancelButton)
     }
 
     override fun fill(item: LogOfSync, isSelected: Boolean) {
@@ -43,8 +46,12 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
         stateIconView.setImageResource(when(item.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success
             OperationState.ERROR -> R.drawable.ic_sync_log_error
-            else -> R.drawable.ic_sync_log_waiting
+            OperationState.WAITING -> R.drawable.ic_sync_log_waiting
+            OperationState.RUNNING -> R.drawable.ic_sync_log_running
+            OperationState.PAUSED -> R.drawable.ic_sync_log_paused
+            else -> R.drawable.ic_sync_log_unknown
         })
+
 
         item.progress?.also { progressValue: Int ->
             progressBar.apply {
@@ -53,6 +60,16 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
             }
         } ?: run {
             progressBar.visibility = View.INVISIBLE
+        }
+
+
+        if (item.isCancelable) {
+            when(item.operationState) {
+                in arrayOf(OperationState.WAITING, OperationState.RUNNING) -> cancelButton.visibility = View.VISIBLE
+                else -> cancelButton.visibility = View.INVISIBLE
+            }
+        } else {
+            cancelButton.visibility = View.INVISIBLE
         }
     }
 }
