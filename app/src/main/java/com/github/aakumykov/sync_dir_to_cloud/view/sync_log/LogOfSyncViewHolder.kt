@@ -6,12 +6,16 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
+import com.github.aakumykov.sync_dir_to_cloud.CancellationCallback
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.FileSizeHelper
 
-class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
-
+class LogOfSyncViewHolder(
+    private val cancellationCallback: CancellationCallback
+) :
+    ListHoldingListAdapter.ViewHolder<LogOfSync>()
+{
     private lateinit var nameView: TextView
     private lateinit var sizeView: TextView
     private lateinit var messageView: TextView
@@ -65,7 +69,13 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
         if (item.isCancelable) {
             when(item.operationState) {
-                in arrayOf(OperationState.WAITING, OperationState.RUNNING) -> cancelButton.visibility = View.VISIBLE
+                in arrayOf(OperationState.WAITING, OperationState.RUNNING) -> {
+                    cancelButton.visibility = View.VISIBLE
+
+                    cancelButton.setOnClickListener {
+//                        cancellationCallback.onCancelButtonClicked(operationId)
+                    }
+                }
                 else -> cancelButton.visibility = View.INVISIBLE
             }
         } else {
