@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.WrappedSyncObject
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.createOperationId
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -56,6 +57,12 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
 
+                        val operationId = createOperationId()
+
+                        val list = WrappedSyncObject.wrapList(list, operationId)
+
+                        logWaiting(syncTask.id, operationName, list)
+
                         copyFilesReal(
                             operationName = operationName,
                             list = list,
@@ -69,9 +76,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         }
     }
 
+
     suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
 
-        val operationId = UUID.randomUUID().toString()
+        val operationId = createOperationId()
 
         try {
             syncObjectReader
@@ -80,12 +88,20 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isNeverSynced }
                 .also { list ->
                     if (list.isNotEmpty()) {
-//                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
+
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
-                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                        val wrappedList = WrappedSyncObject.wrapList(list, operationId)
+
+                        logWaiting(
+                            taskId = syncTask.id,
+                            operationName = operationName,
+                            list = wrappedList
+                        )
+
                         copyFilesReal(
                             operationName = operationName,
-                            list = list,
+                            list = wrappedList,
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
@@ -95,6 +111,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
+
 
     suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
 
@@ -108,12 +125,16 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isTargetReadingOk }
                 .also { list ->
                     if (list.isNotEmpty()) {
-//                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
+
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
-                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                        val wrappedList = WrappedSyncObject.wrapList(list, operationId)
+
+                        logWaiting(syncTask.id, operationName, wrappedList)
+
                         copyFilesReal(
                             operationName = operationName,
-                            list = list,
+                            list = wrappedList,
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
@@ -123,6 +144,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
         }
     }
+
 
     suspend fun copyInTargetLostFiles(syncTask: SyncTask) {
 
@@ -137,12 +159,19 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isTargetReadingOk }
                 .also { list ->
                     if (list.isNotEmpty()) {
-//                        executionLoggerHelper.logStart(syncTask.id,executionId,R.string.EXECUTION_LOG_copying_in_target_lost_files)
+
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
-                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+                        val wrappedList = WrappedSyncObject.wrapList(list, operationId)
+
+                        logWaiting(
+                            taskId = syncTask.id,
+                            operationName = operationName,
+                            list =wrappedList
+                        )
+
                         copyFilesReal(
                             operationName = operationName,
-                            list = list,
+                            list = wrappedList,
                             syncTask = syncTask,
                             overwriteIfExists = false,
                             onSyncObjectProcessingBegin = { syncObject ->
@@ -168,7 +197,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     private suspend fun copyFilesReal(
         @StringRes operationName: Int,
-        list: List<SyncObject>,
+        list: List<WrappedSyncObject>,
         syncTask: SyncTask,
         overwriteIfExists: Boolean,
         onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
@@ -177,14 +206,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     ) {
         val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
-        list.forEach { syncObject ->
+        list.forEach { wrappedSyncObject ->
 
+            val syncObject = wrappedSyncObject.syncObject
             val objectId = syncObject.id
-            val operationId = createOperationId()
-
-            syncObjectLogger(syncTask.id).logWaiting(syncObject, operationName, operationId)
+            val operationId = wrappedSyncObject.operationId
 
             syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
+
             onSyncObjectProcessingBegin?.invoke(syncObject)
 
             // FIXME: избавиться от "!!"
@@ -200,8 +229,12 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     overwriteIfExists = overwriteIfExists,
                     progressCalculator = progressCalculator
                 ) { progressAsPartOf100: Int ->
-                    syncObjectLogger(syncTask.id)
-                        .logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
+                    syncObjectLogger(syncTask.id).logProgress(
+                        syncObject.id,
+                        syncTask.id,
+                        executionId,
+                        progressAsPartOf100
+                    )
                 }
                 ?.onSuccess {
                     syncObjectStateChanger.markAsSuccessfullySynced(objectId)
@@ -212,9 +245,22 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
                         syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
                         onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
-                        syncObjectLogger(syncTask.id).logFail(syncObject, operationName, errorMsg)
+                        syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
                     }
                 }
+        }
+    }
+
+
+    private suspend fun logWaiting(taskId: String, operationName: Int, list: List<WrappedSyncObject>) {
+        syncObjectLogger(taskId).apply {
+            list.forEach { wrappedSyncObject ->
+                logWaiting(
+                    syncObject = wrappedSyncObject.syncObject,
+                    operationName = operationName,
+                    operationId = wrappedSyncObject.operationId,
+                )
+            }
         }
     }
 

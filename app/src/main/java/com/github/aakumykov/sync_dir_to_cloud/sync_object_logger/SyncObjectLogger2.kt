@@ -23,6 +23,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
     private val syncObjectLogUpdater: SyncObjectLogUpdater,
     private val syncObjectProgressUpdater: SyncObjectProgressUpdater,
 ) {
+    @Deprecated("Используй индивидуальный метод или переделай на WrappedSyncObject")
     suspend fun logWaiting(
         syncObjectList: List<SyncObject>,
         @StringRes operationNameRes: Int,
@@ -86,12 +87,14 @@ class SyncObjectLogger2 @AssistedInject constructor(
     suspend fun logFail(
         syncObject: SyncObject,
         @StringRes operationNameRes: Int,
+        operationId: String,
         errorMessage: String
     ) {
         syncObjectLogUpdater.updateLogItem(
             SyncObjectLogItem.createFailed(
                 taskId = taskId,
                 executionId = executionId,
+                operationId = operationId,
                 syncObject = syncObject,
                 operationName = getString(operationNameRes),
                 errorMessage = errorMessage
