@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.createOperationId
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -52,10 +53,9 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isNew }
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        // Выводить сообщение "Копирую новые файлы" не нужно,
-                        // так как будет сообщение для каждого файла отдельно.
+
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
-                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
                         copyFilesReal(
                             operationName = operationName,
                             list = list,
@@ -180,6 +180,9 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         list.forEach { syncObject ->
 
             val objectId = syncObject.id
+            val operationId = createOperationId()
+
+            syncObjectLogger(syncTask.id).logWaiting(syncObject, operationName, operationId)
 
             syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
             onSyncObjectProcessingBegin?.invoke(syncObject)

@@ -17,8 +17,10 @@ class SyncObjectLogger @AssistedInject constructor(
     private val syncLogRepository: SyncObjectLogRepository,
     private val resources: Resources,
 ){
-    suspend fun logWaiting(syncObject: SyncObject, @StringRes operationName: Int,
-                           operationId: String = NO_OPERATION_ID) {
+    suspend fun logWaiting(syncObject: SyncObject,
+                           @StringRes operationName: Int,
+                           operationId: String
+    ) {
         syncLogRepository.addLogItem(SyncObjectLogItem.createWaiting(
             taskId = taskId,
             executionId = executionId,

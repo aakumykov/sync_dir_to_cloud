@@ -65,9 +65,10 @@ data class SyncObjectLogItem (
         const val ERROR_MESSAGE_FIELD = "error_message"
         const val PROGRESS_FIELD = "progress"
 
+        // TODO: ещё нужно состояние "running"
         fun createWaiting(taskId: String,
                           executionId: String,
-                          operationId: String = NO_OPERATION_ID,
+                          operationId: String,
                           syncObject: SyncObject,
                           operationName: String
         ): SyncObjectLogItem {
