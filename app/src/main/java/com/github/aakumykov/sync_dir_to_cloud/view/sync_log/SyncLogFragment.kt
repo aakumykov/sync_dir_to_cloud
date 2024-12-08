@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import com.github.aakumykov.sync_dir_to_cloud.SyncingOperationCancellationCallback
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
@@ -11,9 +12,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 
-class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
+class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncingOperationCancellationCallback {
 
     private val menuState = MenuState.noMenu()
 
@@ -54,7 +56,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
             onItemClicked(listAdapter.getItem(position))
         }*/
 
-        listAdapter = LogOfSyncAdapter()
+        listAdapter = LogOfSyncAdapter(this)
         binding.listView.adapter = listAdapter
     }
 
@@ -118,5 +120,9 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
                 )
             }
         }
+    }
+
+    override fun onSyncingOperationCancelButtonClicked(operationId: String) {
+        showToast(operationId)
     }
 }

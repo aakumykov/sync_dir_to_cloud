@@ -6,13 +6,12 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
-import com.github.aakumykov.sync_dir_to_cloud.CancellationCallback
+import com.github.aakumykov.sync_dir_to_cloud.SyncingOperationCancellationCallback
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
-import com.github.aakumykov.sync_dir_to_cloud.utils.FileSizeHelper
 
 class LogOfSyncViewHolder(
-    private val cancellationCallback: CancellationCallback
+    private val syncingOperationCancellationCallback: SyncingOperationCancellationCallback
 ) :
     ListHoldingListAdapter.ViewHolder<LogOfSync>()
 {
