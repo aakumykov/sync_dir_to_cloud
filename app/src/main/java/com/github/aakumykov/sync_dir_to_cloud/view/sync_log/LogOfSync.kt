@@ -12,6 +12,7 @@ data class LogOfSync(
     val operationState: OperationState,
     val progress: Int? = null,
     val isCancelable: Boolean,
+    @Deprecated("переименовать в cancelationId") val operationId: String,
 ) {
     companion object {
 
@@ -22,6 +23,7 @@ data class LogOfSync(
                 timestamp = executionLogItem.timestamp,
                 operationState = executionLogItemTypeToOperationState(executionLogItem.type),
                 isCancelable = false,
+                operationId = executionLogItem.operationId,
             )
         }
 
@@ -33,6 +35,7 @@ data class LogOfSync(
                 operationState = syncObjectLogItem.operationState,
                 progress = syncObjectLogItem.progress,
                 isCancelable = true,
+                operationId = syncObjectLogItem.operationId,
             )
         }
 

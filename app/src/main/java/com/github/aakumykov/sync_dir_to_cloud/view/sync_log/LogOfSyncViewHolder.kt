@@ -72,13 +72,20 @@ class LogOfSyncViewHolder(
                     cancelButton.visibility = View.VISIBLE
 
                     cancelButton.setOnClickListener {
-//                        cancellationCallback.onCancelButtonClicked(operationId)
+                        syncingOperationCancellationCallback.onSyncingOperationCancelButtonClicked(item.operationId)
                     }
                 }
-                else -> cancelButton.visibility = View.INVISIBLE
+                else -> disableCancelationButton()
             }
         } else {
-            cancelButton.visibility = View.INVISIBLE
+            disableCancelationButton()
+        }
+    }
+
+    private fun disableCancelationButton() {
+        cancelButton.apply {
+            visibility = View.INVISIBLE
+            setOnClickListener(null)
         }
     }
 }
