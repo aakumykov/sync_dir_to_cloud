@@ -109,7 +109,7 @@
     <string name="SYNC_OBJECT_LOGGER_create_in_target_lost_dir">Восстанавливается каталог</string>
     <string name="SYNC_OBJECT_LOGGER_copy_new_file">Копируется новый файл</string>
     <string name="SYNC_OBJECT_LOGGER_copy_previously_forgotten_file">Копируется забытый файл</string>
-    <string name="SYNC_OBJECT_LOGGER_copy_modified_file">Копируется изменённого файла</string>
+    <string name="SYNC_OBJECT_LOGGER_copy_modified_file">Копируется изменённый файл</string>
     <string name="SYNC_OBJECT_LOGGER_copy_in_target_lost_file">Восстанавливается пропавший файл</string>
     <string name="SYNC_OBJECT_LOGGER_deleting_dir">Удаляется каталог</string>
     <string name="SYNC_OBJECT_LOGGER_deleting_file">Удаляется файл</string>
