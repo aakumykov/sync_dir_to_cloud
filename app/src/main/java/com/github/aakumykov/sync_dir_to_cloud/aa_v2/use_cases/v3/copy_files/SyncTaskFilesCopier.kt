@@ -28,6 +28,10 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 
@@ -43,16 +47,19 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val executionLoggerHelper: ExecutionLoggerHelper,
     @Assisted private val executionId: String,
 ) {
-    suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
+    // TODO: внедрять
+    private val fileCopyingScope = CoroutineScope(Job() + Dispatchers.IO)
+
+    suspend fun copyNewFilesForSyncTask(syncTask: SyncTask): Job? {
 
         val operationId = UUID.randomUUID().toString()
 
-        try {
+        return try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isNew }
-                .also { list ->
+                .let { list ->
                     if (list.isNotEmpty()) {
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
@@ -69,10 +76,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
+                    } else {
+                        null
                     }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
+            null
         }
     }
 
@@ -203,51 +213,54 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
         onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
         onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
-    ) {
-        val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
+    ): Job {
+        return fileCopyingScope.launch {
 
-        list.forEach { wrappedSyncObject ->
+            val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
-            val syncObject = wrappedSyncObject.syncObject
-            val objectId = syncObject.id
-            val operationId = wrappedSyncObject.operationId
+            list.forEach { wrappedSyncObject ->
 
-            syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
+                val syncObject = wrappedSyncObject.syncObject
+                val objectId = syncObject.id
+                val operationId = wrappedSyncObject.operationId
 
-            onSyncObjectProcessingBegin?.invoke(syncObject)
+                syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
 
-            // FIXME: избавиться от "!!"
-            val sourcePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
-            val targetPath = syncObject.absolutePathIn(syncTask.targetPath!!)
+                onSyncObjectProcessingBegin?.invoke(syncObject)
 
-            val progressCalculator = ProgressCalculator(syncObject.actualSize)
+                // FIXME: избавиться от "!!"
+                val sourcePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
+                val targetPath = syncObject.absolutePathIn(syncTask.targetPath!!)
 
-            syncObjectCopier
-                ?.copyDataFromPathToPath(
-                    absoluteSourceFilePath = sourcePath,
-                    absoluteTargetFilePath = targetPath,
-                    overwriteIfExists = overwriteIfExists,
-                    progressCalculator = progressCalculator
-                ) { progressAsPartOf100: Int ->
-                    syncObjectLogger(syncTask.id).logProgress(
-                        syncObject.id,
-                        syncTask.id,
-                        executionId,
-                        progressAsPartOf100
-                    )
-                }
-                ?.onSuccess {
-                    syncObjectStateChanger.markAsSuccessfullySynced(objectId)
-                    onSyncObjectProcessingSuccess?.invoke(syncObject)
-                    syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
-                }
-                ?.onFailure { throwable ->
-                    ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                        syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
-                        onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
-                        syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
+                val progressCalculator = ProgressCalculator(syncObject.actualSize)
+
+                syncObjectCopier
+                    ?.copyDataFromPathToPath(
+                        absoluteSourceFilePath = sourcePath,
+                        absoluteTargetFilePath = targetPath,
+                        overwriteIfExists = overwriteIfExists,
+                        progressCalculator = progressCalculator
+                    ) { progressAsPartOf100: Int ->
+                        syncObjectLogger(syncTask.id).logProgress(
+                            syncObject.id,
+                            syncTask.id,
+                            executionId,
+                            progressAsPartOf100
+                        )
                     }
-                }
+                    ?.onSuccess {
+                        syncObjectStateChanger.markAsSuccessfullySynced(objectId)
+                        onSyncObjectProcessingSuccess?.invoke(syncObject)
+                        syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
+                    }
+                    ?.onFailure { throwable ->
+                        ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
+                            syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
+                            onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
+                            syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
+                        }
+                    }
+            }
         }
     }
 
