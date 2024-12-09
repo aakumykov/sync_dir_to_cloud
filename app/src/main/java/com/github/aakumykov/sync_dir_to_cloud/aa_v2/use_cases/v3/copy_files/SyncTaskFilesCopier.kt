@@ -8,6 +8,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectPro
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.WrappedSyncObject
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.createOperationId
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileCopyingScope
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -28,9 +30,11 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -45,11 +49,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     private val executionLoggerHelper: ExecutionLoggerHelper,
+    @CoroutineFileCopyingScope private val fileCopyingScope: CoroutineScope,
+    @DispatcherIO private val fileCopyingDispatcher: CoroutineDispatcher,
     @Assisted private val executionId: String,
 ) {
-    // TODO: внедрять
-    private val fileCopyingScope = CoroutineScope(Job() + Dispatchers.IO)
-
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask): Job? {
 
         val operationId = UUID.randomUUID().toString()
@@ -234,7 +237,38 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                 val progressCalculator = ProgressCalculator(syncObject.actualSize)
 
-                syncObjectCopier
+                val oneFileCopyingJob = fileCopyingScope.launch (fileCopyingDispatcher) {
+                    try {
+                        syncObjectCopier?.copyDataFromPathToPath(
+                            absoluteSourceFilePath = sourcePath,
+                            absoluteTargetFilePath = targetPath,
+                            overwriteIfExists = overwriteIfExists,
+                            progressCalculator = progressCalculator
+                        ) {
+                            progressAsPartOf100 ->
+                                syncObjectLogger(syncTask.id).logProgress(
+                                    syncObject.id,
+                                    syncTask.id,
+                                    executionId,
+                                    progressAsPartOf100
+                                )
+                        }
+                        syncObjectStateChanger.markAsSuccessfullySynced(objectId)
+                        onSyncObjectProcessingSuccess?.invoke(syncObject)
+                        syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
+
+                    } catch (e: Exception) {
+                        ExceptionUtils.getErrorMessage(e).also { errorMsg ->
+                            syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
+                            onSyncObjectProcessingFailed?.invoke(syncObject, e) ?: Log.e(TAG, errorMsg, e)
+                            syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
+                        }
+                    }
+                }.apply {
+                    join()
+                }
+
+                /*syncObjectCopier
                     ?.copyDataFromPathToPath(
                         absoluteSourceFilePath = sourcePath,
                         absoluteTargetFilePath = targetPath,
@@ -259,7 +293,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
                             syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
                         }
-                    }
+                    }*/
             }
         }
     }

@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.InputStream
 
@@ -25,7 +26,7 @@ class StreamToFileDataCopier(
 ) {
     private var lastProgressValue: Float = 0f
 
-    suspend fun copyDataFromPathToPath(
+    suspend fun copyDataFromPathToPathResult(
         absoluteSourceFilePath: String,
         absoluteTargetFilePath: String,
         progressCalculator: ProgressCalculator,
@@ -35,29 +36,50 @@ class StreamToFileDataCopier(
     : Result<String> {
 
         try {
-            val sourceFileStream: InputStream = sourceFileStreamSupplier.getSourceFileStream(absoluteSourceFilePath).getOrThrow()
-
-            cloudWriter.putStream(
-                inputStream = sourceFileStream,
-                targetPath = absoluteTargetFilePath,
-                overwriteIfExists = overwriteIfExists
-            ) { writtenBytesCount: Long ->
-                Log.d(TAG, "записано байт: $writtenBytesCount")
-                progressCallbackCoroutineScope.launch (progressCallbackCoroutineDispatcher) {
-                    val progress = progressCalculator.calcProgress(writtenBytesCount)
-                    if (lastProgressValue != progress) { // Реализация пропуска повторяющихся значений
-                        lastProgressValue = progress
-                        onProgressChanged.invoke(progressCalculator.progressAsPartOf100(progress))
-                    }
-                }
-            }
-
+            copyDataFromPathToPath(
+                absoluteSourceFilePath = absoluteSourceFilePath,
+                absoluteTargetFilePath = absoluteTargetFilePath,
+                progressCalculator = progressCalculator,
+                overwriteIfExists = overwriteIfExists,
+                onProgressChanged = onProgressChanged,
+            )
             return Result.success(absoluteTargetFilePath)
         }
         catch (e: Exception) {
             return Result.failure(e)
         }
     }
+
+
+    suspend fun copyDataFromPathToPath(
+        absoluteSourceFilePath: String,
+        absoluteTargetFilePath: String,
+        progressCalculator: ProgressCalculator,
+        overwriteIfExists: Boolean = true,
+        onProgressChanged: (suspend (Int) -> Unit)? = null,
+    ) {
+        val sourceFileStream: InputStream = sourceFileStreamSupplier
+            .getSourceFileStream(absoluteSourceFilePath)
+            .getOrThrow()
+
+        cloudWriter.putStream(
+            inputStream = sourceFileStream,
+            targetPath = absoluteTargetFilePath,
+            overwriteIfExists = overwriteIfExists
+        ) { writtenBytesCount: Long ->
+            Log.d(TAG, "записано байт: $writtenBytesCount")
+            onProgressChanged?.also { progressCallback ->
+                progressCallbackCoroutineScope.launch (progressCallbackCoroutineDispatcher) {
+                    val progress = progressCalculator.calcProgress(writtenBytesCount)
+                    if (lastProgressValue != progress) { // Реализация пропуска повторяющихся значений
+                        lastProgressValue = progress
+                        progressCallback.invoke(progressCalculator.progressAsPartOf100(progress))
+                    }
+                }
+            }
+        }
+    }
+
 
     companion object {
         val TAG: String = StreamToFileDataCopier::class.java.simpleName
