@@ -67,7 +67,7 @@ class StreamToFileDataCopier(
             targetPath = absoluteTargetFilePath,
             overwriteIfExists = overwriteIfExists
         ) { writtenBytesCount: Long ->
-            Log.d(TAG, "записано байт: $writtenBytesCount")
+//            Log.d(TAG, "записано байт: $writtenBytesCount")
             onProgressChanged?.also { progressCallback ->
                 progressCallbackCoroutineScope.launch (progressCallbackCoroutineDispatcher) {
                     val progress = progressCalculator.calcProgress(writtenBytesCount)
