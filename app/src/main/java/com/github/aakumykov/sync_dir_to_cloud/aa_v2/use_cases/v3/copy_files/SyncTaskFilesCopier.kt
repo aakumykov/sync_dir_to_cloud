@@ -23,6 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSucce
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -38,6 +39,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import java.util.UUID
+import java.util.concurrent.CancellationException
 
 
 /**
@@ -248,18 +250,20 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             absoluteTargetFilePath = targetPath,
                             overwriteIfExists = overwriteIfExists,
                             progressCalculator = progressCalculator
-                        ) {
-                            progressAsPartOf100 ->
-                                syncObjectLogger(syncTask.id).logProgress(
-                                    syncObject.id,
-                                    syncTask.id,
-                                    executionId,
-                                    progressAsPartOf100
-                                )
+                        ) { progressAsPartOf100 ->
+                            syncObjectLogger(syncTask.id).logProgress(
+                                syncObject.id,
+                                syncTask.id,
+                                executionId,
+                                progressAsPartOf100
+                            )
                         }
                         syncObjectStateChanger.markAsSuccessfullySynced(objectId)
                         onSyncObjectProcessingSuccess?.invoke(syncObject)
                         syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
+
+                    } catch (e: CancellationException) {
+                        Log.d(TAG, e.errorMsg)
 
                     } catch (e: Exception) {
                         ExceptionUtils.getErrorMessage(e).also { errorMsg ->

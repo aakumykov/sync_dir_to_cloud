@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
@@ -9,8 +10,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
 
 class SyncLogViewModel(
     private val syncObjectLogReader: SyncObjectLogReader,
@@ -74,8 +77,20 @@ class SyncLogViewModel(
 
     fun cancelJob(id: String) {
         // FIXME: не ViewMdodelScope, а "application scope" (!)
+
+    }
+
+    fun cancelOperation(operationId: String) {
+        // FIXME: не ViewMdodelScope, а "application scope" (!)
         viewModelScope.launch {
-            operationCancellationHolder.getJob(id)?.cancelAndJoin()
+            operationCancellationHolder.getJob(operationId).also { operationJob ->
+                Log.d(TAG, "operationJob: $operationJob")
+                operationJob?.cancel(CancellationException("Отменено пользователем"))
+            }
         }
+    }
+
+    companion object {
+        val TAG: String = SyncLogViewModel::class.java.simpleName
     }
 }

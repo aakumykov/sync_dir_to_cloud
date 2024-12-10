@@ -123,6 +123,6 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncingOperationCa
     }
 
     override fun onSyncingOperationCancelButtonClicked(operationId: String) {
-        showToast(operationId)
+        syncLogViewModel.cancelOperation(operationId)
     }
 }
