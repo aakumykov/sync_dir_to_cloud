@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectPro
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.WrappedSyncObject
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.createOperationId
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileCopyingScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -49,6 +50,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     private val executionLoggerHelper: ExecutionLoggerHelper,
+    private val operationCancellationHolder: OperationCancellationHolder,
     @CoroutineFileCopyingScope private val fileCopyingScope: CoroutineScope,
     @DispatcherIO private val fileCopyingDispatcher: CoroutineDispatcher,
     @Assisted private val executionId: String,
@@ -221,6 +223,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
             val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
+            val jobsList: MutableList<Job> = mutableListOf()
+
             list.forEach { wrappedSyncObject ->
 
                 val syncObject = wrappedSyncObject.syncObject
@@ -237,7 +241,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                 val progressCalculator = ProgressCalculator(syncObject.actualSize)
 
-                val oneFileCopyingJob = fileCopyingScope.launch (fileCopyingDispatcher) {
+                val fileCopyingJob = fileCopyingScope.launch (fileCopyingDispatcher) {
                     try {
                         syncObjectCopier?.copyDataFromPathToPath(
                             absoluteSourceFilePath = sourcePath,
@@ -264,9 +268,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
                         }
                     }
-                }.apply {
-                    join()
                 }
+
+                operationCancellationHolder.addJob(
+                    operationId = operationId,
+                    job = fileCopyingJob,
+                )
+
+                jobsList.add(fileCopyingJob)
 
                 /*syncObjectCopier
                     ?.copyDataFromPathToPath(
@@ -295,6 +304,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         }
                     }*/
             }
+
+            jobsList.onEach { it.join() }
         }
     }
 
