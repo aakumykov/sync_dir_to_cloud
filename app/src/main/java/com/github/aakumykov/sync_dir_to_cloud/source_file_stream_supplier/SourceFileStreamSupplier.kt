@@ -4,4 +4,5 @@ import java.io.InputStream
 
 interface SourceFileStreamSupplier {
     suspend fun getSourceFileStream(absolutePath: String): Result<InputStream>
+    fun getSourceFileStreamSimple(absolutePath: String): Result<InputStream>
 }

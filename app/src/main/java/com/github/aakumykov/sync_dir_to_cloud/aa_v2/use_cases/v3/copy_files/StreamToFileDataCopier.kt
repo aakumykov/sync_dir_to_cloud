@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.InputStream
 
 /**
@@ -58,22 +59,28 @@ class StreamToFileDataCopier(
         overwriteIfExists: Boolean = true,
         onProgressChanged: (suspend (Int) -> Unit)? = null,
     ) {
-        val sourceFileStream: InputStream = sourceFileStreamSupplier
-            .getSourceFileStream(absoluteSourceFilePath)
-            .getOrThrow()
+        return suspendCancellableCoroutine { cancellableContinuation ->
 
-        cloudWriter.putStream(
-            inputStream = sourceFileStream,
-            targetPath = absoluteTargetFilePath,
-            overwriteIfExists = overwriteIfExists
-        ) { writtenBytesCount: Long ->
-//            Log.d(TAG, "записано байт: $writtenBytesCount")
-            onProgressChanged?.also { progressCallback ->
-                progressCallbackCoroutineScope.launch (progressCallbackCoroutineDispatcher) {
-                    val progress = progressCalculator.calcProgress(writtenBytesCount)
-                    if (lastProgressValue != progress) { // Реализация пропуска повторяющихся значений
-                        lastProgressValue = progress
-                        progressCallback.invoke(progressCalculator.progressAsPartOf100(progress))
+            val sourceFileStream: InputStream = sourceFileStreamSupplier
+                .getSourceFileStream(absoluteSourceFilePath)
+                .getOrThrow()
+
+            cancellableContinuation.invokeOnCancellation { cause: Throwable? ->
+                sourceFileStream.close()
+            }
+
+            cloudWriter.putStream(
+                inputStream = sourceFileStream,
+                targetPath = absoluteTargetFilePath,
+                overwriteIfExists = overwriteIfExists
+            ) { writtenBytesCount: Long ->
+                onProgressChanged?.also { progressCallback ->
+                    progressCallbackCoroutineScope.launch (progressCallbackCoroutineDispatcher) {
+                        val progress = progressCalculator.calcProgress(writtenBytesCount)
+                        if (lastProgressValue != progress) { // Реализация пропуска повторяющихся значений
+                            lastProgressValue = progress
+                            progressCallback.invoke(progressCalculator.progressAsPartOf100(progress))
+                        }
                     }
                 }
             }

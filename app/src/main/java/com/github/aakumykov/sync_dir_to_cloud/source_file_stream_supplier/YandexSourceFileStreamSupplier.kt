@@ -21,6 +21,11 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
 
     override suspend fun getSourceFileStream(absolutePath: String): Result<InputStream> {
 
+
+    }
+
+    override fun getSourceFileStreamSimple(absolutePath: String): Result<InputStream> {
+
         App.getAppComponent().also { appComponent ->
 
             appComponent.getSyncTaskReader().getSyncTask(taskId).also { syncTask ->
