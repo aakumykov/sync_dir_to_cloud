@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_sourc
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_target.TargetReader
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncObjectFileCopierCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncObjectDataCopierCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_deleter.TaskDirsDeleterCreator
@@ -161,7 +161,7 @@ interface AppComponent {
 
     fun getDatabaseToStorageWriter(): DatabaseToStorageWriter
 
-    fun getFileCopierCreator(): SyncObjectFileCopierCreator
+    fun getFileCopierCreator(): SyncObjectDataCopierCreator
 
     fun getSyncTaskFilesCopierAssistedFactory(): SyncTaskFilesCopierAssistedFactory
 

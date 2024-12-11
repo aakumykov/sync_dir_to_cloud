@@ -1,14 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
-import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.kotlin_playground.counting_buffered_streams.CountingBufferedInputStream
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.SourceFileStreamSupplier
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.InputStream
@@ -19,7 +15,7 @@ import java.io.InputStream
  * Пишет в файл с помощью [CloudWriter]-а.
  * Возвращает данные о количестве переданных байт через коллбек.
  */
-class StreamToFileDataCopier(
+class SyncObjectDataCopier(
     private val sourceFileStreamSupplier: SourceFileStreamSupplier,
     private val cloudWriter: CloudWriter,
     private val progressCallbackCoroutineScope: CoroutineScope,
@@ -62,7 +58,7 @@ class StreamToFileDataCopier(
         return suspendCancellableCoroutine { cancellableContinuation ->
 
             val sourceFileStream: InputStream = sourceFileStreamSupplier
-                .getSourceFileStream(absoluteSourceFilePath)
+                .getSourceFileStreamSimple(absoluteSourceFilePath)
                 .getOrThrow()
 
             cancellableContinuation.invokeOnCancellation { cause: Throwable? ->
@@ -89,6 +85,6 @@ class StreamToFileDataCopier(
 
 
     companion object {
-        val TAG: String = StreamToFileDataCopier::class.java.simpleName
+        val TAG: String = SyncObjectDataCopier::class.java.simpleName
     }
 }

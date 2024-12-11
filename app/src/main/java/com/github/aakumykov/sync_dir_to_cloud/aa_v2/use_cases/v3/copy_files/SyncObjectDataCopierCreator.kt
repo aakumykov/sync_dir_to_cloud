@@ -13,14 +13,14 @@ import javax.inject.Inject
 /**
  * Создаёт SyncObjectFileCopier для SyncTask.
  */
-class SyncObjectFileCopierCreator @Inject constructor(
+class SyncObjectDataCopierCreator @Inject constructor(
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
     private val cloudAuthReader: CloudAuthReader,
     private val cloudWriterCreator: CloudWriterCreator,
     @CoroutineFileCopyingScope private val fileCopyingScope: CoroutineScope,
     @DispatcherIO private val fileCopyingDispatcher: CoroutineDispatcher,
 ) {
-    suspend fun createFileCopierFor(syncTask: SyncTask): StreamToFileDataCopier? {
+    suspend fun createDataCopierFor(syncTask: SyncTask): SyncObjectDataCopier? {
 
         val sourceFileStreamSupplier = sourceFileStreamSupplierCreator.create(
             syncTask.id,
@@ -33,7 +33,7 @@ class SyncObjectFileCopierCreator @Inject constructor(
         )
 
         return if (null != sourceFileStreamSupplier && null != targetCloudWriter) {
-            StreamToFileDataCopier(
+            SyncObjectDataCopier(
                 sourceFileStreamSupplier = sourceFileStreamSupplier,
                 cloudWriter = targetCloudWriter,
                 progressCallbackCoroutineScope = fileCopyingScope,

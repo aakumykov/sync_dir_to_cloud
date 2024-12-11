@@ -12,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.createOperationI
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileCopyingScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -34,9 +33,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.CancellationException
@@ -49,7 +46,7 @@ import java.util.concurrent.CancellationException
 class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
+    private val syncObjectDataCopierCreator: SyncObjectDataCopierCreator,
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     private val executionLoggerHelper: ExecutionLoggerHelper,
     private val operationCancellationHolder: OperationCancellationHolder,
@@ -223,7 +220,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     ): Job {
         return fileCopyingScope.launch {
 
-            val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
+            val syncObjectDataCopier = syncObjectDataCopierCreator.createDataCopierFor(syncTask)
 
             val jobsList: MutableList<Job> = mutableListOf()
 
@@ -245,7 +242,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                 val fileCopyingJob = fileCopyingScope.launch (fileCopyingDispatcher) {
                     try {
-                        syncObjectCopier?.copyDataFromPathToPath(
+                        syncObjectDataCopier?.copyDataFromPathToPath(
                             absoluteSourceFilePath = sourcePath,
                             absoluteTargetFilePath = targetPath,
                             overwriteIfExists = overwriteIfExists,
