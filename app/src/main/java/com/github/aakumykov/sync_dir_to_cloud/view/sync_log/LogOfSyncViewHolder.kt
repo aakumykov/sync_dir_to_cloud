@@ -35,7 +35,7 @@ class LogOfSyncViewHolder(
             visibility = View.INVISIBLE
         }
 
-        cancelButton = itemView.findViewById<ImageView>(R.id.syncOperationCancelButton)
+        cancelButton = itemView.findViewById(R.id.syncOperationCancelButton)
     }
 
     override fun fill(item: LogOfSync, isSelected: Boolean) {
