@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.InputStream
+import kotlin.coroutines.resume
 
 /**
  * Копирует данные из файла, расположенному по пути источника в файл по пути приёмника.
@@ -80,6 +81,8 @@ class SyncObjectDataCopier(
                     }
                 }
             }
+
+            cancellableContinuation.resume(Unit)
         }
     }
 
