@@ -23,6 +23,10 @@ class CloudAuthRepository @Inject constructor(
         return id?.let { cloudAuthDAO.get(id) }
     }
 
+    override fun getCloudAuthSimple(id: String?): CloudAuth? {
+        return id?.let { cloudAuthDAO.getSimple(id) }
+    }
+
     override suspend fun hasAuthWithName(name: String): Boolean
         = cloudAuthDAO.hasName(name)
 }

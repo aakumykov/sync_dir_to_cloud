@@ -20,4 +20,7 @@ interface CloudAuthDAO {
 
     @Query("SELECT * FROM cloud_auth WHERE id = :id")
     suspend fun get(id: String): CloudAuth
+
+    @Query("SELECT * FROM cloud_auth WHERE id = :id")
+    fun getSimple(id: String): CloudAuth
 }
