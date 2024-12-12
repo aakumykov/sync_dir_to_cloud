@@ -75,7 +75,9 @@ class LogOfSyncViewHolder(
                         syncingOperationCancellationCallback.onSyncingOperationCancelButtonClicked(item.operationId)
                     }
                 }
-                else -> disableCancelationButton()
+                else -> {
+                    disableCancelationButton()
+                }
             }
         } else {
             disableCancelationButton()
