@@ -10,6 +10,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import okhttp3.OkHttpClient
 import java.io.InputStream
+import kotlin.concurrent.thread
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 // TODO: внедрять SyncTaskReader, CloudAuthReader, а то и YnadexCloudReader
 class YandexSourceFileStreamSupplier @AssistedInject constructor(
@@ -20,19 +23,25 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
 
 
     override suspend fun getSourceFileStream(absolutePath: String): Result<InputStream> {
-
-
+        return suspendCoroutine { continuation ->
+            thread {
+                getSourceFileStreamSimple(absolutePath).let {
+                    continuation.resume(it)
+                }
+            }
+        }
     }
+
 
     override fun getSourceFileStreamSimple(absolutePath: String): Result<InputStream> {
 
         App.getAppComponent().also { appComponent ->
 
-            appComponent.getSyncTaskReader().getSyncTask(taskId).also { syncTask ->
+            appComponent.getSyncTaskReader().getSyncTaskSimple(taskId).also { syncTask ->
 
                 syncTask.sourceAuthId?.also { authId ->
 
-                    appComponent.getCloudAuthReader().getCloudAuth(authId)?.also { cloudAuth ->
+                    appComponent.getCloudAuthReader().getCloudAuthSimple(authId)?.also { cloudAuth ->
 
                         yandexCloudReader = YandexDiskCloudReader(
                             cloudAuth.authToken,
@@ -45,7 +54,7 @@ class YandexSourceFileStreamSupplier @AssistedInject constructor(
             }
         }
 
-        return yandexCloudReader?.getFileInputStream(absolutePath)
+        return yandexCloudReader?.getFileInputStreamSimple(absolutePath)
             ?: Result.failure(Exception("YandexCloudReader is null."))
     }
 
