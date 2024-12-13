@@ -61,9 +61,13 @@ class LogOfSyncViewHolder(
                 progress = progressValue
                 visibility = View.VISIBLE
             }
-            sizeView.text = "(${progressValue}%)"
+            sizeView.apply {
+                text = "(${progressValue}%)"
+                visibility = View.VISIBLE
+            }
         } ?: run {
             progressBar.visibility = View.INVISIBLE
+            sizeView.visibility = View.INVISIBLE
         }
 
 
