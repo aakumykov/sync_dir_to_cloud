@@ -22,7 +22,7 @@ data class LogOfSync(
                 subText = executionLogItem.type.name,
                 timestamp = executionLogItem.timestamp,
                 operationState = executionLogItemTypeToOperationState(executionLogItem.type),
-                isCancelable = false,
+                isCancelable = executionLogItem.isCancelable,
                 operationId = executionLogItem.operationId,
             )
         }

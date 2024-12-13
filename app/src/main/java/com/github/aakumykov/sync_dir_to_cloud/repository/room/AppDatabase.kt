@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -34,7 +35,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncObjectLogItem::class,
         ExecutionLogItem::class,
    ],
-    version = 83,
+    version = 84,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -63,6 +64,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 80, to = 81), // Добавление поля operationId в SyncObjectLogItem.
         AutoMigration(from = 81, to = 82, spec = SyncObjectLogItem.RemoveOperationIdFieldSpec::class), // Удаление поля operationId в SyncObjectLogItem.
         AutoMigration(from = 82, to = 83), // Повторное добавление поля operationId в SyncObjectLogItem.
+        AutoMigration(from = 83, to = 84), // Добавление поля ExecutionLogItem.isCancelable
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

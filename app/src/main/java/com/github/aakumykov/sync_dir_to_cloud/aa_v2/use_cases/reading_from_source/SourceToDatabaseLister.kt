@@ -101,7 +101,8 @@ class SourceToDatabaseLister @Inject constructor(
             taskId = taskId,
             executionId = executionId,
             operationId = operationId,
-            message = getString(R.string.EXECUTION_LOG_reading_source)
+            message = getString(R.string.EXECUTION_LOG_reading_source),
+            isCancelable = true,
         ))
     }
 

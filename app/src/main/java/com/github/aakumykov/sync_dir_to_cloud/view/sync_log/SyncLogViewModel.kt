@@ -41,15 +41,15 @@ class SyncLogViewModel(
 
     private fun prepareMediatorLiveData(taskId: String, executionId: String) {
 
-        mediatorLiveData.addSource(syncObjectLogReader.getListAsLiveData(taskId, executionId)) { list ->
+        mediatorLiveData.addSource(syncObjectLogReader.getListAsLiveData(taskId, executionId)) { syncObjectLogItemList ->
             currentSyncObjectLogItemList.clear()
-            currentSyncObjectLogItemList.addAll(list)
+            currentSyncObjectLogItemList.addAll(syncObjectLogItemList)
             processAndPublishCompiundLog()
         }
 
-        mediatorLiveData.addSource(executionLogReader.getExecutionLog(taskId,executionId)) { list ->
+        mediatorLiveData.addSource(executionLogReader.getExecutionLog(taskId,executionId)) { executionLogItemList ->
             currentExecutionLogItemList.clear()
-            currentExecutionLogItemList.addAll(list)
+            currentExecutionLogItemList.addAll(executionLogItemList)
             processAndPublishCompiundLog()
         }
     }

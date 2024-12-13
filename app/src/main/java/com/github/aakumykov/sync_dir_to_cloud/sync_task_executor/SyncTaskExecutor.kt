@@ -125,7 +125,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 readSource(syncTask).join()
 
                 // Прочитать приёмник
-                readTarget(syncTask)
+                readTarget(syncTask).join()
 
                 // Забэкапить удалённое
                 backupDeletedDirs(syncTask)
@@ -341,8 +341,14 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun readTarget(syncTask: SyncTask) {
-        appComponent.getTargetReader().readWithCheckFromTarget(syncTask, executionId)
+    private suspend fun readTarget(syncTask: SyncTask): Job {
+        return appComponent
+            .getTargetReader()
+            .readWithCheckFromTarget(
+                scope = taskExecutionScope,
+                syncTask = syncTask,
+                executionId = executionId,
+            )
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {

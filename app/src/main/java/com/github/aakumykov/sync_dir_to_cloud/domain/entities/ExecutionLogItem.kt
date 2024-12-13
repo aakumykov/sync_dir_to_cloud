@@ -32,6 +32,7 @@ class ExecutionLogItem (
     @ColumnInfo(name = TIMESTAMP_FIELD_NAME) val timestamp: Long,
     @ColumnInfo(name = TYPE_FIELD_NAME) val type: ExecutionLogItemType,
     val message: String,
+    @ColumnInfo(name = IS_CANCELABLE_FIELD_NAME, defaultValue = false.toString()) val isCancelable: Boolean,
 ) {
     companion object {
 
@@ -39,12 +40,14 @@ class ExecutionLogItem (
                                executionId: String,
                                operationId: String,
                                message: String,
+                               isCancelable: Boolean,
         ): ExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
             operationId = operationId,
             itemType = ExecutionLogItemType.START,
             message = message,
+            isCancelable = isCancelable,
         )
 
 
@@ -58,6 +61,7 @@ class ExecutionLogItem (
             operationId = operationId,
             itemType = ExecutionLogItemType.FINISH,
             message = message,
+            isCancelable = false,
         )
 
 
@@ -71,6 +75,7 @@ class ExecutionLogItem (
             operationId = operationId,
             itemType = ExecutionLogItemType.ERROR,
             message = message,
+            isCancelable = false,
         )
 
 
@@ -79,6 +84,7 @@ class ExecutionLogItem (
                            operationId: String,
                            itemType: ExecutionLogItemType,
                            message: String,
+                           isCancelable: Boolean,
         ): ExecutionLogItem = ExecutionLogItem(
             id = UUID.randomUUID().toString(),
             taskId = taskId,
@@ -87,6 +93,7 @@ class ExecutionLogItem (
             timestamp = Date().time,
             type = itemType,
             message = message,
+            isCancelable = isCancelable,
         )
 
         const val TABLE_NAME = "execution_log"
@@ -96,6 +103,7 @@ class ExecutionLogItem (
         const val TIMESTAMP_FIELD_NAME = "timestamp"
         const val TYPE_FIELD_NAME = "type"
         const val OPERATION_STATE_FIELD_NAME = "operation_state"
+        const val IS_CANCELABLE_FIELD_NAME = "is_cancelable"
     }
 
 
