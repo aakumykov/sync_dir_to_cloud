@@ -25,15 +25,11 @@ class SyncObjectLogRepository @Inject constructor(
     SyncObjectProgressUpdater
 {
     override suspend fun addLogItem(syncObjectLogItem: SyncObjectLogItem) {
-        withContext(coroutineDispatcher) {
-            dao.addLogItem(syncObjectLogItem)
-        }
+        dao.addLogItem(syncObjectLogItem)
     }
 
     override suspend fun updateLogItem(syncObjectLogItem: SyncObjectLogItem) {
-        withContext(coroutineDispatcher) {
-            dao.updateLogItem(syncObjectLogItem)
-        }
+        dao.updateLogItem(syncObjectLogItem)
     }
 
     override suspend fun updateProgress(
@@ -42,15 +38,11 @@ class SyncObjectLogRepository @Inject constructor(
         executionId: String,
         progressAsPartOf100: Int
     ) {
-        withContext(coroutineDispatcher) {
-            dao.updateProgress(objectId, taskId, executionId, progressAsPartOf100)
-        }
+        dao.updateProgress(objectId, taskId, executionId, progressAsPartOf100)
     }
 
     override suspend fun deleteLogsForTask(taskId: String) {
-        withContext(coroutineDispatcher) {
-            dao.deleteLogItemsForTask(taskId)
-        }
+        dao.deleteLogItemsForTask(taskId)
     }
 
 
