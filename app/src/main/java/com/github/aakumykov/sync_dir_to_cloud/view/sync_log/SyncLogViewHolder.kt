@@ -23,7 +23,7 @@ class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<SyncObjectLogItem>()
 
     override fun init(itemView: View) {
         nameView = itemView.findViewById(R.id.syncLogNameView)
-        sizeView = itemView.findViewById(R.id.syncLogSizeView)
+        sizeView = itemView.findViewById(R.id.syncLogPercentView)
         operationNameView = itemView.findViewById(R.id.syncLogOperationNameView)
         stateIconView = itemView.findViewById(R.id.syncLogStateIconView)
 

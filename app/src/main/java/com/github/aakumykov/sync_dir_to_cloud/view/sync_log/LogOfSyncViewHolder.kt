@@ -16,7 +16,7 @@ class LogOfSyncViewHolder(
     ListHoldingListAdapter.ViewHolder<LogOfSync>()
 {
     private lateinit var nameView: TextView
-    private lateinit var sizeView: TextView
+    private lateinit var percentView: TextView
     private lateinit var messageView: TextView
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
@@ -26,7 +26,7 @@ class LogOfSyncViewHolder(
 
     override fun init(itemView: View) {
         nameView = itemView.findViewById(R.id.syncLogNameView)
-        sizeView = itemView.findViewById(R.id.syncLogSizeView)
+        percentView = itemView.findViewById(R.id.syncLogPercentView)
         messageView = itemView.findViewById(R.id.syncLogOperationNameView)
         stateIconView = itemView.findViewById(R.id.syncLogStateIconView)
 
@@ -61,13 +61,13 @@ class LogOfSyncViewHolder(
                 progress = progressValue
                 visibility = View.VISIBLE
             }
-            sizeView.apply {
+            percentView.apply {
                 text = "(${progressValue}%)"
                 visibility = View.VISIBLE
             }
         } ?: run {
             progressBar.visibility = View.INVISIBLE
-            sizeView.visibility = View.INVISIBLE
+            percentView.visibility = View.INVISIBLE
         }
 
 

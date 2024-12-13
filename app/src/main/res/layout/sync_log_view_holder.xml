@@ -49,7 +49,7 @@
         tools:text="имя объекта" />
 
     <TextView
-        android:id="@+id/syncLogSizeView"
+        android:id="@+id/syncLogPercentView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/syncLogOperationNameView"
