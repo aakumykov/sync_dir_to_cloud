@@ -52,3 +52,14 @@ data class LogOfSync(
         return "LogOfSync(text='$text', subText='$subText', timestamp=$timestamp)"
     }
 }
+
+
+fun LogOfSync.toSyncLogDialogInfo(): SyncLogDialogInfo {
+    return SyncLogDialogInfo(
+        title = text,
+        subtitle = subText,
+        errorMessage = if (OperationState.ERROR == operationState) subText else null,
+        operationState = operationState,
+        timestamp = timestamp
+    )
+}
