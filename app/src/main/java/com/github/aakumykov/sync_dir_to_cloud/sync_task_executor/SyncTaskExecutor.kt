@@ -122,7 +122,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 markAllObjectsAsDeleted(taskId)
 
                 // Прочитать источник
-                readSource(syncTask).getOrThrow()
+                readSource(syncTask).join()
 
                 // Прочитать приёмник
                 readTarget(syncTask)
@@ -327,10 +327,11 @@ class SyncTaskExecutor @AssistedInject constructor(
     /**
      * @return Флаг успешности чтения источника.
      */
-    private suspend fun readSource(syncTask: SyncTask): Result<Boolean> {
+    private suspend fun readSource(syncTask: SyncTask): Job {
         return appComponent
             .getSourceToDatabaseLister()
             .readFromPath(
+                scope = taskExecutionScope,
                 pathReadingFrom = syncTask.sourcePath,
                 taskId = syncTask.id,
                 executionId = executionId,

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -18,6 +19,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
@@ -29,52 +33,61 @@ class SourceToDatabaseLister @Inject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val executionLogger: ExecutionLogger,
     private val resources: Resources,
+    private val operationCancellationHolder: OperationCancellationHolder,
 ) {
+    /**
+     * @param scope Используется scope задачи для того, потому что отмена
+     * этой операции должна отменять всю задачу.
+     */
     suspend fun readFromPath(
+        scope: CoroutineScope,
         pathReadingFrom: String?,
         changesDetectionStrategy: ChangesDetectionStrategy,
         cloudAuth: CloudAuth?,
         taskId: String,
         executionId: String,
-    ): Result<Boolean> {
+    ): Job {
 
-        val operationId = UUID.randomUUID().toString()
+        return scope.launch {
 
-        return try {
+            val operationId = UUID.randomUUID().toString()
 
-            logExecutionStarted(taskId, executionId, operationId)
+            try {
 
-            if (null == pathReadingFrom)
-                throw IllegalArgumentException("path argument is null")
+                logExecutionStarted(taskId, executionId, operationId)
 
-            if (null == cloudAuth)
-                throw IllegalArgumentException("cloudAuth argument is null")
+                if (null == pathReadingFrom)
+                    throw IllegalArgumentException("path argument is null")
 
-            syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
+                if (null == cloudAuth)
+                    throw IllegalArgumentException("cloudAuth argument is null")
 
-            recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
-                ?.listDirRecursively(
-                    path = pathReadingFrom,
-                    foldersFirst = true
-                )
-                ?.apply {
-                    syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
+                syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
+
+                recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
+                    ?.listDirRecursively(
+                        path = pathReadingFrom,
+                        foldersFirst = true
+                    )
+                    ?.apply {
+                        syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
+                    }
+                    ?.forEach { fileListItem ->
+                        addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
+                    }
+
+                logExecutionFinished(taskId, executionId, operationId)
+
+                Result.success(true)
+
+            } catch (e: Exception) {
+                ExceptionUtils.getErrorMessage(e).also { errorMsg ->
+                    syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
+                    Log.e(TAG, errorMsg, e)
+                    logExecutionError(taskId, executionId, operationId, errorMsg)
                 }
-                ?.forEach { fileListItem ->
-                    addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
-                }
-
-            logExecutionFinished(taskId, executionId, operationId)
-
-            Result.success(true)
-
-        } catch (e: Exception) {
-            ExceptionUtils.getErrorMessage(e).also { errorMsg ->
-                syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
-                Log.e(TAG, errorMsg, e)
-                logExecutionError(taskId, executionId, operationId, errorMsg)
+                Result.failure(e)
             }
-            Result.failure(e)
         }
     }
 
