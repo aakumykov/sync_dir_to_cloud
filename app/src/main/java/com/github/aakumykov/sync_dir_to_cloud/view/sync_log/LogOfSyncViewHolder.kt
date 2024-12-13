@@ -27,7 +27,7 @@ class LogOfSyncViewHolder(
     override fun init(itemView: View) {
         nameView = itemView.findViewById(R.id.syncLogNameView)
         sizeView = itemView.findViewById(R.id.syncLogSizeView)
-        messageView = itemView.findViewById(R.id.syncLogMessageView)
+        messageView = itemView.findViewById(R.id.syncLogOperationNameView)
         stateIconView = itemView.findViewById(R.id.syncLogStateIconView)
 
         progressBar = itemView.findViewById<ProgressBar>(R.id.syncLogProgressBar).apply {
@@ -61,6 +61,7 @@ class LogOfSyncViewHolder(
                 progress = progressValue
                 visibility = View.VISIBLE
             }
+            sizeView.text = "(${progressValue}%)"
         } ?: run {
             progressBar.visibility = View.INVISIBLE
         }
@@ -86,7 +87,7 @@ class LogOfSyncViewHolder(
 
     private fun disableCancelationButton() {
         cancelButton.apply {
-            visibility = View.INVISIBLE
+            visibility = View.GONE
             setOnClickListener(null)
         }
     }
