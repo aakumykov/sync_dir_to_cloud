@@ -21,7 +21,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import java.util.UUID
 import javax.inject.Inject
 
-class StorageToDatabaseLister @Inject constructor(
+class SourceToDatabaseLister @Inject constructor(
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
@@ -160,6 +160,6 @@ class StorageToDatabaseLister @Inject constructor(
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
 
     companion object {
-        val TAG: String = StorageToDatabaseLister::class.java.simpleName
+        val TAG: String = SourceToDatabaseLister::class.java.simpleName
     }
 }

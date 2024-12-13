@@ -329,7 +329,7 @@ class SyncTaskExecutor @AssistedInject constructor(
      */
     private suspend fun readSource(syncTask: SyncTask): Result<Boolean> {
         return appComponent
-            .getStorageToDatabaseLister()
+            .getSourceToDatabaseLister()
             .readFromPath(
                 pathReadingFrom = syncTask.sourcePath,
                 taskId = syncTask.id,
