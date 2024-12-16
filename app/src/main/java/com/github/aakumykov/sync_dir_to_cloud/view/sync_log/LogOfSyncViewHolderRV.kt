@@ -1,19 +1,17 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
-import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
-import com.github.aakumykov.sync_dir_to_cloud.SyncingOperationCancellationCallback
+import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 class LogOfSyncViewHolderRV(
     private val view: View,
-    private val syncingOperationCancellationCallback: SyncingOperationCancellationCallback
+    private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
 ) :
     RecyclerView.ViewHolder(view)
 {
@@ -23,9 +21,6 @@ class LogOfSyncViewHolderRV(
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
     private lateinit var cancelButton: ImageView
-
-    private val context: Context get() = nameView.context
-
 
 
     fun init(itemView: View) {
@@ -42,15 +37,15 @@ class LogOfSyncViewHolderRV(
         cancelButton = itemView.findViewById(R.id.syncOperationCancelButton)
     }
 
-    fun fill(item: LogOfSync, isSelected: Boolean) {
+    fun fill(logOfSync: LogOfSync, isSelected: Boolean) {
 
-        nameView.text = item.subText
+        nameView.text = logOfSync.subText
 
 //        sizeView.text = FileSizeHelper.bytes2size(context, item.size)
 
-        messageView.text = item.text
+        messageView.text = logOfSync.text
 
-        stateIconView.setImageResource(when(item.operationState){
+        stateIconView.setImageResource(when(logOfSync.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success
             OperationState.ERROR -> R.drawable.ic_sync_log_error
             OperationState.WAITING -> R.drawable.ic_sync_log_waiting
@@ -60,7 +55,7 @@ class LogOfSyncViewHolderRV(
         })
 
 
-        item.progress?.also { progressValue: Int ->
+        logOfSync.progress?.also { progressValue: Int ->
             progressBar.apply {
                 progress = progressValue
                 visibility = View.VISIBLE
@@ -75,25 +70,35 @@ class LogOfSyncViewHolderRV(
         }
 
 
-        if (item.isCancelable) {
-            when(item.operationState) {
-                in arrayOf(OperationState.WAITING, OperationState.RUNNING) -> {
-                    cancelButton.visibility = View.VISIBLE
+        stateIconView.setOnClickListener {
+            syncLogViewHolderClickCallbacks.onSyncLogInfoButtonClicked(logOfSync)
+        }
 
-                    cancelButton.setOnClickListener {
-                        syncingOperationCancellationCallback.onSyncingOperationCancelButtonClicked(item.operationId)
-                    }
+
+        if (logOfSync.isCancelable) {
+            when(logOfSync.operationState) {
+                in arrayOf(OperationState.WAITING, OperationState.RUNNING) -> {
+                    enableCancelButton(logOfSync.operationId)
                 }
                 else -> {
-                    disableCancelationButton()
+                    disableCancelButton()
                 }
             }
         } else {
-            disableCancelationButton()
+            disableCancelButton()
         }
     }
 
-    private fun disableCancelationButton() {
+    private fun enableCancelButton(operationId: String) {
+        cancelButton.apply {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                syncLogViewHolderClickCallbacks.onSyncingOperationCancelButtonClicked(operationId)
+            }
+        }
+    }
+
+    private fun disableCancelButton() {
         cancelButton.apply {
             visibility = View.GONE
             setOnClickListener(null)

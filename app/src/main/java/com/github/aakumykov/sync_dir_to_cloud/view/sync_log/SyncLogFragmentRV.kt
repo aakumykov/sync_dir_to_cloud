@@ -6,18 +6,16 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
-import androidx.recyclerview.widget.RecyclerView.Orientation
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.SyncingOperationCancellationCallback
+import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogRvBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 
-class SyncLogFragmentRV : Fragment(R.layout.fragment_sync_log_rv), SyncingOperationCancellationCallback {
+class SyncLogFragmentRV : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHolderClickCallbacks {
 
     private val menuState = MenuState.noMenu()
 
@@ -50,17 +48,9 @@ class SyncLogFragmentRV : Fragment(R.layout.fragment_sync_log_rv), SyncingOperat
 
     private fun prepareAdapter() {
         adapter = LogOfSyncAdapterRV(this)
-        binding.recyclerView.apply {
-            adapter = adapter
-            layoutManager = LinearLayoutManager(requireContext())
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL))
-        }
-    }
-
-
-    private fun onItemClicked(logOfSyncItem: LogOfSync) {
-        LogItemDetailsDialog.create(logOfSyncItem.toSyncLogDialogInfo()).show(childFragmentManager)
-//        syncLogViewModel.cancelJob("qwerty")
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
     }
 
 
@@ -119,6 +109,11 @@ class SyncLogFragmentRV : Fragment(R.layout.fragment_sync_log_rv), SyncingOperat
                 )
             }
         }
+    }
+
+
+    override fun onSyncLogInfoButtonClicked(logOfSync: LogOfSync) {
+        LogItemDetailsDialog.create(logOfSync.toSyncLogDialogInfo()).show(childFragmentManager)
     }
 
     override fun onSyncingOperationCancelButtonClicked(operationId: String) {

@@ -6,12 +6,12 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
-import com.github.aakumykov.sync_dir_to_cloud.SyncingOperationCancellationCallback
+import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 class LogOfSyncViewHolder(
-    private val syncingOperationCancellationCallback: SyncingOperationCancellationCallback
+    private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
 ) :
     ListHoldingListAdapter.ViewHolder<LogOfSync>()
 {
@@ -77,7 +77,7 @@ class LogOfSyncViewHolder(
                     cancelButton.visibility = View.VISIBLE
 
                     cancelButton.setOnClickListener {
-                        syncingOperationCancellationCallback.onSyncingOperationCancelButtonClicked(item.operationId)
+                        syncLogViewHolderClickCallbacks.onSyncingOperationCancelButtonClicked(item.operationId)
                     }
                 }
                 else -> {

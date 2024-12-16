@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.SyncingOperationCancellationCallback
+import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 
 class LogOfSyncAdapterRV(
-    private val cancellationCallback: SyncingOperationCancellationCallback
+    private val cancellationCallback: SyncLogViewHolderClickCallbacks
 ) : RecyclerView.Adapter<LogOfSyncViewHolderRV>() {
 
     // TODO: List вместо MutableList

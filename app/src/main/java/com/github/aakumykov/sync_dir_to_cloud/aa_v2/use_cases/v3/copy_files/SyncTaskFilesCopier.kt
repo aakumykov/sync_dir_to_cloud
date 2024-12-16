@@ -34,6 +34,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.CancellationException
@@ -248,6 +249,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             overwriteIfExists = overwriteIfExists,
                             progressCalculator = progressCalculator
                         ) { progressAsPartOf100 ->
+                            delay(1000)
                             syncObjectLogger(syncTask.id).logProgress(
                                 syncObject.id,
                                 syncTask.id,
