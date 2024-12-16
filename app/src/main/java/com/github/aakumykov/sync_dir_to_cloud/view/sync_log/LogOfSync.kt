@@ -10,6 +10,7 @@ data class LogOfSync(
     val subText: String,
     val timestamp: Long,
     val operationState: OperationState,
+    var errorMessage: String?,
     val progress: Int? = null,
     val isCancelable: Boolean,
     @Deprecated("переименовать в cancelationId") val operationId: String,
@@ -17,22 +18,30 @@ data class LogOfSync(
     companion object {
 
         fun from(executionLogItem: ExecutionLogItem): LogOfSync {
+
+            val operationState = executionLogItemTypeToOperationState(executionLogItem.type)
+
             return LogOfSync(
                 text = executionLogItem.message,
                 subText = executionLogItem.type.name,
                 timestamp = executionLogItem.timestamp,
-                operationState = executionLogItemTypeToOperationState(executionLogItem.type),
+                operationState = operationState,
+                errorMessage = if (operationState.isError()) executionLogItem.message else null,
                 isCancelable = executionLogItem.isCancelable,
                 operationId = executionLogItem.operationId,
             )
         }
 
         fun from(syncObjectLogItem: SyncObjectLogItem): LogOfSync {
+
+            val operationState = syncObjectLogItem.operationState
+
             return LogOfSync(
                 text = syncObjectLogItem.operationName,
                 timestamp = syncObjectLogItem.timestamp,
                 subText = syncObjectLogItem.itemName,
                 operationState = syncObjectLogItem.operationState,
+                errorMessage = if (operationState.isError()) syncObjectLogItem.errorMessage else null,
                 progress = syncObjectLogItem.progress,
                 isCancelable = true,
                 operationId = syncObjectLogItem.operationId,
@@ -58,7 +67,7 @@ fun LogOfSync.toSyncLogDialogInfo(): SyncLogDialogInfo {
     return SyncLogDialogInfo(
         title = text,
         subtitle = subText,
-        errorMessage = if (OperationState.ERROR == operationState) subText else null,
+        errorMessage = errorMessage,
         operationState = operationState,
         timestamp = timestamp
     )
