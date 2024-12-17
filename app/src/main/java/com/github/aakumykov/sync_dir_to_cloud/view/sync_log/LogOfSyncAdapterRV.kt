@@ -11,8 +11,9 @@ import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 
 class LogOfSyncAdapterRV(
     private val cancellationCallback: SyncLogViewHolderClickCallbacks
-) : ListAdapter<LogOfSync, LogOfSyncViewHolderRV>(LogOfSyncDiffer()) {
-
+)
+    : ListAdapter<LogOfSync, LogOfSyncViewHolderRV>(LogOfSyncDiffer())
+{
     // TODO: List вместо MutableList
 //    private val list: MutableList<LogOfSync> = mutableListOf()
 
@@ -32,8 +33,14 @@ class LogOfSyncAdapterRV(
 
     class LogOfSyncDiffer : DiffUtil.ItemCallback<LogOfSync>() {
 
+        override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
+            return super.getChangePayload(oldItem, newItem)
+        }
+
         override fun areItemsTheSame(oldItem: LogOfSync, newItem: LogOfSync): Boolean {
-            return oldItem.operationId == newItem.operationId
+            return oldItem.operationId == newItem.operationId &&
+                    oldItem.text == newItem.text &&
+                    oldItem.subText == newItem.subText
         }
 
         override fun areContentsTheSame(oldItem: LogOfSync, newItem: LogOfSync): Boolean {
