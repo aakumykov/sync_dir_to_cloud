@@ -10,10 +10,11 @@ data class LogOfSync(
     val subText: String,
     val timestamp: Long,
     val operationState: OperationState,
-    var errorMessage: String?,
+    @Deprecated("Сделать val") var errorMessage: String?,
     val progress: Int? = null,
     val isCancelable: Boolean,
-    @Deprecated("переименовать в cancelationId") val operationId: String,
+    @Deprecated("переименовать в cancelationId")
+    val operationId: String,
 ) {
     companion object {
 
@@ -59,6 +60,17 @@ data class LogOfSync(
 
     override fun toString(): String {
         return "LogOfSync(text='$text', subText='$subText', timestamp=$timestamp)"
+    }
+
+    fun isEqualsWith(other: LogOfSync): Boolean {
+        return text == other.text &&
+                subText == other.subText &&
+                timestamp == other.timestamp &&
+                operationState == other.operationState &&
+                errorMessage == other.errorMessage &&
+                progress == other.progress &&
+                isCancelable == other.isCancelable &&
+                operationId == other.operationId
     }
 }
 

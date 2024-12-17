@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -87,7 +88,11 @@ class SyncLogFragmentRV : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHo
 
     private fun onLogOfSyncChanged(list: List<LogOfSync>?) {
         list?.also {
-            adapter.setList(list)
+            adapter.submitList(list)
+            Log.d(TAG, "=========== submitList() ==========")
+            list.joinToString(", ") { "${it.text} (${it.subText})" }.also {  s ->
+                Log.d(TAG, s)
+            }
         }
     }
 
