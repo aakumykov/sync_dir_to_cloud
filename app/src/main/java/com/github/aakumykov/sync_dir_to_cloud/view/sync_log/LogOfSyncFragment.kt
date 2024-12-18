@@ -46,7 +46,6 @@ class LogOfSyncFragment : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHo
 
         viewModel.logOfSync.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
-            adapter.notifyDataSetChanged()
         }
 
         binding.recyclerView.adapter = adapter

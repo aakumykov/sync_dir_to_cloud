@@ -89,6 +89,10 @@ class SyncLogFragmentRV : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHo
     private fun onLogOfSyncChanged(list: List<LogOfSync>?) {
         list?.also {
             adapter.submitList(list)
+
+            // Костыль против неоторражения списка.
+            adapter.notifyDataSetChanged()
+
             Log.d(TAG, "=========== submitList() ==========")
             list.joinToString(", ") { "${it.text} (${it.subText})" }.also {  s ->
                 Log.d(TAG, s)

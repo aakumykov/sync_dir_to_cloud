@@ -147,8 +147,8 @@ class MainActivity : AppCompatActivity() {
             is NavTarget.Back -> returnToPrevFragment()
             is NavTarget.TaskInfo -> loadFragment(TaskStateFragment.create(navTarget.id))
             is NavTarget.SyncLog -> {
-//                loadFragment(SyncLogFragmentRV.create(navTarget.taskId, navTarget.executionId))
-                loadFragment(LogOfSyncFragment.create(navTarget.taskId, navTarget.executionId))
+                loadFragment(SyncLogFragmentRV.create(navTarget.taskId, navTarget.executionId))
+//                loadFragment(LogOfSyncFragment.create(navTarget.taskId, navTarget.executionId))
             }
             else -> loadInitialFragment(intent)
         }

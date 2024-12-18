@@ -20,13 +20,18 @@ class LogOfSyncAdapterRV(private val cancellationCallback: SyncLogViewHolderClic
         viewHolder.fill(getItem(position))
     }
 
-    override fun submitList(list: List<LogOfSync>?) {
+    /*override fun submitList(list: List<LogOfSync>?) {
         super.submitList(list)
-        /*list?.size.also { size ->
-            if (0 == size)
-                notifyItemRangeRemoved(0, itemCount)
-        }*/
-    }
+
+        *//**
+         * Костыль для решения проблемы не-отображения списка, если сначала он пустой.
+         *//*
+        val oldSize = currentList.size
+        val newSize = list?.size ?: 0
+
+        if (0 == oldSize || 0 == newSize)
+            notifyDataSetChanged()
+    }*/
 
     class LogOfSyncDiffer : DiffUtil.ItemCallback<LogOfSync>() {
 
