@@ -20,6 +20,13 @@ class LogOfSyncAdapterRV(private val cancellationCallback: SyncLogViewHolderClic
         viewHolder.fill(getItem(position))
     }
 
+    override fun submitList(list: List<LogOfSync>?) {
+        super.submitList(list)
+        /*list?.size.also { size ->
+            if (0 == size)
+                notifyItemRangeRemoved(0, itemCount)
+        }*/
+    }
 
     class LogOfSyncDiffer : DiffUtil.ItemCallback<LogOfSync>() {
 

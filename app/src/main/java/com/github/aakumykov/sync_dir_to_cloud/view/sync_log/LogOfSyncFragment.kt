@@ -40,15 +40,14 @@ class LogOfSyncFragment : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHo
 
         val adapter = LogOfSyncAdapterRV(this)
 
-//        if (null == savedInstanceState) {
-            viewModel.getLogOfSync(taskId, executionId).observe(viewLifecycleOwner) { list: List<ExecutionLogItem> ->
-                list.map { executionLogItem ->
-                    LogOfSync.from(executionLogItem)
-                }.also { list ->
-                    adapter.submitList(list)
-                }
-            }
-//        }
+        if (null == savedInstanceState) {
+            viewModel.startWork(taskId, executionId)
+        }
+
+        viewModel.logOfSync.observe(viewLifecycleOwner) { list ->
+            adapter.submitList(list)
+            adapter.notifyDataSetChanged()
+        }
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
