@@ -2,40 +2,26 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 
-class LogOfSyncAdapterRV(
-    private val cancellationCallback: SyncLogViewHolderClickCallbacks
-)
+class LogOfSyncAdapterRV(private val cancellationCallback: SyncLogViewHolderClickCallbacks)
     : ListAdapter<LogOfSync, LogOfSyncViewHolderRV>(LogOfSyncDiffer())
 {
-    // TODO: List вместо MutableList
-//    private val list: MutableList<LogOfSync> = mutableListOf()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogOfSyncViewHolderRV {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.sync_log_view_holder, parent, false)
-        return LogOfSyncViewHolderRV(view, cancellationCallback).apply {
-            init(view)
-        }
+        return LogOfSyncViewHolderRV(view, cancellationCallback)
     }
 
-//    override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(viewHolder: LogOfSyncViewHolderRV, position: Int) {
-        viewHolder.fill(currentList[position], false)
+        viewHolder.fill(getItem(position))
     }
 
 
     class LogOfSyncDiffer : DiffUtil.ItemCallback<LogOfSync>() {
-
-        override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
-            return super.getChangePayload(oldItem, newItem)
-        }
 
         override fun areItemsTheSame(oldItem: LogOfSync, newItem: LogOfSync): Boolean {
             return oldItem.operationId == newItem.operationId &&
@@ -44,7 +30,19 @@ class LogOfSyncAdapterRV(
         }
 
         override fun areContentsTheSame(oldItem: LogOfSync, newItem: LogOfSync): Boolean {
-            return oldItem.isEqualsWith(newItem)
+//            return oldItem.isEqualsWith(newItem)
+            return oldItem.text == newItem.text &&
+                    oldItem.subText == newItem.subText &&
+                    oldItem.timestamp == newItem.timestamp &&
+                    oldItem.operationState == newItem.operationState &&
+                    oldItem.errorMessage == newItem.errorMessage &&
+                    oldItem.progress == newItem.progress &&
+                    oldItem.isCancelable == newItem.isCancelable &&
+                    oldItem.operationId == newItem.operationId
         }
+
+        /*override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
+            return super.getChangePayload(oldItem, newItem)
+        }*/
     }
 }

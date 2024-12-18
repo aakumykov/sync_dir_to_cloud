@@ -10,20 +10,20 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 class LogOfSyncViewHolderRV(
-    private val view: View,
+    private val itemView: View,
     private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
 ) :
-    RecyclerView.ViewHolder(view)
+    RecyclerView.ViewHolder(itemView)
 {
-    private lateinit var nameView: TextView
-    private lateinit var percentView: TextView
-    private lateinit var messageView: TextView
-    private lateinit var stateIconView: ImageView
-    private lateinit var progressBar: ProgressBar
-    private lateinit var cancelButton: ImageView
+    private val nameView: TextView = itemView.findViewById(R.id.syncLogNameView)
+    private val percentView: TextView = itemView.findViewById(R.id.syncLogPercentView)
+    private val messageView: TextView = itemView.findViewById(R.id.syncLogOperationNameView)
+    private val stateIconView: ImageView = itemView.findViewById(R.id.syncLogStateIconView)
+    private val progressBar: ProgressBar = itemView.findViewById<ProgressBar>(R.id.syncLogProgressBar)
+    private val cancelButton: ImageView = itemView.findViewById(R.id.syncOperationCancelButton)
 
 
-    fun init(itemView: View) {
+    /*fun init(itemView: View) {
         nameView = itemView.findViewById(R.id.syncLogNameView)
         percentView = itemView.findViewById(R.id.syncLogPercentView)
         messageView = itemView.findViewById(R.id.syncLogOperationNameView)
@@ -35,13 +35,12 @@ class LogOfSyncViewHolderRV(
         }
 
         cancelButton = itemView.findViewById(R.id.syncOperationCancelButton)
-    }
+    }*/
 
-    fun fill(logOfSync: LogOfSync, isSelected: Boolean) {
+
+    fun fill(logOfSync: LogOfSync) {
 
         nameView.text = logOfSync.subText
-
-//        sizeView.text = FileSizeHelper.bytes2size(context, item.size)
 
         messageView.text = logOfSync.text
 
@@ -57,6 +56,7 @@ class LogOfSyncViewHolderRV(
 
         logOfSync.progress?.also { progressValue: Int ->
             progressBar.apply {
+                max = 100
                 progress = progressValue
                 visibility = View.VISIBLE
             }
@@ -89,6 +89,7 @@ class LogOfSyncViewHolderRV(
         }
     }
 
+
     private fun enableCancelButton(operationId: String) {
         cancelButton.apply {
             visibility = View.VISIBLE
@@ -97,6 +98,7 @@ class LogOfSyncViewHolderRV(
             }
         }
     }
+
 
     private fun disableCancelButton() {
         cancelButton.apply {
