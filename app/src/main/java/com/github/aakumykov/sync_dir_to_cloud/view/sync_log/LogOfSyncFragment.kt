@@ -15,6 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogFragmentRV.Co
 
 class LogOfSyncFragment : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHolderClickCallbacks {
 
+    private lateinit var adapter: LogOfSyncAdapterRV
     private val taskId: String get() = arguments?.getString(SyncLogFragmentRV.TASK_ID)!!
     private val executionId: String get() = arguments?.getString(SyncLogFragmentRV.EXECUTION_ID)!!
 
@@ -38,7 +39,7 @@ class LogOfSyncFragment : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHo
 
         _binding = FragmentSyncLogRvBinding.bind(view)
 
-        val adapter = LogOfSyncAdapterRV(this)
+        adapter = LogOfSyncAdapterRV(/*this*/)
 
         if (null == savedInstanceState) {
             viewModel.startWork(taskId, executionId)

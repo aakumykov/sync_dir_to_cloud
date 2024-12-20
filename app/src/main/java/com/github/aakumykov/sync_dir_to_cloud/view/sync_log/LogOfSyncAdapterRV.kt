@@ -7,12 +7,11 @@ import androidx.recyclerview.widget.ListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 
-class LogOfSyncAdapterRV(private val cancellationCallback: SyncLogViewHolderClickCallbacks)
-    : ListAdapter<LogOfSync, LogOfSyncViewHolderRV>(LogOfSyncDiffer())
+class LogOfSyncAdapterRV : ListAdapter<LogOfSync, LogOfSyncViewHolderRV>(LogOfSyncDiffer())
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogOfSyncViewHolderRV {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.sync_log_view_holder, parent, false)
-        return LogOfSyncViewHolderRV(view, cancellationCallback)
+        return LogOfSyncViewHolderRV(view)
     }
 
 
@@ -53,8 +52,8 @@ class LogOfSyncAdapterRV(private val cancellationCallback: SyncLogViewHolderClic
                     oldItem.operationId == newItem.operationId
         }
 
-        /*override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
+        override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
             return super.getChangePayload(oldItem, newItem)
-        }*/
+        }
     }
 }

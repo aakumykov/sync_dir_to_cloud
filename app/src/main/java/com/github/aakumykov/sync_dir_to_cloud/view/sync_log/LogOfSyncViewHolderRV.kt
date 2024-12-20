@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 class LogOfSyncViewHolderRV(
     private val itemView: View,
-    private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
+//    private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
 ) :
     RecyclerView.ViewHolder(itemView)
 {
@@ -71,7 +71,7 @@ class LogOfSyncViewHolderRV(
 
 
         stateIconView.setOnClickListener {
-            syncLogViewHolderClickCallbacks.onSyncLogInfoButtonClicked(logOfSync)
+//            syncLogViewHolderClickCallbacks.onSyncLogInfoButtonClicked(logOfSync)
         }
 
 
@@ -94,7 +94,7 @@ class LogOfSyncViewHolderRV(
         cancelButton.apply {
             visibility = View.VISIBLE
             setOnClickListener {
-                syncLogViewHolderClickCallbacks.onSyncingOperationCancelButtonClicked(operationId)
+//                syncLogViewHolderClickCallbacks.onSyncingOperationCancelButtonClicked(operationId)
             }
         }
     }
