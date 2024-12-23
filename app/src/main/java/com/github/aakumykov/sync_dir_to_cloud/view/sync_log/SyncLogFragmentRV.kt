@@ -48,7 +48,7 @@ class SyncLogFragmentRV : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHo
     }
 
     private fun prepareAdapter() {
-        adapter = LogOfSyncAdapterRV(/*this*/)
+        adapter = LogOfSyncAdapterRV(this)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))

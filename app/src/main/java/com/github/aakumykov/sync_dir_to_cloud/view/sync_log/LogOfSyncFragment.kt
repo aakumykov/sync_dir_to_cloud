@@ -39,7 +39,7 @@ class LogOfSyncFragment : Fragment(R.layout.fragment_sync_log_rv), SyncLogViewHo
 
         _binding = FragmentSyncLogRvBinding.bind(view)
 
-        adapter = LogOfSyncAdapterRV(/*this*/)
+        adapter = LogOfSyncAdapterRV(this)
 
         if (null == savedInstanceState) {
             viewModel.startWork(taskId, executionId)

@@ -1,9 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -29,13 +32,13 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncLogViewHolderC
     private val executionId: String get() = arguments?.getString(EXECUTION_ID)!!
 
 //    private lateinit var listAdapter: SyncLogListAdapter
-    private lateinit var listAdapter: LogOfSyncAdapter
+    private lateinit var adapter: LogOfSyncAdapterRV
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareLayout(view)
-        prepareListAdapter()
+        prepareRecyclerView()
         prepareViewModels()
         startWork(savedInstanceState)
     }
@@ -45,23 +48,12 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncLogViewHolderC
         menuStateViewModel.sendMenuState(menuState)
     }
 
-    private fun prepareListAdapter() {
-        /*listAdapter = SyncLogListAdapter()
-        binding.listView.adapter = listAdapter
-//        binding.listView.setOnItemClickListener(::onItemClicked)
-        binding.listView.isClickable = true
-        binding.listView.setOnItemClickListener { parent, view, position, id ->
-            onItemClicked(listAdapter.getItem(position))
-        }*/
+    private fun prepareRecyclerView() {
+        adapter = LogOfSyncAdapterRV(this)
 
-        listAdapter = LogOfSyncAdapter(this)
-        binding.listView.adapter = listAdapter
-
-        binding.listView.isClickable = true
-
-        binding.listView.setOnItemClickListener { parent, view, position, id ->
-            onItemClicked(listAdapter.getItem(position))
-        }
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
     }
 
 
@@ -103,7 +95,11 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncLogViewHolderC
 //    }
 
     private fun onLogOfSyncChanged(list: List<LogOfSync>?) {
-        list?.also { listAdapter.setList(list) }
+        list?.also {
+            Log.d(TAG, "-------------------- List to submit -------------------")
+            list.forEach { Log.d(TAG, it.toString()) }
+            adapter.submitList(list)
+        }
     }
 
     override fun onDestroyView() {

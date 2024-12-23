@@ -7,30 +7,17 @@ import androidx.recyclerview.widget.ListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.SyncLogViewHolderClickCallbacks
 
-class LogOfSyncAdapterRV : ListAdapter<LogOfSync, LogOfSyncViewHolderRV>(LogOfSyncDiffer())
+class LogOfSyncAdapterRV(callbacks: SyncLogViewHolderClickCallbacks)
+    : ListAdapter<LogOfSync, LogOfSyncViewHolderRV>(LogOfSyncDiffer())
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogOfSyncViewHolderRV {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.sync_log_view_holder, parent, false)
         return LogOfSyncViewHolderRV(view)
     }
 
-
     override fun onBindViewHolder(viewHolder: LogOfSyncViewHolderRV, position: Int) {
         viewHolder.fill(getItem(position))
     }
-
-    /*override fun submitList(list: List<LogOfSync>?) {
-        super.submitList(list)
-
-        *//**
-         * Костыль для решения проблемы не-отображения списка, если сначала он пустой.
-         *//*
-        val oldSize = currentList.size
-        val newSize = list?.size ?: 0
-
-        if (0 == oldSize || 0 == newSize)
-            notifyDataSetChanged()
-    }*/
 
     class LogOfSyncDiffer : DiffUtil.ItemCallback<LogOfSync>() {
 
