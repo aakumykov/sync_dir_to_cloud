@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 class LogOfSyncViewHolderRV(
     private val itemView: View,
-//    private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
+    private val syncLogViewHolderClickCallbacks: SyncLogViewHolderClickCallbacks
 ) :
     RecyclerView.ViewHolder(itemView)
 {
@@ -21,21 +21,6 @@ class LogOfSyncViewHolderRV(
     private val stateIconView: ImageView = itemView.findViewById(R.id.syncLogStateIconView)
     private val progressBar: ProgressBar = itemView.findViewById<ProgressBar>(R.id.syncLogProgressBar)
     private val cancelButton: ImageView = itemView.findViewById(R.id.syncOperationCancelButton)
-
-
-    /*fun init(itemView: View) {
-        nameView = itemView.findViewById(R.id.syncLogNameView)
-        percentView = itemView.findViewById(R.id.syncLogPercentView)
-        messageView = itemView.findViewById(R.id.syncLogOperationNameView)
-        stateIconView = itemView.findViewById(R.id.syncLogStateIconView)
-
-        progressBar = itemView.findViewById<ProgressBar>(R.id.syncLogProgressBar).apply {
-            max = 100
-            visibility = View.INVISIBLE
-        }
-
-        cancelButton = itemView.findViewById(R.id.syncOperationCancelButton)
-    }*/
 
 
     fun fill(logOfSync: LogOfSync) {
@@ -71,7 +56,7 @@ class LogOfSyncViewHolderRV(
 
 
         stateIconView.setOnClickListener {
-//            syncLogViewHolderClickCallbacks.onSyncLogInfoButtonClicked(logOfSync)
+            syncLogViewHolderClickCallbacks.onSyncLogInfoButtonClicked(logOfSync)
         }
 
 
@@ -94,7 +79,7 @@ class LogOfSyncViewHolderRV(
         cancelButton.apply {
             visibility = View.VISIBLE
             setOnClickListener {
-//                syncLogViewHolderClickCallbacks.onSyncingOperationCancelButtonClicked(operationId)
+                syncLogViewHolderClickCallbacks.onSyncingOperationCancelButtonClicked(operationId)
             }
         }
     }
