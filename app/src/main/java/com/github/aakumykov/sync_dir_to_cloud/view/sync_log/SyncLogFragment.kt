@@ -124,7 +124,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncLogViewHolderC
 
 
     override fun onSyncLogInfoButtonClicked(logOfSync: LogOfSync) {
-
+        LogItemDetailsDialog.create(logOfSync.toSyncLogDialogInfo()).show(childFragmentManager)
     }
 
     override fun onSyncingOperationCancelButtonClicked(operationId: String) {
