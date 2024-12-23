@@ -66,7 +66,10 @@ class SyncLogViewModel(
 
             sortBy { it.timestamp }
 
-            mediatorLiveData.value = this
+            // В RecyclerView.ListAdapter необходимо каждый раз отправлять новый список,
+            // иначе он не обновляется.
+            // https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
+            mediatorLiveData.value = this.toList()
         }
     }
 
