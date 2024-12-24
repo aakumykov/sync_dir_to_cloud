@@ -160,7 +160,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 copyPreviouslyForgottenFiles(syncTask)?.join()
 
                 // Скопировать изменившееся
-                copyModifiedFiles(syncTask)
+                copyModifiedFiles(syncTask)?.join()
 
                 // Восстановить файлы, утраченные в приёмнике
                 copyLostFilesAgain(syncTask)
@@ -289,8 +289,8 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskDirCreator.createNeverProcessedDirs(syncTask)
     }
 
-    private suspend fun copyModifiedFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
+    private suspend fun copyModifiedFiles(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
     }
 
     private suspend fun copyNewFiles(syncTask: SyncTask): Job? {

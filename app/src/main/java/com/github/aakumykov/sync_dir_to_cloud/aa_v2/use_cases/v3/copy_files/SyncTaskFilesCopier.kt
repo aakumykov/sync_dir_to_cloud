@@ -133,17 +133,17 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
+    suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask): Job? {
 
-        val operationId = UUID.randomUUID().toString()
+        val operationId = createOperationId()
 
-        try {
+        return try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isModified }
                 .filter { it.isTargetReadingOk }
-                .also { list ->
+                .let { list ->
                     if (list.isNotEmpty()) {
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
@@ -158,10 +158,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
+                    } else {
+                        null
                     }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
+            null
         }
     }
 
