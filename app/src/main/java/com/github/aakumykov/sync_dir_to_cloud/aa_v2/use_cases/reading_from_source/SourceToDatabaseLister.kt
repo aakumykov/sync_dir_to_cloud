@@ -49,9 +49,9 @@ class SourceToDatabaseLister @Inject constructor(
         executionId: String,
     ): Job {
 
-        return scope.launch {
+        val operationId = UUID.randomUUID().toString()
 
-            val operationId = UUID.randomUUID().toString()
+        val job = scope.launch {
 
             try {
 
@@ -91,8 +91,16 @@ class SourceToDatabaseLister @Inject constructor(
                     logExecutionError(taskId, executionId, operationId, errorMsg)
                 }
                 Result.failure(e)
+
+            } finally {
+                operationCancellationHolder.removeJob(operationId)
             }
+
+        }.also { job ->
+            operationCancellationHolder.addJob(operationId = operationId, job = job)
         }
+
+        return job
     }
 
 
