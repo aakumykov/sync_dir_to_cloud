@@ -169,18 +169,18 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    suspend fun copyInTargetLostFiles(syncTask: SyncTask) {
+    suspend fun copyInTargetLostFiles(syncTask: SyncTask): Job? {
 
         val operationId = UUID.randomUUID().toString()
 
-        try {
+        return try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isSuccessSynced }
                 .filter { it.notExistsInTarget }
                 .filter { it.isTargetReadingOk }
-                .also { list ->
+                .let { list ->
                     if (list.isNotEmpty()) {
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
@@ -210,10 +210,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                                 }
                             }
                         )
+                    } else {
+                        null
                     }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
+            null
         }
     }
 
