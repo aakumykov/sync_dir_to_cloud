@@ -45,15 +45,15 @@ import java.util.concurrent.CancellationException
  * меняя статус обрабатываемого SyncObject.
  */
 class SyncTaskFilesCopier @AssistedInject constructor(
+    @CoroutineFileCopyingScope private val coroutineScope: CoroutineScope,
+    @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
+    @Assisted private val executionId: String,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectDataCopierCreator: SyncObjectDataCopierCreator,
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     private val executionLoggerHelper: ExecutionLoggerHelper,
     private val operationCancellationHolder: OperationCancellationHolder,
-    @CoroutineFileCopyingScope private val fileCopyingScope: CoroutineScope,
-    @DispatcherIO private val fileCopyingDispatcher: CoroutineDispatcher,
-    @Assisted private val executionId: String,
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask): Job? {
 
@@ -230,7 +230,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
         onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
     ): Job {
-        return fileCopyingScope.launch {
+        return coroutineScope.launch (coroutineDispatcher) {
 
             val syncObjectDataCopier = syncObjectDataCopierCreator.createDataCopierFor(syncTask)
 
@@ -252,7 +252,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                 val progressCalculator = ProgressCalculator(syncObject.actualSize)
 
-                val fileCopyingJob = fileCopyingScope.launch (fileCopyingDispatcher) {
+                val fileCopyingJob = coroutineScope.launch (coroutineDispatcher) {
                     try {
                         syncObjectDataCopier?.copyDataFromPathToPath(
                             absoluteSourceFilePath = sourcePath,
