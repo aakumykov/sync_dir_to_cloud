@@ -21,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPa
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -55,6 +56,9 @@ class SourceToDatabaseLister @Inject constructor(
             try {
 
                 logExecutionStarted(taskId, executionId, operationId)
+
+                // TODO: убрать
+                delay(5000)
 
                 if (null == pathReadingFrom)
                     throw IllegalArgumentException("path argument is null")
