@@ -57,7 +57,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask): Job? {
 
-        val operationId = UUID.randomUUID().toString()
+        val operationId = createOperationId()
 
         return try {
             syncObjectReader
@@ -69,15 +69,17 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
 
-                        val operationId = createOperationId()
+                        val wrappedList = WrappedSyncObject.wrapList(list, operationId)
 
-                        val list = WrappedSyncObject.wrapList(list, operationId)
-
-                        logWaiting(syncTask.id, operationName, list)
+                        logWaiting(
+                            taskId = syncTask.id,
+                            operationName = operationName,
+                            list = wrappedList,
+                        )
 
                         copyFilesReal(
                             operationName = operationName,
-                            list = list,
+                            list = wrappedList,
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
@@ -92,16 +94,16 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
+    suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask): Job? {
 
         val operationId = createOperationId()
 
-        try {
+        return try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isNeverSynced }
-                .also { list ->
+                .let { list ->
                     if (list.isNotEmpty()) {
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
@@ -111,7 +113,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         logWaiting(
                             taskId = syncTask.id,
                             operationName = operationName,
-                            list = wrappedList
+                            list = wrappedList,
                         )
 
                         copyFilesReal(
@@ -120,10 +122,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
+                    } else {
+                        null
                     }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
+            null
         }
     }
 

@@ -157,12 +157,12 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
                 // Скопировать забытые с прошлого раза файлы
-                copyPreviouslyForgottenFiles(syncTask)
+                copyPreviouslyForgottenFiles(syncTask)?.join()
 
                 // Скопировать изменившееся
                 copyModifiedFiles(syncTask)
 
-                // Восстановить утраченные файлы
+                // Восстановить файлы, утраченные в приёмнике
                 copyLostFilesAgain(syncTask)
 
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
@@ -289,16 +289,16 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskDirCreator.createNeverProcessedDirs(syncTask)
     }
 
-    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
-    }
-
     private suspend fun copyModifiedFiles(syncTask: SyncTask) {
         syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
     }
 
     private suspend fun copyNewFiles(syncTask: SyncTask): Job? {
         return syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
+    }
+
+    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
     }
 
     private suspend fun createNewDirs(syncTask: SyncTask) {
