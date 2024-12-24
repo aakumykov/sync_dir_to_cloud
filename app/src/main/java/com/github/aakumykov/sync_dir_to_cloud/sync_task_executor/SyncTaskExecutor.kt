@@ -34,6 +34,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -168,6 +169,9 @@ class SyncTaskExecutor @AssistedInject constructor(
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
                 logExecutionFinish(syncTask)
+            }
+            catch (e: CancellationException) {
+                Log.d(TAG, "CancellationException")
             }
             catch (t: Throwable) {
                 ExceptionUtils.getErrorMessage(t).also { errorMsg ->
