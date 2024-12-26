@@ -96,8 +96,8 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log), SyncLogViewHolderC
 
     private fun onLogOfSyncChanged(list: List<LogOfSync>?) {
         list?.also {
-            Log.d(TAG, "-------------------- List to submit -------------------")
-            list.forEach { Log.d(TAG, it.toString()) }
+//            Log.d(TAG, "-------------------- List to submit -------------------")
+//            list.forEach { Log.d(TAG, it.toString()) }
             adapter.submitList(list)
         }
     }
