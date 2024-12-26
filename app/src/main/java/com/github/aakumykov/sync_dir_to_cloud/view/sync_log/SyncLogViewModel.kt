@@ -89,6 +89,9 @@ class SyncLogViewModel(
             operationCancellationHolder.getJob(operationId).also { operationJob ->
                 Log.d(TAG, "operationJob: $operationJob")
                 operationJob?.cancel(CancellationException("Отменено пользователем"))
+                    ?: run {
+                        Log.e(TAG, "задача не найдена")
+                    }
                 // TODO: как сообщать, что операция не найдена?
             }
         }

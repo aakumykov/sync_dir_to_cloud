@@ -73,7 +73,7 @@ class SourceToDatabaseLister @Inject constructor(
                         path = pathReadingFrom,
                         foldersFirst = true,
                         debug_log_each_item = true,
-                        debug_each_step_delay_for_debug_ms = 1000,
+                        debug_each_step_delay_for_debug_ms = 5000,
                     )
                     ?.apply {
                         syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
@@ -84,18 +84,17 @@ class SourceToDatabaseLister @Inject constructor(
 
                 logExecutionFinished(taskId, executionId, operationId)
 
-                Result.success(true)
-
             } catch (e: Exception) {
-                ExceptionUtils.getErrorMessage(e).also { errorMsg ->
-                    syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
-                    Log.e(TAG, errorMsg, e)
-                    logExecutionError(taskId, executionId, operationId, errorMsg)
-                }
-                Result.failure(e)
 
-            } finally {
                 operationCancellationHolder.removeJob(operationId)
+
+                val errorMsg = ExceptionUtils.getErrorMessage(e)
+                Log.e(TAG, errorMsg, e)
+
+                syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
+                logExecutionError(taskId, executionId, operationId, errorMsg)
+
+                throw e
             }
 
         }.also { job ->
