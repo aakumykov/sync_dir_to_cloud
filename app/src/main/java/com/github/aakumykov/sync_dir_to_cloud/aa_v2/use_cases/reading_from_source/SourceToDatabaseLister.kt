@@ -71,7 +71,9 @@ class SourceToDatabaseLister @Inject constructor(
                 recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
                     ?.listDirRecursivelySuspend(
                         path = pathReadingFrom,
-                        foldersFirst = true
+                        foldersFirst = true,
+                        debug_log_each_item = true,
+                        debug_each_step_delay_for_debug_ms = 1000,
                     )
                     ?.apply {
                         syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
