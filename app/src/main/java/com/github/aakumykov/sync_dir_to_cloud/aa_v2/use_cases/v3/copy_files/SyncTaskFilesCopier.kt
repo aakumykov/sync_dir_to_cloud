@@ -224,6 +224,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private suspend fun copyFilesReal(
         @StringRes operationName: Int,
         list: List<WrappedSyncObject>,
+        filesCopyingCountAtOnce: Int = 5,
         syncTask: SyncTask,
         overwriteIfExists: Boolean,
         onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
@@ -234,92 +235,67 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
             val syncObjectDataCopier = syncObjectDataCopierCreator.createDataCopierFor(syncTask)
 
-            val jobsList: MutableList<Job> = mutableListOf()
+            list.chunked(filesCopyingCountAtOnce).forEach { listChunk: List<WrappedSyncObject> ->
 
-            list.forEach { wrappedSyncObject ->
+                listChunk.map { wrappedSyncObject ->
 
-                val syncObject = wrappedSyncObject.syncObject
-                val objectId = syncObject.id
-                val operationId = wrappedSyncObject.operationId
+                    val syncObject = wrappedSyncObject.syncObject
+                    val objectId = syncObject.id
+                    val operationId = wrappedSyncObject.operationId
 
-                syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
+                    syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
 
-                onSyncObjectProcessingBegin?.invoke(syncObject)
+                    onSyncObjectProcessingBegin?.invoke(syncObject)
 
-                // FIXME: избавиться от "!!"
-                val sourcePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
-                val targetPath = syncObject.absolutePathIn(syncTask.targetPath!!)
+                    // FIXME: избавиться от "!!"
+                    val sourcePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
+                    val targetPath = syncObject.absolutePathIn(syncTask.targetPath!!)
 
-                val progressCalculator = ProgressCalculator(syncObject.actualSize)
+                    val progressCalculator = ProgressCalculator(syncObject.actualSize)
 
-                val fileCopyingJob = coroutineScope.launch (coroutineDispatcher) {
-                    try {
-                        syncObjectDataCopier?.copyDataFromPathToPath(
-                            absoluteSourceFilePath = sourcePath,
-                            absoluteTargetFilePath = targetPath,
-                            overwriteIfExists = overwriteIfExists,
-                            progressCalculator = progressCalculator
-                        ) { progressAsPartOf100 ->
-                            delay(1000)
-                            syncObjectLogger(syncTask.id).logProgress(
-                                syncObject.id,
-                                syncTask.id,
-                                executionId,
-                                progressAsPartOf100
-                            )
-                        }
-                        syncObjectStateChanger.markAsSuccessfullySynced(objectId)
-                        onSyncObjectProcessingSuccess?.invoke(syncObject)
-                        syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
+                    val fileCopyingJob = coroutineScope.launch (coroutineDispatcher) {
+                        try {
+                            syncObjectDataCopier?.copyDataFromPathToPath(
+                                absoluteSourceFilePath = sourcePath,
+                                absoluteTargetFilePath = targetPath,
+                                overwriteIfExists = overwriteIfExists,
+                                progressCalculator = progressCalculator
+                            ) { progressAsPartOf100 ->
+                                delay(1000)
+                                syncObjectLogger(syncTask.id).logProgress(
+                                    syncObject.id,
+                                    syncTask.id,
+                                    executionId,
+                                    progressAsPartOf100
+                                )
+                            }
+                            syncObjectStateChanger.markAsSuccessfullySynced(objectId)
+                            onSyncObjectProcessingSuccess?.invoke(syncObject)
+                            syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
 
-                    } catch (e: CancellationException) {
-                        Log.d(TAG, e.errorMsg)
+                        } catch (e: CancellationException) {
+                            Log.d(TAG, e.errorMsg)
 
-                    } catch (e: Exception) {
-                        ExceptionUtils.getErrorMessage(e).also { errorMsg ->
-                            syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
-                            onSyncObjectProcessingFailed?.invoke(syncObject, e) ?: Log.e(TAG, errorMsg, e)
-                            syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
+                        } catch (e: Exception) {
+                            ExceptionUtils.getErrorMessage(e).also { errorMsg ->
+                                syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
+                                onSyncObjectProcessingFailed?.invoke(syncObject, e) ?: Log.e(TAG, errorMsg, e)
+                                syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
+                            }
                         }
                     }
+
+                    operationCancellationHolder.addJob(
+                        operationId = operationId,
+                        job = fileCopyingJob,
+                    )
+
+                    fileCopyingJob
+
+                }.forEach {
+                    it.join()
                 }
-
-                operationCancellationHolder.addJob(
-                    operationId = operationId,
-                    job = fileCopyingJob,
-                )
-
-                jobsList.add(fileCopyingJob)
-
-                /*syncObjectCopier
-                    ?.copyDataFromPathToPath(
-                        absoluteSourceFilePath = sourcePath,
-                        absoluteTargetFilePath = targetPath,
-                        overwriteIfExists = overwriteIfExists,
-                        progressCalculator = progressCalculator
-                    ) { progressAsPartOf100: Int ->
-                        syncObjectLogger(syncTask.id).logProgress(
-                            syncObject.id,
-                            syncTask.id,
-                            executionId,
-                            progressAsPartOf100
-                        )
-                    }
-                    ?.onSuccess {
-                        syncObjectStateChanger.markAsSuccessfullySynced(objectId)
-                        onSyncObjectProcessingSuccess?.invoke(syncObject)
-                        syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
-                    }
-                    ?.onFailure { throwable ->
-                        ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
-                            syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
-                            onSyncObjectProcessingFailed?.invoke(syncObject, throwable) ?: Log.e(TAG, errorMsg, throwable)
-                            syncObjectLogger(syncTask.id).logFail(syncObject, operationName, operationId, errorMsg)
-                        }
-                    }*/
             }
-
-            jobsList.onEach { it.join() }
         }
     }
 
