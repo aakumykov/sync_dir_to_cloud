@@ -34,7 +34,9 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.CancellationException
@@ -55,7 +57,11 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val executionLoggerHelper: ExecutionLoggerHelper,
     private val operationCancellationHolder: OperationCancellationHolder,
 ) {
-    suspend fun copyNewFilesForSyncTask(syncTask: SyncTask): Job? {
+    suspend fun copyNewFilesForSyncTask(
+        syncTask: SyncTask,
+        scope: CoroutineScope,
+        chunkSize: Int = 3,
+    ): Job? {
 
         val operationId = createOperationId()
 
@@ -69,7 +75,38 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
 
-                        val wrappedList = WrappedSyncObject.wrapList(list, operationId)
+                        scope.launch {
+
+                            val chunkJob = SupervisorJob(scope.coroutineContext.job)
+
+                            list.chunked(chunkSize).map { chunk ->
+                                Log.d(TAG, "-> Скачивание куска из ${chunk.size} файлов (старт)")
+
+                                val wrappedList = WrappedSyncObject.wrapList(list, operationId)
+
+                                launch (chunkJob) {
+                                    logWaiting(
+                                        taskId = syncTask.id,
+                                        operationName = operationName,
+                                        list = wrappedList,
+                                    )
+
+                                    copyFilesReal(
+                                        operationName = operationName,
+                                        list = wrappedList,
+                                        syncTask = syncTask,
+                                        overwriteIfExists = true
+                                    )
+                                }
+
+                                chunkJob.complete()
+
+                                Log.d(TAG, "-> Скачивание куска из ${chunk.size} файлов (старт)")
+                            }
+
+                        }
+
+                        /*val wrappedList = WrappedSyncObject.wrapList(list, operationId)
 
                         logWaiting(
                             taskId = syncTask.id,
@@ -82,7 +119,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                             list = wrappedList,
                             syncTask = syncTask,
                             overwriteIfExists = true
-                        )
+                        )*/
+
                     } else {
                         null
                     }

@@ -298,7 +298,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
     private suspend fun copyNewFiles(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
+        return syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask, scope = taskExecutionScope)
     }
 
     private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask): Job? {
