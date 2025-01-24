@@ -66,10 +66,10 @@ class DirDeleter @AssistedInject constructor(
             operationLogger.logOperationStarts(syncObject, operationName)
             syncObjectStateChanger.markAsBusy(syncObject.id)
 
-            repeat(5) { i ->
+            /*repeat(5) { i ->
                 Log.d(DirCreator.TAG, "Ожидание удаления каталога «${syncObject.name}» ...$i")
                 delay(1000)
-            }
+            }*/
 
             cloudWriter.deleteFile(
                 syncObject.absolutePathIn(syncTask.sourcePath!!),
