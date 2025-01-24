@@ -37,6 +37,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.CancellationException
@@ -79,10 +80,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                             val chunkJob = SupervisorJob(scope.coroutineContext.job)
 
-                            list.chunked(chunkSize).map { chunk ->
-                                Log.d(TAG, "-> Скачивание куска из ${chunk.size} файлов (старт)")
+                            var currentChunkSize = -1
 
-                                val wrappedList = WrappedSyncObject.wrapList(list, operationId)
+                            list.chunked(chunkSize).map { chunk ->
+
+                                Log.d(TAG, "-> Скачивание куска из ${chunk.size} файлов (старт)")
+                                WrappedSyncObject.wrapList(list, operationId)
+
+                            }.map {  wrappedList ->
 
                                 launch (chunkJob) {
                                     logWaiting(
@@ -98,11 +103,11 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                                         overwriteIfExists = true
                                     )
                                 }
+                            }.joinAll()
 
-                                chunkJob.complete()
+                            chunkJob.complete()
 
-                                Log.d(TAG, "-> Скачивание куска из ${chunk.size} файлов (старт)")
-                            }
+                            Log.d(TAG, "-> Скачивание куска из $currentChunkSize файлов (старт)")
 
                         }
 
