@@ -58,7 +58,7 @@ class SourceToDatabaseLister @Inject constructor(
                 logExecutionStarted(taskId, executionId, operationId)
 
                 // TODO: убрать
-                delay(5000)
+//                delay(5000)
 
                 if (null == pathReadingFrom)
                     throw IllegalArgumentException("path argument is null")
