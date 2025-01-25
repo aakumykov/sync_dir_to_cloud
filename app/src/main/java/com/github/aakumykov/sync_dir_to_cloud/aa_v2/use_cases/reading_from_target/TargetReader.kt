@@ -24,49 +24,47 @@ class TargetReader @Inject constructor(
     private val executionLogger: ExecutionLogger,
     private val resources: Resources,
 ) {
-    fun readWithCheckFromTarget(
-        scope: CoroutineScope,
+    suspend fun readWithCheckFromTarget(
         syncTask: SyncTask,
         executionId: String
-    ): Job {
-        return scope.launch {
+    ) {
+        val operationId = UUID.randomUUID().toString()
+        val inTargetChecker = inTargetExistenceCheckerFactory.create(syncTask)
 
-            val operationId = UUID.randomUUID().toString()
-            val inTargetChecker = inTargetExistenceCheckerFactory.create(syncTask)
+        try {
+            executionLogger.log(ExecutionLogItem.createStartingItem(
+                taskId = syncTask.id,
+                executionId = executionId,
+                operationId = operationId,
+                message = resources.getString(R.string.EXECUTION_LOG_reading_target),
+                isCancelable = true,
+            ))
 
-            try {
-                executionLogger.log(ExecutionLogItem.createStartingItem(
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    operationId = operationId,
-                    message = resources.getString(R.string.EXECUTION_LOG_reading_target),
-                    isCancelable = true,
-                ))
+            syncObjectReader
+                .getAllObjectsForTask(syncTask.id).forEach { syncObject ->
+//                    if (isActive) inTargetChecker.checkObjectExists(syncObject)
+//                    else return@forEach
 
-                syncObjectReader
-                    .getAllObjectsForTask(syncTask.id).forEach { syncObject ->
-                        if (isActive) inTargetChecker.checkObjectExists(syncObject)
-                        else return@forEach
-                    }
+                    inTargetChecker.checkObjectExists(syncObject)
+                }
 
-                executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
+            executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
+                syncTask.id,
+                executionId,
+                operationId,
+                resources.getString(R.string.EXECUTION_LOG_reading_target)
+            ))
+
+        }
+        catch (e: Exception) {
+            e.errorMsg.also { errorMessage ->
+                Log.e(TAG, errorMessage, e)
+                executionLogger.updateLog(ExecutionLogItem.createErrorItem(
                     syncTask.id,
                     executionId,
                     operationId,
-                    resources.getString(R.string.EXECUTION_LOG_reading_target)
+                    errorMessage,
                 ))
-
-            }
-            catch (e: Exception) {
-                e.errorMsg.also { errorMessage ->
-                    Log.e(TAG, errorMessage, e)
-                    executionLogger.updateLog(ExecutionLogItem.createErrorItem(
-                        syncTask.id,
-                        executionId,
-                        operationId,
-                        errorMessage,
-                    ))
-                }
             }
         }
     }
