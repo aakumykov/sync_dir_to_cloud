@@ -45,7 +45,6 @@ import java.util.concurrent.CancellationException
  * меняя статус обрабатываемого SyncObject.
  */
 class SyncTaskFilesCopier @AssistedInject constructor(
-    @CoroutineFileCopyingScope private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
     @Assisted private val executionId: String,
     private val syncObjectReader: SyncObjectReader,
