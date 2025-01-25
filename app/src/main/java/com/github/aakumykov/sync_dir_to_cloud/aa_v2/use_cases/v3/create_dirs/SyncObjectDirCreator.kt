@@ -24,23 +24,26 @@ class SyncObjectDirCreator (
     fun createDir(syncObject: SyncObject, syncTask: SyncTask): Result<String> {
 
         if (!syncObject.isDir)
-            throw IllegalArgumentException("SyncObject it not a directory object: $syncObject")
+            return Result.failure(IllegalArgumentException("SyncObject it not a directory object: $syncObject"))
 
-        try {
+        return try {
             val pathSegments = Uri
                 .parse(syncObject.absolutePathIn(syncTask.targetPath!!))
                 .pathSegments
                 .toMutableList()
 
-            val dirName = pathSegments.removeLast()
+            val dirName = pathSegments.removeLastOrNull()
             val targetPath = FSItem.pathSegmentsToPath(pathSegments, true)
 
-            cloudWriter.createDir(targetPath, dirName)
-
-            return Result.success(File(targetPath,dirName).absolutePath)
+            if (null != dirName) {
+                cloudWriter.createDir(targetPath, dirName)
+                Result.success(File(targetPath, dirName).absolutePath)
+            } else {
+                Result.failure(Exception("dirName is NULL"))
+            }
 
         } catch (e: Exception) {
-            return Result.failure(e)
+            Result.failure(e)
         }
     }
 }
