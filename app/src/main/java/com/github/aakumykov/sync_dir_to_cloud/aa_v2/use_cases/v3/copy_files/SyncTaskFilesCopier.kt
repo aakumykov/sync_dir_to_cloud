@@ -11,7 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.Operati
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.createOperationId
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileCopyingScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -19,8 +18,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModif
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
@@ -34,10 +34,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.job
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.CancellationException
@@ -60,13 +57,12 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 ) {
     suspend fun copyNewFilesForSyncTask(
         syncTask: SyncTask,
-        scope: CoroutineScope,
         chunkSize: Int = 3,
-    ): Job? {
+    ) {
 
         val operationId = createOperationId()
 
-        return try {
+        try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
@@ -76,10 +72,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
 
-                        scope.launch {
-
-                            val chunkJob = SupervisorJob(scope.coroutineContext.job)
-
                             var currentChunkSize = -1
 
                             list.chunked(chunkSize).map { chunk ->
@@ -88,51 +80,25 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                                 WrappedSyncObject.wrapList(list, operationId)
 
                             }.map {  wrappedList ->
-
-                                launch (chunkJob) {
                                     logWaiting(
                                         taskId = syncTask.id,
                                         operationName = operationName,
                                         list = wrappedList,
                                     )
-
                                     copyFilesReal(
                                         operationName = operationName,
                                         list = wrappedList,
                                         syncTask = syncTask,
                                         overwriteIfExists = true
                                     )
-                                }
-                            }.joinAll()
-
-                            chunkJob.complete()
+                            }
 
                             Log.d(TAG, "-> Скачивание куска из $currentChunkSize файлов (старт)")
-
-                        }
-
-                        /*val wrappedList = WrappedSyncObject.wrapList(list, operationId)
-
-                        logWaiting(
-                            taskId = syncTask.id,
-                            operationName = operationName,
-                            list = wrappedList,
-                        )
-
-                        copyFilesReal(
-                            operationName = operationName,
-                            list = wrappedList,
-                            syncTask = syncTask,
-                            overwriteIfExists = true
-                        )*/
-
-                    } else {
-                        null
                     }
                 }
+
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, operationId, TAG, e)
-            null
         }
     }
 
