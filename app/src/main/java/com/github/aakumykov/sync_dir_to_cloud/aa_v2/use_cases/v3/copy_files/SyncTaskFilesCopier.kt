@@ -39,6 +39,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     private val executionLoggerHelper: ExecutionLoggerHelper,
     @Assisted private val executionId: String,
+    @Assisted private val fileOperationAtOnce: Int,
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         try {
@@ -46,15 +47,16 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isNew }
-                .also { list ->
-                    if (list.isNotEmpty()) {
+                .chunked(fileOperationAtOnce)
+                .forEach { listChink ->
+                    if (listChink.isNotEmpty()) {
                         // Выводить сообщение "Копирую новые файлы" не нужно,
                         // так как будет сообщение для каждого файла отдельно.
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
-                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+                        syncObjectLogger(syncTask.id).logWaiting(listChink, operationName)
                         copyFilesReal(
                             operationName = operationName,
-                            list = list,
+                            list = listChink,
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )

@@ -4,5 +4,5 @@ import dagger.assisted.AssistedFactory
 
 @AssistedFactory
 interface SyncTaskFilesCopierAssistedFactory {
-    fun create(executionId: String): SyncTaskFilesCopier
+    fun create(executionId: String, chunkSize: Int = 3): SyncTaskFilesCopier
 }
