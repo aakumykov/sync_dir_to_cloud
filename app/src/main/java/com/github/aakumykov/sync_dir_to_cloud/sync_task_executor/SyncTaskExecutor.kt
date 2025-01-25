@@ -9,27 +9,26 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.Sync
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_to_target_writer2.SyncObjectToTargetWriter2Creator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
@@ -37,7 +36,6 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SyncTaskExecutor @AssistedInject constructor(
@@ -122,10 +120,10 @@ class SyncTaskExecutor @AssistedInject constructor(
                 markAllObjectsAsDeleted(taskId)
 
                 // Прочитать источник
-                readSource(syncTask).join()
+                readSource(syncTask)
 
                 // Прочитать приёмник
-                readTarget(syncTask).join()
+                readTarget(syncTask)
 
                 // Забэкапить удалённое
                 backupDeletedDirs(syncTask)
@@ -153,17 +151,17 @@ class SyncTaskExecutor @AssistedInject constructor(
                 createNeverSyncedDirs(syncTask)
 
                 // Скопировать новые файлы
-                copyNewFiles(syncTask)?.join()
+                copyNewFiles(syncTask)
 //            appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
                 // Скопировать забытые с прошлого раза файлы
-                copyPreviouslyForgottenFiles(syncTask)?.join()
+                copyPreviouslyForgottenFiles(syncTask)
 
                 // Скопировать изменившееся
-                copyModifiedFiles(syncTask)?.join()
+                copyModifiedFiles(syncTask)
 
                 // Восстановить файлы, утраченные в приёмнике
-                copyLostFilesAgain(syncTask)?.join()
+                copyLostFilesAgain(syncTask)
 
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
@@ -284,24 +282,24 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskDirCreator.createInTargetLostDirs(syncTask)
     }
 
-    private suspend fun copyLostFilesAgain(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyInTargetLostFiles(syncTask)
+    private suspend fun copyLostFilesAgain(syncTask: SyncTask) {
+        syncTaskFilesCopier.copyInTargetLostFiles(syncTask)
     }
 
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
         syncTaskDirCreator.createNeverProcessedDirs(syncTask)
     }
 
-    private suspend fun copyModifiedFiles(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
+    private suspend fun copyModifiedFiles(syncTask: SyncTask) {
+        syncTaskFilesCopier.copyModifiedFilesForSyncTask(syncTask)
     }
 
-    private suspend fun copyNewFiles(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask, scope = taskExecutionScope)
+    private suspend fun copyNewFiles(syncTask: SyncTask) {
+        syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
     }
 
-    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
+    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask) {
+        syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
     }
 
     private suspend fun createNewDirs(syncTask: SyncTask) {
@@ -330,11 +328,10 @@ class SyncTaskExecutor @AssistedInject constructor(
     /**
      * @return Флаг успешности чтения источника.
      */
-    private suspend fun readSource(syncTask: SyncTask): Job {
-        return appComponent
+    private suspend fun readSource(syncTask: SyncTask) {
+        appComponent
             .getSourceToDatabaseLister()
             .readFromPath(
-                scope = taskExecutionScope,
                 pathReadingFrom = syncTask.sourcePath,
                 taskId = syncTask.id,
                 executionId = executionId,
@@ -344,11 +341,10 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun readTarget(syncTask: SyncTask): Job {
-        return appComponent
+    private suspend fun readTarget(syncTask: SyncTask) {
+        appComponent
             .getTargetReader()
             .readWithCheckFromTarget(
-                scope = taskExecutionScope,
                 syncTask = syncTask,
                 executionId = executionId,
             )
