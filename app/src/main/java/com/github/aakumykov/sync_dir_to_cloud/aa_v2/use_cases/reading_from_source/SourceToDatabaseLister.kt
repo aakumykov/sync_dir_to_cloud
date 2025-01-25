@@ -41,67 +41,58 @@ class SourceToDatabaseLister @Inject constructor(
      * этой операции должна отменять всю задачу.
      */
     suspend fun readFromPath(
-        scope: CoroutineScope,
         pathReadingFrom: String?,
         changesDetectionStrategy: ChangesDetectionStrategy,
         cloudAuth: CloudAuth?,
         taskId: String,
         executionId: String,
-    ): Job {
+    ) {
 
         val operationId = UUID.randomUUID().toString()
 
-        val job = scope.launch {
+        try {
 
-            try {
+            logExecutionStarted(taskId, executionId, operationId)
 
-                logExecutionStarted(taskId, executionId, operationId)
-
-                // TODO: убрать
+            // TODO: убрать
 //                delay(5000)
 
-                if (null == pathReadingFrom)
-                    throw IllegalArgumentException("path argument is null")
+            if (null == pathReadingFrom)
+                throw IllegalArgumentException("path argument is null")
 
-                if (null == cloudAuth)
-                    throw IllegalArgumentException("cloudAuth argument is null")
+            if (null == cloudAuth)
+                throw IllegalArgumentException("cloudAuth argument is null")
 
-                syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
+            syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
 
-                recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
-                    ?.listDirRecursivelySuspend(
-                        path = pathReadingFrom,
-                        foldersFirst = true,
-                        debug_log_each_item = true,
-                        debug_each_step_delay_for_debug_ms = 5000,
-                    )
-                    ?.apply {
-                        syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
-                    }
-                    ?.forEach { fileListItem ->
-                        addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
-                    }
+            recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
+                ?.listDirRecursivelySuspend(
+                    path = pathReadingFrom,
+                    foldersFirst = true,
+                    debug_log_each_item = true,
+                    debug_each_step_delay_for_debug_ms = 5000,
+                )
+                ?.apply {
+                    syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
+                }
+                ?.forEach { fileListItem ->
+                    addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
+                }
 
-                logExecutionFinished(taskId, executionId, operationId)
+            logExecutionFinished(taskId, executionId, operationId)
 
-            } catch (e: Exception) {
+        } catch (e: Exception) {
 
-                operationCancellationHolder.removeJob(operationId)
+            operationCancellationHolder.removeJob(operationId)
 
-                val errorMsg = ExceptionUtils.getErrorMessage(e)
-                Log.e(TAG, errorMsg, e)
+            val errorMsg = ExceptionUtils.getErrorMessage(e)
+            Log.e(TAG, errorMsg, e)
 
-                syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
-                logExecutionError(taskId, executionId, operationId, errorMsg)
+            syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
+            logExecutionError(taskId, executionId, operationId, errorMsg)
 
-                throw e
-            }
-
-        }.also { job ->
-            operationCancellationHolder.addJob(operationId = operationId, job = job)
+            throw e
         }
-
-        return job
     }
 
 
