@@ -53,7 +53,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
 
-    private val syncTaskLogger: SyncTaskLogger,
     private val taskStateLogger: TaskStateLogger,
     private val executionLogger: ExecutionLogger,
 
