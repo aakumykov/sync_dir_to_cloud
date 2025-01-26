@@ -112,30 +112,34 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
-        try {
-            syncObjectReader
-                .getAllObjectsForTask(syncTask.id)
-                .filter { it.isFile }
-                .filter { it.isModified }
-                .filter { it.isTargetReadingOk }
+    fun copyModifiedFilesForSyncTask(scope: CoroutineScope, syncTask: SyncTask): Job? {
+        return scope.launch {
+            getModifiedFiles(syncTask)
+                ?.also {  list ->
+
+//                    executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
+                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
+                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                    copyFileListByChunksInCoroutine(
+                        scope = scope,
+                        syncTask = syncTask,
+                        operationName = operationName,
+                        list = list,
+                        overwriteIfExists = true
+                    )
+                }
+        }
+        /*try {
+
                 .also { list ->
                     if (list.isNotEmpty()) {
-                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
-                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
-                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-                        copyFileListByChunks(
-                            operationName = operationName,
-                            list = list,
-                            chunkSize = fileOperationPortionSize,
-                            syncTask = syncTask,
-                            overwriteIfExists = true
-                        )
+
                     }
                 }
         } catch (e: Exception) {
             executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
-        }
+        }*/
     }
 
     suspend fun copyInTargetLostFiles(syncTask: SyncTask) {
@@ -371,6 +375,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNeverSynced }
             .nullIfEmpty()
+    }
+
+    private suspend fun getModifiedFiles(syncTask: SyncTask): List<SyncObject>? {
+        return syncObjectReader
+            .getAllObjectsForTask(syncTask.id)
+            .filter { it.isFile }
+            .filter { it.isModified }
+            .filter { it.isTargetReadingOk }
     }
 
 
