@@ -93,6 +93,14 @@ class SyncTaskExecutor @AssistedInject constructor(
         }
     }
 
+    /*
+    * FIXME: всё-таки, происходит смешение операций!
+    *  */
+
+    /*
+    FIXME: что, если удалённо файл пропал, а локально изменился?
+     */
+
     /**
      * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
      * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
@@ -163,7 +171,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             copyModifiedFiles(syncTask)?.join()
 
             // Восстановить утраченные файлы
-            copyLostFilesAgain(syncTask)
+            copyLostFilesAgain(syncTask)?.join()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
@@ -276,8 +284,11 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskDirCreator.createInTargetLostDirs(syncTask)
     }
 
-    private suspend fun copyLostFilesAgain(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyInTargetLostFiles(syncTask)
+    private suspend fun copyLostFilesAgain(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyInTargetLostFiles(
+            syncTask = syncTask,
+            scope = coroutineScope,
+        )
     }
 
     private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
