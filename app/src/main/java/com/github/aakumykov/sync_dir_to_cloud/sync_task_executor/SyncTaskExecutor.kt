@@ -38,6 +38,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
+/*
+FIXME: отображается прогресс только в первой порции копируемых файлов.
+ */
+
+/*
+FIXME: всё-таки, происходит смешение операций!
+*/
+
+/*
+FIXME: что, если удалённо файл пропал, а локально изменился?
+ */
+
 class SyncTaskExecutor @AssistedInject constructor(
 
     @Assisted private val coroutineScope: CoroutineScope,
@@ -92,14 +104,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             doWork(syncTask)
         }
     }
-
-    /*
-    * FIXME: всё-таки, происходит смешение операций!
-    *  */
-
-    /*
-    FIXME: что, если удалённо файл пропал, а локально изменился?
-     */
 
     /**
      * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
