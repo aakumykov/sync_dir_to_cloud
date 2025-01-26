@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingBegin
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingFailed
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.OnSyncObjectProcessingSuccess
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileOperationJob
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -38,6 +39,7 @@ import kotlinx.coroutines.launch
  * меняя статус обрабатываемого SyncObject.
  */
 class SyncTaskFilesCopier @AssistedInject constructor(
+    @CoroutineFileOperationJob private val fileOperationJob: CompletableJob,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
@@ -47,35 +49,59 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     @Assisted private val fileOperationPortionSize: Int,
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
-        try {
-            syncObjectReader
-                .getAllObjectsForTask(syncTask.id)
-                .filter { it.isFile }
-                .filter { it.isNew }
-                .also { listChink ->
-                    if (listChink.isNotEmpty()) {
-                        // Выводить сообщение "Копирую новые файлы" не нужно,
-                        // так как будет сообщение для каждого файла отдельно.
-                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
-                        syncObjectLogger(syncTask.id).logWaiting(listChink, operationName)
-                        copyFileListByChunks(
-                            operationName = operationName,
-                            list = listChink,
-                            chunkSize = fileOperationPortionSize,
-                            syncTask = syncTask,
-                            overwriteIfExists = true
-                        )
-                    }
-                }
-        } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+        copyNewFilesForSyncTaskCommon(syncTask) { list ->
+            // Выводить сообщение "Копирую новые файлы" не нужно,
+            // так как будет сообщение для каждого файла отдельно.
+            val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
+            syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+            copyFileListByChunks(
+                operationName = operationName,
+                list = list,
+                chunkSize = fileOperationPortionSize,
+                syncTask = syncTask,
+                overwriteIfExists = true
+            )
         }
     }
 
 
     suspend fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
         return scope.launch {
-            copyNewFilesForSyncTask(syncTask)
+            copyNewFilesForSyncTaskCommon(syncTask) { list ->
+                // Выводить сообщение "Копирую новые файлы" не нужно,
+                // так как будет сообщение для каждого файла отдельно.
+                val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
+                syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+                copyFileListByChunksInCoroutine(
+                    operationName = operationName,
+                    list = list,
+                    chunkSize = fileOperationPortionSize,
+                    syncTask = syncTask,
+                    overwriteIfExists = true,
+                    scope = scope,
+                    singleFileOperationJob = fileOperationJob
+                )
+            }
+        }
+    }
+
+
+    private suspend fun copyNewFilesForSyncTaskCommon(
+        syncTask: SyncTask,
+        listProcessor: suspend (List<SyncObject>) -> Unit
+    ) {
+        try {
+            syncObjectReader
+                .getAllObjectsForTask(syncTask.id)
+                .filter { it.isFile }
+                .filter { it.isNew }
+                .also { list ->
+                    if (list.isNotEmpty()) {
+                        listProcessor.invoke(list)
+                    }
+                }
+        } catch (e: Exception) {
+            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
         }
     }
 
@@ -206,9 +232,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         chunkSize: Int,
         syncTask: SyncTask,
         overwriteIfExists: Boolean,
-        onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
-        onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
-        onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
     ): Job {
         return scope.launch {
             list
