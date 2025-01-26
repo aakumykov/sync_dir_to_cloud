@@ -96,6 +96,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .filter { it.isFile }
                 .filter { it.isNew }
                 .also { list ->
+                    Log.d(TAG, "list size: ${list.size}")
                     if (list.isNotEmpty()) {
                         listProcessor.invoke(list)
                     }
@@ -107,12 +108,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
 
     suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
+        Log.d(TAG, "copyPreviouslyForgottenFilesOfSyncTask()")
         try {
             syncObjectReader
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isNeverSynced }
                 .also { list ->
+                    Log.d(TAG, "list size: ${list.size}")
                     if (list.isNotEmpty()) {
 //                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file

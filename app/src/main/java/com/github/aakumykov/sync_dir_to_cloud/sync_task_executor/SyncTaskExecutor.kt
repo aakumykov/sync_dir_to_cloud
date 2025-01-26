@@ -81,7 +81,9 @@ class SyncTaskExecutor @AssistedInject constructor(
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
-        Log.d(tag, "executeSyncTask() [${classNameWithHash()}]")
+        Log.d(TAG, "")
+        Log.d(TAG, "")
+        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ========")
 
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             currentTask = syncTask
@@ -147,11 +149,15 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             // Скопировать новые файлы
 //            copyNewFiles(syncTask)
+            Log.d(TAG, "Скопировать новые файлы (start)")
             copyNewFilesInCoroutine(syncTask)?.join()
+            Log.d(TAG, "Скопировать новые файлы (finish)")
 //            appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
             // Скопировать забытые с прошлого раза файлы
+            Log.d(TAG, "Скопировать забытые с прошлого раза файлы (start)")
             copyPreviouslyForgottenFiles(syncTask)
+            Log.d(TAG, "Скопировать забытые с прошлого раза файлы (finish)")
 
             // Скопировать изменившееся
             copyModifiedFiles(syncTask)
@@ -291,6 +297,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
     private suspend fun copyNewFilesInCoroutine(syncTask: SyncTask): Job? {
+        Log.d(TAG, "copyNewFilesInCoroutine()")
         return syncTaskFilesCopier.copyNewFilesForSyncTaskInCoroutine(
             syncTask = syncTask,
             scope = coroutineScope,
