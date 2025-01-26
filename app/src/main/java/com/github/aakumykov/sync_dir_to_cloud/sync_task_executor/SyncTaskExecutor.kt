@@ -50,6 +50,10 @@ FIXME: всё-таки, происходит смешение операций!
 FIXME: что, если удалённо файл пропал, а локально изменился?
  */
 
+/*
+FIXME: удалённо пропал и локально пропал...
+ */
+
 class SyncTaskExecutor @AssistedInject constructor(
 
     @Assisted private val coroutineScope: CoroutineScope,
