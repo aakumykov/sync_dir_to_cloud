@@ -80,7 +80,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     overwriteIfExists = true,
                     scope = scope,
                     singleFileOperationJob = fileOperationJob
-                )
+                ).join()
             }
         }
     }
@@ -247,7 +247,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         syncTask = syncTask,
                         overwriteIfExists = overwriteIfExists,
                         singleFileOperationJob = singleFileOperationJob,
-                    )
+                    ).join()
                 }
         }
     }
@@ -307,7 +307,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
 
     // FIXME: добавить обработку ошибок
-    private fun copyFilesRealInCoroutine(
+    private suspend fun copyFilesRealInCoroutine(
         list: List<SyncObject>,
         operationName: Int,
         syncTask: SyncTask,
