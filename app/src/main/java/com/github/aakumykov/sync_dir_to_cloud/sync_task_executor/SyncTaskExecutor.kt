@@ -40,6 +40,8 @@ import kotlinx.coroutines.delay
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
+ Те, что были за пределами операции, идут на следующий этап - "копирование
+ забытых файлов".
  */
 
 /*
@@ -315,10 +317,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             syncTask = syncTask,
             scope = coroutineScope,
         )
-    }
-
-    private suspend fun copyNewFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
     }
 
     private suspend fun copyNewFilesInCoroutine(syncTask: SyncTask): Job? {
