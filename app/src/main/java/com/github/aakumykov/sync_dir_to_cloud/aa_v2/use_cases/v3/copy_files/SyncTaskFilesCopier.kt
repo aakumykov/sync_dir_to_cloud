@@ -67,14 +67,16 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     suspend fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
         return scope.launch {
-            copyNewFilesForSyncTaskCommon(syncTask) { list ->
+            copyNewFilesForSyncTaskCommon(syncTask) { syncObjectList ->
                 // Выводить сообщение "Копирую новые файлы" не нужно,
                 // так как будет сообщение для каждого файла отдельно.
                 val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
-                syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                syncObjectLogger(syncTask.id).logWaiting(syncObjectList, operationName)
+
                 copyFileListByChunksInCoroutine(
                     operationName = operationName,
-                    list = list,
+                    list = syncObjectList,
                     chunkSize = fileOperationPortionSize,
                     syncTask = syncTask,
                     overwriteIfExists = true,
