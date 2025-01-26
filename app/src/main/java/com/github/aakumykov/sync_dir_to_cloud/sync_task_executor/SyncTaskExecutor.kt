@@ -146,7 +146,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             createNeverSyncedDirs(syncTask)
 
             // Скопировать новые файлы
-            copyNewFiles(syncTask)
+//            copyNewFiles(syncTask)
+            copyNewFilesInCoroutine(syncTask)?.join()
 //            appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
             // Скопировать забытые с прошлого раза файлы
@@ -289,11 +290,12 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
     }
 
-    /*private suspend fun copyNewFilesInCoroutine(syncTask: SyncTask): Job {
+    private suspend fun copyNewFilesInCoroutine(syncTask: SyncTask): Job? {
         return syncTaskFilesCopier.copyNewFilesForSyncTaskInCoroutine(
             syncTask = syncTask,
+            scope = coroutineScope,
         )
-    }*/
+    }
 
     private suspend fun createNewDirs(syncTask: SyncTask) {
         syncTaskDirCreator.createNewDirs(syncTask)
