@@ -240,6 +240,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             list
                 .chunked(chunkSize)
                 .forEach { listChunk ->
+                    Log.d(TAG, "copyFileListByChunksInCoroutine(), chunk size: ${listChunk.size}")
                     copyFilesRealInCoroutine(
                         scope = scope,
                         operationName = operationName,
