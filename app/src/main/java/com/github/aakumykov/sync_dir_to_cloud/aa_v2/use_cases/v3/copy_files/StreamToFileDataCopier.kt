@@ -54,7 +54,7 @@ class StreamToFileDataCopier (
                 targetPath = absoluteTargetFilePath,
                 overwriteIfExists = overwriteIfExists
             ) { writtenBytesCount: Long ->
-                Log.d(TAG, "записано байт: $writtenBytesCount")
+//                Log.d(TAG, "записано байт: $writtenBytesCount")
             }
 
             return Result.success(absoluteTargetFilePath)
