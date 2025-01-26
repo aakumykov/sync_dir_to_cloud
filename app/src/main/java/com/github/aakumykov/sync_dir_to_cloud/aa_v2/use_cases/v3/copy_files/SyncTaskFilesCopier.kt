@@ -19,6 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSucce
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
+import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -48,93 +49,68 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val fileOperationPortionSize: Int,
 ) {
+//    executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
+
+    // TODO: убрать suspend
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
-        copyNewFilesForSyncTaskCommon(syncTask) { list ->
-            // Выводить сообщение "Копирую новые файлы" не нужно,
-            // так как будет сообщение для каждого файла отдельно.
-            val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
-            syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-            copyFileListByChunks(
-                operationName = operationName,
-                list = list,
-                chunkSize = fileOperationPortionSize,
-                syncTask = syncTask,
-                overwriteIfExists = true
-            )
-        }
-    }
+        getNewFilesForSyncTask(syncTask)
+            ?.also { list ->
 
-
-    suspend fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
-        return scope.launch {
-            copyNewFilesForSyncTaskCommon(syncTask) { syncObjectList ->
                 // Выводить сообщение "Копирую новые файлы" не нужно,
                 // так как будет сообщение для каждого файла отдельно.
                 val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
+                syncObjectLogger(syncTask.id).logWaiting(list, operationName)
 
-                syncObjectLogger(syncTask.id).logWaiting(syncObjectList, operationName)
-
-                copyFileListByChunksInCoroutine(
+                copyFileListByChunks(
                     operationName = operationName,
-                    list = syncObjectList,
+                    list = list,
                     chunkSize = fileOperationPortionSize,
                     syncTask = syncTask,
-                    overwriteIfExists = true,
-                    scope = scope,
-                    singleFileOperationJob = fileOperationJob
-                ).join()
+                    overwriteIfExists = true
+                )
             }
-        }
     }
 
+    // TODO: убрать suspend
+    suspend fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
+        return scope.launch {
+            getNewFilesForSyncTask(syncTask)
+                ?.also { syncObjectList ->
 
-    private suspend fun copyNewFilesForSyncTaskCommon(
-        syncTask: SyncTask,
-        listProcessor: suspend (List<SyncObject>) -> Unit
-    ) {
-        try {
-            syncObjectReader
-                .getAllObjectsForTask(syncTask.id)
-                .filter { it.isFile }
-                .filter { it.isNew }
-                .also { list ->
-                    Log.d(TAG, "list size: ${list.size}")
-                    if (list.isNotEmpty()) {
-                        listProcessor.invoke(list)
-                    }
+                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
+                    syncObjectLogger(syncTask.id).logWaiting(syncObjectList, operationName)
+
+                    copyFileListByChunksInCoroutine(
+                        scope = scope,
+                        syncTask = syncTask,
+                        operationName = operationName,
+                        list = syncObjectList,
+                        overwriteIfExists = true,
+                    ).join()
                 }
-        } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
         }
     }
 
 
-    suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
-        Log.d(TAG, "copyPreviouslyForgottenFilesOfSyncTask()")
-        try {
-            syncObjectReader
-                .getAllObjectsForTask(syncTask.id)
-                .filter { it.isFile }
-                .filter { it.isNeverSynced }
-                .also { list ->
-                    Log.d(TAG, "list size: ${list.size}")
-                    if (list.isNotEmpty()) {
-//                        executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
-                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
-                        syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-                        copyFileListByChunks(
-                            operationName = operationName,
-                            list = list,
-                            chunkSize = fileOperationPortionSize,
-                            syncTask = syncTask,
-                            overwriteIfExists = true
-                        )
-                    }
+    fun copyPreviouslyForgottenFilesInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
+        return scope.launch {
+            getPreviouslyForgottenFiles(syncTask)
+                ?.also { list ->
+
+                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
+                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+
+                    copyFileListByChunksInCoroutine(
+                        scope = scope,
+                        syncTask = syncTask,
+                        operationName = operationName,
+                        list = list,
+                        overwriteIfExists = true
+                    )
                 }
-        } catch (e: Exception) {
-            executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
         }
     }
+
 
     suspend fun copyModifiedFilesForSyncTask(syncTask: SyncTask) {
         try {
@@ -231,10 +207,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     // FIXME: добавить обработку ошибок
     private suspend fun copyFileListByChunksInCoroutine(
         scope: CoroutineScope,
-        singleFileOperationJob: CompletableJob,
+        singleFileOperationJob: CompletableJob = fileOperationJob,
         @StringRes operationName: Int,
         list: List<SyncObject>,
-        chunkSize: Int,
+        chunkSize: Int = fileOperationPortionSize,
         syncTask: SyncTask,
         overwriteIfExists: Boolean,
     ): Job {
@@ -340,6 +316,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         }
     }
 
+
     private suspend fun processSingleFile(
         operationName: Int,
         syncObject: SyncObject,
@@ -379,6 +356,25 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
+    private suspend fun getNewFilesForSyncTask(syncTask: SyncTask): List<SyncObject>? {
+        return syncObjectReader
+            .getAllObjectsForTask(syncTask.id)
+            .filter { it.isFile }
+            .filter { it.isNew }
+            .nullIfEmpty()
+    }
+
+
+    private suspend fun getPreviouslyForgottenFiles(syncTask: SyncTask): List<SyncObject>? {
+        return syncObjectReader
+            .getAllObjectsForTask(syncTask.id)
+            .filter { it.isFile }
+            .filter { it.isNeverSynced }
+            .nullIfEmpty()
+    }
+
+
+    // TODO: внедрять как @Assisted
     private fun syncObjectLogger(taskId: String): SyncObjectLogger2 {
         return syncObjectLogger2Factory.create(taskId, executionId)
     }

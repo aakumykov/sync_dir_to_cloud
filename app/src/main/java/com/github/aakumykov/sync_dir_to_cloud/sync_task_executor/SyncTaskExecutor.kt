@@ -156,7 +156,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             // Скопировать забытые с прошлого раза файлы
             Log.d(TAG, "Скопировать забытые с прошлого раза файлы (start)")
-            copyPreviouslyForgottenFiles(syncTask)
+            copyPreviouslyForgottenFiles(syncTask)?.join()
             Log.d(TAG, "Скопировать забытые с прошлого раза файлы (finish)")
 
             // Скопировать изменившееся
@@ -284,8 +284,11 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskDirCreator.createNeverProcessedDirs(syncTask)
     }
 
-    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask) {
-        syncTaskFilesCopier.copyPreviouslyForgottenFilesOfSyncTask(syncTask)
+    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask): Job? {
+        return syncTaskFilesCopier.copyPreviouslyForgottenFilesInCoroutine(
+            syncTask = syncTask,
+            scope = coroutineScope,
+        )
     }
 
     private suspend fun copyModifiedFiles(syncTask: SyncTask) {
