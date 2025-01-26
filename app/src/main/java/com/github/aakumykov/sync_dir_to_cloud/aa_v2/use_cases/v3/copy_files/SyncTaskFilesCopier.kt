@@ -72,6 +72,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         }
     }
 
+
+    suspend fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
+        return scope.launch {
+            copyNewFilesForSyncTask(syncTask)
+        }
+    }
+
+
     suspend fun copyPreviouslyForgottenFilesOfSyncTask(syncTask: SyncTask) {
         try {
             syncObjectReader
@@ -186,6 +194,36 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     onSyncObjectProcessingFailed,
                 )
             }
+    }
+
+
+    // FIXME: добавить обработку ошибок
+    private suspend fun copyFileListByChunksInCoroutine(
+        scope: CoroutineScope,
+        singleFileOperationJob: CompletableJob,
+        @StringRes operationName: Int,
+        list: List<SyncObject>,
+        chunkSize: Int,
+        syncTask: SyncTask,
+        overwriteIfExists: Boolean,
+        onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
+        onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
+        onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
+    ): Job {
+        return scope.launch {
+            list
+                .chunked(chunkSize)
+                .forEach { listChunk ->
+                    copyFilesRealInCoroutine(
+                        scope = scope,
+                        operationName = operationName,
+                        list = listChunk,
+                        syncTask = syncTask,
+                        overwriteIfExists = overwriteIfExists,
+                        singleFileOperationJob = singleFileOperationJob,
+                    )
+                }
+        }
     }
 
 

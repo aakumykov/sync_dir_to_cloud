@@ -35,6 +35,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
 class SyncTaskExecutor @AssistedInject constructor(
@@ -287,6 +288,12 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun copyNewFiles(syncTask: SyncTask) {
         syncTaskFilesCopier.copyNewFilesForSyncTask(syncTask)
     }
+
+    /*private suspend fun copyNewFilesInCoroutine(syncTask: SyncTask): Job {
+        return syncTaskFilesCopier.copyNewFilesForSyncTaskInCoroutine(
+            syncTask = syncTask,
+        )
+    }*/
 
     private suspend fun createNewDirs(syncTask: SyncTask) {
         syncTaskDirCreator.createNewDirs(syncTask)
