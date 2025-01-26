@@ -26,6 +26,11 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 
 /**
@@ -39,7 +44,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
     private val executionLoggerHelper: ExecutionLoggerHelper,
     @Assisted private val executionId: String,
-    @Assisted private val fileOperationAtOnce: Int,
+    @Assisted private val fileOperationPortionSize: Int,
 ) {
     suspend fun copyNewFilesForSyncTask(syncTask: SyncTask) {
         try {
@@ -47,16 +52,16 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 .getAllObjectsForTask(syncTask.id)
                 .filter { it.isFile }
                 .filter { it.isNew }
-                .chunked(fileOperationAtOnce)
-                .forEach { listChink ->
+                .also { listChink ->
                     if (listChink.isNotEmpty()) {
                         // Выводить сообщение "Копирую новые файлы" не нужно,
                         // так как будет сообщение для каждого файла отдельно.
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
                         syncObjectLogger(syncTask.id).logWaiting(listChink, operationName)
-                        copyFilesReal(
+                        copyFileListByChunks(
                             operationName = operationName,
                             list = listChink,
+                            chunkSize = fileOperationPortionSize,
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
@@ -78,9 +83,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_previously_forgotten_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-                        copyFilesReal(
+                        copyFileListByChunks(
                             operationName = operationName,
                             list = list,
+                            chunkSize = fileOperationPortionSize,
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
@@ -103,9 +109,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-                        copyFilesReal(
+                        copyFileListByChunks(
                             operationName = operationName,
                             list = list,
+                            chunkSize = fileOperationPortionSize,
                             syncTask = syncTask,
                             overwriteIfExists = true
                         )
@@ -129,9 +136,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         executionLoggerHelper.logStart(syncTask.id,executionId,R.string.EXECUTION_LOG_copying_in_target_lost_files)
                         val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
                         syncObjectLogger(syncTask.id).logWaiting(list, operationName)
-                        copyFilesReal(
+                        copyFileListByChunks(
                             operationName = operationName,
                             list = list,
+                            chunkSize = fileOperationPortionSize,
                             syncTask = syncTask,
                             overwriteIfExists = false,
                             onSyncObjectProcessingBegin = { syncObject ->
@@ -155,15 +163,43 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    private suspend fun copyFilesReal(
+    private suspend fun copyFileListByChunks(
         @StringRes operationName: Int,
         list: List<SyncObject>,
+        chunkSize: Int,
         syncTask: SyncTask,
         overwriteIfExists: Boolean,
         onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
         onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
         onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
     ) {
+        list
+            .chunked(chunkSize)
+            .forEach { listChunk ->
+                copyFilesReal(
+                    operationName,
+                    listChunk,
+                    syncTask,
+                    overwriteIfExists,
+                    onSyncObjectProcessingBegin,
+                    onSyncObjectProcessingSuccess,
+                    onSyncObjectProcessingFailed,
+                )
+            }
+    }
+
+
+    private suspend fun copyFilesReal(
+        operationName: Int,
+        list: List<SyncObject>,
+        syncTask: SyncTask,
+        overwriteIfExists: Boolean,
+        onSyncObjectProcessingBegin: (suspend (syncObject: SyncObject) -> Unit)?,
+        onSyncObjectProcessingSuccess: (suspend (syncObject: SyncObject) -> Unit)?,
+        onSyncObjectProcessingFailed: (suspend (syncObject: SyncObject, throwable: Throwable) -> Unit)?
+    ) {
+//        Log.d(TAG, "copyFilesReal(${list.size})")
+
         val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
         list.forEach { syncObject ->
@@ -201,7 +237,78 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         syncObjectLogger(syncTask.id).logFail(syncObject, operationName, errorMsg)
                     }
                 }
+
         }
+    }
+
+
+    // FIXME: добавить обработку ошибок
+    private fun copyFilesRealInCoroutine(
+        list: List<SyncObject>,
+        operationName: Int,
+        syncTask: SyncTask,
+        overwriteIfExists: Boolean,
+        scope: CoroutineScope,
+        singleFileOperationJob: CompletableJob,
+    ): Job {
+        return scope.launch {
+
+            val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
+
+            list.map { syncObject: SyncObject ->
+                launch (singleFileOperationJob) {
+                    processSingleFile(
+                        operationName,
+                        syncObject,
+                        overwriteIfExists,
+                        syncTask,
+                        syncObjectCopier
+                    )
+                }
+            }.joinAll()
+
+            // Хак против остановки хода обработки после .joinAll()
+            //  https://stackoverflow.com/questions/66003458/how-to-correctly-join-all-jobs-launched-in-a-coroutinescope
+            singleFileOperationJob.complete()
+        }
+    }
+
+    private suspend fun processSingleFile(
+        operationName: Int,
+        syncObject: SyncObject,
+        overwriteIfExists: Boolean,
+        syncTask: SyncTask,
+        syncObjectCopier: StreamToFileDataCopier?
+    ) {
+        val objectId = syncObject.id
+
+        syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
+
+        // FIXME: избавиться от "!!"
+        val sourcePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
+        val targetPath = syncObject.absolutePathIn(syncTask.targetPath!!)
+
+        val progressCalculator = ProgressCalculator(syncObject.actualSize)
+
+        syncObjectCopier
+            ?.copyDataFromPathToPath(
+                absoluteSourceFilePath = sourcePath,
+                absoluteTargetFilePath = targetPath,
+                overwriteIfExists = overwriteIfExists,
+                progressCalculator = progressCalculator
+            ) { progressAsPartOf100: Int ->
+                syncObjectLogger(syncTask.id)
+                    .logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
+            }?.onSuccess {
+                syncObjectStateChanger.markAsSuccessfullySynced(objectId)
+                syncObjectLogger(syncTask.id).logSuccess(syncObject, operationName)
+            }
+            ?.onFailure { throwable ->
+                ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
+                    syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
+                    syncObjectLogger(syncTask.id).logFail(syncObject, operationName, errorMsg)
+                }
+            }
     }
 
 
