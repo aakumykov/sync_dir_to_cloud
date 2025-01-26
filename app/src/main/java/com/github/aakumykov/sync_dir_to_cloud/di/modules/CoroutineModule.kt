@@ -1,17 +1,20 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileOperationJob
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileCopyingScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineMainScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.job
 
 @Module
 class CoroutineModule {
@@ -44,4 +47,12 @@ class CoroutineModule {
     @CoroutineFileCopyingScope
     fun provideFileCopyingScope(@DispatcherIO ioDispatcher: CoroutineDispatcher): CoroutineScope
         = CoroutineScope(ioDispatcher + Job())
+
+    // TODO: Главный Job делать руками?
+
+    @Provides
+    @CoroutineFileOperationJob
+    fun provideFileOperationJob(@CoroutineFileCopyingScope fileCopyingScope: CoroutineScope): CompletableJob {
+        return SupervisorJob(fileCopyingScope.coroutineContext.job)
+    }
 }
