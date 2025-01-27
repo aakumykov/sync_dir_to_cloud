@@ -185,6 +185,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                         onSyncObjectProcessingSuccess = onSyncObjectProcessingSuccess,
                         onSyncObjectProcessingFailed = onSyncObjectProcessingFailed,
                     ).join()
+                }.also {
+                    // Хак против остановки хода обработки после .joinAll()
+                    //  https://stackoverflow.com/questions/66003458/how-to-correctly-join-all-jobs-launched-in-a-coroutinescope
+                    //
+                    // Вызываю здесь, после обработки всех кусков списка.
+                    //
+                    singleFileOperationJob.complete()
                 }
         }
     }
@@ -279,11 +286,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     )
                 }
             }.joinAll()
-
-            // Хак против остановки хода обработки после .joinAll()
-            //  https://stackoverflow.com/questions/66003458/how-to-correctly-join-all-jobs-launched-in-a-coroutinescope
-            singleFileOperationJob.complete()
-            Log.d(TAG, "singleFileOperationJob.complete()")
         }
     }
 
