@@ -153,32 +153,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    private suspend fun copyFileListByChunks(
-        @StringRes operationName: Int,
-        list: List<SyncObject>,
-        chunkSize: Int,
-        syncTask: SyncTask,
-        overwriteIfExists: Boolean,
-        onSyncObjectProcessingBegin: OnSyncObjectProcessingBegin? = null,
-        onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
-        onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
-    ) {
-        list
-            .chunked(chunkSize)
-            .forEach { listChunk ->
-                copyFilesReal(
-                    operationName,
-                    listChunk,
-                    syncTask,
-                    overwriteIfExists,
-                    onSyncObjectProcessingBegin,
-                    onSyncObjectProcessingSuccess,
-                    onSyncObjectProcessingFailed,
-                )
-            }
-    }
-
-
     // FIXME: добавить обработку ошибок
     private suspend fun copyFileListByChunksInCoroutine(
         scope: CoroutineScope,
@@ -216,7 +190,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     }
 
 
-    private suspend fun copyFilesReal(
+    private suspend fun copyFileListReal(
         operationName: Int,
         list: List<SyncObject>,
         syncTask: SyncTask,
@@ -225,7 +199,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: (suspend (syncObject: SyncObject) -> Unit)?,
         onSyncObjectProcessingFailed: (suspend (syncObject: SyncObject, throwable: Throwable) -> Unit)?
     ) {
-//        Log.d(TAG, "copyFilesReal(${list.size})")
+        Log.d(TAG, "copyFileListReal(${list.size})")
 
         val syncObjectCopier = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
@@ -249,6 +223,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     overwriteIfExists = overwriteIfExists,
                     progressCalculator = progressCalculator
                 ) { progressAsPartOf100: Int ->
+                    Log.d(TAG, "syncObject: id=${syncObject.id}, name=${syncObject.name}, progress: ${progressAsPartOf100}")
                     syncObjectLogger(syncTask.id)
                         .logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
                 }
@@ -281,13 +256,17 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: (suspend (syncObject: SyncObject) -> Unit)?,
         onSyncObjectProcessingFailed: (suspend (syncObject: SyncObject, throwable: Throwable) -> Unit)?
     ): Job {
+        Log.d(TAG, "copyFilesRealInCoroutine(${list.size})")
+
         return scope.launch {
 
             val syncObjectCopier: StreamToFileDataCopier?
                 = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
 
             list.map { syncObject: SyncObject ->
+                Log.d(TAG, "list.map{ ${syncObject.name} }")
                 launch (singleFileOperationJob) {
+                    Log.d(TAG, "launch{ ${syncObject.name} }")
                     processSingleFile(
                         syncObjectCopier = syncObjectCopier,
                         syncTask = syncTask,
@@ -304,6 +283,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             // Хак против остановки хода обработки после .joinAll()
             //  https://stackoverflow.com/questions/66003458/how-to-correctly-join-all-jobs-launched-in-a-coroutinescope
             singleFileOperationJob.complete()
+            Log.d(TAG, "singleFileOperationJob.complete()")
         }
     }
 
@@ -318,6 +298,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: (suspend (syncObject: SyncObject) -> Unit)?,
         onSyncObjectProcessingFailed: (suspend (syncObject: SyncObject, throwable: Throwable) -> Unit)?
     ) {
+        Log.d(TAG, "processSingleFile(): id=${syncObject.id}, name=${syncObject.name})")
+
         val objectId = syncObject.id
 
         syncObjectStateChanger.setSyncState(objectId, ExecutionState.RUNNING)
@@ -337,6 +319,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 overwriteIfExists = overwriteIfExists,
                 progressCalculator = progressCalculator
             ) { progressAsPartOf100: Int ->
+//                Log.d(TAG, "syncObject: id=${syncObject.id}, name=${syncObject.name}, progress: ${progressAsPartOf100}")
                 syncObjectLogger(syncTask.id).logProgress(syncObject.id, syncTask.id, executionId, progressAsPartOf100)
             }?.onSuccess {
                 syncObjectStateChanger.markAsSuccessfullySynced(objectId)
