@@ -57,7 +57,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 ?.also { syncObjectList ->
 
                     val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
-                    syncObjectLogger(syncTask.id).logWaiting(syncObjectList, operationName)
 
                     copyFileListByChunksInCoroutine(
                         scope = scope,
@@ -197,7 +196,10 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             list
                 .chunked(chunkSize)
                 .forEach { listChunk ->
+
                     Log.d(TAG, "copyFileListByChunksInCoroutine(), chunk size: ${listChunk.size}")
+                    syncObjectLogger(syncTask.id).logWaiting(listChunk, operationName)
+
                     copyFilesRealInCoroutine(
                         scope = scope,
                         syncTask = syncTask,
