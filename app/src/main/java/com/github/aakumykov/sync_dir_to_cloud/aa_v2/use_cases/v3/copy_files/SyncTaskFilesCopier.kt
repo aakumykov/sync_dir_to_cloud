@@ -51,8 +51,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 ) {
 //    executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
 
-    // TODO: убрать suspend
-    suspend fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
+    fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
         return scope.launch {
             getNewFilesForSyncTask(syncTask)
                 ?.also { syncObjectList ->
