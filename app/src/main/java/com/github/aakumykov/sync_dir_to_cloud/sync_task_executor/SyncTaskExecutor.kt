@@ -173,15 +173,15 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            appComponent.getFileCopierAssistedFactory().create(syncStuff, coroutineScope, executionId).copyNewFiles(syncTask)
 
             // Скопировать забытые с прошлого раза файлы
-            Log.d(TAG, "Скопировать забытые с прошлого раза файлы (start)")
-            copyPreviouslyForgottenFiles(syncTask)?.join()
-            Log.d(TAG, "Скопировать забытые с прошлого раза файлы (finish)")
+//            Log.d(TAG, "Скопировать забытые с прошлого раза файлы (start)")
+//            copyPreviouslyForgottenFiles(syncTask)?.join()
+//            Log.d(TAG, "Скопировать забытые с прошлого раза файлы (finish)")
 
             // Скопировать изменившееся
-            copyModifiedFiles(syncTask)?.join()
+//            copyModifiedFiles(syncTask)?.join()
 
             // Восстановить утраченные файлы
-            copyLostFilesAgain(syncTask)?.join()
+//            copyLostFilesAgain(syncTask)?.join()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
