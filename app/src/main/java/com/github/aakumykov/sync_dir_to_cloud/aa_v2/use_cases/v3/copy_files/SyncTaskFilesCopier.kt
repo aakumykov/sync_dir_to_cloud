@@ -91,9 +91,11 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
 
     fun copyModifiedFilesForSyncTask(scope: CoroutineScope, syncTask: SyncTask): Job? {
+        Log.d(TAG, "copyModifiedFilesForSyncTask()")
         return scope.launch {
             getModifiedFiles(syncTask)
                 ?.also {  list ->
+                    Log.d(TAG, "[${list.map { it.name }.joinToString(", ")}]")
 
 //                    executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
                     val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
@@ -166,6 +168,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: OnSyncObjectProcessingSuccess? = null,
         onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
     ): Job {
+        Log.d(TAG, "copyFileListByChunksInCoroutine()")
         return scope.launch {
             list
                 .chunked(chunkSize)
@@ -188,9 +191,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                 }.also {
                     // Хак против остановки хода обработки после .joinAll()
                     //  https://stackoverflow.com/questions/66003458/how-to-correctly-join-all-jobs-launched-in-a-coroutinescope
-                    //
-                    // Вызываю здесь, после обработки всех кусков списка.
-                    //
                     singleFileOperationJob.complete()
                 }
         }
@@ -263,9 +263,11 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingSuccess: (suspend (syncObject: SyncObject) -> Unit)?,
         onSyncObjectProcessingFailed: (suspend (syncObject: SyncObject, throwable: Throwable) -> Unit)?
     ): Job {
-        Log.d(TAG, "copyFilesRealInCoroutine(${list.size})")
+        Log.d(TAG, "copyFilesRealInCoroutine(), list size: ${list.size}")
 
         return scope.launch {
+
+            Log.d(TAG, "--------------- старт ----------------")
 
             val syncObjectCopier: StreamToFileDataCopier?
                 = syncObjectFileCopierCreator.createFileCopierFor(syncTask)
@@ -286,6 +288,8 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     )
                 }
             }.joinAll()
+
+            Log.d(TAG, "--------------- финиш ----------------")
         }
     }
 
