@@ -63,6 +63,7 @@ class SourceToDatabaseLister @Inject constructor(
                     Log.d(TAG, "list.size: ${list.size}")
                 }
                 ?.forEach { fileListItem ->
+                    Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
 

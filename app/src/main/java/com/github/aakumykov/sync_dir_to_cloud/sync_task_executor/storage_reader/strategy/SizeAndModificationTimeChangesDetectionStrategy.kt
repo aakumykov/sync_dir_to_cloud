@@ -24,15 +24,15 @@ class SizeAndModificationTimeChangesDetectionStrategy @Inject constructor() : Ch
 //                Log.d(TAG, "время изменения совпадает у ${existingSyncObject.name}")
 
             if (existingSyncObject.mTime == newFsItem.mTime) {
-//                    Log.d(TAG, "размер совпадает у ${existingSyncObject.name}")
+//                Log.d(TAG, "размер совпадает у ${existingSyncObject.name}")
                 return StateInStorage.UNCHANGED
             } else {
-                Log.d(TAG, "размер отличается у ${existingSyncObject.name}")
+                Log.d(TAG, "время изменения отличается у ${existingSyncObject.name}")
                 Log.d(TAG, "   ${existingSyncObject.mTime}")
                 Log.d(TAG, "   ${newFsItem.mTime}")
             }
         } else {
-            Log.d(TAG, "время изменения отличается у ${existingSyncObject.name}")
+            Log.d(TAG, "размер отличается у ${existingSyncObject.name}")
             Log.d(TAG, "   ${existingSyncObject.size}")
             Log.d(TAG, "   ${newFsItem.size}")
         }
