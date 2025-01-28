@@ -71,12 +71,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
 
     fun copyPreviouslyForgottenFilesInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
+        Log.d(TAG, "copyPreviouslyForgottenFilesInCoroutine()")
+
         return scope.launch {
             getPreviouslyForgottenFiles(syncTask)
                 ?.also { list ->
 
                     val operationName = R.string.SYNC_OBJECT_LOGGER_copy_previously_forgotten_file
-                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+//                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
 
                     copyFileListByChunksInCoroutine(
                         scope = scope,
@@ -92,6 +94,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     fun copyModifiedFilesForSyncTask(scope: CoroutineScope, syncTask: SyncTask): Job? {
         Log.d(TAG, "copyModifiedFilesForSyncTask()")
+
         return scope.launch {
             getModifiedFiles(syncTask)
                 ?.also {  list ->
@@ -99,7 +102,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
 //                    executionLoggerHelper.logStart(syncTask.id, executionId, R.string.EXECUTION_LOG_copying_modified_files)
                     val operationName = R.string.SYNC_OBJECT_LOGGER_copy_modified_file
-                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+//                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
 
                     copyFileListByChunksInCoroutine(
                         scope = scope,
@@ -129,7 +132,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
 //                    executionLoggerHelper.logStart(syncTask.id,executionId,R.string.EXECUTION_LOG_copying_in_target_lost_files)
                     val operationName = R.string.SYNC_OBJECT_LOGGER_copy_in_target_lost_file
-                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
+//                    syncObjectLogger(syncTask.id).logWaiting(list, operationName)
 
                     copyFileListByChunksInCoroutine(
                         scope = scope,
@@ -169,12 +172,13 @@ class SyncTaskFilesCopier @AssistedInject constructor(
         onSyncObjectProcessingFailed: OnSyncObjectProcessingFailed? = null,
     ): Job {
         Log.d(TAG, "copyFileListByChunksInCoroutine()")
+
         return scope.launch {
             list
                 .chunked(chunkSize)
                 .forEach { listChunk ->
 
-                    Log.d(TAG, "copyFileListByChunksInCoroutine(), chunk size: ${listChunk.size}")
+                    Log.d(TAG, "  chunk size: ${listChunk.size}")
                     syncObjectLogger(syncTask.id).logWaiting(listChunk, operationName)
 
                     copyFilesRealInCoroutine(
@@ -365,6 +369,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isModified }
             .filter { it.isTargetReadingOk }
+            .nullIfEmpty()
     }
 
     private suspend fun getInTargetLostFiles(syncTask: SyncTask): List<SyncObject>? {
@@ -374,6 +379,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isSuccessSynced }
             .filter { it.notExistsInTarget }
             .filter { it.isTargetReadingOk }
+            .nullIfEmpty()
     }
 
 

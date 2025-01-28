@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_object_logger
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
@@ -26,6 +27,8 @@ class SyncObjectLogger2 @AssistedInject constructor(
         syncObjectList: List<SyncObject>,
         @StringRes operationNameRes: Int,
     ) {
+        Log.d(TAG, "logWaiting(): '${getString(operationNameRes)}': [${syncObjectList.map { it.name }.joinToString(",")}]")
+
         syncObjectList.forEach { syncObject ->
             syncObjectLogAdder.addLogItem(SyncObjectLogItem.createWaiting(
                 taskId = taskId,
@@ -98,5 +101,9 @@ class SyncObjectLogger2 @AssistedInject constructor(
             @Assisted(QUALIFIER_TASK_ID) taskId: String,
             @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
         ): SyncObjectLogger2
+    }
+
+    companion object {
+        val TAG: String = SyncObjectLogger2::class.java.simpleName
     }
 }
