@@ -341,12 +341,14 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             }
             ?.onFailure { throwable ->
                 ExceptionUtils.getErrorMessage(throwable).also { errorMsg ->
+                    Log.e(TAG, "${syncObject.name}: $errorMsg")
                     syncObjectStateChanger.setSyncState(objectId, ExecutionState.ERROR, errorMsg)
                     syncObjectLogger(syncTask.id).logFail(syncObject, operationName, errorMsg)
                     onSyncObjectProcessingFailed?.invoke(syncObject, throwable)
                 }
             }
     }
+
 
 
     private suspend fun getNewFilesForSyncTask(syncTask: SyncTask): List<SyncObject>? {
@@ -356,7 +358,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
             .filter { it.isNew }
             .nullIfEmpty()
     }
-
 
     private suspend fun getPreviouslyForgottenFiles(syncTask: SyncTask): List<SyncObject>? {
         return syncObjectReader
