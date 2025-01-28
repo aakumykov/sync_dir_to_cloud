@@ -37,6 +37,8 @@ class SourceToDatabaseLister @Inject constructor(
         executionId: String,
     ): Result<Boolean> {
 
+        Log.d(TAG, "readFromPath('$pathReadingFrom')")
+
         return try {
 
             logExecutionStarted(taskId,executionId)

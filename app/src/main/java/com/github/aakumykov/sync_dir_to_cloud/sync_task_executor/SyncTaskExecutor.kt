@@ -100,7 +100,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         Log.d(TAG, "")
         Log.d(TAG, "")
-        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ========")
+        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
 
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             currentTask = syncTask
@@ -108,6 +108,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             prepareWriter(syncTask)
             doWork(syncTask)
         }
+
+        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
     }
 
     /**
