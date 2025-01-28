@@ -36,7 +36,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -348,7 +347,7 @@ class SyncTaskExecutor @AssistedInject constructor(
      */
     private suspend fun readSource(syncTask: SyncTask): Result<Boolean> {
         return appComponent
-            .getStorageToDatabaseLister()
+            .getSourceToDatabaseLister()
             .readFromPath(
                 pathReadingFrom = syncTask.sourcePath,
                 taskId = syncTask.id,
