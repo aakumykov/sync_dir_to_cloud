@@ -7,8 +7,10 @@ import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.isModified
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -134,13 +136,19 @@ class SourceToDatabaseLister @Inject constructor(
             )
         }
         else {
-            syncObjectUpdater.updateSyncObject(
-                SyncObject.createFromExisting(
-                    existingSyncObject = existingObject,
-                    modifiedFSItem = fileListItem,
-                    changesDetectionStrategy.detectItemModification(pathReadingFrom, fileListItem, existingObject)
-                )
-            )
+            changesDetectionStrategy.detectItemModification(
+                pathReadingFrom, fileListItem, existingObject
+            ).also { stateInStorage ->
+                if (stateInStorage.isModified()) {
+                    syncObjectUpdater.updateSyncObject(
+                        SyncObject.createFromExisting(
+                            existingSyncObject = existingObject,
+                            modifiedFSItem = fileListItem,
+                            stateInStorage = stateInStorage,
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -150,3 +158,13 @@ class SourceToDatabaseLister @Inject constructor(
         val TAG: String = SourceToDatabaseLister::class.java.simpleName
     }
 }
+
+/*
+fun <T> T.isEqual(other: Any?): T? {
+    return if (null == other)
+        null
+    else {
+        if (other.equals(T.)) T
+        null
+    }
+}*/

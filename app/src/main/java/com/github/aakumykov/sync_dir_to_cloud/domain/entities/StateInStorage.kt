@@ -8,3 +8,4 @@ enum class StateInStorage {
 }
 
 fun StateInStorage.isNew(): Boolean = this == StateInStorage.NEW
+fun StateInStorage.isModified(): Boolean = this == StateInStorage.MODIFIED

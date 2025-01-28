@@ -122,7 +122,7 @@ class SyncObject (
         {
             return existingSyncObject.apply {
                 existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
-                this.stateInStorage = stateInStorage
+//                this.stateInStorage = stateInStorage
             }
         }
     }
