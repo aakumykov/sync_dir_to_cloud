@@ -7,12 +7,20 @@ import javax.inject.Inject
 
 abstract class ChangesDetectionStrategy {
 
-    abstract suspend fun detectItemModification(sourcePath: String, newFsItem: FSItem, existingSyncObject: SyncObject): StateInSource
+    abstract suspend fun detectItemModification(
+        sourcePath: String,
+        newFsItem: FSItem,
+        existingSyncObject: SyncObject
+    ): StateInSource
 
 
     class SizeAndModificationTime @Inject constructor() : ChangesDetectionStrategy() {
 
-        override suspend fun detectItemModification(sourcePath: String, newFsItem: FSItem, existingSyncObject: SyncObject): StateInSource {
+        override suspend fun detectItemModification(
+            sourcePath: String,
+            newFsItem: FSItem,
+            existingSyncObject: SyncObject
+        ): StateInSource {
 
             if (existingSyncObject.isDir)
                 return StateInSource.UNCHANGED
