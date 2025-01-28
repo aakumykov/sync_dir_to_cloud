@@ -59,6 +59,9 @@ class SourceToDatabaseLister @Inject constructor(
                 ?.apply {
                     syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
                 }
+                ?.also { list ->
+                    Log.d(TAG, "list.size: ${list.size}")
+                }
                 ?.forEach { fileListItem ->
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
