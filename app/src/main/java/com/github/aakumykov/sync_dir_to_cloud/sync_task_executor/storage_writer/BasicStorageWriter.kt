@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
@@ -140,14 +140,14 @@ abstract class BasicStorageWriter (
 
 
     private suspend fun deleteDeletedFiles() {
-        syncObjectReader.getObjectsForTaskWithModificationState(taskId, StateInSource.DELETED)
+        syncObjectReader.getObjectsForTaskWithModificationState(taskId, StateInStorage.DELETED)
             .filter { !it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }
 
 
     private suspend fun deleteDeletedDirs() {
-        syncObjectReader.getObjectsForTaskWithModificationState(taskId, StateInSource.DELETED)
+        syncObjectReader.getObjectsForTaskWithModificationState(taskId, StateInStorage.DELETED)
             .filter { it.isDir }
             .forEach { syncObject -> deleteObjectInTarget(syncObject) }
     }

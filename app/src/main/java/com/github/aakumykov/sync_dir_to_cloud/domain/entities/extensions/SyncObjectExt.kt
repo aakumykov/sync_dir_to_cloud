@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions
 
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 // TODO: дать имя, точно отражающее функцию.
@@ -28,13 +28,13 @@ val SyncObject.isSuccessSynced: Boolean get() = ExecutionState.SUCCESS == syncSt
 
 val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
 
-val SyncObject.isUnchanged: Boolean get() = StateInSource.UNCHANGED == stateInSource
+val SyncObject.isUnchanged: Boolean get() = StateInStorage.UNCHANGED == stateInStorage
 
-val SyncObject.isNew: Boolean get() = StateInSource.NEW == stateInSource
+val SyncObject.isNew: Boolean get() = StateInStorage.NEW == stateInStorage
 
-val SyncObject.isModified: Boolean get() = (StateInSource.MODIFIED == stateInSource)
+val SyncObject.isModified: Boolean get() = (StateInStorage.MODIFIED == stateInStorage)
 
-val SyncObject.isDeleted: Boolean get() = StateInSource.DELETED == stateInSource
+val SyncObject.isDeleted: Boolean get() = StateInStorage.DELETED == stateInStorage
 
 /**
  * Возвращает значение newSize, если оно есть, иначе значение поля size.

@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_ob
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 
@@ -18,7 +18,7 @@ interface SyncObjectReader {
     suspend fun getAllObjectsForTask(taskId: String): List<SyncObject>
 
     @Deprecated("Сделать отдельные методы для файлов и каталогов")
-    suspend fun getObjectsForTaskWithModificationState(taskId: String, stateInSource: StateInSource): List<SyncObject>
+    suspend fun getObjectsForTaskWithModificationState(taskId: String, stateInStorage: StateInStorage): List<SyncObject>
 
     @Deprecated("Сделать отдельные методы для файлов и каталогов")
     suspend fun getObjectsForTaskWithSyncState(taskId: String, syncState: ExecutionState): List<SyncObject>

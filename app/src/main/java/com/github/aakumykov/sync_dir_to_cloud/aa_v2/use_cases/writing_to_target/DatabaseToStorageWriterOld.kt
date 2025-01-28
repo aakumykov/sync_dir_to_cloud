@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderCreator
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
@@ -101,7 +101,7 @@ class DatabaseToStorageWriterOld @Inject constructor(
     private suspend fun createNewDirs(allObjectsForTask: List<SyncObject>) {
         allObjectsForTask
             .filter { it.isDir }
-            .filter { it.stateInSource == StateInSource.NEW }
+            .filter { it.stateInStorage == StateInStorage.NEW }
             .forEach { syncObject ->
                 Log.d(TAG, "Новая папка: ${syncObject.relativeParentDirPath}/${syncObject.name}")
             }
@@ -121,7 +121,7 @@ class DatabaseToStorageWriterOld @Inject constructor(
     private fun syncNewFiles(allObjectsForTask: List<SyncObject>) {
         allObjectsForTask
             .filter { !it.isDir }
-            .filter { it.stateInSource == StateInSource.NEW }
+            .filter { it.stateInStorage == StateInStorage.NEW }
             .forEach { syncObject ->
                 Log.d(TAG, "Новый файл: ${syncObject.relativeParentDirPath}/${syncObject.name}")
             }
@@ -131,7 +131,7 @@ class DatabaseToStorageWriterOld @Inject constructor(
     private fun syncModifiedFiles(allObjectsForTask: List<SyncObject>) {
         allObjectsForTask
             .filter { !it.isDir }
-            .filter { it.stateInSource == StateInSource.MODIFIED }
+            .filter { it.stateInStorage == StateInStorage.MODIFIED }
             .forEach { syncObject ->
                 Log.d(TAG, "Изменённый файл: ${syncObject.relativeParentDirPath}/${syncObject.name}")
             }

@@ -60,7 +60,7 @@ class SyncObject (
     @Deprecated("Переименовать в operationError")
     @ColumnInfo(name = "sync_error") var syncError: String,
 
-    @ColumnInfo(name = "state_in_source") var stateInSource: StateInSource,
+    @ColumnInfo(name = "state_in_source") var stateInStorage: StateInStorage,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
     @ColumnInfo(name = "new_m_time") var newMTime: Long? = null,
@@ -82,7 +82,7 @@ class SyncObject (
     override fun toString(): String {
         return "SyncObject( " +
                 (if (isDir) "[DIR]" else "[FILE]") +
-                " name='$name', id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$stateInSource, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
+                " name='$name', id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$stateInStorage, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
     }
 
 
@@ -110,7 +110,7 @@ class SyncObject (
                 syncState = ExecutionState.NEVER,
                 syncDate = 0L,
                 syncError = "",
-                stateInSource = StateInSource.NEW,
+                stateInStorage = StateInStorage.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
             )
@@ -118,11 +118,11 @@ class SyncObject (
 
         fun createFromExisting(existingSyncObject: SyncObject,
                                modifiedFSItem: FSItem,
-                               stateInSource: StateInSource): SyncObject
+                               stateInStorage: StateInStorage): SyncObject
         {
             return existingSyncObject.apply {
                 existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
-                this.stateInSource = stateInSource
+                this.stateInStorage = stateInStorage
             }
         }
     }

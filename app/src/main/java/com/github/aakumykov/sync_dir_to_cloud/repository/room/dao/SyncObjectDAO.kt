@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInSource
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 @Dao
@@ -42,11 +42,11 @@ interface SyncObjectDAO {
 
     @Query("DELETE FROM sync_objects " +
             "WHERE task_id = :taskId " +
-            "AND state_in_source = :stateInSource " +
+            "AND state_in_source = :stateInStorage " +
             "AND sync_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(
         taskId: String,
-        stateInSource: StateInSource,
+        stateInStorage: StateInStorage,
         syncState: ExecutionState
     )
 
@@ -56,7 +56,7 @@ interface SyncObjectDAO {
 
 
     @Query("UPDATE sync_objects " +
-            "SET state_in_source = :stateInSource " +
+            "SET state_in_source = :stateInStorage " +
             "AND name = :name " +
             "AND relative_parent_dir_path = :relativeParentDirPath " +
             "AND task_id = :taskId")
@@ -64,7 +64,7 @@ interface SyncObjectDAO {
         name: String,
         relativeParentDirPath: String,
         taskId: String,
-        stateInSource: StateInSource
+        stateInStorage: StateInStorage
     )
 
 
@@ -85,11 +85,11 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
-            "AND state_in_source = :stateInSource"
+            "AND state_in_source = :stateInStorage"
     )
     suspend fun getObjectsWithModificationState(
         taskId: String,
-        stateInSource: StateInSource
+        stateInStorage: StateInStorage
     ): List<SyncObject>
 
 
