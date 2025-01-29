@@ -55,6 +55,10 @@ interface SyncObjectDAO {
     suspend fun updateSyncObject(syncObject: SyncObject)
 
 
+    @Query("UPDATE sync_objects SET state_in_source = :state WHERE id = :objectId")
+    suspend fun setObjectState(objectId: String, state: StateInStorage)
+
+
     @Query("UPDATE sync_objects " +
             "SET state_in_source = :stateInStorage " +
             "AND name = :name " +

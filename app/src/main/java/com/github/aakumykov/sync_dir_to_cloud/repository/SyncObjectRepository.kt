@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -162,12 +163,18 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.getSyncObject(taskId, name, relativeParentDirPath)
 
 
-    override suspend fun deleteObjectWithDeletedState(objectId: String)
-        = syncObjectDAO.deleteDeletedObject(objectId)
+    override suspend fun deleteObjectWithDeletedState(objectId: String) {
+        Log.d(TAG, "deleteObjectWithDeletedState() called with: objectId = $objectId")
+        syncObjectDAO.deleteDeletedObject(objectId)
+    }
 
 
     override suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
         = syncObjectDAO.updateSyncObject(modifiedSyncObject)
+
+    override suspend fun markObjectAsUnchanged(objectId: String)
+        = syncObjectDAO.setObjectState(objectId, StateInStorage.UNCHANGED)
+
 
     override suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
         = syncObjectDAO.setExistsInTarget(objectId, isExists)
@@ -206,4 +213,7 @@ class SyncObjectRepository @Inject constructor(
         syncObjectBadStateResettingDAO.resetSyncBadState(taskId)
     }
 
+    companion object {
+        val TAG: String = SyncObjectRepository::class.java.simpleName
+    }
 }
