@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.isModified
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -39,7 +38,7 @@ class SourceToDatabaseLister @Inject constructor(
         executionId: String,
     ): Result<Boolean> {
 
-        Log.d(TAG, "readFromPath('$pathReadingFrom')")
+//        Log.d(TAG, "readFromPath('$pathReadingFrom'), тип хранилища: ${cloudAuth?.storageType ?: "НЕИЗВЕСТНО"}")
 
         return try {
 
@@ -62,10 +61,10 @@ class SourceToDatabaseLister @Inject constructor(
                     syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
                 }
                 ?.also { list ->
-                    Log.d(TAG, "list.size: ${list.size}")
+//                    Log.d(TAG, "Прочитано файлов: ${list.size}")
                 }
                 ?.forEach { fileListItem ->
-                    Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
+//                    Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
                     addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
                 }
 
@@ -112,41 +111,62 @@ class SourceToDatabaseLister @Inject constructor(
 
 
     private suspend fun addOrUpdateFileListItem(
-        fileListItem: RecursiveDirReader.FileListItem,
+        newItem: RecursiveDirReader.FileListItem,
         pathReadingFrom: String,
         taskId: String,
         changesDetectionStrategy: ChangesDetectionStrategy
     ) {
-        val inTargetParentDirPath = calculateRelativeParentDirPath(fileListItem, pathReadingFrom)
+        val inTargetParentDirPath = calculateRelativeParentDirPath(newItem, pathReadingFrom)
 
-        val existingObject = syncObjectReader.getSyncObject(
+//        Log.d(TAG, "--------------------------------------------------------")
+//        Log.d(TAG, "Все объекты задачи ${taskId}:")
+        syncObjectReader.getAllObjectsForTask(taskId).forEach {
+            Log.d(TAG, "  ${it}")
+        }
+//        Log.d(TAG, "--------------------------------------------------------")
+
+        val existingItem = syncObjectReader.getSyncObject(
             taskId,
-            fileListItem.name,
+            newItem.name,
             inTargetParentDirPath)
 
+//        Log.d(TAG, "--------------------------------------------------------")
+//        Log.d(TAG, "existingItem: ${existingItem}")
+//        Log.d(TAG, "newItem: mTime: ${newItem.mTime}, size: ${newItem.size}")
+//        Log.d(TAG, "--------------------------------------------------------")
 
-        if (null == existingObject) {
+        if (null == existingItem) {
             syncObjectAdder.addSyncObject(
                 // TODO: сделать определение нового родительского пути более понятным
                 SyncObject.createAsNew(
                     taskId,
-                    fileListItem,
+                    newItem,
                     inTargetParentDirPath
                 )
             )
         }
         else {
-            changesDetectionStrategy.detectItemModification(
-                pathReadingFrom, fileListItem, existingObject
-            ).also { stateInStorage ->
-                if (stateInStorage.isModified()) {
+            val stateInStorage = changesDetectionStrategy.detectItemModification(
+                pathReadingFrom,
+                newItem,
+                existingItem
+            )
+
+            when (stateInStorage) {
+                StateInStorage.MODIFIED -> {
                     syncObjectUpdater.updateSyncObject(
                         SyncObject.createFromExisting(
-                            existingSyncObject = existingObject,
-                            modifiedFSItem = fileListItem,
+                            existingSyncObject = existingItem,
+                            modifiedFSItem = newItem,
                             stateInStorage = stateInStorage,
                         )
                     )
+                }
+                StateInStorage.UNCHANGED -> {
+                    syncObjectUpdater.markObjectAsUnchanged(existingItem.id)
+                }
+                else -> {
+                    Log.d(TAG, "Sate in storage of item '${existingItem.name} [${existingItem.id}] is ${stateInStorage}")
                 }
             }
         }
