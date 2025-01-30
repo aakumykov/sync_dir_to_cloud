@@ -144,7 +144,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             // Забэкапить удалённое
             backupDeletedDirs(syncTask)
-//            appComponent.getDirBackuperAssistedFactory().create(syncStuff).backupDeletedDirs(syncTask)
             backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
@@ -154,14 +153,12 @@ class SyncTaskExecutor @AssistedInject constructor(
             deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
             // Удалить удалённые каталоги
-//            appComponent.getDirDeleterAssistedFactory().create(syncStuff, coroutineScope).deleteDeletedDirs(syncTask)
             deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
             // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
             createNewDirs(syncTask)
-//            appComponent.getDirCreatorAssistedFactory().create(syncStuff, coroutineScope).createNewDirs(syncTask)
             createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
