@@ -52,7 +52,7 @@ class SyncObjectRepositoryInterfacesModule {
     }
 
     @Provides
-    fun provideSyncTaskObjectReader(syncObjectRepository: SyncFileObjectRepository): SyncTaskFileObjectReader {
+    fun provideSyncTaskFileObjectReader(syncObjectRepository: SyncFileObjectRepository): SyncTaskFileObjectReader {
         return syncObjectRepository
     }
 }
