@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.Rec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncFileObjectRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
@@ -18,7 +18,7 @@ abstract class BasicStorageReader(
     private val authToken: String,
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
     private val changesDetectionStrategy: ChangesDetectionStrategy,
-    private val syncObjectRepository: SyncFileObjectRepository
+    private val syncObjectRepository: SyncObjectRepository
 )
     : StorageReader
 {

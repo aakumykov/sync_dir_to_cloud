@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncFileObjectRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.BasicStorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import dagger.assisted.Assisted
@@ -14,7 +14,7 @@ class LocalStorageReader @AssistedInject constructor(
     @Assisted(AssistedArgName.TASK_ID) taskId: String,
     @Assisted changesDetectionStrategy: ChangesDetectionStrategy,
     recursiveDirReaderFactory: RecursiveDirReaderFactory,
-    syncObjectRepository: SyncFileObjectRepository,
+    syncObjectRepository: SyncObjectRepository,
 )
     // TODO: делегировать ему, чтобы не вызывать этот громоздкий конструктор.
     : BasicStorageReader(

@@ -11,8 +11,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNever
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskDirObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
@@ -29,7 +31,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 @AppScope
-class SyncFileObjectRepository @Inject constructor(
+class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
     private val syncObjectStateSetterDAO: SyncObjectStateSetterDAO,
     private val syncObjectBadStateResettingDAO: SyncObjectBadStateResettingDAO,
@@ -42,7 +44,8 @@ class SyncFileObjectRepository @Inject constructor(
         SyncObjectDeleter,
         SyncObjectUpdater,
 
-        SyncTaskFileObjectReader
+        SyncTaskFileObjectReader,
+        SyncTaskDirObjectReader
 {
     override suspend fun addSyncObject(syncObject: SyncObject)
         = syncObjectDAO.add(syncObject)
@@ -247,6 +250,33 @@ class SyncFileObjectRepository @Inject constructor(
             .getAllObjectsForTask(taskId)
             .filter { it.isFile }
             .filter { it.isModified }
+            .filter { it.isTargetReadingOk }
+            .nullIfEmpty()
+    }
+
+    override fun getNewDirs(taskId: String): List<SyncObject>? {
+        return syncObjectDAO
+            .getAllObjectsForTask(taskId)
+            .filter { it.isDir }
+            .filter { it.isNew }
+            .nullIfEmpty()
+    }
+
+    override fun getNeverProcessedDirs(taskId: String): List<SyncObject>? {
+        return syncObjectDAO
+            .getAllObjectsForTask(taskId)
+            .filter { it.isDir }
+            .filter { it.isNeverSynced && it.isUnchanged }
+            .filter { it.isTargetReadingOk }
+            .nullIfEmpty()
+    }
+
+    override fun getInTargetLostDirs(taskId: String): List<SyncObject>? {
+        return syncObjectDAO
+            .getAllObjectsForTask(taskId)
+            .filter { it.isDir }
+            .filter { it.isSuccessSynced }
+            .filter { it.notExistsInTarget }
             .filter { it.isTargetReadingOk }
             .nullIfEmpty()
     }
