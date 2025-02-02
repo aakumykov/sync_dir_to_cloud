@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -7,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncFileObjectRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
 import dagger.Module
 import dagger.Provides
@@ -16,12 +17,12 @@ import dagger.Provides
 class SyncObjectRepositoryInterfacesModule {
 
     @Provides
-    fun provideSyncObjectAdder(syncObjectRepository: SyncObjectRepository): SyncObjectAdder {
+    fun provideSyncObjectAdder(syncObjectRepository: SyncFileObjectRepository): SyncObjectAdder {
         return syncObjectRepository
     }
 
     @Provides
-    fun provideSyncObjectUpdater(syncObjectRepository: SyncObjectRepository): SyncObjectUpdater {
+    fun provideSyncObjectUpdater(syncObjectRepository: SyncFileObjectRepository): SyncObjectUpdater {
         return syncObjectRepository
     }
 
@@ -31,22 +32,27 @@ class SyncObjectRepositoryInterfacesModule {
     }
 
     @Provides
-    fun provideSyncObjectReader(syncObjectRepository: SyncObjectRepository): SyncObjectReader {
+    fun provideSyncObjectReader(syncObjectRepository: SyncFileObjectRepository): SyncObjectReader {
         return syncObjectRepository
     }
 
     @Provides
-    fun provideSyncObjectStateChanger(syncObjectRepository: SyncObjectRepository): SyncObjectStateChanger {
+    fun provideSyncObjectStateChanger(syncObjectRepository: SyncFileObjectRepository): SyncObjectStateChanger {
         return syncObjectRepository
     }
 
     @Provides
-    fun provideSyncObjectStateResetter(syncObjectRepository: SyncObjectRepository): SyncObjectStateResetter {
+    fun provideSyncObjectStateResetter(syncObjectRepository: SyncFileObjectRepository): SyncObjectStateResetter {
         return syncObjectRepository
     }
 
     @Provides
-    fun provideSyncObjectDeleter(syncObjectRepository: SyncObjectRepository): SyncObjectDeleter {
+    fun provideSyncObjectDeleter(syncObjectRepository: SyncFileObjectRepository): SyncObjectDeleter {
+        return syncObjectRepository
+    }
+
+    @Provides
+    fun provideSyncTaskObjectReader(syncObjectRepository: SyncFileObjectRepository): SyncTaskFileObjectReader {
         return syncObjectRepository
     }
 }

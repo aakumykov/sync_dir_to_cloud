@@ -5,6 +5,15 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
+import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -20,7 +29,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 @AppScope
-class SyncObjectRepository @Inject constructor(
+class SyncFileObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
     private val syncObjectStateSetterDAO: SyncObjectStateSetterDAO,
     private val syncObjectBadStateResettingDAO: SyncObjectBadStateResettingDAO,
@@ -31,7 +40,9 @@ class SyncObjectRepository @Inject constructor(
         SyncObjectStateChanger,
         SyncObjectStateResetter,
         SyncObjectDeleter,
-        SyncObjectUpdater
+        SyncObjectUpdater,
+
+        SyncTaskFileObjectReader
 {
     override suspend fun addSyncObject(syncObject: SyncObject)
         = syncObjectDAO.add(syncObject)
@@ -204,6 +215,40 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun resetSyncBadState(taskId: String) {
         syncObjectBadStateResettingDAO.resetSyncBadState(taskId)
+    }
+
+    override suspend fun getNewFiles(taskId: String): List<SyncObject>? {
+        return syncObjectDAO
+            .getObjectsForTask(taskId)
+            .filter { it.isFile }
+            .filter { it.isNew }
+            .nullIfEmpty()
+    }
+
+    override fun getForgottenFiles(taskId: String): List<SyncObject>? {
+        return syncObjectDAO
+            .getAllObjectsForTask(taskId)
+            .filter { it.isFile }
+            .filter { it.isNeverSynced }
+            .nullIfEmpty()
+    }
+
+    override fun getInTargetLostFiles(taskId: String): List<SyncObject>? {
+        return syncObjectDAO.getAllObjectsForTask(taskId)
+            .filter { it.isFile }
+            .filter { it.isSuccessSynced }
+            .filter { it.notExistsInTarget }
+            .filter { it.isTargetReadingOk }
+            .nullIfEmpty()
+    }
+
+    override fun getModifiedFiles(taskId: String): List<SyncObject>? {
+        return syncObjectDAO
+            .getAllObjectsForTask(taskId)
+            .filter { it.isFile }
+            .filter { it.isModified }
+            .filter { it.isTargetReadingOk }
+            .nullIfEmpty()
     }
 
 }

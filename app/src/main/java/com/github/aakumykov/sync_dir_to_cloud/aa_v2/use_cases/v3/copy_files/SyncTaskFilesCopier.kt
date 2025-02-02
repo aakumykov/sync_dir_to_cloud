@@ -11,17 +11,9 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
@@ -41,7 +33,7 @@ import kotlinx.coroutines.launch
  */
 class SyncTaskFilesCopier @AssistedInject constructor(
     @CoroutineFileOperationJob private val fileOperationJob: CompletableJob,
-    private val syncObjectReader: SyncObjectReader,
+    private val syncTaskFileObjectReader: SyncTaskFileObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
     private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
@@ -49,31 +41,30 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val fileOperationPortionSize: Int,
 ) {
-//    executionLoggerHelper.logError(syncTask.id, executionId, TAG, e)
-
     fun copyNewFilesForSyncTaskInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
         return scope.launch {
-            getNewFilesForSyncTask(syncTask)
-                ?.also { syncObjectList ->
+            syncTaskFileObjectReader
+                .getNewFiles(syncTask.id)
+                    ?.also { syncObjectList ->
 
-                    Log.d(TAG, "copyNewFilesForSyncTaskInCoroutine()")
+                        Log.d(TAG, "copyNewFilesForSyncTaskInCoroutine()")
 
-                    val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
+                        val operationName = R.string.SYNC_OBJECT_LOGGER_copy_new_file
 
-                    copyFileListByChunksInCoroutine(
-                        scope = scope,
-                        syncTask = syncTask,
-                        operationName = operationName,
-                        list = syncObjectList,
-                        overwriteIfExists = true,
-                    ).join()
-                }
+                        copyFileListByChunksInCoroutine(
+                            scope = scope,
+                            syncTask = syncTask,
+                            operationName = operationName,
+                            list = syncObjectList,
+                            overwriteIfExists = true,
+                        ).join()
+                    }
         }
     }
 
     fun copyPreviouslyForgottenFilesInCoroutine(scope: CoroutineScope, syncTask: SyncTask): Job? {
         return scope.launch {
-            getPreviouslyForgottenFiles(syncTask)
+            syncTaskFileObjectReader.getForgottenFiles(syncTask.id)
                 ?.also { list ->
 
                     Log.d(TAG, "copyPreviouslyForgottenFilesInCoroutine()")
@@ -94,7 +85,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     fun copyModifiedFilesForSyncTask(scope: CoroutineScope, syncTask: SyncTask): Job? {
         return scope.launch {
-            getModifiedFiles(syncTask)
+            syncTaskFileObjectReader.getModifiedFiles(syncTask.id)
                 ?.also {  list ->
 
                     Log.d(TAG, "copyModifiedFilesForSyncTask()")
@@ -128,7 +119,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     fun copyInTargetLostFiles(scope: CoroutineScope, syncTask: SyncTask): Job? {
         return scope.launch {
-            getInTargetLostFiles(syncTask)
+            syncTaskFileObjectReader.getInTargetLostFiles(syncTask.id)
                 ?.also { list ->
 
                     Log.d(TAG, "copyInTargetLostFiles()")
@@ -347,43 +338,6 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     onSyncObjectProcessingFailed?.invoke(syncObject, throwable)
                 }
             }
-    }
-
-
-
-    private suspend fun getNewFilesForSyncTask(syncTask: SyncTask): List<SyncObject>? {
-        return syncObjectReader
-            .getAllObjectsForTask(syncTask.id)
-            .filter { it.isFile }
-            .filter { it.isNew }
-            .nullIfEmpty()
-    }
-
-    private suspend fun getPreviouslyForgottenFiles(syncTask: SyncTask): List<SyncObject>? {
-        return syncObjectReader
-            .getAllObjectsForTask(syncTask.id)
-            .filter { it.isFile }
-            .filter { it.isNeverSynced }
-            .nullIfEmpty()
-    }
-
-    private suspend fun getModifiedFiles(syncTask: SyncTask): List<SyncObject>? {
-        return syncObjectReader
-            .getAllObjectsForTask(syncTask.id)
-            .filter { it.isFile }
-            .filter { it.isModified }
-            .filter { it.isTargetReadingOk }
-            .nullIfEmpty()
-    }
-
-    private suspend fun getInTargetLostFiles(syncTask: SyncTask): List<SyncObject>? {
-        return syncObjectReader
-            .getAllObjectsForTask(syncTask.id)
-            .filter { it.isFile }
-            .filter { it.isSuccessSynced }
-            .filter { it.notExistsInTarget }
-            .filter { it.isTargetReadingOk }
-            .nullIfEmpty()
     }
 
 
