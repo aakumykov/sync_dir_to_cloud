@@ -1,7 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.target_object_repository.TargetObjectRepository
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.target_object_repository.TargetObjectRepositoryImpl
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskDirObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -62,10 +60,5 @@ class SyncObjectRepositoryInterfacesModule {
     @Provides
     fun provideSyncTaskDirObjectReader(syncObjectRepository: SyncObjectRepository): SyncTaskDirObjectReader {
         return syncObjectRepository
-    }
-
-    @Provides
-    fun provideTargetObjectRepository(targetObjectRepositoryImpl: TargetObjectRepositoryImpl): TargetObjectRepository {
-        return targetObjectRepositoryImpl
     }
 }

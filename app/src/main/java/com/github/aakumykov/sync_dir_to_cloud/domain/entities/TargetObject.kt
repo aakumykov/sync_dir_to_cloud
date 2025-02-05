@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TargetObject.Companion.TABLE_NAME
 
 @Entity(tableName = TABLE_NAME)
@@ -32,15 +31,6 @@ class TargetObject(
     )
 
     companion object {
-
-        fun from(taskId: String, fileListItem: RecursiveDirReader.FileListItem): TargetObject {
-            return TargetObject(SyncObject.createAsNew(
-                taskId = taskId,
-                fsItem = fileListItem,
-                relativeParentDirPath = ,
-            ))
-        }
-
         const val TABLE_NAME = "target_objects"
     }
 }
