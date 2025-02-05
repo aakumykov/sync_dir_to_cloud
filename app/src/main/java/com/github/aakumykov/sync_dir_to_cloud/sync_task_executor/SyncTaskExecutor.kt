@@ -27,6 +27,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
@@ -140,44 +141,41 @@ class SyncTaskExecutor @AssistedInject constructor(
             readSource(syncTask).getOrThrow()
 
             // Прочитать приёмник
-            readTarget(syncTask)
+//            readTarget(syncTask)
 
             // Забэкапить удалённое
-            backupDeletedDirs(syncTask)
-//            appComponent.getDirBackuperAssistedFactory().create(syncStuff).backupDeletedDirs(syncTask)
-            backupDeletedFiles(syncTask)
+//            backupDeletedDirs(syncTask)
+//            backupDeletedFiles(syncTask)
 
             // Забэкапить изменившееся
-            backupModifiedFiles(syncTask)
+//            backupModifiedFiles(syncTask)
 
             // Удалить удалённые файлы
-            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
+//            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
 
             // Удалить удалённые каталоги
-//            appComponent.getDirDeleterAssistedFactory().create(syncStuff, coroutineScope).deleteDeletedDirs(syncTask)
-            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
+//            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
 
             // TODO: очистка БД от удалённых элементов как отдельный этап?
 
             // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
-            createNewDirs(syncTask)
-//            appComponent.getDirCreatorAssistedFactory().create(syncStuff, coroutineScope).createNewDirs(syncTask)
-            createLostDirsAgain(syncTask)
+//            createNewDirs(syncTask)
+//            createLostDirsAgain(syncTask)
 
             // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
-            createNeverSyncedDirs(syncTask)
+//            createNeverSyncedDirs(syncTask)
 
             // Скопировать новые файлы
-            copyNewFiles(syncTask)?.join()
+//            copyNewFiles(syncTask)?.join()
 
             // Скопировать забытые с прошлого раза файлы
-            copyPreviouslyForgottenFiles(syncTask)?.join()
+//            copyPreviouslyForgottenFiles(syncTask)?.join()
 
             // Скопировать изменившееся
-            copyModifiedFiles(syncTask)?.join()
+//            copyModifiedFiles(syncTask)?.join()
 
             // Восстановить утраченные файлы
-            copyLostFilesAgain(syncTask)?.join()
+//            copyLostFilesAgain(syncTask)?.join()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
@@ -351,18 +349,32 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun readSource(syncTask: SyncTask): Result<Boolean> {
         return appComponent
             .getStorageToDatabaseLister()
-            .readFromPath(
-                pathReadingFrom = syncTask.sourcePath,
+            .listFromPathToDatabase(
+                side = Side.SOURCE,
                 taskId = syncTask.id,
                 executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId),
+                pathReadingFrom = syncTask.sourcePath,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
     }
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        appComponent.getTargetReader().readWithCheckFromTarget(syncTask, executionId)
+        /*appComponent
+            .getTargetReader()
+            .readWithCheckFromTarget(syncTask, executionId)*/
+
+        appComponent
+            .getStorageToDatabaseLister()
+            .listFromPathToDatabase(
+                side = Side.TARGET,
+                taskId = syncTask.id,
+                executionId = executionId,
+                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId),
+                pathReadingFrom = syncTask.targetPath,
+                changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+            )
     }
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {
