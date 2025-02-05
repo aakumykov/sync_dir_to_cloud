@@ -141,7 +141,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             readSource(syncTask).getOrThrow()
 
             // Прочитать приёмник
-//            readTarget(syncTask)
+            readTarget(syncTask)
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
@@ -361,10 +361,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        /*appComponent
-            .getTargetReader()
-            .readWithCheckFromTarget(syncTask, executionId)*/
-
         appComponent
             .getStorageToDatabaseLister()
             .listFromPathToDatabase(
