@@ -18,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
     primaryKeys = [
         "id",
         "task_id",
+        "execution_id",
         "relative_parent_dir_path",
         "name",
         SIDE_KEY
@@ -37,10 +38,11 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
     ]
 )
 class SyncObject (
-
     @ColumnInfo(name = "id")           val id: String,
 
     @ColumnInfo(name = "task_id")      val taskId: String,
+
+    @ColumnInfo(name = "execution_id", defaultValue = "none") var executionId: String,
 
     @ColumnInfo(name = SIDE_KEY, defaultValue = SIDE_KEY_DEFAULT) val side: Side,
 
@@ -100,6 +102,7 @@ class SyncObject (
 
         fun createAsNew(
             taskId: String,
+            executionId: String,
             side: Side,
             fsItem: FSItem,
             relativeParentDirPath: String,
@@ -108,6 +111,7 @@ class SyncObject (
             return SyncObject(
                 id = id(fsItem),
                 taskId = taskId,
+                executionId = executionId,
                 side = side,
                 name = fsItem.name,
                 relativeParentDirPath = relativeParentDirPath,
@@ -126,12 +130,17 @@ class SyncObject (
             )
         }
 
-        fun createFromExisting(existingSyncObject: SyncObject,
+        @Deprecated("разберись с аргументом stateInStorage")
+        fun createFromExisting(executionId: String,
+                               existingSyncObject: SyncObject,
                                modifiedFSItem: FSItem,
                                stateInStorage: StateInStorage): SyncObject
         {
             return existingSyncObject.apply {
-                existingSyncObject.shiftTwoVersionParameters(modifiedFSItem)
+                existingSyncObject.shiftTwoVersionParameters(
+                    modifiedFSItem
+                )
+                this.executionId = executionId
 //                this.stateInStorage = stateInStorage
             }
         }

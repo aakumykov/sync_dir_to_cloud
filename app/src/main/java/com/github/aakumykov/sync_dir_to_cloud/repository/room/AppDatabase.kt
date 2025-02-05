@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -34,7 +35,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncObjectLogItem::class,
         ExecutionLogItem::class,
    ],
-    version = 80,
+    version = 81,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -59,7 +60,8 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 76, to = 77, spec = ExecutionLogItem.RenameColumnsAutoMigrationSpec1::class), // добавилось ExecutionLogItem
         AutoMigration(from = 77, to = 78), // Новое поле "operationState" в ExecutionLogItem
         AutoMigration(from = 78, to = 79, spec = ExecutionLogItem.RemoveOperationStateFieldSpec::class), // Удаление поля ExecutionLogItem.operationState
-        AutoMigration(from = 79, to = 80), // Новое поле "side"
+        AutoMigration(from = 79, to = 80),
+        AutoMigration(from = 80, to = 81), // Новое поле SyncObject.executionId
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

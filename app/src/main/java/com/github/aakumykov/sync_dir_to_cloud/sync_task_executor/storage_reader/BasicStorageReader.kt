@@ -56,6 +56,7 @@ abstract class BasicStorageReader(
             if (null == existingObject) {
                 SyncObject.createAsNew(
                     taskId = taskId,
+                    executionId = "none",
                     fsItem = fileListItem,
                     side = Side.SOURCE,
                     relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath),
@@ -66,6 +67,7 @@ abstract class BasicStorageReader(
             }
             else {
                 SyncObject.createFromExisting(
+                    executionId = "none",
                     existingObject,
                     fileListItem,
                     changesDetectionStrategy.detectItemModification(sourcePath, fileListItem, existingObject)

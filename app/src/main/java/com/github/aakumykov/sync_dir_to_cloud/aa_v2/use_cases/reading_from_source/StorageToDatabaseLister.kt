@@ -69,6 +69,7 @@ class StorageToDatabaseLister @Inject constructor(
                 ?.forEach { fileListItem ->
                     Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
                     addOrUpdateFileListItem(
+                        executionId = executionId,
                         side = side,
                         fileListItem = fileListItem,
                         pathReadingFrom = pathReadingFrom,
@@ -120,6 +121,7 @@ class StorageToDatabaseLister @Inject constructor(
 
 
     private suspend fun addOrUpdateFileListItem(
+        executionId: String,
         side: Side,
         fileListItem: RecursiveDirReader.FileListItem,
         pathReadingFrom: String,
@@ -139,6 +141,7 @@ class StorageToDatabaseLister @Inject constructor(
                 // TODO: сделать определение нового родительского пути более понятным
                 SyncObject.createAsNew(
                     taskId = taskId,
+                    executionId = executionId,
                     fsItem = fileListItem,
                     side = side,
                     relativeParentDirPath = parentDirPath,
@@ -147,12 +150,15 @@ class StorageToDatabaseLister @Inject constructor(
         }
         else {
             changesDetectionStrategy.detectItemModification(
-                pathReadingFrom, fileListItem, existingObject
+                pathReadingFrom,
+                fileListItem,
+                existingObject
             ).also { stateInStorage ->
                 when(stateInStorage) {
                     StateInStorage.MODIFIED -> {
                         syncObjectUpdater.updateSyncObject(
                             SyncObject.createFromExisting(
+                                executionId = executionId,
                                 existingSyncObject = existingObject,
                                 modifiedFSItem = fileListItem,
                                 stateInStorage = stateInStorage,
