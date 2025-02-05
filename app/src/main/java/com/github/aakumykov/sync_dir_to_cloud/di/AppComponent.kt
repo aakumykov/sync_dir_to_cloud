@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.SourceToDatabaseLister
+import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_target.TargetReader
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
@@ -153,7 +153,7 @@ interface AppComponent {
 
     fun getProgressInfoHolder(): ProgressInfoHolder
 
-    fun getSourceToDatabaseLister(): SourceToDatabaseLister
+    fun getStorageToDatabaseLister(): StorageToDatabaseLister
 
     @Deprecated("Возвращает устаревший класс")
     fun getDatabaseToStorageWriterOld(): DatabaseToStorageWriterOld
