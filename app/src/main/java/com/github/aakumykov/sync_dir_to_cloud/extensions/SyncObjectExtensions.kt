@@ -14,3 +14,11 @@ fun SyncObject.basePathIn(dirPath: String): String {
 
 val SyncObject.relativePath: String
     get() = relativeParentDirPath + FSItem.DS + name
+
+
+fun SyncObject.theSameWith(other: SyncObject): Boolean {
+    return taskId == other.taskId &&
+            executionId == other.executionId &&
+            name == other.name &&
+            relativeParentDirPath == other.relativeParentDirPath
+}

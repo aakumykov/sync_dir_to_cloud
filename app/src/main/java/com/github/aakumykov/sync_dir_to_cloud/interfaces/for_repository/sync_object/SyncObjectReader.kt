@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 
 interface SyncObjectReader {
@@ -27,4 +28,10 @@ interface SyncObjectReader {
     suspend fun getList(taskId: String, readingStrategy: ReadingStrategy): List<SyncObject>
 
     suspend fun getInTargetMissingObjects(taskId: String): List<SyncObject>
+
+    suspend fun getAllObjectsForTask(
+        side: Side,
+        taskId: String,
+        executionId: String
+    ): List<SyncObject>
 }

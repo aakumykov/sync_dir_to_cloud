@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSucce
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskDirObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
@@ -67,6 +68,18 @@ class SyncObjectRepository @Inject constructor(
         taskId: String
     ): List<SyncObject> {
         return syncObjectDAO.getAllObjectsForTask(taskId)
+    }
+
+    override suspend fun getAllObjectsForTask(
+        side: Side,
+        taskId: String,
+        executionId: String
+    ): List<SyncObject> {
+        return syncObjectDAO.getAllObjectsForTask(
+            side = side,
+            taskId = taskId,
+            executionId = executionId,
+        )
     }
 
 
@@ -189,6 +202,14 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun markAsUnchanged(objectId: String)
         = syncObjectDAO.setStateInStorage(objectId, StateInStorage.UNCHANGED)
+
+    /*override suspend fun getAllObjectsForTask(
+        side: Side,
+        taskId: String,
+        executionId: String
+    ): List<SyncObject> {
+        return syncObjectDAO.getAllObjectsForTask(side, taskId, executionId)
+    }*/
 
 
     override suspend fun changeModificationState(

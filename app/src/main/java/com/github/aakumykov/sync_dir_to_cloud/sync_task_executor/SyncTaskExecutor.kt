@@ -7,6 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ComparisionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.UpdateTargetComparisionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -142,6 +144,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             // Прочитать приёмник
             readTarget(syncTask)
+
+            // Сравнить источник с приёмником
+            compareSourceWithTarget(taskId = syncTask.id, executionId = executionId)
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
@@ -372,6 +377,18 @@ class SyncTaskExecutor @AssistedInject constructor(
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
     }
+
+
+    private suspend fun compareSourceWithTarget(taskId: String, executionId: String) {
+        appComponent
+            .getSourceWithTargetComparator()
+            .compare(
+                taskId = taskId,
+                executionId = executionId,
+                comparitionStrategy = UpdateTargetComparisionStrategy()
+            )
+    }
+
 
     private fun showWritingTargetNotification(syncTask: SyncTask) {
         syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
