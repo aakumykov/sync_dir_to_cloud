@@ -7,6 +7,7 @@ import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.isModified
@@ -31,7 +32,8 @@ class StorageToDatabaseLister @Inject constructor(
     private val executionLogger: ExecutionLogger,
     private val resources: Resources,
 ) {
-    suspend fun readFromPath(
+    suspend fun listFromPathToDatabase(
+        side: Side,
         pathReadingFrom: String?,
         changesDetectionStrategy: ChangesDetectionStrategy,
         cloudAuth: CloudAuth?,
@@ -66,7 +68,13 @@ class StorageToDatabaseLister @Inject constructor(
                 }
                 ?.forEach { fileListItem ->
                     Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
-                    addOrUpdateFileListItem(fileListItem, pathReadingFrom, taskId, changesDetectionStrategy)
+                    addOrUpdateFileListItem(
+                        side = side,
+                        fileListItem = fileListItem,
+                        pathReadingFrom = pathReadingFrom,
+                        taskId = taskId,
+                        changesDetectionStrategy = changesDetectionStrategy
+                    )
                 }
 
             logExecutionFinished(taskId,executionId)
@@ -112,17 +120,18 @@ class StorageToDatabaseLister @Inject constructor(
 
 
     private suspend fun addOrUpdateFileListItem(
+        side: Side,
         fileListItem: RecursiveDirReader.FileListItem,
         pathReadingFrom: String,
         taskId: String,
         changesDetectionStrategy: ChangesDetectionStrategy
     ) {
-        val inTargetParentDirPath = calculateRelativeParentDirPath(fileListItem, pathReadingFrom)
+        val parentDirPath = calculateRelativeParentDirPath(fileListItem, pathReadingFrom)
 
         val existingObject = syncObjectReader.getSyncObject(
             taskId,
             fileListItem.name,
-            inTargetParentDirPath)
+            parentDirPath)
 
 
         if (null == existingObject) {
@@ -131,8 +140,8 @@ class StorageToDatabaseLister @Inject constructor(
                 SyncObject.createAsNew(
                     taskId = taskId,
                     fsItem = fileListItem,
-                    side = Side.SOURCE,
-                    relativeParentDirPath = inTargetParentDirPath,
+                    side = side,
+                    relativeParentDirPath = parentDirPath,
                 )
             )
         }
@@ -140,14 +149,22 @@ class StorageToDatabaseLister @Inject constructor(
             changesDetectionStrategy.detectItemModification(
                 pathReadingFrom, fileListItem, existingObject
             ).also { stateInStorage ->
-                if (stateInStorage.isModified()) {
-                    syncObjectUpdater.updateSyncObject(
-                        SyncObject.createFromExisting(
-                            existingSyncObject = existingObject,
-                            modifiedFSItem = fileListItem,
-                            stateInStorage = stateInStorage,
+                when(stateInStorage) {
+                    StateInStorage.MODIFIED -> {
+                        syncObjectUpdater.updateSyncObject(
+                            SyncObject.createFromExisting(
+                                existingSyncObject = existingObject,
+                                modifiedFSItem = fileListItem,
+                                stateInStorage = stateInStorage,
+                            )
                         )
-                    )
+                    }
+                    StateInStorage.UNCHANGED -> {
+                        syncObjectUpdater.markAsUnchanged(existingObject.id)
+                    }
+                    else -> {
+                        Log.i(TAG, "SyncObject: sate_in_storage: ${existingObject.stateInStorage}, ${existingObject.id}, ${existingObject.name}")
+                    }
                 }
             }
         }
