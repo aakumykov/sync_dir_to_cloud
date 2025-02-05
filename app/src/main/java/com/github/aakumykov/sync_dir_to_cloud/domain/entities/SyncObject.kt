@@ -5,8 +5,10 @@ import androidx.room.ForeignKey.Companion.CASCADE
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject.Companion.SIDE_KEY
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 // TODO: сложный ключ, включающий taskId, name, parentPath и другое, что составляет уникальность.
@@ -17,7 +19,8 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
         "id",
         "task_id",
         "relative_parent_dir_path",
-        "name"
+        "name",
+        SIDE_KEY
     ],
     foreignKeys = [
         ForeignKey(
@@ -38,6 +41,8 @@ class SyncObject (
     @ColumnInfo(name = "id")           val id: String,
 
     @ColumnInfo(name = "task_id")      val taskId: String,
+
+    @ColumnInfo(name = SIDE_KEY, defaultValue = SIDE_KEY_DEFAULT) val side: Side,
 
     @ColumnInfo(name = "name") val name: String,
 
@@ -88,10 +93,14 @@ class SyncObject (
 
     companion object {
 
+        const val SIDE_KEY = "side"
+        const val SIDE_KEY_DEFAULT = "SOURCE"
+
         fun id(fsItem: FSItem): String = sha256(fsItem.absolutePath)
 
         fun createAsNew(
             taskId: String,
+            side: Side,
             fsItem: FSItem,
             relativeParentDirPath: String,
         ): SyncObject {
@@ -99,6 +108,7 @@ class SyncObject (
             return SyncObject(
                 id = id(fsItem),
                 taskId = taskId,
+                side = side,
                 name = fsItem.name,
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,

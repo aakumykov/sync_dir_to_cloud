@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.isModified
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -128,9 +129,10 @@ class StorageToDatabaseLister @Inject constructor(
             syncObjectAdder.addSyncObject(
                 // TODO: сделать определение нового родительского пути более понятным
                 SyncObject.createAsNew(
-                    taskId,
-                    fileListItem,
-                    inTargetParentDirPath
+                    taskId = taskId,
+                    fsItem = fileListItem,
+                    side = Side.SOURCE,
+                    relativeParentDirPath = inTargetParentDirPath,
                 )
             )
         }

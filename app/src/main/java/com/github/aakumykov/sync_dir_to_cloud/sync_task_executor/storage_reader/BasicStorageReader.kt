@@ -6,6 +6,7 @@ import com.github.aakumykov.file_lister_navigator_selector.file_lister.SimpleSor
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
@@ -13,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 
+@Deprecated("Кажется, не используется")
 abstract class BasicStorageReader(
     private val taskId: String,
     private val authToken: String,
@@ -55,6 +57,7 @@ abstract class BasicStorageReader(
                 SyncObject.createAsNew(
                     taskId = taskId,
                     fsItem = fileListItem,
+                    side = Side.SOURCE,
                     relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath),
                 )
                     .also {

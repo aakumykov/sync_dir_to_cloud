@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
+@Deprecated("кажется, не используется")
 class YandexStorageReader @AssistedInject constructor(
     @Assisted(AssistedArgName.AUTH_TOKEN) authToken: String,
     @Assisted(AssistedArgName.TASK_ID) taskId: String,
