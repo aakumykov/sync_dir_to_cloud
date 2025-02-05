@@ -5,4 +5,5 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 interface SyncObjectUpdater {
     suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
     suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
+    suspend fun markAsUnchanged(objectId: String)
 }
