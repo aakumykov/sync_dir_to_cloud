@@ -14,7 +14,12 @@ interface SyncObjectReader {
 
     suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
 
-    suspend fun getSyncObject(taskId: String, name: String, relativeParentDirPath: String): SyncObject?
+    suspend fun getSyncObject(
+        taskId: String,
+        side: Side,
+        name: String,
+        relativeParentDirPath: String
+    ): SyncObject?
 
     suspend fun getAllObjectsForTask(taskId: String): List<SyncObject>
 
@@ -32,6 +37,5 @@ interface SyncObjectReader {
     suspend fun getAllObjectsForTask(
         side: Side,
         taskId: String,
-        executionId: String
     ): List<SyncObject>
 }

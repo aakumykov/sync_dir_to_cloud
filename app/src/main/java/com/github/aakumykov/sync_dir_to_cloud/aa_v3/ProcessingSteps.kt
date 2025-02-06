@@ -9,7 +9,7 @@ data class ProcessingSteps(
     companion object {
         val BACKUP_AND_COPY = ProcessingSteps(ProcessingAction.BACKUP, ProcessingAction.COPY)
         val BACKUP_AND_DELETE = ProcessingSteps(ProcessingAction.BACKUP, ProcessingAction.DELETE)
+        val COPY = ProcessingSteps(ProcessingAction.DO_NOTHING, ProcessingAction.COPY)
         val DO_NOTHING = ProcessingSteps(ProcessingAction.DO_NOTHING, ProcessingAction.DO_NOTHING)
-        val COPY = ProcessingSteps(ProcessingAction.COPY, ProcessingAction.COPY)
     }
 }

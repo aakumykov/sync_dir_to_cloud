@@ -29,7 +29,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStat
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import java.lang.Thread.State
 import javax.inject.Inject
 
 @AppScope
@@ -73,12 +72,10 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun getAllObjectsForTask(
         side: Side,
         taskId: String,
-        executionId: String
     ): List<SyncObject> {
         return syncObjectDAO.getAllObjectsForTask(
             side = side,
             taskId = taskId,
-            executionId = executionId,
         )
     }
 
@@ -186,8 +183,13 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.markAllObjectsAsDeleted(taskId)
 
 
-    override suspend fun getSyncObject(taskId: String, name: String, relativeParentDirPath: String): SyncObject?
-        = syncObjectDAO.getSyncObject(taskId, name, relativeParentDirPath)
+    override suspend fun getSyncObject(
+        taskId: String,
+        side: Side,
+        name: String,
+        relativeParentDirPath: String
+    ): SyncObject?
+        = syncObjectDAO.getSyncObject(taskId, side, name, relativeParentDirPath)
 
 
     override suspend fun deleteObjectWithDeletedState(objectId: String)

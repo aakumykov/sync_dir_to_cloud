@@ -32,7 +32,7 @@ abstract class BasicStorageReader(
 
 
     @Throws(FileLister.NotADirException::class)
-    override suspend fun read(sourcePath: String?) {
+    override suspend fun read(sourcePath: String?, side: Side) {
 
         if (null == sourcePath) {
             Log.e(tag, "Source path is null.")
@@ -49,9 +49,10 @@ abstract class BasicStorageReader(
 
             val existingObject = syncObjectRepository.getSyncObject(
                 taskId,
+                side,
                 fileListItem.name,
                 fileListItem.parentPath
-                )
+            )
 
             if (null == existingObject) {
                 SyncObject.createAsNew(

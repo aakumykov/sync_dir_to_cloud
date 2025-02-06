@@ -36,9 +36,15 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
+            "AND side = :side " +
             "AND name = :name " +
             "AND relative_parent_dir_path = :relativeParentDirPath")
-    suspend fun getSyncObject(taskId: String, name: String, relativeParentDirPath: String): SyncObject?
+    suspend fun getSyncObject(
+        taskId: kotlin.String,
+        side: Side,
+        name: kotlin.String,
+        relativeParentDirPath: kotlin.String
+    ): SyncObject?
 
 
     @Query("DELETE FROM sync_objects " +
@@ -113,9 +119,8 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects " +
             "WHERE side = :side " +
-            "AND task_id = :taskId " +
-            "AND execution_id = :executionId")
-    fun getAllObjectsForTask(side: Side, taskId: String, executionId: String): List<SyncObject>
+            "AND task_id = :taskId")
+    fun getAllObjectsForTask(side: Side, taskId: String): List<SyncObject>
 
     @Query("DELETE FROM sync_objects WHERE id = :objectId AND state_in_source = 'DELETED'")
     fun deleteDeletedObject(objectId: String)

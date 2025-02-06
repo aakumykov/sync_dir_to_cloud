@@ -146,7 +146,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             readTarget(syncTask)
 
             // Сравнить источник с приёмником
-//            compareSourceWithTarget(taskId = syncTask.id, executionId = executionId)
+            compareSourceWithTarget(syncTask.id)
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
@@ -379,14 +379,19 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun compareSourceWithTarget(taskId: String, executionId: String) {
+    private suspend fun compareSourceWithTarget(taskId: String) {
         appComponent
             .getSourceWithTargetComparator()
-            .compare(
-                taskId = taskId,
-                executionId = executionId,
-                comparitionStrategy = UpdateTargetComparisionStrategy()
-            )
+            .apply {
+
+                removeOldSyncInstructions(taskId)
+
+                compare(
+                    taskId = taskId,
+                    executionId = executionId,
+                    comparitionStrategy = UpdateTargetComparisionStrategy()
+                )
+            }
     }
 
 

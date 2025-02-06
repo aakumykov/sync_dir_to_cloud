@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v3
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 abstract class ComparisionStrategy {
 
@@ -25,6 +24,12 @@ abstract class ComparisionStrategy {
     abstract fun whenModifiedAndUnchanged(): ProcessingSteps
     abstract fun whenModifiedAndModified(): ProcessingSteps
 
+    abstract fun whenNotExistsAndNew(): ProcessingSteps
+    abstract fun whenNotExistsAndDeleted(): ProcessingSteps
+    abstract fun whenNotExistsAndUnchanged(): ProcessingSteps
+    abstract fun whenNotExistsAndModified(): ProcessingSteps
+
+
     fun compare(
         sourceState: StateInStorage,
         targetState: StateInStorage?
@@ -32,8 +37,8 @@ abstract class ComparisionStrategy {
         return when(sourceState) {
             StateInStorage.NEW -> newAnd(targetState)
             StateInStorage.DELETED -> deletedAnd(targetState)
-            StateInStorage.UNCHANGED -> unchangedAnd(targetState)
             StateInStorage.MODIFIED -> modifiedAnd(targetState)
+            else -> unchangedAnd(targetState)
         }
     }
 
@@ -41,4 +46,9 @@ abstract class ComparisionStrategy {
     abstract fun deletedAnd(targetState: StateInStorage?): ProcessingSteps
     abstract fun unchangedAnd(targetState: StateInStorage?): ProcessingSteps
     abstract fun modifiedAnd(targetState: StateInStorage?): ProcessingSteps
+    abstract fun whenNewAndNotExists(): ProcessingSteps
+    abstract fun whenDeletedAndNotExists(): ProcessingSteps
+    abstract fun whenUnchangedAndNotExists(): ProcessingSteps
+    abstract fun whenModifiedAndNotExists(): ProcessingSteps
+    abstract fun whenNotExistsAndNotExists(): ProcessingSteps
 }

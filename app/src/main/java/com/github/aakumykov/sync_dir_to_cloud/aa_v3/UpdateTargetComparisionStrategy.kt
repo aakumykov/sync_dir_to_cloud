@@ -22,28 +22,40 @@ class UpdateTargetComparisionStrategy : ComparisionStrategy() {
     override fun whenNewAndDeleted() = ProcessingSteps.COPY
     override fun whenNewAndUnchanged() = ProcessingSteps.COPY
     override fun whenNewAndModified() = ProcessingSteps.BACKUP_AND_COPY
+    override fun whenNewAndNotExists() = ProcessingSteps.COPY
 
     override fun whenDeletedAndNew() = ProcessingSteps.BACKUP_AND_DELETE
     override fun whenDeletedAndDeleted() = ProcessingSteps.DO_NOTHING
     override fun whenDeletedAndUnchanged() = ProcessingSteps.BACKUP_AND_DELETE
     override fun whenDeletedAndModified() = ProcessingSteps.BACKUP_AND_DELETE
+    override fun whenDeletedAndNotExists() = ProcessingSteps.DO_NOTHING
 
     override fun whenUnchangedAndNew() = ProcessingSteps.BACKUP_AND_COPY
     override fun whenUnchangedAndDeleted() = ProcessingSteps.COPY
     override fun whenUnchangedAndUnchanged() = ProcessingSteps.DO_NOTHING
     override fun whenUnchangedAndModified() = ProcessingSteps.BACKUP_AND_COPY
+    override fun whenUnchangedAndNotExists() = ProcessingSteps.COPY
 
     override fun whenModifiedAndNew() = ProcessingSteps.BACKUP_AND_COPY
     override fun whenModifiedAndDeleted() = ProcessingSteps.COPY
     override fun whenModifiedAndUnchanged() = ProcessingSteps.BACKUP_AND_COPY
     override fun whenModifiedAndModified() = ProcessingSteps.BACKUP_AND_COPY
+    override fun whenModifiedAndNotExists() = ProcessingSteps.COPY
+
+    override fun whenNotExistsAndNew() = ProcessingSteps.DO_NOTHING
+    override fun whenNotExistsAndDeleted() = ProcessingSteps.DO_NOTHING
+    override fun whenNotExistsAndUnchanged() = ProcessingSteps.DO_NOTHING
+    override fun whenNotExistsAndModified() = ProcessingSteps.DO_NOTHING
+    override fun whenNotExistsAndNotExists() = ProcessingSteps.DO_NOTHING
+
 
     override fun newAnd(targetState: StateInStorage?): ProcessingSteps {
         return when(targetState) {
             StateInStorage.NEW -> whenNewAndNew()
             StateInStorage.UNCHANGED -> whenNewAndUnchanged()
             StateInStorage.MODIFIED -> whenNewAndModified()
-            else -> whenNewAndDeleted()
+            StateInStorage.DELETED -> whenNewAndDeleted()
+            null -> whenNewAndNotExists()
         }
     }
 
@@ -52,7 +64,8 @@ class UpdateTargetComparisionStrategy : ComparisionStrategy() {
             StateInStorage.NEW -> whenDeletedAndNew()
             StateInStorage.UNCHANGED -> whenDeletedAndUnchanged()
             StateInStorage.MODIFIED -> whenDeletedAndModified()
-            else -> whenDeletedAndDeleted()
+            StateInStorage.DELETED -> whenDeletedAndDeleted()
+            null -> whenDeletedAndNotExists()
         }
     }
 
@@ -61,7 +74,8 @@ class UpdateTargetComparisionStrategy : ComparisionStrategy() {
             StateInStorage.NEW -> whenUnchangedAndNew()
             StateInStorage.UNCHANGED -> whenUnchangedAndUnchanged()
             StateInStorage.MODIFIED -> whenUnchangedAndModified()
-            else -> whenUnchangedAndDeleted()
+            StateInStorage.DELETED -> whenUnchangedAndDeleted()
+            null -> whenUnchangedAndNotExists()
         }
     }
 
@@ -70,7 +84,8 @@ class UpdateTargetComparisionStrategy : ComparisionStrategy() {
             StateInStorage.NEW -> whenModifiedAndNew()
             StateInStorage.UNCHANGED -> whenModifiedAndUnchanged()
             StateInStorage.MODIFIED -> whenModifiedAndModified()
-            else -> whenModifiedAndDeleted()
+            StateInStorage.DELETED -> whenModifiedAndDeleted()
+            null -> whenModifiedAndNotExists()
         }
     }
 }

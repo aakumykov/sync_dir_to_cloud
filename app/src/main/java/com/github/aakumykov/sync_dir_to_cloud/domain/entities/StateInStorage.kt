@@ -4,7 +4,7 @@ enum class StateInStorage {
     NEW,
     DELETED,
     UNCHANGED,
-    MODIFIED;
+    MODIFIED,
 }
 
 fun StateInStorage.isNew(): Boolean = this == StateInStorage.NEW

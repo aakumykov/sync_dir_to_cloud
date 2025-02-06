@@ -14,8 +14,8 @@ class SyncInstructionRepository @Inject constructor(
         syncInstructionDAO.addSyncInstruction(syncInstruction)
     }
 
-    suspend fun deleteAllFor(taskId: String, executionId: String) {
-        syncInstructionDAO.deleteAllFor(taskId, executionId)
+    suspend fun deleteAllFor(taskId: String) {
+        syncInstructionDAO.deleteAllFor(taskId)
     }
 
     suspend fun getFor(taskId: String,
