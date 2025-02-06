@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ComparisionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.UpdateTargetComparisionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
@@ -75,6 +75,8 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskLogger: SyncTaskLogger,
     private val taskStateLogger: TaskStateLogger,
     private val executionLogger: ExecutionLogger,
+
+    private val syncInstructionRepository: SyncInstructionRepository,
 
     private val resources: Resources,
 
@@ -148,6 +150,9 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Сравнить источник с приёмником
             compareSourceWithTarget(syncTask.id)
 
+            // Выполнить инструкции синхронизации
+            processSyncInstructions(syncTask.id)
+
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
 //            backupDeletedFiles(syncTask)
@@ -197,6 +202,11 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+
+    private suspend fun processSyncInstructions(taskId: String) {
+
     }
 
 

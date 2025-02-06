@@ -18,11 +18,9 @@ interface SyncInstructionDAO {
 
     @Query("SELECT * FROM sync_instructions " +
             "WHERE task_id = :taskId " +
-            "AND execution_id = :executionId " +
             "AND source_object_id = :sourceObjectId " +
             "AND target_object_id = :targetObjectId")
     suspend fun get(taskId: String,
-                    executionId: String,
                     sourceObjectId: String,
                     targetObjectId: String,
     ): SyncInstruction?

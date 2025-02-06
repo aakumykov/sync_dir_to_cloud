@@ -18,14 +18,12 @@ class SyncInstructionRepository @Inject constructor(
         syncInstructionDAO.deleteAllFor(taskId)
     }
 
-    suspend fun getFor(taskId: String,
-                       executionId: String,
-                       sourceObjectId: String,
-                       targetObjectId: String,
+    suspend fun getAllFor(taskId: String,
+                          sourceObjectId: String,
+                          targetObjectId: String,
     ): SyncInstruction? {
         return syncInstructionDAO.get(
             taskId = taskId,
-            executionId = executionId,
             sourceObjectId = sourceObjectId,
             targetObjectId = targetObjectId
         )
