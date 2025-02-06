@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 83,
-    "identityHash": "b4b1fa5d5f4dcb313ccf208422ec64f8",
+    "identityHash": "0978f66173d00fdcef7c11466706a552",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -580,17 +580,11 @@
       },
       {
         "tableName": "sync_instructions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `source_object_id` TEXT NOT NULL, `target_object_id` TEXT NOT NULL, `backup` INTEGER NOT NULL, `copy` INTEGER NOT NULL, `delete` INTEGER NOT NULL, PRIMARY KEY(`task_id`, `execution_id`, `source_object_id`, `target_object_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`task_id` TEXT NOT NULL, `source_object_id` TEXT NOT NULL, `target_object_id` TEXT NOT NULL, `backup` INTEGER NOT NULL, `copy` INTEGER NOT NULL, `delete` INTEGER NOT NULL, PRIMARY KEY(`task_id`, `source_object_id`, `target_object_id`))",
         "fields": [
           {
             "fieldPath": "taskId",
             "columnName": "task_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "execitionId",
-            "columnName": "execution_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -629,7 +623,6 @@
           "autoGenerate": false,
           "columnNames": [
             "task_id",
-            "execution_id",
             "source_object_id",
             "target_object_id"
           ]
@@ -641,7 +634,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b4b1fa5d5f4dcb313ccf208422ec64f8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0978f66173d00fdcef7c11466706a552')"
     ]
   }
 }

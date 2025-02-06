@@ -11,14 +11,12 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ProcessingSteps
     tableName = "sync_instructions",
     primaryKeys = [
         "task_id",
-        "execution_id",
         "source_object_id",
         "target_object_id"
     ]
 )
 open class SyncInstruction (
     @ColumnInfo(name = "task_id") val taskId: String,
-    @ColumnInfo(name = "execution_id") val execitionId: String,
     @ColumnInfo(name = "source_object_id") val sourceObjectId: String,
     @ColumnInfo(name = "target_object_id") val targetObjectId: String,
     val backup: Boolean,

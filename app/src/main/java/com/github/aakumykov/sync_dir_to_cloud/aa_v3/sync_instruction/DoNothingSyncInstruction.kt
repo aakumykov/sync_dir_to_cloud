@@ -5,7 +5,6 @@ class DoNothingSyncInstruction(taskId: String,
                                targetObjectId: String,
 ) : SyncInstruction(
     taskId = taskId,
-    execitionId = "executionId",
     sourceObjectId = sourceObjectId,
     targetObjectId = targetObjectId,
     backup = false,
