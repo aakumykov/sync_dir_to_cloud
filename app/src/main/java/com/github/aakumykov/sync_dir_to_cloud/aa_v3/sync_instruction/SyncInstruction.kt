@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction
 
 import androidx.room.ColumnInfo
-import androidx.room.DeleteColumn
 import androidx.room.Entity
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ProcessingAction
@@ -61,8 +60,7 @@ open class SyncInstruction (
         }
     }
 
-    class FirstAddThisObjectSpec : AutoMigrationSpec {}
+    class FirstAddThisObjectSpec : AutoMigrationSpec {
 
-    @DeleteColumn(tableName = "sync_instructions", columnName = "execution_id")
-    class DeleteColumnExecutionIdSpec : AutoMigrationSpec {}
+    }
 }
