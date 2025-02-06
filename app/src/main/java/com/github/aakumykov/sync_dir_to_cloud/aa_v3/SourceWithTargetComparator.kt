@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v3
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.Side
@@ -18,7 +19,6 @@ class SourceWithTargetComparator @Inject constructor(
     }
 
     suspend fun compare(taskId: String,
-                        executionId: String,
                         comparitionStrategy: ComparisionStrategy
     ) {
         val sourceItems: List<SyncObject> = syncObjectReader
@@ -39,7 +39,6 @@ class SourceWithTargetComparator @Inject constructor(
 
             val syncInstruction = SyncInstruction.fromProcessingSteps(
                 taskId = taskId,
-                executionId = executionId,
                 sourceObjectId = sourceItem.id,
                 targetObjectId = sourceItem.id,
                 processingSteps = processingSteps,

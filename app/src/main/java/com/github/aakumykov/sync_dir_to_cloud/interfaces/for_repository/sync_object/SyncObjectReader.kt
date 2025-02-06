@@ -23,6 +23,8 @@ interface SyncObjectReader {
 
     suspend fun getAllObjectsForTask(taskId: String): List<SyncObject>
 
+    suspend fun getAllObjectsForTask(side: Side, taskId: String, ): List<SyncObject>
+
     @Deprecated("Сделать отдельные методы для файлов и каталогов")
     suspend fun getObjectsForTaskWithModificationState(taskId: String, stateInStorage: StateInStorage): List<SyncObject>
 
@@ -33,9 +35,4 @@ interface SyncObjectReader {
     suspend fun getList(taskId: String, readingStrategy: ReadingStrategy): List<SyncObject>
 
     suspend fun getInTargetMissingObjects(taskId: String): List<SyncObject>
-
-    suspend fun getAllObjectsForTask(
-        side: Side,
-        taskId: String,
-    ): List<SyncObject>
 }

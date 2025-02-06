@@ -393,14 +393,8 @@ class SyncTaskExecutor @AssistedInject constructor(
         appComponent
             .getSourceWithTargetComparator()
             .apply {
-
                 removeOldSyncInstructions(taskId)
-
-                compare(
-                    taskId = taskId,
-                    executionId = executionId,
-                    comparitionStrategy = UpdateTargetComparisionStrategy()
-                )
+                compare(taskId, UpdateTargetComparisionStrategy())
             }
     }
 
