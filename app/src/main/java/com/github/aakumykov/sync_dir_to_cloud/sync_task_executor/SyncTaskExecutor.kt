@@ -206,7 +206,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun processSyncInstructions(taskId: String) {
-
+        appComponent
+            .getSyncInstructionsProcessor()
+            .processSyncInstructions()
     }
 
 
