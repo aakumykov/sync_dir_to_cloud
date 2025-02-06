@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_d
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SourceWithTargetComparator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssistedFactory
@@ -193,6 +194,8 @@ interface AppComponent {
     fun getExecutionLogCleaner(): ExecutionLogCleaner
 
     fun getSourceWithTargetComparator(): SourceWithTargetComparator
+
+    fun getSyncInstructionRepository(): SyncInstructionRepository
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

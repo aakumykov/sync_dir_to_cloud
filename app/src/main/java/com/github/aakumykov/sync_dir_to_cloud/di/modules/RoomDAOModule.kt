@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
@@ -81,5 +82,10 @@ class RoomDAOModule(private val appDatabase: AppDatabase) {
     @Provides
     fun provideExecutionLogDAO(): ExecutionLogDAO {
         return appDatabase.getExecutionLogDAO()
+    }
+
+    @Provides
+    fun provideSyncInstructionDAO(): SyncInstructionDAO {
+        return appDatabase.getSyncInstructionDAO()
     }
 }

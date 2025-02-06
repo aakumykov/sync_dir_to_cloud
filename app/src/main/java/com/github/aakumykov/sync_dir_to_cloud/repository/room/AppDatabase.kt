@@ -4,6 +4,8 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.AutoMigrationSpec
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -25,7 +27,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 
-
 @Database(
     entities = [
         SyncTask::class,
@@ -34,8 +35,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         TaskLogEntry::class,
         SyncObjectLogItem::class,
         ExecutionLogItem::class,
+        SyncInstruction::class,
    ],
-    version = 81,
+    version = 82,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -62,6 +64,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 78, to = 79, spec = ExecutionLogItem.RemoveOperationStateFieldSpec::class), // Удаление поля ExecutionLogItem.operationState
         AutoMigration(from = 79, to = 80),
         AutoMigration(from = 80, to = 81), // Новое поле SyncObject.executionId
+        AutoMigration(from = 81, to = 82, spec = SyncInstruction.FirstAddThisObjectSpec::class), // Новый объект "SyncInstruction"
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -80,4 +83,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getTaskLogDAO(): SyncTaskLogDAO
     abstract fun getSyncObjectLogDAO(): SyncObjectLogDAO
     abstract fun getExecutionLogDAO(): ExecutionLogDAO
+    abstract fun getSyncInstructionDAO(): SyncInstructionDAO
 }

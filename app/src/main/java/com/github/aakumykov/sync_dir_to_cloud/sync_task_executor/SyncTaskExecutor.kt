@@ -146,7 +146,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             readTarget(syncTask)
 
             // Сравнить источник с приёмником
-            compareSourceWithTarget(taskId = syncTask.id, executionId = executionId)
+//            compareSourceWithTarget(taskId = syncTask.id, executionId = executionId)
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)

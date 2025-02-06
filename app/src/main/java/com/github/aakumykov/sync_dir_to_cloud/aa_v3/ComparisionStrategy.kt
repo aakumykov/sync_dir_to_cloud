@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 abstract class ComparisionStrategy {
+
     abstract fun whenNewAndNew(): ProcessingSteps
     abstract fun whenNewAndDeleted(): ProcessingSteps
     abstract fun whenNewAndUnchanged(): ProcessingSteps
