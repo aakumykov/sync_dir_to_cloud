@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectProgressUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ class SyncObjectLogRepository @Inject constructor(
     SyncObjectLogDeleter,
     SyncObjectLogReader,
     SyncObjectLogUpdater,
-    SyncObjectProgressUpdater
+    SyncObjectLogProgressUpdater
 {
     override suspend fun addLogItem(syncObjectLogItem: SyncObjectLogItem) {
         withContext(coroutineDispatcher) {

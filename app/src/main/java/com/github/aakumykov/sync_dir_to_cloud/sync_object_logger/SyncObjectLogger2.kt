@@ -5,12 +5,11 @@ import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectProgressUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogProgressUpdater
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -21,7 +20,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
     private val resources: Resources,
     private val syncObjectLogAdder: SyncObjectLogAdder,
     private val syncObjectLogUpdater: SyncObjectLogUpdater,
-    private val syncObjectProgressUpdater: SyncObjectProgressUpdater,
+    private val syncObjectLogProgressUpdater: SyncObjectLogProgressUpdater,
 ) {
     suspend fun logWaiting(
         syncObjectList: List<SyncObject>,
@@ -55,7 +54,7 @@ class SyncObjectLogger2 @AssistedInject constructor(
         executionId: String,
         progressAsPartOf100: Int
     ) {
-        syncObjectProgressUpdater.updateProgress(objectId, taskId, executionId, progressAsPartOf100)
+        syncObjectLogProgressUpdater.updateProgress(objectId, taskId, executionId, progressAsPartOf100)
     }
 
     suspend fun logSuccess(
