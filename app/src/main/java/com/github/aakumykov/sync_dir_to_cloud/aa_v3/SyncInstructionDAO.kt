@@ -17,12 +17,6 @@ interface SyncInstructionDAO {
     suspend fun deleteAllFor(taskId: String)
 
 
-    @Query("SELECT * FROM sync_instructions " +
-            "WHERE task_id = :taskId " +
-            "AND source_object_id = :sourceObjectId " +
-            "AND target_object_id = :targetObjectId")
-    suspend fun get(taskId: String,
-                    sourceObjectId: String,
-                    targetObjectId: String,
-    ): SyncInstruction?
+    @Query("SELECT * FROM sync_instructions WHERE task_id = :taskId ")
+    suspend fun get(taskId: String): List<SyncInstruction>
 }

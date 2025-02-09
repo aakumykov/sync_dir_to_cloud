@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 
+@Deprecated("Переименовтаь в Maker")
 class BackupDirCreator (
     private val cloudWriter: CloudWriter
 ) {

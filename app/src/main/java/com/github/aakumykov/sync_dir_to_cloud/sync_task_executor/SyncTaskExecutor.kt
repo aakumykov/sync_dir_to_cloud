@@ -151,7 +151,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             compareSourceWithTarget(syncTask.id)
 
             // Выполнить инструкции синхронизации
-            processSyncInstructions(syncTask.id)
+            processSyncInstructions(syncTask)
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
@@ -205,9 +205,10 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun processSyncInstructions(taskId: String) {
+    private suspend fun processSyncInstructions(syncTask: SyncTask) {
         appComponent
-            .getSyncInstructionsProcessor()
+            .getSyncInstructionsProcessorAssistedFactory()
+            .create(syncTask, executionId)
             .processSyncInstructions()
     }
 

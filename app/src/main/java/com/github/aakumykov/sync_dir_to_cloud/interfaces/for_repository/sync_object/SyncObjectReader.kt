@@ -14,6 +14,8 @@ interface SyncObjectReader {
 
     suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
 
+    suspend fun getSyncObject(objectId: String): SyncObject?
+
     suspend fun getSyncObject(
         taskId: String,
         side: Side,

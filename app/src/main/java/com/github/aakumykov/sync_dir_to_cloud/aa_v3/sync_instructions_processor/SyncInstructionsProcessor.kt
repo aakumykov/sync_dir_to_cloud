@@ -1,25 +1,57 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instructions_processor
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ItemBackuperAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ItemCopierAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ItemDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionRepository
-import javax.inject.Inject
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-class SyncInstructionsProcessor @Inject constructor(
-    private val syncInstructionRepository: SyncInstructionRepository,
-
-    private val filesBackuperCreator: FilesBackuperCreator,
-    private val disBackuperCreator: DirsBackuperCreator,
-
-    private val taskFilesDeleCreator: DirsBackuperCreator,
-    private val taskDirsDeleterCreator: FilesBackuperCreator,
-
-    private val syncTaskDirsCreator: SyncTaskDirsCreator,
-    private val syncTaskFilesCopier: SyncTaskFilesCopier,
+class SyncInstructionsProcessor @AssistedInject constructor(
+    @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
+    private val instructionRepository: SyncInstructionRepository,
+    private val syncObjectReader: SyncObjectReader,
+    private val itemBackuperAssistedFactory: ItemBackuperAssistedFactory,
+    private val deleter: ItemDeleter,
+    private val itemCopierAssistedFactory: ItemCopierAssistedFactory,
 ) {
-    fun processSyncInstructions() {
-
+    suspend fun processSyncInstructions() {
+        instructionRepository.getAllFor(syncTask.id).forEach { syncInstruction ->
+            processOneInstruction(syncInstruction)
+        }
     }
+
+    private suspend fun processOneInstruction(syncInstruction: SyncInstruction) {
+        val sourceObject = syncObjectReader.getSyncObject(syncInstruction.sourceObjectId)
+        val targetObject = syncObjectReader.getSyncObject(syncInstruction.targetObjectId)
+
+        if (syncInstruction.backup) makeBackup(targetObject)
+        if (syncInstruction.copy) makeCopy(sourceObject, targetObject)
+        if (syncInstruction.delete) makeDelete(targetObject)
+    }
+
+    private suspend fun makeBackup(targetObject: SyncObject?) {
+        itemBackuperAssistedFactory.create(syncTask, executionId)
+            .process(targetObject)
+    }
+
+    private suspend fun makeCopy(sourceObject: SyncObject?, targetObject: SyncObject?) {
+        itemCopierAssistedFactory.create(syncTask)
+            .process(sourceObject, targetObject)
+    }
+
+    private suspend fun makeDelete(targetObject: SyncObject?) {
+        deleter.process(targetObject)
+    }
+}
+
+@AssistedFactory
+interface SyncInstructionsProcessorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): SyncInstructionsProcessor
 }

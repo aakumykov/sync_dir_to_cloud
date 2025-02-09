@@ -34,6 +34,10 @@ interface SyncObjectDAO {
     suspend fun setSyncDate(objectId: String, date: Long)
 
 
+    @Query("SELECT * FROM sync_objects WHERE id = :objectId")
+    suspend fun getSyncObject(objectId: String): SyncObject?
+
+
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
             "AND side = :side " +
