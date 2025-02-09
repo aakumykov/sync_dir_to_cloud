@@ -150,4 +150,5 @@
     <string name="EXECUTION_LOG_work_begins">Work started</string>
     <string name="EXECUTION_LOG_work_ends">Work finished</string>
     <string name="EXECUTION_LOG_work_error">Work error</string>
+    <string name="SYNC_OBJECT_LOGGER_copying_file">Копирование файла %1$s</string>
 </resources>
