@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.other.utils
 
 import android.content.Context
+import android.content.res.Resources
 
+// TODO: тест
 class TextMessage {
 
     constructor(text: String) {
@@ -26,10 +28,15 @@ class TextMessage {
 
 
     fun get(context: Context): String {
+        return get(context.resources)
+    }
+
+
+    fun get(resources: Resources): String {
         if (formatArguments.size > 0 && null != textId)
-            return formattedText(context)
+            return formattedText(resources)
         else if (null != textId)
-            return textFromResource(context)
+            return textFromResource(resources)
         else if (null != text)
             return text!!
         else
@@ -38,11 +45,19 @@ class TextMessage {
 
 
     private fun formattedText(context: Context): String {
-        return context.resources.getString(textId!!, *formatArguments)
+        return formattedText(context.resources)
+    }
+
+    private fun formattedText(resources: Resources): String {
+        return resources.getString(textId!!, *formatArguments)
     }
 
 
     private fun textFromResource(context: Context): String {
-        return context.resources.getString(textId!!)
+        return textFromResource(context.resources)
+    }
+
+    private fun textFromResource(resources: Resources): String {
+        return resources.getString(textId!!)
     }
 }
