@@ -36,7 +36,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         ExecutionLogItem::class,
         SyncInstruction::class,
    ],
-    version = 83,
+    version = 84,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -65,6 +65,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 80, to = 81), // Новое поле SyncObject.executionId
         AutoMigration(from = 81, to = 82, spec = SyncInstruction.FirstAddThisObjectSpec::class), // Новый объект "SyncInstruction"
         AutoMigration(from = 82, to = 83, spec = SyncInstruction.DeleteColumnExecutionIdSpec::class),
+        AutoMigration(from = 83, to = 84), // Добавил внешний ключ к SyncInstruction.
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

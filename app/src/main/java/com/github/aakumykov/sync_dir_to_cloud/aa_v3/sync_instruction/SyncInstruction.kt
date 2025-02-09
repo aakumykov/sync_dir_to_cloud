@@ -3,9 +3,12 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction
 import androidx.room.ColumnInfo
 import androidx.room.DeleteColumn
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ProcessingAction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ProcessingSteps
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 @Entity(
     tableName = "sync_instructions",
@@ -13,7 +16,16 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.ProcessingSteps
         "task_id",
         "source_object_id",
         "target_object_id"
-    ]
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = SyncTask::class,
+            parentColumns = ["id"],
+            childColumns = ["task_id"],
+            onDelete = CASCADE,
+            onUpdate = CASCADE
+        )
+    ],
 )
 open class SyncInstruction (
     @ColumnInfo(name = "task_id") val taskId: String,
