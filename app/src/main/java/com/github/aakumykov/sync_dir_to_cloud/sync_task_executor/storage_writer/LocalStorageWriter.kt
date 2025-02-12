@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -18,7 +18,7 @@ class LocalStorageWriter @AssistedInject constructor(
     @Assisted(AssistedArgName.AUTH_TOKEN) private val dummyAuthToken: String,
     syncObjectReader: SyncObjectReader,
     syncObjectStateChanger: SyncObjectStateChanger,
-    private val cloudWriterCreator: CloudWriterCreator,
+    private val cloudWriterGetter: CloudWriterGetter,
 )
     : BasicStorageWriter(
         taskId = taskId,
@@ -29,7 +29,7 @@ class LocalStorageWriter @AssistedInject constructor(
     )
 {
     private val localCloudWriter: CloudWriter?  by lazy {
-        cloudWriterCreator.createCloudWriter(StorageType.LOCAL, taskId)
+        cloudWriterGetter.getCloudWriter(StorageType.LOCAL, taskId)
     }
 
     override val cloudWriter get() = localCloudWriter

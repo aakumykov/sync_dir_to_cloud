@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.in_target_existence_checker
 
 import android.util.Log
 import com.github.aakumykov.cloud_reader.CloudReader
-import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderCreator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -19,7 +19,7 @@ import dagger.assisted.AssistedInject
 class InTargetExistenceChecker @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudAuthReader: CloudAuthReader,
-    private val cloudReaderCreator: CloudReaderCreator,
+    private val cloudReaderGetter: CloudReaderGetter,
     private val syncObjectUpdater: SyncObjectUpdater,
     private val syncObjectStateChanger: SyncObjectStateChanger,
 ) {
@@ -27,7 +27,7 @@ class InTargetExistenceChecker @AssistedInject constructor(
 
     private suspend fun cloudReader(): CloudReader? {
         if (null == cloudReader) {
-            cloudReader = cloudReaderCreator.createCloudReader(
+            cloudReader = cloudReaderGetter.getCloudReader(
                 syncTask.targetStorageType,
                 cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.authToken
             )

@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.storage_writer2
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.cloud_writer.extensions.stripMultiSlashes
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -13,10 +13,10 @@ import java.io.InputStream
 class YandexDiskStorageWriter2 @AssistedInject constructor(
     @Assisted private val targetStorageType: StorageType,
     @Assisted private val targetAuthToken: String,
-    private val cloudWriterCreator: CloudWriterCreator
+    private val cloudWriterGetter: CloudWriterGetter
 ): StorageWriter2 {
 
-    private val cloudWriter: CloudWriter? get() = cloudWriterCreator.createCloudWriter(targetStorageType, targetAuthToken)
+    private val cloudWriter: CloudWriter? get() = cloudWriterGetter.getCloudWriter(targetStorageType, targetAuthToken)
 
     override suspend fun createDir(basePath: String, dirName: String): Result<String> {
         return try {

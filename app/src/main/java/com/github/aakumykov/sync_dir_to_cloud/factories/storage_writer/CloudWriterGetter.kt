@@ -9,10 +9,10 @@ import javax.inject.Inject
  * в словарь по типам хранилищ. Потом фабрика, соответствующая типу хранилища,
  * создаёт объект CloudWriter, основываясь на данных авторизации.
  */
-class CloudWriterCreator @Inject constructor(
+class CloudWriterGetter @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudWriterAssistedFactory>
 ){
-    fun createCloudWriter(storageType: StorageType?, authToken: String?): CloudWriter? {
+    fun getCloudWriter(storageType: StorageType?, authToken: String?): CloudWriter? {
         return map[storageType]
                 ?.createCloudWriterFactory(authToken)
                 ?.createCloudWriter()
