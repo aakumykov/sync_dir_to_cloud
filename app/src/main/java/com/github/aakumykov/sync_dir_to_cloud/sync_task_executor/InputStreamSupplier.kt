@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderGetter
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderLocator
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
@@ -13,10 +13,10 @@ import javax.inject.Inject
 class InputStreamSupplier @AssistedInject constructor(
     @Assisted private val authToken: String,
     @Assisted private val storageType: StorageType,
-    private val cloudReaderGetter: CloudReaderGetter
+    private val cloudReaderLocator: CloudReaderLocator
 ) {
     suspend fun getInputStreamFor(absoluteFilePath: String): Result<InputStream>? {
-        return cloudReaderGetter
+        return cloudReaderLocator
                 .getCloudReader(storageType, authToken)
                 ?.getFileInputStream(absoluteFilePath)
     }

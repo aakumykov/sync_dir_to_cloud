@@ -7,9 +7,10 @@ import javax.inject.Inject
 /**
  * Фактически, это фабрика фабрик. Dagger2 собирает реализации CloudWriterFactory
  * в словарь по типам хранилищ. Потом фабрика, соответствующая типу хранилища,
- * создаёт объект CloudWriter, основываясь на данных авторизации.
+ * создаёт объект CloudWriterGetter, основываясь на данных авторизации.
  */
-class CloudWriterGetter @Inject constructor(
+@Deprecated("Неудачное название")
+class CloudWriterLocator @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudWriterAssistedFactory>
 ){
     fun getCloudWriter(storageType: StorageType?, authToken: String?): CloudWriter? {

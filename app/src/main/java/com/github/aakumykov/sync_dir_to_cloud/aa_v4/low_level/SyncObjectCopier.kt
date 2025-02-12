@@ -9,13 +9,15 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.suspendCancellableCoroutine
+import okio.IOException
 
 class SyncObjectCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val inputStreamGetter: InputStreamGetter,
     private val cloudWriter: CloudWriter,
 ) {
-    @Throws
+    @Throws(IOException::class)
     suspend fun copyObjectFromSourceToTarget(syncObject: SyncObject,
                                              overwriteIfExists: Boolean = true,
                                              onProgress: (Int) -> Unit = {}) {
@@ -23,6 +25,8 @@ class SyncObjectCopier @AssistedInject constructor(
         else putFile(syncObject, overwriteIfExists, onProgress)
     }
 
+
+    @Throws(IOException::class)
     private suspend fun createDir(syncObject: SyncObject) {
         cloudWriter.createDir(
             basePath = syncTask.targetPath!!,
@@ -30,7 +34,8 @@ class SyncObjectCopier @AssistedInject constructor(
         )
     }
 
-    // TODO: её нужно отменять, но как?
+
+    @Throws(IOException::class)
     private suspend fun putFile(
         syncObject: SyncObject,
         overwriteIfExists: Boolean,
@@ -38,21 +43,28 @@ class SyncObjectCopier @AssistedInject constructor(
     ) {
         val inputStream = inputStreamGetter.getInputStreamFor(syncObject)
 
-        val inputFileSize = syncObject.size
-        val progressCalculator = ProgressCalculator(inputFileSize)
+        return suspendCancellableCoroutine { cancellableContinuation ->
 
-        cloudWriter.putStream(
-            inputStream = inputStream,
-            targetPath = syncObject.absolutePathIn(syncTask.targetPath!!),
-            overwriteIfExists = overwriteIfExists,
-            writingCallback = {  bytesWritten: Long ->
-                onProgress.invoke(
-                    progressCalculator.progressAsPartOf100(
-                        1f * bytesWritten / inputFileSize
-                    )
-                )
+            cancellableContinuation.invokeOnCancellation { cause: Throwable? ->
+                inputStream.close()
             }
-        )
+
+            val inputFileSize = syncObject.size
+            val progressCalculator = ProgressCalculator(inputFileSize)
+
+            cloudWriter.putStream(
+                inputStream = inputStream,
+                targetPath = syncObject.absolutePathIn(syncTask.targetPath!!),
+                overwriteIfExists = overwriteIfExists,
+                writingCallback = {  bytesWritten: Long ->
+                    onProgress.invoke(
+                        progressCalculator.progressAsPartOf100(
+                            1f * bytesWritten / inputFileSize
+                        )
+                    )
+                }
+            )
+        }
     }
 }
 

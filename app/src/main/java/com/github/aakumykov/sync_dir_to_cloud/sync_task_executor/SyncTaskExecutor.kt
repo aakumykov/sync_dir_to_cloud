@@ -440,7 +440,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     suspend fun stopExecutingTask(taskId: String) {
-        // TODO: по-настоящему прерывать работу CloudWriter-а
+        // TODO: по-настоящему прерывать работу CloudWriterGetter-а
         MyLogger.d(tag, "stopExecutingTask(), [${hashCode()}]")
         syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
