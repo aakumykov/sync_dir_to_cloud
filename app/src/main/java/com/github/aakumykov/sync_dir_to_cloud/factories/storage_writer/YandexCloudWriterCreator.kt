@@ -16,5 +16,5 @@ class YandexCloudWriterCreator @AssistedInject constructor(
 
 @AssistedFactory
 interface YandexCloudWriterAssistedFactory : CloudWriterAssistedFactory {
-    override fun createCloudWriterFactory(authToken: String?): YandexCloudWriterCreator?
+    override fun createCloudWriterFactory(authToken: String): YandexCloudWriterCreator
 }

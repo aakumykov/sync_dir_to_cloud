@@ -19,8 +19,12 @@ class CloudAuthRepository @Inject constructor(
     override suspend fun listCloudAuth(): LiveData<List<CloudAuth>>
         = cloudAuthDAO.list()
 
-    override suspend fun getCloudAuth(id: String?): CloudAuth? {
-        return id?.let { cloudAuthDAO.get(id) }
+    override suspend fun getCloudAuth(id: String): CloudAuth {
+        return cloudAuthDAO.get(id)
+    }
+
+    override fun getCloudAuthBlocking(authId: String): CloudAuth {
+        return cloudAuthDAO.getBlocking(authId)
     }
 
     override suspend fun hasAuthWithName(name: String): Boolean

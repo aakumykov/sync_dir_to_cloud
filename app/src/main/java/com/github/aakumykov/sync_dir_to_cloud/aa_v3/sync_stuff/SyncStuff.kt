@@ -32,11 +32,11 @@ class SyncStuff @Inject constructor(
 
     suspend fun prepareFor(syncTask: SyncTask, executionId: String): SyncStuff {
 
-        val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
-        val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
+        val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!)
+        val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)
 
-        _cloudReader = cloudReaderLocator.getCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken)
-        _cloudWriter = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuth?.authToken)
+        _cloudReader = cloudReaderLocator.getCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken!!)
+        _cloudWriter = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuth?.authToken!!)
         _backupDirSpec = backupDirNamer.createBackupDirSpec(syncTask)
         _operationLogger = operationLoggerAssistedFactory.create(syncObjectLoggerFactory.create(syncTask.id, executionId))
 

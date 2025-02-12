@@ -12,7 +12,7 @@ class DirsBackuperCreator @Inject constructor(
     private val cloudWriterLocator: CloudWriterLocator,
 ){
     suspend fun createDirsBackuperForTask(syncTask: SyncTask, executionId: String): DirsBackuper? {
-        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.authToken?.let { targetAuthToken ->
+        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.authToken?.let { targetAuthToken ->
 
             val cloudWriter: CloudWriter? = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuthToken)
 

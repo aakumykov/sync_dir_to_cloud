@@ -16,5 +16,5 @@ class LocalCloudWriterCreator @AssistedInject constructor(
 
 @AssistedFactory
 interface LocalCloudWriterAssistedFactory : CloudWriterAssistedFactory {
-    override fun createCloudWriterFactory(authToken: String?): LocalCloudWriterCreator?
+    override fun createCloudWriterFactory(authToken: String): LocalCloudWriterCreator
 }

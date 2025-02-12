@@ -13,9 +13,14 @@ import javax.inject.Inject
 class CloudWriterLocator @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudWriterAssistedFactory>
 ){
-    fun getCloudWriter(storageType: StorageType?, authToken: String?): CloudWriter? {
-        return map[storageType]
-                ?.createCloudWriterFactory(authToken)
-                ?.createCloudWriter()
+    @Throws(NoSuchElementException::class)
+    fun getCloudWriter(storageType: StorageType?, authToken: String): CloudWriter {
+        if (map.containsKey(storageType)) {
+            return map[storageType]!!
+                .createCloudWriterFactory(authToken)
+                .createCloudWriter()
+        } else {
+            throw NoSuchElementException("Where is no CloudWriterAssistedFactory for storage type '$storageType'")
+        }
     }
 }

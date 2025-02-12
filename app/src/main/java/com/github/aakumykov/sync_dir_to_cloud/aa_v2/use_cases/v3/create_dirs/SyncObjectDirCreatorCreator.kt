@@ -10,7 +10,7 @@ class SyncObjectDirCreatorCreator @Inject constructor(
     private val cloudAuthReader: CloudAuthReader
 ) {
     suspend fun createFor(syncTask: SyncTask): SyncObjectDirCreator? {
-        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.let { cloudAuth ->
+        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.let { cloudAuth ->
             cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, cloudAuth.authToken)?.let { cloudWriter ->
                 SyncObjectDirCreator(cloudWriter)
             }

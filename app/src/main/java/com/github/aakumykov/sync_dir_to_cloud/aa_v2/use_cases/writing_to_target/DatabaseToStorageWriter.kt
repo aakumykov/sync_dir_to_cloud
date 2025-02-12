@@ -34,8 +34,8 @@ class DatabaseToStorageWriter @Inject constructor(
 
     suspend fun writeFromDatabaseToStorage(syncTask: SyncTask) {
 
-        val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
-        val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
+        val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!)
+        val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)
 
         // TODO: syncTaskErrorSetter
         if (null == sourceAuth) {

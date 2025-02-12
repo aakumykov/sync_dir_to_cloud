@@ -15,7 +15,7 @@ class SyncObjectToTargetWriter2Creator @Inject constructor(
         return syncObjectToTargetWriterFactory.create(
             storageWriter2Creator.createStorageWriter(
                 syncTask.targetStorageType,
-                cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.authToken
+                cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.authToken
             )
         )
     }

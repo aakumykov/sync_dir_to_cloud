@@ -7,5 +7,5 @@ interface CloudWriterFactory {
 }
 
 interface CloudWriterAssistedFactory {
-    fun createCloudWriterFactory(authToken: String?): CloudWriterFactory?
+    fun createCloudWriterFactory(authToken: String): CloudWriterFactory
 }

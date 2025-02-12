@@ -13,17 +13,17 @@ class CloudReaderGetter @Inject constructor(
     private val authReader: CloudAuthReader,
     private val cloudReaderLocator: CloudReaderLocator,
 ) {
-    suspend fun getSourceCloudReaderFor(syncTask: SyncTask): CloudReader? {
+    suspend fun getSourceCloudReaderFor(syncTask: SyncTask): CloudReader {
         return cloudReaderLocator.getCloudReader(
             syncTask.sourceStorageType,
-            authReader.getCloudAuth(syncTask.sourceAuthId)?.authToken
+            authReader.getCloudAuth(syncTask.sourceAuthId!!).authToken
         )
     }
 
-    suspend fun getTargetCloudReaderFor(syncTask: SyncTask): CloudReader? {
+    suspend fun getTargetCloudReaderFor(syncTask: SyncTask): CloudReader {
         return cloudReaderLocator.getCloudReader(
             syncTask.targetStorageType,
-            authReader.getCloudAuth(syncTask.targetAuthId)?.authToken
+            authReader.getCloudAuth(syncTask.targetAuthId!!).authToken
         )
     }
 }

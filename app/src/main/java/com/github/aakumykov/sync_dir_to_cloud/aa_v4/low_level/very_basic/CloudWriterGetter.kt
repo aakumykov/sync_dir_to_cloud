@@ -13,17 +13,17 @@ class CloudWriterGetter @Inject constructor(
     private val authReader: CloudAuthReader,
     private val cloudWriterLocator: CloudWriterLocator
 ) {
-    suspend fun getSourceCloudWriter(syncTask: SyncTask): CloudWriter? {
+    fun getSourceCloudWriter(syncTask: SyncTask): CloudWriter {
         return cloudWriterLocator.getCloudWriter(
             syncTask.sourceStorageType,
-            authReader.getCloudAuth(syncTask.sourceAuthId)?.authToken
+            authReader.getCloudAuthBlocking(syncTask.sourceAuthId!!).authToken
         )
     }
 
-    suspend fun getTargetCloudWriter(syncTask: SyncTask): CloudWriter? {
+    fun getTargetCloudWriter(syncTask: SyncTask): CloudWriter {
         return cloudWriterLocator.getCloudWriter(
             syncTask.targetStorageType,
-            authReader.getCloudAuth(syncTask.targetAuthId)?.authToken
+            authReader.getCloudAuthBlocking(syncTask.targetAuthId!!).authToken
         )
     }
 }

@@ -37,7 +37,7 @@ class BackupDirCreatorCreator @Inject constructor(
     private val cloudWriterLocator: CloudWriterLocator
 ) {
     suspend fun createBackupDirCreatorFor(syncTask: SyncTask): BackupDirCreator? {
-        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.let { cloudAuth ->
+        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.let { cloudAuth ->
             cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, cloudAuth.authToken)?.let { cloudWriter ->
                 BackupDirCreator(cloudWriter)
             }

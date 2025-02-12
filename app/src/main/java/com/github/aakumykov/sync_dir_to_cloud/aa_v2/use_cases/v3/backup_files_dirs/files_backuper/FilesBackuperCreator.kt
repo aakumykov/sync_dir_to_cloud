@@ -14,7 +14,7 @@ class FilesBackuperCreator @Inject constructor(
 ) {
     // FIXME: Почему он nullable?
     suspend fun createFilesBackuperForSyncTask(syncTask: SyncTask, executionId: String): FilesBackuper? {
-        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.let { targetAuth ->
+        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.let { targetAuth ->
 
             val targetCloudReader = cloudReaderLocator.getCloudReader(syncTask.targetStorageType, targetAuth.authToken)
             val targetCloudWriter = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuth.authToken)

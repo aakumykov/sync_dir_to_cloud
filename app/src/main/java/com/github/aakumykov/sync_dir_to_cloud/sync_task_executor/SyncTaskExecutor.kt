@@ -28,6 +28,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
@@ -150,8 +151,11 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Сравнить источник с приёмником
             compareSourceWithTarget(syncTask.id)
 
+            copyFilesProbe(syncTask)
+
+
             // Выполнить инструкции синхронизации
-            processSyncInstructions(syncTask)
+//            processSyncInstructions(syncTask)
 
             // Забэкапить удалённое
 //            backupDeletedDirs(syncTask)
@@ -202,6 +206,29 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    @Throws(Exception::class)
+    private suspend fun copyFilesProbe(syncTask: SyncTask) {
+
+        val syncObjectCopier = appComponent
+            .getSyncObjectCopierAssistedFactory()
+            .create(syncTask)
+
+        appComponent.getSyncObjectReader()
+            .getAllObjectsForTask(syncTask.id)
+            .filter { it.isNew }
+            .forEach { syncObject ->
+
+                Log.d(TAG, if (syncObject.isDir) "Создаётся каталог '${syncObject.name}'"
+                else "Копируется файл '${syncObject.name}'")
+
+                syncObjectCopier.copyObjectFromSourceToTarget(
+                    syncObject = syncObject
+                ) { progressAsPartOf100 ->
+                    Log.d(TAG, progressAsPartOf100.toString())
+                }
+            }
     }
 
 
@@ -371,7 +398,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 side = Side.SOURCE,
                 taskId = syncTask.id,
                 executionId = executionId,
-                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId),
+                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!),
                 pathReadingFrom = syncTask.sourcePath,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
@@ -385,7 +412,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 side = Side.TARGET,
                 taskId = syncTask.id,
                 executionId = executionId,
-                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId),
+                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!),
                 pathReadingFrom = syncTask.targetPath,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )

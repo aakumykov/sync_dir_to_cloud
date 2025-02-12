@@ -5,9 +5,7 @@ import com.github.aakumykov.yandex_disk_cloud_reader.YandexDiskCloudReader
 import javax.inject.Inject
 
 class YandexDiskCloudReaderFactory @Inject constructor() : CloudReaderFactory {
-    override fun createCloudReader(authToken: String?): CloudReader? {
-        if (null == authToken)
-            return null
+    override fun createCloudReader(authToken: String): CloudReader {
         return YandexDiskCloudReader(authToken)
     }
 }

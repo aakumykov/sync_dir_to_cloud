@@ -6,11 +6,15 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import javax.inject.Inject
 
 // TODO: классу место в вереве каталогов "di", так как он жёстко привязан к Dagger.
-@Deprecated("Неудачное название")
+@Deprecated("Неудачное название, м.б. назвать Map, Holder, Registry?")
 class CloudReaderLocator @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudReaderFactory>
 ){
-    fun getCloudReader(storageType: StorageType?, authToken: String?): CloudReader? {
-        return map[storageType]?.createCloudReader(authToken)
+    @Throws(Exception::class)
+    fun getCloudReader(storageType: StorageType?, authToken: String): CloudReader {
+        if (map.containsKey(storageType))
+            return map.get(storageType)!!.createCloudReader(authToken)
+        else
+            throw NoSuchElementException("There is no CloudReaderFactory for storage type '${storageType}'")
     }
 }

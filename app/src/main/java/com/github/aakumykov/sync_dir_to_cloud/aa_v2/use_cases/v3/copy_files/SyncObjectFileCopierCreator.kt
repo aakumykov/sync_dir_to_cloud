@@ -23,7 +23,7 @@ class SyncObjectFileCopierCreator @Inject constructor(
 
         val targetCloudWriter = cloudWriterLocator.getCloudWriter(
             syncTask.targetStorageType,
-            cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.authToken
+            cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!).authToken
         )
 
         return if (null != sourceFileStreamSupplier && null != targetCloudWriter) {

@@ -11,7 +11,7 @@ class FileDeleterCreator @Inject constructor(
     private val fileDeleterAssistedFactory: FileDeleterAssistedFactory,
 ){
     suspend fun createFileDeleterForTask(syncTask: SyncTask): FileDeleter? {
-        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId)?.authToken?.let { authToken ->
+        return cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)?.authToken?.let { authToken ->
             cloudWriterLocator.getCloudWriter(syncTask.targetStorageType!!, authToken)?.let { cloudWriter ->
                 fileDeleterAssistedFactory.create(cloudWriter, syncTask.targetPath!!)
             }

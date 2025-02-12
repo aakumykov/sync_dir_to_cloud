@@ -30,13 +30,13 @@ class AuthHolder @Inject constructor(
 
     private suspend fun getSourceCloudAuth(syncTask: SyncTask): CloudAuth? {
         if (null == _sourceCloudAuth)
-            _sourceCloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
+            _sourceCloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!)
         return _sourceCloudAuth
     }
 
     private suspend fun getTargetCloudAuth(syncTask: SyncTask): CloudAuth? {
         if (null == _targetCloudAuth)
-            _targetCloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
+            _targetCloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)
         return _targetCloudAuth
     }
 }

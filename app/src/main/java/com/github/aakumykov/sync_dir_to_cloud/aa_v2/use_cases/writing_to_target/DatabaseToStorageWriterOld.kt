@@ -38,11 +38,11 @@ class DatabaseToStorageWriterOld @Inject constructor(
         // FIXME: обыграть
         val overwriteIfExists = true
 
-        val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)
-        val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId)
+        val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!)
+        val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)
 
-        val cloudReader = cloudReaderLocator.getCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken)
-        val cloudWriter = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuth?.authToken)
+        val cloudReader = cloudReaderLocator.getCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken!!)
+        val cloudWriter = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuth?.authToken!!)
 
         // TODO: перевести на Flow
         val allObjectsForTask = syncObjectReader.getAllObjectsForTask(syncTask.id)

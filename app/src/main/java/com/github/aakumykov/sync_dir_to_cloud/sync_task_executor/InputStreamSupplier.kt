@@ -32,7 +32,7 @@ class InputStreamSupplier @AssistedInject constructor(
     ) {
         suspend fun create(syncTask: SyncTask): InputStreamSupplier? {
             return factory.create(
-                cloudAuthReader.getCloudAuth(syncTask.sourceAuthId)?.authToken,
+                cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!)?.authToken,
                 syncTask.sourceStorageType
             )
         }

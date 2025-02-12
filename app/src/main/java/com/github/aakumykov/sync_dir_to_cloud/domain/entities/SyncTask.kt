@@ -64,7 +64,10 @@ class SyncTask {
     @ColumnInfo(name = "old_interval_h") var oldIntervalH: Int
     @ColumnInfo(name = "old_interval_m") var oldIntervalM: Int
 
+    @Deprecated("Избавиться от !!")
     @ColumnInfo(name = "source_auth_id") var sourceAuthId: String? = null
+
+    @Deprecated("Избавиться от !!")
     @ColumnInfo(name = "target_auth_id") var targetAuthId: String? = null
 
     @ColumnInfo(name = "c_time") var cTime: Long = Date().time
