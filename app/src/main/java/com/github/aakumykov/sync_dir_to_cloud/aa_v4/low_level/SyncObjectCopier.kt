@@ -14,6 +14,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.IOException
+import kotlin.coroutines.resume
 
 class SyncObjectCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -75,6 +76,8 @@ class SyncObjectCopier @AssistedInject constructor(
                     )
                 }
             )
+
+            cancellableContinuation.resume(Unit)
         }
     }
 

@@ -4,6 +4,7 @@ import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 
 // TODO: дать имя, точно отражающее функцию.
 fun SyncObject.shiftTwoVersionParameters(modifiedFSItem: FSItem) {
@@ -31,6 +32,8 @@ val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
 val SyncObject.isUnchanged: Boolean get() = StateInStorage.UNCHANGED == stateInStorage
 
 val SyncObject.isNew: Boolean get() = StateInStorage.NEW == stateInStorage
+
+val SyncObject.isSource: Boolean get() = Side.SOURCE == side
 
 val SyncObject.isModified: Boolean get() = (StateInStorage.MODIFIED == stateInStorage)
 
