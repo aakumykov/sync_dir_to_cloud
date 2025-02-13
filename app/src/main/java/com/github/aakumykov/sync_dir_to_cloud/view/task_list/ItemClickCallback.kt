@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view
+package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.view.View
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
