@@ -10,8 +10,14 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.concurrent.thread
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class ProbeFilesCopier @Inject constructor(
     private val syncObjectReader: SyncObjectReader,
@@ -23,7 +29,7 @@ class ProbeFilesCopier @Inject constructor(
 
         return scope.launch {
             try {
-                syncObjectReader
+                /*syncObjectReader
                     .getAllObjectsForTask(syncTask.id)
                     .filter { it.isSource }
                     .forEach { syncObject ->
@@ -31,10 +37,40 @@ class ProbeFilesCopier @Inject constructor(
                         syncObjectCopier.copyObjectFromSourceToTarget(syncObject) { p ->
                             Log.d(TAG, p.toString())
                         }
-                    }
+                    }*/
+
+                listOf(1,2,3,4,5).forEach {
+                    cancellableDelay(3)
+                }
 
             } catch (e: CancellationException) {
                 Log.e(TAG, e.message, e)
+            }
+        }
+    }
+
+    private suspend fun simpleDelay(timeoutSec: Int) {
+        return suspendCoroutine {  continuation ->
+            thread {
+                repeat(timeoutSec) {
+                    TimeUnit.SECONDS.sleep(1)
+                }
+                continuation.resume(Unit)
+            }
+        }
+    }
+
+    private suspend fun cancellableDelay(timeoutSec: Int) {
+        return suspendCancellableCoroutine {  continuation ->
+            thread {
+                repeat(timeoutSec) { i ->
+                    if (!continuation.isActive) {
+                        return@repeat
+                    }
+                    Log.d(TAG, "delay: $i")
+                    TimeUnit.SECONDS.sleep(1)
+                }
+                continuation.resume(Unit)
             }
         }
     }
