@@ -20,7 +20,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_creator.DirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_deleter.DirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.FileCopierAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instructions_processor.SyncInstructionsProcessor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instructions_processor.SyncInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.SyncObjectCopierAssistedFactory
@@ -71,6 +70,7 @@ import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factor
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ProbeFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
@@ -203,6 +203,8 @@ interface AppComponent {
     fun getSyncInstructionsProcessorAssistedFactory(): SyncInstructionsProcessorAssistedFactory
 
     fun getSyncObjectCopierAssistedFactory(): SyncObjectCopierAssistedFactory
+
+    fun getProbeFilesCopier(): ProbeFilesCopier
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

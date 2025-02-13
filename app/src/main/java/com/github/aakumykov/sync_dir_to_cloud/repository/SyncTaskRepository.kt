@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
@@ -104,6 +105,10 @@ class SyncTaskRepository @Inject constructor(
     }
 
     override suspend fun changeExecutionState(taskId: String, newState: ExecutionState, errorMsg: String) {
+        Log.d(
+            TAG,
+            "changeExecutionState(), taskId: $taskId, newState: $newState, errorMsg: $errorMsg"
+        )
         changeExecutionState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
     }
 

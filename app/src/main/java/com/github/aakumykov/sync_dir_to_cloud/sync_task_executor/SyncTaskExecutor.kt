@@ -32,6 +32,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSource
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.Side
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
@@ -40,8 +41,14 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
+import kotlin.coroutines.resume
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -152,7 +159,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Сравнить источник с приёмником
             compareSourceWithTarget(syncTask.id)
 
-            copyFilesProbe(syncTask)
+            copyFilesProbe(syncTask).join()
 
 
             // Выполнить инструкции синхронизации
@@ -197,10 +204,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             logExecutionFinish(syncTask)
         }
         catch (t: Throwable) {
-            ExceptionUtils.getErrorMessage(t).also { errorMsg ->
-                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
-                Log.e(TAG, errorMsg, t)
-            }
+            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, t.errorMsg)
+            Log.e(TAG, t.errorMsg, t)
             logExecutionError(syncTask, t)
         }
         finally {
@@ -210,27 +215,35 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
     @Throws(Exception::class)
-    private suspend fun copyFilesProbe(syncTask: SyncTask) {
+    private suspend fun copyFilesProbe(syncTask: SyncTask): Job {
+        /*return appComponent
+            .getProbeFilesCopier()
+            .copyFiles(syncTask, coroutineScope)*/
 
-        val syncObjectCopier = appComponent
-            .getSyncObjectCopierAssistedFactory()
-            .create(syncTask)
-
-        appComponent.getSyncObjectReader()
-            .getAllObjectsForTask(syncTask.id)
-            .filter { it.isSource }
-            .filter { it.isNew }
-            .forEach { syncObject ->
-
-                Log.d(TAG, if (syncObject.isDir) "Создаётся каталог '${syncObject.name}'"
-                else "Копируется файл '${syncObject.name}'")
-
-                syncObjectCopier.copyObjectFromSourceToTarget(
-                    syncObject = syncObject
-                ) { progressAsPartOf100 ->
-                    Log.d(TAG, progressAsPartOf100.toString())
-                }
+        return coroutineScope.launch {
+            try {
+                qwerty()
+            } catch (e: CancellationException) {
+                Log.e(TAG, "copyFilesProbe(): ${e.errorMsg}")
             }
+        }
+    }
+
+    private suspend fun qwerty() {
+        return suspendCancellableCoroutine { cont ->
+            cont.invokeOnCancellation {
+                Log.d(TAG, it?.errorMsg ?: "")
+            }
+            thread {
+                repeat(5) { i->
+                    if (!cont.isActive)
+                        return@repeat
+                    Log.d(TAG, "qwerty(), $i")
+                    TimeUnit.SECONDS.sleep(1)
+                }
+                cont.resume(Unit)
+            }
+        }
     }
 
 

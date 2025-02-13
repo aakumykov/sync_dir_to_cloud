@@ -38,8 +38,8 @@ class TaskListViewModel(
 
             if (syncTaskStartStopUseCase.isRunning(taskId)) {
 
-                taskCancellationHolder.getScope(taskId)?.also {
-                    cancel(CancellationException("Прервано пользователем"))
+                taskCancellationHolder.getScope(taskId)?.also { scope ->
+                    scope.cancel(CancellationException("Прервано пользователем"))
                 } ?: {
                     Log.e(TAG, "CoroutineScope не найден для задачи '$taskId'")
                 }
