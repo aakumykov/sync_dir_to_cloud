@@ -14,6 +14,8 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.IOException
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 import kotlin.coroutines.resume
 
 class SyncObjectCopier @AssistedInject constructor(
@@ -53,31 +55,37 @@ class SyncObjectCopier @AssistedInject constructor(
     ) {
         val inputStream = inputStreamGetter.getInputStreamFor(syncObject)
 
-        return suspendCancellableCoroutine { cancellableContinuation ->
-
-            cancellableContinuation.invokeOnCancellation {
-                inputStream.close()
-            }
-
-            val inputFileSize = syncObject.size
-            val progressCalculator = ProgressCalculator(inputFileSize)
-
-            cloudWriterGetter
-                .getTargetCloudWriter(syncTask)
-                .putStream(
-                inputStream = inputStream,
-                targetPath = syncObject.absolutePathIn(syncTask.targetPath!!),
-                overwriteIfExists = overwriteIfExists,
-                writingCallback = {  bytesWritten: Long ->
-                    onProgress.invoke(
-                        progressCalculator.progressAsPartOf100(
-                            1f * bytesWritten / inputFileSize
-                        )
-                    )
+        return suspendCancellableCoroutine { cont ->
+            thread {
+                cont.invokeOnCancellation {
+                    inputStream.close()
                 }
-            )
 
-            cancellableContinuation.resume(Unit)
+                val inputFileSize = syncObject.size
+                val progressCalculator = ProgressCalculator(inputFileSize)
+
+                cloudWriterGetter
+                    .getTargetCloudWriter(syncTask)
+                    .putStream(
+                        inputStream = inputStream,
+                        targetPath = syncObject.absolutePathIn(syncTask.targetPath!!),
+                        overwriteIfExists = overwriteIfExists,
+                        writingCallback = {  bytesWritten: Long ->
+                            if (!cont.isActive)
+                                return@putStream
+
+                            TimeUnit.MILLISECONDS.sleep(100)
+
+                            onProgress.invoke(
+                                progressCalculator.progressAsPartOf100(
+                                    1f * bytesWritten / inputFileSize
+                                )
+                            )
+                        }
+                    )
+
+                cont.resume(Unit)
+            }
         }
     }
 
