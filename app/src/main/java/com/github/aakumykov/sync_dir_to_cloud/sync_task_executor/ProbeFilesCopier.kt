@@ -40,13 +40,17 @@ class ProbeFilesCopier @Inject constructor(
                     }*/
 
                 listOf(1,2,3,4,5).forEach {
-                    cancellableDelay(3)
+                    qwertyDelay(3)
                 }
 
             } catch (e: CancellationException) {
                 Log.e(TAG, e.message, e)
             }
         }
+    }
+
+    private suspend fun qwertyDelay(timeoutSec: Int) {
+        cancellableDelay(timeoutSec)
     }
 
     private suspend fun simpleDelay(timeoutSec: Int) {
