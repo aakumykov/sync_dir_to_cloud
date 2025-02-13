@@ -220,11 +220,15 @@ class SyncTaskExecutor @AssistedInject constructor(
             .getProbeFilesCopier()
             .copyFiles(syncTask, coroutineScope)*/
 
-        return coroutineScope.launch {
+        return qwertyScope(coroutineScope)
+    }
+
+    private fun qwertyScope(scope: CoroutineScope): Job {
+        return scope.launch {
             try {
                 qwerty()
             } catch (e: CancellationException) {
-                Log.e(TAG, "copyFilesProbe(): ${e.errorMsg}")
+                Log.e(TAG, e.errorMsg)
             }
         }
     }
