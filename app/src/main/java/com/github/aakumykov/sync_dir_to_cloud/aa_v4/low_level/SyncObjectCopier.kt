@@ -40,10 +40,12 @@ class SyncObjectCopier @AssistedInject constructor(
 
     @Throws(IOException::class)
     private suspend fun createDir(syncObject: SyncObject) {
-        cloudWriter().createDir(
-            basePath = syncTask.targetPath!!,
-            dirName = syncObject.name
-        )
+        cloudWriterGetter
+            .getTargetCloudWriter(syncTask)
+            .createDir(
+                basePath = syncTask.targetPath!!,
+                dirName = syncObject.name
+            )
     }
 
 
@@ -53,44 +55,43 @@ class SyncObjectCopier @AssistedInject constructor(
         overwriteIfExists: Boolean,
         onProgress: (Int) -> Unit = {}
     ) {
-        val inputStream = inputStreamGetter.getInputStreamFor(syncObject)
+        inputStreamGetter
+            .getInputStreamFor(syncObject)
+            .use { inputStream ->
 
-        return suspendCancellableCoroutine { cont ->
-            thread {
-                cont.invokeOnCancellation {
-                    inputStream.close()
+                return suspendCancellableCoroutine { cont ->
+                    thread {
+                        cont.invokeOnCancellation { inputStream.close() }
+
+                        val inputFileSize = syncObject.size
+                        val progressCalculator = ProgressCalculator(inputFileSize)
+
+                        cloudWriterGetter
+                            .getTargetCloudWriter(syncTask)
+                            .putStream(
+                                inputStream = inputStream,
+                                targetPath = syncObject.absolutePathIn(syncTask.targetPath!!),
+                                overwriteIfExists = overwriteIfExists,
+                                writingCallback = {  bytesWritten: Long ->
+                                    if (!cont.isActive)
+                                        return@putStream
+
+                                    TimeUnit.MILLISECONDS.sleep(30)
+
+                                    onProgress.invoke(
+                                        progressCalculator.progressAsPartOf100(
+                                            1f * bytesWritten / inputFileSize
+                                        )
+                                    )
+                                }
+                            )
+
+                        cont.resume(Unit)
+                    }
                 }
 
-                val inputFileSize = syncObject.size
-                val progressCalculator = ProgressCalculator(inputFileSize)
-
-                cloudWriterGetter
-                    .getTargetCloudWriter(syncTask)
-                    .putStream(
-                        inputStream = inputStream,
-                        targetPath = syncObject.absolutePathIn(syncTask.targetPath!!),
-                        overwriteIfExists = overwriteIfExists,
-                        writingCallback = {  bytesWritten: Long ->
-                            if (!cont.isActive)
-                                return@putStream
-
-                            TimeUnit.MILLISECONDS.sleep(100)
-
-                            onProgress.invoke(
-                                progressCalculator.progressAsPartOf100(
-                                    1f * bytesWritten / inputFileSize
-                                )
-                            )
-                        }
-                    )
-
-                cont.resume(Unit)
             }
-        }
     }
-
-
-    private suspend fun cloudWriter(): CloudWriter = cloudWriterGetter.getTargetCloudWriter(syncTask)
 
 
     companion object {

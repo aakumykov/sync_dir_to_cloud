@@ -53,4 +53,8 @@ class ProbeFilesCopier @Inject constructor(
             else "Копируется файл '${syncObject.name}'"
         )
     }
+
+    companion object {
+        val TAG: String = ProbeFilesCopier::class.java.simpleName
+    }
 }
