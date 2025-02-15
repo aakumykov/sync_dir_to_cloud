@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.drivers_getter
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_01_drivers
 
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReadersHolder

@@ -1,8 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file
 
 import android.util.Log
+import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.drivers_getter.CloudWriterGetter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_01_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -13,21 +14,48 @@ import java.io.InputStream
 class FileWriter5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
-    private val syncOptions: SyncOptions,
 ) {
-    // TODO: какое исключение выбрасывает и выбрасывает ли?
     @Throws(Exception::class)
-    suspend fun putFile(inputStream: InputStream,
-                        targetFilePath: String,
-                        overwriteIfExists: Boolean = syncOptions.overwriteIfExists
+    suspend fun putFileToTarget(inputStream: InputStream,
+                                filePath: String,
+                                overwriteIfExists: Boolean
+    ) {
+        putStreamReal(
+            cloudWriterGetter.getTargetCloudWriter(syncTask),
+            inputStream,
+            filePath,
+            overwriteIfExists
+        )
+    }
+
+    @Throws(Exception::class)
+    suspend fun putFileToSource(inputStream: InputStream,
+                                filePath: String,
+                                overwriteIfExists: Boolean
+    ) {
+        putStreamReal(
+            cloudWriterGetter.getSourceCloudWriter(syncTask),
+            inputStream,
+            filePath,
+            overwriteIfExists
+        )
+    }
+
+    @Throws(Exception::class)
+    private suspend fun putStreamReal(
+        cloudWriter: CloudWriter,
+        inputStream: InputStream,
+        filePath: String,
+        overwriteIfExists: Boolean
     ) {
         return suspendCancellableCoroutine { cont ->
+
             cont.invokeOnCancellation { inputStream.close() }
-            cloudWriterGetter
-                .getTargetCloudWriter(syncTask)
+
+            cloudWriter
                 .putStream(
                     inputStream = inputStream,
-                    targetPath = targetFilePath,
+                    targetPath = filePath,
                     overwriteIfExists = overwriteIfExists
                 ) { progress ->
                     if (!cont.isActive)
@@ -36,6 +64,7 @@ class FileWriter5 @AssistedInject constructor(
                 }
         }
     }
+
 
     companion object {
         val TAG: String = FileWriter5::class.java.simpleName

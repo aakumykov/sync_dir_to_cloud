@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.drivers_getter.CloudWriterGetter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_01_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn

@@ -1,6 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_03_sync_object
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_03_intermediate
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.drivers_getter.CloudReaderGetter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_01_drivers.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
