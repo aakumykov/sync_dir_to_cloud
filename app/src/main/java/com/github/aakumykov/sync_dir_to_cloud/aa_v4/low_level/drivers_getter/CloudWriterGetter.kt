@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.very_basic
+package com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.drivers_getter
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask

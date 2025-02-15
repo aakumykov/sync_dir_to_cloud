@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level
 
 import com.github.aakumykov.cloud_reader.CloudReader
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.very_basic.CloudReaderGetter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.drivers_getter.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -10,7 +10,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.io.InputStream
-import javax.inject.Inject
 
 class InputStreamGetter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
