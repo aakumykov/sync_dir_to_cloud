@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterLocator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudWritersHolder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import javax.inject.Inject
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class SyncObjectFileCopierCreator @Inject constructor(
     private val sourceFileStreamSupplierCreator: SourceFileStreamSupplierCreator,
     private val cloudAuthReader: CloudAuthReader,
-    private val cloudWriterLocator: CloudWriterLocator,
+    private val cloudWritersHolder: CloudWritersHolder,
 ) {
     suspend fun createFileCopierFor(syncTask: SyncTask): StreamToFileDataCopier? {
 
@@ -21,7 +21,7 @@ class SyncObjectFileCopierCreator @Inject constructor(
             syncTask.sourceStorageType
         )
 
-        val targetCloudWriter = cloudWriterLocator.getCloudWriter(
+        val targetCloudWriter = cloudWritersHolder.getCloudWriter(
             syncTask.targetStorageType,
             cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!).authToken
         )

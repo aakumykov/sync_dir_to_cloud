@@ -1,11 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderLocator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReadersHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterLocator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudWritersHolder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -19,9 +19,9 @@ import javax.inject.Inject
  * То есть, нужно у специфического CloudReader-а (тип которого записан в SyncTask)
  * получить поток чтения файла из БД.
  *
- * cloudReader = CloudReaderLocator.getCloudReaderFor(syncTask.sourceStorageType)
+ * cloudReader = CloudReadersHolder.getCloudReaderFor(syncTask.sourceStorageType)
  * inputStream = cloudReader.getInputStreamFor(syncObject)
- * cloudWriter = CloudWriterLocator.getCloudWriterFor(syncTask.targetStorageType)
+ * cloudWriter = CloudWritersHolder.getCloudWriterFor(syncTask.targetStorageType)
  * cloudWriter.putFileFromStream(inputStream)
  *
  */
@@ -29,8 +29,8 @@ import javax.inject.Inject
 class DatabaseToStorageWriterOld @Inject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val cloudAuthReader: CloudAuthReader,
-    private val cloudReaderLocator: CloudReaderLocator,
-    private val cloudWriterLocator: CloudWriterLocator,
+    private val cloudReadersHolder: CloudReadersHolder,
+    private val cloudWritersHolder: CloudWritersHolder,
     private val syncObjectStateChanger: SyncObjectStateChanger,
 ) {
     suspend fun writeFromDatabaseToStorage(syncTask: SyncTask) {
@@ -41,8 +41,8 @@ class DatabaseToStorageWriterOld @Inject constructor(
         val sourceAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!)
         val targetAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!)
 
-        val cloudReader = cloudReaderLocator.getCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken!!)
-        val cloudWriter = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuth?.authToken!!)
+        val cloudReader = cloudReadersHolder.getCloudReader(syncTask.sourceStorageType, sourceAuth?.authToken!!)
+        val cloudWriter = cloudWritersHolder.getCloudWriter(syncTask.targetStorageType, targetAuth?.authToken!!)
 
         // TODO: перевести на Flow
         val allObjectsForTask = syncObjectReader.getAllObjectsForTask(syncTask.id)

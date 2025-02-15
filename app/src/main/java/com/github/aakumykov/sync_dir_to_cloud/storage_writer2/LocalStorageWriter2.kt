@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.storage_writer2
 
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterLocator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudWritersHolder
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -11,12 +11,12 @@ import java.io.InputStream
 class LocalStorageWriter2 @AssistedInject constructor(
     @Assisted private val targetStorageType: StorageType,
     @Assisted private val targetAuthToken: String,
-    private val cloudWriterLocator: CloudWriterLocator
+    private val cloudWritersHolder: CloudWritersHolder
 ): StorageWriter2 {
 
     override suspend fun createDir(basePath: String, dirName: String): Result<String> {
         return try {
-            cloudWriterLocator.getCloudWriter(targetStorageType, targetAuthToken)?.createDir(basePath, dirName)
+            cloudWritersHolder.getCloudWriter(targetStorageType, targetAuthToken)?.createDir(basePath, dirName)
             return Result.success(dirName)
         }
         catch (e: Exception) {
@@ -33,7 +33,7 @@ class LocalStorageWriter2 @AssistedInject constructor(
         // FIXME: избавиться от "!!"
 
         return try {
-            cloudWriterLocator.getCloudWriter(targetStorageType, targetAuthToken)
+            cloudWritersHolder.getCloudWriter(targetStorageType, targetAuthToken)
                 ?.putStream(sourceFileInputStream!!, targetFilePath!!, overwriteIfExists)
             return Result.success(targetFilePath!!)
         }

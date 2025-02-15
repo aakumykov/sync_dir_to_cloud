@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.very_basic
 
 import com.github.aakumykov.cloud_reader.CloudReader
-import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReaderLocator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReadersHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import javax.inject.Inject
@@ -11,17 +11,17 @@ import javax.inject.Inject
  */
 class CloudReaderGetter @Inject constructor(
     private val authReader: CloudAuthReader,
-    private val cloudReaderLocator: CloudReaderLocator,
+    private val cloudReadersHolder: CloudReadersHolder,
 ) {
     suspend fun getSourceCloudReaderFor(syncTask: SyncTask): CloudReader {
-        return cloudReaderLocator.getCloudReader(
+        return cloudReadersHolder.getCloudReader(
             syncTask.sourceStorageType,
             authReader.getCloudAuth(syncTask.sourceAuthId!!).authToken
         )
     }
 
     suspend fun getTargetCloudReaderFor(syncTask: SyncTask): CloudReader {
-        return cloudReaderLocator.getCloudReader(
+        return cloudReadersHolder.getCloudReader(
             syncTask.targetStorageType,
             authReader.getCloudAuth(syncTask.targetAuthId!!).authToken
         )

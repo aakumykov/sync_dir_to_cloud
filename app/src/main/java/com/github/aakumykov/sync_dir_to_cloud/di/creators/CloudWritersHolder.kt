@@ -1,7 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer
+package com.github.aakumykov.sync_dir_to_cloud.di.creators
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterAssistedFactory
 import javax.inject.Inject
 
 /**
@@ -9,8 +10,7 @@ import javax.inject.Inject
  * в словарь по типам хранилищ. Потом фабрика, соответствующая типу хранилища,
  * создаёт объект CloudWriterGetter, основываясь на данных авторизации.
  */
-@Deprecated("Неудачное название")
-class CloudWriterLocator @Inject constructor(
+class CloudWritersHolder @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudWriterAssistedFactory>
 ){
     @Throws(NoSuchElementException::class)

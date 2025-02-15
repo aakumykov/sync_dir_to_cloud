@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.AssistedArgName
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterLocator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudWritersHolder
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
@@ -18,7 +18,7 @@ class YandexDiskStorageWriter @AssistedInject constructor(
     @Assisted(AssistedArgName.AUTH_TOKEN) private val authToken: String,
     syncObjectReader: SyncObjectReader,
     syncObjectStateChanger: SyncObjectStateChanger,
-    private val cloudWriterLocator: CloudWriterLocator,
+    private val cloudWritersHolder: CloudWritersHolder,
 )
     : BasicStorageWriter(
         syncObjectReader = syncObjectReader,
@@ -29,7 +29,7 @@ class YandexDiskStorageWriter @AssistedInject constructor(
     )
 {
     private val yandexCloudWriter: CloudWriter? by lazy {
-        cloudWriterLocator.getCloudWriter(StorageType.YANDEX_DISK, authToken)
+        cloudWritersHolder.getCloudWriter(StorageType.YANDEX_DISK, authToken)
     }
 
     override val cloudWriter get() = yandexCloudWriter

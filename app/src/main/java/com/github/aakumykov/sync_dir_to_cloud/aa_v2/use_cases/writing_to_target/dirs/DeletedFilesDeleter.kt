@@ -5,20 +5,20 @@ import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
-import com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer.CloudWriterLocator
+import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudWritersHolder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
 class DeletedFilesDeleter @Inject constructor(
-    private val cloudWriterLocator: CloudWriterLocator,
+    private val cloudWritersHolder: CloudWritersHolder,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger
 ) {
     suspend fun doWork(syncTask: SyncTask, targetAuth: CloudAuth) {
 
-        val cloudWriter = cloudWriterLocator.getCloudWriter(syncTask.targetStorageType, targetAuth.authToken)
+        val cloudWriter = cloudWritersHolder.getCloudWriter(syncTask.targetStorageType, targetAuth.authToken)
 
         syncObjectReader.getAllObjectsForTask(syncTask.id)
             .filter { it.isDir && it.isDeleted }

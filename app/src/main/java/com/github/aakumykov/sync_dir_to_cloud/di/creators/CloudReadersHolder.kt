@@ -6,8 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import javax.inject.Inject
 
 // TODO: классу место в вереве каталогов "di", так как он жёстко привязан к Dagger.
-@Deprecated("Неудачное название, м.б. назвать Map, Holder, Registry?")
-class CloudReaderLocator @Inject constructor(
+class CloudReadersHolder @Inject constructor(
     private val map: Map<StorageType, @JvmSuppressWildcards CloudReaderFactory>
 ){
     @Throws(Exception::class)
