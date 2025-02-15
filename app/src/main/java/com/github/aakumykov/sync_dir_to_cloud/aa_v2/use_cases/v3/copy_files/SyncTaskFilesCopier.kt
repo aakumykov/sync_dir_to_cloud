@@ -175,7 +175,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
                     //Log.d(TAG, "  chunk size: ${listChunk.size}")
                     syncObjectLogger(syncTask.id).logWaiting(listChunk, operationName)
 
-                    copyFilesRealInCoroutine(
+                    copyFilesFromChunkInCoroutine(
                         scope = scope,
                         syncTask = syncTask,
                         operationName = operationName,
@@ -250,7 +250,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
 
     // FIXME: добавить обработку ошибок
-    private suspend fun copyFilesRealInCoroutine(
+    private suspend fun copyFilesFromChunkInCoroutine(
         list: List<SyncObject>,
         operationName: Int,
         syncTask: SyncTask,

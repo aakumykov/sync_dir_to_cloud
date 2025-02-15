@@ -50,6 +50,7 @@ class CoroutineModule {
 
     // TODO: Главный Job делать руками?
 
+    // FIXME: описать, зачем он
     @Provides
     @CoroutineFileOperationJob
     fun provideFileOperationJob(@CoroutineFileCopyingScope fileCopyingScope: CoroutineScope): CompletableJob {

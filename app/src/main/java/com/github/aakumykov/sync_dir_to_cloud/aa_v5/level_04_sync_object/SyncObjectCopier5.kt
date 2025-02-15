@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 // TODO: передавать готовый DirCreator и FileWriter?...
@@ -16,7 +17,7 @@ import dagger.assisted.AssistedInject
 //  требуют ещё и соответствующего аргумента.
 //  Хотя... нет. Эти фунции приватные, внешние методы лишены этой проблемы.
 
-class SyncObjectCopier @AssistedInject constructor(
+class SyncObjectCopier5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val inputStreamGetter5: InputStreamGetter5,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
@@ -85,4 +86,10 @@ class SyncObjectCopier @AssistedInject constructor(
 
     private val fileWriter: FileWriter5
         get() = fileWriter5AssistedFactory.create(syncTask)
+}
+
+
+@AssistedFactory
+interface SyncObjectCopierAssistedFactory5 {
+    fun create(syncTask: SyncTask): SyncObjectCopier5
 }
