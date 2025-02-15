@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.factories.storage_writer
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import javax.inject.Inject
 
 /**
@@ -11,10 +12,11 @@ import javax.inject.Inject
  */
 @Deprecated("Неудачное название")
 class CloudWriterLocator @Inject constructor(
-    private val map: Map<StorageType, @JvmSuppressWildcards CloudWriterAssistedFactory>
+    private val map: Map<StorageType, @JvmSuppressWildcards CloudWriterAssistedFactory>,
+    private val authReader: CloudAuthReader,
 ){
     @Throws(NoSuchElementException::class)
-    fun getCloudWriter(storageType: StorageType?, authToken: String): CloudWriter {
+    suspend fun getCloudWriter(storageType: StorageType?, authToken: String): CloudWriter {
         if (map.containsKey(storageType)) {
             return map[storageType]!!
                 .createCloudWriterFactory(authToken)
@@ -22,5 +24,13 @@ class CloudWriterLocator @Inject constructor(
         } else {
             throw NoSuchElementException("Where is no CloudWriterAssistedFactory for storage type '$storageType'")
         }
+    }
+
+    @Throws(NoSuchElementException::class)
+    suspend fun getCloudWriterWithAuthId(storageType: StorageType, authId: String): CloudWriter {
+        return getCloudWriter(
+            storageType,
+            authReader.getCloudAuth(authId).authToken
+        )
     }
 }
