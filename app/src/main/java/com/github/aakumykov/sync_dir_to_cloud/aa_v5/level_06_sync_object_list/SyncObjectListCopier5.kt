@@ -17,7 +17,7 @@ class SyncObjectListCopier5 @AssistedInject constructor(
     @Assisted private val oneFileCopyingScope: CoroutineScope,
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
 ) {
-    private suspend fun copyListFromSourceToTarget(list: List<SyncObject>, overwriteIfExists: Boolean) {
+    suspend fun copyListFromSourceToTarget(list: List<SyncObject>, overwriteIfExists: Boolean) {
         list.map { oneObject ->
             oneFileCopyingScope.launch {
                 syncObjectCopier.copyFromSourceToTarget(oneObject, overwriteIfExists)
@@ -26,7 +26,7 @@ class SyncObjectListCopier5 @AssistedInject constructor(
     }
 
 
-    private suspend fun copyListFromTargetToSource(list: List<SyncObject>, overwriteIfExists: Boolean) {
+    suspend fun copyListFromTargetToSource(list: List<SyncObject>, overwriteIfExists: Boolean) {
         list.map { oneObject ->
             oneFileCopyingScope.launch {
                 syncObjectCopier.copyFromTargetToSource(oneObject, overwriteIfExists)
