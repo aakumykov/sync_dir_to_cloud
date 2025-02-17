@@ -16,12 +16,12 @@ class FileDeleter5 @AssistedInject constructor(
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
     @Throws(Exception::class)
-    suspend fun deleteSourceFile(basePath: String, fileName: String) {
+    suspend fun deleteFileInSource(basePath: String, fileName: String) {
         return deleteFileWith(cloudWriterGetter.getSourceCloudWriter(syncTask), basePath, fileName);
     }
 
     @Throws(Exception::class)
-    suspend fun deleteTargetFile(basePath: String, fileName: String) {
+    suspend fun deleteFileInTarget(basePath: String, fileName: String) {
         return deleteFileWith(cloudWriterGetter.getTargetCloudWriter(syncTask), basePath, fileName);
     }
 
