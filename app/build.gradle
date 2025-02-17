@@ -192,7 +192,7 @@ dependencies {
     implementation "com.github.permissions-dispatcher:ktx:1.1.4"
 
     implementation 'com.github.aakumykov:cloud_reader_2:3.1.0-alpha'
-    implementation 'com.github.aakumykov:cloud_writer_2:5.1.0-alpha'
+    implementation 'com.github.aakumykov:cloud_writer_2:5.2.0-alpha'
 
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
