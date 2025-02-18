@@ -61,7 +61,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 76, to = 77, spec = ExecutionLogItem.RenameColumnsAutoMigrationSpec1::class), // добавилось ExecutionLogItem
         AutoMigration(from = 77, to = 78), // Новое поле "operationState" в ExecutionLogItem
         AutoMigration(from = 78, to = 79, spec = ExecutionLogItem.RemoveOperationStateFieldSpec::class), // Удаление поля ExecutionLogItem.operationState
-        AutoMigration(from = 79, to = 80),
+        AutoMigration(from = 79, to = 80), // Новое поле SyncObject.side
         AutoMigration(from = 80, to = 81), // Новое поле SyncObject.executionId
         AutoMigration(from = 81, to = 82, spec = SyncInstruction.FirstAddThisObjectSpec::class), // Новый объект "SyncInstruction"
         AutoMigration(from = 82, to = 83, spec = SyncInstruction.DeleteColumnExecutionIdSpec::class),
