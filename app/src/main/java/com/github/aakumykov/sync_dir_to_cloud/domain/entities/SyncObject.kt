@@ -2,13 +2,12 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
-import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 // TODO: сложный ключ, включающий taskId, name, parentPath и другое, что составляет уникальность.
@@ -21,7 +20,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
         "execution_id",
         "relative_parent_dir_path",
         "name",
-        "sync_side"
+        "side"
     ],
     foreignKeys = [
         ForeignKey(
@@ -44,7 +43,7 @@ class SyncObject (
 
     @ColumnInfo(name = "execution_id", defaultValue = "none") var executionId: String,
 
-    @ColumnInfo(name = "sync_side", defaultValue = "SOURCE") val syncSide: SyncSide,
+    @ColumnInfo(name = "side", defaultValue = "SOURCE") val side: Side,
 
     @ColumnInfo(name = "name") val name: String,
 
@@ -100,7 +99,7 @@ class SyncObject (
         fun createAsNew(
             taskId: String,
             executionId: String,
-            syncSide: SyncSide,
+            side: Side,
             fsItem: FSItem,
             relativeParentDirPath: String,
         ): SyncObject {
@@ -109,7 +108,7 @@ class SyncObject (
                 id = id(fsItem),
                 taskId = taskId,
                 executionId = executionId,
-                syncSide = syncSide,
+                side = side,
                 name = fsItem.name,
                 relativeParentDirPath = relativeParentDirPath,
                 isDir = fsItem.isDir,
@@ -154,7 +153,4 @@ class SyncObject (
             }
         }
     }*/
-
-    @RenameColumn(tableName = "sync_objects", fromColumnName = "side", toColumnName = "sync_side")
-    class RenameSideToSyncSideMigration : AutoMigrationSpec
 }

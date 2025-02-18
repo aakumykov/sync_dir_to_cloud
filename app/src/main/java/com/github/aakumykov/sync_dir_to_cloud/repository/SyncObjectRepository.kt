@@ -13,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSucce
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskDirObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
@@ -70,11 +70,11 @@ class SyncObjectRepository @Inject constructor(
     }
 
     override suspend fun getAllObjectsForTask(
-        syncSide: SyncSide,
+        side: Side,
         taskId: String,
     ): List<SyncObject> {
         return syncObjectDAO.getAllObjectsForTask(
-            syncSide = syncSide,
+            side = side,
             taskId = taskId,
         )
     }
@@ -187,11 +187,11 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun getSyncObject(
         taskId: String,
-        syncSide: SyncSide,
+        side: Side,
         name: String,
         relativeParentDirPath: String
     ): SyncObject?
-        = syncObjectDAO.getSyncObject(taskId, syncSide, name, relativeParentDirPath)
+        = syncObjectDAO.getSyncObject(taskId, side, name, relativeParentDirPath)
 
 
     override suspend fun deleteObjectWithDeletedState(objectId: String)
@@ -208,7 +208,7 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.setStateInStorage(objectId, StateInStorage.UNCHANGED)
 
     /*override suspend fun getAllObjectsForTask(
-        side: SyncSide,
+        side: Side,
         taskId: String,
         executionId: String
     ): List<SyncObject> {

@@ -9,7 +9,7 @@ import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 
 @Dao
 interface SyncObjectDAO {
@@ -40,12 +40,12 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
-            "AND sync_side = :syncSide " +
+            "AND side = :side " +
             "AND name = :name " +
             "AND relative_parent_dir_path = :relativeParentDirPath")
     suspend fun getSyncObject(
         taskId: kotlin.String,
-        syncSide: SyncSide,
+        side: Side,
         name: kotlin.String,
         relativeParentDirPath: kotlin.String
     ): SyncObject?
@@ -122,9 +122,9 @@ interface SyncObjectDAO {
     fun getAllObjectsForTask(taskId: String): List<SyncObject>
 
     @Query("SELECT * FROM sync_objects " +
-            "WHERE sync_side = :syncSide " +
+            "WHERE side = :side " +
             "AND task_id = :taskId")
-    fun getAllObjectsForTask(syncSide: SyncSide, taskId: String): List<SyncObject>
+    fun getAllObjectsForTask(side: Side, taskId: String): List<SyncObject>
 
     @Query("DELETE FROM sync_objects WHERE id = :objectId AND state_in_source = 'DELETED'")
     fun deleteDeletedObject(objectId: String)

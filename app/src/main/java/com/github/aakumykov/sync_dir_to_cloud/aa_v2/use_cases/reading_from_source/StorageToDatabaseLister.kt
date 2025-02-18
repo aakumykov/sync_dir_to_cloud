@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.enums.Side
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -32,7 +32,7 @@ class StorageToDatabaseLister @Inject constructor(
     private val resources: Resources,
 ) {
     suspend fun listFromPathToDatabase(
-        syncSide: SyncSide,
+        side: Side,
         pathReadingFrom: String?,
         changesDetectionStrategy: ChangesDetectionStrategy,
         cloudAuth: CloudAuth?,
@@ -69,7 +69,7 @@ class StorageToDatabaseLister @Inject constructor(
                     Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
                     addOrUpdateFileListItem(
                         executionId = executionId,
-                        syncSide = syncSide,
+                        side = side,
                         fileListItem = fileListItem,
                         pathReadingFrom = pathReadingFrom,
                         taskId = taskId,
@@ -121,7 +121,7 @@ class StorageToDatabaseLister @Inject constructor(
 
     private suspend fun addOrUpdateFileListItem(
         executionId: String,
-        syncSide: SyncSide,
+        side: Side,
         fileListItem: RecursiveDirReader.FileListItem,
         pathReadingFrom: String,
         taskId: String,
@@ -131,7 +131,7 @@ class StorageToDatabaseLister @Inject constructor(
 
         val existingObject = syncObjectReader.getSyncObject(
             taskId,
-            syncSide,
+            side,
             fileListItem.name,
             parentDirPath)
 
@@ -143,7 +143,7 @@ class StorageToDatabaseLister @Inject constructor(
                     taskId = taskId,
                     executionId = executionId,
                     fsItem = fileListItem,
-                    syncSide = syncSide,
+                    side = side,
                     relativeParentDirPath = parentDirPath,
                 )
             )
