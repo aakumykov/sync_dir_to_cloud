@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -24,6 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncSt
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO5
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 
 @Database(
@@ -35,8 +37,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncObjectLogItem::class,
         ExecutionLogItem::class,
         SyncInstruction::class,
+        SyncInstruction5::class,
    ],
-    version = 86,
+    version = 87,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -68,6 +71,8 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 83, to = 84), // Добавил внешний ключ к SyncInstruction.
         AutoMigration(from = 84, to = 85), // Добавил поле SyncInstruction.isDir
         AutoMigration(from = 85, to = 86, spec = SyncObject.RenameSideToSyncSideMigration::class), // SyncObject.side --> syncSide
+        AutoMigration(from = 86, to = 87), // Новый объект SyncInstruction5
+
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -87,4 +92,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncObjectLogDAO(): SyncObjectLogDAO
     abstract fun getExecutionLogDAO(): ExecutionLogDAO
     abstract fun getSyncInstructionDAO(): SyncInstructionDAO
+    abstract fun getSyncInstructionDAO5(): SyncInstructionDAO5
 }
