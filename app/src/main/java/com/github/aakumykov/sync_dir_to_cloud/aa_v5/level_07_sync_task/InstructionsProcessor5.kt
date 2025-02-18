@@ -20,21 +20,11 @@ class InstructionsProcessor5 @AssistedInject constructor(
     }
 
     private suspend fun processDirs() {
-        instructionRepository
-            .getAllFor(syncTask.id)
-            .filter { it.isDir }
-            .forEach { syncInstruction ->
-                processDirInstruction(syncInstruction)
-            }
+
     }
 
     private suspend fun processFiles() {
-        instructionRepository
-            .getAllFor(syncTask.id)
-            .filterNot { it.isDir }
-            .forEach { syncInstruction ->
-                processFileInstruction(syncInstruction)
-            }
+
     }
 
     private fun processFileInstruction(syncInstruction: SyncInstruction) {

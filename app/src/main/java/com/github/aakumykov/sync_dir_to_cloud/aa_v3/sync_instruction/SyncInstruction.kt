@@ -31,7 +31,6 @@ open class SyncInstruction (
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "source_object_id") val sourceObjectId: String,
     @ColumnInfo(name = "target_object_id") val targetObjectId: String,
-    @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
     val backup: Boolean,
     val copy: Boolean,
     val delete: Boolean,
