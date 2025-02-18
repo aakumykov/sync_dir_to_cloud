@@ -28,17 +28,14 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSource
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
-import com.github.aakumykov.sync_dir_to_cloud.enums.Side
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.SizeAndModificationTimeChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
@@ -414,7 +411,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         return appComponent
             .getStorageToDatabaseLister()
             .listFromPathToDatabase(
-                side = Side.SOURCE,
+                syncSide = SyncSide.SOURCE,
                 taskId = syncTask.id,
                 executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!),
@@ -428,7 +425,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         appComponent
             .getStorageToDatabaseLister()
             .listFromPathToDatabase(
-                side = Side.TARGET,
+                syncSide = SyncSide.TARGET,
                 taskId = syncTask.id,
                 executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!),
