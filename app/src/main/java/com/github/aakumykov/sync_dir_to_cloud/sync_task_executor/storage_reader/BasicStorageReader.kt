@@ -6,7 +6,7 @@ import com.github.aakumykov.file_lister_navigator_selector.file_lister.SimpleSor
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.Side
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
@@ -32,7 +32,7 @@ abstract class BasicStorageReader(
 
 
     @Throws(FileLister.NotADirException::class)
-    override suspend fun read(sourcePath: String?, side: Side) {
+    override suspend fun read(sourcePath: String?, syncSide: SyncSide) {
 
         if (null == sourcePath) {
             Log.e(tag, "Source path is null.")
@@ -49,7 +49,7 @@ abstract class BasicStorageReader(
 
             val existingObject = syncObjectRepository.getSyncObject(
                 taskId,
-                side,
+                syncSide,
                 fileListItem.name,
                 fileListItem.parentPath
             )
@@ -59,7 +59,7 @@ abstract class BasicStorageReader(
                     taskId = taskId,
                     executionId = "none",
                     fsItem = fileListItem,
-                    side = Side.SOURCE,
+                    syncSide = SyncSide.SOURCE,
                     relativeParentDirPath = calculateRelativeParentDirPath(fileListItem, sourcePath),
                 )
                     .also {
