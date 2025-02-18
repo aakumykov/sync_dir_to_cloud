@@ -22,6 +22,6 @@ class InputStreamGetter5 @AssistedInject constructor(
     }
 }
 
-interface InputStreamGetter5AssistedFactory {
+interface InputStreamGetterAssistedFactory5 {
     fun create(syncTask: SyncTask): InputStreamGetter5
 }

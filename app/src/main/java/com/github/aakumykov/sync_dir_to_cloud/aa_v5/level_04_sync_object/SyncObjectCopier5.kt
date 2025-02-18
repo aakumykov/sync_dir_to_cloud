@@ -1,10 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.InputStreamGetterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.FileWriter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.FileWriter5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_03_intermediate.InputStreamGetter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_03_intermediate.InputStreamGetterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
@@ -19,7 +21,7 @@ import dagger.assisted.AssistedInject
 
 class SyncObjectCopier5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    private val inputStreamGetter5: InputStreamGetter5,
+    private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
     private val fileWriter5AssistedFactory: FileWriter5AssistedFactory,
 ){
@@ -61,7 +63,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
         overwriteIfExists: Boolean
     ) {
         fileWriter.putFileToTarget(
-            inputStream = inputStreamGetter5.getInputStreamFor(syncObject),
+            inputStream = inputStreamGetter.getInputStreamFor(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.targetPath!!),
             overwriteIfExists = overwriteIfExists,
         )
@@ -74,12 +76,15 @@ class SyncObjectCopier5 @AssistedInject constructor(
         overwriteIfExists: Boolean
     ) {
         fileWriter.putFileToSource(
-            inputStream = inputStreamGetter5.getInputStreamFor(syncObject),
+            inputStream = inputStreamGetter.getInputStreamFor(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.sourcePath!!),
             overwriteIfExists = overwriteIfExists,
         )
     }
 
+
+    private val inputStreamGetter: InputStreamGetter5
+        get() = inputStreamGetterAssistedFactory.create(syncTask)
 
     private val dirCreator: DirCreator5
         get() = dirCreator5AssistedFactory.create(syncTask)
