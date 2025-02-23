@@ -153,11 +153,12 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
+            generateSyncInstructions(syncTask)
+
             // Сравнить источник с приёмником
-            compareSourceWithTarget(syncTask.id)
+//            compareSourceWithTarget(syncTask.id)
 
-            copyFilesProbe(syncTask).join()
-
+//            copyFilesProbe(syncTask).join()
 
             // Выполнить инструкции синхронизации
 //            processSyncInstructions(syncTask)
@@ -209,6 +210,13 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    private suspend fun generateSyncInstructions(syncTask: SyncTask) {
+        appComponent
+            .getInstructionsGeneratorAssistedFactory()
+            .create(syncTask)
+            .generateSyncInstructions()
     }
 
     @Throws(Exception::class)

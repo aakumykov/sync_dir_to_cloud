@@ -98,6 +98,18 @@ class SyncObjectRepository @Inject constructor(
         return syncObjectDAO.getObjectsNotDeletedInSourceButDeletedInTarget(taskId)
     }
 
+    override suspend fun getCorrespondingObjectIfExists(
+        syncSide: SyncSide,
+        syncObject: SyncObject
+    ): SyncObject? {
+        return syncObjectDAO.getSyncObject(
+            syncSide = syncSide,
+            taskId = syncObject.taskId,
+            name = syncObject.name,
+            relativeParentDirPath = syncObject.relativeParentDirPath,
+        )
+    }
+
     override suspend fun getList(
         taskId: String,
         readingStrategy: ReadingStrategy

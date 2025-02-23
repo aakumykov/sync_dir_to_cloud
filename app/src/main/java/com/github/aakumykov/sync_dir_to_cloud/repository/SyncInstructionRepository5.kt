@@ -8,6 +8,10 @@ import javax.inject.Inject;
 public class SyncInstructionRepository5 @Inject constructor(
     private val syncInstructionDAO5: SyncInstructionDAO5
 ) {
+    suspend fun add(syncInstruction5: SyncInstruction5) {
+        syncInstructionDAO5.add(syncInstruction5)
+    }
+
     suspend fun getSyncInstructions(taskId: String,
                                     executionId: String,
                                     syncSide: SyncSide,

@@ -23,6 +23,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.FileCopierAssist
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instructions_processor.SyncInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.SyncObjectCopierAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGenerator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.BetterTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -205,6 +207,8 @@ interface AppComponent {
     fun getSyncObjectCopierAssistedFactory(): SyncObjectCopierAssistedFactory
 
     fun getProbeFilesCopier(): ProbeFilesCopier
+
+    fun getInstructionsGeneratorAssistedFactory(): InstructionsGeneratorAssistedFactory
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

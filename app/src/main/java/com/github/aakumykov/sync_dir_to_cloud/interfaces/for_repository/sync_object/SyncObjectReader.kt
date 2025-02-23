@@ -37,4 +37,9 @@ interface SyncObjectReader {
     suspend fun getList(taskId: String, readingStrategy: ReadingStrategy): List<SyncObject>
 
     suspend fun getInTargetMissingObjects(taskId: String): List<SyncObject>
+
+    suspend fun getCorrespondingObjectIfExists(
+        syncSide: SyncSide,
+        syncObject: SyncObject
+    ): SyncObject?
 }
