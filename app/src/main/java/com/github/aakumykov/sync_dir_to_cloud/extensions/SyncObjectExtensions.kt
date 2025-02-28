@@ -18,7 +18,7 @@ val SyncObject.relativePath: String
 
 fun SyncObject.isSameWith(other: SyncObject): Boolean {
     return taskId == other.taskId &&
-            executionId == other.executionId &&
+//            executionId == other.executionId &&
             name == other.name &&
             relativeParentDirPath == other.relativeParentDirPath
 }
