@@ -56,6 +56,7 @@ class SyncTask {
     @Deprecated("Не может быть null, реши этот вопрос")
     @ColumnInfo(name = "target_path") var targetPath: String? // FIXME: не-null
 
+    @Deprecated("Не может быть null")
     @ColumnInfo(name = "sync_mode") var syncMode: SyncMode?
 
     @ColumnInfo(name = "interval_h") var intervalHours: Int

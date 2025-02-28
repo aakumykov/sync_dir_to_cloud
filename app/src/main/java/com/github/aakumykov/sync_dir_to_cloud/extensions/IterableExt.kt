@@ -1,7 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.extensions
 
-import kotlinx.coroutines.processNextEventInCurrentThread
-
 /**
  * Возвращает элементы списка, присутствующие во втором ([other]) списке,
  * что определяется через функцию [areItemsTheSame].
