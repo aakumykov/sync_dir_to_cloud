@@ -1,5 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -14,8 +16,8 @@ import javax.inject.Inject
 
 class SyncInstructionCreator @AssistedInject constructor(
     @Assisted private val initialOrderNum: Int,
-    @Assisted private val taskId: String,
-    @Assisted private val executionId: String,
+    @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
+    @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
 ) {
     private var orderNum = initialOrderNum
 
@@ -71,6 +73,6 @@ class SyncInstructionCreator @AssistedInject constructor(
 @AssistedFactory
 interface SyncInstructionCreatorAssistedFactory {
     fun create(initialOrderNum: Int,
-               taskId: String,
-               executionId: String): SyncInstructionCreator
+               @Assisted(QUALIFIER_TASK_ID) taskId: String,
+               @Assisted(QUALIFIER_EXECUTION_ID) executionId: String): SyncInstructionCreator
 }
