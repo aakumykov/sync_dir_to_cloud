@@ -78,8 +78,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 91, to = 92), // SyncInstruction5.sourceObjectId стало nullable.
         AutoMigration(from = 92, to = 93), // Новое поле SyncInstruction5.executionOrderNum
         AutoMigration(from = 93, to = 94, spec = SyncInstruction5.DeleteSyncSideColumnMigrationSpec::class),
+        AutoMigration(from = 94, to = 95, spec = SyncInstruction5.DeleteIsDirColumnMigrationSpec::class),
     ],
-    version = 94,
+    version = 95,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

@@ -18,18 +18,6 @@ class SyncInstructionRepository5 @Inject constructor(
         syncInstructionDAO5.add(syncInstruction5)
     }
 
-    suspend fun getSyncInstructions(taskId: String,
-                                    executionId: String,
-                                    syncSide: SyncSide,
-                                    isDir: Boolean
-    ): List<SyncInstruction5> {
-        return syncInstructionDAO5.getSyncInstructions(
-            taskId = taskId,
-            executionId = executionId,
-            isDir = isDir
-        )
-    }
-
     suspend fun deleteSyncInstructionsForTask(taskId: String) {
         syncInstructionDAO5.deleteSyncInstructionsForTask(taskId)
     }

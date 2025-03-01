@@ -35,7 +35,7 @@ class SyncInstruction5 (
     @ColumnInfo(name = "target_object_id", defaultValue = "null") val targetObjectId: String?,
 
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "is_dir") val isDir: Boolean,
+
     @ColumnInfo(name = "sync_operation") val operation: SyncOperation,
 ) {
     @RenameColumn(tableName = "sync_instructions_5", fromColumnName = "order_num", toColumnName = "execution_order_num")
@@ -46,4 +46,7 @@ class SyncInstruction5 (
 
     @DeleteColumn(tableName = "sync_instructions_5", columnName = "sync_side")
     class DeleteSyncSideColumnMigrationSpec : AutoMigrationSpec
+
+    @DeleteColumn(tableName = "sync_instructions_5", columnName = "is_dir")
+    class DeleteIsDirColumnMigrationSpec : AutoMigrationSpec
 }
