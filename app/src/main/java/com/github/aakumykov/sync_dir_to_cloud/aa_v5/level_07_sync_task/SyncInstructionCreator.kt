@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class SyncInstructionCreator @AssistedInject constructor(
     @Assisted private val initialOrderNum: Int,
-    @Assisted private val syncTask: SyncTask,
+    @Assisted private val taskId: String,
     @Assisted private val executionId: String,
 ) {
     private var orderNum = initialOrderNum
@@ -71,6 +71,6 @@ class SyncInstructionCreator @AssistedInject constructor(
 @AssistedFactory
 interface SyncInstructionCreatorAssistedFactory {
     fun create(initialOrderNum: Int,
-               syncTask: SyncTask,
+               taskId: String,
                executionId: String): SyncInstructionCreator
 }

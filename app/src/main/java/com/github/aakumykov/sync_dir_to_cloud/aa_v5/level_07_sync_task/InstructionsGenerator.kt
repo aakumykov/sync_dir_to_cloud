@@ -14,6 +14,7 @@ import dagger.assisted.AssistedInject
 
 class InstructionsGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
     private var syncObjectReader: SyncObjectReader,
     private val instructionRepository: SyncInstructionRepository5,
     private val instructionCreatorAssistedFactory: SyncInstructionCreatorAssistedFactory,
@@ -46,16 +47,15 @@ class InstructionsGenerator @AssistedInject constructor(
         sourceObjectsList: Iterable<SyncObject>,
         targetObjectsList: Iterable<SyncObject>
     ) {
-        /*for (commonObject in commonObjectsList) {
-            instructionRepository.add(
-                instructionCreator.createInstructionForSourceAndTargetCommonItems(
-                    commonObject,
-                    sourceObjectsList.first { it.isSameWith(commonObject) },
-                    targetObjectsList.first { it.isSameWith(commonObject) },
-                    syncTask.syncMode!!
-                )
-            )
-        }*/
+        for (commonObject in commonObjectsList) {
+//            val syncInstruction = instructionCreator.create(
+//                commonObject,
+//                sourceObjectsList.first { it.isSameWith(commonObject) },
+//                targetObjectsList.first { it.isSameWith(commonObject) },
+//                syncTask.syncMode!!
+//            )
+//            instructionRepository.add(syncInstruction)
+        }
     }
 
 
@@ -82,6 +82,9 @@ class InstructionsGenerator @AssistedInject constructor(
         }*/
     }
 
+    private val instructionCreator: SyncInstructionCreator by lazy {
+        instructionCreatorAssistedFactory.create(1, syncTask.id, executionId)
+    }
 
     companion object {
         val TAG: String = InstructionsGenerator::class.java.simpleName
@@ -91,5 +94,5 @@ class InstructionsGenerator @AssistedInject constructor(
 
 @AssistedFactory
 interface InstructionsGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask): InstructionsGenerator
+    fun create(syncTask: SyncTask, executionId: String): InstructionsGenerator
 }
