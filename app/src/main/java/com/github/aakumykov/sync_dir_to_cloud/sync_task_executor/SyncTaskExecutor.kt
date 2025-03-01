@@ -215,7 +215,10 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun generateSyncInstructions(syncTask: SyncTask) {
         appComponent
             .getInstructionsGeneratorAssistedFactory()
-            .create(syncTask)
+            .create(
+                syncTask = syncTask,
+                executionId = executionId,
+            )
             .generateSyncInstructions()
     }
 
