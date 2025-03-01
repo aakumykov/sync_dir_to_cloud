@@ -23,9 +23,9 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 class SyncInstruction5 (
     @PrimaryKey
     @ColumnInfo(name = "id") val id: String,
-    @ColumnInfo(name = "order_num") val orderNum: Int,
     @ColumnInfo(name = "task_id", index = true) val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
+    @ColumnInfo(name = "order_num") val orderNum: Int,
     @ColumnInfo(name = "object_id") val objectId: String,
     @ColumnInfo(name = "sync_side") val syncSide: SyncSide,
     @ColumnInfo(name = "name") val name: String,
