@@ -7,7 +7,14 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction5
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 
 @Dao
-public interface SyncInstructionDAO5 {
+interface SyncInstructionDAO5 {
+
+    @Query("SELECT DISTINCT group_order_num, task_id, execution_id, execution_order_num " +
+            "FROM sync_instructions_5 " +
+            "WHERE task_id = :taskId " +
+            "AND execution_id = :executionId " +
+            "ORDER BY execution_order_num")
+    suspend fun getGroupsForSync(taskId: String, executionId: String)
 
     @Insert
     suspend fun add(syncInstruction5: SyncInstruction5)
