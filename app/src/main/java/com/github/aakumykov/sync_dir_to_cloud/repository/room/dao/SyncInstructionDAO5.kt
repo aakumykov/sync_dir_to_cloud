@@ -23,11 +23,9 @@ interface SyncInstructionDAO5 {
     @Query("SELECT * FROM sync_instructions_5 " +
             "WHERE task_id = :taskId " +
             "AND execution_id = :executionId " +
-            "AND sync_side = :syncSide " +
             "AND is_dir = :isDir")
     suspend fun getSyncInstructions(taskId: String,
                             executionId: String,
-                            syncSide: SyncSide,
                             isDir: Boolean): List<SyncInstruction5>
 
     @Query("DELETE FROM sync_instructions_5 " +

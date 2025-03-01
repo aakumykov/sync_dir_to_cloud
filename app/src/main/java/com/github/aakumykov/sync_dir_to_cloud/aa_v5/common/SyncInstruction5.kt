@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.common
 
 import androidx.room.ColumnInfo
+import androidx.room.DeleteColumn
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
@@ -33,8 +34,6 @@ class SyncInstruction5 (
     @ColumnInfo(name = "source_object_id") val sourceObjectId: String?,
     @ColumnInfo(name = "target_object_id", defaultValue = "null") val targetObjectId: String?,
 
-
-    @ColumnInfo(name = "sync_side") val syncSide: SyncSide,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
     @ColumnInfo(name = "sync_operation") val operation: SyncOperation,
@@ -44,4 +43,7 @@ class SyncInstruction5 (
 
     @RenameColumn(tableName = "sync_instructions_5", fromColumnName = "object_id", toColumnName = "source_object_id")
     class RenameObjectIdToSourceObjectIdMigrationSpec : AutoMigrationSpec
+
+    @DeleteColumn(tableName = "sync_instructions_5", columnName = "sync_side")
+    class DeleteSyncSideColumnMigrationSpec : AutoMigrationSpec
 }

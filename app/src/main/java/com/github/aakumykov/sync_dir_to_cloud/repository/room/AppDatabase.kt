@@ -39,7 +39,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncInstruction::class,
         SyncInstruction5::class,
    ],
-    version = 93,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -78,7 +77,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 90, to = 91, spec = SyncInstruction5.RenameObjectIdToSourceObjectIdMigrationSpec::class),
         AutoMigration(from = 91, to = 92), // SyncInstruction5.sourceObjectId стало nullable.
         AutoMigration(from = 92, to = 93), // Новое поле SyncInstruction5.executionOrderNum
-    ]
+        AutoMigration(from = 93, to = 94, spec = SyncInstruction5.DeleteSyncSideColumnMigrationSpec::class),
+    ],
+    version = 94,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

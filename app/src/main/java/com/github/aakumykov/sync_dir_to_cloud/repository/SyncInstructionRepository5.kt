@@ -26,7 +26,6 @@ class SyncInstructionRepository5 @Inject constructor(
         return syncInstructionDAO5.getSyncInstructions(
             taskId = taskId,
             executionId = executionId,
-            syncSide = syncSide,
             isDir = isDir
         )
     }
