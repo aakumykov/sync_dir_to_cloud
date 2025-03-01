@@ -31,6 +31,7 @@ class SyncInstruction5 (
     @ColumnInfo(name = "group_order_num", defaultValue = "0") val groupOrderNum: Int,
 
     @ColumnInfo(name = "source_object_id") val sourceObjectId: String?,
+    @ColumnInfo(name = "target_object_id", defaultValue = "null") val targetObjectId: String?,
 
 
     @ColumnInfo(name = "sync_side") val syncSide: SyncSide,
