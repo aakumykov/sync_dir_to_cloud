@@ -29,7 +29,10 @@ class SyncInstruction5 (
     @ColumnInfo(name = "execution_id") val executionId: String,
     @ColumnInfo(name = "execution_order_num", defaultValue = "0") val executionOrderNum: Int,
     @ColumnInfo(name = "group_order_num", defaultValue = "0") val groupOrderNum: Int,
-    @ColumnInfo(name = "object_id") val objectId: String,
+
+    @ColumnInfo(name = "source_object_id") val sourceObjectId: String,
+
+
     @ColumnInfo(name = "sync_side") val syncSide: SyncSide,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "is_dir") val isDir: Boolean,
@@ -37,4 +40,7 @@ class SyncInstruction5 (
 ) {
     @RenameColumn(tableName = "sync_instructions_5", fromColumnName = "order_num", toColumnName = "execution_order_num")
     class RenameOrderNumToGroupOrderNumMigrationSpec : AutoMigrationSpec
+
+    @RenameColumn(tableName = "sync_instructions_5", fromColumnName = "object_id", toColumnName = "source_object_id")
+    class RenameObjectIdToSourceObjectIdMigrationSpec : AutoMigrationSpec
 }
