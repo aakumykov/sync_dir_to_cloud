@@ -39,7 +39,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncInstruction::class,
         SyncInstruction5::class,
    ],
-    version = 88,
+    version = 89,
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -73,6 +73,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 85, to = 86, spec = SyncObject.RenameSideToSyncSideMigration::class), // SyncObject.side --> syncSide
         AutoMigration(from = 86, to = 87), // Новый объект SyncInstruction5
         AutoMigration(from = 87, to = 88), // Переместил поля в SyncInstruction5
+        AutoMigration(from = 88, to = 89), // Новое поле SyncInstruction5.executionOrderNum
 
     ]
 )

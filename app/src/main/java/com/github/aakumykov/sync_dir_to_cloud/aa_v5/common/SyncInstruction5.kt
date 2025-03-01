@@ -25,6 +25,7 @@ class SyncInstruction5 (
     @ColumnInfo(name = "id") val id: String,
     @ColumnInfo(name = "task_id", index = true) val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
+    @ColumnInfo(name = "execution_order_num", defaultValue = "0") val executionOrderNum: Int,
     @ColumnInfo(name = "order_num") val orderNum: Int,
     @ColumnInfo(name = "object_id") val objectId: String,
     @ColumnInfo(name = "sync_side") val syncSide: SyncSide,
