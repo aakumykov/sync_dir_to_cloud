@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 
 class InstructionMatrix {
 
-    companion object {
+    /*companion object {
         val INSTRUCTION_MATRIX = mapOf(
             SyncMode.UPDATE_LOCAL to mapOf(
                 StateInStorage.UNCHANGED to SyncAction.DO_NOTHING,
@@ -50,5 +50,5 @@ class InstructionMatrix {
         fun getFor(syncMode: SyncMode, syncObject: SyncObject): SyncAction? {
             return INSTRUCTION_MATRIX[syncMode]?.get(syncObject.stateInStorage)
         }
-    }
+    }*/
 }
