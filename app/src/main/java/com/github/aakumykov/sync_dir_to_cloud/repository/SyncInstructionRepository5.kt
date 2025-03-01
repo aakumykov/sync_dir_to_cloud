@@ -5,9 +5,15 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO5
 import javax.inject.Inject;
 
-public class SyncInstructionRepository5 @Inject constructor(
+class SyncInstructionRepository5 @Inject constructor(
     private val syncInstructionDAO5: SyncInstructionDAO5
 ) {
+    suspend fun getSyncInstructions(taskId: String,
+                                    executionId: String
+    ): List<SyncInstruction5> {
+        return syncInstructionDAO5.getSyncInstructions(taskId, executionId)
+    }
+
     suspend fun add(syncInstruction5: SyncInstruction5) {
         syncInstructionDAO5.add(syncInstruction5)
     }
