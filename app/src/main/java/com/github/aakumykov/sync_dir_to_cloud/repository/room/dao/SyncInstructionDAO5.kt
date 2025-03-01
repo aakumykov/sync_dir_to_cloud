@@ -14,7 +14,7 @@ interface SyncInstructionDAO5 {
             "WHERE task_id = :taskId " +
             "AND execution_id = :executionId " +
             "ORDER BY execution_order_num")
-    suspend fun getGroupsForSync(taskId: String, executionId: String)
+    suspend fun getInstructionGroupsForSync(taskId: String, executionId: String)
 
     @Insert
     suspend fun add(syncInstruction5: SyncInstruction5)
