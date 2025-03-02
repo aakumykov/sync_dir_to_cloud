@@ -78,6 +78,7 @@ class SyncTask {
     @ColumnInfo(name = "total_objects_count", defaultValue = "0") var totalObjectsCount: Int = 0
     @ColumnInfo(name = "synced_objects_count", defaultValue = "0") var syncedObjectsCount: Int = 0
 
+    @ColumnInfo(name = "with_backup", defaultValue = "false") var withBackup = false
 
     @Ignore
     constructor() {
