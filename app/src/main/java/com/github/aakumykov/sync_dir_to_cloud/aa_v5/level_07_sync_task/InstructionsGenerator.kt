@@ -47,15 +47,14 @@ class InstructionsGenerator @AssistedInject constructor(
         sourceObjectsList: Iterable<SyncObject>,
         targetObjectsList: Iterable<SyncObject>
     ) {
-        for (commonObject in commonObjectsList) {
-//            val syncInstruction = instructionCreator.create(
-//                commonObject,
-//                sourceObjectsList.first { it.isSameWith(commonObject) },
-//                targetObjectsList.first { it.isSameWith(commonObject) },
-//                syncTask.syncMode!!
-//            )
-//            instructionRepository.add(syncInstruction)
-        }
+        /*for (commonObject in commonObjectsList) {
+            val syncInstruction = instructionCreator.create(
+                syncTask.syncMode!!,
+                sourceObjectsList.first { it.isSameWith(commonObject) },
+                targetObjectsList.first { it.isSameWith(commonObject) },
+            )
+            instructionRepository.add(syncInstruction)
+        }*/
     }
 
 
@@ -83,7 +82,12 @@ class InstructionsGenerator @AssistedInject constructor(
     }
 
     private val instructionCreator: SyncInstructionCreator by lazy {
-        instructionCreatorAssistedFactory.create(1, syncTask.id, executionId)
+        instructionCreatorAssistedFactory.create(
+            initialOrderNum = 1,
+            taskId = syncTask.id,
+            executionId = executionId,
+            withBackup = syncTask.withBackup
+        )
     }
 
     companion object {

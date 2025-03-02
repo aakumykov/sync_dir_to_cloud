@@ -10,6 +10,7 @@ import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import java.util.UUID
 
 @Entity(
     tableName = "sync_instructions_5",
@@ -26,6 +27,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 class SyncInstruction5 (
     @PrimaryKey
     @ColumnInfo(name = "id") val id: String,
+
     @ColumnInfo(name = "task_id", index = true) val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
     @ColumnInfo(name = "execution_order_num", defaultValue = "0") val executionOrderNum: Int,

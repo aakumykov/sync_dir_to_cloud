@@ -1,10 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 enum class StateInStorage {
-    NEW,
-    DELETED,
     UNCHANGED,
+    NEW,
     MODIFIED,
+    DELETED
 }
 
 fun StateInStorage.isNew(): Boolean = this == StateInStorage.NEW
