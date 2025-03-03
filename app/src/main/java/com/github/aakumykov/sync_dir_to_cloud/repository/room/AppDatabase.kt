@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
@@ -38,6 +39,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         ExecutionLogItem::class,
         SyncInstruction::class,
         SyncInstruction5::class,
+        ComparisonState::class,
    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -80,8 +82,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 93, to = 94, spec = SyncInstruction5.DeleteSyncSideColumnMigrationSpec::class),
         AutoMigration(from = 94, to = 95, spec = SyncInstruction5.DeleteIsDirColumnMigrationSpec::class),
         AutoMigration(from = 95, to = 96), // Новое поле SyncTask.withBackup
+        AutoMigration(from = 96, to = 97),
     ],
-    version = 96,
+    version = 97,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
