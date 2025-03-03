@@ -15,4 +15,8 @@ class ComparisonState (
     @ColumnInfo(name = "source_object_state") val sourceObjectState: StateInStorage?,
     @ColumnInfo(name = "target_object_state") val targetObjectState: StateInStorage?,
     @ColumnInfo(name = "relative_path") val relativePath: String, // Для удобства отладки, чтобы знать, что за файл.
-)
+) {
+    val isBilateral: Boolean = sourceObjectId != null && targetObjectId != null
+    val onlySource: Boolean = sourceObjectId != null && targetObjectId == null
+    val onlyTarget: Boolean = sourceObjectId == null && targetObjectId != null
+}
