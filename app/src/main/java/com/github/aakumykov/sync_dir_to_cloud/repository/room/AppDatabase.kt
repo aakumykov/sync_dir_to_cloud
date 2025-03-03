@@ -25,6 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO5
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
@@ -104,4 +105,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getExecutionLogDAO(): ExecutionLogDAO
     abstract fun getSyncInstructionDAO(): SyncInstructionDAO
     abstract fun getSyncInstructionDAO5(): SyncInstructionDAO5
+    abstract fun getComparisonStateDAO(): ComparisonStateDAO
 }

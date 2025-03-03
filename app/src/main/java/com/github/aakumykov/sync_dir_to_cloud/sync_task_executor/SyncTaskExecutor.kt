@@ -153,6 +153,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
+            compareSourceWithTarget(syncTask)
+
             generateSyncInstructions(syncTask)
 
             // Сравнить источник с приёмником
@@ -446,12 +448,14 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun compareSourceWithTarget(taskId: String) {
+    private suspend fun compareSourceWithTarget(syncTask: SyncTask) {
         appComponent
-            .getSourceWithTargetComparator()
+            .getSourceWithTargetComparatorAssistedFactory5()
+            .create(syncTask = syncTask, executionId = executionId)
             .apply {
-                removeOldSyncInstructions(taskId)
-                compare(taskId, UpdateTargetComparisionStrategy())
+                compareSourceWithTarget()
+                /*removeOldSyncInstructions(taskId)
+                compare(taskId, UpdateTargetComparisionStrategy())*/
             }
     }
 
