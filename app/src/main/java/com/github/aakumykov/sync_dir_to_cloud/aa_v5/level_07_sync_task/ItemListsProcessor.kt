@@ -38,12 +38,7 @@ class ItemListsProcessor @AssistedInject constructor(
         onlyInTargetItemsProcessor.process(list = onlyInTarget, syncMode = syncTask.syncMode!!)
 
         when(syncTask.syncMode!!) {
-            SyncMode.SYNC -> twoPlaceSyncItemsProcessor.process(
-                withBackup = syncTask.withBackup,
-                commonItems = both,
-                allSourceItems = sourceObjectsList,
-                allTargetItems = targetObjectsList,
-            )
+            SyncMode.SYNC -> twoPlaceSyncItemsProcessor.process()
             SyncMode.MIRROR -> {}
         }
     }
