@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionRepository
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.UpdateTargetComparisionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -155,7 +154,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             compareSourceWithTarget(syncTask)
 
-            generateSyncInstructions(syncTask)
+            processItems(syncTask)
+
+//            generateSyncInstructions(syncTask)
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)
@@ -212,6 +213,16 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    private suspend fun processItems(syncTask: SyncTask) {
+        appComponent
+            .getItemListsProcessorAssistedFactory()
+            .create(
+                syncTask = syncTask,
+                executionId = executionId,
+            )
+            .process()
     }
 
     private suspend fun generateSyncInstructions(syncTask: SyncTask) {
