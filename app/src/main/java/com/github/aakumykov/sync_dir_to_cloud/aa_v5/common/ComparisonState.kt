@@ -21,3 +21,7 @@ class ComparisonState (
     @Ignore val onlySource: Boolean = sourceObjectId != null && targetObjectId == null
     @Ignore val onlyTarget: Boolean = sourceObjectId == null && targetObjectId != null
 }
+
+val ComparisonState.isUnchangedNew: Boolean
+    get() = sourceObjectState == StateInStorage.UNCHANGED
+            && targetObjectState == StateInStorage.NEW
