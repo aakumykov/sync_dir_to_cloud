@@ -7,6 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction.SyncInstruc
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionDAO6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -41,6 +43,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncInstruction::class,
         SyncInstruction5::class,
         ComparisonState::class,
+        SyncInstruction6::class,
    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -84,8 +87,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 94, to = 95, spec = SyncInstruction5.DeleteIsDirColumnMigrationSpec::class),
         AutoMigration(from = 95, to = 96), // Новое поле SyncTask.withBackup
         AutoMigration(from = 96, to = 97), // ComparisonState
+        AutoMigration(from = 97, to = 98), // SyncInstruction6
     ],
-    version = 97,
+    version = 98,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -106,4 +110,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncInstructionDAO(): SyncInstructionDAO
     abstract fun getSyncInstructionDAO5(): SyncInstructionDAO5
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
+    abstract fun getSyncInstructionDAO6(): SyncInstructionDAO6
 }

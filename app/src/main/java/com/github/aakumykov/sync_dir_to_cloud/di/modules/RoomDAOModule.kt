@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionDAO6
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
@@ -99,5 +100,10 @@ class RoomDAOModule(private val appDatabase: AppDatabase) {
     @Provides
     fun provideComparisonStateDAO(): ComparisonStateDAO {
         return appDatabase.getComparisonStateDAO()
+    }
+
+    @Provides
+    fun provideSyncInstructionDAO6(): SyncInstructionDAO6 {
+        return appDatabase.getSyncInstructionDAO6()
     }
 }
