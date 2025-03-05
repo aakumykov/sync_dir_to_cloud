@@ -58,6 +58,6 @@ class ItemListsProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface ComparisonResultsProcessorAssistedFactory {
+interface ItemListsProcessorAssistedFactory {
     fun create(syncTask: SyncTask, executionId: String): ItemListsProcessor
 }
