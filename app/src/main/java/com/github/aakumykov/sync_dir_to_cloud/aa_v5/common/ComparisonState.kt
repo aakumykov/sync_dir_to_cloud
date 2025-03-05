@@ -4,6 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import androidx.room.RenameColumn
+import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 
 @Entity(tableName = "comparison_states")
@@ -20,4 +22,10 @@ class ComparisonState (
     @Ignore val isBilateral: Boolean = sourceObjectId != null && targetObjectId != null
     @Ignore val onlySource: Boolean = sourceObjectId != null && targetObjectId == null
     @Ignore val onlyTarget: Boolean = sourceObjectId == null && targetObjectId != null
+
+    @RenameColumn(tableName = "comparison_states", fromColumnName = "source_object_id", toColumnName = "source_id")
+    @RenameColumn(tableName = "comparison_states", fromColumnName = "target_object_id", toColumnName = "target_id")
+    @RenameColumn(tableName = "comparison_states", fromColumnName = "source_object_state", toColumnName = "source_state")
+    @RenameColumn(tableName = "comparison_states", fromColumnName = "target_object_state", toColumnName = "target_state")
+    class RenameStateFieldsSpec : AutoMigrationSpec
 }
