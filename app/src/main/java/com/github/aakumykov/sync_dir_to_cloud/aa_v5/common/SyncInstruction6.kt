@@ -16,7 +16,7 @@ class SyncInstruction6 (
 
     @ColumnInfo(name = "from_id") val fromId: String,
     @ColumnInfo(name = "to_id") val toId: String,
-    @ColumnInfo(name = "operation") val operation6: SyncOperation6,
+    @ColumnInfo(name = "operation") val operation: SyncOperation6,
 )
 
 
