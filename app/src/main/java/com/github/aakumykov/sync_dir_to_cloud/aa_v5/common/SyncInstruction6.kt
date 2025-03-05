@@ -6,6 +6,8 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.RenameColumn
+import androidx.room.migration.AutoMigrationSpec
 import javax.inject.Inject
 
 @Entity(tableName = "sync_instructions_6")
@@ -14,10 +16,20 @@ class SyncInstruction6 (
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
 
-    @ColumnInfo(name = "from_id") val fromId: String,
-    @ColumnInfo(name = "to_id") val toId: String,
+    @ColumnInfo(name = "object_id_in_source") val objectIdInSource: String,
+    @ColumnInfo(name = "object_id_in_target") val objectIdInTarget: String,
     @ColumnInfo(name = "operation") val operation: SyncOperation6,
-)
+) {
+    @RenameColumn(
+        tableName = "sync_instructions_6",
+        fromColumnName = "from_id",
+        toColumnName = "object_id_in_source")
+    @RenameColumn(
+        tableName = "sync_instructions_6",
+        fromColumnName = "to_id",
+        toColumnName = "object_id_in_target")
+    class RenameObjectIdColumnsMigration1: AutoMigrationSpec
+}
 
 
 @Dao
