@@ -24,6 +24,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
     private val syncObjectDeleter5AssistedFactory: SyncObjectDeleterAssistedFactory5,
 ) {
     suspend fun p1(commonItems: Iterable<SyncObject>, allSourceItems: Iterable<SyncObject>, allTargetItems: Iterable<SyncObject>) {
+
         // Прежние в источнике
         processUnchangedInSourceAndUnchangedInTarget(commonItems, allSourceItems, allTargetItems)
         processUnchangedInSourceAndNewInTarget(commonItems, allSourceItems, allTargetItems)
@@ -187,7 +188,6 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
 
     suspend fun process(
         withBackup: Boolean,
-        priority: StoragePriority,
         commonItems: Iterable<SyncObject>,
         allSourceItems: Iterable<SyncObject>,
         allTargetItems: Iterable<SyncObject>,
