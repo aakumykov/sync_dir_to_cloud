@@ -6,7 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.intersectBy
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isSameWith
 import com.github.aakumykov.sync_dir_to_cloud.extensions.subtractBy
-import com.github.aakumykov.sync_dir_to_cloud.helpers.areObjectsTheSame
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository5
 import dagger.assisted.Assisted
@@ -37,6 +36,10 @@ class InstructionsGenerator @AssistedInject constructor(
         processItemsExistsInSourceAndTarget(both, sourceObjectsList, targetObjectsList)
         processItemsExistsOnlyInSource(onlyInSource)
         processItemsExistsOnlyInTarget(onlyInTarget)
+    }
+
+    private fun areObjectsTheSame(o1: SyncObject, o2: SyncObject): Boolean {
+        return o1.isSameWith(o2)
     }
 
     private suspend fun processItemsExistsInSourceAndTarget(
