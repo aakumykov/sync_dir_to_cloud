@@ -64,6 +64,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                     objectIdInSource = comparisonState.targetObjectId!!,
                     objectIdInTarget = comparisonState.sourceObjectId!!,
                     operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
+                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -87,6 +88,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                     objectIdInSource = comparisonState.targetObjectId!!,
                     objectIdInTarget = comparisonState.sourceObjectId!!,
                     operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -107,6 +109,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                     objectIdInSource = comparisonState.targetObjectId!!,
                     objectIdInTarget = comparisonState.sourceObjectId!!,
                     operation = SyncOperation6.DELETE_IN_TARGET,
+                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -127,6 +130,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                     objectIdInSource = comparisonState.targetObjectId!!,
                     objectIdInTarget = comparisonState.sourceObjectId!!,
                     operation = SyncOperation6.DELETE_IN_SOURCE,
+                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -151,6 +155,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                     objectIdInSource = comparisonState.targetObjectId!!,
                     objectIdInTarget = comparisonState.sourceObjectId!!,
                     operation = SyncOperation6.RENAME_IN_SOURCE,
+                    relativePath = comparisonState.relativePath,
                 ))
                 syncInstructionRepository6.add(SyncInstruction6(
                     id = randomUUID,
@@ -159,6 +164,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                     objectIdInSource = comparisonState.targetObjectId!!,
                     objectIdInTarget = comparisonState.sourceObjectId!!,
                     operation = SyncOperation6.RENAME_IN_TARGET,
+                    relativePath = comparisonState.relativePath,
                 ))
                 syncInstructionRepository6.add(SyncInstruction6(
                     id = randomUUID,
@@ -167,6 +173,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                     objectIdInSource = comparisonState.targetObjectId!!,
                     objectIdInTarget = comparisonState.sourceObjectId!!,
                     operation = SyncOperation6.NEED_SECOND_SYNC,
+                    relativePath = comparisonState.relativePath,
                 ))
             }
     }

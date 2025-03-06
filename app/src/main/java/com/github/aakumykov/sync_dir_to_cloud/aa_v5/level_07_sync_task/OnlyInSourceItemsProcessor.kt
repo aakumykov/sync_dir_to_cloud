@@ -43,7 +43,8 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
                     executionId = executionId,
                     objectIdInSource = comparisonState.sourceObjectId,
                     objectIdInTarget = comparisonState.targetObjectId,
-                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET
+                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -61,7 +62,8 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
                     executionId = executionId,
                     objectIdInSource = comparisonState.sourceObjectId,
                     objectIdInTarget = comparisonState.targetObjectId,
-                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET
+                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
