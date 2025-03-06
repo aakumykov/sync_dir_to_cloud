@@ -150,6 +150,6 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface TwoPlaceSyncItemProcessorAssistedFactory {
+interface TwoPlaceItemMirrorProcessorAssistedFactory {
     fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemMirrorProcessor
 }
