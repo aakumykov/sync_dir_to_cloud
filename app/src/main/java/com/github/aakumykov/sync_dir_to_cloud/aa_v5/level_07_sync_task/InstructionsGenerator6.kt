@@ -6,7 +6,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class ItemListsProcessor @AssistedInject constructor(
+class InstructionsGenerator6 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val onlyInSourceItemsProcessorAssistedFactory: OnlyInSourceItemsProcessorAssistedFactory,
@@ -14,7 +14,7 @@ class ItemListsProcessor @AssistedInject constructor(
     private val twoPlaceItemsMirrorProcessorAssistedFactory: TwoPlaceItemMirrorProcessorAssistedFactory,
     private val twoPlaceItemsSyncProcessorAssistedFactory: TwoPlaceItemSyncProcessorAssistedFactory,
 ) {
-    suspend fun process() {
+    suspend fun generate() {
 
         onlyInSourceItemsProcessor.process()
         onlyInTargetItemsProcessor.process()
@@ -44,6 +44,6 @@ class ItemListsProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface ItemListsProcessorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): ItemListsProcessor
+interface InstructionsGeneratorAssistedFactory6 {
+    fun create(syncTask: SyncTask, executionId: String): InstructionsGenerator6
 }

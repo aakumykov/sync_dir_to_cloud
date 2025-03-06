@@ -23,7 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.FileCopierAssist
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.SyncObjectCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.ItemListsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWithTargetComparatorAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -212,7 +212,7 @@ interface AppComponent {
 
     fun getInstructionsGeneratorAssistedFactory(): InstructionsGeneratorAssistedFactory
 
-    fun getItemListsProcessorAssistedFactory(): ItemListsProcessorAssistedFactory
+    fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

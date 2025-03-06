@@ -217,12 +217,12 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun generateSyncInstructions(syncTask: SyncTask) {
         appComponent
-            .getItemListsProcessorAssistedFactory()
+            .getInstructionsGeneratorAssistedFactory6()
             .create(
                 syncTask = syncTask,
                 executionId = executionId,
             )
-            .process()
+            .generate()
     }
 
 
