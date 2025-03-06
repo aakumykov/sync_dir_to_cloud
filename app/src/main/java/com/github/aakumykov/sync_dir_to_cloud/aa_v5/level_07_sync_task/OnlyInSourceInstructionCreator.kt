@@ -21,6 +21,7 @@ class OnlyInSourceInstructionCreator @AssistedInject constructor(
 ){
     //Несмотря на то, что инструкция к фалам и каталогам применяется одна,
     // вначале должны быть созданы каталоги.
+    // Нет: порядок выполнения определяется на этапе выполнения инструкций.
     suspend fun process(initialOrderNum: Int): Int {
         val nextOrderNum = processUnchangedNewModifiedDirs(initialOrderNum)
         return processUnchangedNewModifiedFiles(nextOrderNum)

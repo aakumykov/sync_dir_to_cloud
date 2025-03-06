@@ -30,7 +30,7 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ) {
-    suspend fun process(initialOrderNum: Int): Int {
+    suspend fun processMirroring(initialOrderNum: Int): Int {
         var nextOrderNum = processMutuallyUnchangedOrDeleted(initialOrderNum)
         nextOrderNum = processSourceUnchangedOrDeletedWithTargetNewOrModified(nextOrderNum)
         nextOrderNum = processSourceNewOrModifiedWithTargetUnchangedOrDeleted(nextOrderNum)

@@ -23,7 +23,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
     /**
      * @return Увеличенный порядковый номер
      */
-    suspend fun process(initialOrderNum: Int): Int {
+    suspend fun processSyncing(initialOrderNum: Int): Int {
         val nextOrderNum = processNeedToBeCopiedToTarget(initialOrderNum)
         return processNeedToBeDeletedInTarget(nextOrderNum)
     }
