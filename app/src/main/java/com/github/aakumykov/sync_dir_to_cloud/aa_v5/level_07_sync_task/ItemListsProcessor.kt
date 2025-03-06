@@ -15,13 +15,14 @@ import dagger.assisted.AssistedInject
 class ItemListsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val syncObjectReader: SyncObjectReader,
+//    private val syncObjectReader: SyncObjectReader,
     private val onlyInSourceItemsProcessorAssistedFactory: OnlyInSourceItemsProcessorAssistedFactory,
     private val onlyInTargetItemsProcessorAssistedFactory: OnlyInTargetItemsProcessorAssistedFactory,
     private val twoPlaceItemsProcessorAssistedFactory: TwoPlaceSyncItemProcessorAssistedFactory,
 ) {
     suspend fun process() {
 
+/*
         val sourceObjectsList = syncObjectReader
             .getAllObjectsForTask(SyncSide.SOURCE, syncTask.id)
             .toMutableList()
@@ -33,8 +34,9 @@ class ItemListsProcessor @AssistedInject constructor(
         val both = sourceObjectsList.intersectBy(targetObjectsList, ::areObjectsTheSame)
         val onlyInSource = sourceObjectsList.subtractBy(targetObjectsList, ::areObjectsTheSame)
         val onlyInTarget = targetObjectsList.subtractBy(sourceObjectsList, ::areObjectsTheSame)
+*/
 
-//        onlyInSourceItemsProcessor.process(onlyInSource)
+        onlyInSourceItemsProcessor.process()
 //        onlyInTargetItemsProcessor.process(list = onlyInTarget, syncMode = syncTask.syncMode!!)
 
         when(syncTask.syncMode ?: SyncMode.SYNC) {
@@ -44,7 +46,7 @@ class ItemListsProcessor @AssistedInject constructor(
     }
 
     private val onlyInSourceItemsProcessor by lazy {
-        onlyInSourceItemsProcessorAssistedFactory.create(syncTask)
+        onlyInSourceItemsProcessorAssistedFactory.create(syncTask, executionId)
     }
 
     private val onlyInTargetItemsProcessor by lazy {
