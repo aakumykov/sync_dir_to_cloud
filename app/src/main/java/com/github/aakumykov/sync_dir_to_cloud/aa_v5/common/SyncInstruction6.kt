@@ -37,6 +37,7 @@ class SyncInstruction6 (
     @ColumnInfo(name = "order_num", defaultValue = "0") val orderNum: Int,
     @ColumnInfo(name = "operation") val operation: SyncOperation6,
 
+    @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
     @ColumnInfo(name = "relative_path", defaultValue = "") val relativePath: String
 ) {
     @RenameColumn(
@@ -87,6 +88,7 @@ fun SyncInstruction6.Companion.from(
     objectIdInSource = comparisonState.sourceObjectId,
     objectIdInTarget = comparisonState.targetObjectId,
     operation = operation,
+    isDir = comparisonState.isDir,
     relativePath = comparisonState.relativePath,
     orderNum = orderNum,
 )
