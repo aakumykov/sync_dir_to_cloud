@@ -2,11 +2,25 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.common
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
-@Entity(tableName = "comparison_states")
+@Entity(
+    tableName = "comparison_states",
+    foreignKeys = [
+        ForeignKey(
+            entity = SyncTask::class,
+            parentColumns = ["id"],
+            childColumns = ["task_id"],
+            onDelete = CASCADE,
+            onUpdate = CASCADE
+        )
+    ],
+)
 class ComparisonState (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
