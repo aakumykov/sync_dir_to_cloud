@@ -11,6 +11,7 @@ class ComparisonState (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
+    @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
     @ColumnInfo(name = "source_object_id") val sourceObjectId: String?,
     @ColumnInfo(name = "target_object_id") val targetObjectId: String?,
     @ColumnInfo(name = "source_object_state") val sourceObjectState: StateInStorage?,

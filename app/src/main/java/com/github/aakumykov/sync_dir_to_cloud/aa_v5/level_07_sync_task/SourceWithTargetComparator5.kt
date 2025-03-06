@@ -42,11 +42,12 @@ class SourceWithTargetComparator5 @AssistedInject constructor(
                 id = randomUUID,
                 taskId = syncTask.id,
                 executionId = executionId,
+                isDir = commonSyncObject.isDir,
                 sourceObjectId = sourceObject.id,
                 targetObjectId = targetObject.id,
                 sourceObjectState = sourceObject.stateInStorage,
                 targetObjectState = targetObject.stateInStorage,
-                relativePath = sourceObject.relativePath
+                relativePath = sourceObject.relativePath,
             ))
         }
 
@@ -55,6 +56,7 @@ class SourceWithTargetComparator5 @AssistedInject constructor(
                 id = randomUUID,
                 taskId = syncTask.id,
                 executionId = executionId,
+                isDir = sourceObject.isDir,
                 sourceObjectId = sourceObject.id,
                 targetObjectId = null,
                 sourceObjectState = sourceObject.stateInStorage,
@@ -68,6 +70,7 @@ class SourceWithTargetComparator5 @AssistedInject constructor(
                 id = randomUUID,
                 taskId = syncTask.id,
                 executionId = executionId,
+                isDir = targetObject.isDir,
                 sourceObjectId = null,
                 targetObjectId = targetObject.id,
                 sourceObjectState = null,
