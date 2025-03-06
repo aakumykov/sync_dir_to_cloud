@@ -16,12 +16,14 @@ class InstructionsGenerator6 @AssistedInject constructor(
 ) {
     suspend fun generate() {
 
-        onlyInSourceItemsProcessor.process()
-        onlyInTargetItemsProcessor.process()
+        val initialOrderNum = 1
+
+        var nextOrderNum = onlyInSourceItemsProcessor.process(initialOrderNum)
+        nextOrderNum = onlyInTargetItemsProcessor.process(nextOrderNum)
 
         when(syncTask.syncMode ?: SyncMode.SYNC) {
-            SyncMode.SYNC -> twoPlaceSyncItemsProcessor.process()
-            SyncMode.MIRROR -> twoPlaceMirrorItemsProcessor.process()
+            SyncMode.SYNC -> twoPlaceSyncItemsProcessor.process(nextOrderNum)
+            SyncMode.MIRROR -> twoPlaceMirrorItemsProcessor.process(nextOrderNum)
         }
     }
 

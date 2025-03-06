@@ -7,14 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.from
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopierAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -28,12 +21,13 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
 ){
     //Несмотря на то, что инструкция к фалам и каталогам применяется одна,
     // вначале должны быть созданы каталоги.
-    suspend fun process() {
-        processUnchangedNewModifiedDirs()
-        processUnchangedNewModifiedFiles()
+    suspend fun process(initialOrderNum: Int): Int {
+        val nextOrderNum = processUnchangedNewModifiedDirs(initialOrderNum)
+        return processUnchangedNewModifiedFiles(nextOrderNum)
     }
 
-    private suspend fun processUnchangedNewModifiedDirs() {
+    private suspend fun processUnchangedNewModifiedDirs(initialOrderNum: Int): Int {
+        var n = initialOrderNum
         getOnlyInSourceStates()
             .filter { it.isDir }
             .filter { it.notUnchangedOrDeletedInSource }
@@ -41,11 +35,14 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
                 syncInstructionRepository6.add(SyncInstruction6.from(
                     comparisonState = comparisonState,
                     operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    orderNum = n++
                 ))
             }
+        return n
     }
 
-    private suspend fun processUnchangedNewModifiedFiles() {
+    private suspend fun processUnchangedNewModifiedFiles(initialOrderNum: Int): Int {
+        var n = initialOrderNum
         getOnlyInSourceStates()
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInSource }
@@ -53,8 +50,10 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
                 syncInstructionRepository6.add(SyncInstruction6.from(
                     comparisonState = comparisonState,
                     operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    orderNum = n++
                 ))
             }
+        return n
     }
 
     private suspend fun getOnlyInSourceStates(): Iterable<ComparisonState> {

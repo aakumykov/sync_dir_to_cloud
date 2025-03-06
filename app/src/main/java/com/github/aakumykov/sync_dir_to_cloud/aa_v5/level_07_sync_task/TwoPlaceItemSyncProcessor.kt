@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedInBothPlaces
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -21,12 +20,16 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ) {
-    suspend fun process() {
-        processNeedToBeCopyiedToTarget()
-        processNeedToBeDeletedInTarget()
+    /**
+     * @return Увеличенный порядковый номер
+     */
+    suspend fun process(initialOrderNum: Int): Int {
+        val nextOrderNum = processNeedToBeCopiedToTarget(initialOrderNum)
+        return processNeedToBeDeletedInTarget(nextOrderNum)
     }
 
-    private suspend fun processNeedToBeCopyiedToTarget() {
+    private suspend fun processNeedToBeCopiedToTarget(initialOrderNum: Int): Int {
+        var n = initialOrderNum
         comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
             .filter { it.notDeletedInSource }
@@ -34,12 +37,15 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6.from(
                     comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET
+                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    orderNum = n++
                 ))
             }
+        return n
     }
 
-    private suspend fun processNeedToBeDeletedInTarget() {
+    private suspend fun processNeedToBeDeletedInTarget(initialOrderNum: Int): Int {
+        var n = initialOrderNum
         comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
             .filter { it.isDeletedInSource }
@@ -47,9 +53,11 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6.from(
                     comparisonState = comparisonState,
-                    operation = SyncOperation6.DELETE_IN_TARGET
+                    operation = SyncOperation6.DELETE_IN_TARGET,
+                    orderNum = n++
                 ))
             }
+        return n
     }
 }
 

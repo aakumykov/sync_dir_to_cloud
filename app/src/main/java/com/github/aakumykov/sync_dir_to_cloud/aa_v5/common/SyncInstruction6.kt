@@ -34,6 +34,7 @@ class SyncInstruction6 (
     @ColumnInfo(name = "object_id_in_source") val objectIdInSource: String?,
     @ColumnInfo(name = "object_id_in_target") val objectIdInTarget: String?,
 
+    @ColumnInfo(name = "order_num", defaultValue = "0") val orderNum: Int,
     @ColumnInfo(name = "operation") val operation: SyncOperation6,
 
     @ColumnInfo(name = "relative_path", defaultValue = "") val relativePath: String
@@ -77,7 +78,8 @@ class SyncInstructionRepository6 @Inject constructor(
 
 fun SyncInstruction6.Companion.from(
     comparisonState: ComparisonState,
-    operation: SyncOperation6
+    operation: SyncOperation6,
+    orderNum: Int,
 ): SyncInstruction6 = SyncInstruction6(
     id = randomUUID,
     taskId = comparisonState.taskId,
@@ -85,5 +87,6 @@ fun SyncInstruction6.Companion.from(
     objectIdInSource = comparisonState.sourceObjectId,
     objectIdInTarget = comparisonState.targetObjectId,
     operation = operation,
-    relativePath = comparisonState.relativePath
+    relativePath = comparisonState.relativePath,
+    orderNum = orderNum,
 )
