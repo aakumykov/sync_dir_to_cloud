@@ -12,7 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class OnlyInTargetItemsProcessor @AssistedInject constructor(
+class OnlyInTargetInstructionCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -28,12 +28,13 @@ class OnlyInTargetItemsProcessor @AssistedInject constructor(
 
 
     /**
-     * @return З
+     * @return
      */
     private suspend fun processDirs(initialOrderNum: Int): Int {
         var n = initialOrderNum
         comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
+            .filter { it.onlyTarget }
             .filter { it.isDir }
             .filter { it.notUnchangedOrDeletedInTarget }
             .forEach { comparisonState ->
@@ -53,6 +54,7 @@ class OnlyInTargetItemsProcessor @AssistedInject constructor(
         var n = initialOrderNum
         comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
+            .filter { it.onlyTarget }
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInTarget }
             .forEach { comparisonState ->
@@ -68,6 +70,6 @@ class OnlyInTargetItemsProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface OnlyInTargetItemsProcessorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetItemsProcessor
+interface OnlyInTargetInstructionCreatorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetInstructionCreator
 }

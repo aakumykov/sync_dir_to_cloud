@@ -266,7 +266,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun processSyncInstructions(syncTask: SyncTask) {
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
-            .create(syncTask, executionId)
+            .create(syncTask, executionId, coroutineScope)
             .processInstructions()
     }
 

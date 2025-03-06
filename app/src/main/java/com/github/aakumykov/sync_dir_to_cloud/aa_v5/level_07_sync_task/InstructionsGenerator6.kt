@@ -9,8 +9,8 @@ import dagger.assisted.AssistedInject
 class InstructionsGenerator6 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val onlyInSourceItemsProcessorAssistedFactory: OnlyInSourceItemsProcessorAssistedFactory,
-    private val onlyInTargetItemsProcessorAssistedFactory: OnlyInTargetItemsProcessorAssistedFactory,
+    private val onlyInSourceInstructionCreatorAssistedFactory: OnlyInSourceInstructionCreatorAssistedFactory,
+    private val onlyInTargetInstructionCreatorAssistedFactory: OnlyInTargetInstructionCreatorAssistedFactory,
     private val twoPlaceItemsMirrorProcessorAssistedFactory: TwoPlaceItemMirrorProcessorAssistedFactory,
     private val twoPlaceItemsSyncProcessorAssistedFactory: TwoPlaceItemSyncProcessorAssistedFactory,
 ) {
@@ -19,6 +19,7 @@ class InstructionsGenerator6 @AssistedInject constructor(
         val initialOrderNum = 1
 
         var nextOrderNum = onlyInSourceItemsProcessor.process(initialOrderNum)
+
         nextOrderNum = onlyInTargetItemsProcessor.process(nextOrderNum)
 
         when(syncTask.syncMode ?: SyncMode.SYNC) {
@@ -28,11 +29,11 @@ class InstructionsGenerator6 @AssistedInject constructor(
     }
 
     private val onlyInSourceItemsProcessor by lazy {
-        onlyInSourceItemsProcessorAssistedFactory.create(syncTask, executionId)
+        onlyInSourceInstructionCreatorAssistedFactory.create(syncTask, executionId)
     }
 
     private val onlyInTargetItemsProcessor by lazy {
-        onlyInTargetItemsProcessorAssistedFactory.create(syncTask, executionId)
+        onlyInTargetInstructionCreatorAssistedFactory.create(syncTask, executionId)
     }
 
     private val twoPlaceMirrorItemsProcessor by lazy {

@@ -7,11 +7,12 @@ import dagger.assisted.AssistedInject
 
 class SyncObjectBackuper5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
 ) {
 }
 
 
 @AssistedFactory
 interface SyncObjectBackuperAssistedFactory5 {
-    fun create(syncTask: SyncTask): SyncObjectBackuper5
+    fun create(syncTask: SyncTask, executionId: String): SyncObjectBackuper5
 }

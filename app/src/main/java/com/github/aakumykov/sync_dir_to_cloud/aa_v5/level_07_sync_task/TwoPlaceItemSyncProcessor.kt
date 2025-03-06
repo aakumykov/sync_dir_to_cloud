@@ -32,6 +32,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
         var n = initialOrderNum
         comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
+            .filter { it.isBilateral }
             .filter { it.notDeletedInSource }
             .filter { it.notUnchangedInBothPlaces }
             .forEach { comparisonState ->
@@ -48,6 +49,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
         var n = initialOrderNum
         comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
+            .filter { it.isBilateral }
             .filter { it.isDeletedInSource }
             .filter { it.notDeletedInTarget }
             .forEach { comparisonState ->

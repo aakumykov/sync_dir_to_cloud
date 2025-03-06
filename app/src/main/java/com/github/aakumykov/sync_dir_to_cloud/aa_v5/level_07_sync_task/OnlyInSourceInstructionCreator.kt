@@ -13,7 +13,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class OnlyInSourceItemsProcessor @AssistedInject constructor(
+class OnlyInSourceInstructionCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -29,6 +29,7 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
     private suspend fun processUnchangedNewModifiedDirs(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
+            .filter { it.onlySource }
             .filter { it.isDir }
             .filter { it.notUnchangedOrDeletedInSource }
             .forEach { comparisonState ->
@@ -44,6 +45,7 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
     private suspend fun processUnchangedNewModifiedFiles(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
+            .filter { it.onlySource }
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInSource }
             .forEach { comparisonState ->
@@ -69,6 +71,6 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface OnlyInSourceItemsProcessorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): OnlyInSourceItemsProcessor
+interface OnlyInSourceInstructionCreatorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): OnlyInSourceInstructionCreator
 }

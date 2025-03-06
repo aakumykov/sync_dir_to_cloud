@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.InputStreamGetterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.FileWriter5

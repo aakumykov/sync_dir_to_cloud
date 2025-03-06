@@ -5,11 +5,13 @@ import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.Ignore
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import javax.inject.Inject
@@ -40,6 +42,13 @@ class SyncInstruction6 (
     @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
     @ColumnInfo(name = "relative_path", defaultValue = "") val relativePath: String
 ) {
+    @Ignore val isDeletion: Boolean = SyncOperation6.DELETE_IN_TARGET == operation ||
+            SyncOperation6.DELETE_IN_SOURCE == operation
+
+    @Ignore val notDeletion: Boolean =
+        SyncOperation6.DELETE_IN_TARGET != operation &&
+                SyncOperation6.DELETE_IN_SOURCE != operation
+
     @RenameColumn(
         tableName = "sync_instructions_6",
         fromColumnName = "from_id",
@@ -92,3 +101,5 @@ fun SyncInstruction6.Companion.from(
     relativePath = comparisonState.relativePath,
     orderNum = orderNum,
 )
+
+val SyncInstruction6.isFile: Boolean get() = !isDir
