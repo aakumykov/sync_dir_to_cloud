@@ -11,11 +11,15 @@ class ComparisonState (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
+
     @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
+
     @ColumnInfo(name = "source_object_id") val sourceObjectId: String?,
     @ColumnInfo(name = "target_object_id") val targetObjectId: String?,
+
     @ColumnInfo(name = "source_object_state") val sourceObjectState: StateInStorage?,
     @ColumnInfo(name = "target_object_state") val targetObjectState: StateInStorage?,
+
     @ColumnInfo(name = "relative_path") val relativePath: String, // Для удобства отладки, чтобы знать, что за файл.
 ) {
     @Ignore val isBilateral: Boolean = sourceObjectId != null && targetObjectId != null
@@ -26,6 +30,10 @@ class ComparisonState (
         return "ComparisonState(id='$id', taskId='$taskId', executionId='$executionId', sourceObjectId=$sourceObjectId, targetObjectId=$targetObjectId, sourceObjectState=$sourceObjectState, targetObjectState=$targetObjectState, relativePath='$relativePath', isBilateral=$isBilateral, onlySource=$onlySource, onlyTarget=$onlyTarget)"
     }
 }
+
+
+val ComparisonState.isFile: Boolean get() = !isDir
+
 
 val ComparisonState.isUnchangedNew: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED

@@ -1,12 +1,17 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopierAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -18,18 +23,47 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ){
+    //Несмотря на то, что инструкция к фалам и каталогам применяется одна,
+    // вначале должны быть созданы каталоги.
     suspend fun process() {
         processUnchangedNewModifiedDirs()
         processUnchangedNewModifiedFiles()
     }
 
-    private fun processUnchangedNewModifiedDirs() {
-        /*getOnlyInSourceStates()
-            .filter { }*/
+    private suspend fun processUnchangedNewModifiedDirs() {
+        getOnlyInSourceStates()
+            .filter { it.isDir }
+            .let { it }
+            .filter { it.sourceObjectState != StateInStorage.DELETED }
+            .let { it }
+            .forEach { comparisonState ->
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.sourceObjectId,
+                    objectIdInTarget = comparisonState.targetObjectId,
+                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET
+                ))
+            }
     }
 
-    private fun processUnchangedNewModifiedFiles() {
-
+    private suspend fun processUnchangedNewModifiedFiles() {
+        getOnlyInSourceStates()
+            .filter { it.isFile }
+            .let { it }
+            .filter { it.sourceObjectState != StateInStorage.DELETED }
+            .let { it }
+            .forEach { comparisonState ->
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.sourceObjectId,
+                    objectIdInTarget = comparisonState.targetObjectId,
+                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET
+                ))
+            }
     }
 
     private suspend fun getOnlyInSourceStates(): Iterable<ComparisonState> {
