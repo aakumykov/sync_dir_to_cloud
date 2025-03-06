@@ -19,13 +19,12 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TwoPlaceItemSyncProcessor @AssistedInject constructor(
+class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -145,12 +144,12 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = TwoPlaceItemSyncProcessor::class.java.simpleName
+        val TAG: String = TwoPlaceItemMirrorProcessor::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
 interface TwoPlaceSyncItemProcessorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemSyncProcessor
+    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemMirrorProcessor
 }

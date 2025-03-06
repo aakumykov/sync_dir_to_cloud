@@ -19,8 +19,8 @@ class ItemListsProcessor @AssistedInject constructor(
         onlyInTargetItemsProcessor.process()
 
         when(syncTask.syncMode ?: SyncMode.SYNC) {
-            SyncMode.SYNC -> twoPlaceSyncItemsProcessor.process()
-            SyncMode.MIRROR -> {}
+            SyncMode.SYNC -> {}
+            SyncMode.MIRROR -> twoPlaceMirrorItemsProcessor.process()
         }
     }
 
@@ -32,7 +32,7 @@ class ItemListsProcessor @AssistedInject constructor(
         onlyInTargetItemsProcessorAssistedFactory.create(syncTask, executionId)
     }
 
-    private val twoPlaceSyncItemsProcessor by lazy {
+    private val twoPlaceMirrorItemsProcessor by lazy {
         twoPlaceItemsProcessorAssistedFactory.create(syncTask, executionId)
     }
 }
