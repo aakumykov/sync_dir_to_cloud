@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.from
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
@@ -35,18 +36,11 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
     private suspend fun processUnchangedNewModifiedDirs() {
         getOnlyInSourceStates()
             .filter { it.isDir }
-            .let { it }
             .filter { it.notUnchangedOrDeletedInSource }
-            .let { it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.sourceObjectId,
-                    objectIdInTarget = comparisonState.targetObjectId,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -54,18 +48,11 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
     private suspend fun processUnchangedNewModifiedFiles() {
         getOnlyInSourceStates()
             .filter { it.isFile }
-            .let { it }
             .filter { it.notUnchangedOrDeletedInSource }
-            .let { it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.sourceObjectId,
-                    objectIdInTarget = comparisonState.targetObjectId,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                    relativePath = comparisonState.relativePath,
                 ))
             }
     }

@@ -9,26 +9,11 @@ import dagger.assisted.AssistedInject
 class ItemListsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-//    private val syncObjectReader: SyncObjectReader,
     private val onlyInSourceItemsProcessorAssistedFactory: OnlyInSourceItemsProcessorAssistedFactory,
     private val onlyInTargetItemsProcessorAssistedFactory: OnlyInTargetItemsProcessorAssistedFactory,
     private val twoPlaceItemsProcessorAssistedFactory: TwoPlaceSyncItemProcessorAssistedFactory,
 ) {
     suspend fun process() {
-
-/*
-        val sourceObjectsList = syncObjectReader
-            .getAllObjectsForTask(SyncSide.SOURCE, syncTask.id)
-            .toMutableList()
-
-        val targetObjectsList = syncObjectReader
-            .getAllObjectsForTask(SyncSide.TARGET, syncTask.id)
-            .toMutableList()
-
-        val both = sourceObjectsList.intersectBy(targetObjectsList, ::areObjectsTheSame)
-        val onlyInSource = sourceObjectsList.subtractBy(targetObjectsList, ::areObjectsTheSame)
-        val onlyInTarget = targetObjectsList.subtractBy(sourceObjectsList, ::areObjectsTheSame)
-*/
 
         onlyInSourceItemsProcessor.process()
         onlyInTargetItemsProcessor.process()

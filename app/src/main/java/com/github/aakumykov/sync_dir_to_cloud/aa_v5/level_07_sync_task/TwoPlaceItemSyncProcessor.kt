@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.from
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndNew
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndUnchanged
@@ -57,14 +58,9 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
                 it.isDeletedAndModified
             }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.targetObjectId!!,
-                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
-                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -81,14 +77,9 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.targetObjectId!!,
-                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -102,14 +93,9 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.targetObjectId!!,
-                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.DELETE_IN_TARGET,
-                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -123,14 +109,9 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.targetObjectId!!,
-                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.DELETE_IN_SOURCE,
-                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
@@ -148,32 +129,17 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.targetObjectId!!,
-                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.RENAME_IN_SOURCE,
-                    relativePath = comparisonState.relativePath,
                 ))
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.targetObjectId!!,
-                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.RENAME_IN_TARGET,
-                    relativePath = comparisonState.relativePath,
                 ))
-                syncInstructionRepository6.add(SyncInstruction6(
-                    id = randomUUID,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    objectIdInSource = comparisonState.targetObjectId!!,
-                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                syncInstructionRepository6.add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
                     operation = SyncOperation6.NEED_SECOND_SYNC,
-                    relativePath = comparisonState.relativePath,
                 ))
             }
     }
