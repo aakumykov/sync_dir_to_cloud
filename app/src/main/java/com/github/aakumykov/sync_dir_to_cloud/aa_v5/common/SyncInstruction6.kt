@@ -16,8 +16,9 @@ class SyncInstruction6 (
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
 
-    @ColumnInfo(name = "object_id_in_source") val objectIdInSource: String,
-    @ColumnInfo(name = "object_id_in_target") val objectIdInTarget: String,
+    @ColumnInfo(name = "object_id_in_source") val objectIdInSource: String?,
+    @ColumnInfo(name = "object_id_in_target") val objectIdInTarget: String?,
+
     @ColumnInfo(name = "operation") val operation: SyncOperation6,
 ) {
     @RenameColumn(
