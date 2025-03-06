@@ -20,8 +20,73 @@ class ComparisonState (
     @Ignore val isBilateral: Boolean = sourceObjectId != null && targetObjectId != null
     @Ignore val onlySource: Boolean = sourceObjectId != null && targetObjectId == null
     @Ignore val onlyTarget: Boolean = sourceObjectId == null && targetObjectId != null
+
+    override fun toString(): String {
+        return "ComparisonState(id='$id', taskId='$taskId', executionId='$executionId', sourceObjectId=$sourceObjectId, targetObjectId=$targetObjectId, sourceObjectState=$sourceObjectState, targetObjectState=$targetObjectState, relativePath='$relativePath', isBilateral=$isBilateral, onlySource=$onlySource, onlyTarget=$onlyTarget)"
+    }
 }
 
 val ComparisonState.isUnchangedNew: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED
             && targetObjectState == StateInStorage.NEW
+
+val ComparisonState.isUnchangedModified: Boolean
+    get() = sourceObjectState == StateInStorage.UNCHANGED
+            && targetObjectState == StateInStorage.MODIFIED
+
+val ComparisonState.isUnchangedDeleted: Boolean
+    get() = sourceObjectState == StateInStorage.UNCHANGED
+            && targetObjectState == StateInStorage.DELETED
+
+
+val ComparisonState.isNewAndUnchanged: Boolean
+    get() = sourceObjectState == StateInStorage.NEW
+            && targetObjectState == StateInStorage.UNCHANGED
+
+val ComparisonState.isNewAndNew: Boolean
+    get() = sourceObjectState == StateInStorage.NEW
+            && targetObjectState == StateInStorage.NEW
+
+val ComparisonState.isNewAndModified: Boolean
+    get() = sourceObjectState == StateInStorage.NEW
+            && targetObjectState == StateInStorage.MODIFIED
+
+val ComparisonState.isNewAndDeleted: Boolean
+    get() = sourceObjectState == StateInStorage.NEW
+            && targetObjectState == StateInStorage.DELETED
+
+
+val ComparisonState.isModifiedAndUnchanged: Boolean
+    get() = sourceObjectState == StateInStorage.MODIFIED
+            && targetObjectState == StateInStorage.UNCHANGED
+
+val ComparisonState.isModifiedAndNew: Boolean
+    get() = sourceObjectState == StateInStorage.MODIFIED
+            && targetObjectState == StateInStorage.NEW
+
+val ComparisonState.isModifiedAndModified: Boolean
+    get() = sourceObjectState == StateInStorage.MODIFIED
+            && targetObjectState == StateInStorage.MODIFIED
+
+val ComparisonState.isModifiedAndDeleted: Boolean
+    get() = sourceObjectState == StateInStorage.MODIFIED
+            && targetObjectState == StateInStorage.DELETED
+
+
+
+val ComparisonState.isDeletedAndUnchanged: Boolean
+    get() = sourceObjectState == StateInStorage.DELETED
+            && targetObjectState == StateInStorage.UNCHANGED
+
+val ComparisonState.isDeletedAndNew: Boolean
+    get() = sourceObjectState == StateInStorage.DELETED
+            && targetObjectState == StateInStorage.NEW
+
+val ComparisonState.isDeletedAndModified: Boolean
+    get() = sourceObjectState == StateInStorage.DELETED
+            && targetObjectState == StateInStorage.MODIFIED
+
+val ComparisonState.isDeletedAndDeleted: Boolean
+    get() = sourceObjectState == StateInStorage.DELETED
+            && targetObjectState == StateInStorage.DELETED
+

@@ -1,13 +1,24 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndDeleted
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndDeleted
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedDeleted
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedNew
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.StoragePriority
-import com.github.aakumykov.sync_dir_to_cloud.extensions.isSameWith
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -21,41 +32,31 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ) {
     suspend fun process() {
-
-        // Прежние в источнике
-        processUnchangedInSourceAndUnchangedInTarget()
-        processUnchangedInSourceAndNewInTarget()
-        processUnchangedInSourceAndModifiedInTarget()
-        processUnchangedInSourceAndDeletedInTarget()
-
-        // Новые в источнике
-        processNewInSourceAndUnchangedInTarget()
-        processNewInSourceAndNewInTarget()
-        processNewInSourceAndModifiedInTarget()
-        processNewInSourceAndDeletedInTarget()
-
-        // Изменившиеся в источнике
-        processModifiedInSourceAndUnchangedInTarget()
-        processModifiedInSourceAndNewInTarget()
-        processModifiedInSourceAndModifiedInTarget()
-        processModifiedInSourceAndDeletedInTarget()
-
-        // Удалённые в источнике
-        processDeletedInSourceAndUnchangedInTarget()
-        processDeletedInSourceAndNewInTarget()
-        processDeletedInSourceAndModifiedInTarget()
-        processDeletedInSourceAndDeletedInTarget()
+        processMutuallyUnchangedOrDeleted()
+        processSourceUnchangedOrDeletedWithTargetNewOrModified()
+        processSourceNewOrModifiedWithTargetUnchangedOrDeleted()
+        processSourceDeletedWithTargetUnchanged()
+        processSourceUnchangedWithTargetDeleted()
+        processNewAndModified()
     }
 
 
-    private fun processUnchangedInSourceAndUnchangedInTarget() {
+    //
+    private fun processMutuallyUnchangedOrDeleted() {
         // Ничего не делать
     }
 
-    private suspend fun processUnchangedInSourceAndNewInTarget() {
+    //
+    private suspend fun processSourceUnchangedOrDeletedWithTargetNewOrModified() {
         comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
-            .filter { it.isUnchangedNew }
+            .let { Log.d(TAG, it.toString()); it }
+            .filter {
+                it.isUnchangedNew ||
+                it.isUnchangedModified ||
+                it.isDeletedAndNew ||
+                it.isDeletedAndModified
+            }
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6(
                     id = randomUUID,
@@ -68,63 +69,111 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             }
     }
 
-    private fun processUnchangedInSourceAndModifiedInTarget() {
-
+    //
+    private suspend fun processSourceNewOrModifiedWithTargetUnchangedOrDeleted() {
+        comparisonStateRepository
+            .getAllFor(syncTask.id, executionId)
+            .filter {
+                it.isNewAndUnchanged ||
+                it.isNewAndUnchanged ||
+                it.isNewAndDeleted ||
+                it.isModifiedAndDeleted
+            }
+            .let { Log.d(TAG, it.toString()); it }
+            .forEach { comparisonState ->
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.targetObjectId!!,
+                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                ))
+            }
     }
 
-    private fun processUnchangedInSourceAndDeletedInTarget() {
+    //
+    private suspend fun processSourceDeletedWithTargetUnchanged() {
+        comparisonStateRepository
+            .getAllFor(syncTask.id, executionId)
+            .filter {
+                it.isDeletedAndUnchanged
+            }
+            .let { Log.d(TAG, it.toString()); it }
+            .forEach { comparisonState ->
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.targetObjectId!!,
+                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                    operation = SyncOperation6.DELETE_IN_TARGET,
+                ))
+            }
+    }
 
+    //
+    private suspend fun processSourceUnchangedWithTargetDeleted() {
+        comparisonStateRepository
+            .getAllFor(syncTask.id, executionId)
+            .filter {
+                it.isUnchangedDeleted
+            }
+            .let { Log.d(TAG, it.toString()); it }
+            .forEach { comparisonState ->
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.targetObjectId!!,
+                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                    operation = SyncOperation6.DELETE_IN_SOURCE,
+                ))
+            }
     }
 
 
-    private fun processNewInSourceAndUnchangedInTarget() {
-
+    //
+    private suspend fun processNewAndModified() {
+        comparisonStateRepository
+            .getAllFor(syncTask.id, executionId)
+            .filter {
+                it.isNewAndNew ||
+                it.isNewAndModified ||
+                it.isModifiedAndNew ||
+                it.isModifiedAndModified
+            }
+            .let { Log.d(TAG, it.toString()); it }
+            .forEach { comparisonState ->
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.targetObjectId!!,
+                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                    operation = SyncOperation6.RENAME_IN_SOURCE,
+                ))
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.targetObjectId!!,
+                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                    operation = SyncOperation6.RENAME_IN_TARGET,
+                ))
+                syncInstructionRepository6.add(SyncInstruction6(
+                    id = randomUUID,
+                    taskId = syncTask.id,
+                    executionId = executionId,
+                    objectIdInSource = comparisonState.targetObjectId!!,
+                    objectIdInTarget = comparisonState.sourceObjectId!!,
+                    operation = SyncOperation6.NEED_SECOND_SYNC,
+                ))
+            }
     }
 
-    private fun processNewInSourceAndNewInTarget() {
-
-    }
-
-    private fun processNewInSourceAndModifiedInTarget() {
-
-    }
-
-    private fun processNewInSourceAndDeletedInTarget() {
-
-    }
-
-
-    private fun processModifiedInSourceAndUnchangedInTarget() {
-
-    }
-
-    private fun processModifiedInSourceAndNewInTarget() {
-
-    }
-
-    private fun processModifiedInSourceAndModifiedInTarget() {
-
-    }
-
-    private fun processModifiedInSourceAndDeletedInTarget() {
-
-    }
-
-
-    private fun processDeletedInSourceAndUnchangedInTarget() {
-
-    }
-
-    private fun processDeletedInSourceAndNewInTarget() {
-
-    }
-
-    private fun processDeletedInSourceAndModifiedInTarget() {
-
-    }
-
-    private fun processDeletedInSourceAndDeletedInTarget() {
-
+    companion object {
+        val TAG: String = TwoPlaceItemSyncProcessor::class.java.simpleName
     }
 }
 

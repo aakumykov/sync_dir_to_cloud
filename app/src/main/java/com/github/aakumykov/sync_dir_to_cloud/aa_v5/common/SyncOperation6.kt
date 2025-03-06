@@ -9,5 +9,5 @@ enum class SyncOperation6 {
     RENAME_IN_TARGET,
 //    BACKUP_IN_SOURCE,
 //    BACKUP_IN_TARGET,
-    SYNC_AGAIN
+    NEED_SECOND_SYNC
 }

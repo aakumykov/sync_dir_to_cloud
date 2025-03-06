@@ -34,10 +34,10 @@ class ItemListsProcessor @AssistedInject constructor(
         val onlyInSource = sourceObjectsList.subtractBy(targetObjectsList, ::areObjectsTheSame)
         val onlyInTarget = targetObjectsList.subtractBy(sourceObjectsList, ::areObjectsTheSame)
 
-        onlyInSourceItemsProcessor.process(onlyInSource)
-        onlyInTargetItemsProcessor.process(list = onlyInTarget, syncMode = syncTask.syncMode!!)
+//        onlyInSourceItemsProcessor.process(onlyInSource)
+//        onlyInTargetItemsProcessor.process(list = onlyInTarget, syncMode = syncTask.syncMode!!)
 
-        when(syncTask.syncMode!!) {
+        when(syncTask.syncMode ?: SyncMode.SYNC) {
             SyncMode.SYNC -> twoPlaceSyncItemsProcessor.process()
             SyncMode.MIRROR -> {}
         }
