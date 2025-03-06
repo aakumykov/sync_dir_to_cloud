@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @Entity(
     tableName = "sync_instructions_6",
-    /*foreignKeys = [
+    foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
             parentColumns = ["id"],
@@ -23,7 +23,7 @@ import javax.inject.Inject
             onDelete = CASCADE,
             onUpdate = CASCADE
         )
-    ],*/
+    ],
 )
 class SyncInstruction6 (
     @PrimaryKey val id: String,
