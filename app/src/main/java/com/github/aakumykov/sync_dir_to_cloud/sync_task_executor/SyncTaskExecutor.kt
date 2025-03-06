@@ -154,9 +154,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             compareSourceWithTarget(syncTask)
 
-            processItems(syncTask)
+            generateSyncInstructions(syncTask)
 
-//            generateSyncInstructions(syncTask)
+            processSyncInstructions(syncTask)
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)
@@ -215,7 +215,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         }
     }
 
-    private suspend fun processItems(syncTask: SyncTask) {
+    private suspend fun generateSyncInstructions(syncTask: SyncTask) {
         appComponent
             .getItemListsProcessorAssistedFactory()
             .create(
@@ -225,15 +225,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             .process()
     }
 
-    private suspend fun generateSyncInstructions(syncTask: SyncTask) {
-        appComponent
-            .getInstructionsGeneratorAssistedFactory()
-            .create(
-                syncTask = syncTask,
-                executionId = executionId,
-            )
-            .generateSyncInstructions()
-    }
 
     @Throws(Exception::class)
     private suspend fun copyFilesProbe(syncTask: SyncTask): Job {
@@ -274,9 +265,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun processSyncInstructions(syncTask: SyncTask) {
         appComponent
-            .getSyncInstructionsProcessorAssistedFactory()
+            .getSyncInstructionsProcessorAssistedFactory6()
             .create(syncTask, executionId)
-            .processSyncInstructions()
+            .processInstructions()
     }
 
 
