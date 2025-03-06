@@ -5,6 +5,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
@@ -34,7 +36,7 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
         getOnlyInSourceStates()
             .filter { it.isDir }
             .let { it }
-            .filter { it.sourceObjectState != StateInStorage.DELETED }
+            .filter { it.notUnchangedOrDeletedInSource }
             .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6(
@@ -53,7 +55,7 @@ class OnlyInSourceItemsProcessor @AssistedInject constructor(
         getOnlyInSourceStates()
             .filter { it.isFile }
             .let { it }
-            .filter { it.sourceObjectState != StateInStorage.DELETED }
+            .filter { it.notUnchangedOrDeletedInSource }
             .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6(

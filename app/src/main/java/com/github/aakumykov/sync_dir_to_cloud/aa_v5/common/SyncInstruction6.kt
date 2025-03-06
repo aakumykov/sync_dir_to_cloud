@@ -11,6 +11,7 @@ import androidx.room.Query
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import javax.inject.Inject
 
 @Entity(
@@ -46,6 +47,7 @@ class SyncInstruction6 (
         fromColumnName = "to_id",
         toColumnName = "object_id_in_target")
     class RenameObjectIdColumnsMigration1: AutoMigrationSpec
+    companion object
 }
 
 
@@ -71,3 +73,17 @@ class SyncInstructionRepository6 @Inject constructor(
         return syncInstructionDAO6.getAllFor(taskId, executionId)
     }
 }
+
+
+fun SyncInstruction6.Companion.from(
+    comparisonState: ComparisonState,
+    operation: SyncOperation6
+): SyncInstruction6 = SyncInstruction6(
+    id = randomUUID,
+    taskId = comparisonState.taskId,
+    executionId = comparisonState.executionId,
+    objectIdInSource = comparisonState.sourceObjectId,
+    objectIdInTarget = comparisonState.targetObjectId,
+    operation = operation,
+    relativePath = comparisonState.relativePath
+)

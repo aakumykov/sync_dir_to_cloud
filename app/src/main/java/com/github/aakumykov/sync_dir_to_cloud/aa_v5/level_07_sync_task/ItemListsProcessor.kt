@@ -1,13 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.StoragePriority
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.intersectBy
-import com.github.aakumykov.sync_dir_to_cloud.extensions.subtractBy
-import com.github.aakumykov.sync_dir_to_cloud.helpers.areObjectsTheSame
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -37,7 +31,7 @@ class ItemListsProcessor @AssistedInject constructor(
 */
 
         onlyInSourceItemsProcessor.process()
-//        onlyInTargetItemsProcessor.process(list = onlyInTarget, syncMode = syncTask.syncMode!!)
+        onlyInTargetItemsProcessor.process()
 
         when(syncTask.syncMode ?: SyncMode.SYNC) {
             SyncMode.SYNC -> twoPlaceSyncItemsProcessor.process()
@@ -50,7 +44,7 @@ class ItemListsProcessor @AssistedInject constructor(
     }
 
     private val onlyInTargetItemsProcessor by lazy {
-        onlyInTargetItemsProcessorAssistedFactory.create(syncTask)
+        onlyInTargetItemsProcessorAssistedFactory.create(syncTask, executionId)
     }
 
     private val twoPlaceSyncItemsProcessor by lazy {
