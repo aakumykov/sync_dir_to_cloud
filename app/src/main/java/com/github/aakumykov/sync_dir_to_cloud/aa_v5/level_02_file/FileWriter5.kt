@@ -10,6 +10,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.InputStream
+import kotlin.coroutines.resume
 
 class FileWriter5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -20,6 +21,7 @@ class FileWriter5 @AssistedInject constructor(
                                 filePath: String,
                                 overwriteIfExists: Boolean
     ) {
+        Log.d(TAG, "putFileToTarget('$filePath')")
         putStreamReal(
             cloudWriterGetter.getTargetCloudWriter(syncTask),
             inputStream,
@@ -33,6 +35,7 @@ class FileWriter5 @AssistedInject constructor(
                                 filePath: String,
                                 overwriteIfExists: Boolean
     ) {
+        Log.d(TAG, "putFileToSource('$filePath')")
         putStreamReal(
             cloudWriterGetter.getSourceCloudWriter(syncTask),
             inputStream,
@@ -56,12 +59,16 @@ class FileWriter5 @AssistedInject constructor(
                 .putStream(
                     inputStream = inputStream,
                     targetPath = filePath,
-                    overwriteIfExists = overwriteIfExists
-                ) { progress ->
-                    if (!cont.isActive)
-                        return@putStream
-                    Log.d(TAG, "progress: $progress")
-                }
+                    overwriteIfExists = overwriteIfExists,
+                    writingCallback = { progress ->
+                        if (!cont.isActive)
+                            return@putStream
+                        Log.d(TAG, "progress: $progress")
+                    },
+                    finishCallback = { _,_ ->
+                        cont.resume(Unit)
+                    }
+                )
         }
     }
 
