@@ -52,10 +52,14 @@ class StreamToFileDataCopier (
             cloudWriter.putStream(
                 inputStream = countingInputStream,
                 targetPath = absoluteTargetFilePath,
-                overwriteIfExists = overwriteIfExists
-            ) { writtenBytesCount: Long ->
-//                Log.d(TAG, "записано байт: $writtenBytesCount")
-            }
+                overwriteIfExists = overwriteIfExists,
+                writingCallback = { writtenBytesCount ->
+//                    Log.d(TAG, "записано байт: $writtenBytesCount")
+                },
+                finishCallback = { readBytes, writtenBytes ->
+//                    Log.d(TAG, "Запись завершена (прочитано: $readBytes, записано: $writtenBytes)")
+                }
+            )
 
             return Result.success(absoluteTargetFilePath)
         }
