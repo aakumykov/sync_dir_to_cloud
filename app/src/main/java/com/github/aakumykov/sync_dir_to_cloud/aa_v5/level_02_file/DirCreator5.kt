@@ -12,6 +12,10 @@ class DirCreator5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter
 ) {
+    /**
+     * @param basePath Родительский каталог
+     * @param dirName Дочерний каталог. Может быть многоуровневым.
+     */
     @Throws(Exception::class)
     suspend fun createDirInTarget(basePath: String, dirName: String) {
         cloudWriterGetter
@@ -19,6 +23,10 @@ class DirCreator5 @AssistedInject constructor(
             .createDir(basePath, dirName)
     }
 
+    /**
+     * @param basePath Родительский каталог
+     * @param dirName Дочерний каталог. Может быть многоуровневым.
+     */
     @Throws(Exception::class)
     suspend fun createDirInSource(basePath: String, dirName: String) {
         cloudWriterGetter
