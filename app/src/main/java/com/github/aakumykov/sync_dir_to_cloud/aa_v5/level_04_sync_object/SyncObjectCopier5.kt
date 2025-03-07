@@ -8,7 +8,9 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_03_intermediate.InputS
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_03_intermediate.InputStreamGetterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
+import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -40,8 +42,11 @@ class SyncObjectCopier5 @AssistedInject constructor(
 
     @Throws(Exception::class)
     private suspend fun createDirInTarget(syncObject: SyncObject) {
+        if (!syncObject.isDir)
+            throw IllegalArgumentException("SyncObject is not a dir: $syncObject")
+
         dirCreator.createDirInTarget(
-            basePath = syncObject.absolutePathIn(syncTask.targetPath!!),
+            basePath = syncObject.basePathIn(syncTask.targetPath!!),
             dirName = syncObject.name
         )
     }
@@ -49,8 +54,11 @@ class SyncObjectCopier5 @AssistedInject constructor(
 
     @Throws(Exception::class)
     private suspend fun createDirInSource(syncObject: SyncObject) {
+        if (!syncObject.isDir)
+            throw IllegalArgumentException("SyncObject is not a dir: $syncObject")
+
         dirCreator.createDirInSource(
-            basePath = syncObject.absolutePathIn(syncTask.targetPath!!),
+            basePath = syncObject.basePathIn(syncTask.targetPath!!),
             dirName = syncObject.name
         )
     }
@@ -61,6 +69,9 @@ class SyncObjectCopier5 @AssistedInject constructor(
         syncObject: SyncObject,
         overwriteIfExists: Boolean
     ) {
+        if (!syncObject.isFile)
+            throw IllegalArgumentException("SyncObject it not a file: $syncObject")
+
         fileWriter.putFileToTarget(
             inputStream = inputStreamGetter.getInputStreamFor(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.targetPath!!),
@@ -74,6 +85,9 @@ class SyncObjectCopier5 @AssistedInject constructor(
         syncObject: SyncObject,
         overwriteIfExists: Boolean
     ) {
+        if (!syncObject.isFile)
+            throw IllegalArgumentException("SyncObject it not a file: $syncObject")
+
         fileWriter.putFileToSource(
             inputStream = inputStreamGetter.getInputStreamFor(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.sourcePath!!),
