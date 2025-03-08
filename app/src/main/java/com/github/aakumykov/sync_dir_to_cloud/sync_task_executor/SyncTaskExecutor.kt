@@ -152,11 +152,13 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
+            deleteOldComparisonStates(syncTask)
             compareSourceWithTarget(syncTask)
 
+            deleteOldSyncInstructions(syncTask)
             generateSyncInstructions(syncTask)
 
-            processSyncInstructions(syncTask)
+//            processSyncInstructions(syncTask)
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)
@@ -213,6 +215,18 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    private suspend fun deleteOldComparisonStates(syncTask: SyncTask) {
+        appComponent
+            .getComparisonsDeleter6()
+            .deleteAllFor(syncTask.id)
+    }
+
+    private suspend fun deleteOldSyncInstructions(syncTask: SyncTask) {
+        appComponent
+            .getInstructionsDeleter6()
+            .deleteAllFor(syncTask.id)
     }
 
     private suspend fun generateSyncInstructions(syncTask: SyncTask) {

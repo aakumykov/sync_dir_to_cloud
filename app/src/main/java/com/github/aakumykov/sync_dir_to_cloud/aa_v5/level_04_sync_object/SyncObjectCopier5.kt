@@ -73,7 +73,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
             throw IllegalArgumentException("SyncObject it not a file: $syncObject")
 
         fileWriter.putFileToTarget(
-            inputStream = inputStreamGetter.getInputStreamFor(syncObject),
+            inputStream = inputStreamGetter.getInputStreamInSource(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.targetPath!!),
             overwriteIfExists = overwriteIfExists,
         )
@@ -89,7 +89,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
             throw IllegalArgumentException("SyncObject it not a file: $syncObject")
 
         fileWriter.putFileToSource(
-            inputStream = inputStreamGetter.getInputStreamFor(syncObject),
+            inputStream = inputStreamGetter.getInputStreamInTarget(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.sourcePath!!),
             overwriteIfExists = overwriteIfExists,
         )

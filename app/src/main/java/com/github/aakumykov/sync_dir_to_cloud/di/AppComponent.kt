@@ -22,9 +22,11 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_deleter.DirDeleterAssist
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.FileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.SyncObjectCopierAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.ComparisonsDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWithTargetComparatorAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.BetterTaskExecutor
@@ -213,6 +215,10 @@ interface AppComponent {
     fun getInstructionsGeneratorAssistedFactory(): InstructionsGeneratorAssistedFactory
 
     fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
+
+    fun getInstructionsDeleter6(): SyncInstructionDeleter6
+
+    fun getComparisonsDeleter6(): ComparisonsDeleter6
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

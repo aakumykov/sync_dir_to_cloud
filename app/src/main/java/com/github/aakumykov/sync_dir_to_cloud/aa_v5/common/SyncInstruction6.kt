@@ -71,6 +71,9 @@ interface SyncInstructionDAO6 {
             "WHERE task_id = :taskId " +
             "AND execution_id = :executionId")
     suspend fun getAllFor(taskId: String, executionId: String): List<SyncInstruction6>
+
+    @Query("DELETE FROM sync_instructions_6 WHERE task_id = :taskId")
+    suspend fun deleteAllForTask(taskId: String)
 }
 
 
@@ -82,6 +85,10 @@ class SyncInstructionRepository6 @Inject constructor(
     }
     suspend fun getAllFor(taskId: String, executionId: String): List<SyncInstruction6> {
         return syncInstructionDAO6.getAllFor(taskId, executionId)
+    }
+
+    suspend fun deleteAllForTask(taskId: String) {
+        syncInstructionDAO6.deleteAllForTask(taskId)
     }
 }
 

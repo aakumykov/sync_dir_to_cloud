@@ -16,5 +16,6 @@ interface ComparisonStateDAO {
             "AND execution_id = :executionId")
     suspend fun getAllFor(taskId: String, executionId: String): List<ComparisonState>
 
-
+    @Query("DELETE FROM comparison_states WHERE task_id = :taskId")
+    suspend fun deleteAllFor(taskId: String)
 }

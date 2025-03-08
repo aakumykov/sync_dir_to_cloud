@@ -19,7 +19,7 @@ class SyncObjectRenamer5 @AssistedInject constructor(
     fun renameInSource(syncObject: SyncObject): String {
         val oldPath = syncObject.absolutePathIn(syncTask.sourcePath!!)
 
-        val newName = newNameFor(syncObject)
+        val newName = newNameFor("source", syncObject)
         val newPath = syncObject.absolutePathInWithNewName(syncTask.sourcePath!!, newName)
 
         sourceCloudWriter.renameFileOrEmptyDir(oldPath, newPath)
@@ -31,7 +31,7 @@ class SyncObjectRenamer5 @AssistedInject constructor(
 
         val oldPath = syncObject.absolutePathIn(syncTask.targetPath!!)
 
-        val newName = "${syncObject.name}_${formattedDateTime(currentTime())}"
+        val newName = newNameFor("target", syncObject)
         val newPath = syncObject.absolutePathInWithNewName(syncTask.targetPath!!, newName)
 
         targetCloudWriter.renameFileOrEmptyDir(oldPath, newPath)
@@ -40,8 +40,8 @@ class SyncObjectRenamer5 @AssistedInject constructor(
     }
 
 
-    private fun newNameFor(syncObject: SyncObject): String {
-        return "${syncObject.name}_${formattedDateTime(currentTime())}"
+    private fun newNameFor(prefix: String, syncObject: SyncObject): String {
+        return "${syncObject.name}_${prefix}_${formattedDateTime(currentTime())}"
     }
 
 

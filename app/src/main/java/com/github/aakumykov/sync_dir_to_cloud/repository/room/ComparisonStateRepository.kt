@@ -14,5 +14,8 @@ class ComparisonStateRepository @Inject constructor(
     suspend fun getAllFor(taskId: String, executionId: String): List<ComparisonState>
         = comparisonStateDAO.getAllFor(taskId, executionId)
 
+    suspend fun deleteAllFor(taskId: String) {
+        comparisonStateDAO.deleteAllFor(taskId)
+    }
 
 }
