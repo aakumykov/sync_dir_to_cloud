@@ -56,11 +56,11 @@ class SyncInstructionExecutor @AssistedInject constructor(
         }
     }
 
-    private fun copyFromSourceToTargetWithBackup(sourceObject: SyncObject?) {
+    private suspend fun copyFromSourceToTargetWithBackup(sourceObject: SyncObject?) {
         copierWithBackup.copyFromSourceToTargetWithBackup(sourceObject!!)
     }
 
-    private fun copyFromTargetToSourceWithBackup(targetObject: SyncObject?) {
+    private suspend fun copyFromTargetToSourceWithBackup(targetObject: SyncObject?) {
         copierWithBackup.copyFromTargetToSourceWithBackup(targetObject!!)
     }
 

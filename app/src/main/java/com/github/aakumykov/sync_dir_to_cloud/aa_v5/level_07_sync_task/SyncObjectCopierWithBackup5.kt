@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuper5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuperAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
@@ -13,15 +14,18 @@ import dagger.assisted.AssistedInject
 class SyncObjectCopierWithBackup5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
+    private val syncOptions: SyncOptions,
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
     private val syncObjectBackuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
 ) {
-    fun copyFromSourceToTargetWithBackup(syncObject: SyncObject) {
-
+    suspend fun copyFromSourceToTargetWithBackup(syncObject: SyncObject) {
+        backuper.backupInTarget(syncObject)
+        copier.copyFromSourceToTarget(syncObject, syncOptions.overwriteIfExists)
     }
 
-    fun copyFromTargetToSourceWithBackup(syncObject: SyncObject) {
-
+    suspend fun copyFromTargetToSourceWithBackup(syncObject: SyncObject) {
+        backuper.backupInSource(syncObject)
+        copier.copyFromTargetToSource(syncObject, syncOptions.overwriteIfExists)
     }
 
     private val copier: SyncObjectCopier5 by lazy {
