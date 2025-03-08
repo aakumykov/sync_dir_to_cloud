@@ -14,10 +14,19 @@ class InputStreamGetter5 @AssistedInject constructor(
     private val cloudReaderGetter: CloudReaderGetter
 ) {
     @Throws(Exception::class)
-    suspend fun getInputStreamFor(syncObject: SyncObject): InputStream {
+    suspend fun getInputStreamInSource(syncObject: SyncObject): InputStream {
         val filePath = syncObject.absolutePathIn(syncTask.sourcePath!!)
         return cloudReaderGetter
             .getSourceCloudReaderFor(syncTask)
+            .getFileInputStream(filePath)
+            .getOrThrow()
+    }
+
+    @Throws(Exception::class)
+    suspend fun getInputStreamInTarget(syncObject: SyncObject): InputStream {
+        val filePath = syncObject.absolutePathIn(syncTask.targetPath!!)
+        return cloudReaderGetter
+            .getTargetCloudReaderFor(syncTask)
             .getFileInputStream(filePath)
             .getOrThrow()
     }
