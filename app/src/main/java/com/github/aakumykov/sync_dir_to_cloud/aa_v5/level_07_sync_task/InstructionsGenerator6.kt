@@ -22,7 +22,7 @@ class InstructionsGenerator6 @AssistedInject constructor(
 
         nextOrderNum = onlyInTargetItemsProcessor.process(nextOrderNum)
 
-        when(syncTask.syncMode ?: SyncMode.SYNC) {
+        when(syncTask.syncMode ?: SyncMode.MIRROR) {
             SyncMode.SYNC -> twoPlaceSyncItemsProcessor.processSyncing(nextOrderNum)
             SyncMode.MIRROR -> twoPlaceMirrorItemsProcessor.processMirroring(nextOrderNum)
         }

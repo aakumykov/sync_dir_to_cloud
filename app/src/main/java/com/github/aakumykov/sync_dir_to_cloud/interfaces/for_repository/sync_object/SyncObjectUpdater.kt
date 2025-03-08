@@ -6,4 +6,5 @@ interface SyncObjectUpdater {
     suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
     suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
     suspend fun markAsUnchanged(objectId: String)
+    suspend fun renameObject(objectId: String, newName: String)
 }

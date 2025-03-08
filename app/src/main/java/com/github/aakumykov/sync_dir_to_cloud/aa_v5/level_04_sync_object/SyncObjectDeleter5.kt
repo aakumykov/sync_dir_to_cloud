@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.FileDeleter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.FileDeleterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -57,13 +58,13 @@ class SyncObjectDeleter5 @AssistedInject constructor(
 
     @Throws(IllegalArgumentException::class)
     private fun throwBadArgumentExceptionIfNotADir(syncObject: SyncObject) {
-        if (!syncObject.isDir)
+        if (syncObject.isFile)
             throw IllegalArgumentException("SyncObject is not a dir object (id: ${syncObject.id}, name:${syncObject.name}).")
     }
 
     @Throws(IllegalArgumentException::class)
     private fun throwBadArgumentExceptionIfNotAFile(syncObject: SyncObject) {
-        if (!syncObject.isDir)
+        if (syncObject.isDir)
             throw IllegalArgumentException("SyncObject is not a file object (id: ${syncObject.id}, name:${syncObject.name}).")
     }
 

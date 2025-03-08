@@ -5,9 +5,9 @@ import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudWritersHolder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
+import com.github.aakumykov.sync_dir_to_cloud.utils.formattedDateTime
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 
 @Deprecated("Переименовтаь в Maker")
@@ -19,7 +19,7 @@ class BackupDirCreator (
      */
     fun createBackupDirFor(syncTask: SyncTask): Result<String> {
 
-        val dateSuffix = SimpleDateFormat(BackupConfig.BACKUP_DIR_DATE_TIME_FORMAT, Locale.getDefault()).format(syncTask.lastStart)
+        val dateSuffix = formattedDateTime(syncTask.lastStart ?: currentTime())
         val backupDirName = "${BackupConfig.BACKUP_DIR_PREFIX}_${dateSuffix}"
         val backupParentDir = File(syncTask.targetPath!!, BackupConfig.BACKUPS_TOP_DIR_NAME).absolutePath
 

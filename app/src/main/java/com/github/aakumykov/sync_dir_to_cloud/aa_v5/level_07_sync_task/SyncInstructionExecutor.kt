@@ -92,7 +92,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         else deleter.deleteFileInTarget(targetObject)
     }
 
-    private fun mutualRenameAndCopy(sourceObject: SyncObject, targetObject: SyncObject) {
+    private suspend fun mutualRenameAndCopy(sourceObject: SyncObject, targetObject: SyncObject) {
         mutualRenamerAndCopier.mutualRenameAndCopy(sourceObject, targetObject)
     }
 

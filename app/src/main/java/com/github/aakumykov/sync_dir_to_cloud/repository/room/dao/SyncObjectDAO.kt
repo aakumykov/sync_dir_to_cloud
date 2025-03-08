@@ -134,4 +134,7 @@ interface SyncObjectDAO {
 
     @Query("UPDATE sync_objects SET state_in_source = :stateInStorage WHERE id = :objectId")
     fun setStateInStorage(objectId: String, stateInStorage: StateInStorage)
+
+    @Query("UPDATE sync_objects SET name = :newName WHERE id = :objectId")
+    fun renameObject(objectId: String, newName: String)
 }
