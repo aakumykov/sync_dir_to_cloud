@@ -143,17 +143,7 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6.from(
                     comparisonState = comparisonState,
-                    operation = SyncOperation6.RENAME_IN_SOURCE,
-                    orderNum = n++
-                ))
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.RENAME_IN_TARGET,
-                    orderNum = n++
-                ))
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.NEED_SECOND_SYNC,
+                    operation = SyncOperation6.MUTUAL_RENAME_AND_COPY,
                     orderNum = n++
                 ))
             }

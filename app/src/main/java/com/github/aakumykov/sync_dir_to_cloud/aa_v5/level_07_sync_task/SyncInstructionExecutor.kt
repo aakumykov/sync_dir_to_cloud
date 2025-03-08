@@ -28,9 +28,11 @@ class SyncInstructionExecutor @AssistedInject constructor(
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
     private val syncObjectListChunkedCopierAssistedFactory5: SyncObjectListChunkedCopierAssistedFactory5,
     private val syncObjectDeleterAssistedFactory5: SyncObjectDeleterAssistedFactory5,
+    private val syncObjectDeleterWithBackupAssistedFactory5: SyncObjectDeleterWithBackupAssistedFactory5,
     private val backuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
     private val renamerAssistedFactory5: SyncObjectRenamerAssistedFactory5,
-//    private val additionalSyncScheduler: AdditionalSyncScheduler,
+    private val syncObjectCopierWithBackupAssistedFactory5: SyncObjectCopierWithBackupAssistedFactory5,
+    private val mutualRenamerAndCopierAssistedFactory5: MutualRenamerAndCopierAssistedFactory5,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
 
@@ -40,12 +42,34 @@ class SyncInstructionExecutor @AssistedInject constructor(
         when(instruction.operation) {
             SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(sourceObject)
             SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(targetObject)
-            SyncOperation6.RENAME_IN_SOURCE -> renameInSource(sourceObject)
-            SyncOperation6.RENAME_IN_TARGET -> renameInTarget(targetObject)
+
+            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET_WITH_BACKUP -> copyFromSourceToTargetWithBackup(sourceObject)
+            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE_WITH_BACKUP -> copyFromTargetToSourceWithBackup(targetObject)
+
+            SyncOperation6.MUTUAL_RENAME_AND_COPY -> mutualRenameAndCopy(sourceObject!!, targetObject!!)
+
             SyncOperation6.DELETE_IN_SOURCE -> deleteInSource(sourceObject)
             SyncOperation6.DELETE_IN_TARGET -> deleteInTarget(targetObject)
-            SyncOperation6.NEED_SECOND_SYNC -> scheduleAdditionalSync()
+
+            SyncOperation6.DELETE_IN_SOURCE_WITH_BACKUP -> deleteInSourceWithBackup(targetObject)
+            SyncOperation6.DELETE_IN_TARGET_WITH_BACKUP -> deleteInTargetWithBackup(targetObject)
         }
+    }
+
+    private fun copyFromSourceToTargetWithBackup(sourceObject: SyncObject?) {
+        copierWithBackup.copyFromSourceToTargetWithBackup(sourceObject!!)
+    }
+
+    private fun copyFromTargetToSourceWithBackup(targetObject: SyncObject?) {
+        copierWithBackup.copyFromTargetToSourceWithBackup(targetObject!!)
+    }
+
+    private fun deleteInSourceWithBackup(targetObject: SyncObject?) {
+        deleterWithBackup.deleteInSourceWithBackup(targetObject!!)
+    }
+
+    private fun deleteInTargetWithBackup(targetObject: SyncObject?) {
+        deleterWithBackup.deleteInTargetWithBackup(targetObject!!)
     }
 
     private suspend fun copyFromSourceToTarget(sourceObject: SyncObject?) {
@@ -56,13 +80,6 @@ class SyncInstructionExecutor @AssistedInject constructor(
         copier.copyFromTargetToSource(targetObject!!, syncOptions.overwriteIfExists)
     }
 
-    private fun renameInSource(sourceObject: SyncObject?) {
-//        renamer
-    }
-
-    private fun renameInTarget(targetObject: SyncObject?) {
-//        renamer
-    }
 
     // FIXME: удалять сначала файлы, потом каталоги
     private suspend fun deleteInSource(sourceObject: SyncObject?) {
@@ -75,8 +92,8 @@ class SyncInstructionExecutor @AssistedInject constructor(
         else deleter.deleteFileInTarget(targetObject)
     }
 
-    private fun scheduleAdditionalSync() {
-
+    private fun mutualRenameAndCopy(sourceObject: SyncObject, targetObject: SyncObject) {
+        mutualRenamerAndCopier.mutualRenameAndCopy(sourceObject, targetObject)
     }
 
 
@@ -84,6 +101,10 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
     private val copier: SyncObjectCopier5 by lazy {
         syncObjectCopierAssistedFactory5.create(syncTask)
+    }
+
+    private val copierWithBackup: SyncObjectCopierWithBackup5 by lazy {
+        syncObjectCopierWithBackupAssistedFactory5.create(syncTask, executionId)
     }
 
     private val chunkedCopier by lazy {
@@ -102,8 +123,16 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncObjectDeleterAssistedFactory5.create(syncTask, executionId)
     }
 
+    private val deleterWithBackup: SyncObjectDeleterWithBackup5 by lazy {
+        syncObjectDeleterWithBackupAssistedFactory5.create(syncTask, executionId)
+    }
+
     private val renamer by lazy {
         renamerAssistedFactory5.create(syncTask)
+    }
+
+    private val mutualRenamerAndCopier: MutualRenamerAndCopier5 by lazy {
+        mutualRenamerAndCopierAssistedFactory5.create(syncTask, executionId)
     }
 }
 
