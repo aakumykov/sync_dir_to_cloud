@@ -68,10 +68,10 @@ abstract class BasicStorageReader(
             }
             else {
                 SyncObject.createFromExisting(
-                    executionId = "none",
-                    existingObject,
-                    fileListItem,
-                    changesDetectionStrategy.detectItemModification(sourcePath, fileListItem, existingObject)
+                    newExecutionId = "none",
+                    syncObject = existingObject,
+                    modifiedFSItem = fileListItem,
+//                    changesDetectionStrategy.detectItemModification(sourcePath, fileListItem, existingObject)
                 )
                     .also {
                         syncObjectRepository.updateSyncObject(it)

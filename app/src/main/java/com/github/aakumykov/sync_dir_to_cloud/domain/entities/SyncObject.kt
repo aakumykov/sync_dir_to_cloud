@@ -127,18 +127,14 @@ class SyncObject (
             )
         }
 
-        @Deprecated("разберись с аргументом stateInStorage")
-        fun createFromExisting(executionId: String,
-                               existingSyncObject: SyncObject,
-                               modifiedFSItem: FSItem,
-                               stateInStorage: StateInStorage): SyncObject
-        {
-            return existingSyncObject.apply {
-                existingSyncObject.shiftTwoVersionParameters(
-                    modifiedFSItem
-                )
-                this.executionId = executionId
-//                this.stateInStorage = stateInStorage
+        fun createFromExisting(
+            syncObject: SyncObject,
+            modifiedFSItem: FSItem,
+            newExecutionId: String
+        ): SyncObject {
+            return syncObject.apply {
+                syncObject.shiftTwoVersionParameters(modifiedFSItem)
+                executionId = newExecutionId
             }
         }
     }

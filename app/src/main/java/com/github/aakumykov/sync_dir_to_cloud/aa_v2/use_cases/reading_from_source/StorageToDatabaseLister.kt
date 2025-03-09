@@ -158,10 +158,9 @@ class StorageToDatabaseLister @Inject constructor(
                     StateInStorage.MODIFIED -> {
                         syncObjectUpdater.updateSyncObject(
                             SyncObject.createFromExisting(
-                                executionId = executionId,
-                                existingSyncObject = existingObject,
+                                newExecutionId = executionId,
+                                syncObject = existingObject,
                                 modifiedFSItem = fileListItem,
-                                stateInStorage = stateInStorage,
                             )
                         )
                     }
