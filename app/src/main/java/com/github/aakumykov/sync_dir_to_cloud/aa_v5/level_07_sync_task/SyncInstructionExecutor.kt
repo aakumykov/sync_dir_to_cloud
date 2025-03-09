@@ -100,7 +100,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
 
     private val copier: SyncObjectCopier5 by lazy {
-        syncObjectCopierAssistedFactory5.create(syncTask)
+        syncObjectCopierAssistedFactory5.create(syncTask, executionId)
     }
 
     private val copierWithBackup: SyncObjectCopierWithBackup5 by lazy {
@@ -110,6 +110,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
     private val chunkedCopier by lazy {
         syncObjectListChunkedCopierAssistedFactory5.create(
             syncTask = syncTask,
+            executionId = executionId,
             chunkSize = syncOptions.chunkSize,
             scope = scope,
         )

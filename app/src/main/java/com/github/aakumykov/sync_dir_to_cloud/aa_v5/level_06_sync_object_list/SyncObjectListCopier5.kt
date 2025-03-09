@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 
 class SyncObjectListCopier5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
     @Assisted private val oneFileCopyingScope: CoroutineScope,
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
 ) {
@@ -36,7 +37,7 @@ class SyncObjectListCopier5 @AssistedInject constructor(
 
 
     private val syncObjectCopier: SyncObjectCopier5
-        get() = syncObjectCopierAssistedFactory5.create(syncTask)
+        get() = syncObjectCopierAssistedFactory5.create(syncTask, executionId)
 
 
     companion object {
@@ -47,5 +48,7 @@ class SyncObjectListCopier5 @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncObjectListCopierAssistedFactory5 {
-    fun create(syncTask: SyncTask, scope: CoroutineScope): SyncObjectListCopier5
+    fun create(syncTask: SyncTask,
+               executionId: String,
+               scope: CoroutineScope): SyncObjectListCopier5
 }

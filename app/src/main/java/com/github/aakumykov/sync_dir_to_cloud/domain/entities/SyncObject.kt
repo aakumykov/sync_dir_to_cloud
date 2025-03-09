@@ -44,7 +44,7 @@ class SyncObject (
 
     @ColumnInfo(name = "execution_id", defaultValue = "none") var executionId: String,
 
-    @ColumnInfo(name = "sync_side", defaultValue = "SOURCE") val syncSide: SyncSide,
+    @ColumnInfo(name = "sync_side", defaultValue = "SOURCE") var syncSide: SyncSide,
 
     @ColumnInfo(name = "name") val name: String,
 
@@ -135,6 +135,17 @@ class SyncObject (
             return syncObject.apply {
                 syncObject.shiftTwoVersionParameters(modifiedFSItem)
                 executionId = newExecutionId
+            }
+        }
+
+        fun createFromExisting(syncObject: SyncObject,
+                               newExecutionId: String,
+                               newSyncSide: SyncSide,
+                               newStateInStorage: StateInStorage): SyncObject {
+            return syncObject.apply {
+                executionId = newExecutionId
+                syncSide = newSyncSide
+                stateInStorage = newStateInStorage
             }
         }
     }

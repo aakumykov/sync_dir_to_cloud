@@ -3,10 +3,15 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopierAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRegistrator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRegistratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamer5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamerAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import dagger.assisted.Assisted
@@ -21,7 +26,8 @@ class MutualRenamerAndCopier5 @AssistedInject constructor(
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
     private val syncObjectUpdater: SyncObjectUpdater,
     private val syncObjectReader: SyncObjectReader,
-){
+    private val syncObjectRegistratorAssistedFactory: SyncObjectRegistratorAssistedFactory,
+    ){
     suspend fun mutualRenameAndCopy(sourceObject: SyncObject, targetObject: SyncObject) {
 
         val newSourceObjectName = renamer.renameInSource(sourceObject)
@@ -36,6 +42,9 @@ class MutualRenamerAndCopier5 @AssistedInject constructor(
         // FIXME: избавиться от "!!"
         copier.copyFromSourceToTarget(newSourceObject!!, syncOptions.overwriteIfExists)
         copier.copyFromTargetToSource(newTargetObject!!, syncOptions.overwriteIfExists)
+
+        syncObjectRegistrator.registerNewObjectInSource(newTargetObject)
+        syncObjectRegistrator.registerNewObjectInTarget(newSourceObject)
     }
 
 
@@ -44,8 +53,11 @@ class MutualRenamerAndCopier5 @AssistedInject constructor(
     }
 
     private val copier: SyncObjectCopier5 by lazy {
-        syncObjectCopierAssistedFactory5.create(syncTask)
+        syncObjectCopierAssistedFactory5.create(syncTask, executionId)
     }
+
+    private val syncObjectRegistrator: SyncObjectRegistrator
+        get() = syncObjectRegistratorAssistedFactory.create(syncTask, executionId)
 }
 
 

@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_03_intermediate.InputS
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
 import dagger.assisted.Assisted
@@ -22,14 +23,19 @@ import dagger.assisted.AssistedInject
 
 class SyncObjectCopier5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
     private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
     private val fileWriter5AssistedFactory: FileWriter5AssistedFactory,
+    private val syncObjectRegistratorAssistedFactory: SyncObjectRegistratorAssistedFactory,
 ){
     @Throws(Exception::class)
     suspend fun copyFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
         if (syncObject.isDir) createDirInTarget(syncObject)
         else copyFromSourceToTargetReal(syncObject, overwriteIfExists)
+
+        if (syncTask.syncMode == SyncMode.MIRROR)
+            syncObjectRegistrator.registerNewObjectInTarget(syncObject)
     }
 
 
@@ -37,6 +43,9 @@ class SyncObjectCopier5 @AssistedInject constructor(
     suspend fun copyFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
         if (syncObject.isDir) createDirInSource(syncObject)
         else copyFromTargetToSourceReal(syncObject, overwriteIfExists)
+
+        if (syncTask.syncMode == SyncMode.MIRROR)
+            syncObjectRegistrator.registerNewObjectInSource(syncObject)
     }
 
 
@@ -104,10 +113,13 @@ class SyncObjectCopier5 @AssistedInject constructor(
 
     private val fileWriter: FileWriter5
         get() = fileWriter5AssistedFactory.create(syncTask)
+
+    private val syncObjectRegistrator: SyncObjectRegistrator
+        get() = syncObjectRegistratorAssistedFactory.create(syncTask, executionId)
 }
 
 
 @AssistedFactory
 interface SyncObjectCopierAssistedFactory5 {
-    fun create(syncTask: SyncTask): SyncObjectCopier5
+    fun create(syncTask: SyncTask, executionId: String): SyncObjectCopier5
 }

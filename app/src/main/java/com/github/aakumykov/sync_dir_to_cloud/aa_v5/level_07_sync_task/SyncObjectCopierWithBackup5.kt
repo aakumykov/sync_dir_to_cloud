@@ -29,7 +29,7 @@ class SyncObjectCopierWithBackup5 @AssistedInject constructor(
     }
 
     private val copier: SyncObjectCopier5 by lazy {
-        syncObjectCopierAssistedFactory5.create(syncTask)
+        syncObjectCopierAssistedFactory5.create(syncTask, executionId)
     }
 
     private val backuper: SyncObjectBackuper5 by lazy {
