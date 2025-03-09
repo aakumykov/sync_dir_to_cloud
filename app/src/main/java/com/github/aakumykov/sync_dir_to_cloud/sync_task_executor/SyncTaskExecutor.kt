@@ -158,7 +158,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             deleteOldSyncInstructions(syncTask)
             generateSyncInstructions(syncTask)
 
-//            processSyncInstructions(syncTask)
+            processSyncInstructions(syncTask)
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)
