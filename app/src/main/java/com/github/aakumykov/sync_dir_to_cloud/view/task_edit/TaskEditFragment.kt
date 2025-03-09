@@ -1,8 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
+import android.R.attr.data
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -20,6 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import com.github.aakumykov.sync_dir_to_cloud.factories.file_selector.FileSelectorFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
@@ -28,15 +32,14 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIc
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
-import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setError
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 
 class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
@@ -69,10 +72,44 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         prepareLayout(view)
         prepareButtons()
+        prepareSpinner()
         prepareViewModels()
         prepareStorageAccessHelper()
         prepareFragmentResultListeners()
         prepareForCreationOfEdition()
+    }
+
+    private fun prepareSpinner() {
+
+        val syncModes: Array<SyncMode> = SyncMode.entries.toTypedArray()
+
+        val spinnerAdapter: ArrayAdapter<SyncMode> = ArrayAdapter<SyncMode>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            syncModes
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+
+        binding.syncModeSpinner.apply {
+            adapter = spinnerAdapter
+            prompt = "Режим работы:"
+            setSelection(0)
+            onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    taskEditViewModel.currentTask?.syncMode = syncModes[position]
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    taskEditViewModel.currentTask?.syncMode = null
+                }
+            }
+        }
     }
 
     private fun prepareStorageAccessHelper() {
