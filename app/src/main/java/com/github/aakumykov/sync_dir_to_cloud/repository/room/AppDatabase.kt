@@ -2,7 +2,10 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
+import androidx.room.RenameColumn
 import androidx.room.RoomDatabase
+import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
@@ -79,12 +82,12 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 86, to = 87), // Новый объект SyncInstruction5
         AutoMigration(from = 87, to = 88), // Переместил поля в SyncInstruction5
         AutoMigration(from = 88, to = 89), // Новое поле SyncInstruction5.executionOrderNum
-        AutoMigration(from = 89, to = 90, spec = SyncInstruction5.RenameOrderNumToGroupOrderNumMigrationSpec::class),
-        AutoMigration(from = 90, to = 91, spec = SyncInstruction5.RenameObjectIdToSourceObjectIdMigrationSpec::class),
+        AutoMigration(from = 89, to = 90, spec = SyncInstruction5RenameOrderNumToGroupOrderNumMigrationSpec::class),
+        AutoMigration(from = 90, to = 91, spec = SyncInstruction5RenameObjectIdToSourceObjectIdMigrationSpec::class),
         AutoMigration(from = 91, to = 92), // SyncInstruction5.sourceObjectId стало nullable.
         AutoMigration(from = 92, to = 93), // Новое поле SyncInstruction5.executionOrderNum
-        AutoMigration(from = 93, to = 94, spec = SyncInstruction5.DeleteSyncSideColumnMigrationSpec::class),
-        AutoMigration(from = 94, to = 95, spec = SyncInstruction5.DeleteIsDirColumnMigrationSpec::class),
+        AutoMigration(from = 93, to = 94, spec = SyncInstruction5DeleteSyncSideColumnMigrationSpec::class),
+        AutoMigration(from = 94, to = 95, spec = SyncInstruction5DeleteIsDirColumnMigrationSpec::class),
         AutoMigration(from = 95, to = 96), // Новое поле SyncTask.withBackup
         AutoMigration(from = 96, to = 97), // ComparisonState
         AutoMigration(from = 97, to = 98), // SyncInstruction6
@@ -121,3 +124,15 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
     abstract fun getSyncInstructionDAO6(): SyncInstructionDAO6
 }
+
+@RenameColumn(tableName = "sync_instructions_5", fromColumnName = "order_num", toColumnName = "execution_order_num")
+class SyncInstruction5RenameOrderNumToGroupOrderNumMigrationSpec : AutoMigrationSpec
+
+@RenameColumn(tableName = "sync_instructions_5", fromColumnName = "object_id", toColumnName = "source_object_id")
+class SyncInstruction5RenameObjectIdToSourceObjectIdMigrationSpec : AutoMigrationSpec
+
+@DeleteColumn(tableName = "sync_instructions_5", columnName = "sync_side")
+class SyncInstruction5DeleteSyncSideColumnMigrationSpec : AutoMigrationSpec
+
+@DeleteColumn(tableName = "sync_instructions_5", columnName = "is_dir")
+class SyncInstruction5DeleteIsDirColumnMigrationSpec : AutoMigrationSpec

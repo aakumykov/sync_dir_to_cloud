@@ -40,15 +40,4 @@ class SyncInstruction5 (
 
     @ColumnInfo(name = "sync_operation") val operation: SyncOperation,
 ) {
-    @RenameColumn(tableName = "sync_instructions_5", fromColumnName = "order_num", toColumnName = "execution_order_num")
-    class RenameOrderNumToGroupOrderNumMigrationSpec : AutoMigrationSpec
-
-    @RenameColumn(tableName = "sync_instructions_5", fromColumnName = "object_id", toColumnName = "source_object_id")
-    class RenameObjectIdToSourceObjectIdMigrationSpec : AutoMigrationSpec
-
-    @DeleteColumn(tableName = "sync_instructions_5", columnName = "sync_side")
-    class DeleteSyncSideColumnMigrationSpec : AutoMigrationSpec
-
-    @DeleteColumn(tableName = "sync_instructions_5", columnName = "is_dir")
-    class DeleteIsDirColumnMigrationSpec : AutoMigrationSpec
 }
