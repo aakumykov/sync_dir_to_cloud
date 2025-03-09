@@ -67,7 +67,7 @@ class SyncObject (
     @Deprecated("Переименовать в operationError")
     @ColumnInfo(name = "sync_error") var syncError: String,
 
-    @ColumnInfo(name = "state_in_source") var stateInStorage: StateInStorage,
+    @ColumnInfo(name = "state_in_storage", defaultValue = "UNCHANGED") var stateInStorage: StateInStorage,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
     @ColumnInfo(name = "new_m_time") var newMTime: Long? = null,
@@ -157,4 +157,8 @@ class SyncObject (
 
     @RenameColumn(tableName = "sync_objects", fromColumnName = "side", toColumnName = "sync_side")
     class RenameSideToSyncSideMigration : AutoMigrationSpec
+
+
+    @RenameColumn(tableName = "sync_objects", fromColumnName = "state_in_source", toColumnName = "state_in_source")
+    class RenameStateInSourceToStateInStorageMigration : AutoMigrationSpec
 }

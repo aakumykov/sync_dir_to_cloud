@@ -96,8 +96,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 103, to = 104), // ForeignKeys в SyncInstruction6
         AutoMigration(from = 104, to = 105), // Новое поле SyncInstruction6.orderNum
         AutoMigration(from = 105, to = 106), // Новое поле SyncInstruction6.isDir
+        AutoMigration(from = 106, to = 107, spec = SyncObject.RenameStateInSourceToStateInStorageMigration::class),
     ],
-    version = 106,
+    version = 107,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

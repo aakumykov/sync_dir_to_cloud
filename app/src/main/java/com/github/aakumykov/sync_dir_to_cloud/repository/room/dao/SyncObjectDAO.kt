@@ -53,7 +53,7 @@ interface SyncObjectDAO {
 
     @Query("DELETE FROM sync_objects " +
             "WHERE task_id = :taskId " +
-            "AND state_in_source = :stateInStorage " +
+            "AND state_in_storage = :stateInStorage " +
             "AND sync_state = :syncState")
     suspend fun deleteObjectsWithModificationAndSyncState(
         taskId: String,
@@ -67,7 +67,7 @@ interface SyncObjectDAO {
 
 
     @Query("UPDATE sync_objects " +
-            "SET state_in_source = :stateInStorage " +
+            "SET state_in_storage = :stateInStorage " +
             "AND name = :name " +
             "AND relative_parent_dir_path = :relativeParentDirPath " +
             "AND task_id = :taskId")
@@ -80,7 +80,7 @@ interface SyncObjectDAO {
 
 
     @Query("UPDATE sync_objects " +
-            "SET state_in_source = 'DELETED' " +
+            "SET state_in_storage = 'DELETED' " +
             "WHERE task_id = :taskId")
     suspend fun markAllObjectsAsDeleted(taskId: String)
 
@@ -96,7 +96,7 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
-            "AND state_in_source = :stateInStorage"
+            "AND state_in_storage = :stateInStorage"
     )
     suspend fun getObjectsWithModificationState(
         taskId: String,
@@ -111,7 +111,7 @@ interface SyncObjectDAO {
     @Query("SELECT * FROM sync_objects " +
             "WHERE task_id = :taskId " +
             "AND is_exists_in_target = 0 " +
-            "AND state_in_source IS NOT 'DELETED'")
+            "AND state_in_storage IS NOT 'DELETED'")
     fun getObjectsNotDeletedInSourceButDeletedInTarget(taskId: String): List<SyncObject>
 
 
@@ -126,13 +126,13 @@ interface SyncObjectDAO {
             "AND task_id = :taskId")
     fun getAllObjectsForTask(syncSide: SyncSide, taskId: String): List<SyncObject>
 
-    @Query("DELETE FROM sync_objects WHERE id = :objectId AND state_in_source = 'DELETED'")
+    @Query("DELETE FROM sync_objects WHERE id = :objectId AND state_in_storage = 'DELETED'")
     fun deleteDeletedObject(objectId: String)
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
     fun deleteAllObjectsForTask(taskId: String)
 
-    @Query("UPDATE sync_objects SET state_in_source = :stateInStorage WHERE id = :objectId")
+    @Query("UPDATE sync_objects SET state_in_storage = :stateInStorage WHERE id = :objectId")
     fun setStateInStorage(objectId: String, stateInStorage: StateInStorage)
 
     @Query("UPDATE sync_objects SET name = :newName WHERE id = :objectId")
