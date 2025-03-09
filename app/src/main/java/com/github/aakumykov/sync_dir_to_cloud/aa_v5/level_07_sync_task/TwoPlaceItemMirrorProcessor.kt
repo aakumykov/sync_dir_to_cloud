@@ -1,10 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.from
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndNew
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndUnchanged
@@ -24,6 +24,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
+@Deprecated("Переименовтаь в 'generator'")
 class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
@@ -48,8 +49,7 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     //
     private suspend fun processSourceUnchangedOrDeletedWithTargetNewOrModified(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllFor(syncTask.id, executionId)
             .let { Log.d(TAG, it.toString()); it }
             .filter {
                 it.isUnchangedNew ||
@@ -58,11 +58,13 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
                 it.isDeletedAndModified
             }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }
@@ -70,8 +72,7 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     //
     private suspend fun processSourceNewOrModifiedWithTargetUnchangedOrDeleted(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllFor(syncTask.id, executionId)
             .filter {
                 it.isNewAndUnchanged ||
                 it.isNewAndUnchanged ||
@@ -80,11 +81,13 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }
@@ -92,18 +95,26 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     //
     private suspend fun processSourceDeletedWithTargetUnchanged(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllFor(syncTask.id, executionId)
             .filter {
                 it.isDeletedAndUnchanged
             }
 //            .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.DELETE_IN_TARGET,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    if (syncTask.withBackup) {
+                        add(SyncInstruction6.from(
+                            comparisonState = comparisonState,
+                            operation = SyncOperation6.BACKUP_IN_TARGET,
+                            orderNum = n++
+                        ))
+                    }
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.DELETE_IN_TARGET,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }
@@ -111,18 +122,26 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     //
     private suspend fun processSourceUnchangedWithTargetDeleted(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllFor(syncTask.id, executionId)
             .filter {
                 it.isUnchangedDeleted
             }
 //            .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.DELETE_IN_SOURCE,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    if (syncTask.withBackup) {
+                        add(SyncInstruction6.from(
+                            comparisonState = comparisonState,
+                            operation = SyncOperation6.BACKUP_IN_SOURCE,
+                            orderNum = n++
+                        ))
+                    }
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.DELETE_IN_SOURCE,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }
@@ -131,8 +150,7 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
     //
     private suspend fun processNewAndModified(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllFor(syncTask.id, executionId)
             .filter {
                 it.isNewAndNew ||
                 it.isNewAndModified ||
@@ -141,14 +159,41 @@ class TwoPlaceItemMirrorProcessor @AssistedInject constructor(
             }
 //            .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.MUTUAL_RENAME_AND_COPY,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.RENAME_COLLISION_IN_SOURCE,
+                        orderNum = n++
+                    ))
+                }
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.RENAME_COLLISION_IN_TARGET,
+                        orderNum = n++
+                    ))
+                }
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                        orderNum = n++
+                    ))
+                }
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }
+
+
+    private suspend fun getAllFor(taskId: String, executionId: String): Iterable<ComparisonState>
+        = comparisonStateRepository.getAllFor(taskId, executionId)
 
     companion object {
         val TAG: String = TwoPlaceItemMirrorProcessor::class.java.simpleName

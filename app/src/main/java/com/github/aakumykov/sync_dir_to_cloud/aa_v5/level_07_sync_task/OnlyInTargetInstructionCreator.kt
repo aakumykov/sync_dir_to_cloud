@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.from
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -32,8 +32,7 @@ class OnlyInTargetInstructionCreator @AssistedInject constructor(
      */
     private suspend fun processDirs(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllStatesFor(syncTask.id, executionId)
             .filter { it.onlyTarget }
             .filter { it.isDir }
             .filter { it.notUnchangedOrDeletedInTarget }
@@ -52,8 +51,7 @@ class OnlyInTargetInstructionCreator @AssistedInject constructor(
      */
     private suspend fun processFiles(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllStatesFor(syncTask.id, executionId)
             .filter { it.onlyTarget }
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInTarget }
@@ -65,6 +63,11 @@ class OnlyInTargetInstructionCreator @AssistedInject constructor(
                 ))
             }
         return n
+    }
+
+    private suspend fun getAllStatesFor(taskId: String, executionId: String): Iterable<ComparisonState> {
+        return comparisonStateRepository
+            .getAllFor(syncTask.id, executionId)
     }
 }
 

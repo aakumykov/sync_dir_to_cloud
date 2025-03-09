@@ -11,7 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectDeleterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamerAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_06_sync_object_list.SyncObjectListChunkedCopierAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import dagger.assisted.Assisted
@@ -19,7 +18,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
-class SyncInstructionExecutor @AssistedInject constructor(
+class OneSyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
@@ -35,67 +34,67 @@ class SyncInstructionExecutor @AssistedInject constructor(
     private val mutualRenamerAndCopierAssistedFactory5: MutualRenamerAndCopierAssistedFactory5,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
-
-        val sourceObject = instruction.objectIdInSource?.let { syncObjectReader.getSyncObject(it) }
-        val targetObject = instruction.objectIdInTarget?.let { syncObjectReader.getSyncObject(it) }
-
         when(instruction.operation) {
-            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(sourceObject)
-            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(targetObject)
+            SyncOperation6.RENAME_COLLISION_IN_SOURCE -> renameCollisionInSource(instruction.objectIdInSource!!)
+            SyncOperation6.RENAME_COLLISION_IN_TARGET -> renameCollisionInTarget(instruction.objectIdInTarget!!)
 
-            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET_WITH_BACKUP -> copyFromSourceToTargetWithBackup(sourceObject)
-            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE_WITH_BACKUP -> copyFromTargetToSourceWithBackup(targetObject)
+            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(instruction.objectIdInSource!!)
+            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(instruction.objectIdInTarget!!)
 
-            SyncOperation6.MUTUAL_RENAME_AND_COPY -> mutualRenameAndCopy(sourceObject!!, targetObject!!)
+            SyncOperation6.DELETE_IN_SOURCE -> deleteInSource(instruction.objectIdInSource!!)
+            SyncOperation6.DELETE_IN_TARGET -> deleteInTarget(instruction.objectIdInTarget!!)
 
-            SyncOperation6.DELETE_IN_SOURCE -> deleteInSource(sourceObject)
-            SyncOperation6.DELETE_IN_TARGET -> deleteInTarget(targetObject)
-
-            SyncOperation6.DELETE_IN_SOURCE_WITH_BACKUP -> deleteInSourceWithBackup(targetObject)
-            SyncOperation6.DELETE_IN_TARGET_WITH_BACKUP -> deleteInTargetWithBackup(targetObject)
+            SyncOperation6.BACKUP_IN_SOURCE -> { /*backuper.backupInSource(instruction)*/ }
+            SyncOperation6.BACKUP_IN_TARGET -> { /*backuper.backupInTarget(instruction)*/ }
         }
     }
 
-    private suspend fun copyFromSourceToTargetWithBackup(sourceObject: SyncObject?) {
-        copierWithBackup.copyFromSourceToTargetWithBackup(sourceObject!!)
+    private suspend fun renameCollisionInSource(sourceObjectId: String) {
+        syncObjectReader.getSyncObject(sourceObjectId)?.also {
+            renamer.renameCollisionInSource(it)
+        }
     }
 
-    private suspend fun copyFromTargetToSourceWithBackup(targetObject: SyncObject?) {
-        copierWithBackup.copyFromTargetToSourceWithBackup(targetObject!!)
+    private suspend fun renameCollisionInTarget(targetObjectId: String) {
+        syncObjectReader.getSyncObject(targetObjectId)?.also {
+            renamer.renameCollisionInTarget(it)
+        }
     }
 
-    private fun deleteInSourceWithBackup(targetObject: SyncObject?) {
-        deleterWithBackup.deleteInSourceWithBackup(targetObject!!)
+    private suspend fun copyFromSourceToTarget(sourceObjectId: String) {
+        syncObjectReader.getSyncObject(sourceObjectId)?.also {
+            copier.copyFromSourceToTarget(it, syncOptions.overwriteIfExists)
+        } ?: {
+//            TODO: errorLogger.log()
+        }
     }
 
-    private fun deleteInTargetWithBackup(targetObject: SyncObject?) {
-        deleterWithBackup.deleteInTargetWithBackup(targetObject!!)
-    }
-
-    private suspend fun copyFromSourceToTarget(sourceObject: SyncObject?) {
-        copier.copyFromSourceToTarget(sourceObject!!, syncOptions.overwriteIfExists)
-    }
-
-    private suspend fun copyFromTargetToSource(targetObject: SyncObject?) {
-        copier.copyFromTargetToSource(targetObject!!, syncOptions.overwriteIfExists)
+    private suspend fun copyFromTargetToSource(targetObjectId: String) {
+        syncObjectReader.getSyncObject(targetObjectId)?.also {
+            copier.copyFromTargetToSource(it, syncOptions.overwriteIfExists)
+        } ?: run {
+            // TODO: где и как регистриро БРОСАТЬ ИСКЛЮЧЕНИЕ
+        }
     }
 
 
-    // FIXME: удалять сначала файлы, потом каталоги
-    private suspend fun deleteInSource(sourceObject: SyncObject?) {
-        if (sourceObject!!.isDir) deleter.deleteEmptyDirInSource(sourceObject)
-        else deleter.deleteFileInSource(sourceObject)
+    /**
+     * // FIXME: удалять сначала файлы, потом каталоги...
+     * // Это делается в [SyncInstructionsProcessor6.processInstructions]
+     */
+    private suspend fun deleteInSource(sourceObjectId: String) {
+        syncObjectReader.getSyncObject(sourceObjectId)?.also {
+            if (it.isDir) deleter.deleteEmptyDirInSource(it)
+            else deleter.deleteFileInSource(it)
+        } // TODO: ?: throw Exception
     }
 
-    private suspend fun deleteInTarget(targetObject: SyncObject?) {
-        if (targetObject!!.isDir) deleter.deleteEmptyDirInTarget(targetObject)
-        else deleter.deleteFileInTarget(targetObject)
+    private suspend fun deleteInTarget(targetObjectId: String) {
+        syncObjectReader.getSyncObject(targetObjectId)?.also {
+            if (it.isDir) deleter.deleteEmptyDirInTarget(it)
+            else deleter.deleteFileInTarget(it)
+        } // TODO: ?: throw Exception
     }
-
-    private suspend fun mutualRenameAndCopy(sourceObject: SyncObject, targetObject: SyncObject) {
-        mutualRenamerAndCopier.mutualRenameAndCopy(sourceObject, targetObject)
-    }
-
 
 
 
@@ -143,5 +142,5 @@ interface SyncInstructionExecutorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
-        scope: CoroutineScope): SyncInstructionExecutor
+        scope: CoroutineScope): OneSyncInstructionExecutor
 }

@@ -1,9 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.from
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
@@ -36,11 +35,20 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             .filter { it.notDeletedInSource }
             .filter { it.notUnchangedInBothPlaces }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    if (syncTask.withBackup) {
+                        add(SyncInstruction6.from(
+                            comparisonState = comparisonState,
+                            operation = SyncOperation6.BACKUP_IN_TARGET,
+                            orderNum = n++
+                        ))
+                    }
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }
@@ -53,11 +61,20 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             .filter { it.isDeletedInSource }
             .filter { it.notDeletedInTarget }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.DELETE_IN_TARGET,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    if (syncTask.withBackup) {
+                        add(SyncInstruction6.from(
+                            comparisonState = comparisonState,
+                            operation = SyncOperation6.BACKUP_IN_TARGET,
+                            orderNum = n++
+                        ))
+                        add(SyncInstruction6.from(
+                            comparisonState = comparisonState,
+                            operation = SyncOperation6.DELETE_IN_TARGET,
+                            orderNum = n++
+                        ))
+                    }
+                }
             }
         return n
     }

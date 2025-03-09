@@ -7,11 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRegistratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamer5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamerAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import dagger.assisted.Assisted
@@ -30,8 +27,8 @@ class MutualRenamerAndCopier5 @AssistedInject constructor(
     ){
     suspend fun mutualRenameAndCopy(sourceObject: SyncObject, targetObject: SyncObject) {
 
-        val newSourceObjectName = renamer.renameInSource(sourceObject)
-        val newTargetObjectName = renamer.renameInTarget(sourceObject)
+        val newSourceObjectName = renamer.renameCollisionInSource(sourceObject)
+        val newTargetObjectName = renamer.renameCollisionInTarget(sourceObject)
 
         syncObjectUpdater.renameObject(sourceObject.id, newSourceObjectName)
         syncObjectUpdater.renameObject(targetObject.id, newTargetObjectName)

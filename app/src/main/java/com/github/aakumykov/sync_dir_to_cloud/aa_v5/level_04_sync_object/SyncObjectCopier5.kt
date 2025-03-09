@@ -29,6 +29,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
     private val fileWriter5AssistedFactory: FileWriter5AssistedFactory,
     private val syncObjectRegistratorAssistedFactory: SyncObjectRegistratorAssistedFactory,
 ){
+    @Deprecated("Разобраться, как сочетается overwriteIfExists с бекапом")
     @Throws(Exception::class)
     suspend fun copyFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
         if (syncObject.isDir) createDirInTarget(syncObject)
@@ -39,6 +40,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
     }
 
 
+    @Deprecated("Разобраться, как сочетается overwriteIfExists с бекапом")
     @Throws(Exception::class)
     suspend fun copyFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
         if (syncObject.isDir) createDirInSource(syncObject)

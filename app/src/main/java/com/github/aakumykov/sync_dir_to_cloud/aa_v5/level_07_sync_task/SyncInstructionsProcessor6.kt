@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

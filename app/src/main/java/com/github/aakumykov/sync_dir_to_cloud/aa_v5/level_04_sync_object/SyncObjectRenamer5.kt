@@ -16,7 +16,7 @@ class SyncObjectRenamer5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
-    fun renameInSource(syncObject: SyncObject): String {
+    fun renameCollisionInSource(syncObject: SyncObject): String {
         val oldPath = syncObject.absolutePathIn(syncTask.sourcePath!!)
 
         val newName = newNameFor("source", syncObject)
@@ -27,7 +27,7 @@ class SyncObjectRenamer5 @AssistedInject constructor(
         return newName
     }
 
-    fun renameInTarget(syncObject: SyncObject): String {
+    fun renameCollisionInTarget(syncObject: SyncObject): String {
 
         val oldPath = syncObject.absolutePathIn(syncTask.targetPath!!)
 

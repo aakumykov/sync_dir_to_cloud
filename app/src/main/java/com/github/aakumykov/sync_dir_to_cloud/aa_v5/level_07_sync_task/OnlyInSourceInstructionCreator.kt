@@ -2,9 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.from
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -19,9 +18,6 @@ class OnlyInSourceInstructionCreator @AssistedInject constructor(
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ){
-    //Несмотря на то, что инструкция к фалам и каталогам применяется одна,
-    // вначале должны быть созданы каталоги.
-    // Нет: порядок выполнения определяется на этапе выполнения инструкций.
     suspend fun process(initialOrderNum: Int): Int {
         val nextOrderNum = processUnchangedNewModifiedDirs(initialOrderNum)
         return processUnchangedNewModifiedFiles(nextOrderNum)
@@ -34,11 +30,13 @@ class OnlyInSourceInstructionCreator @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.notUnchangedOrDeletedInSource }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }
@@ -50,11 +48,13 @@ class OnlyInSourceInstructionCreator @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInSource }
             .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                    orderNum = n++
-                ))
+                syncInstructionRepository6.apply {
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                        orderNum = n++
+                    ))
+                }
             }
         return n
     }

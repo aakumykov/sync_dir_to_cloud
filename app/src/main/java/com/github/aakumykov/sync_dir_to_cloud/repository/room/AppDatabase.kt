@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstructionDAO6
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
