@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
+import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -30,6 +31,10 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     // задачу как "успешную", чтобы бессмысленно не пытаться выполнить её много раз.
     // Т.е. нужен доп статус спец. для этой ситуации...
     private val taskId: String get() = inputData.getString(TASK_ID)!!
+
+    /*override suspend fun getForegroundInfo(): ForegroundInfo {
+        return ForegroundInfo()
+    }*/
 
     override suspend fun doWork(): Result {
         return withContext(coroutineDispatcher) {
