@@ -35,8 +35,8 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
                 .setInputData(inputData)
                 .setConstraints(networkConstraints)
 //            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно
-//            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
+            .setExpedited(OutOfQuotaPolicy.DROP_WORK_REQUEST)
+            .build()
 
         workManager
             .beginUniqueWork(workName, ExistingWorkPolicy.KEEP, manualSyncStartWorkRequest)
