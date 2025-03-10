@@ -16,11 +16,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-// TODO: передавать готовый DirCreator и FileWriter?...
-// TODO: место для ошибок: помимо того, что методы источник/приёмник
-//  требуют ещё и соответствующего аргумента.
-//  Хотя... нет. Эти фунции приватные, внешние методы лишены этой проблемы.
-
 class SyncObjectCopier5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
@@ -32,22 +27,22 @@ class SyncObjectCopier5 @AssistedInject constructor(
     @Deprecated("Разобраться, как сочетается overwriteIfExists с бекапом")
     @Throws(Exception::class)
     suspend fun copyFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
+
         if (syncObject.isDir) createDirInTarget(syncObject)
         else copyFromSourceToTargetReal(syncObject, overwriteIfExists)
 
-        if (syncTask.syncMode == SyncMode.MIRROR)
-            syncObjectRegistrator.registerNewObjectInTarget(syncObject)
+        registrator.registerNewObjectInTarget(syncObject)
     }
 
 
     @Deprecated("Разобраться, как сочетается overwriteIfExists с бекапом")
     @Throws(Exception::class)
     suspend fun copyFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
+
         if (syncObject.isDir) createDirInSource(syncObject)
         else copyFromTargetToSourceReal(syncObject, overwriteIfExists)
 
-        if (syncTask.syncMode == SyncMode.MIRROR)
-            syncObjectRegistrator.registerNewObjectInSource(syncObject)
+        registrator.registerNewObjectInSource(syncObject)
     }
 
 
@@ -69,7 +64,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
             throw IllegalArgumentException("SyncObject is not a dir: $syncObject")
 
         dirCreator.createDirInSource(
-            basePath = syncObject.basePathIn(syncTask.targetPath!!),
+            basePath = syncObject.basePathIn(syncTask.sourcePath!!),
             dirName = syncObject.name
         )
     }
@@ -116,7 +111,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
     private val fileWriter: FileWriter5
         get() = fileWriter5AssistedFactory.create(syncTask)
 
-    private val syncObjectRegistrator: SyncObjectRegistrator
+    private val registrator: SyncObjectRegistrator
         get() = syncObjectRegistratorAssistedFactory.create(syncTask, executionId)
 }
 
