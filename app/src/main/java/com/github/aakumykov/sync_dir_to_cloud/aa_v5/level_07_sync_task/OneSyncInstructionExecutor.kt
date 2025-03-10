@@ -12,7 +12,9 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamerAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_06_sync_object_list.SyncObjectListChunkedCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -24,6 +26,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
     private val syncOptions: SyncOptions,
     private val syncObjectReader: SyncObjectReader,
+    private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
     private val syncObjectListChunkedCopierAssistedFactory5: SyncObjectListChunkedCopierAssistedFactory5,
     private val syncObjectDeleterAssistedFactory5: SyncObjectDeleterAssistedFactory5,
@@ -64,6 +67,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private suspend fun copyFromSourceToTarget(sourceObjectId: String) {
         syncObjectReader.getSyncObject(sourceObjectId)?.also {
             copier.copyFromSourceToTarget(it, syncOptions.overwriteIfExists)
+            syncObjectStateChanger.setSyncState(sourceObjectId, ExecutionState.SUCCESS)
         } ?: {
 //            TODO: errorLogger.log()
         }
@@ -72,6 +76,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private suspend fun copyFromTargetToSource(targetObjectId: String) {
         syncObjectReader.getSyncObject(targetObjectId)?.also {
             copier.copyFromTargetToSource(it, syncOptions.overwriteIfExists)
+            syncObjectStateChanger.setSyncState(targetObjectId, ExecutionState.SUCCESS)
         } ?: run {
             // TODO: где и как регистриро БРОСАТЬ ИСКЛЮЧЕНИЕ
         }

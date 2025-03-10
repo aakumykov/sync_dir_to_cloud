@@ -158,7 +158,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             deleteOldSyncInstructions(syncTask)
             generateSyncInstructions(syncTask)
 
-//            processSyncInstructions(syncTask)
+            processSyncInstructions(syncTask)
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)
@@ -232,10 +232,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun generateSyncInstructions(syncTask: SyncTask) {
         appComponent
             .getInstructionsGeneratorAssistedFactory6()
-            .create(
-                syncTask = syncTask,
-                executionId = executionId,
-            )
+            .create(syncTask,executionId)
             .generate()
     }
 

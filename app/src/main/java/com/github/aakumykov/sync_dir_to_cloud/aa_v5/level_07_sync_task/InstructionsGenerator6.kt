@@ -9,9 +9,9 @@ import dagger.assisted.AssistedInject
 class InstructionsGenerator6 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val onlyInSourceInstructionCreatorAssistedFactory: OnlyInSourceInstructionCreatorAssistedFactory,
-    private val onlyInTargetInstructionCreatorAssistedFactory: OnlyInTargetInstructionCreatorAssistedFactory,
-    private val twoPlaceItemsMirrorProcessorAssistedFactory: TwoPlaceItemMirrorProcessorAssistedFactory,
+    private val onlyInSourceInstructionGeneratorAssistedFactory: OnlyInSourceInstructionGeneratorAssistedFactory,
+    private val onlyInTargetInstructionGeneratorAssistedFactory: OnlyInTargetInstructionGeneratorAssistedFactory,
+    private val twoPlaceItemsMirrorProcessorAssistedFactory: TwoPlaceItemInstructionGeneratorAssistedFactory,
     private val twoPlaceItemsSyncProcessorAssistedFactory: TwoPlaceItemSyncProcessorAssistedFactory,
 ) {
     suspend fun generate() {
@@ -29,11 +29,11 @@ class InstructionsGenerator6 @AssistedInject constructor(
     }
 
     private val onlyInSourceItemsProcessor by lazy {
-        onlyInSourceInstructionCreatorAssistedFactory.create(syncTask, executionId)
+        onlyInSourceInstructionGeneratorAssistedFactory.create(syncTask, executionId)
     }
 
     private val onlyInTargetItemsProcessor by lazy {
-        onlyInTargetInstructionCreatorAssistedFactory.create(syncTask, executionId)
+        onlyInTargetInstructionGeneratorAssistedFactory.create(syncTask, executionId)
     }
 
     private val twoPlaceMirrorItemsProcessor by lazy {
