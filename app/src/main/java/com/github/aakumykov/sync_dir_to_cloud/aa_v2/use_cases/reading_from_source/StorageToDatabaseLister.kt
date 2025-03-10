@@ -10,6 +10,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
@@ -154,22 +156,33 @@ class StorageToDatabaseLister @Inject constructor(
                 fileListItem,
                 existingObject
             ).also { stateInStorage ->
-                when(stateInStorage) {
-                    StateInStorage.MODIFIED -> {
-                        syncObjectUpdater.updateSyncObject(
-                            SyncObject.createFromExisting(
-                                newExecutionId = executionId,
-                                syncObject = existingObject,
-                                modifiedFSItem = fileListItem,
+                // Выяснять новый статус объекта имеет смысл лишь тогда,
+                // когда они были синхронизированы. Если нет,
+                if (existingObject.isSuccessSynced) {
+                    when (stateInStorage) {
+                        StateInStorage.MODIFIED -> {
+                            syncObjectUpdater.updateSyncObject(
+                                SyncObject.createFromExisting(
+                                    newExecutionId = executionId,
+                                    syncObject = existingObject,
+                                    modifiedFSItem = fileListItem,
+                                )
                             )
-                        )
+                        }
+
+                        StateInStorage.UNCHANGED -> {
+                            syncObjectUpdater.markAsUnchanged(existingObject.id)
+                        }
+
+                        else -> {
+                            Log.i(
+                                TAG,
+                                "SyncObject: sate_in_storage: ${existingObject.stateInStorage}, ${existingObject.id}, ${existingObject.name}"
+                            )
+                        }
                     }
-                    StateInStorage.UNCHANGED -> {
-                        syncObjectUpdater.markAsUnchanged(existingObject.id)
-                    }
-                    else -> {
-                        Log.i(TAG, "SyncObject: sate_in_storage: ${existingObject.stateInStorage}, ${existingObject.id}, ${existingObject.name}")
-                    }
+                } else {
+                    syncObjectUpdater.markAsNew(existingObject.id)
                 }
             }
         }
