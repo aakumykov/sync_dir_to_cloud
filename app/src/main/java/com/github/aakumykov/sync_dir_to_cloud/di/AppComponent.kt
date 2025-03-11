@@ -81,6 +81,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
 
@@ -222,6 +223,8 @@ interface AppComponent {
     fun getComparisonsDeleter6(): ComparisonsDeleter6
 
     fun getBackuperRestorer(): BackuperRestorer
+
+    fun getNotificationChannelHelper(): NotificationChannelHelper
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

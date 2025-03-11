@@ -1,14 +1,19 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
+import android.app.Notification
 import android.content.Context
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,6 +21,8 @@ import java.util.concurrent.CancellationException
 
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
     // TODO: OutputData: краткая сводка о выполненной работе
+
+    private val workerContext = context
 
     private val coroutineDispatcher = Dispatchers.IO
 
@@ -32,9 +39,25 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     // Т.е. нужен доп статус спец. для этой ситуации...
     private val taskId: String get() = inputData.getString(TASK_ID)!!
 
-    /*override suspend fun getForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo()
-    }*/
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+
+        appComponent.getNotificationChannelHelper()
+            .createNotificationChannel(
+                ProgressNotificationsConfig.CHANNEL_ID,
+                ProgressNotificationsConfig.CHANNEL_IMPORTANCE,
+                workerContext.getString(ProgressNotificationsConfig.CHANNEL_NAME_RES),
+                workerContext.getString(ProgressNotificationsConfig.CHANNEL_DESCRIPTION_RES)
+            )
+
+        return ForegroundInfo(
+            syncTaskReader.getSyncTask(taskId).notificationId,
+            NotificationCompat
+                .Builder(workerContext, ProgressNotificationsConfig.CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(workerContext.getString(R.string.NOTIFICATION_title))
+                .build()
+        )
+    }
 
     override suspend fun doWork(): Result {
         return withContext(coroutineDispatcher) {
