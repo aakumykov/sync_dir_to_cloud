@@ -34,8 +34,8 @@ class BackuperRestorer @Inject constructor(
 
     suspend fun restoreTasks() {
         readFromBackupFile().also { json ->
-            val list: List<SyncTask> =
-                gson.fromJson(json, object:TypeToken<List<SyncTask>>(){}.type)
+            val type = object : TypeToken<List<SyncTask>>() {}.type
+            val list = gson.fromJson<List<SyncTask>>(json, type)
             list.forEach { syncTask ->
                 syncTaskRepository.createSyncTask(syncTask)
             }
@@ -47,7 +47,7 @@ class BackuperRestorer @Inject constructor(
    }
 
     private fun readFromBackupFile(): String {
-        return backupFile.readBytes().toString()
+        return backupFile.readText()
     }
 
     private val backupDir: File

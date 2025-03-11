@@ -16,6 +16,7 @@ import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -240,10 +241,20 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
 
 
     private fun prepareButtons() {
-        binding.addButton.setOnClickListener {
-            requestNotificationPermission()
-        }
+        binding.addButton.setOnClickListener { requestNotificationPermission() }
+        binding.backupButton.setOnClickListener { backupTasks() }
+        binding.restoreButton.setOnClickListener { restoreTasks() }
     }
+
+    private fun backupTasks() {
+        lifecycleScope.launch (Dispatchers.IO) { backuperRestorer.backupTasks() }
+    }
+
+    private fun restoreTasks() {
+        lifecycleScope.launch (Dispatchers.IO) { backuperRestorer.restoreTasks() }
+    }
+
+    private val backuperRestorer by lazy { appComponent.getBackuperRestorer() }
 
     private fun requestNotificationPermission() {
         if (isAndroidTiramisuOrLater()) {

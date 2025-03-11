@@ -18,16 +18,44 @@
         android:layout_alignParentEnd="true"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/backupButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#81D4FA"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/description_sync_task_add_button"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_backup" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/restoreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#C5E1A5"
+        android:layout_toEndOf="@id/backupButton"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/description_sync_task_add_button"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_restore" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        app:srcCompat="@drawable/ic_add"
-        android:focusable="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:contentDescription="@string/description_sync_task_add_button" />
+        android:clickable="true"
+        android:contentDescription="@string/description_sync_task_add_button"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_add" />
 
 </RelativeLayout>
