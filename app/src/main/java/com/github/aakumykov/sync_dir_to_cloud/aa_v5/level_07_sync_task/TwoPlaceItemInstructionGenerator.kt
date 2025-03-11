@@ -56,6 +56,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
                 it.isDeletedAndNew ||
                 it.isDeletedAndModified
             }
+            .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     add(SyncInstruction6.from(
@@ -98,7 +99,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
             .filter {
                 it.isDeletedAndUnchanged
             }
-//            .let { Log.d(TAG, it.toString()); it }
+            .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     if (syncTask.withBackup) {
@@ -125,7 +126,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
             .filter {
                 it.isUnchangedDeleted
             }
-//            .let { Log.d(TAG, it.toString()); it }
+            .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     if (syncTask.withBackup) {
@@ -156,7 +157,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
                 it.isModifiedAndNew ||
                 it.isModifiedAndModified
             }
-//            .let { Log.d(TAG, it.toString()); it }
+            .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     add(SyncInstruction6.from(

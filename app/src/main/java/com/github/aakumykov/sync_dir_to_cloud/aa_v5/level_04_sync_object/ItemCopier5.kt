@@ -57,7 +57,11 @@ class ItemCopier5 @AssistedInject constructor(
             newSyncSide = newSyncSide,
         )
 
+        // Вот почему "регистрацию" объекта нужно выносить в отдельный класс:
+        // он должен считываться из БД, чтобы ...
         syncObjectAdder.addSyncObject(newSyncObject)
+
+        syncObjectStateChanger.markAsSuccessfullySynced(newSyncObject.id)
     }
 
 
