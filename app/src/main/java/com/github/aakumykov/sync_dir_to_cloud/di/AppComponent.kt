@@ -29,6 +29,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWit
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.BetterTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
@@ -219,6 +220,8 @@ interface AppComponent {
     fun getInstructionsDeleter6(): SyncInstructionDeleter6
 
     fun getComparisonsDeleter6(): ComparisonsDeleter6
+
+    fun getBackuperRestorer(): BackuperRestorer
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()
