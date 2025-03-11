@@ -164,28 +164,22 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
                         operation = SyncOperation6.RENAME_COLLISION_IN_SOURCE,
                         orderNum = n++
                     ))
-                }
-                syncInstructionRepository6.apply {
                     add(SyncInstruction6.from(
                         comparisonState = comparisonState,
                         operation = SyncOperation6.RENAME_COLLISION_IN_TARGET,
                         orderNum = n++
                     ))
-                }
-                /*syncInstructionRepository6.apply {
                     add(SyncInstruction6.from(
                         comparisonState = comparisonState,
                         operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
                         orderNum = n++
                     ))
-                }
-                syncInstructionRepository6.apply {
                     add(SyncInstruction6.from(
                         comparisonState = comparisonState,
                         operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
                         orderNum = n++
                     ))
-                }*/
+                }
             }
         return n
     }

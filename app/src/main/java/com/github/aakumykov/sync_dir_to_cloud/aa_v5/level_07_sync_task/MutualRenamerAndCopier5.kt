@@ -30,8 +30,8 @@ class MutualRenamerAndCopier5 @AssistedInject constructor(
         val newSourceObjectName = renamer.renameCollisionInSource(sourceObject)
         val newTargetObjectName = renamer.renameCollisionInTarget(sourceObject)
 
-        syncObjectUpdater.renameObject(sourceObject.id, newSourceObjectName)
-        syncObjectUpdater.renameObject(targetObject.id, newTargetObjectName)
+        syncObjectUpdater.updateName(sourceObject.id, newSourceObjectName)
+        syncObjectUpdater.updateName(targetObject.id, newTargetObjectName)
 
         val newSourceObject = syncObjectReader.getSyncObject(sourceObject.id)
         val newTargetObject = syncObjectReader.getSyncObject(targetObject.id)

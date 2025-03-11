@@ -325,7 +325,7 @@ class SyncObjectRepository @Inject constructor(
             .nullIfEmpty()
     }
 
-    override suspend fun renameObject(objectId: String, newName: String) {
+    override suspend fun updateName(objectId: String, newName: String) {
         return syncObjectDAO.renameObject(objectId, newName)
     }
 

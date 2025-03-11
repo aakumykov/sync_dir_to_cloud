@@ -6,28 +6,37 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathInWithNewName
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.formattedDateTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
+//
+// TODO: Хорошо бы создать такую иерархию:
+//  ItemRenamer:
+//    FileRenamer
+//    SyncObjectRenamer
+//
 class SyncObjectRenamer5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
+    private val syncObjectUpdater: SyncObjectUpdater,
 ) {
-    fun renameCollisionInSource(syncObject: SyncObject): String {
+    suspend fun renameCollisionInSource(syncObject: SyncObject): String {
         val oldPath = syncObject.absolutePathIn(syncTask.sourcePath!!)
 
         val newName = newNameFor("source", syncObject)
         val newPath = syncObject.absolutePathInWithNewName(syncTask.sourcePath!!, newName)
 
         sourceCloudWriter.renameFileOrEmptyDir(oldPath, newPath)
+        syncObjectUpdater.updateName(syncObject.id, newName)
 
         return newName
     }
 
-    fun renameCollisionInTarget(syncObject: SyncObject): String {
+    suspend fun renameCollisionInTarget(syncObject: SyncObject): String {
 
         val oldPath = syncObject.absolutePathIn(syncTask.targetPath!!)
 
@@ -35,6 +44,7 @@ class SyncObjectRenamer5 @AssistedInject constructor(
         val newPath = syncObject.absolutePathInWithNewName(syncTask.targetPath!!, newName)
 
         targetCloudWriter.renameFileOrEmptyDir(oldPath, newPath)
+        syncObjectUpdater.updateName(syncObject.id, newName)
 
         return newName
     }
