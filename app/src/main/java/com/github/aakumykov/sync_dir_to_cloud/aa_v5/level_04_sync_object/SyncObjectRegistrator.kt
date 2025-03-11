@@ -9,9 +9,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-/**
- *
- */
+@Deprecated("Вывести из использования")
 class SyncObjectRegistrator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
@@ -35,7 +33,7 @@ class SyncObjectRegistrator @AssistedInject constructor(
     suspend fun registerNewObjectInTarget(syncObject: SyncObject) {
 
         if (syncObject.syncSide != SyncSide.SOURCE)
-            throw IllegalArgumentException("SyncObject must have syncSide=${SyncSide.SOURCE} property: $syncObject")
+            throw IllegalArgumentException("SyncObject must have syncSide='${SyncSide.SOURCE}': $syncObject")
 
         SyncObject.createFromExisting(
             syncObject = syncObject,

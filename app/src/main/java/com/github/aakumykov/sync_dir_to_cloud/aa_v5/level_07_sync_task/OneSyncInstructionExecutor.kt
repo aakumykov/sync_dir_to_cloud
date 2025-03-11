@@ -3,6 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopier5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuper5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuperAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
@@ -35,6 +37,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val renamerAssistedFactory5: SyncObjectRenamerAssistedFactory5,
     private val syncObjectCopierWithBackupAssistedFactory5: SyncObjectCopierWithBackupAssistedFactory5,
     private val mutualRenamerAndCopierAssistedFactory5: MutualRenamerAndCopierAssistedFactory5,
+    private val itemCopierAssistedFactory: ItemCopierAssistedFactory5,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
         when(instruction.operation) {
@@ -64,10 +67,20 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         }
     }
 
+    /*
+    FIXME: логика размазана по разным местам:
+     @ регистрация скопированного объекта в БД происходит в "копировщике"
+     @ изменение syncState на SUCCESS - здесь
+     @ при этом получается два объекта с одним id, но разными syncSide,
+       поэтому обновление syncState происходит одним вызовом...
+       ...
+     @ вот одинаковость id и сказалась: при чтении хранилища и обновлении
+      записей БД изменения затрагивают другую сторону. [Уже решил, добавив
+      случайный id при клонировании объекта.]
+     */
     private suspend fun copyFromSourceToTarget(sourceObjectId: String) {
         syncObjectReader.getSyncObject(sourceObjectId)?.also {
-            copier.copyFromSourceToTarget(it, syncOptions.overwriteIfExists)
-            syncObjectStateChanger.setSyncState(sourceObjectId, ExecutionState.SUCCESS)
+            itemCopier.copyItemFromSourceToTarget(it, syncOptions.overwriteIfExists)
         } ?: {
 //            TODO: errorLogger.log()
         }
@@ -75,8 +88,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
     private suspend fun copyFromTargetToSource(targetObjectId: String) {
         syncObjectReader.getSyncObject(targetObjectId)?.also {
-            copier.copyFromTargetToSource(it, syncOptions.overwriteIfExists)
-            syncObjectStateChanger.setSyncState(targetObjectId, ExecutionState.SUCCESS)
+            itemCopier.copyItemFromTargetToSource(it, syncOptions.overwriteIfExists)
         } ?: run {
             // TODO: где и как регистриро БРОСАТЬ ИСКЛЮЧЕНИЕ
         }
@@ -102,6 +114,9 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     }
 
 
+    private val itemCopier: ItemCopier5 by lazy {
+        itemCopierAssistedFactory.create(syncTask, executionId)
+    }
 
     private val copier: SyncObjectCopier5 by lazy {
         syncObjectCopierAssistedFactory5.create(syncTask, executionId)

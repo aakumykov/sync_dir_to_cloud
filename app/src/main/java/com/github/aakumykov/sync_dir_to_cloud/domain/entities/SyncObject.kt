@@ -9,6 +9,8 @@ import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
+import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
 // TODO: сложный ключ, включающий taskId, name, parentPath и другое, что составляет уникальность.
@@ -38,7 +40,8 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
     ]
 )
 class SyncObject (
-    @ColumnInfo(name = "id")           val id: String,
+    // FIXME: id не должно быть var !!!
+    @ColumnInfo(name = "id")           var id: String,
 
     @ColumnInfo(name = "task_id")      val taskId: String,
 
@@ -106,7 +109,7 @@ class SyncObject (
         ): SyncObject {
 
             return SyncObject(
-                id = id(fsItem),
+                id = randomUUID,
                 taskId = taskId,
                 executionId = executionId,
                 syncSide = syncSide,
@@ -127,25 +130,41 @@ class SyncObject (
             )
         }
 
+
         fun createFromExisting(
             syncObject: SyncObject,
             modifiedFSItem: FSItem,
             newExecutionId: String
         ): SyncObject {
             return syncObject.apply {
+                id = randomUUID
                 syncObject.shiftTwoVersionParameters(modifiedFSItem)
                 executionId = newExecutionId
             }
         }
 
+
+        @Deprecated("Используется устаревшим кодом")
         fun createFromExisting(syncObject: SyncObject,
                                newExecutionId: String,
                                newSyncSide: SyncSide,
                                newStateInStorage: StateInStorage): SyncObject {
             return syncObject.apply {
+                id = randomUUID
                 executionId = newExecutionId
                 syncSide = newSyncSide
                 stateInStorage = newStateInStorage
+            }
+        }
+
+
+        fun createFromExisting(syncObject: SyncObject,
+                               newExecutionId: String,
+                               newSyncSide: SyncSide): SyncObject {
+            return syncObject.apply {
+                id = randomUUID
+                executionId = newExecutionId
+                syncSide = newSyncSide
             }
         }
     }

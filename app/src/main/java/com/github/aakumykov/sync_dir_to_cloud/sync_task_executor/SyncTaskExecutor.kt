@@ -154,7 +154,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             deleteOldComparisonStates(syncTask)
             compareSourceWithTarget(syncTask)
-
+//
             deleteOldSyncInstructions(syncTask)
             generateSyncInstructions(syncTask)
 

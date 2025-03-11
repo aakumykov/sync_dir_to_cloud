@@ -16,33 +16,36 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
+/**
+ * SyncObject - это объект БД, но его копирование подразумевает
+ * операцию над физическим файлом/каталогом. Эти два элемента - запись в БД
+ * и файлы в хранилище - идут параллельно, поэтому и обрабатываются параллельно
+ * в одном классе. Хотя, здесь можно долго рассуждать: например, что из SyncObject
+ * в БД берётся только информация о файле, так что "SyncObjectCopier" должен
+ * заниматься только физическими изменениями, а операции с БД нужно выносить
+ * в отдельный класс.
+ */
 class SyncObjectCopier5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
-    private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
     private val fileWriter5AssistedFactory: FileWriter5AssistedFactory,
+    private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
     private val syncObjectRegistratorAssistedFactory: SyncObjectRegistratorAssistedFactory,
 ){
     @Deprecated("Разобраться, как сочетается overwriteIfExists с бекапом")
     @Throws(Exception::class)
     suspend fun copyFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
-
         if (syncObject.isDir) createDirInTarget(syncObject)
         else copyFromSourceToTargetReal(syncObject, overwriteIfExists)
-
-        registrator.registerNewObjectInTarget(syncObject)
     }
 
 
     @Deprecated("Разобраться, как сочетается overwriteIfExists с бекапом")
     @Throws(Exception::class)
     suspend fun copyFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
-
         if (syncObject.isDir) createDirInSource(syncObject)
         else copyFromTargetToSourceReal(syncObject, overwriteIfExists)
-
-        registrator.registerNewObjectInSource(syncObject)
     }
 
 
