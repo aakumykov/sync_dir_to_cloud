@@ -12,4 +12,6 @@ interface SyncTaskReader {
 
     @Deprecated("Сделать возвращаемые значения nullable")
     suspend fun listSyncTasks(): LiveData<List<SyncTask>>
+
+    suspend fun getAllTasks(): List<SyncTask>
 }

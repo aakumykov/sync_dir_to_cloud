@@ -35,4 +35,7 @@ interface SyncTaskDAO {
     @Deprecated("Чтобы задействовать, нужно разобраться с ошибками в suspend-функциях")
     @Update
     suspend fun updateSuspend(syncTask: SyncTask)
+
+    @Query("SELECT * FROM sync_tasks")
+    suspend fun getAllTasks(): List<SyncTask>
 }
