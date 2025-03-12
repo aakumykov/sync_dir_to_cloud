@@ -2,12 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncObjectActualizer
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncObjectActualizerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -22,9 +23,8 @@ class ItemCopier5 @AssistedInject constructor(
     @Assisted private val executionId: String,
     private val fileCopier5AssistedFactory: FileCopier5AssistedFactory,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
-    // TODO: передать бы эти два действия в специальный класс...
     private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val syncObjectAdder: SyncObjectAdder,
+    private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory,
 ){
     // TODO: разобраться, как overwriteIfExists сочетается с бекапом
 
@@ -33,35 +33,18 @@ class ItemCopier5 @AssistedInject constructor(
         if (syncObject.isDir) createDirInTarget(syncObject)
         else copyFileFromSourceToTarget(syncObject, overwriteIfExists)
 
-        markAsSyncedAndRegisterInNewStorage(syncObject, SyncSide.TARGET)
+        syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
+        syncObjectActualizer.addActualInfoAboutObjectTo(SyncSide.TARGET, syncObject)
     }
+
 
     @Throws(Exception::class)
     suspend fun copyItemFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
         if (syncObject.isDir) createDirInSource(syncObject)
         else copyFileFromTargetToSource(syncObject, overwriteIfExists)
 
-        markAsSyncedAndRegisterInNewStorage(syncObject, SyncSide.SOURCE)
-    }
-
-
-    private suspend fun markAsSyncedAndRegisterInNewStorage(
-        syncObject: SyncObject,
-        newSyncSide: SyncSide
-    ) {
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
-
-        val newSyncObject = SyncObject.createFromExisting(
-            syncObject = syncObject,
-            newExecutionId = executionId,
-            newSyncSide = newSyncSide,
-        )
-
-        // Вот почему "регистрацию" объекта нужно выносить в отдельный класс:
-        // он должен считываться из БД, чтобы ...
-        syncObjectAdder.addSyncObject(newSyncObject)
-
-        syncObjectStateChanger.markAsSuccessfullySynced(newSyncObject.id)
+        syncObjectActualizer.addActualInfoAboutObjectTo(SyncSide.SOURCE, syncObject)
     }
 
 
@@ -100,9 +83,14 @@ class ItemCopier5 @AssistedInject constructor(
 
 
 
-    private val fileCopier: FileCopier5 by lazy { fileCopier5AssistedFactory.create(syncTask, executionId) }
+    private val fileCopier: FileCopier5 by lazy {
+        fileCopier5AssistedFactory.create(syncTask, executionId) }
 
-    private val dirCreator: DirCreator5 by lazy { dirCreator5AssistedFactory.create(syncTask) }
+    private val dirCreator: DirCreator5 by lazy {
+        dirCreator5AssistedFactory.create(syncTask) }
+
+    private val syncObjectActualizer: SyncObjectActualizer by lazy {
+        syncObjectActualizerAssistedFactory.create(syncTask, executionId) }
 }
 
 

@@ -67,7 +67,7 @@ abstract class BasicStorageReader(
                     }
             }
             else {
-                SyncObject.createFromExisting(
+                SyncObject.createFromExistingAsModified(
                     newExecutionId = "none",
                     syncObject = existingObject,
                     modifiedFSItem = fileListItem,

@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
@@ -162,7 +161,7 @@ class StorageToDatabaseLister @Inject constructor(
                     when (stateInStorage) {
                         StateInStorage.MODIFIED -> {
                             syncObjectUpdater.updateSyncObject(
-                                SyncObject.createFromExisting(
+                                SyncObject.createFromExistingAsModified(
                                     newExecutionId = executionId,
                                     syncObject = existingObject,
                                     modifiedFSItem = fileListItem,
