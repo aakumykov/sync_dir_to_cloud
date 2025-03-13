@@ -100,8 +100,10 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 104, to = 105), // Новое поле SyncInstruction6.orderNum
         AutoMigration(from = 105, to = 106), // Новое поле SyncInstruction6.isDir
         AutoMigration(from = 106, to = 107, spec = SyncObject.RenameStateInSourceToStateInStorageMigration::class),
+        AutoMigration(from = 107, to = 108), // Новое поле SyncObject.stateJustDetected
+        AutoMigration(from = 108, to = 109, spec = SyncObjectDeleteStateJustDetectedField::class),
     ],
-    version = 107,
+    version = 109,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -136,3 +138,8 @@ class SyncInstruction5DeleteSyncSideColumnMigrationSpec : AutoMigrationSpec
 
 @DeleteColumn(tableName = "sync_instructions_5", columnName = "is_dir")
 class SyncInstruction5DeleteIsDirColumnMigrationSpec : AutoMigrationSpec
+
+
+@DeleteColumn(tableName = "sync_objects", columnName = "state_just_detected")
+class SyncObjectDeleteStateJustDetectedField : AutoMigrationSpec
+
