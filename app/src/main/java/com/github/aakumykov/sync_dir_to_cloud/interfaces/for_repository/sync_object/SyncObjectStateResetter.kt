@@ -5,6 +5,7 @@ interface SyncObjectStateResetter {
 
     // TODO: вынести в отдельный интерфейс
     suspend fun markAllObjectsAsDeleted(taskId: String)
+    suspend fun resetAllStateJustDetectedFls(taskId: String)
 
     suspend fun resetTargetReadingBadState(taskId: String)
     suspend fun resetBackupBadState(taskId: String)

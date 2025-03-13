@@ -70,6 +70,9 @@ class SyncObject (
     @Deprecated("Переименовать в operationError")
     @ColumnInfo(name = "sync_error") var syncError: String,
 
+    @ColumnInfo(name = "state_just_detected", defaultValue = "false")
+    var stateJustDetected: Boolean,
+
     @ColumnInfo(name = "state_in_storage", defaultValue = "UNCHANGED") var stateInStorage: StateInStorage,
 
     @ColumnInfo(name = "m_time") var mTime: Long,
@@ -124,6 +127,7 @@ class SyncObject (
                 syncState = ExecutionState.NEVER,
                 syncDate = currentTime(),
                 syncError = "",
+                stateJustDetected = true,
                 stateInStorage = StateInStorage.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
@@ -140,6 +144,7 @@ class SyncObject (
                 id = randomUUID
                 syncObject.shiftTwoVersionParameters(modifiedFSItem)
                 executionId = newExecutionId
+                stateJustDetected = true
                 stateInStorage = StateInStorage.MODIFIED
             }
         }
@@ -154,6 +159,7 @@ class SyncObject (
                 id = randomUUID
                 executionId = newExecutionId
                 syncSide = newSyncSide
+                stateJustDetected = true
                 stateInStorage = newStateInStorage
             }
         }
@@ -166,6 +172,7 @@ class SyncObject (
                 id = randomUUID
                 executionId = newExecutionId
                 syncSide = newSyncSide
+                stateJustDetected = true
             }
         }
     }

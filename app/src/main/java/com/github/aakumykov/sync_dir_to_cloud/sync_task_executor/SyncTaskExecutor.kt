@@ -145,6 +145,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             resetTaskBadStates(taskId)
             resetObjectsBadState(taskId)
             markAllObjectsAsDeleted(taskId)
+            resetAllStateJustDetectedFlag(taskId)
 
             // Прочитать источник
             readSource(syncTask).getOrThrow()
@@ -215,6 +216,10 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    private suspend fun resetAllStateJustDetectedFlag(taskId: String) {
+        syncObjectStateResetter.resetAllStateJustDetectedFls(taskId)
     }
 
     private suspend fun deleteOldComparisonStates(syncTask: SyncTask) {

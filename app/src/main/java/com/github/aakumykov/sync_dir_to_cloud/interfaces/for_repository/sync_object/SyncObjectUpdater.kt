@@ -10,14 +10,9 @@ interface SyncObjectUpdater {
 
     suspend fun markAsUnchanged(objectId: String)
 
-    @Deprecated("НЕ ИСПОЛЬЗОВАТЬ!")
-    suspend fun markAsNew(objectId: String)
-
     suspend fun markAsDeleted(objectId: String)
 
     suspend fun updateAsModified(objectId: String, newSize: Long, newMTime: Long)
-
-//    suspend fun updateAsDeleted(objectId: String)
 
     suspend fun updateName(objectId: String, newName: String)
 }
