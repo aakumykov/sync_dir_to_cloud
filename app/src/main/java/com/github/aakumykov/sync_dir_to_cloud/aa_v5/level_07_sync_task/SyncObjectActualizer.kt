@@ -80,7 +80,6 @@ class SyncObjectActualizer @AssistedInject constructor(
         isDir = fileMetadata.isDir,
 
         stateInStorage = StateInStorage.NEW,
-        stateJustDetected = false,
         syncState = ExecutionState.SUCCESS,
 
         backupState = ExecutionState.NEVER,

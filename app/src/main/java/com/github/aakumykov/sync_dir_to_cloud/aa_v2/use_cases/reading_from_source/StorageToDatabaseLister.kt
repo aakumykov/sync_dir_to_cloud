@@ -156,7 +156,8 @@ class StorageToDatabaseLister @Inject constructor(
                 existingObject
             ).also { stateInStorage ->
 
-                // Статус выясняется
+                /*Выяснять новый статус объекта имеет смысл лишь тогда,
+                когда они были синхронизированы. Если нет,*/
                 if (existingObject.isSuccessSynced) {
 
                     when (stateInStorage) {
@@ -179,6 +180,10 @@ class StorageToDatabaseLister @Inject constructor(
                             )
                         }
                     }
+                }
+                // В смысле 'maskAsNew()'? Такое действие вообще бессмысленно.
+                else {
+                    syncObjectUpdater.markAsNew(existingObject.id)
                 }
             }
         }

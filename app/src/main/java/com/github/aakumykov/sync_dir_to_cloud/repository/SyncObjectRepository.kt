@@ -194,9 +194,6 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun markAllObjectsAsDeleted(taskId: String)
         = syncObjectDAO.markAllObjectsAsDeleted(taskId)
 
-    override suspend fun resetAllStateJustDetectedFls(taskId: String)
-        = syncObjectDAO.resetAllStateJustDetectedFls(taskId)
-
     override suspend fun getSyncObject(objectId: String): SyncObject?
         = syncObjectDAO.getSyncObject(objectId)
 
@@ -229,6 +226,10 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun markAsUnchanged(objectId: String)
         = syncObjectDAO.setStateInStorage(objectId, StateInStorage.UNCHANGED)
+
+    @Deprecated("НЕ ИСПОЛЬЗОВАТЬ!")
+    override suspend fun markAsNew(objectId: String)
+            = syncObjectDAO.setStateInStorage(objectId, StateInStorage.NEW)
 
     /*override suspend fun updateAsDeleted(objectId: String)
             = syncObjectDAO.updateAsDeleted(objectId)*/

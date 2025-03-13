@@ -132,10 +132,7 @@ interface SyncObjectDAO {
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
     fun deleteAllObjectsForTask(taskId: String)
 
-    @Query("UPDATE sync_objects SET " +
-            "state_in_storage = :stateInStorage, " +
-            "state_just_detected = 'true' " +
-            "WHERE id = :objectId")
+    @Query("UPDATE sync_objects SET state_in_storage = :stateInStorage WHERE id = :objectId")
     fun setStateInStorage(objectId: String, stateInStorage: StateInStorage)
 
     @Query("UPDATE sync_objects SET name = :newName WHERE id = :objectId")
@@ -155,6 +152,9 @@ interface SyncObjectDAO {
         mTime: Long
     )
 
-    @Query("UPDATE sync_objects SET state_just_detected = 'false' WHERE task_id = :taskId")
-    fun resetAllStateJustDetectedFls(taskId: String)
+    /*@Query("UPDATE sync_objects SET " +
+            "state_in_storage = 'DELETED', " +
+            "sync_state = 'NEVER' " +
+            "WHERE id = :objectId")
+    fun updateAsDeleted(objectId: String)*/
 }
