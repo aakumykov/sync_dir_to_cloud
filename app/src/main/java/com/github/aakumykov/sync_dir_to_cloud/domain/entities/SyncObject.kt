@@ -146,10 +146,10 @@ class SyncObject (
 
 
         @Deprecated("Используется устаревшим кодом")
-        fun createFromExistingAsModified(syncObject: SyncObject,
-                                         newExecutionId: String,
-                                         newSyncSide: SyncSide,
-                                         newStateInStorage: StateInStorage): SyncObject {
+        fun createFromExisting(syncObject: SyncObject,
+                               newExecutionId: String,
+                               newSyncSide: SyncSide,
+                               newStateInStorage: StateInStorage): SyncObject {
             return syncObject.apply {
                 id = randomUUID
                 executionId = newExecutionId
@@ -159,7 +159,7 @@ class SyncObject (
         }
 
 
-        fun createFromExistingAsModified(syncObject: SyncObject,
+        fun createFromExisting(syncObject: SyncObject,
                                          newExecutionId: String,
                                          newSyncSide: SyncSide): SyncObject {
             return syncObject.apply {

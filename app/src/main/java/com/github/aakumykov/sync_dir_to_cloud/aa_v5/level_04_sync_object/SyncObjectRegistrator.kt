@@ -20,7 +20,7 @@ class SyncObjectRegistrator @AssistedInject constructor(
         if (syncObject.syncSide != SyncSide.TARGET)
             throw IllegalArgumentException("SyncObject must have syncSide=${SyncSide.TARGET} property: $syncObject")
 
-        SyncObject.createFromExistingAsModified(
+        SyncObject.createFromExisting(
             syncObject = syncObject,
             newExecutionId = executionId,
             newSyncSide = SyncSide.SOURCE,
@@ -35,7 +35,7 @@ class SyncObjectRegistrator @AssistedInject constructor(
         if (syncObject.syncSide != SyncSide.SOURCE)
             throw IllegalArgumentException("SyncObject must have syncSide='${SyncSide.SOURCE}': $syncObject")
 
-        SyncObject.createFromExistingAsModified(
+        SyncObject.createFromExisting(
             syncObject = syncObject,
             newExecutionId = executionId,
             newSyncSide = SyncSide.TARGET,

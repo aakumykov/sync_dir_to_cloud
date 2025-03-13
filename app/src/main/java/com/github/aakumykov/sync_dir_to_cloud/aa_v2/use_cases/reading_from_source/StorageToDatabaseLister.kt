@@ -155,17 +155,17 @@ class StorageToDatabaseLister @Inject constructor(
                 fileListItem,
                 existingObject
             ).also { stateInStorage ->
-                // Выяснять новый статус объекта имеет смысл лишь тогда,
-                // когда они были синхронизированы. Если нет,
+
+                /*Выяснять новый статус объекта имеет смысл лишь тогда,
+                когда они были синхронизированы. Если нет,*/
                 if (existingObject.isSuccessSynced) {
+
                     when (stateInStorage) {
                         StateInStorage.MODIFIED -> {
-                            syncObjectUpdater.updateSyncObject(
-                                SyncObject.createFromExistingAsModified(
-                                    newExecutionId = executionId,
-                                    syncObject = existingObject,
-                                    modifiedFSItem = fileListItem,
-                                )
+                            syncObjectUpdater.updateAsModified(
+                                objectId = existingObject.id,
+                                newSize = fileListItem.size,
+                                newMTime = fileListItem.mTime
                             )
                         }
 
@@ -180,7 +180,9 @@ class StorageToDatabaseLister @Inject constructor(
                             )
                         }
                     }
-                } else {
+                }
+                // В смысле 'maskAsNew()'? Такое действие вообще бессмысленно.
+                else {
                     syncObjectUpdater.markAsNew(existingObject.id)
                 }
             }

@@ -213,17 +213,29 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
         = syncObjectDAO.updateSyncObject(modifiedSyncObject)
 
+    override suspend fun updateAsModified(objectId: String, newSize: Long, newMTime: Long) {
+        syncObjectDAO.updateAsModified(
+            objectId = objectId,
+            size = newSize,
+            mTime = newMTime,
+        )
+    }
+
     override suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
         = syncObjectDAO.setExistsInTarget(objectId, isExists)
 
     override suspend fun markAsUnchanged(objectId: String)
         = syncObjectDAO.setStateInStorage(objectId, StateInStorage.UNCHANGED)
 
+    @Deprecated("НЕ ИСПОЛЬЗОВАТЬ!")
     override suspend fun markAsNew(objectId: String)
             = syncObjectDAO.setStateInStorage(objectId, StateInStorage.NEW)
 
+    /*override suspend fun updateAsDeleted(objectId: String)
+            = syncObjectDAO.updateAsDeleted(objectId)*/
+
     override suspend fun markAsDeleted(objectId: String)
-            = syncObjectDAO.setStateInStorage(objectId, StateInStorage.DELETED)
+        = syncObjectDAO.setStateInStorage(objectId, StateInStorage.DELETED)
 
     /*override suspend fun getAllObjectsForTask(
         side: SyncSide,

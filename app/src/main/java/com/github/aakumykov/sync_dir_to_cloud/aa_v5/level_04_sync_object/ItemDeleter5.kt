@@ -12,7 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class `ItemDeleter5` @AssistedInject constructor(
+class ItemDeleter5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val fileDeleterAssistedFactory: FileDeleterAssistedFactory5,

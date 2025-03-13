@@ -48,7 +48,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
     //
     private suspend fun processSourceUnchangedOrDeletedWithTargetNewOrModified(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        getAllFor(syncTask.id, executionId)
+        getAllComparisonStatesFor(syncTask.id, executionId)
             .let { Log.d(TAG, it.toString()); it }
             .filter {
                 it.isUnchangedNew ||
@@ -72,7 +72,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
     //
     private suspend fun processSourceNewOrModifiedWithTargetUnchangedOrDeleted(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        getAllFor(syncTask.id, executionId)
+        getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
                 it.isNewAndUnchanged ||
                 it.isNewAndUnchanged ||
@@ -95,7 +95,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
     //
     private suspend fun processSourceDeletedWithTargetUnchanged(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        getAllFor(syncTask.id, executionId)
+        getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
                 it.isDeletedAndUnchanged
             }
@@ -122,7 +122,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
     //
     private suspend fun processSourceUnchangedWithTargetDeleted(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        getAllFor(syncTask.id, executionId)
+        getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
                 it.isUnchangedDeleted
             }
@@ -150,7 +150,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
     //
     private suspend fun processNewAndModified(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        getAllFor(syncTask.id, executionId)
+        getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
                 it.isNewAndNew ||
                 it.isNewAndModified ||
@@ -186,7 +186,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
     }
 
 
-    private suspend fun getAllFor(taskId: String, executionId: String): Iterable<ComparisonState>
+    private suspend fun getAllComparisonStatesFor(taskId: String, executionId: String): Iterable<ComparisonState>
         = comparisonStateRepository.getAllFor(taskId, executionId)
 
     companion object {

@@ -137,4 +137,24 @@ interface SyncObjectDAO {
 
     @Query("UPDATE sync_objects SET name = :newName WHERE id = :objectId")
     fun renameObject(objectId: String, newName: String)
+
+    // TODO: ExecutionState здесь не 'NEVER', а 'сброшенный'
+    //  м.б. добавить такой?
+    @Query("UPDATE sync_objects SET " +
+            "size = :size, " +
+            "m_time = :mTime, " +
+            "state_in_storage = 'MODIFIED', " +
+            "sync_state = 'NEVER' " +
+            "WHERE id = :objectId")
+    fun updateAsModified(
+        objectId: String,
+        size: Long,
+        mTime: Long
+    )
+
+    /*@Query("UPDATE sync_objects SET " +
+            "state_in_storage = 'DELETED', " +
+            "sync_state = 'NEVER' " +
+            "WHERE id = :objectId")
+    fun updateAsDeleted(objectId: String)*/
 }

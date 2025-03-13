@@ -3,10 +3,21 @@ package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_ob
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 interface SyncObjectUpdater {
+
     suspend fun updateSyncObject(modifiedSyncObject: SyncObject)
+
     suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
+
     suspend fun markAsUnchanged(objectId: String)
+
+    @Deprecated("НЕ ИСПОЛЬЗОВАТЬ!")
     suspend fun markAsNew(objectId: String)
+
     suspend fun markAsDeleted(objectId: String)
+
+    suspend fun updateAsModified(objectId: String, newSize: Long, newMTime: Long)
+
+//    suspend fun updateAsDeleted(objectId: String)
+
     suspend fun updateName(objectId: String, newName: String)
 }
