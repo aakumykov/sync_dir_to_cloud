@@ -222,6 +222,9 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun markAsNew(objectId: String)
             = syncObjectDAO.setStateInStorage(objectId, StateInStorage.NEW)
 
+    override suspend fun markAsDeleted(objectId: String)
+            = syncObjectDAO.setStateInStorage(objectId, StateInStorage.DELETED)
+
     /*override suspend fun getAllObjectsForTask(
         side: SyncSide,
         taskId: String,

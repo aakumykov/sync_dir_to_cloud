@@ -7,5 +7,6 @@ interface SyncObjectUpdater {
     suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
     suspend fun markAsUnchanged(objectId: String)
     suspend fun markAsNew(objectId: String)
+    suspend fun markAsDeleted(objectId: String)
     suspend fun updateName(objectId: String, newName: String)
 }

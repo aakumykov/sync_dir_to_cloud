@@ -5,6 +5,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopierAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDeleterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuper5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuperAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
@@ -28,16 +30,10 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
     private val syncOptions: SyncOptions,
     private val syncObjectReader: SyncObjectReader,
-    private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
-    private val syncObjectListChunkedCopierAssistedFactory5: SyncObjectListChunkedCopierAssistedFactory5,
-    private val syncObjectDeleterAssistedFactory5: SyncObjectDeleterAssistedFactory5,
-    private val syncObjectDeleterWithBackupAssistedFactory5: SyncObjectDeleterWithBackupAssistedFactory5,
+    private val itemCopierAssistedFactory: ItemCopierAssistedFactory5,
+    private val itemDeleterAssistedFactory5: ItemDeleterAssistedFactory5,
     private val backuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
     private val renamerAssistedFactory5: SyncObjectRenamerAssistedFactory5,
-    private val syncObjectCopierWithBackupAssistedFactory5: SyncObjectCopierWithBackupAssistedFactory5,
-    private val mutualRenamerAndCopierAssistedFactory5: MutualRenamerAndCopierAssistedFactory5,
-    private val itemCopierAssistedFactory: ItemCopierAssistedFactory5,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
         when(instruction.operation) {
@@ -101,15 +97,13 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
      */
     private suspend fun deleteInSource(sourceObjectId: String) {
         syncObjectReader.getSyncObject(sourceObjectId)?.also {
-            if (it.isDir) deleter.deleteEmptyDirInSource(it)
-            else deleter.deleteFileInSource(it)
+            itemDeleter.deleteItemInSource(it)
         } // TODO: ?: throw Exception
     }
 
     private suspend fun deleteInTarget(targetObjectId: String) {
         syncObjectReader.getSyncObject(targetObjectId)?.also {
-            if (it.isDir) deleter.deleteEmptyDirInTarget(it)
-            else deleter.deleteFileInTarget(it)
+            itemDeleter.deleteItemInTarget(it)
         } // TODO: ?: throw Exception
     }
 
@@ -118,41 +112,15 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         itemCopierAssistedFactory.create(syncTask, executionId)
     }
 
-    private val copier: SyncObjectCopier5 by lazy {
-        syncObjectCopierAssistedFactory5.create(syncTask, executionId)
-    }
-
-    private val copierWithBackup: SyncObjectCopierWithBackup5 by lazy {
-        syncObjectCopierWithBackupAssistedFactory5.create(syncTask, executionId)
-    }
-
-    private val chunkedCopier by lazy {
-        syncObjectListChunkedCopierAssistedFactory5.create(
-            syncTask = syncTask,
-            executionId = executionId,
-            chunkSize = syncOptions.chunkSize,
-            scope = scope,
-        )
-    }
-
     private val backuper: SyncObjectBackuper5 by lazy {
         backuperAssistedFactory5.create(syncTask, executionId)
     }
 
-    private val deleter: SyncObjectDeleter5 by lazy {
-        syncObjectDeleterAssistedFactory5.create(syncTask, executionId)
+    private val itemDeleter: ItemDeleter5 by lazy {
+        itemDeleterAssistedFactory5.create(syncTask, executionId)
     }
-
-    private val deleterWithBackup: SyncObjectDeleterWithBackup5 by lazy {
-        syncObjectDeleterWithBackupAssistedFactory5.create(syncTask, executionId)
-    }
-
     private val renamer by lazy {
         renamerAssistedFactory5.create(syncTask)
-    }
-
-    private val mutualRenamerAndCopier: MutualRenamerAndCopier5 by lazy {
-        mutualRenamerAndCopierAssistedFactory5.create(syncTask, executionId)
     }
 }
 
