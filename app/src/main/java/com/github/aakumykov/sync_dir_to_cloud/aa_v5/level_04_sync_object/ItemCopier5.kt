@@ -34,7 +34,7 @@ class ItemCopier5 @AssistedInject constructor(
         else copyFileFromSourceToTarget(syncObject, overwriteIfExists)
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
-        syncObjectActualizer.addActualInfoAboutObjectTo(SyncSide.TARGET, syncObject)
+        syncObjectActualizer.actualizeInfoAboutObject(SyncSide.TARGET, syncObject)
     }
 
 
@@ -44,7 +44,7 @@ class ItemCopier5 @AssistedInject constructor(
         else copyFileFromTargetToSource(syncObject, overwriteIfExists)
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
-        syncObjectActualizer.addActualInfoAboutObjectTo(SyncSide.SOURCE, syncObject)
+        syncObjectActualizer.actualizeInfoAboutObject(SyncSide.SOURCE, syncObject)
     }
 
 

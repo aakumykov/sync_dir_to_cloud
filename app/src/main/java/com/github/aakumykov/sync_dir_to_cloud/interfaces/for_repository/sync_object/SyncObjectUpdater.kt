@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object
 
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 interface SyncObjectUpdater {
@@ -17,7 +18,12 @@ interface SyncObjectUpdater {
 
     suspend fun updateAsModified(objectId: String, newSize: Long, newMTime: Long)
 
-//    suspend fun updateAsDeleted(objectId: String)
+    suspend fun markJustChecked(objectId: String)
 
     suspend fun updateName(objectId: String, newName: String)
+
+
+    suspend fun updateStateInStorage(objectId: String, stateInStorage: StateInStorage)
+
+    suspend fun updateMetadata(objectId: String, size: Long, mTime: Long)
 }

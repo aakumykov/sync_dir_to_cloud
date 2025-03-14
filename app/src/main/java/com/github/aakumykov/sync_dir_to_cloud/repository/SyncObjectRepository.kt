@@ -51,6 +51,9 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun addSyncObject(syncObject: SyncObject)
         = syncObjectDAO.add(syncObject)
 
+    override suspend fun updateMetadata(objectId: String, size: Long, mTime: Long)
+        = syncObjectDAO.updateMetadata(objectId = objectId, size = size, mTime = mTime)
+
 
     override suspend fun getObjectsNeedsToBeSynced(taskId: String): List<SyncObject> {
 
@@ -191,8 +194,14 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.setSyncDate(objectId, date)
 
 
-    override suspend fun markAllObjectsAsDeleted(taskId: String)
-        = syncObjectDAO.markAllObjectsAsDeleted(taskId)
+    override suspend fun markAllObjectsAsNotChecked(taskId: String)
+        = syncObjectDAO.markAllObjectsAsNotChecked(taskId)
+
+    override suspend fun markAllNotCheckedObjectsAsDeleted(taskId: String)
+        = syncObjectDAO.markAllNotCheckedObjectsAsDeleted(taskId)
+
+    override suspend fun markJustChecked(objectId: String)
+        = syncObjectDAO.setJustChecked(objectId, true)
 
     override suspend fun getSyncObject(objectId: String): SyncObject?
         = syncObjectDAO.getSyncObject(objectId)
@@ -224,18 +233,36 @@ class SyncObjectRepository @Inject constructor(
     override suspend fun setIsExistsInTarget(objectId: String, isExists: Boolean)
         = syncObjectDAO.setExistsInTarget(objectId, isExists)
 
-    override suspend fun markAsUnchanged(objectId: String)
-        = syncObjectDAO.setStateInStorage(objectId, StateInStorage.UNCHANGED)
+    override suspend fun updateStateInStorage(objectId: String, stateInStorage: StateInStorage)
+        = syncObjectDAO.setStateInStorage(objectId, stateInStorage)
+
+    override suspend fun markAsUnchanged(objectId: String) {
+        syncObjectDAO.updateStateInStorage(
+            objectId = objectId,
+            stateInStorage = StateInStorage.UNCHANGED,
+            justChecked = true
+        )
+    }
 
     @Deprecated("НЕ ИСПОЛЬЗОВАТЬ!")
-    override suspend fun markAsNew(objectId: String)
-            = syncObjectDAO.setStateInStorage(objectId, StateInStorage.NEW)
+    override suspend fun markAsNew(objectId: String) {
+        syncObjectDAO.updateStateInStorage(
+            objectId = objectId,
+            stateInStorage = StateInStorage.NEW,
+            justChecked = true
+        )
+    }
 
     /*override suspend fun updateAsDeleted(objectId: String)
             = syncObjectDAO.updateAsDeleted(objectId)*/
 
-    override suspend fun markAsDeleted(objectId: String)
-        = syncObjectDAO.setStateInStorage(objectId, StateInStorage.DELETED)
+    override suspend fun markAsDeleted(objectId: String) {
+        syncObjectDAO.updateStateInStorage(
+            objectId = objectId,
+            stateInStorage = StateInStorage.DELETED,
+            justChecked = true
+        )
+    }
 
     /*override suspend fun getAllObjectsForTask(
         side: SyncSide,

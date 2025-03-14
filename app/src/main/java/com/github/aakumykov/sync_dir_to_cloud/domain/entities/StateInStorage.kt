@@ -21,5 +21,9 @@ enum class StateInStorage {
     }
 }
 
-fun StateInStorage.isNew(): Boolean = this == StateInStorage.NEW
-fun StateInStorage.isModified(): Boolean = this == StateInStorage.MODIFIED
+val StateInStorage.isNew: Boolean get() = this == StateInStorage.NEW
+
+val StateInStorage.isNewOrIsModified: Boolean get() {
+    return StateInStorage.MODIFIED == this ||
+            StateInStorage.NEW == this
+}

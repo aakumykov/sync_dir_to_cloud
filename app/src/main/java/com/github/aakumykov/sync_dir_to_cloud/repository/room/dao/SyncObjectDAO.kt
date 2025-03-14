@@ -80,9 +80,9 @@ interface SyncObjectDAO {
 
 
     @Query("UPDATE sync_objects " +
-            "SET state_in_storage = 'DELETED' " +
+            "SET just_checked = 'false' " +
             "WHERE task_id = :taskId")
-    suspend fun markAllObjectsAsDeleted(taskId: String)
+    suspend fun markAllObjectsAsNotChecked(taskId: String)
 
 
     @Query("SELECT * FROM sync_objects " +
@@ -132,19 +132,25 @@ interface SyncObjectDAO {
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
     fun deleteAllObjectsForTask(taskId: String)
 
-    @Query("UPDATE sync_objects SET state_in_storage = :stateInStorage WHERE id = :objectId")
-    fun setStateInStorage(objectId: String, stateInStorage: StateInStorage)
+    // TODO: разбить на отдельные методы и использовать транзакцию ...
+    @Query("UPDATE sync_objects SET " +
+            "state_in_storage = :stateInStorage, " +
+            "just_checked = :justChecked " +
+            "WHERE id = :objectId")
+    fun updateStateInStorage(objectId: String, stateInStorage: StateInStorage, justChecked: Boolean)
 
     @Query("UPDATE sync_objects SET name = :newName WHERE id = :objectId")
     fun renameObject(objectId: String, newName: String)
 
+    // TODO: разбить на отдельные методы и использовать транзакцию
     // TODO: ExecutionState здесь не 'NEVER', а 'сброшенный'
     //  м.б. добавить такой?
     @Query("UPDATE sync_objects SET " +
             "size = :size, " +
             "m_time = :mTime, " +
             "state_in_storage = 'MODIFIED', " +
-            "sync_state = 'NEVER' " +
+            "sync_state = 'NEVER'," +
+            "just_checked = 'true'" +
             "WHERE id = :objectId")
     fun updateAsModified(
         objectId: String,
@@ -152,9 +158,18 @@ interface SyncObjectDAO {
         mTime: Long
     )
 
-    /*@Query("UPDATE sync_objects SET " +
-            "state_in_storage = 'DELETED', " +
-            "sync_state = 'NEVER' " +
-            "WHERE id = :objectId")
-    fun updateAsDeleted(objectId: String)*/
+    @Query("UPDATE sync_objects SET " +
+            "state_in_storage = 'DELETED' " +
+            "WHERE task_id = :taskId " +
+            "AND just_checked = 'false'")
+    fun markAllNotCheckedObjectsAsDeleted(taskId: String)
+
+    @Query("UPDATE sync_objects SET just_checked = :value WHERE id = :objectId")
+    fun setJustChecked(objectId: String, value: Boolean)
+
+    @Query("UPDATE sync_objects SET state_in_storage = :stateInStorage WHERE id = :objectId")
+    fun setStateInStorage(objectId: String, stateInStorage: StateInStorage)
+
+    @Query("UPDATE sync_objects SET size = :size, m_time = :mTime WHERE id = :objectId")
+    fun updateMetadata(objectId: String, size: Long, mTime: Long)
 }

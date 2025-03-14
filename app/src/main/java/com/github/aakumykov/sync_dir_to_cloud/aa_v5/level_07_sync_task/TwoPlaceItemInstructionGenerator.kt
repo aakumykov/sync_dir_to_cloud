@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndNew
@@ -75,8 +76,8 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
         getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
                 it.isNewAndUnchanged ||
-                it.isNewAndUnchanged ||
                 it.isNewAndDeleted ||
+                it.isModifiedAndUnchanged ||
                 it.isModifiedAndDeleted
             }
             .let { Log.d(TAG, it.toString()); it }

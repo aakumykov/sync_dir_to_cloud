@@ -102,8 +102,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 106, to = 107, spec = SyncObject.RenameStateInSourceToStateInStorageMigration::class),
         AutoMigration(from = 107, to = 108), // Новое поле SyncObject.stateJustDetected
         AutoMigration(from = 108, to = 109, spec = SyncObjectDeleteStateJustDetectedField::class),
+        AutoMigration(from = 109, to = 110), // Новое поле SyncObject.justChecked
     ],
-    version = 109,
+    version = 110,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

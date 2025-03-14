@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
@@ -137,6 +137,7 @@ class StorageToDatabaseLister @Inject constructor(
             parentDirPath)
 
 
+        // Если в БД нет такого объекта, добавляю как новый и заканчиваю.
         if (null == existingObject) {
             syncObjectAdder.addSyncObject(
                 // TODO: сделать определение нового родительского пути более понятным
@@ -148,46 +149,65 @@ class StorageToDatabaseLister @Inject constructor(
                     relativeParentDirPath = parentDirPath,
                 )
             )
+            return
         }
-        else {
-            changesDetectionStrategy.detectItemModification(
-                pathReadingFrom,
-                fileListItem,
-                existingObject
-            ).also { stateInStorage ->
 
-                /*Выяснять новый статус объекта имеет смысл лишь тогда,
-                когда они были синхронизированы. Если нет,*/
-                if (existingObject.isSuccessSynced) {
+        val newStateInStorage = changesDetectionStrategy.detectItemModification(
+            pathReadingFrom,
+            fileListItem,
+            existingObject
+        )
 
-                    when (stateInStorage) {
-                        StateInStorage.MODIFIED -> {
-                            syncObjectUpdater.updateAsModified(
-                                objectId = existingObject.id,
-                                newSize = fileListItem.size,
-                                newMTime = fileListItem.mTime
-                            )
-                        }
-
-                        StateInStorage.UNCHANGED -> {
-                            syncObjectUpdater.markAsUnchanged(existingObject.id)
-                        }
-
-                        else -> {
-                            Log.i(
-                                TAG,
-                                "SyncObject: sate_in_storage: ${existingObject.stateInStorage}, ${existingObject.id}, ${existingObject.name}"
-                            )
-                        }
-                    }
-                }
-                // В смысле 'maskAsNew()'? Такое действие вообще бессмысленно.
-                else {
-                    syncObjectUpdater.markAsNew(existingObject.id)
-                }
+        when(newStateInStorage) {
+            StateInStorage.UNCHANGED -> {
+                updateObjectAsUnchanged(existingObject)
+            }
+            StateInStorage.NEW -> {
+                throw IllegalStateException("Object with 'NEW' state in storage cannot be used in 'update' part of code!")
+            }
+            StateInStorage.MODIFIED -> {
+                updateObjectAsModified(existingObject.id, fileListItem)
+            }
+            StateInStorage.DELETED -> {
+                updateObjectAsDeleted(existingObject)
             }
         }
     }
+
+
+    private suspend fun updateObjectAsUnchanged(existingObject: SyncObject) {
+        if (existingObject.isNeverSynced) {
+            markObjectAsChecked(existingObject.id)
+        } else {
+            markObjectAs(existingObject.id, StateInStorage.UNCHANGED)
+            markObjectAsChecked(existingObject.id)
+        }
+    }
+
+    private suspend fun updateObjectAsModified(objectId: String, fsItem: RecursiveDirReader.FileListItem) {
+        markObjectAs(objectId, StateInStorage.MODIFIED)
+        markObjectAsChecked(objectId)
+        syncObjectUpdater.updateMetadata(
+            objectId = objectId,
+            size = fsItem.size,
+            mTime = fsItem.mTime
+        )
+    }
+
+    private suspend fun updateObjectAsDeleted(existingObject: SyncObject) {
+        markObjectAs(existingObject.id, StateInStorage.DELETED)
+        markObjectAsChecked(existingObject.id)
+    }
+
+    private suspend fun markObjectAs(objectId: String, stateInStorage: StateInStorage) {
+        syncObjectUpdater.updateStateInStorage(objectId, stateInStorage)
+    }
+
+
+    private suspend fun markObjectAsChecked(objectId: String) {
+        syncObjectUpdater.markJustChecked(objectId)
+    }
+
 
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
 
@@ -195,13 +215,3 @@ class StorageToDatabaseLister @Inject constructor(
         val TAG: String = StorageToDatabaseLister::class.java.simpleName
     }
 }
-
-/*
-fun <T> T.isEqual(other: Any?): T? {
-    return if (null == other)
-        null
-    else {
-        if (other.equals(T.)) T
-        null
-    }
-}*/

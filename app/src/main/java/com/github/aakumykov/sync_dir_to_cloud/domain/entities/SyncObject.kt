@@ -6,6 +6,7 @@ import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notYetSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -72,6 +73,9 @@ class SyncObject (
 
     @ColumnInfo(name = "state_in_storage", defaultValue = "UNCHANGED") var stateInStorage: StateInStorage,
 
+    @ColumnInfo(name = "just_checked", defaultValue = "0")
+    var justChecked: Boolean,
+
     @ColumnInfo(name = "m_time") var mTime: Long,
     @ColumnInfo(name = "new_m_time") var newMTime: Long? = null,
 
@@ -89,10 +93,16 @@ class SyncObject (
         )
     }
 
-    override fun toString(): String {
+    /*override fun toString(): String {
         return "SyncObject( " +
                 (if (isDir) "[DIR]" else "[FILE]") +
                 " name='$name', id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$stateInStorage, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
+    }*/
+
+    override fun toString(): String {
+        return "SyncObject( " +
+                (if (isDir) "[DIR]" else "[FILE]") +
+                " name='$name', notYetSynced:${notYetSynced}, isNewOrIsModified:${stateInStorage.isNewOrIsModified})"
     }
 
 
@@ -124,6 +134,7 @@ class SyncObject (
                 syncState = ExecutionState.NEVER,
                 syncDate = currentTime(),
                 syncError = "",
+                justChecked = true,
                 stateInStorage = StateInStorage.NEW,
                 mTime = fsItem.mTime,
                 size = fsItem.size,
@@ -141,6 +152,7 @@ class SyncObject (
                 syncObject.shiftTwoVersionParameters(modifiedFSItem)
                 executionId = newExecutionId
                 stateInStorage = StateInStorage.MODIFIED
+                justChecked = true
             }
         }
 
@@ -155,17 +167,7 @@ class SyncObject (
                 executionId = newExecutionId
                 syncSide = newSyncSide
                 stateInStorage = newStateInStorage
-            }
-        }
-
-
-        fun createFromExisting(syncObject: SyncObject,
-                                         newExecutionId: String,
-                                         newSyncSide: SyncSide): SyncObject {
-            return syncObject.apply {
-                id = randomUUID
-                executionId = newExecutionId
-                syncSide = newSyncSide
+                justChecked = true
             }
         }
     }

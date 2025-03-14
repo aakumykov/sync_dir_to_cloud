@@ -144,7 +144,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Выполнить подготовку
             resetTaskBadStates(taskId)
             resetObjectsBadState(taskId)
-            markAllObjectsAsDeleted(taskId)
+
+            markAllObjectsAsNotChecked(taskId)
 
             // Прочитать источник
             readSource(syncTask).getOrThrow()
@@ -152,13 +153,16 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
+            // Отметить все не найденные объекты как удалённые
+            markAllNotCheckedObjectsAsDeleted(taskId)
+
             deleteOldComparisonStates(syncTask)
             compareSourceWithTarget(syncTask)
 //
             deleteOldSyncInstructions(syncTask)
             generateSyncInstructions(syncTask)
 
-//            processSyncInstructions(syncTask)
+            processSyncInstructions(syncTask)
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)
@@ -215,6 +219,10 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    private suspend fun markAllNotCheckedObjectsAsDeleted(taskId: String) {
+        syncObjectStateResetter.markAllNotCheckedObjectsAsDeleted(taskId)
     }
 
     private suspend fun deleteOldComparisonStates(syncTask: SyncTask) {
@@ -425,8 +433,8 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun markAllObjectsAsDeleted(taskId: String) {
-        syncObjectStateResetter.markAllObjectsAsDeleted(taskId)
+    private suspend fun markAllObjectsAsNotChecked(taskId: String) {
+        syncObjectStateResetter.markAllObjectsAsNotChecked(taskId)
     }
 
 

@@ -10,6 +10,8 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import dagger.assisted.Assisted
@@ -23,20 +25,49 @@ import dagger.assisted.AssistedInject
  * изменившийся при следующем запуске синхронизации.
  * Делается актуализация путём считывания данных о файле (папке?)
  * из хранилища.
+ *
+ * // FIXME: неудачное название. Действительная функция - добавление объекта.
  */
 class SyncObjectActualizer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
+    private val syncObjectReader: SyncObjectReader,
     private val cloudReaderGetter: CloudReaderGetter,
-    private val syncObjectAdder: SyncObjectAdder
+    private val syncObjectAdder: SyncObjectAdder,
+    private val syncObjectUpdater: SyncObjectUpdater,
 ) {
-    suspend fun addActualInfoAboutObjectTo(
+    suspend fun actualizeInfoAboutObject(
         syncSide: SyncSide,
         correspondingObject: SyncObject,
     ) {
-        cloudReader(syncSide)
-            .getFileMetadata(absolutePathFor(correspondingObject, syncSide))
-            .getOrThrow()
+        syncObjectReader.getSyncObject(
+            taskId = correspondingObject.taskId,
+            syncSide = syncSide,
+            name = correspondingObject.name,
+            relativeParentDirPath = correspondingObject.relativeParentDirPath,
+        )?.also { foundSyncObject ->
+            updateSyncObjectMetadata(foundSyncObject)
+        } ?: run {
+            addNewSyncObject(syncSide, correspondingObject)
+        }
+    }
+
+    private suspend fun updateSyncObjectMetadata(foundSyncObject: SyncObject) {
+        getFileMetadata(foundSyncObject.syncSide, absolutePathFor(foundSyncObject, foundSyncObject.syncSide))
+            .also { fileMetadata: FileMetadata ->
+                syncObjectUpdater.updateMetadata(
+                    objectId = foundSyncObject.id,
+                    size = fileMetadata.size,
+                    mTime = fileMetadata.modified
+                )
+            }
+    }
+
+    private suspend fun addNewSyncObject(
+        syncSide: SyncSide,
+        correspondingObject: SyncObject,
+    ) {
+        getFileMetadata(syncSide, absolutePathFor(correspondingObject, syncSide))
             .also { metadata ->
                 syncObjectAdder.addSyncObject(successfullySyncedNewObject(
                     fileMetadata = metadata,
@@ -45,6 +76,12 @@ class SyncObjectActualizer @AssistedInject constructor(
                     syncSide = syncSide,
                 ))
             }
+    }
+
+    private suspend fun getFileMetadata(syncSide: SyncSide, absolutePath: String): FileMetadata {
+        return cloudReader(syncSide)
+            .getFileMetadata(absolutePath)
+            .getOrThrow()
     }
 
     private fun absolutePathFor(syncObject: SyncObject, syncSide: SyncSide): String {
@@ -81,6 +118,7 @@ class SyncObjectActualizer @AssistedInject constructor(
 
         stateInStorage = StateInStorage.NEW,
         syncState = ExecutionState.SUCCESS,
+        justChecked = true,
 
         backupState = ExecutionState.NEVER,
         targetReadingState = ExecutionState.NEVER,
