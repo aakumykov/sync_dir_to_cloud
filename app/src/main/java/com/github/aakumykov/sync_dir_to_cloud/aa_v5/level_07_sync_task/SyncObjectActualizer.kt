@@ -74,6 +74,7 @@ class SyncObjectActualizer @AssistedInject constructor(
                     taskId = syncTask.id,
                     executionId = executionId,
                     syncSide = syncSide,
+                    relativeParentDirPath = correspondingObject.relativeParentDirPath,
                 ))
             }
     }
@@ -101,13 +102,14 @@ class SyncObjectActualizer @AssistedInject constructor(
         taskId: String,
         executionId: String,
         syncSide: SyncSide,
+        relativeParentDirPath: String,
     ): SyncObject = SyncObject(
         id = randomUUID,
         taskId = taskId,
         executionId = executionId,
 
         syncSide = syncSide,
-        relativeParentDirPath = "",
+        relativeParentDirPath = relativeParentDirPath,
         isExistsInTarget = true,
         syncDate = currentTime(),
         syncError = "",
