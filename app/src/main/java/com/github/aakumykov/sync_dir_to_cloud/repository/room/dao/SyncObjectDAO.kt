@@ -173,6 +173,9 @@ interface SyncObjectDAO {
     @Query("UPDATE sync_objects SET size = :size, m_time = :mTime WHERE id = :objectId")
     fun updateMetadata(objectId: String, size: Long, mTime: Long)
 
-    @Query("DELETE FROM sync_objects WHERE state_in_storage = 'DELETED' AND task_id = :taskId")
-    fun deleteObjectsWithDeletedState(taskId: String)
+    @Query("DELETE FROM sync_objects WHERE " +
+            "sync_state = 'SUCCESS' " +
+            "AND state_in_storage = 'DELETED' " +
+            "AND task_id = :taskId")
+    fun deleteProcessedObjectsWithDeletedState(taskId: String)
 }

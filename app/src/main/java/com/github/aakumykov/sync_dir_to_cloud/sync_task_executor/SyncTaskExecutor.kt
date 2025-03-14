@@ -164,7 +164,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             processSyncInstructions(syncTask)
 
-            clearSyncObjectsWithDeletedState(syncTask)
+            clearProcessedSyncObjectsWithDeletedState(syncTask)
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)
@@ -223,10 +223,10 @@ class SyncTaskExecutor @AssistedInject constructor(
         }
     }
 
-    private suspend fun clearSyncObjectsWithDeletedState(syncTask: SyncTask) {
+    private suspend fun clearProcessedSyncObjectsWithDeletedState(syncTask: SyncTask) {
         appComponent
             .getSyncObjectDeleter()
-            .deleteObjectsWithDeletedState(syncTask.id)
+            .deleteProcessedObjectsWithDeletedState(syncTask.id)
     }
 
     private suspend fun markAllNotCheckedObjectsAsDeleted(taskId: String) {
