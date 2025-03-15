@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
-import android.R.attr.data
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.View
@@ -70,16 +69,21 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         firstRun = (null == savedInstanceState)
 
-        prepareLayout(view)
-        prepareButtons()
-        prepareSpinner()
         prepareViewModels()
+
         prepareStorageAccessHelper()
         prepareFragmentResultListeners()
         prepareForCreationOfEdition()
+
+        prepareLayout(view)
+        prepareButtons()
+        /**
+         * [initSpinner] будет вызван в методе [fillForm]
+         * после поступления SyncTask от ViewModel, в методе [onSyncTaskChanged]
+          */
     }
 
-    private fun prepareSpinner() {
+    private fun initSpinner() {
 
         val syncModes: Array<SyncMode> = SyncMode.entries.toTypedArray()
 
@@ -91,10 +95,13 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
 
+        val syncMode = currentTask?.syncMode ?: SyncMode.SYNC
+        val syncModeIndex = syncModes.indexOf(syncMode)
+
         binding.syncModeSpinner.apply {
             adapter = spinnerAdapter
             prompt = "Режим работы:"
-            setSelection(0)
+            setSelection(syncModeIndex)
             onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -442,6 +449,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         fillPaths(syncTask)
         fillStorageTypeButtons(syncTask)
         fillPeriodView(syncTask)
+        initSpinner()
     }
 
     private fun fillStorageTypeButtons(syncTask: SyncTask) {
