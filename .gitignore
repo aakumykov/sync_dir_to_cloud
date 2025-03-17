@@ -20,3 +20,4 @@ local.properties
 
 # VIM text editor swap file
 *.swp
+~*.xlsx
