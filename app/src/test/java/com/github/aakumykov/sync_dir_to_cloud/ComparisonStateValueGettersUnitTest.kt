@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedInBothPlaces
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -10,11 +11,12 @@ import org.junit.Test
 
 class ComparisonStateValueGettersUnitTest {
 
+    //
+    // ComparisonState.notDeletedInTarget
+    //
     @Test
     fun when_target_state_not_deleted_then_notDeletedInTarget_is_true() {
-        StateInStorage
-            .values()
-            .toMutableSet()
+        storageStates
             .filterNot { StateInStorage.DELETED == it }
             .forEach { stateInStorage ->
                 cs(
@@ -28,9 +30,7 @@ class ComparisonStateValueGettersUnitTest {
 
     @Test
     fun when_target_state_is_deleted_then_notDeletedInTarget_is_false() {
-        StateInStorage
-            .values()
-            .toMutableSet()
+        storageStates
             .forEach { stateInStorage ->
                 cs(
                     sourceState = stateInStorage,
@@ -41,11 +41,13 @@ class ComparisonStateValueGettersUnitTest {
             }
     }
 
+
+    //
+    // ComparisonState.isDeletedInSource
+    //
     @Test
     fun when_source_state_is_deleted_then_isDeletedInSource_is_true() {
-        StateInStorage
-            .values()
-            .toMutableSet()
+        storageStates
             .forEach { stateInStorage ->
                 cs(
                     sourceState = StateInStorage.DELETED,
@@ -59,9 +61,7 @@ class ComparisonStateValueGettersUnitTest {
 
     @Test
     fun when_source_state_not_deleted_then_isDeletedInSource_is_false() {
-        StateInStorage
-            .values()
-            .toMutableSet()
+        storageStates
             .filterNot { StateInStorage.DELETED == it }
             .forEach { stateInStorage ->
                 cs(
@@ -74,9 +74,43 @@ class ComparisonStateValueGettersUnitTest {
             }
     }
 
-    
 
-    fun cs(sourceState: StateInStorage, targetState: StateInStorage): ComparisonState = ComparisonState(
+    //
+    // ComparisonState.notUnchangedInBothPlaces
+    //
+    @Test
+    fun when_source_or_target_state_not_UNCHANGED_then_notUnchangedInBothPlaces_is_true() {
+
+        fun notUnchangedStates(): Iterable<StateInStorage> = storageStates.filterNot { StateInStorage.UNCHANGED == it }
+
+        notUnchangedStates().forEach { sourceState ->
+            storageStates.forEach { targetState ->
+                cs(sourceState, targetState).also {
+                    assertTrue(it.notUnchangedInBothPlaces)
+                }
+            }
+        }
+
+        storageStates.forEach { sourceState ->
+            notUnchangedStates().forEach { targetState ->
+                cs(sourceState, targetState).also {
+                    assertTrue(it.notUnchangedInBothPlaces)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun when_source_and_target_are_UNCHANGED_then_notUnchangedInBothPlaces_is_false() {
+        assertFalse(
+            cs(StateInStorage.UNCHANGED, StateInStorage.UNCHANGED)
+                .notUnchangedInBothPlaces
+        )
+    }
+
+
+
+    private fun cs(sourceState: StateInStorage, targetState: StateInStorage): ComparisonState = ComparisonState(
         id = randomUUID,
         taskId = randomUUID,
         executionId = randomUUID,
@@ -87,4 +121,7 @@ class ComparisonStateValueGettersUnitTest {
         sourceObjectState = sourceState,
         targetObjectState = targetState,
     )
+
+    private val storageStates: MutableSet<StateInStorage>
+        = StateInStorage.values().toMutableSet()
 }
