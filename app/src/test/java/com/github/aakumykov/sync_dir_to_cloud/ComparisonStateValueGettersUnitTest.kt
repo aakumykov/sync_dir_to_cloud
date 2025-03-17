@@ -185,8 +185,15 @@ class ComparisonStateValueGettersUnitTest {
     }
 
     @Test
-    fun when_source_not_UNCHANGED_and_target_not_NEW_then_isSourceUnchangedTargetNew_is_false() {
+    fun when_source_not_UNCHANGED_or_target_not_NEW_then_isSourceUnchangedTargetNew_is_false() {
+
         statesInStorage.without(StateInStorage.UNCHANGED).forEach { sourceState ->
+            statesInStorage.forEach { targetState ->
+                assertFalse(cs(sourceState,targetState).isSourceUnchangedTargetNew)
+            }
+        }
+
+        statesInStorage.forEach { sourceState ->
             statesInStorage.without(StateInStorage.NEW).forEach { targetState ->
                 assertFalse(cs(sourceState,targetState).isSourceUnchangedTargetNew)
             }
@@ -206,8 +213,17 @@ class ComparisonStateValueGettersUnitTest {
     }
 
     @Test
-    fun when_source_not_UNCHANGED_and_target_not_MODIFIED_then_isSourceUnchangedTargetModified_is_false() {
+    fun when_source_not_UNCHANGED_or_target_not_MODIFIED_then_isSourceUnchangedTargetModified_is_false() {
+
         statesInStorage.without(StateInStorage.UNCHANGED).forEach { sourceState ->
+            statesInStorage.forEach { targetState ->
+                assertFalse(cs(
+                    sourceState,targetState
+                ).isSourceUnchangedTargetModified)
+            }
+        }
+
+        statesInStorage.forEach { sourceState ->
             statesInStorage.without(StateInStorage.MODIFIED).forEach { targetState ->
                 assertFalse(cs(
                     sourceState,targetState
