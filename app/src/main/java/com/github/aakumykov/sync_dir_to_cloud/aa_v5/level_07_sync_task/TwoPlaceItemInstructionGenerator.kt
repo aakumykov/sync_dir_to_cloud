@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndNew
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
@@ -53,7 +53,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
             .let { Log.d(TAG, it.toString()); it }
             .filter {
                 it.isSourceUnchangedTargetNew ||
-                it.isUnchangedModified ||
+                it.isSourceUnchangedTargetModified ||
                 it.isDeletedAndNew ||
                 it.isDeletedAndModified
             }

@@ -76,7 +76,7 @@ val ComparisonState.isSourceUnchangedTargetNew: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED
             && targetObjectState == StateInStorage.NEW
 
-val ComparisonState.isUnchangedModified: Boolean
+val ComparisonState.isSourceUnchangedTargetModified: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED
             && targetObjectState == StateInStorage.MODIFIED
 
