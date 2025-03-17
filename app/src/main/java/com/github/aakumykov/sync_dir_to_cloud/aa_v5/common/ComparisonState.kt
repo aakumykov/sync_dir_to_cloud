@@ -89,7 +89,7 @@ val ComparisonState.isSourceNewAndTargetUnchanged: Boolean
     get() = sourceObjectState == StateInStorage.NEW
             && targetObjectState == StateInStorage.UNCHANGED
 
-val ComparisonState.isNewAndNew: Boolean
+val ComparisonState.isSourceNewAndTargetNew: Boolean
     get() = sourceObjectState == StateInStorage.NEW
             && targetObjectState == StateInStorage.NEW
 
