@@ -12,7 +12,7 @@ class InstructionsGenerator6 @AssistedInject constructor(
     private val onlyInSourceInstructionGeneratorAssistedFactory: OnlyInSourceInstructionGeneratorAssistedFactory,
     private val onlyInTargetInstructionGeneratorAssistedFactory: OnlyInTargetInstructionGeneratorAssistedFactory,
     private val twoPlaceItemsMirrorProcessorAssistedFactory: TwoPlaceItemInstructionGeneratorAssistedFactory,
-    private val twoPlaceItemsSyncProcessorAssistedFactory: TwoPlaceItemSyncProcessorAssistedFactory,
+    private val twoPlaceItemsSyncProcessorAssistedFactory: TwoPlaceItemsInstructionGeneratorAssistedFactory,
 ) {
     suspend fun generate() {
 
