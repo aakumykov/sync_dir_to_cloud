@@ -23,7 +23,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.FileCopierAssist
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.SyncObjectCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.ComparisonsDeleter6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWithTargetComparatorAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionDeleter6
@@ -214,8 +213,6 @@ interface AppComponent {
     fun getSyncObjectCopierAssistedFactory(): SyncObjectCopierAssistedFactory
 
     fun getProbeFilesCopier(): ProbeFilesCopier
-
-    fun getInstructionsGeneratorAssistedFactory(): InstructionsGeneratorAssistedFactory
 
     fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
 
