@@ -80,7 +80,7 @@ val ComparisonState.isSourceUnchangedTargetModified: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED
             && targetObjectState == StateInStorage.MODIFIED
 
-val ComparisonState.isUnchangedDeleted: Boolean
+val ComparisonState.isSourceUnchangedTargetDeleted: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED
             && targetObjectState == StateInStorage.DELETED
 
