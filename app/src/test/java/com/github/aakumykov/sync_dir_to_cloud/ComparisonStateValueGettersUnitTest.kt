@@ -302,6 +302,8 @@ class ComparisonStateValueGettersUnitTest {
     }
 
 
+    // Слишком простые свойства-геттеры, чтобы писать для них тесты...
+
 
     private fun cs(sourceState: StateInStorage, targetState: StateInStorage): ComparisonState = ComparisonState(
         id = randomUUID,
