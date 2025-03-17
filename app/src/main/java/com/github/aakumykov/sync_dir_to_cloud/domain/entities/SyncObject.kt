@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notYetS
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
@@ -99,12 +100,15 @@ class SyncObject (
                 " name='$name', id='$id', taskId='$taskId', relativeParentDirPath='$relativeParentDirPath', isDir=$isDir, syncState=$syncState, syncDate=$syncDate, syncError='$syncError', modificationState=$stateInStorage, mTime=$mTime, newMTime=$newMTime, size=$size, newSize=$newSize)"
     }*/
 
-    override fun toString(): String {
+    /*override fun toString(): String {
         return "SyncObject( " +
                 (if (isDir) "[DIR]" else "[FILE]") +
                 " name='$name', notYetSynced:${notYetSynced}, isNewOrIsModified:${stateInStorage.isNewOrIsModified})"
-    }
+    }*/
 
+    override fun toString(): String {
+        return "SyncObject([${syncSide}] '$relativePath')"
+    }
 
     companion object {
 

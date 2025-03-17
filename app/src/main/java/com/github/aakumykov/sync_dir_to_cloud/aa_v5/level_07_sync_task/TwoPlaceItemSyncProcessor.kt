@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
@@ -29,11 +30,14 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
 
     private suspend fun processNeedToBeCopiedToTarget(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllComparisonStatesFor(syncTask.id, executionId)
+            .let { it }
             .filter { it.isBilateral }
+            .let { it }
             .filter { it.notDeletedInSource }
+            .let { it }
             .filter { it.notUnchangedInBothPlaces }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     if (syncTask.withBackup) {
@@ -55,11 +59,14 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
 
     private suspend fun processNeedToBeDeletedInTarget(initialOrderNum: Int): Int {
         var n = initialOrderNum
-        comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        getAllComparisonStatesFor(syncTask.id, executionId)
+            .let { it }
             .filter { it.isBilateral }
+            .let { it }
             .filter { it.isDeletedInSource }
+            .let { it }
             .filter { it.notDeletedInTarget }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     if (syncTask.withBackup) {
@@ -78,6 +85,13 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             }
         return n
     }
+
+
+    private suspend fun getAllComparisonStatesFor(
+        taskId: String,
+        executionId: String
+    ): Iterable<ComparisonState> = comparisonStateRepository
+        .getAllFor(taskId, executionId)
 }
 
 

@@ -26,9 +26,11 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     private suspend fun processUnchangedNewModifiedDirs(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
+            .let { it }
             .filter { it.onlySource }
             .filter { it.isDir }
             .filter { it.notUnchangedOrDeletedInSource }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     add(SyncInstruction6.from(
@@ -44,9 +46,11 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     private suspend fun processUnchangedNewModifiedFiles(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
+            .let { it }
             .filter { it.onlySource }
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInSource }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     add(SyncInstruction6.from(

@@ -33,9 +33,11 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     private suspend fun processDirs(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getAllStatesFor(syncTask.id, executionId)
+            .let { it }
             .filter { it.onlyTarget }
             .filter { it.isDir }
             .filter { it.notUnchangedOrDeletedInTarget }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6.from(
                     comparisonState = comparisonState,
@@ -52,9 +54,11 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     private suspend fun processFiles(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getAllStatesFor(syncTask.id, executionId)
+            .let { it }
             .filter { it.onlyTarget }
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInTarget }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6.from(
                     comparisonState = comparisonState,

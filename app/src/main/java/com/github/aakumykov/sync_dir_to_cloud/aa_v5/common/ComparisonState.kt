@@ -40,8 +40,13 @@ class ComparisonState (
     @Ignore val onlySource: Boolean = sourceObjectId != null && targetObjectId == null
     @Ignore val onlyTarget: Boolean = sourceObjectId == null && targetObjectId != null
 
-    override fun toString(): String {
+    /*override fun toString(): String {
         return "ComparisonState(id='$id', taskId='$taskId', executionId='$executionId', sourceObjectId=$sourceObjectId, targetObjectId=$targetObjectId, sourceObjectState=$sourceObjectState, targetObjectState=$targetObjectState, relativePath='$relativePath', isBilateral=$isBilateral, onlySource=$onlySource, onlyTarget=$onlyTarget)"
+    }*/
+
+    @Ignore
+    override fun toString(): String {
+        return "ComparisonState('$relativePath', s:$sourceObjectState, t:$targetObjectState)"
     }
 }
 
