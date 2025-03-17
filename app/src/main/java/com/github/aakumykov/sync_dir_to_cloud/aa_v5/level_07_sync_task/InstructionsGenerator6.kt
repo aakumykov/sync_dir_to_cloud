@@ -11,8 +11,8 @@ class InstructionsGenerator6 @AssistedInject constructor(
     @Assisted private val executionId: String,
     private val onlyInSourceInstructionGeneratorAssistedFactory: OnlyInSourceInstructionGeneratorAssistedFactory,
     private val onlyInTargetInstructionGeneratorAssistedFactory: OnlyInTargetInstructionGeneratorAssistedFactory,
-    private val twoPlaceItemsMirrorProcessorAssistedFactory: TwoPlaceItemInstructionGeneratorAssistedFactory,
-    private val twoPlaceItemsSyncProcessorAssistedFactory: TwoPlaceItemsInstructionGeneratorAssistedFactory,
+    private val twoPlaceItemsMirrorInstructionGeneratorAssistedFactory: TwoPlaceItemsMirrorInstructionGeneratorAssistedFactory,
+    private val twoPlaceItemsSyncInstructionGeneratorAssistedFactory: TwoPlaceItemsSyncInstructionGeneratorAssistedFactory,
 ) {
     suspend fun generate() {
 
@@ -23,8 +23,8 @@ class InstructionsGenerator6 @AssistedInject constructor(
         nextOrderNum = onlyInTargetItemsProcessor.process(nextOrderNum)
 
         when(syncTask.syncMode!!) {
-            SyncMode.SYNC -> twoPlaceSyncItemsProcessor.processSyncing(nextOrderNum)
-            SyncMode.MIRROR -> twoPlaceMirrorItemsProcessor.processMirroring(nextOrderNum)
+            SyncMode.SYNC -> twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
+            SyncMode.MIRROR -> twoPlaceItemsMirrorInstructionGenerator.generate(nextOrderNum)
         }
     }
 
@@ -36,12 +36,12 @@ class InstructionsGenerator6 @AssistedInject constructor(
         onlyInTargetInstructionGeneratorAssistedFactory.create(syncTask, executionId)
     }
 
-    private val twoPlaceMirrorItemsProcessor by lazy {
-        twoPlaceItemsMirrorProcessorAssistedFactory.create(syncTask, executionId)
+    private val twoPlaceItemsMirrorInstructionGenerator by lazy {
+        twoPlaceItemsMirrorInstructionGeneratorAssistedFactory.create(syncTask, executionId)
     }
 
-    private val twoPlaceSyncItemsProcessor by lazy {
-        twoPlaceItemsSyncProcessorAssistedFactory.create(syncTask, executionId)
+    private val twoPlaceItemsSyncInstructionGenerator by lazy {
+        twoPlaceItemsSyncInstructionGeneratorAssistedFactory.create(syncTask, executionId)
     }
 }
 

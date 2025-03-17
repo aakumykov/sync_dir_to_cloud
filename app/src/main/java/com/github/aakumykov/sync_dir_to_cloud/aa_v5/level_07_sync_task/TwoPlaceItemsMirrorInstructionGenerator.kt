@@ -25,13 +25,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
+class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ) {
-    suspend fun processMirroring(initialOrderNum: Int): Int {
+    suspend fun generate(initialOrderNum: Int): Int {
         var nextOrderNum = processMutuallyUnchangedOrDeleted(initialOrderNum)
         nextOrderNum = processSourceUnchangedOrDeletedWithTargetNewOrModified(nextOrderNum)
         nextOrderNum = processSourceNewOrModifiedWithTargetUnchangedOrDeleted(nextOrderNum)
@@ -191,12 +191,12 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
         = comparisonStateRepository.getAllFor(taskId, executionId)
 
     companion object {
-        val TAG: String = TwoPlaceItemInstructionGenerator::class.java.simpleName
+        val TAG: String = TwoPlaceItemsMirrorInstructionGenerator::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface TwoPlaceItemInstructionGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemInstructionGenerator
+interface TwoPlaceItemsMirrorInstructionGeneratorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemsMirrorInstructionGenerator
 }

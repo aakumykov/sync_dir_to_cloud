@@ -22,7 +22,7 @@ class TwoPlaceItemsInstructionGenerator @AssistedInject constructor(
     /**
      * @return Увеличенный порядковый номер
      */
-    suspend fun processSyncing(initialOrderNum: Int): Int {
+    suspend fun generate(initialOrderNum: Int): Int {
         val nextOrderNum = processNeedToBeCopiedToTarget(initialOrderNum)
         return processNeedToBeDeletedInTarget(nextOrderNum)
     }
@@ -87,6 +87,6 @@ class TwoPlaceItemsInstructionGenerator @AssistedInject constructor(
 
 
 @AssistedFactory
-interface TwoPlaceItemsInstructionGeneratorAssistedFactory {
+interface TwoPlaceItemsSyncInstructionGeneratorAssistedFactory {
     fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemsInstructionGenerator
 }
