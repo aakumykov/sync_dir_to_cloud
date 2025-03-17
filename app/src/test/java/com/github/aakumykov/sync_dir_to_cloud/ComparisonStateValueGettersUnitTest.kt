@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetNew
@@ -262,6 +263,40 @@ class ComparisonStateValueGettersUnitTest {
                     sourceState,
                     targetState
                 ).isSourceUnchangedTargetDeleted)
+            }
+        }
+    }
+
+
+    /**
+     * [ComparisonState.isSourceNewAndTargetUnchanged]
+     */
+    @Test
+    fun when_source_NEW_and_target_UNCHANGED_then_isSourceNewAndTargetUnchanged_is_true() {
+        assertTrue(cs(
+            StateInStorage.NEW,
+            StateInStorage.UNCHANGED
+        ).isSourceNewAndTargetUnchanged)
+    }
+
+    @Test
+    fun when_source_not_NEW_ot_target_not_UNCHANGED_then_isSourceNewAndTargetUnchanged_is_true() {
+
+        statesInStorage.without(StateInStorage.NEW).forEach { sourceState ->
+            statesInStorage.forEach { targetState ->
+                assertFalse(cs(
+                    sourceState,
+                    targetState
+                ).isSourceNewAndTargetUnchanged)
+            }
+        }
+
+        statesInStorage.forEach { sourceState ->
+            statesInStorage.without(StateInStorage.UNCHANGED).forEach { targetState ->
+                assertFalse(cs(
+                    sourceState,
+                    targetState
+                ).isSourceNewAndTargetUnchanged)
             }
         }
     }
