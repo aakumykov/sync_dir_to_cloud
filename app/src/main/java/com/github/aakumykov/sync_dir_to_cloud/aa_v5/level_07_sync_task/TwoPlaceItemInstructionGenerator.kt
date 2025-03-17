@@ -15,7 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndUnchange
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetNew
@@ -75,7 +75,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
         var n = initialOrderNum
         getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
-                it.isNewAndUnchanged ||
+                it.isSourceNewAndTargetUnchanged ||
                 it.isNewAndDeleted ||
                 it.isModifiedAndUnchanged ||
                 it.isModifiedAndDeleted
