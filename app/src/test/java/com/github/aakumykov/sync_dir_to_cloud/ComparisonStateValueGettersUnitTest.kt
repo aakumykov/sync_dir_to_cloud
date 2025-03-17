@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetNew
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
@@ -211,6 +212,40 @@ class ComparisonStateValueGettersUnitTest {
                 assertFalse(cs(
                     sourceState,targetState
                 ).isSourceUnchangedTargetModified)
+            }
+        }
+    }
+
+
+    /**
+     * [ComparisonState.isSourceUnchangedTargetDeleted]
+     */
+    @Test
+    fun when_source_UNCHANGED_and_target_DELETED_then_isSourceUnchangedTargetDeleted_is_true() {
+        assertTrue(cs(
+            StateInStorage.UNCHANGED,
+            StateInStorage.DELETED
+        ).isSourceUnchangedTargetDeleted)
+    }
+
+    @Test
+    fun when_source_not_UNCHANGED_or_target_not_DELETED_then_isSourceUnchangedTargetDeleted_is_false() {
+
+        statesInStorage.without(StateInStorage.UNCHANGED).forEach { sourceState ->
+            statesInStorage.forEach { targetState ->
+                assertFalse(cs(
+                    sourceState,
+                    targetState
+                ).isSourceUnchangedTargetDeleted)
+            }
+        }
+
+        statesInStorage.forEach { sourceState ->
+            statesInStorage.without(StateInStorage.DELETED).forEach { targetState ->
+                assertFalse(cs(
+                    sourceState,
+                    targetState
+                ).isSourceUnchangedTargetDeleted)
             }
         }
     }
