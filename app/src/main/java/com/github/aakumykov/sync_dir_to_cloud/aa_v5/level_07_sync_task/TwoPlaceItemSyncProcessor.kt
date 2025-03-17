@@ -5,7 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -34,7 +33,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             .let { it }
             .filter { it.isBilateral }
             .let { it }
-            .filter { it.notDeletedInSource }
+            .filter { !it.isDeletedInSource }
             .let { it }
             .filter { it.notMutuallyUnchanged }
             .let { it }
