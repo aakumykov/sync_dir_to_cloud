@@ -53,25 +53,31 @@ class ComparisonState (
 
 val ComparisonState.isFile: Boolean get() = !isDir
 
+
 val ComparisonState.notDeletedInTarget: Boolean
     get() = targetObjectState != StateInStorage.DELETED
 
+
 val ComparisonState.isDeletedInSource: Boolean
     get() = sourceObjectState == StateInStorage.DELETED
+
+
 
 val ComparisonState.notMutuallyUnchanged: Boolean
     get() = !(sourceObjectState == StateInStorage.UNCHANGED &&
             targetObjectState == StateInStorage.UNCHANGED)
 
-val ComparisonState.notUnchangedOrDeletedInTarget: Boolean
-    get() = targetObjectState != StateInStorage.UNCHANGED &&
-            targetObjectState != StateInStorage.DELETED
 
 val ComparisonState.notUnchangedOrDeletedInSource: Boolean
     get() = sourceObjectState != StateInStorage.UNCHANGED &&
             sourceObjectState != StateInStorage.DELETED
 
+val ComparisonState.notUnchangedOrDeletedInTarget: Boolean
+    get() = targetObjectState != StateInStorage.UNCHANGED &&
+            targetObjectState != StateInStorage.DELETED
 
+
+// Дальше однотипные
 val ComparisonState.isSourceUnchangedTargetNew: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED
             && targetObjectState == StateInStorage.NEW
@@ -84,7 +90,6 @@ val ComparisonState.isSourceUnchangedTargetDeleted: Boolean
     get() = sourceObjectState == StateInStorage.UNCHANGED
             && targetObjectState == StateInStorage.DELETED
 
-
 val ComparisonState.isSourceNewAndTargetUnchanged: Boolean
     get() = sourceObjectState == StateInStorage.NEW
             && targetObjectState == StateInStorage.UNCHANGED
@@ -93,46 +98,43 @@ val ComparisonState.isSourceNewAndTargetNew: Boolean
     get() = sourceObjectState == StateInStorage.NEW
             && targetObjectState == StateInStorage.NEW
 
-val ComparisonState.isNewAndModified: Boolean
+val ComparisonState.isSourceNewAndTargetModified: Boolean
     get() = sourceObjectState == StateInStorage.NEW
             && targetObjectState == StateInStorage.MODIFIED
 
-val ComparisonState.isNewAndDeleted: Boolean
+val ComparisonState.isSourceNewAndTargetDeleted: Boolean
     get() = sourceObjectState == StateInStorage.NEW
             && targetObjectState == StateInStorage.DELETED
 
-
-val ComparisonState.isModifiedAndUnchanged: Boolean
+val ComparisonState.isSourceModifiedAndTargetUnchanged: Boolean
     get() = sourceObjectState == StateInStorage.MODIFIED
             && targetObjectState == StateInStorage.UNCHANGED
 
-val ComparisonState.isModifiedAndNew: Boolean
+val ComparisonState.isSourceModifiedAndTargetNew: Boolean
     get() = sourceObjectState == StateInStorage.MODIFIED
             && targetObjectState == StateInStorage.NEW
 
-val ComparisonState.isModifiedAndModified: Boolean
+val ComparisonState.isSourceModifiedAndTargetModified: Boolean
     get() = sourceObjectState == StateInStorage.MODIFIED
             && targetObjectState == StateInStorage.MODIFIED
 
-val ComparisonState.isModifiedAndDeleted: Boolean
+val ComparisonState.isSourceModifiedAndTargetDeleted: Boolean
     get() = sourceObjectState == StateInStorage.MODIFIED
             && targetObjectState == StateInStorage.DELETED
 
-
-
-val ComparisonState.isDeletedAndUnchanged: Boolean
+val ComparisonState.isSourceDeletedAndTargetUnchanged: Boolean
     get() = sourceObjectState == StateInStorage.DELETED
             && targetObjectState == StateInStorage.UNCHANGED
 
-val ComparisonState.isDeletedAndNew: Boolean
+val ComparisonState.isSourceDeletedAndTargetNew: Boolean
     get() = sourceObjectState == StateInStorage.DELETED
             && targetObjectState == StateInStorage.NEW
 
-val ComparisonState.isDeletedAndModified: Boolean
+val ComparisonState.isSourceDeletedAndTargetModified: Boolean
     get() = sourceObjectState == StateInStorage.DELETED
             && targetObjectState == StateInStorage.MODIFIED
 
-val ComparisonState.isDeletedAndDeleted: Boolean
+val ComparisonState.isSourceDeletedAndTargetDeleted: Boolean
     get() = sourceObjectState == StateInStorage.DELETED
             && targetObjectState == StateInStorage.DELETED
 

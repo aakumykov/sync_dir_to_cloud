@@ -5,15 +5,15 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedAndUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedAndUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewAndModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetDeleted
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetDeleted
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetNew
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetDeleted
@@ -54,8 +54,8 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
             .filter {
                 it.isSourceUnchangedTargetNew ||
                 it.isSourceUnchangedTargetModified ||
-                it.isDeletedAndNew ||
-                it.isDeletedAndModified
+                it.isSourceDeletedAndTargetNew ||
+                it.isSourceDeletedAndTargetModified
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
@@ -76,9 +76,9 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
         getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
                 it.isSourceNewAndTargetUnchanged ||
-                it.isNewAndDeleted ||
-                it.isModifiedAndUnchanged ||
-                it.isModifiedAndDeleted
+                it.isSourceNewAndTargetDeleted ||
+                it.isSourceModifiedAndTargetUnchanged ||
+                it.isSourceModifiedAndTargetDeleted
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
@@ -98,7 +98,7 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
         var n = initialOrderNum
         getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
-                it.isDeletedAndUnchanged
+                it.isSourceDeletedAndTargetUnchanged
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
@@ -154,9 +154,9 @@ class TwoPlaceItemInstructionGenerator @AssistedInject constructor(
         getAllComparisonStatesFor(syncTask.id, executionId)
             .filter {
                 it.isSourceNewAndTargetNew ||
-                it.isNewAndModified ||
-                it.isModifiedAndNew ||
-                it.isModifiedAndModified
+                it.isSourceNewAndTargetModified ||
+                it.isSourceModifiedAndTargetNew ||
+                it.isSourceModifiedAndTargetModified
             }
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
