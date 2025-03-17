@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedInBothPlaces
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -36,7 +36,7 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
             .let { it }
             .filter { it.notDeletedInSource }
             .let { it }
-            .filter { it.notUnchangedInBothPlaces }
+            .filter { it.notMutuallyUnchanged }
             .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
