@@ -30,13 +30,9 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
     private suspend fun processNeedToBeCopiedToTarget(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getAllComparisonStatesFor(syncTask.id, executionId)
-            .let { it }
             .filter { it.isBilateral }
-            .let { it }
             .filter { !it.isDeletedInSource }
-            .let { it }
             .filter { it.notMutuallyUnchanged }
-            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     if (syncTask.withBackup) {
@@ -59,13 +55,9 @@ class TwoPlaceItemSyncProcessor @AssistedInject constructor(
     private suspend fun processNeedToBeDeletedInTarget(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getAllComparisonStatesFor(syncTask.id, executionId)
-            .let { it }
             .filter { it.isBilateral }
-            .let { it }
             .filter { it.isDeletedInSource }
-            .let { it }
             .filter { it.notDeletedInTarget }
-            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
                     if (syncTask.withBackup) {
