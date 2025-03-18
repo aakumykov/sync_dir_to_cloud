@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_01_drivers.CloudReader
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeleted
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
@@ -46,8 +47,15 @@ class SyncObjectActualizer @AssistedInject constructor(
             name = correspondingObject.name,
             relativeParentDirPath = correspondingObject.relativeParentDirPath,
         )?.also { foundSyncObject ->
-            updateSyncObjectMetadata(foundSyncObject)
+            if (foundSyncObject.isDeleted) {
+                // Новый объект вместо удалённого.
+                addNewSyncObject(syncSide, correspondingObject)
+            } else {
+                // Обновление существующего объекта.
+                updateSyncObjectMetadata(foundSyncObject)
+            }
         } ?: run {
+            // Новый объект на пустое место.
             addNewSyncObject(syncSide, correspondingObject)
         }
     }
@@ -69,7 +77,7 @@ class SyncObjectActualizer @AssistedInject constructor(
     ) {
         getFileMetadata(syncSide, absolutePathFor(correspondingObject, syncSide))
             .also { metadata ->
-                syncObjectAdder.addSyncObject(successfullySyncedNewObject(
+                syncObjectAdder.addSyncObject(newSuccessfullySyncedObject(
                     fileMetadata = metadata,
                     taskId = syncTask.id,
                     executionId = executionId,
@@ -97,7 +105,7 @@ class SyncObjectActualizer @AssistedInject constructor(
             SyncSide.TARGET -> cloudReaderGetter.getTargetCloudReaderFor(syncTask)
     }
 
-    private fun successfullySyncedNewObject(
+    private fun newSuccessfullySyncedObject(
         fileMetadata: FileMetadata,
         taskId: String,
         executionId: String,
