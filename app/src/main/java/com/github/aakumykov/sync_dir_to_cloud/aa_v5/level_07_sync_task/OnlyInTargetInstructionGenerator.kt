@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -12,7 +13,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class OnlyInTargetInstructionGeneratorForSync @AssistedInject constructor(
+class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -21,9 +22,24 @@ class OnlyInTargetInstructionGeneratorForSync @AssistedInject constructor(
     /**
      * @return Порядковый номер для слежующего генератора инструкций.
      */
-    suspend fun generate(initialOrderNum: Int): Int {
-        val nextOrderNum = processDirsNeedsToBeDeleted(initialOrderNum)
-        return processFilesNeedsToBeDeleted(nextOrderNum)
+    suspend fun generateForSync(initialOrderNum: Int): Int {
+        var nextOrderNum = initialOrderNum
+        return nextOrderNum
+    }
+
+    suspend fun generateForMirror(initialOrderNum: Int): Int {
+        var nextOrderNum = initialOrderNum
+        nextOrderNum = processDirsNeedToBeCreatedInSource(nextOrderNum)
+        nextOrderNum = processFilesNeedToBeCopiedToSource(nextOrderNum)
+        return nextOrderNum
+    }
+
+    private fun processDirsNeedToBeCreatedInSource(nextOrderNum: Int): Int {
+
+    }
+
+    private fun processFilesNeedToBeCopiedToSource(nextOrderNum: Int): Int {
+
     }
 
 
@@ -36,7 +52,7 @@ class OnlyInTargetInstructionGeneratorForSync @AssistedInject constructor(
             .let { it }
             .filter { it.onlyTarget }
             .filter { it.isDir }
-            .filter { it.notUnchangedOrDeletedInTarget }
+            .filter { it.isDeletedInSource }
             .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.add(SyncInstruction6.from(
@@ -77,6 +93,6 @@ class OnlyInTargetInstructionGeneratorForSync @AssistedInject constructor(
 
 
 @AssistedFactory
-interface OnlyInTargetInstructionGeneratorForSyncAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetInstructionGeneratorForSync
+interface OnlyInTargetInstructionGeneratorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetInstructionGenerator
 }

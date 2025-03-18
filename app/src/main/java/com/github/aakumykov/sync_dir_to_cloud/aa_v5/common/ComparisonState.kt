@@ -65,6 +65,8 @@ val ComparisonState.notDeletedInTarget: Boolean
 val ComparisonState.isDeletedInSource: Boolean
     get() = sourceObjectState == StateInStorage.DELETED
 
+val ComparisonState.isDeletedInTarget: Boolean
+    get() = StateInStorage.DELETED == targetObjectState
 
 
 val ComparisonState.notMutuallyUnchanged: Boolean
