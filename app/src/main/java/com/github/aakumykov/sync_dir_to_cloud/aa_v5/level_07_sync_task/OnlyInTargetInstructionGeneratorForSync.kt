@@ -12,7 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class OnlyInTargetInstructionGenerator @AssistedInject constructor(
+class OnlyInTargetInstructionGeneratorForSync @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -22,15 +22,15 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
      * @return Порядковый номер для слежующего генератора инструкций.
      */
     suspend fun generate(initialOrderNum: Int): Int {
-        val nextOrderNum = processDirs(initialOrderNum)
-        return processFiles(nextOrderNum)
+        val nextOrderNum = processDirsNeedsToBeDeleted(initialOrderNum)
+        return processFilesNeedsToBeDeleted(nextOrderNum)
     }
 
 
     /**
      * @return
      */
-    private suspend fun processDirs(initialOrderNum: Int): Int {
+    private suspend fun processDirsNeedsToBeDeleted(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getAllStatesFor(syncTask.id, executionId)
             .let { it }
@@ -51,7 +51,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     /**
      * @return Порядковый номер для следующего участника.
      */
-    private suspend fun processFiles(initialOrderNum: Int): Int {
+    private suspend fun processFilesNeedsToBeDeleted(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getAllStatesFor(syncTask.id, executionId)
             .let { it }
@@ -77,6 +77,6 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
 
 
 @AssistedFactory
-interface OnlyInTargetInstructionGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetInstructionGenerator
+interface OnlyInTargetInstructionGeneratorForSyncAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetInstructionGeneratorForSync
 }

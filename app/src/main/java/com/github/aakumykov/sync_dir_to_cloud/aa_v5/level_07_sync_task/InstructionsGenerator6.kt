@@ -10,7 +10,7 @@ class InstructionsGenerator6 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val onlyInSourceInstructionGeneratorAssistedFactory: OnlyInSourceInstructionGeneratorAssistedFactory,
-    private val onlyInTargetInstructionGeneratorAssistedFactory: OnlyInTargetInstructionGeneratorAssistedFactory,
+    private val onlyInTargetInstructionGeneratorForSyncAssistedFactory: OnlyInTargetInstructionGeneratorForSyncAssistedFactory,
     private val twoPlaceItemsMirrorInstructionGeneratorAssistedFactory: TwoPlaceItemsMirrorInstructionGeneratorAssistedFactory,
     private val twoPlaceItemsSyncInstructionGeneratorAssistedFactory: TwoPlaceItemsSyncInstructionGeneratorAssistedFactory,
 ) {
@@ -21,10 +21,10 @@ class InstructionsGenerator6 @AssistedInject constructor(
 
         when(syncTask.syncMode!!) {
             SyncMode.SYNC -> {
-                nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
                 // В режиме SYNC приёмник не обрабатывается.
                 // Да? А как же бекап?
                 // Получается, нужно обрабатывать.
+                nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
                 twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
             }
             SyncMode.MIRROR -> {
@@ -40,7 +40,7 @@ class InstructionsGenerator6 @AssistedInject constructor(
     }
 
     private val onlyInTargetInstructionGenerator by lazy {
-        onlyInTargetInstructionGeneratorAssistedFactory.create(syncTask, executionId)
+        onlyInTargetInstructionGeneratorForSyncAssistedFactory.create(syncTask, executionId)
     }
 
     private val twoPlaceItemsMirrorInstructionGenerator by lazy {
