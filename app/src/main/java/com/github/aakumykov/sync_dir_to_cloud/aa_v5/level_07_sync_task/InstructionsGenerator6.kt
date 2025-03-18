@@ -17,14 +17,21 @@ class InstructionsGenerator6 @AssistedInject constructor(
     suspend fun generate() {
 
         val initialOrderNum = 1
-
-        var nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
-
-        nextOrderNum = onlyInTargetInstructionGenerator.generate(nextOrderNum)
+        var nextOrderNum = -1;
 
         when(syncTask.syncMode!!) {
-            SyncMode.SYNC -> twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
-            SyncMode.MIRROR -> twoPlaceItemsMirrorInstructionGenerator.generate(nextOrderNum)
+            SyncMode.SYNC -> {
+                nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
+                // В режиме SYNC приёмник не обрабатывается.
+                // Да? А как же бекап?
+                // Получается, нужно обрабатывать.
+                twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
+            }
+            SyncMode.MIRROR -> {
+                nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
+                nextOrderNum = onlyInTargetInstructionGenerator.generate(nextOrderNum)
+                twoPlaceItemsMirrorInstructionGenerator.generate(nextOrderNum)
+            }
         }
     }
 
