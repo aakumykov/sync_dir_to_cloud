@@ -24,11 +24,11 @@ class InstructionsGenerator6 @AssistedInject constructor(
                 // В режиме SYNC приёмник не обрабатывается.
                 // Да? А как же бекап?
                 // Получается, нужно обрабатывать.
-                nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
+                nextOrderNum = onlyInSourceInstructionGenerator.generateForSync(initialOrderNum)
                 twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
             }
             SyncMode.MIRROR -> {
-                nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
+                nextOrderNum = onlyInSourceInstructionGenerator.generateForSync(initialOrderNum)
                 nextOrderNum = onlyInTargetInstructionGenerator.generate(nextOrderNum)
                 twoPlaceItemsMirrorInstructionGenerator.generate(nextOrderNum)
             }

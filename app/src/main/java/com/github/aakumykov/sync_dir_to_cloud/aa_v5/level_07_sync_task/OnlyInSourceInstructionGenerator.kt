@@ -6,8 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionReposito
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -20,12 +18,20 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ){
-    suspend fun generate(initialOrderNum: Int): Int {
-        val nextOrderNum = processNotDeletedDirs(initialOrderNum)
-        return processNotDeletedFiles(nextOrderNum)
+    suspend fun generateForSync(initialOrderNum: Int): Int {
+        var nextOrderNum = initialOrderNum
+        nextOrderNum = deleteInTargetFilesDeletedInSource(nextOrderNum)
+        nextOrderNum = deleteInTargetDirsDeletedInSource(nextOrderNum)
+        nextOrderNum = copyDirs(nextOrderNum)
+        nextOrderNum = copyFiles(nextOrderNum)
+        return nextOrderNum
     }
 
-    private suspend fun processNotDeletedDirs(initialOrderNum: Int): Int {
+    suspend fun generateForMirror(initialOrderNum: Int): Int {
+
+    }
+
+    private suspend fun copyDirs(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
             .let { it }
@@ -47,7 +53,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
         return n
     }
 
-    private suspend fun processNotDeletedFiles(initialOrderNum: Int): Int {
+    private suspend fun copyFiles(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
             .let { it }
