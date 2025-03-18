@@ -13,7 +13,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TwoPlaceItemsInstructionGenerator @AssistedInject constructor(
+class TwoPlaceItemsSyncInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -88,5 +88,5 @@ class TwoPlaceItemsInstructionGenerator @AssistedInject constructor(
 
 @AssistedFactory
 interface TwoPlaceItemsSyncInstructionGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemsInstructionGenerator
+    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemsSyncInstructionGenerator
 }
