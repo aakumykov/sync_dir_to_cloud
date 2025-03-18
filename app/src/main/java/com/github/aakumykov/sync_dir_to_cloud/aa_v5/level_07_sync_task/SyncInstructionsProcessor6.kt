@@ -59,8 +59,11 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     private suspend fun processFilesNotDeletion() {
         syncInstructionRepository6
             .getAllFor(syncTask.id, executionId)
+            .let { it }
             .filter { it.isFile }
+            .let { it }
             .filter { it.notDeletion }
+            .let { it }
             .forEach { instruction ->
                 syncInstructionExecutor.execute(instruction)
             }

@@ -21,7 +21,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     /**
      * @return Порядковый номер для слежующего генератора инструкций.
      */
-    suspend fun process(initialOrderNum: Int): Int {
+    suspend fun generate(initialOrderNum: Int): Int {
         val nextOrderNum = processDirs(initialOrderNum)
         return processFiles(nextOrderNum)
     }

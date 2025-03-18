@@ -47,6 +47,11 @@ class SyncInstruction6 (
         SyncOperation6.DELETE_IN_TARGET != operation &&
                 SyncOperation6.DELETE_IN_SOURCE != operation
 
+
+    override fun toString(): String {
+        return SyncInstruction6::class.java.simpleName + "{ $operation, $relativePath }"
+    }
+
     @RenameColumn(
         tableName = "sync_instructions_6",
         fromColumnName = "from_id",

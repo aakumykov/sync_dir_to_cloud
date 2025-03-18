@@ -54,6 +54,10 @@ class ComparisonState (
 val ComparisonState.isFile: Boolean get() = !isDir
 
 
+val ComparisonState.notDeletedInSource: Boolean
+    get() = StateInStorage.DELETED != sourceObjectState
+
+
 val ComparisonState.notDeletedInTarget: Boolean
     get() = targetObjectState != StateInStorage.DELETED
 

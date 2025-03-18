@@ -107,7 +107,7 @@ class SyncObject (
     }*/
 
     override fun toString(): String {
-        return "SyncObject([${syncSide}] '$relativePath')"
+        return "SyncObject([${syncSide}] '$relativePath', syncState:$syncState, stateInStorage:$stateInStorage)"
     }
 
     companion object {

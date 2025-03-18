@@ -5,6 +5,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
@@ -18,18 +20,20 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ){
-    suspend fun process(initialOrderNum: Int): Int {
-        val nextOrderNum = processUnchangedNewModifiedDirs(initialOrderNum)
-        return processUnchangedNewModifiedFiles(nextOrderNum)
+    suspend fun generate(initialOrderNum: Int): Int {
+        val nextOrderNum = processNotDeletedDirs(initialOrderNum)
+        return processNotDeletedFiles(nextOrderNum)
     }
 
-    private suspend fun processUnchangedNewModifiedDirs(initialOrderNum: Int): Int {
+    private suspend fun processNotDeletedDirs(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
             .let { it }
             .filter { it.onlySource }
+            .let { it }
             .filter { it.isDir }
-            .filter { it.notUnchangedOrDeletedInSource }
+            .let { it }
+            .filter { it.notDeletedInSource }
             .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
@@ -43,13 +47,15 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
         return n
     }
 
-    private suspend fun processUnchangedNewModifiedFiles(initialOrderNum: Int): Int {
+    private suspend fun processNotDeletedFiles(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getOnlyInSourceStates()
             .let { it }
             .filter { it.onlySource }
+            .let { it }
             .filter { it.isFile }
-            .filter { it.notUnchangedOrDeletedInSource }
+            .let { it }
+            .filter { it.notDeletedInSource }
             .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {

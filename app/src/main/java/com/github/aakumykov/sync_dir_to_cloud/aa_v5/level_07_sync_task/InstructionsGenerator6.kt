@@ -18,9 +18,9 @@ class InstructionsGenerator6 @AssistedInject constructor(
 
         val initialOrderNum = 1
 
-        var nextOrderNum = onlyInSourceItemsProcessor.process(initialOrderNum)
+        var nextOrderNum = onlyInSourceInstructionGenerator.generate(initialOrderNum)
 
-        nextOrderNum = onlyInTargetItemsProcessor.process(nextOrderNum)
+        nextOrderNum = onlyInTargetInstructionGenerator.generate(nextOrderNum)
 
         when(syncTask.syncMode!!) {
             SyncMode.SYNC -> twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
@@ -28,11 +28,11 @@ class InstructionsGenerator6 @AssistedInject constructor(
         }
     }
 
-    private val onlyInSourceItemsProcessor by lazy {
+    private val onlyInSourceInstructionGenerator by lazy {
         onlyInSourceInstructionGeneratorAssistedFactory.create(syncTask, executionId)
     }
 
-    private val onlyInTargetItemsProcessor by lazy {
+    private val onlyInTargetInstructionGenerator by lazy {
         onlyInTargetInstructionGeneratorAssistedFactory.create(syncTask, executionId)
     }
 
