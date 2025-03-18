@@ -63,17 +63,6 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         }
     }
 
-    /*
-    FIXME: логика размазана по разным местам:
-     @ регистрация скопированного объекта в БД происходит в "копировщике"
-     @ изменение syncState на SUCCESS - здесь
-     @ при этом получается два объекта с одним id, но разными syncSide,
-       поэтому обновление syncState происходит одним вызовом...
-       ...
-     @ вот одинаковость id и сказалась: при чтении хранилища и обновлении
-      записей БД изменения затрагивают другую сторону. [Уже решил, добавив
-      случайный id при клонировании объекта.]
-     */
     private suspend fun copyFromSourceToTarget(sourceObjectId: String) {
         syncObjectReader.getSyncObject(sourceObjectId)?.also {
             itemCopier.copyItemFromSourceToTarget(it, syncOptions.overwriteIfExists)
