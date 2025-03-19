@@ -1,32 +1,43 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
+/**
+ * У файлов, находящихся только в приёмнике, два пути:
+ * 1) в режиме SYNC они игнорируются;
+ * 2) в режиме MIRROR копируются в источник.
+ */
 class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
-    private val syncInstructionRepository6: SyncInstructionRepository6,
-){
+    private val syncInstructionRepository: SyncInstructionRepository6,
+)
+    : BasicInstructionGenerator(
+        taskId = syncTask.id,
+        executionId = executionId,
+        comparisonStateRepository = comparisonStateRepository,
+        syncInstructionRepository = syncInstructionRepository
+    )
+{
     /**
-     * @return Порядковый номер для слежующего генератора инструкций.
+     * @return Порядковый номер для следующего генератора инструкций.
      */
     suspend fun generateForSync(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
         return nextOrderNum
     }
 
+    /**
+     * @return Порядковый номер для следующего генератора инструкций.
+     */
     suspend fun generateForMirror(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
         nextOrderNum = processDirsNeedToBeCreatedInSource(nextOrderNum)
@@ -34,61 +45,45 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
         return nextOrderNum
     }
 
-    private fun processDirsNeedToBeCreatedInSource(nextOrderNum: Int): Int {
 
+    private suspend fun processDirsNeedToBeCreatedInSource(nextOrderNum: Int): Int {
+        return getStatesForThisTaskAndExecution()
+            .filter { it.isDir }
+            .let {
+                generateSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
+            }
     }
 
-    private fun processFilesNeedToBeCopiedToSource(nextOrderNum: Int): Int {
 
+    private suspend fun processFilesNeedToBeCopiedToSource(nextOrderNum: Int): Int {
+        return getStatesForThisTaskAndExecution()
+            .filter { it.isFile }
+            .let {
+                generateSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
+            }
     }
 
 
-    /**
-     * @return
-     */
-    private suspend fun processDirsNeedsToBeDeleted(initialOrderNum: Int): Int {
-        var n = initialOrderNum
-        getAllStatesFor(syncTask.id, executionId)
-            .let { it }
+    /*private suspend fun processDirsNeedsToBeDeleted(nextOrderNum: Int): Int {
+        return getStates()
             .filter { it.onlyTarget }
             .filter { it.isDir }
             .filter { it.isDeletedInSource }
-            .let { it }
-            .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
-                    orderNum = n++
-                ))
+            .let {
+               generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
             }
-        return n
     }
 
-    /**
-     * @return Порядковый номер для следующего участника.
-     */
-    private suspend fun processFilesNeedsToBeDeleted(initialOrderNum: Int): Int {
-        var n = initialOrderNum
-        getAllStatesFor(syncTask.id, executionId)
-            .let { it }
+
+    private suspend fun processFilesNeedsToBeDeleted(nextOrderNum: Int): Int {
+        return getStates()
             .filter { it.onlyTarget }
             .filter { it.isFile }
             .filter { it.notUnchangedOrDeletedInTarget }
-            .let { it }
-            .forEach { comparisonState ->
-                syncInstructionRepository6.add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
-                    orderNum = n++
-                ))
+            .let {
+                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
             }
-        return n
-    }
-
-    private suspend fun getAllStatesFor(taskId: String, executionId: String): Iterable<ComparisonState> {
-        return comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
-    }
+    }*/
 }
 
 

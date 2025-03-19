@@ -141,6 +141,12 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
+            // Удалить выполненные инструкции
+            deleteProcessedSyncInstructions(syncTask)
+
+            // Выполнить недоделанные инструкции
+            processUnprocessedSyncInstructions(syncTask)
+
             // Выполнить подготовку
             resetTaskBadStates(taskId)
             resetObjectsBadState(taskId)
@@ -158,8 +164,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             deleteOldComparisonStates(syncTask)
             compareSourceWithTarget(syncTask)
-//
-            deleteOldSyncInstructions(syncTask)
+
             generateSyncInstructions(syncTask)
 
             processSyncInstructions(syncTask)
@@ -238,10 +243,10 @@ class SyncTaskExecutor @AssistedInject constructor(
             .deleteAllFor(syncTask.id)
     }
 
-    private suspend fun deleteOldSyncInstructions(syncTask: SyncTask) {
+    private suspend fun deleteProcessedSyncInstructions(syncTask: SyncTask) {
         appComponent
             .getInstructionsDeleter6()
-            .deleteAllFor(syncTask.id)
+            .deleteFinishedInstructionsFor(syncTask.id)
     }
 
     private suspend fun generateSyncInstructions(syncTask: SyncTask) {
@@ -286,6 +291,11 @@ class SyncTaskExecutor @AssistedInject constructor(
                 cont.resume(Unit)
             }
         }
+    }
+
+
+    private suspend fun processUnprocessedSyncInstructions(syncTask: SyncTask) {
+        processSyncInstructions(syncTask)
     }
 
 

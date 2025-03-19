@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SyncInstructionDeleter6 @Inject constructor(
     private val syncInstructionRepository6: SyncInstructionRepository6
 ) {
-    suspend fun deleteAllFor(taskId: String) {
-        syncInstructionRepository6.deleteAllForTask(taskId)
+    suspend fun deleteFinishedInstructionsFor(taskId: String) {
+        syncInstructionRepository6.deleteFinishedInstructionsForTask(taskId)
     }
 }

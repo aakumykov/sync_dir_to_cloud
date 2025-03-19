@@ -15,6 +15,11 @@ interface SyncInstructionDAO6 {
             "AND execution_id = :executionId")
     suspend fun getAllFor(taskId: String, executionId: String): List<SyncInstruction6>
 
-    @Query("DELETE FROM sync_instructions_6 WHERE task_id = :taskId")
-    suspend fun deleteAllForTask(taskId: String)
+    @Query("DELETE FROM sync_instructions_6 WHERE " +
+            "task_id = :taskId AND " +
+            "is_processed = '1'")
+    suspend fun deleteFinishedInstructionsForTask(taskId: String)
+
+    @Query("UPDATE sync_instructions_6 SET is_processed = '1' WHERE id = :instructionId")
+    suspend fun markAsProcessed(instructionId: String)
 }

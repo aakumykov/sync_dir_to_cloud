@@ -1,10 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
@@ -19,7 +17,14 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository: SyncInstructionRepository6,
-){
+)
+    : BasicInstructionGenerator(
+        taskId = syncTask.id,
+        executionId = executionId,
+        comparisonStateRepository = comparisonStateRepository,
+        syncInstructionRepository = syncInstructionRepository
+    )
+{
     suspend fun generateForSync(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
 
@@ -45,7 +50,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructions(nextOrderNum, it, SyncOperation6.DELETE_IN_SOURCE)
+                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
             }
     }
 
@@ -54,7 +59,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructions(nextOrderNum, it, SyncOperation6.DELETE_IN_SOURCE)
+                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
             }
     }
 
@@ -63,7 +68,11 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.notDeletedInSource }
             .let {
-                generateSyncInstructions(nextOrderNum, it, SyncOperation6.COPY_FROM_SOURCE_TO_TARGET)
+                generateSyncInstructionsFrom(
+                    it,
+                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    nextOrderNum
+                )
             }
     }
 
@@ -73,32 +82,18 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.notDeletedInSource }
             .let {
-                generateSyncInstructions(nextOrderNum, it, SyncOperation6.COPY_FROM_SOURCE_TO_TARGET)
+                generateSyncInstructionsFrom(
+                    it,
+                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    nextOrderNum
+                )
             }
     }
 
 
     private suspend fun getOnlyInSourceComparisonStates(): Iterable<ComparisonState> {
-        return comparisonStateRepository
-            .getAllFor(syncTask.id, executionId)
+        return getStatesForThisTaskAndExecution()
             .filter { it.onlySource }
-    }
-
-    private suspend fun generateSyncInstructions(nextOrderNum: Int,
-                                                 comparisonStateList: Iterable<ComparisonState>,
-                                                 syncOperation6: SyncOperation6
-    ): Int {
-        var n = nextOrderNum
-        syncInstructionRepository.apply {
-            comparisonStateList.forEach { comparisonState ->
-                add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = syncOperation6,
-                    orderNum = n++
-                ))
-            }
-        }
-        return n
     }
 }
 

@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
@@ -19,16 +20,17 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     private val syncInstructionExecutorAssistedFactory: SyncInstructionExecutorAssistedFactory,
 ) {
     suspend fun processInstructions() {
-        deleteFiles()
-        deleteDirs()
+        deleteFiles(false)
+        deleteDirs(false)
 
-        processDirsNotDeletion()
-        processFilesNotDeletion()
+        processDirsNotDeletion(false)
+        processFilesNotDeletion(false)
     }
 
-    private suspend fun deleteFiles() {
-        syncInstructionRepository6
-            .getAllFor(syncTask.id, executionId)
+
+    private suspend fun deleteFiles(isFinished: Boolean) {
+        getSyncInstructions()
+            .filter { it.isProcessed == isFinished }
             .filter { it.isFile }
             .filter { it.isDeletion }
             .forEach { syncInstruction ->
@@ -36,9 +38,9 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun deleteDirs() {
-        syncInstructionRepository6
-            .getAllFor(syncTask.id, executionId)
+    private suspend fun deleteDirs(isFinished: Boolean) {
+        getSyncInstructions()
+            .filter { it.isProcessed == isFinished }
             .filter { it.isDir }
             .filter { it.isDeletion }
             .forEach { syncInstruction ->
@@ -46,9 +48,9 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processDirsNotDeletion() {
-        syncInstructionRepository6
-            .getAllFor(syncTask.id, executionId)
+    private suspend fun processDirsNotDeletion(isFinished: Boolean) {
+        getSyncInstructions()
+            .filter { it.isProcessed == isFinished }
             .filter { it.isDir }
             .filter { it.notDeletion }
             .forEach { instruction ->
@@ -56,18 +58,21 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processFilesNotDeletion() {
-        syncInstructionRepository6
-            .getAllFor(syncTask.id, executionId)
-            .let { it }
+    private suspend fun processFilesNotDeletion(isFinished: Boolean) {
+        getSyncInstructions()
+            .filter { it.isProcessed == isFinished }
             .filter { it.isFile }
-            .let { it }
             .filter { it.notDeletion }
-            .let { it }
             .forEach { instruction ->
                 syncInstructionExecutor.execute(instruction)
             }
     }
+
+
+    private suspend fun getSyncInstructions(): Iterable<SyncInstruction6> {
+        return syncInstructionRepository6.getAllFor(syncTask.id, executionId)
+    }
+
 
     private val syncInstructionExecutor by lazy {
         syncInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)

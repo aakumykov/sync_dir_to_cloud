@@ -9,16 +9,10 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDel
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDeleterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuper5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuperAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopier5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCopierAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectDeleterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamerAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_06_sync_object_list.SyncObjectListChunkedCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -34,8 +28,10 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val itemDeleterAssistedFactory5: ItemDeleterAssistedFactory5,
     private val backuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
     private val renamerAssistedFactory5: SyncObjectRenamerAssistedFactory5,
+    private val syncInstructionUpdater: SyncInstructionUpdater,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
+
         when(instruction.operation) {
             SyncOperation6.RENAME_COLLISION_IN_SOURCE -> renameCollisionInSource(instruction.objectIdInSource!!)
             SyncOperation6.RENAME_COLLISION_IN_TARGET -> renameCollisionInTarget(instruction.objectIdInTarget!!)
@@ -49,6 +45,9 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             SyncOperation6.BACKUP_IN_SOURCE -> { /*backuper.backupInSource(instruction)*/ }
             SyncOperation6.BACKUP_IN_TARGET -> { /*backuper.backupInTarget(instruction)*/ }
         }
+
+        // Спорно делать это здесь, а не в каждом конкретном методе...
+        syncInstructionUpdater.markAsProcessed(instruction.executionId)
     }
 
     private suspend fun renameCollisionInSource(sourceObjectId: String) {
