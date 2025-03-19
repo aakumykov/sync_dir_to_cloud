@@ -103,6 +103,7 @@ class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
+
                     if (syncTask.withBackup) {
                         add(SyncInstruction6.from(
                             comparisonState = comparisonState,
@@ -110,6 +111,7 @@ class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
                             orderNum = n++
                         ))
                     }
+
                     add(SyncInstruction6.from(
                         comparisonState = comparisonState,
                         operation = SyncOperation6.DELETE_IN_TARGET,
@@ -130,6 +132,7 @@ class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
             .let { Log.d(TAG, it.toString()); it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
+
                     if (syncTask.withBackup) {
                         add(SyncInstruction6.from(
                             comparisonState = comparisonState,
@@ -137,6 +140,7 @@ class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
                             orderNum = n++
                         ))
                     }
+
                     add(SyncInstruction6.from(
                         comparisonState = comparisonState,
                         operation = SyncOperation6.DELETE_IN_SOURCE,

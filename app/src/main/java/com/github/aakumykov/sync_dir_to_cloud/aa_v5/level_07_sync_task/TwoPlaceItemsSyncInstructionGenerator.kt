@@ -35,6 +35,7 @@ class TwoPlaceItemsSyncInstructionGenerator @AssistedInject constructor(
             .filter { it.notMutuallyUnchanged }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
+
                     if (syncTask.withBackup) {
                         add(SyncInstruction6.from(
                             comparisonState = comparisonState,
@@ -42,6 +43,7 @@ class TwoPlaceItemsSyncInstructionGenerator @AssistedInject constructor(
                             orderNum = n++
                         ))
                     }
+
                     add(SyncInstruction6.from(
                         comparisonState = comparisonState,
                         operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
@@ -55,23 +57,29 @@ class TwoPlaceItemsSyncInstructionGenerator @AssistedInject constructor(
     private suspend fun processNeedToBeDeletedInTarget(initialOrderNum: Int): Int {
         var n = initialOrderNum
         getAllComparisonStatesFor(syncTask.id, executionId)
+            .let { it }
             .filter { it.isBilateral }
+            .let { it }
             .filter { it.isDeletedInSource }
+            .let { it }
             .filter { it.notDeletedInTarget }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
+
                     if (syncTask.withBackup) {
                         add(SyncInstruction6.from(
                             comparisonState = comparisonState,
                             operation = SyncOperation6.BACKUP_IN_TARGET,
                             orderNum = n++
                         ))
-                        add(SyncInstruction6.from(
-                            comparisonState = comparisonState,
-                            operation = SyncOperation6.DELETE_IN_TARGET,
-                            orderNum = n++
-                        ))
                     }
+
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = SyncOperation6.DELETE_IN_TARGET,
+                        orderNum = n++
+                    ))
                 }
             }
         return n
