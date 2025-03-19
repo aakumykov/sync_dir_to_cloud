@@ -3,13 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.DeleteColumn
+import androidx.room.DeleteTable
 import androidx.room.RenameColumn
 import androidx.room.RoomDatabase
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_instruction.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -32,7 +32,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO5
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 
 @Database(
@@ -44,7 +43,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncObjectLogItem::class,
         ExecutionLogItem::class,
         SyncInstruction::class,
-        SyncInstruction5::class,
         ComparisonState::class,
         SyncInstruction6::class,
    ],
@@ -104,8 +102,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 108, to = 109, spec = SyncObjectDeleteStateJustDetectedField::class),
         AutoMigration(from = 109, to = 110), // Новое поле SyncObject.justChecked
         AutoMigration(from = 110, to = 111), // Новое поле SyncInstruction6.isProcessed
+        AutoMigration(from = 111, to = 112, spec = DeleteTableSyncInstructions5::class),
     ],
-    version = 111,
+    version = 112,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -124,7 +123,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncObjectLogDAO(): SyncObjectLogDAO
     abstract fun getExecutionLogDAO(): ExecutionLogDAO
     abstract fun getSyncInstructionDAO(): SyncInstructionDAO
-    abstract fun getSyncInstructionDAO5(): SyncInstructionDAO5
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
     abstract fun getSyncInstructionDAO6(): SyncInstructionDAO6
 }
@@ -144,4 +142,8 @@ class SyncInstruction5DeleteIsDirColumnMigrationSpec : AutoMigrationSpec
 
 @DeleteColumn(tableName = "sync_objects", columnName = "state_just_detected")
 class SyncObjectDeleteStateJustDetectedField : AutoMigrationSpec
+
+
+@DeleteTable(tableName = "sync_instructions_5")
+class DeleteTableSyncInstructions5 : AutoMigrationSpec
 

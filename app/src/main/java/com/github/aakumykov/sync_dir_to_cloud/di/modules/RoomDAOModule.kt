@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO5
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
@@ -90,11 +89,6 @@ class RoomDAOModule(private val appDatabase: AppDatabase) {
     @Provides
     fun provideSyncInstructionDAO(): SyncInstructionDAO {
         return appDatabase.getSyncInstructionDAO()
-    }
-
-    @Provides
-    fun provideSyncInstructionDAO5(): SyncInstructionDAO5 {
-        return appDatabase.getSyncInstructionDAO5()
     }
 
     @Provides
