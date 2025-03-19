@@ -38,7 +38,9 @@ class SyncInstruction6 (
     @ColumnInfo(name = "operation") val operation: SyncOperation6,
 
     @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
-    @ColumnInfo(name = "relative_path", defaultValue = "") val relativePath: String
+    @ColumnInfo(name = "relative_path", defaultValue = "") val relativePath: String,
+
+    @ColumnInfo(name = "is_processed", defaultValue = "0") val isProcessed: Boolean,
 ) {
     @Ignore val isDeletion: Boolean = SyncOperation6.DELETE_IN_TARGET == operation ||
             SyncOperation6.DELETE_IN_SOURCE == operation
@@ -77,6 +79,7 @@ class SyncInstruction6 (
             isDir = comparisonState.isDir,
             relativePath = comparisonState.relativePath,
             orderNum = orderNum,
+            isProcessed = false,
         )
     }
 }
