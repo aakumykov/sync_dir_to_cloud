@@ -19,18 +19,28 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     private val syncInstructionRepository6: SyncInstructionRepository6,
     private val syncInstructionExecutorAssistedFactory: SyncInstructionExecutorAssistedFactory,
 ) {
-    suspend fun processInstructions() {
-        deleteFiles(false)
-        deleteDirs(false)
+    suspend fun processUnprocessedInstructions() {
+        processInstructions(true)
+    }
 
-        processDirsNotDeletion(false)
-        processFilesNotDeletion(false)
+    suspend fun processCurrentInstructions() {
+        processInstructions(false)
+    }
+
+    private suspend fun processInstructions(selectUnprocessed: Boolean) {
+
+        val list = if (selectUnprocessed) getAllUnprocessedSyncInstructions() else getCurentSyncInstructions()
+
+        deleteFiles(list)
+        deleteDirs(list)
+
+        processDirsNotDeletion(list)
+        processFilesNotDeletion(list)
     }
 
 
-    private suspend fun deleteFiles(isFinished: Boolean) {
-        getSyncInstructions()
-            .filter { it.isProcessed == isFinished }
+    private suspend fun deleteFiles(list: Iterable<SyncInstruction6>) {
+        list
             .filter { it.isFile }
             .filter { it.isDeletion }
             .forEach { syncInstruction ->
@@ -38,9 +48,8 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun deleteDirs(isFinished: Boolean) {
-        getSyncInstructions()
-            .filter { it.isProcessed == isFinished }
+    private suspend fun deleteDirs(list: Iterable<SyncInstruction6>) {
+        list
             .filter { it.isDir }
             .filter { it.isDeletion }
             .forEach { syncInstruction ->
@@ -48,9 +57,8 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processDirsNotDeletion(isFinished: Boolean) {
-        getSyncInstructions()
-            .filter { it.isProcessed == isFinished }
+    private suspend fun processDirsNotDeletion(list: Iterable<SyncInstruction6>) {
+        list
             .filter { it.isDir }
             .filter { it.notDeletion }
             .forEach { instruction ->
@@ -58,9 +66,8 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processFilesNotDeletion(isFinished: Boolean) {
-        getSyncInstructions()
-            .filter { it.isProcessed == isFinished }
+    private suspend fun processFilesNotDeletion(list: Iterable<SyncInstruction6>) {
+        list
             .filter { it.isFile }
             .filter { it.notDeletion }
             .forEach { instruction ->
@@ -69,8 +76,15 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     }
 
 
-    private suspend fun getSyncInstructions(): Iterable<SyncInstruction6> {
-        return syncInstructionRepository6.getAllFor(syncTask.id, executionId)
+    private suspend fun getCurentSyncInstructions(): Iterable<SyncInstruction6> {
+        return syncInstructionRepository6
+            .getAllFor(syncTask.id, executionId)
+    }
+
+    private suspend fun getAllUnprocessedSyncInstructions(): Iterable<SyncInstruction6> {
+        return syncInstructionRepository6
+            .getAllWithoutExecutionId(syncTask.id)
+            .filter { !it.isProcessed }
     }
 
 

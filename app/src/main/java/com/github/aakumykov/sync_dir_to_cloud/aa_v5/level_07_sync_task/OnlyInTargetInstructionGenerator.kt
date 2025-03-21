@@ -2,7 +2,10 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -40,15 +43,41 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
      */
     suspend fun generateForMirror(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
+
+        nextOrderNum = processFilesNeedToBeDeletedInSource(nextOrderNum)
+        nextOrderNum = processDirsNeedToBeDeletedInSource(nextOrderNum)
+
         nextOrderNum = processDirsNeedToBeCreatedInSource(nextOrderNum)
         nextOrderNum = processFilesNeedToBeCopiedToSource(nextOrderNum)
+
         return nextOrderNum
+    }
+
+
+    private suspend fun processFilesNeedToBeDeletedInSource(nextOrderNum: Int): Int {
+        return getStatesForThisTaskAndExecution()
+            .filter { it.isFile }
+            .filter { it.isDeletedInTarget }
+            .let {
+                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
+            }
+    }
+
+    private suspend fun processDirsNeedToBeDeletedInSource(nextOrderNum: Int): Int {
+        return getStatesForThisTaskAndExecution()
+            .filter { it.isDir }
+            .filter { it.isDeletedInTarget }
+            .let {
+                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
+            }
     }
 
 
     private suspend fun processDirsNeedToBeCreatedInSource(nextOrderNum: Int): Int {
         return getStatesForThisTaskAndExecution()
             .filter { it.isDir }
+            .filter { it.notMutuallyUnchanged }
+            .filter { it.notDeletedInTarget }
             .let {
                 generateSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
             }
@@ -58,6 +87,8 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     private suspend fun processFilesNeedToBeCopiedToSource(nextOrderNum: Int): Int {
         return getStatesForThisTaskAndExecution()
             .filter { it.isFile }
+            .filter { it.notMutuallyUnchanged }
+            .filter { it.notDeletedInTarget }
             .let {
                 generateSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
             }

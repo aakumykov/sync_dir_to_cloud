@@ -50,7 +50,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum)
             }
     }
 
@@ -59,7 +59,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum)
             }
     }
 

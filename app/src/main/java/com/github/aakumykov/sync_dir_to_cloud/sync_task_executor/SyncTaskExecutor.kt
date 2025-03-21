@@ -145,6 +145,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             deleteProcessedSyncInstructions(syncTask)
 
             // Выполнить недоделанные инструкции
+            removeDuplicatedUnprocessedSyncInstructions(syncTask)
             processUnprocessedSyncInstructions(syncTask)
 
             // Выполнить подготовку
@@ -227,6 +228,12 @@ class SyncTaskExecutor @AssistedInject constructor(
         }
     }
 
+    private suspend fun removeDuplicatedUnprocessedSyncInstructions(syncTask: SyncTask) {
+        appComponent
+            .getSyncInstructionRepository6()
+            .deleteUnprocessedDuplicatedInstructions(syncTask.id)
+    }
+
     private suspend fun clearProcessedSyncObjectsWithDeletedState(syncTask: SyncTask) {
         appComponent
             .getSyncObjectDeleter()
@@ -295,7 +302,10 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun processUnprocessedSyncInstructions(syncTask: SyncTask) {
-        processSyncInstructions(syncTask)
+        appComponent
+            .getSyncInstructionsProcessorAssistedFactory6()
+            .create(syncTask, executionId, coroutineScope)
+            .processUnprocessedInstructions()
     }
 
 
@@ -303,7 +313,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
             .create(syncTask, executionId, coroutineScope)
-            .processInstructions()
+            .processCurrentInstructions()
     }
 
 

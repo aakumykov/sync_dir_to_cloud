@@ -33,10 +33,14 @@ class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
 ) {
     suspend fun generate(initialOrderNum: Int): Int {
         var nextOrderNum = processMutuallyUnchangedOrDeleted(initialOrderNum)
+
+        // TODO: назвать методы согдасно их задаче
+
         nextOrderNum = processSourceUnchangedOrDeletedWithTargetNewOrModified(nextOrderNum)
         nextOrderNum = processSourceNewOrModifiedWithTargetUnchangedOrDeleted(nextOrderNum)
         nextOrderNum = processSourceDeletedWithTargetUnchanged(nextOrderNum)
         nextOrderNum = processSourceUnchangedWithTargetDeleted(nextOrderNum)
+
         return processNewAndModified(nextOrderNum)
     }
 
