@@ -47,7 +47,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         }
 
         // Спорно делать это здесь, а не в каждом конкретном методе...
-        syncInstructionUpdater.markAsProcessed(instruction.executionId)
+        syncInstructionUpdater.markAsProcessed(instruction.id)
     }
 
     private suspend fun renameCollisionInSource(sourceObjectId: String) {
