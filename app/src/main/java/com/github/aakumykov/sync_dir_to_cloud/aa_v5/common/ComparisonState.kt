@@ -82,6 +82,10 @@ val ComparisonState.notUnchangedOrDeletedInTarget: Boolean
     get() = targetObjectState != StateInStorage.UNCHANGED &&
             targetObjectState != StateInStorage.DELETED
 
+val ComparisonState.isNewOrModifiedInSource: Boolean
+    get() = StateInStorage.NEW == sourceObjectState ||
+            StateInStorage.MODIFIED == sourceObjectState
+
 
 // Дальше однотипные
 val ComparisonState.isSourceUnchangedTargetNew: Boolean

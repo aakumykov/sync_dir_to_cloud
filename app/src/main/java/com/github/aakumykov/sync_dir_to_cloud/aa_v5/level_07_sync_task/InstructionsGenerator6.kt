@@ -11,8 +11,8 @@ class InstructionsGenerator6 @AssistedInject constructor(
     @Assisted private val executionId: String,
     private val onlyInSourceInstructionGeneratorAssistedFactory: OnlyInSourceInstructionGeneratorAssistedFactory,
     private val onlyInTargetInstructionGeneratorAssistedFactory: OnlyInTargetInstructionGeneratorAssistedFactory,
-    private val twoPlaceItemsMirrorInstructionGeneratorAssistedFactory: TwoPlaceItemsMirrorInstructionGeneratorAssistedFactory,
-    private val twoPlaceItemsSyncInstructionGeneratorAssistedFactory: TwoPlaceItemsSyncInstructionGeneratorAssistedFactory,
+    private val twoPlaceInstructionGeneratorForMirrorAssistedFactory: TwoPlaceInstructionGeneratorForMirrorAssistedFactory,
+    private val twoPlaceInstructionGeneratorForSyncAssistedFactory: TwoPlaceInstructionGeneratorForSyncAssistedFactory,
 ) {
     suspend fun generate() {
 
@@ -42,11 +42,11 @@ class InstructionsGenerator6 @AssistedInject constructor(
     }
 
     private val twoPlaceItemsMirrorInstructionGenerator by lazy {
-        twoPlaceItemsMirrorInstructionGeneratorAssistedFactory.create(syncTask, executionId)
+        twoPlaceInstructionGeneratorForMirrorAssistedFactory.create(syncTask, executionId)
     }
 
     private val twoPlaceItemsSyncInstructionGenerator by lazy {
-        twoPlaceItemsSyncInstructionGeneratorAssistedFactory.create(syncTask, executionId)
+        twoPlaceInstructionGeneratorForSyncAssistedFactory.create(syncTask, executionId)
     }
 }
 

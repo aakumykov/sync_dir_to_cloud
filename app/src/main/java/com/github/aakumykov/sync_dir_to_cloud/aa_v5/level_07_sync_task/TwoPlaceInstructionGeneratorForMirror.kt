@@ -25,7 +25,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
+class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -199,12 +199,12 @@ class TwoPlaceItemsMirrorInstructionGenerator @AssistedInject constructor(
         = comparisonStateRepository.getAllFor(taskId, executionId)
 
     companion object {
-        val TAG: String = TwoPlaceItemsMirrorInstructionGenerator::class.java.simpleName
+        val TAG: String = TwoPlaceInstructionGeneratorForMirror::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface TwoPlaceItemsMirrorInstructionGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemsMirrorInstructionGenerator
+interface TwoPlaceInstructionGeneratorForMirrorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): TwoPlaceInstructionGeneratorForMirror
 }

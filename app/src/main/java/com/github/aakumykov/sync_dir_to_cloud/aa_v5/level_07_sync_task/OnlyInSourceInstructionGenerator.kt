@@ -41,7 +41,9 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
         nextOrderNum = deleteFilesInSourceDeletedInTarget(nextOrderNum)
         nextOrderNum = deleteDirsInSourceDeletedInTarget(nextOrderNum)
 
-        return generateForSync(nextOrderNum)
+        nextOrderNum = generateForSync(nextOrderNum)
+
+        return nextOrderNum
     }
 
 
@@ -66,7 +68,9 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     private suspend fun createDirsFromSourceInTarget(nextOrderNum: Int): Int {
         return getOnlyInSourceComparisonStates()
             .filter { it.isDir }
+            .let { it }
             .filter { it.notDeletedInSource }
+            .let { it }
             .let {
                 generateSyncInstructionsFrom(
                     it,
@@ -80,7 +84,9 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     private suspend fun copyFilesFromSourceToTarget(nextOrderNum: Int): Int {
         return getOnlyInSourceComparisonStates()
             .filter { it.isFile }
+            .let { it }
             .filter { it.notDeletedInSource }
+            .let { it }
             .let {
                 generateSyncInstructionsFrom(
                     it,

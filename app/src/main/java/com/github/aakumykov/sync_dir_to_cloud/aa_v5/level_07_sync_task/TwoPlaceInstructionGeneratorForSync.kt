@@ -5,15 +5,19 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TwoPlaceItemsSyncInstructionGenerator @AssistedInject constructor(
+class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -31,8 +35,9 @@ class TwoPlaceItemsSyncInstructionGenerator @AssistedInject constructor(
         var n = initialOrderNum
         getAllComparisonStatesFor(syncTask.id, executionId)
             .filter { it.isBilateral }
-            .filter { !it.isDeletedInSource }
-            .filter { it.notMutuallyUnchanged }
+            .let { it }
+            .filter { it.isNewOrModifiedInSource || it.isDeletedInTarget }
+            .let { it }
             .forEach { comparisonState ->
                 syncInstructionRepository6.apply {
 
@@ -95,6 +100,6 @@ class TwoPlaceItemsSyncInstructionGenerator @AssistedInject constructor(
 
 
 @AssistedFactory
-interface TwoPlaceItemsSyncInstructionGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): TwoPlaceItemsSyncInstructionGenerator
+interface TwoPlaceInstructionGeneratorForSyncAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): TwoPlaceInstructionGeneratorForSync
 }
