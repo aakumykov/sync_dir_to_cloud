@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewModifiedDeletedI
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInSource
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
@@ -41,14 +42,14 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     private suspend fun processNeedToBeDeletedInTarget(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
         // Сначала удаляю все файлы
-        nextOrderNum = deleteInTargetFilesDeletedInSource(nextOrderNum)
+        nextOrderNum = deleteFilesInTargetDeletedInSource(nextOrderNum)
         // Потом каталоги (которые к этой поре должны стать пустыми).
         // Ибо удаление непустого каталога в облаке - "несинхронная" операция.
-        nextOrderNum = deleteInTargetDirsDeletedInSource(nextOrderNum)
+        nextOrderNum = deleteDirsInTargetDeletedInSource(nextOrderNum)
         return nextOrderNum
     }
 
-    private suspend fun deleteInTargetFilesDeletedInSource(nextOrderNum: Int): Int {
+    private suspend fun deleteFilesInTargetDeletedInSource(nextOrderNum: Int): Int {
         return getAllBilateralComparisonStates()
             .filter { it.isFile}
             .filter { it.isDeletedInSource }
@@ -56,7 +57,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .let { createInstructionsFor(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum) }
     }
 
-    private suspend fun deleteInTargetDirsDeletedInSource(nextOrderNum: Int): Int {
+    private suspend fun deleteDirsInTargetDeletedInSource(nextOrderNum: Int): Int {
         return getAllBilateralComparisonStates()
             .filter { it.isDir }
             .filter { it.isDeletedInSource }
@@ -71,7 +72,8 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
         nextOrderNum = reCreateInTargetDirsDeletedInTarget(nextOrderNum)
 
         nextOrderNum = copyToTargetFilesNewAndModifiedInSource(nextOrderNum)
-        nextOrderNum = copyToTargetFilesNewModifiedDeletedInTarget(nextOrderNum)
+
+        nextOrderNum = reCopyToTargetFilesNewModifiedDeletedInTarget(nextOrderNum)
 
         return nextOrderNum
     }
@@ -94,11 +96,12 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
 
     }
 
-    private suspend fun copyToTargetFilesNewModifiedDeletedInTarget(nextOrderNum: Int): Int {
+    private suspend fun reCopyToTargetFilesNewModifiedDeletedInTarget(nextOrderNum: Int): Int {
         return getAllBilateralComparisonStates()
             .filter { it.isFile }
             .filter { it.isNewModifiedDeletedInTarget }
             .filter { it.notDeletedInSource }
+            .filter { it.isUnchangedInSource }
             .let { createInstructionsFor(it, SyncOperation6.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
     }
 
