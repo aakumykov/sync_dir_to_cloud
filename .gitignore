@@ -20,4 +20,6 @@ local.properties
 
 # VIM text editor swap file
 *.swp
+# Office Excel and Calc lock files
 ~*.xlsx
+.~lock*
