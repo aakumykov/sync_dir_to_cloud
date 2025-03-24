@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 
 // TODO: дать более осмысленное название / разделить на отдельные интерфейсы
+// FIXME: путаю с SyncObjectUpdater-ом
 interface SyncObjectStateChanger {
 
     suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String = "")
