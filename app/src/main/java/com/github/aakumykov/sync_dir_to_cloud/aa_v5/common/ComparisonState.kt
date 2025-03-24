@@ -86,6 +86,11 @@ val ComparisonState.isNewOrModifiedInSource: Boolean
     get() = StateInStorage.NEW == sourceObjectState ||
             StateInStorage.MODIFIED == sourceObjectState
 
+val ComparisonState.isNewModifiedDeletedInTarget: Boolean
+    get() = StateInStorage.NEW == targetObjectState ||
+            StateInStorage.MODIFIED == targetObjectState ||
+            StateInStorage.DELETED == targetObjectState
+
 
 // Дальше однотипные
 val ComparisonState.isSourceUnchangedTargetNew: Boolean
