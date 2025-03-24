@@ -5,6 +5,10 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetNew
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetUnchanged
@@ -19,6 +23,9 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetU
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetDeleted
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetModified
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -32,171 +39,120 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     private val syncInstructionRepository6: SyncInstructionRepository6,
 ) {
     suspend fun generate(initialOrderNum: Int): Int {
-        var nextOrderNum = processMutuallyUnchangedOrDeleted(initialOrderNum)
+        var nextOrderNum = initialOrderNum
 
-        // TODO: назвать методы согдасно их задаче
+        nextOrderNum = processWhatToDelete(nextOrderNum)
+        nextOrderNum = processWhatToRename(nextOrderNum)
+        nextOrderNum = processWhatToCopy(nextOrderNum)
 
-        nextOrderNum = processSourceUnchangedOrDeletedWithTargetNewOrModified(nextOrderNum)
-        nextOrderNum = processSourceNewOrModifiedWithTargetUnchangedOrDeleted(nextOrderNum)
-        nextOrderNum = processSourceDeletedWithTargetUnchanged(nextOrderNum)
-        nextOrderNum = processSourceUnchangedWithTargetDeleted(nextOrderNum)
-
-        return processNewAndModified(nextOrderNum)
+        return nextOrderNum
     }
 
 
-    //
-    private fun processMutuallyUnchangedOrDeleted(initialOrderNum: Int): Int {
-        return initialOrderNum
-    }
-
-    //
-    private suspend fun processSourceUnchangedOrDeletedWithTargetNewOrModified(initialOrderNum: Int): Int {
-        var n = initialOrderNum
-        getAllComparisonStatesFor(syncTask.id, executionId)
-            .let { Log.d(TAG, it.toString()); it }
-            .filter {
-                it.isSourceUnchangedTargetNew ||
-                it.isSourceUnchangedTargetModified ||
-                it.isSourceDeletedAndTargetNew ||
-                it.isSourceDeletedAndTargetModified
-            }
-            .let { Log.d(TAG, it.toString()); it }
-            .forEach { comparisonState ->
-                syncInstructionRepository6.apply {
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
-                        orderNum = n++
-                    ))
-                }
-            }
+    private suspend fun processWhatToDelete(nextOrderNum: Int): Int {
+        var n = nextOrderNum
+        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = true, nextOrderNum = n)
+        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = false, nextOrderNum = n)
         return n
     }
 
-    //
-    private suspend fun processSourceNewOrModifiedWithTargetUnchangedOrDeleted(initialOrderNum: Int): Int {
-        var n = initialOrderNum
-        getAllComparisonStatesFor(syncTask.id, executionId)
-            .filter {
-                it.isSourceNewAndTargetUnchanged ||
-                it.isSourceNewAndTargetDeleted ||
-                it.isSourceModifiedAndTargetUnchanged ||
-                it.isSourceModifiedAndTargetDeleted
-            }
-            .let { Log.d(TAG, it.toString()); it }
-            .forEach { comparisonState ->
-                syncInstructionRepository6.apply {
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                        orderNum = n++
-                    ))
-                }
-            }
-        return n
+    private suspend fun deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir: Boolean, nextOrderNum: Int): Int {
+        return getAllBilateralComparisonStates()
+            .filter { if (isDir) it.isDir else it.isFile }
+            .filter { it.isDeletedInSource }
+            .filter { it.isUnchangedInTarget }
+            .let { createSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum) }
     }
 
-    //
-    private suspend fun processSourceDeletedWithTargetUnchanged(initialOrderNum: Int): Int {
-        var n = initialOrderNum
-        getAllComparisonStatesFor(syncTask.id, executionId)
-            .filter {
-                it.isSourceDeletedAndTargetUnchanged
-            }
-            .let { Log.d(TAG, it.toString()); it }
-            .forEach { comparisonState ->
-                syncInstructionRepository6.apply {
 
-                    if (syncTask.withBackup) {
-                        add(SyncInstruction6.from(
-                            comparisonState = comparisonState,
-                            operation = SyncOperation6.BACKUP_IN_TARGET,
-                            orderNum = n++
-                        ))
-                    }
-
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.DELETE_IN_TARGET,
-                        orderNum = n++
-                    ))
-                }
-            }
-        return n
-    }
-
-    //
-    private suspend fun processSourceUnchangedWithTargetDeleted(initialOrderNum: Int): Int {
-        var n = initialOrderNum
-        getAllComparisonStatesFor(syncTask.id, executionId)
-            .filter {
-                it.isSourceUnchangedTargetDeleted
-            }
-            .let { Log.d(TAG, it.toString()); it }
-            .forEach { comparisonState ->
-                syncInstructionRepository6.apply {
-
-                    if (syncTask.withBackup) {
-                        add(SyncInstruction6.from(
-                            comparisonState = comparisonState,
-                            operation = SyncOperation6.BACKUP_IN_SOURCE,
-                            orderNum = n++
-                        ))
-                    }
-
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.DELETE_IN_SOURCE,
-                        orderNum = n++
-                    ))
-                }
-            }
+    private suspend fun processWhatToRename(nextOrderNum: Int): Int {
+        var n = nextOrderNum
+        n = renameObjectsMutuallyNewOrChanged(isDir = true, n)
+        n = renameObjectsMutuallyNewOrChanged(isDir = false, n)
         return n
     }
 
 
-    //
-    private suspend fun processNewAndModified(initialOrderNum: Int): Int {
-        var n = initialOrderNum
-        getAllComparisonStatesFor(syncTask.id, executionId)
-            .filter {
-                it.isSourceNewAndTargetNew ||
-                it.isSourceNewAndTargetModified ||
-                it.isSourceModifiedAndTargetNew ||
-                it.isSourceModifiedAndTargetModified
+    private suspend fun renameObjectsMutuallyNewOrChanged(isDir: Boolean, nextOrderNum: Int): Int {
+        return getAllBilateralComparisonStates()
+            .filter { if (isDir) it.isDir else it.isFile }
+            .filter { it.isNewOrModifiedInSource }
+            .filter { it.isNewOrModifiedInTarget }
+            .let {
+                createSyncInstructionsFrom(
+                    list = it,
+                    listOf(
+                        SyncOperation6.RENAME_COLLISION_IN_SOURCE,
+                        SyncOperation6.RENAME_COLLISION_IN_TARGET
+                    ),
+                    nextOrderNum
+                )
             }
-            .let { Log.d(TAG, it.toString()); it }
-            .forEach { comparisonState ->
-                syncInstructionRepository6.apply {
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.RENAME_COLLISION_IN_SOURCE,
-                        orderNum = n++
-                    ))
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.RENAME_COLLISION_IN_TARGET,
-                        orderNum = n++
-                    ))
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                        orderNum = n++
-                    ))
-                    add(SyncInstruction6.from(
-                        comparisonState = comparisonState,
-                        operation = SyncOperation6.COPY_FROM_TARGET_TO_SOURCE,
-                        orderNum = n++
-                    ))
-                }
-            }
+    }
+
+
+    private suspend fun processWhatToCopy(nextOrderNum: Int): Int {
+        var n = nextOrderNum
+        n = copyFilesToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(n)
+        n = copyFilesToTargetNewOrModofiedInSourceAndUnchangedOrDeletedInTarget(n)
         return n
     }
 
 
-    private suspend fun getAllComparisonStatesFor(taskId: String, executionId: String): Iterable<ComparisonState>
-        = comparisonStateRepository.getAllFor(taskId, executionId)
+    private suspend fun copyFilesToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(nextOrderNum: Int): Int {
+        return getAllBilateralComparisonStates()
+            .filter { it.isFile }
+            .filter { it.isNewOrModifiedInTarget }
+            .filter { it.isUnchangedOrDeletedInSource }
+            .let { createSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+    }
+
+
+    private suspend fun copyFilesToTargetNewOrModofiedInSourceAndUnchangedOrDeletedInTarget(nextOrderNum: Int): Int {
+        return getAllBilateralComparisonStates()
+            .filter { it.isFile }
+            .filter { it.isNewOrModifiedInSource }
+            .filter { it.isUnchangedOrDeletedInTarget }
+            .let { createSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
+    }
+
+
+
+    private suspend fun createSyncInstructionsFrom(
+        list: List<ComparisonState>,
+        syncOperationList: List<SyncOperation6>,
+        nextOrderNum: Int
+    ): Int {
+        var n = nextOrderNum
+        list.forEach { comparisonState ->
+            syncInstructionRepository6.apply {
+                syncOperationList.forEach { syncOperation ->
+                    add(SyncInstruction6.from(
+                        comparisonState = comparisonState,
+                        operation = syncOperation,
+                        orderNum = n++
+                    ))
+                }
+            }
+        }
+        return n
+    }
+
+    private suspend fun createSyncInstructionsFrom(
+        list: List<ComparisonState>,
+        syncOperation: SyncOperation6,
+        nextOrderNum: Int
+    ): Int {
+        return createSyncInstructionsFrom(list, listOf(syncOperation), nextOrderNum)
+    }
+
+    // Нужно использовать именно такой метод, каждый раз получая
+    // свежий список из репозитория. Потому что в случае переименований он меняется.
+    // FIXME: хотя, это чревато несогласованностью
+    private suspend fun getAllBilateralComparisonStates(): Iterable<ComparisonState>
+        = comparisonStateRepository
+            .getAllFor(syncTask.id, executionId)
+            .filter { it.isBilateral }
 
     companion object {
         val TAG: String = TwoPlaceInstructionGeneratorForMirror::class.java.simpleName
