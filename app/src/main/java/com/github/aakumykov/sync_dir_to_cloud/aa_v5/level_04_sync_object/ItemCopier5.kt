@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncObjec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncObjectActualizerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
@@ -34,7 +35,12 @@ class ItemCopier5 @AssistedInject constructor(
         else copyFileFromSourceToTarget(syncObject, overwriteIfExists)
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
-        syncObjectActualizer.actualizeInfoAboutObject(SyncSide.TARGET, syncObject)
+
+        syncObjectActualizer.actualizeInfoAboutObject(
+            syncObject,
+            SyncSide.TARGET,
+            ExecutionState.SUCCESS
+        )
     }
 
 
@@ -44,7 +50,12 @@ class ItemCopier5 @AssistedInject constructor(
         else copyFileFromTargetToSource(syncObject, overwriteIfExists)
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
-        syncObjectActualizer.actualizeInfoAboutObject(SyncSide.SOURCE, syncObject)
+
+        syncObjectActualizer.actualizeInfoAboutObject(
+            syncObject,
+            SyncSide.SOURCE,
+            ExecutionState.SUCCESS
+        )
     }
 
 

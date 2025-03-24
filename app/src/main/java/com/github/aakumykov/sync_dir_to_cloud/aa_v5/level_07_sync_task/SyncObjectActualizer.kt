@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
@@ -36,11 +37,14 @@ class SyncObjectActualizer @AssistedInject constructor(
     private val cloudReaderGetter: CloudReaderGetter,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
+    private val syncObjectStateChanger: SyncObjectStateChanger,
 ) {
     suspend fun actualizeInfoAboutObject(
-        syncSide: SyncSide,
         correspondingObject: SyncObject,
+        syncSide: SyncSide,
+        syncState: ExecutionState,
     ) {
+        // FIXME: сложная спорная логика
         syncObjectReader.getSyncObject(
             taskId = correspondingObject.taskId,
             syncSide = syncSide,
@@ -49,15 +53,20 @@ class SyncObjectActualizer @AssistedInject constructor(
         )?.also { foundSyncObject ->
             if (foundSyncObject.isDeleted) {
                 // Новый объект вместо удалённого.
-                addNewSyncObject(syncSide, correspondingObject)
+                addNewSuccesscullySyncedSyncObject(syncSide, correspondingObject)
             } else {
                 // Обновление существующего объекта.
                 updateSyncObjectMetadata(foundSyncObject)
+                setSyncState(foundSyncObject.id, syncState)
             }
         } ?: run {
             // Новый объект на пустое место.
-            addNewSyncObject(syncSide, correspondingObject)
+            addNewSuccesscullySyncedSyncObject(syncSide, correspondingObject)
         }
+    }
+
+    private suspend fun setSyncState(objectId: String, syncState: ExecutionState) {
+        syncObjectStateChanger.changeSyncState(objectId, syncState)
     }
 
     private suspend fun updateSyncObjectMetadata(foundSyncObject: SyncObject) {
@@ -71,7 +80,7 @@ class SyncObjectActualizer @AssistedInject constructor(
             }
     }
 
-    private suspend fun addNewSyncObject(
+    private suspend fun addNewSuccesscullySyncedSyncObject(
         syncSide: SyncSide,
         correspondingObject: SyncObject,
     ) {
