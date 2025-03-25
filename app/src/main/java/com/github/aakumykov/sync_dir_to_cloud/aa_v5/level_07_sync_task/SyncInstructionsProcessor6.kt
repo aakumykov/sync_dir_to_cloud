@@ -34,8 +34,20 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
         deleteFiles(list)
         deleteDirs(list)
 
+        processCollisionResolution(true, list)
+        processCollisionResolution(false, list)
+
         processDirsNotDeletion(list)
         processFilesNotDeletion(list)
+    }
+
+    private suspend fun processCollisionResolution(isDir: Boolean, list: Iterable<SyncInstruction6>) {
+        list
+            .filter { if (isDir) it.isDir else it.isFile }
+            .filter { it.isCollisionResolution }
+            .forEach { syncInstruction ->
+                syncInstructionExecutor.execute(syncInstruction)
+            }
     }
 
 

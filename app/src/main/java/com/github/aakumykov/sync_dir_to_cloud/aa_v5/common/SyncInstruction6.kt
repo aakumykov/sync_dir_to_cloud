@@ -45,6 +45,8 @@ class SyncInstruction6 (
     @Ignore val isDeletion: Boolean = SyncOperation6.DELETE_IN_TARGET == operation ||
             SyncOperation6.DELETE_IN_SOURCE == operation
 
+    @Ignore val isCollisionResolution: Boolean = SyncOperation6.RESOLVE_COLLISION == operation
+
     @Ignore val notDeletion: Boolean =
         SyncOperation6.DELETE_IN_TARGET != operation &&
                 SyncOperation6.DELETE_IN_SOURCE != operation

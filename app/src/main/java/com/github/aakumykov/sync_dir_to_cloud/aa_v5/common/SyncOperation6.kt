@@ -2,8 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.common
 
 enum class SyncOperation6 {
 
-    RENAME_COLLISION_IN_SOURCE,
-    RENAME_COLLISION_IN_TARGET,
+    RESOLVE_COLLISION,
 
     COPY_FROM_SOURCE_TO_TARGET,
     COPY_FROM_TARGET_TO_SOURCE,

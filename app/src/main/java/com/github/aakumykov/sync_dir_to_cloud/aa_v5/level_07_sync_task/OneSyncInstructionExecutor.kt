@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDel
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDeleterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuper5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuperAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectRenamerAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCollisionResolverAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -27,14 +27,13 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val itemCopierAssistedFactory: ItemCopierAssistedFactory5,
     private val itemDeleterAssistedFactory5: ItemDeleterAssistedFactory5,
     private val backuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
-    private val renamerAssistedFactory5: SyncObjectRenamerAssistedFactory5,
+    private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
 
         when(instruction.operation) {
-            SyncOperation6.RENAME_COLLISION_IN_SOURCE -> renameCollisionInSource(instruction.objectIdInSource!!)
-            SyncOperation6.RENAME_COLLISION_IN_TARGET -> renameCollisionInTarget(instruction.objectIdInTarget!!)
+            SyncOperation6.RESOLVE_COLLISION -> resolveCollisionFor(instruction)
 
             SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(instruction.objectIdInSource!!)
             SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(instruction.objectIdInTarget!!)
@@ -50,16 +49,8 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         syncInstructionUpdater.markAsProcessed(instruction.id)
     }
 
-    private suspend fun renameCollisionInSource(sourceObjectId: String) {
-        syncObjectReader.getSyncObject(sourceObjectId)?.also {
-            renamer.renameCollisionInSource(it)
-        }
-    }
-
-    private suspend fun renameCollisionInTarget(targetObjectId: String) {
-        syncObjectReader.getSyncObject(targetObjectId)?.also {
-            renamer.renameCollisionInTarget(it)
-        }
+    private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction6) {
+        collisionResolver.resolveCollision(syncInstruction.objectIdInSource!!, syncInstruction.objectIdInTarget!!)
     }
 
     private suspend fun copyFromSourceToTarget(sourceObjectId: String) {
@@ -107,8 +98,8 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val itemDeleter: ItemDeleter5 by lazy {
         itemDeleterAssistedFactory5.create(syncTask, executionId)
     }
-    private val renamer by lazy {
-        renamerAssistedFactory5.create(syncTask)
+    private val collisionResolver by lazy {
+        collisionResolverAssistedFactory.create(syncTask)
     }
 }
 

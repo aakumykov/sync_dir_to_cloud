@@ -24,6 +24,25 @@ class SyncObjectRenamer5 @AssistedInject constructor(
     private val cloudWriterGetter: CloudWriterGetter,
     private val syncObjectUpdater: SyncObjectUpdater,
 ) {
+    suspend fun renameObjectInSource(syncObject: SyncObject, newName: String) {
+        sourceCloudWriter.renameFileOrEmptyDir(
+            fromAbsolutePath = syncObject.absolutePathIn(syncTask.sourcePath!!),
+            toAbsolutePath = syncObject.absolutePathInWithNewName(syncTask.sourcePath!!, newName),
+            overwriteIfExists = false
+        )
+        syncObjectUpdater.updateName(syncObject.id, newName)
+    }
+
+    suspend fun renameObjectInTarget(syncObject: SyncObject, newName: String) {
+        targetCloudWriter.renameFileOrEmptyDir(
+            fromAbsolutePath = syncObject.absolutePathIn(syncTask.targetPath!!),
+            toAbsolutePath = syncObject.absolutePathInWithNewName(syncTask.targetPath!!, newName),
+            overwriteIfExists = false
+        )
+        syncObjectUpdater.updateName(syncObject.id, newName)
+    }
+
+    @Deprecated("Использовать SyncObjectCollisionResolver")
     suspend fun renameCollisionInSource(syncObject: SyncObject): String {
         val oldPath = syncObject.absolutePathIn(syncTask.sourcePath!!)
 
@@ -36,6 +55,7 @@ class SyncObjectRenamer5 @AssistedInject constructor(
         return newName
     }
 
+    @Deprecated("Использовать SyncObjectCollisionResolver")
     suspend fun renameCollisionInTarget(syncObject: SyncObject): String {
 
         val oldPath = syncObject.absolutePathIn(syncTask.targetPath!!)

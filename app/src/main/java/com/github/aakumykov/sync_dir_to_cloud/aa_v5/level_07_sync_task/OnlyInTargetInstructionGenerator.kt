@@ -1,11 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -55,7 +57,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
 
 
     private suspend fun processFilesNeedToBeDeletedInSource(nextOrderNum: Int): Int {
-        return getStatesForThisTaskAndExecution()
+        return getOnlyInTargetStates()
             .filter { it.isFile }
             .filter { it.isDeletedInTarget }
             .let {
@@ -64,7 +66,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     }
 
     private suspend fun processDirsNeedToBeDeletedInSource(nextOrderNum: Int): Int {
-        return getStatesForThisTaskAndExecution()
+        return getOnlyInTargetStates()
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .let {
@@ -74,7 +76,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
 
 
     private suspend fun processDirsNeedToBeCreatedInSource(nextOrderNum: Int): Int {
-        return getStatesForThisTaskAndExecution()
+        return getOnlyInTargetStates()
             .filter { it.isDir }
             .filter { it.notMutuallyUnchanged }
             .filter { it.notDeletedInTarget }
@@ -85,7 +87,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
 
 
     private suspend fun processFilesNeedToBeCopiedToSource(nextOrderNum: Int): Int {
-        return getStatesForThisTaskAndExecution()
+        return getOnlyInTargetStates()
             .filter { it.isFile }
             .filter { it.notMutuallyUnchanged }
             .filter { it.notDeletedInTarget }
@@ -94,6 +96,10 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             }
     }
 
+    private suspend fun getOnlyInTargetStates(): Iterable<ComparisonState> {
+        return getStatesForThisTaskAndExecution()
+            .filter { null == it.sourceObjectState }
+    }
 
     /*private suspend fun processDirsNeedsToBeDeleted(nextOrderNum: Int): Int {
         return getStates()

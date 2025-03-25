@@ -78,16 +78,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isNewOrModifiedInSource }
             .filter { it.isNewOrModifiedInTarget }
-            .let {
-                createSyncInstructionsFrom(
-                    list = it,
-                    listOf(
-                        SyncOperation6.RENAME_COLLISION_IN_SOURCE,
-                        SyncOperation6.RENAME_COLLISION_IN_TARGET
-                    ),
-                    nextOrderNum
-                )
-            }
+            .let { createSyncInstructionsFrom(it, SyncOperation6.RESOLVE_COLLISION, nextOrderNum) }
     }
 
 
@@ -101,6 +92,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
     private suspend fun copyFilesToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(nextOrderNum: Int): Int {
         return getAllBilateralComparisonStates()
+            .let { it }
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInTarget }
             .filter { it.isUnchangedOrDeletedInSource }
@@ -118,7 +110,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
 
 
-    private suspend fun createSyncInstructionsFrom(
+    /*private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
         syncOperationList: List<SyncOperation6>,
         nextOrderNum: Int
@@ -136,14 +128,24 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             }
         }
         return n
-    }
+    }*/
 
     private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
         syncOperation: SyncOperation6,
         nextOrderNum: Int
     ): Int {
-        return createSyncInstructionsFrom(list, listOf(syncOperation), nextOrderNum)
+        var n = nextOrderNum
+        syncInstructionRepository6.apply {
+            list.forEach { comparisonState ->
+                add(SyncInstruction6.from(
+                    comparisonState = comparisonState,
+                    operation = syncOperation,
+                    orderNum = n++
+                ))
+            }
+        }
+        return n
     }
 
     // Нужно использовать именно такой метод, каждый раз получая
