@@ -78,7 +78,17 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isNewOrModifiedInSource }
             .filter { it.isNewOrModifiedInTarget }
-            .let { createSyncInstructionsFrom(it, SyncOperation6.RESOLVE_COLLISION, nextOrderNum) }
+            .let {
+                createSyncInstructionsFrom(
+                    it,
+                    listOf(
+                        SyncOperation6.RESOLVE_COLLISION,
+                        SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                        SyncOperation6.COPY_FROM_TARGET_TO_SOURCE
+                    ),
+                    nextOrderNum
+                )
+            }
     }
 
 
@@ -110,7 +120,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
 
 
-    /*private suspend fun createSyncInstructionsFrom(
+    private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
         syncOperationList: List<SyncOperation6>,
         nextOrderNum: Int
@@ -128,24 +138,18 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             }
         }
         return n
-    }*/
+    }
 
     private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
         syncOperation: SyncOperation6,
         nextOrderNum: Int
     ): Int {
-        var n = nextOrderNum
-        syncInstructionRepository6.apply {
-            list.forEach { comparisonState ->
-                add(SyncInstruction6.from(
-                    comparisonState = comparisonState,
-                    operation = syncOperation,
-                    orderNum = n++
-                ))
-            }
-        }
-        return n
+        return createSyncInstructionsFrom(
+            list,
+            listOf(syncOperation),
+            nextOrderNum
+        )
     }
 
     // Нужно использовать именно такой метод, каждый раз получая
