@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
 import javax.inject.Inject
 
@@ -13,5 +14,13 @@ class SyncOperationLoggerRepository @Inject constructor(
 
     suspend fun list(taskId: String, executionId: String): List<SyncOperationLogItem> {
         return syncOperationLoggerDAO.list(taskId, executionId)
+    }
+
+    suspend fun updateLogItemState(logItemId: String, operationState: OperationState) {
+        return syncOperationLoggerDAO.updateState(logItemId, operationState)
+    }
+
+    suspend fun updateLogItemState(logItemId: String, operationState: OperationState, errorMsg: String) {
+        return syncOperationLoggerDAO.updateStateAndError(logItemId, operationState, errorMsg)
     }
 }

@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
@@ -13,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import dagger.assisted.Assisted
@@ -53,7 +55,15 @@ class SyncInstructionExecutor @AssistedInject constructor(
     }
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction6) {
-        collisionResolver.resolveCollision(syncInstruction.objectIdInSource!!, syncInstruction.objectIdInTarget!!)
+        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+            try {
+                collisionResolver.resolveCollision(syncInstruction.objectIdInSource!!, syncInstruction.objectIdInTarget!!)
+                syncOperationLogger.logSuccess(logItemId)
+            } catch (e: Exception) {
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+                logE(e)
+            }
+        }
     }
 
     private suspend fun copyFromSourceToTarget(sourceObjectId: String) {
@@ -108,6 +118,15 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
     private val syncOperationLogger: SyncOperationLogger by lazy {
         syncOperationLoggerAssistedFactory.create(syncTask.id, executionId)
+    }
+
+
+    private fun logE(e: Exception) {
+        Log.e(TAG, e.errorMsg, e)
+    }
+
+    companion object {
+        val TAG: String = SyncInstructionExecutor::class.java.simpleName
     }
 }
 

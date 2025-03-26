@@ -31,14 +31,17 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
 
         val list = if (selectUnprocessed) getAllUnprocessedSyncInstructions() else getCurentSyncInstructions()
 
+        // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
+//        backupFilesAndDirs()
+
         deleteFiles(list)
         deleteDirs(list)
 
         processCollisionResolution(true, list)
         processCollisionResolution(false, list)
 
-        processDirsNotDeletion(list)
-        processFilesNotDeletion(list)
+        processDirsDirsCreation(list)
+        processFilesCopying(list)
     }
 
     private suspend fun processCollisionResolution(isDir: Boolean, list: Iterable<SyncInstruction6>) {
@@ -69,7 +72,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processDirsNotDeletion(list: Iterable<SyncInstruction6>) {
+    private suspend fun processDirsDirsCreation(list: Iterable<SyncInstruction6>) {
         list
             .filter { it.isDir }
             .filter { it.notDeletion }
@@ -78,10 +81,11 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processFilesNotDeletion(list: Iterable<SyncInstruction6>) {
+    private suspend fun processFilesCopying(list: Iterable<SyncInstruction6>) {
         list
             .filter { it.isFile }
             .filter { it.notDeletion }
+            .let { it }
             .forEach { instruction ->
                 syncInstructionExecutor.execute(instruction)
             }
