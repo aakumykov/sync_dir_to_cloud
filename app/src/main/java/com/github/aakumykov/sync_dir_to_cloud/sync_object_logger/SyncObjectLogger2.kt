@@ -93,16 +93,16 @@ class SyncObjectLogger2 @AssistedInject constructor(
     private fun getString(@StringRes stringRes: Int, vararg arguments: Any) =
         resources.getString(stringRes, arguments)
 
-
-    @AssistedFactory
-    interface Factory {
-        fun create(
-            @Assisted(QUALIFIER_TASK_ID) taskId: String,
-            @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
-        ): SyncObjectLogger2
-    }
-
     companion object {
         val TAG: String = SyncObjectLogger2::class.java.simpleName
     }
+}
+
+
+@AssistedFactory
+interface SyncObjectLogger2AssistedFactory {
+    fun create(
+        @Assisted(QUALIFIER_TASK_ID) taskId: String,
+        @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
+    ): SyncObjectLogger2
 }

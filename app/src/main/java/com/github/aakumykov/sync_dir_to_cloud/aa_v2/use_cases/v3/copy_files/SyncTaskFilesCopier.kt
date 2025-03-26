@@ -16,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.helpers.ExecutionLoggerHelper
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
+import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
@@ -36,7 +37,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
     private val syncTaskFileObjectReader: SyncTaskFileObjectReader,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectFileCopierCreator: SyncObjectFileCopierCreator,
-    private val syncObjectLogger2Factory: SyncObjectLogger2.Factory,
+    private val syncObjectLogger2SyncObjectLogger2AssistedFactory: SyncObjectLogger2AssistedFactory,
     private val executionLoggerHelper: ExecutionLoggerHelper,
     @Assisted private val executionId: String,
     @Assisted private val fileOperationPortionSize: Int,
@@ -343,7 +344,7 @@ class SyncTaskFilesCopier @AssistedInject constructor(
 
     // TODO: внедрять как @Assisted
     private fun syncObjectLogger(taskId: String): SyncObjectLogger2 {
-        return syncObjectLogger2Factory.create(taskId, executionId)
+        return syncObjectLogger2SyncObjectLogger2AssistedFactory.create(taskId, executionId)
     }
 
 
