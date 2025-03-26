@@ -10,6 +10,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDel
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuper5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectBackuperAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObjectCollisionResolverAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLogger
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -29,6 +31,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val backuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
     private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
+    private val syncOperationLoggerAssistedFactory: SyncOperationLoggerAssistedFactory,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
 
@@ -98,8 +101,13 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val itemDeleter: ItemDeleter5 by lazy {
         itemDeleterAssistedFactory5.create(syncTask, executionId)
     }
+
     private val collisionResolver by lazy {
         collisionResolverAssistedFactory.create(syncTask)
+    }
+
+    private val syncOperationLogger: SyncOperationLogger by lazy {
+        syncOperationLoggerAssistedFactory.create(syncTask.id, executionId)
     }
 }
 
