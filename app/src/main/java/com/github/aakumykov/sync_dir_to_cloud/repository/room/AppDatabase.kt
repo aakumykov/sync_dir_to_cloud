@@ -16,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
@@ -33,6 +34,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
 
 @Database(
     entities = [
@@ -45,6 +47,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         SyncInstruction::class,
         ComparisonState::class,
         SyncInstruction6::class,
+        SyncOperationLogItem::class,
    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = TaskLogEntry.RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -103,8 +106,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
         AutoMigration(from = 109, to = 110), // Новое поле SyncObject.justChecked
         AutoMigration(from = 110, to = 111), // Новое поле SyncInstruction6.isProcessed
         AutoMigration(from = 111, to = 112, spec = DeleteTableSyncInstructions5::class),
+        AutoMigration(from = 112, to = 113), // Новый объект SyncOperationLogItem
     ],
-    version = 112,
+    version = 113,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -125,6 +129,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncInstructionDAO(): SyncInstructionDAO
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
     abstract fun getSyncInstructionDAO6(): SyncInstructionDAO6
+    abstract fun getSyncOperationLoggerDAO(): SyncOperationLoggerDAO
 }
 
 @RenameColumn(tableName = "sync_instructions_5", fromColumnName = "order_num", toColumnName = "execution_order_num")
