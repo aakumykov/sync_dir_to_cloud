@@ -35,6 +35,6 @@ class SyncOperationLogItem(
     @ColumnInfo(name = "operation_state")
     val operationState: OperationState,
 
-    /*@ColumnInfo(name = "error_msg", defaultValue = "null")
-    val errorMsg: String? = null,*/
+    @ColumnInfo(name = "error_msg", defaultValue = "null")
+    val errorMsg: String? = null,
 )
