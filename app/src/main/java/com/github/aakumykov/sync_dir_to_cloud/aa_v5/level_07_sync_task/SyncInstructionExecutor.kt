@@ -20,7 +20,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
-class OneSyncInstructionExecutor @AssistedInject constructor(
+class SyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
@@ -117,5 +117,5 @@ interface SyncInstructionExecutorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
-        scope: CoroutineScope): OneSyncInstructionExecutor
+        scope: CoroutineScope): SyncInstructionExecutor
 }
