@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
@@ -9,25 +8,11 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceDeletedAndTargetUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceModifiedAndTargetUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetNew
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

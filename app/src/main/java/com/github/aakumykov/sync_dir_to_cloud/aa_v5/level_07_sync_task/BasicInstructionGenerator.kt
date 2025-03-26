@@ -4,7 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 
 open class BasicInstructionGenerator(
     private val taskId: String,

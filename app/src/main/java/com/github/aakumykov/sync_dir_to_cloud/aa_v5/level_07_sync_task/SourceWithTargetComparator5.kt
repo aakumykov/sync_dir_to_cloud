@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.subtractBy
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

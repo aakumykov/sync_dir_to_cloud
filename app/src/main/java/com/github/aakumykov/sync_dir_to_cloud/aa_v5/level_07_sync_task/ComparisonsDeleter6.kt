@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.ComparisonStateRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import javax.inject.Inject
 
 class ComparisonsDeleter6 @Inject constructor(
