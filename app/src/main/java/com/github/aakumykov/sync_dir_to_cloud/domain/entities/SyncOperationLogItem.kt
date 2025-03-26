@@ -18,7 +18,7 @@ class SyncOperationLogItem(
     val executionId: String,
 
     @ColumnInfo(name = "timestamp")
-    val timestamp: String,
+    val timestamp: Long,
 
     @ColumnInfo(name = "source_object_id")
     val sourceObjectId: String?,
@@ -34,4 +34,7 @@ class SyncOperationLogItem(
 
     @ColumnInfo(name = "operation_state")
     val operationState: OperationState,
+
+    /*@ColumnInfo(name = "error_msg", defaultValue = "null")
+    val errorMsg: String? = null,*/
 )
