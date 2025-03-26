@@ -152,4 +152,5 @@
     <string name="EXECUTION_LOG_work_error">Работа завершилась в ошибкой</string>
     <string name="SYNC_OBJECT_LOGGER_copying_file">Копирование файла %1$s</string>
     <string name="FRAGMENT_TASK_EDIT_sync_mode_label">Режим работы:</string>
+    <string name="SYNC_OBJECT_LOGGER_resolving_name_collision">Исправляем коллизию имён</string>
 </resources>

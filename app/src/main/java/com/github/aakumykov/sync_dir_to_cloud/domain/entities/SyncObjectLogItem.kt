@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.actualSize
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
@@ -74,6 +75,18 @@ data class SyncObjectLogItem (
             )
         }
 
+        fun createWaiting(taskId: String, executionId: String, syncInstruction: SyncInstruction6, operationName: String): SyncObjectLogItem {
+            return create(
+                taskId = taskId,
+                executionId = executionId,
+                syncInstruction = syncInstruction,
+                operationName = operationName,
+                errorMessage =  null,
+                operationState = OperationState.WAITING,
+                progress = 0
+            )
+        }
+
         fun createSuccess(taskId: String, executionId: String, syncObject: SyncObject, operationName: String): SyncObjectLogItem {
             return create(
                 taskId = taskId,
@@ -115,6 +128,30 @@ data class SyncObjectLogItem (
                 timestamp = currentTime(),
                 itemName = syncObject.name,
                 size = syncObject.actualSize,
+                operationName = operationName,
+                operationState = operationState,
+                errorMessage = errorMessage,
+                progress = progress,
+            )
+        }
+
+        private fun create(
+            taskId: String,
+            executionId: String,
+            syncInstruction: SyncInstruction6,
+            operationState: OperationState,
+            operationName: String,
+            errorMessage: String?,
+            progress: Int,
+        ): SyncObjectLogItem {
+            return SyncObjectLogItem(
+                id = UUID.randomUUID().toString(),
+                taskId = taskId,
+                objectId = syncInstruction.objectIdInSource!!,
+                executionId = executionId,
+                timestamp = currentTime(),
+                itemName = syncInstruction.relativePath,
+                size = 0L,
                 operationName = operationName,
                 operationState = operationState,
                 errorMessage = errorMessage,
