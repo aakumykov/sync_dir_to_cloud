@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogAdder
@@ -36,22 +35,6 @@ class SyncObjectLogger2 @AssistedInject constructor(
                 syncObject = syncObject,
                 operationName = getString(operationNameRes)
             ))
-        }
-    }
-
-    suspend fun logWaiting(
-        syncInstruction: SyncInstruction6,
-        @StringRes operationNameRes: Int,
-    ) {
-//        Log.d(TAG, "logWaiting(): '${getString(operationNameRes)}': [${syncObjectList.map { it.name }.joinToString(",")}]")
-
-        SyncObjectLogItem.createWaiting(
-            taskId = taskId,
-            executionId = executionId,
-            syncInstruction = syncInstruction,
-            operationName = getString(operationNameRes)
-        ).also {
-            syncObjectLogAdder.addLogItem(it)
         }
     }
 

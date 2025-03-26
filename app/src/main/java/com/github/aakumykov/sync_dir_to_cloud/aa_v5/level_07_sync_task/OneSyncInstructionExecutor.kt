@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
-import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
@@ -14,8 +13,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2
-import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger2AssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -25,17 +22,13 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
-
     private val syncOptions: SyncOptions,
     private val syncObjectReader: SyncObjectReader,
-    private val syncInstructionUpdater: SyncInstructionUpdater,
-
     private val itemCopierAssistedFactory: ItemCopierAssistedFactory5,
     private val itemDeleterAssistedFactory5: ItemDeleterAssistedFactory5,
     private val backuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
     private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
-
-    private val syncObjectLogger2AssistedFactory: SyncObjectLogger2AssistedFactory,
+    private val syncInstructionUpdater: SyncInstructionUpdater,
 ){
     suspend fun execute(instruction: SyncInstruction6) {
 
@@ -57,7 +50,6 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     }
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction6) {
-        syncObjectLogger.logWaiting(syncInstruction, R.string.SYNC_OBJECT_LOGGER_resolving_name_collision)
         collisionResolver.resolveCollision(syncInstruction.objectIdInSource!!, syncInstruction.objectIdInTarget!!)
     }
 
@@ -106,13 +98,8 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val itemDeleter: ItemDeleter5 by lazy {
         itemDeleterAssistedFactory5.create(syncTask, executionId)
     }
-
     private val collisionResolver by lazy {
         collisionResolverAssistedFactory.create(syncTask)
-    }
-
-    private val syncObjectLogger: SyncObjectLogger2 by lazy {
-        syncObjectLogger2AssistedFactory.create(syncTask.id, executionId)
     }
 }
 

@@ -152,5 +152,4 @@
     <string name="EXECUTION_LOG_work_error">Work error</string>
     <string name="SYNC_OBJECT_LOGGER_copying_file">Копирование файла %1$s</string>
     <string name="FRAGMENT_TASK_EDIT_sync_mode_label">Work mode:</string>
-    <string name="SYNC_OBJECT_LOGGER_resolving_name_collision">Resolving name collision</string>
 </resources>
