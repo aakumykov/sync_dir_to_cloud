@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
@@ -30,6 +31,16 @@ data class LogOfSync(
                 subText = syncObjectLogItem.itemName,
                 operationState = syncObjectLogItem.operationState,
                 progress = syncObjectLogItem.progress,
+            )
+        }
+
+        fun from(logItem: SyncOperationLogItem): LogOfSync {
+            return LogOfSync(
+                text = logItem.operationName,
+                timestamp = logItem.timestamp,
+                subText = logItem.objectName,
+                operationState = logItem.operationState,
+                progress = null,
             )
         }
 

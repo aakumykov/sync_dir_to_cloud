@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.room.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -18,8 +19,17 @@ interface SyncOperationLoggerDAO {
             "ORDER BY timestamp ASC")
     suspend fun list(taskId: String, executionId: String): List<SyncOperationLogItem>
 
+
+    @Query("SELECT * FROM sync_operation_logs WHERE " +
+            "task_id = :taskId " +
+            "AND execution_id = :executionId " +
+            "ORDER BY timestamp ASC")
+    fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>>
+
+
     @Query("UPDATE sync_operation_logs SET operation_state = :operationState WHERE id = :logItemId")
     suspend fun updateState(logItemId: String, operationState: OperationState)
+
 
     @Query("UPDATE sync_operation_logs SET operation_state = :operationState, error_msg = :errorMsg WHERE id = :logItemId")
     suspend fun updateStateAndError(logItemId: String, operationState: OperationState, errorMsg: String)

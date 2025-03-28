@@ -13,9 +13,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncOperationLoggerRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -129,12 +129,12 @@ class ViewModelsModule {
     @IntoMap
     @ViewModelKey(SyncLogViewModel::class)
     fun provideSyncLogViewModel(
-        syncObjectLogReader: SyncObjectLogReader,
+        syncOperationLoggerRepository: SyncOperationLoggerRepository,
         executionLogReader: ExecutionLogReader,
         operationCancellationHolder: OperationCancellationHolder
     ): ViewModel {
         return SyncLogViewModel(
-            syncObjectLogReader,
+            syncOperationLoggerRepository,
             executionLogReader,
             operationCancellationHolder
         )

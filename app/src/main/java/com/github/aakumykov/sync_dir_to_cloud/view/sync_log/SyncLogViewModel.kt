@@ -6,26 +6,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object_log.SyncObjectLogReader
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncOperationLoggerRepository
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
-    private val syncObjectLogReader: SyncObjectLogReader,
+    // FIXME: "Reader"
+    private val syncOperationLoggerRepository: SyncOperationLoggerRepository,
     private val executionLogReader: ExecutionLogReader,
     private val operationCancellationHolder: OperationCancellationHolder,
 )
     : ViewModel()
 {
-    private var isFirstRun = true
-    private val mediatorLiveData: MediatorLiveData<List<LogOfSync>> = MediatorLiveData()
     val logOfSync: LiveData<List<LogOfSync>> get() = mediatorLiveData
 
-    private val currentSyncObjectLogItemList: MutableList<SyncObjectLogItem> = mutableListOf()
+    private val mediatorLiveData: MediatorLiveData<List<LogOfSync>> = MediatorLiveData()
     private val currentExecutionLogItemList: MutableList<ExecutionLogItem> = mutableListOf()
+    private val currentSyncOperationLogItemList: MutableList<SyncOperationLogItem> = mutableListOf()
     private val logOfSyncList: MutableList<LogOfSync> = mutableListOf()
+    private var isFirstRun = true
 
 
     fun startWorking(taskId: String, executionId: String) {
@@ -38,9 +39,11 @@ class SyncLogViewModel(
 
     private fun prepareMediatorLiveData(taskId: String, executionId: String) {
 
-        mediatorLiveData.addSource(syncObjectLogReader.getListAsLiveData(taskId, executionId)) { list ->
-            currentSyncObjectLogItemList.clear()
-            currentSyncObjectLogItemList.addAll(list)
+        mediatorLiveData.addSource(syncOperationLoggerRepository.listAsLiveData(taskId, executionId)) { list ->
+            currentSyncOperationLogItemList.apply {
+                clear()
+                addAll(list)
+            }
             processAndPublishCompoundLog()
         }
 
@@ -55,7 +58,7 @@ class SyncLogViewModel(
         logOfSyncList.apply {
             clear()
 
-            val syncLog = currentSyncObjectLogItemList.map { LogOfSync.from(it) }
+            val syncLog = currentSyncOperationLogItemList.map { LogOfSync.from(it) }
             addAll(syncLog)
 
             val executionLog = currentExecutionLogItemList.map { LogOfSync.from(it) }
@@ -65,11 +68,6 @@ class SyncLogViewModel(
 
             mediatorLiveData.value = this
         }
-    }
-
-
-    fun getListLiveData(taskId: String, executionId: String): LiveData<List<SyncObjectLogItem>> {
-        return syncObjectLogReader.getListAsLiveData(taskId,executionId)
     }
 
     fun cancelJob(id: String) {
