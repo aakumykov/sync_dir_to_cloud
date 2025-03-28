@@ -2,23 +2,10 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
-@Entity(
-    tableName = "sync_operation_logs",
-    foreignKeys = [
-        ForeignKey(
-            entity = SyncTask::class,
-            parentColumns = ["id"],
-            childColumns = ["task_id"],
-            onDelete = CASCADE,
-            onUpdate = CASCADE
-        )
-    ],
-)
+@Entity(tableName = "sync_operation_logs")
 class SyncOperationLogItem(
 
     @PrimaryKey

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 114,
-    "identityHash": "684dd2f61f4488b1c2ea686e5de76734",
+    "identityHash": "ea178d775e4ba9dabf5dd59a71656260",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -830,7 +830,7 @@
       },
       {
         "tableName": "sync_operation_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `source_object_id` TEXT, `target_object_id` TEXT, `object_name` TEXT NOT NULL, `operation_name` TEXT NOT NULL, `operation_state` TEXT NOT NULL, `error_msg` TEXT DEFAULT null, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `source_object_id` TEXT, `target_object_id` TEXT, `object_name` TEXT NOT NULL, `operation_name` TEXT NOT NULL, `operation_state` TEXT NOT NULL, `error_msg` TEXT DEFAULT null, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -901,25 +901,13 @@
           ]
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "sync_tasks",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "task_id"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '684dd2f61f4488b1c2ea686e5de76734')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ea178d775e4ba9dabf5dd59a71656260')"
     ]
   }
 }
