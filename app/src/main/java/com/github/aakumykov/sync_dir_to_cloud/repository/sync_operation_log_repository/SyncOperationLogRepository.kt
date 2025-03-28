@@ -8,13 +8,11 @@ import javax.inject.Inject
 
 class SyncOperationLogRepository @Inject constructor(
     private val syncOperationLoggerDAO: SyncOperationLoggerDAO
-) : SyncOperationLogReader {
+)
+    : SyncOperationLogReader
+{
     suspend fun add(syncOperationLogItem: SyncOperationLogItem) {
         syncOperationLoggerDAO.add(syncOperationLogItem)
-    }
-
-    override suspend fun list(taskId: String, executionId: String): List<SyncOperationLogItem> {
-        return syncOperationLoggerDAO.list(taskId, executionId)
     }
 
     override fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>> {

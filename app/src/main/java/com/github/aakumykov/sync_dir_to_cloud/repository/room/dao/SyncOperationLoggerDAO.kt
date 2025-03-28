@@ -13,12 +13,6 @@ interface SyncOperationLoggerDAO {
     @Insert
     suspend fun add(syncOperationLogItem: SyncOperationLogItem)
 
-    @Query("SELECT * FROM sync_operation_logs WHERE " +
-            "task_id = :taskId " +
-            "AND execution_id = :executionId " +
-            "ORDER BY timestamp ASC")
-    suspend fun list(taskId: String, executionId: String): List<SyncOperationLogItem>
-
 
     @Query("SELECT * FROM sync_operation_logs WHERE " +
             "task_id = :taskId " +
