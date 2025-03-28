@@ -40,11 +40,11 @@ class SyncInstructionExecutor @AssistedInject constructor(
         when(instruction.operation) {
             SyncOperation6.RESOLVE_COLLISION -> resolveCollisionFor(instruction)
 
-            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(instruction.objectIdInSource!!)
-            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(instruction.objectIdInTarget!!)
+            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(instruction)
+            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(instruction)
 
-            SyncOperation6.DELETE_IN_SOURCE -> deleteInSource(instruction.objectIdInSource!!)
-            SyncOperation6.DELETE_IN_TARGET -> deleteInTarget(instruction.objectIdInTarget!!)
+            SyncOperation6.DELETE_IN_SOURCE -> deleteInSource(instruction)
+            SyncOperation6.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
             SyncOperation6.BACKUP_IN_SOURCE -> { /*backuper.backupInSource(instruction)*/ }
             SyncOperation6.BACKUP_IN_TARGET -> { /*backuper.backupInTarget(instruction)*/ }
@@ -66,19 +66,37 @@ class SyncInstructionExecutor @AssistedInject constructor(
         }
     }
 
-    private suspend fun copyFromSourceToTarget(sourceObjectId: String) {
-        syncObjectReader.getSyncObject(sourceObjectId)?.also {
-            itemCopier.copyItemFromSourceToTarget(it, syncOptions.overwriteIfExists)
-        } ?: {
-//            TODO: errorLogger.log()
+    private suspend fun copyFromSourceToTarget(syncInstruction: SyncInstruction6) {
+        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+            try {
+                val sourceObjectId = syncInstruction.objectIdInSource!!
+                syncObjectReader.getSyncObject(sourceObjectId)?.also {
+                    itemCopier.copyItemFromSourceToTarget(it, syncOptions.overwriteIfExists)
+                } ?: {
+                    throw NoSourceObjectInDatabase(sourceObjectId)
+                }
+                syncOperationLogger.logSuccess(logItemId)
+            } catch (e: Exception) {
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+                logE(e)
+            }
         }
     }
 
-    private suspend fun copyFromTargetToSource(targetObjectId: String) {
-        syncObjectReader.getSyncObject(targetObjectId)?.also {
-            itemCopier.copyItemFromTargetToSource(it, syncOptions.overwriteIfExists)
-        } ?: run {
-            // TODO: где и как регистриро БРОСАТЬ ИСКЛЮЧЕНИЕ
+    private suspend fun copyFromTargetToSource(syncInstruction: SyncInstruction6) {
+        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+            try {
+                val targetObjectId = syncInstruction.objectIdInTarget!!
+                syncObjectReader.getSyncObject(targetObjectId)?.also {
+                    itemCopier.copyItemFromTargetToSource(it, syncOptions.overwriteIfExists)
+                } ?: run {
+                    throw NoTargetObjectInDatabase(targetObjectId)
+                }
+                syncOperationLogger.logSuccess(logItemId)
+            } catch (e: Exception) {
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+                logE(e)
+            }
         }
     }
 
@@ -87,16 +105,47 @@ class SyncInstructionExecutor @AssistedInject constructor(
      * // FIXME: удалять сначала файлы, потом каталоги...
      * // Это делается в [SyncInstructionsProcessor6.processInstructions]
      */
-    private suspend fun deleteInSource(sourceObjectId: String) {
-        syncObjectReader.getSyncObject(sourceObjectId)?.also {
-            itemDeleter.deleteItemInSource(it)
-        } // TODO: ?: throw Exception
+    private suspend fun deleteInSource(syncInstruction: SyncInstruction6) {
+        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+            val sourceItemId = syncInstruction.objectIdInSource!!
+            try {
+                syncObjectReader.getSyncObject(sourceItemId)?.also {
+                    itemDeleter.deleteItemInSource(it)
+                } ?: {
+                    throw NoSourceObjectInDatabase(sourceItemId)
+                }
+                syncOperationLogger.logSuccess(logItemId)
+            } catch (e: Exception) {
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+                logE(e)
+            }
+        }
     }
 
-    private suspend fun deleteInTarget(targetObjectId: String) {
-        syncObjectReader.getSyncObject(targetObjectId)?.also {
-            itemDeleter.deleteItemInTarget(it)
-        } // TODO: ?: throw Exception
+    private suspend fun deleteInTarget(syncInstruction: SyncInstruction6) {
+        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+            val targetItemId = syncInstruction.objectIdInTarget!!
+            try {
+                syncObjectReader.getSyncObject(targetItemId)?.also {
+                    itemDeleter.deleteItemInTarget(it)
+                } ?: {
+                    throw NoTargetObjectInDatabase(targetItemId)
+                }
+                syncOperationLogger.logSuccess(logItemId)
+            } catch (e: Exception) {
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+                logE(e)
+            }
+        }
+    }
+
+
+    private fun logNoSourceObjectInDatabase(sourceObjectId: String) {
+        logE("Source object with id='$sourceObjectId' not found in database!")
+    }
+
+    private fun logNoTargetObjectInDatabase(targetObjectId: String) {
+        logE("Target object with id='$targetObjectId' not found in database!")
     }
 
 
@@ -125,6 +174,10 @@ class SyncInstructionExecutor @AssistedInject constructor(
         Log.e(TAG, e.errorMsg, e)
     }
 
+    private fun logE(errorMsg: String) {
+        Log.e(TAG, errorMsg)
+    }
+
     companion object {
         val TAG: String = SyncInstructionExecutor::class.java.simpleName
     }
@@ -138,3 +191,7 @@ interface SyncInstructionExecutorAssistedFactory {
         executionId: String,
         scope: CoroutineScope): SyncInstructionExecutor
 }
+
+
+class NoSourceObjectInDatabase(errorMsg: String) : RuntimeException(errorMsg)
+class NoTargetObjectInDatabase(errorMsg: String) : RuntimeException(errorMsg)
