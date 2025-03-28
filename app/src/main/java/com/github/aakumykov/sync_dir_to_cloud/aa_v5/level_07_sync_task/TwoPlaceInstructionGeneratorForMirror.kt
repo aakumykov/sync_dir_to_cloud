@@ -5,9 +5,11 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInTarget
@@ -36,8 +38,13 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
     private suspend fun processWhatToDelete(nextOrderNum: Int): Int {
         var n = nextOrderNum
-        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = true, nextOrderNum = n)
+        // Сначала каталоги, потом файлы! Чтобы не путаться,
+        // хорошо бы эту логику инкапсулировать.
         n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = false, nextOrderNum = n)
+        n = deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir = false, nextOrderNum = n)
+
+        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = true, nextOrderNum = n)
+        n = deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir = true, nextOrderNum = n)
         return n
     }
 
@@ -47,6 +54,14 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { it.isDeletedInSource }
             .filter { it.isUnchangedInTarget }
             .let { createSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum) }
+    }
+
+    private suspend fun deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir: Boolean, nextOrderNum: Int): Int {
+        return getAllBilateralComparisonStates()
+            .filter { if (isDir) it.isDir else it.isFile }
+            .filter { it.isDeletedInTarget }
+            .filter { it.isUnchangedInSource }
+            .let { createSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum) }
     }
 
 
