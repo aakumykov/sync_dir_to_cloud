@@ -51,6 +51,9 @@ class SyncInstruction6 (
         SyncOperation6.DELETE_IN_TARGET != operation &&
                 SyncOperation6.DELETE_IN_SOURCE != operation
 
+    @Ignore val isCopying: Boolean =
+        SyncOperation6.COPY_FROM_TARGET_TO_SOURCE == operation ||
+                SyncOperation6.COPY_FROM_SOURCE_TO_TARGET == operation
 
     override fun toString(): String {
         return SyncInstruction6::class.java.simpleName + "{ $operation, $relativePath }"
