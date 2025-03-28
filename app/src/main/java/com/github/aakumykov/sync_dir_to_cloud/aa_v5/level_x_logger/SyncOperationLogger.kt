@@ -43,8 +43,8 @@ class SyncOperationLogger @AssistedInject constructor(
             taskId = taskId,
             executionId = executionId,
             timestamp = currentTime(),
-            sourceObjectId = syncInstruction.objectIdInSource!!,
-            targetObjectId = syncInstruction.objectIdInTarget!!,
+            sourceObjectId = syncInstruction.objectIdInSource,
+            targetObjectId = syncInstruction.objectIdInTarget,
             operationName = operationNameFor(syncInstruction.operation),
             operationState = operationState,
             objectName = syncInstruction.relativePath
