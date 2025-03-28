@@ -94,23 +94,23 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
     private suspend fun processWhatToCopy(nextOrderNum: Int): Int {
         var n = nextOrderNum
-        n = copyFilesToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(n)
-        n = copyFilesToTargetNewOrModofiedInSourceAndUnchangedOrDeletedInTarget(n)
+        n = copyFilesFromTargetToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(n)
+        n = copyFilesFromSourceToTargetNewOrModifiedInSourceAndUnchangedOrDeletedInTarget(n)
         return n
     }
 
 
-    private suspend fun copyFilesToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(nextOrderNum: Int): Int {
+    private suspend fun copyFilesFromTargetToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(nextOrderNum: Int): Int {
         return getAllBilateralComparisonStates()
             .let { it }
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInTarget }
             .filter { it.isUnchangedOrDeletedInSource }
-            .let { createSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+            .let { createSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
     }
 
 
-    private suspend fun copyFilesToTargetNewOrModofiedInSourceAndUnchangedOrDeletedInTarget(nextOrderNum: Int): Int {
+    private suspend fun copyFilesFromSourceToTargetNewOrModifiedInSourceAndUnchangedOrDeletedInTarget(nextOrderNum: Int): Int {
         return getAllBilateralComparisonStates()
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInSource }
