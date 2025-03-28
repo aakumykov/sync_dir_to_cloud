@@ -84,7 +84,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     private suspend fun processFilesCopying(list: Iterable<SyncInstruction6>) {
         list
             .filter { it.isFile }
-            .filter { it.notDeletion }
+            .filter { it.isCopying }
             .let { it }
             .forEach { instruction ->
                 syncInstructionExecutor.execute(instruction)
