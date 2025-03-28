@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncOperationLoggerRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -18,7 +18,7 @@ import dagger.assisted.AssistedInject
 class SyncOperationLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val repository: SyncOperationLoggerRepository,
+    private val repository: SyncOperationLogRepository,
     private val resources: Resources,
 ) {
     suspend fun logWaiting(syncInstruction6: SyncInstruction6): String {

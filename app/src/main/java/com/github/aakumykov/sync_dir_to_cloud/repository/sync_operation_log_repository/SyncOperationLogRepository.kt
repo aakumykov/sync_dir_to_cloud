@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.repository
+package com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
@@ -6,18 +6,18 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
 import javax.inject.Inject
 
-class SyncOperationLoggerRepository @Inject constructor(
+class SyncOperationLogRepository @Inject constructor(
     private val syncOperationLoggerDAO: SyncOperationLoggerDAO
-){
+) : SyncOperationLogReader {
     suspend fun add(syncOperationLogItem: SyncOperationLogItem) {
         syncOperationLoggerDAO.add(syncOperationLogItem)
     }
 
-    suspend fun list(taskId: String, executionId: String): List<SyncOperationLogItem> {
+    override suspend fun list(taskId: String, executionId: String): List<SyncOperationLogItem> {
         return syncOperationLoggerDAO.list(taskId, executionId)
     }
 
-    fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>> {
+    override fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>> {
         return syncOperationLoggerDAO.listAsLiveData(taskId, executionId)
     }
 

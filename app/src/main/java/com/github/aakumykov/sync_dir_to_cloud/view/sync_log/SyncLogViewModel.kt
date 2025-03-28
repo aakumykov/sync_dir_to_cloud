@@ -8,13 +8,14 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.Operati
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncOperationLoggerRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogReader
+import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogRepository
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
     // FIXME: "Reader"
-    private val syncOperationLoggerRepository: SyncOperationLoggerRepository,
+    private val syncOperationLogReader: SyncOperationLogReader,
     private val executionLogReader: ExecutionLogReader,
     private val operationCancellationHolder: OperationCancellationHolder,
 )
@@ -39,7 +40,7 @@ class SyncLogViewModel(
 
     private fun prepareMediatorLiveData(taskId: String, executionId: String) {
 
-        mediatorLiveData.addSource(syncOperationLoggerRepository.listAsLiveData(taskId, executionId)) { list ->
+        mediatorLiveData.addSource(syncOperationLogReader.listAsLiveData(taskId, executionId)) { list ->
             currentSyncOperationLogItemList.apply {
                 clear()
                 addAll(list)

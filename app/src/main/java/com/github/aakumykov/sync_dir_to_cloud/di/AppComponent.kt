@@ -51,6 +51,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterFactoriesM
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncOperationLogRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TaskLoggerModule
@@ -74,6 +75,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
@@ -99,6 +101,7 @@ import dagger.Component
         SyncObjectLoggerInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
         SyncObjectRepositoryInterfacesModule::class,
+        SyncOperationLogRepositoryInterfacesModule::class,
         ExecutionLogRepositoryInterfacesModule::class,
         SyncInstructionRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,
