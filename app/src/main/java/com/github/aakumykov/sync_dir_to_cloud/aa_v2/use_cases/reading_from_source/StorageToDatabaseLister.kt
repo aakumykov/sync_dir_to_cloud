@@ -45,7 +45,12 @@ class StorageToDatabaseLister @Inject constructor(
 
         return try {
 
-            logExecutionStarted(taskId,executionId)
+            logExecutionStarted(
+                taskId,
+                executionId,
+                if (SyncSide.SOURCE == syncSide) getString(R.string.EXECUTION_LOG_reading_source)
+                else getString(R.string.EXECUTION_LOG_reading_target)
+            )
 
             if (null == pathReadingFrom)
                 throw IllegalArgumentException("path argument is null")
@@ -93,11 +98,11 @@ class StorageToDatabaseLister @Inject constructor(
     }
 
 
-    private suspend fun logExecutionStarted(taskId: String, executionId: String) {
+    private suspend fun logExecutionStarted(taskId: String, executionId: String, message: String) {
         executionLogger.log(ExecutionLogItem.createStartingItem(
             taskId = taskId,
             executionId = executionId,
-            message = getString(R.string.EXECUTION_LOG_reading_source)
+            message = message
         ))
     }
 
