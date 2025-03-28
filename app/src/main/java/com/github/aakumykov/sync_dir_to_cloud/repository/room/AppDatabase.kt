@@ -108,8 +108,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationL
         AutoMigration(from = 111, to = 112, spec = DeleteTableSyncInstructions5::class),
         AutoMigration(from = 112, to = 113), // Новый объект SyncOperationLogItem
         AutoMigration(from = 113, to = 114), // Новое поле SyncOperationLogItem.errorMsg
+        AutoMigration(from = 114, to = 115), // Внешний ключ в SyncOperationLogItem
     ],
-    version = 114,
+    version = 115,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
