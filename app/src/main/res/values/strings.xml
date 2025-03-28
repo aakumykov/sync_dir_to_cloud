@@ -150,11 +150,11 @@
     <string name="EXECUTION_LOG_work_begins">Work started</string>
     <string name="EXECUTION_LOG_work_ends">Work finished</string>
     <string name="EXECUTION_LOG_work_error">Work error</string>
-    <string name="SYNC_OBJECT_LOGGER_copying_file">Копирование файла %1$s</string>
+    <string name="SYNC_OBJECT_LOGGER_copying_file">File copying %1$s</string>
     <string name="FRAGMENT_TASK_EDIT_sync_mode_label">Work mode:</string>
-    <string name="SYNC_OBJECT_LOGGER_resolving_collision">Разрешаем конфликт имён</string>
-    <string name="SYNC_OPERATION_copying_from_source_to_target">Копируем из источника в приёмник</string>
-    <string name="SYNC_OPERATION_copying_from_target_to_source">Копируем из приёмника в источник</string>
+    <string name="SYNC_OBJECT_LOGGER_resolving_collision">Resolving names conflict</string>
+    <string name="SYNC_OPERATION_copying_from_source_to_target">Copying from source to target</string>
+    <string name="SYNC_OPERATION_copying_from_target_to_source">Copying from target to source</string>
     <string name="SYNC_OPERATION_deleting_from_source">Deleting from source</string>
     <string name="SYNC_OPERATION_deleting_from_target">Deleting from target</string>
     <string name="SYNC_OPERATION_backing_up_in_source">Backuing up in source</string>
