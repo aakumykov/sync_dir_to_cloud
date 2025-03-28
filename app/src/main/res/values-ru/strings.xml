@@ -152,11 +152,11 @@
     <string name="EXECUTION_LOG_work_error">Работа завершилась в ошибкой</string>
     <string name="SYNC_OBJECT_LOGGER_copying_file">Копирование файла %1$s</string>
     <string name="FRAGMENT_TASK_EDIT_sync_mode_label">Режим работы:</string>
-    <string name="SYNC_OBJECT_LOGGER_resolving_collision">Разрешаем конфликт имён</string>
-    <string name="SYNC_OPERATION_copying_from_source_to_target">Копируем из источника в приёмник</string>
-    <string name="SYNC_OPERATION_copying_from_target_to_source">Копируем из приёмника в источник</string>
-    <string name="SYNC_OPERATION_deleting_from_source">Удаляем из источника</string>
-    <string name="SYNC_OPERATION_deleting_from_target">Удаляем из приёника</string>
-    <string name="SYNC_OPERATION_backing_up_in_source">Бекапим в источнике</string>
-    <string name="SYNC_OPERATION_backing_up_in_target">Бекапим в приёмнике</string>
+    <string name="SYNC_OBJECT_LOGGER_resolving_collision">Разрешение конфликта имён</string>
+    <string name="SYNC_OPERATION_copying_from_source_to_target">Копирование из источника в приёмник</string>
+    <string name="SYNC_OPERATION_copying_from_target_to_source">Копирование из приёмника в источник</string>
+    <string name="SYNC_OPERATION_deleting_from_source">Удаление из источника</string>
+    <string name="SYNC_OPERATION_deleting_from_target">Удаление из приёника</string>
+    <string name="SYNC_OPERATION_backing_up_in_source">Бекап в источнике</string>
+    <string name="SYNC_OPERATION_backing_up_in_target">Бекап в приёмнике</string>
 </resources>
