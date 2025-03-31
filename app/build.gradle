@@ -207,4 +207,7 @@ dependencies {
     implementation "com.leinardi.android:speed-dial:3.3.0"
 
     implementation 'com.github.aakumykov:list_holding_list_adapter:0.0.5-alpha'
+
+    androidTestImplementation("com.kaspersky.android-components:kaspresso:1.5.1")
+    androidTestUtil("androidx.test:orchestrator:1.5.1")
 }
