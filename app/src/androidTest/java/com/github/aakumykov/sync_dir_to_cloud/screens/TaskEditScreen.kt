@@ -23,5 +23,5 @@ object TaskEditScreen : KScreen<TaskEditScreen>() {
     val saveButton = KButton { withId(R.id.saveButton)}
 
     val addStorageButton = KButton { withId(R.id.addButton) }
-    val localStorageSubbutton = KTextView { withText(R.string.speed_dial_auth_label_local) }
+    val localStorageSubButton = KTextView { withText(R.string.speed_dial_auth_label_local) }
 }
