@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.screens
 
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.kaspersky.components.kautomator.screen.UiScreen
 import com.kaspersky.kaspresso.screens.KScreen
+import io.github.kakaocup.kakao.recycler.KRecyclerView
 import io.github.kakaocup.kakao.text.KButton
 
 object TaskListScreen : KScreen<TaskListScreen>() {
@@ -13,4 +13,9 @@ object TaskListScreen : KScreen<TaskListScreen>() {
         get() = null
 
     val addTaskButton = KButton { withId(R.id.addButton) }
+
+    val taskList = KRecyclerView(
+        builder = { withId(R.id.recyclerView) },
+        itemTypeBuilder = { itemType { TaskListItem(it) } }
+    )
 }
