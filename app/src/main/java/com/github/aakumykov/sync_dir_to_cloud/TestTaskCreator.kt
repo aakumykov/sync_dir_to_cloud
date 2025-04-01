@@ -29,8 +29,9 @@ class TestTaskCreator @Inject constructor(
 
     private suspend fun createTestCloudAuth(): CloudAuth {
         return CloudAuth(
-            TEST_LOCAL_CLOUD_AUTH_NAME,
-            StorageType.LOCAL,
+            id = TEST_ID,
+            name = TEST_LOCAL_CLOUD_AUTH_NAME,
+            storageType = StorageType.LOCAL,
             authToken = ""
         ).apply {
             cloudAuthRepository.addCloudAuth(this)
@@ -59,6 +60,7 @@ class TestTaskCreator @Inject constructor(
             intervalHours = 0,
             intervalMinutes = 0,
         ).apply {
+            id = TEST_ID
             this.sourceAuthId = sourceAuthId
             this.targetAuthId = targetAuthId
         }.also {

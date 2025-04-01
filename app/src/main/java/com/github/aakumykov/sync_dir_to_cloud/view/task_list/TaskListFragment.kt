@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -256,6 +257,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
     }
 
     private fun createTestTask() {
+        Log.d(TAG, "createTestTask() called")
         lifecycleScope.launch (Dispatchers.IO) { testTaskCreator.createTestTask() }
     }
 
@@ -293,6 +295,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
 
 
     companion object {
+        val TAG: String = TaskListFragment::class.java.simpleName
         fun create() : TaskListFragment = TaskListFragment()
     }
 }
