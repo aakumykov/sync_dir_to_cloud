@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskCreator
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_target.TargetReader
@@ -233,6 +234,8 @@ interface AppComponent {
     fun getSyncObjectDeleter(): SyncObjectDeleter
 
     fun getSyncInstructionRepository6(): SyncInstructionRepository6
+
+    fun getTestTaskCreator(): TestTaskCreator
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

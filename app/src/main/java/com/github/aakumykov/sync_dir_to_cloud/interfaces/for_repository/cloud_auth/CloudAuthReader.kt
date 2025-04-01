@@ -7,4 +7,5 @@ interface CloudAuthReader {
     suspend fun listCloudAuth(): LiveData<List<CloudAuth>>
     suspend fun getCloudAuth(id: String): CloudAuth
     fun getCloudAuthBlocking(authId: String): CloudAuth
+    suspend fun exists(authId: String): Boolean
 }

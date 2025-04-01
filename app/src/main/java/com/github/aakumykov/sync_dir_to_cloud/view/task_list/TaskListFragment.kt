@@ -244,6 +244,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         binding.addButton.setOnClickListener { requestNotificationPermission() }
         binding.backupButton.setOnClickListener { backupTasks() }
         binding.restoreButton.setOnClickListener { restoreTasks() }
+        binding.createTestTaskButton.setOnClickListener { createTestTask() }
     }
 
     private fun backupTasks() {
@@ -254,7 +255,12 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         lifecycleScope.launch (Dispatchers.IO) { backuperRestorer.restoreTasks() }
     }
 
+    private fun createTestTask() {
+        lifecycleScope.launch (Dispatchers.IO) { testTaskCreator.createTestTask() }
+    }
+
     private val backuperRestorer by lazy { appComponent.getBackuperRestorer() }
+    private val testTaskCreator by lazy { appComponent.getTestTaskCreator() }
 
     private fun requestNotificationPermission() {
         if (isAndroidTiramisuOrLater()) {

@@ -54,6 +54,10 @@ class SyncTaskRepository @Inject constructor(
         return syncTaskDAO.get(id)
     }
 
+    override suspend fun getSyncTaskNullable(id: String): SyncTask? {
+        return syncTaskDAO.getNullable(id)
+    }
+
     override suspend fun getSyncTaskAsLiveData(taskId: String): LiveData<SyncTask> {
         return syncTaskDAO.getAsLiveData(taskId)
     }
@@ -159,6 +163,10 @@ class SyncTaskRepository @Inject constructor(
                 Result.failure(RuntimeException("Cannot reset running task"))
             }
         }
+    }
+
+    suspend fun exists(taskId: String): Boolean {
+        return null != getSyncTaskNullable(taskId)
     }
 }
 

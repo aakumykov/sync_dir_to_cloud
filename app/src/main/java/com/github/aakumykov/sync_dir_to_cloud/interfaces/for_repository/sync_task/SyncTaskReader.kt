@@ -7,6 +7,8 @@ interface SyncTaskReader {
     @Deprecated("Сделать возвращаемые значения nullable")
     suspend fun getSyncTask(id: String): SyncTask
 
+    suspend fun getSyncTaskNullable(id: String): SyncTask?
+
     @Deprecated("Сделать возвращаемые значения nullable")
     suspend fun getSyncTaskAsLiveData(taskId: String): LiveData<SyncTask>
 

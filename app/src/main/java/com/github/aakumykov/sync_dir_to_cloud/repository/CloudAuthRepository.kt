@@ -27,6 +27,10 @@ class CloudAuthRepository @Inject constructor(
         return cloudAuthDAO.getBlocking(authId)
     }
 
+    override suspend fun exists(authId: String): Boolean {
+        return cloudAuthDAO.getNullable(authId) != null
+    }
+
     override suspend fun hasAuthWithName(name: String): Boolean
         = cloudAuthDAO.hasName(name)
 }

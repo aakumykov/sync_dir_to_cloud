@@ -23,4 +23,7 @@ interface CloudAuthDAO {
 
     @Query("SELECT * FROM cloud_auth WHERE id = :authId")
     fun getBlocking(authId: String): CloudAuth
+
+    @Query("SELECT * FROM cloud_auth WHERE id = :authId")
+    suspend fun getNullable(authId: String): CloudAuth?
 }

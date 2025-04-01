@@ -46,6 +46,20 @@
         app:srcCompat="@drawable/ic_restore" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/createTestTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FFAB91"
+        android:layout_toEndOf="@id/restoreButton"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/description_sync_task_add_button"
+        android:focusable="true"
+        app:srcCompat="@drawable/action_probe_change_task_state" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
