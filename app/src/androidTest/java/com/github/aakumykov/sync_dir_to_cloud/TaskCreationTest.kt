@@ -3,11 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListItemScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
@@ -62,12 +64,17 @@ class TaskCreationTest : TestCase(
         }
 
         step("Проверка, что задача создалась") {
+            /*onData(withTaskId(TestTaskCreator.TEST_ID)).apply {
+                perform(ViewActions.click())
+                isDisplayed()
+            }*/
             TaskListScreen {
-                TaskListScreen {
-                    recyclerView {
-                        onData(withTaskId(TestTaskCreator.TEST_ID)).apply {
-                            perform(ViewActions.click())
+                recyclerView {
+                    firstChild<TaskListItemScreen> {
+                        runButton {
                             isVisible()
+                            isClickable()
+                            click()
                         }
                     }
                 }
