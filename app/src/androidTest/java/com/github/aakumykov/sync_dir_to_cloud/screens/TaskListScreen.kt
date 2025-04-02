@@ -13,4 +13,9 @@ object TaskListScreen : KScreen<TaskListScreen>() {
         get() = null
 
     val createTestTaskButton = KButton { withId(R.id.createTestTaskButton) }
+
+    val recyclerView = KRecyclerView(
+        builder = { withId(R.id.recyclerView) },
+        itemTypeBuilder = { itemType(::TaskListItemScreen) }
+    )
 }

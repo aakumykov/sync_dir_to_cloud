@@ -1,16 +1,22 @@
 package com.github.aakumykov.sync_dir_to_cloud.tests
 
+import androidx.core.view.isVisible
+import androidx.test.espresso.Espresso.onData
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import com.github.aakumykov.sync_dir_to_cloud.TestTaskCreator
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.screens.CloudAuthEditScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskEditScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import org.hamcrest.Description
 import org.junit.After
 import org.junit.Assert
 import org.junit.Rule
@@ -59,14 +65,49 @@ class TaskCreationTest : TestCase(
             }
         }
 
-        // TODO: проверять, что задача создалась
+        step("Проверка, что задача создалась") {
+            TaskListScreen {
+                TaskListScreen {
+                    recyclerView {
+                        onData(withTaskId(TestTaskCreator.TEST_ID)).apply {
+                            perform(ViewActions.click())
+                            isVisible()
+                        }
+                    }
+                }
+            }
+        }
 
         step("Создание целевой папки") {
-            Assert.assertTrue(File(TestTaskCreator.testTaskLocalTargetPath).mkdirs())
+            File(TestTaskCreator.testTaskLocalTargetPath).also {
+                Assert.assertTrue(
+                    it.exists() || it.mkdirs()
+                )
+            }
         }
 
         step("Запуск задачи") {
 
         }
+    }
+
+    companion object {
+        fun withTaskId(taskId: String) = SyncTaskMatcher(taskId)
+    }
+}
+
+class SyncTaskMatcher(
+    private val taskId: String,
+    /*taskName: String, sourcePath: String, targetPath: String*/
+) : BoundedMatcher<Any?, SyncTask>(SyncTask::class.java) {
+
+    override fun describeTo(description: Description) {
+        description.appendText("SyncTask with id: $taskId")
+    }
+
+    override fun matchesSafely(item: SyncTask?): Boolean {
+        return item?.let {
+            it.id == taskId
+        } ?: false
     }
 }
