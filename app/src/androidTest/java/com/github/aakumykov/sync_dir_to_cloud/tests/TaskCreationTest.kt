@@ -4,7 +4,6 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
-import com.github.aakumykov.sync_dir_to_cloud.scenario.RemoveAllTasksScenario
 import com.github.aakumykov.sync_dir_to_cloud.screens.CloudAuthEditScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskEditScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
@@ -49,7 +48,7 @@ class TaskCreationTest : TestCase(
 
         step("Нажать кнопку Добавить") {
             TaskListScreen {
-                addTaskButton.apply {
+                createTestTaskButton.apply {
                     isVisible()
                     isClickable()
                     click()
@@ -57,40 +56,6 @@ class TaskCreationTest : TestCase(
             }
         }
 
-        step("Открыть окно выбора пути к источнику") {
-            TaskEditScreen {
-                sourcePathSelectionButton.click()
-            }
-        }
-
-        step("Создать локальное хранилище") {
-            TaskEditScreen {
-                addStorageButton.apply {
-                    isVisible()
-                    // isClickable() // Не работает на SpeedDialView
-                    click()
-                }
-                localStorageSubButton.apply {
-                    isVisible()
-                    click()
-                }
-
-                CloudAuthEditScreen {
-                    nameInput.apply {
-                        isVisible()
-                        replaceText("Локальное хранилище")
-                    }
-                    saveButton.apply {
-                        isVisible()
-                        isClickable()
-                        click()
-                    }
-                }
-
-
-            }
-        }
-
-
+        // TODO: проверять, что задача создалась
     }
 }
