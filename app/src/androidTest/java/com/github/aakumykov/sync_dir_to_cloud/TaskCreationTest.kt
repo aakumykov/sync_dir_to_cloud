@@ -70,6 +70,7 @@ class TaskCreationTest : TestCase(
                         isVisible()
                     }*/
                     childWith<TaskListItemScreen> {
+                        // FIXME: должна быть ошибка, но её нет
                         onData(withTaskId(TestTaskCreator.TEST_ID+"@")).apply {
                             isDisplayed()
                         }
@@ -78,8 +79,17 @@ class TaskCreationTest : TestCase(
             }
         }
 
+        step("Удаление старой целевой папки") {
+            targetDir.apply {
+                Assert.assertTrue(
+                    if (exists()) deleteRecursively()
+                    else true
+                )
+            }
+        }
+
         step("Создание целевой папки") {
-            File(TestTaskCreator.testTaskLocalTargetPath).also {
+            targetDir.also {
                 Assert.assertTrue(
                     it.exists() || it.mkdirs()
                 )
@@ -99,7 +109,12 @@ class TaskCreationTest : TestCase(
                 }
             }
         }
+
+
     }
+
+    private val targetDir: File
+        get() = File(TestTaskCreator.testTaskLocalTargetPath)
 
     companion object {
         fun withTaskId(taskId: String) = SyncTaskMatcher(taskId)
