@@ -39,17 +39,6 @@ class TestTaskCreator @Inject constructor(
     }
 
 
-    private val testTaskLocalSourcePath
-        get() =  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-
-    private val testTaskLocalTargetPath: String
-        get() = File(Environment.getExternalStorageDirectory(), targetDirName).absolutePath
-
-    private val targetDirName: String
-        get() = "d${Build.VERSION.SDK_INT}"
-
-
-
     private suspend fun createTestSyncTask(sourceAuthId: String, targetAuthId: String) {
         SyncTask(
             sourcePath = testTaskLocalSourcePath,
@@ -72,5 +61,14 @@ class TestTaskCreator @Inject constructor(
     companion object {
         const val TEST_ID = "test-01"
         const val TEST_LOCAL_CLOUD_AUTH_NAME = "test_local_cloud_auth"
+
+        val targetDirName: String
+            get() = "d${Build.VERSION.SDK_INT}"
+
+        val testTaskLocalTargetPath: String
+            get() = File(Environment.getExternalStorageDirectory(), targetDirName).absolutePath
+
+        val testTaskLocalSourcePath
+            get() =  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
     }
 }

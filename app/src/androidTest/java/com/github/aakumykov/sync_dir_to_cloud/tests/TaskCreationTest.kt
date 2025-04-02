@@ -4,6 +4,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskCreator
 import com.github.aakumykov.sync_dir_to_cloud.screens.CloudAuthEditScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskEditScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
@@ -11,8 +12,10 @@ import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.After
+import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 class TaskCreationTest : TestCase(
@@ -57,5 +60,13 @@ class TaskCreationTest : TestCase(
         }
 
         // TODO: проверять, что задача создалась
+
+        step("Создание целевой папки") {
+            Assert.assertTrue(File(TestTaskCreator.testTaskLocalTargetPath).mkdirs())
+        }
+
+        step("Запуск задачи") {
+
+        }
     }
 }
