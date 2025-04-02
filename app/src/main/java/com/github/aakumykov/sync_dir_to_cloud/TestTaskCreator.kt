@@ -23,7 +23,7 @@ class TestTaskCreator @Inject constructor(
             cloudAuthRepository.getCloudAuth(TEST_ID) else createTestCloudAuth()
 
         if (!syncTaskRepository.exists(TEST_ID))
-            createTestSyncTask(cloudAuth.authToken,cloudAuth.authToken)
+            createTestSyncTask(cloudAuth.id, cloudAuth.id)
     }
 
 
