@@ -64,17 +64,14 @@ class TaskCreationTest : TestCase(
         }
 
         step("Проверка, что задача создалась") {
-            /*onData(withTaskId(TestTaskCreator.TEST_ID)).apply {
-                perform(ViewActions.click())
-                isDisplayed()
-            }*/
             TaskListScreen {
                 recyclerView {
-                    firstChild<TaskListItemScreen> {
-                        runButton {
-                            isVisible()
-                            isClickable()
-                            click()
+                    /*firstChild<TaskListItemScreen> {
+                        isVisible()
+                    }*/
+                    childWith<TaskListItemScreen> {
+                        onData(withTaskId(TestTaskCreator.TEST_ID+"@")).apply {
+                            isDisplayed()
                         }
                     }
                 }
@@ -90,7 +87,17 @@ class TaskCreationTest : TestCase(
         }
 
         step("Запуск задачи") {
-
+            TaskListScreen {
+                recyclerView {
+                    firstChild<TaskListItemScreen> {
+                        runButton {
+                            isVisible()
+                            isClickable()
+                            click()
+                        }
+                    }
+                }
+            }
         }
     }
 
