@@ -1,6 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.tests
+package com.github.aakumykov.sync_dir_to_cloud
 
-import androidx.core.view.isVisible
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
@@ -8,10 +7,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskCreator
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.screens.CloudAuthEditScreen
-import com.github.aakumykov.sync_dir_to_cloud.screens.TaskEditScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
