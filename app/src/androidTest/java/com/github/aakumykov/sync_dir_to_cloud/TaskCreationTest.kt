@@ -1,9 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
 import androidx.test.espresso.Espresso.onData
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
-import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
@@ -11,6 +9,7 @@ import androidx.test.uiautomator.UiDevice
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListItemScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
+import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestTaskCreator
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
@@ -55,7 +54,7 @@ class TaskCreationTest : TestCase(
 
         step("Нажать кнопку Добавить") {
             TaskListScreen {
-                createTestTaskButton.apply {
+                createSyncTestTaskButton.apply {
                     isVisible()
                     isClickable()
                     click()
@@ -96,6 +95,8 @@ class TaskCreationTest : TestCase(
             }
         }
 
+        // TODO: как проверять, что задача запустилась:
+        //  через БД или графический интерфейс?
         step("Запуск задачи") {
             TaskListScreen {
                 recyclerView {

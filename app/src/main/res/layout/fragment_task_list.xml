@@ -21,14 +21,15 @@
         android:id="@+id/backupButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#81D4FA"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="#81D4FA"
         android:clickable="true"
         android:contentDescription="@string/description_sync_task_add_button"
         android:focusable="true"
+        app:fabSize="mini"
         app:srcCompat="@drawable/ic_backup" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -38,26 +39,44 @@
         android:backgroundTint="#C5E1A5"
         android:layout_toEndOf="@id/backupButton"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:contentDescription="@string/description_sync_task_add_button"
         android:focusable="true"
+        app:fabSize="mini"
         app:srcCompat="@drawable/ic_restore" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/createTestTaskButton"
+        android:id="@+id/createSyncTestTaskButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#FFAB91"
         android:layout_toEndOf="@id/restoreButton"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:contentDescription="@string/description_sync_task_add_button"
         android:focusable="true"
-        app:srcCompat="@drawable/action_probe_change_task_state" />
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_sync_mode_sync" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/createMirrorTestTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FFE082"
+        android:layout_toEndOf="@id/createSyncTestTaskButton"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/description_sync_task_add_button"
+        android:focusable="true"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_sync_mode_mirror" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"

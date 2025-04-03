@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud
+package com.github.aakumykov.sync_dir_to_cloud.test_utils
 
 import android.content.Context
 import android.os.Build
@@ -18,12 +18,12 @@ class TestTaskCreator @Inject constructor(
     private val syncTaskRepository: SyncTaskRepository,
     private val cloudAuthRepository: CloudAuthRepository,
 ){
-    suspend fun createTestTask() {
+    suspend fun createTestTask(syncMode: SyncMode) {
         val cloudAuth = if (cloudAuthRepository.exists(TEST_ID))
             cloudAuthRepository.getCloudAuth(TEST_ID) else createTestCloudAuth()
 
         if (!syncTaskRepository.exists(TEST_ID))
-            createTestSyncTask(cloudAuth.id, cloudAuth.id)
+            createTestSyncTask(syncMode, sourceAuthId = cloudAuth.id, targetAuthId = cloudAuth.id)
     }
 
 
@@ -39,7 +39,11 @@ class TestTaskCreator @Inject constructor(
     }
 
 
-    private suspend fun createTestSyncTask(sourceAuthId: String, targetAuthId: String) {
+    private suspend fun createTestSyncTask(
+        syncMode: SyncMode,
+        sourceAuthId: String,
+        targetAuthId: String,
+    ) {
         SyncTask(
             sourcePath = testTaskLocalSourcePath,
             targetPath = testTaskLocalTargetPath,

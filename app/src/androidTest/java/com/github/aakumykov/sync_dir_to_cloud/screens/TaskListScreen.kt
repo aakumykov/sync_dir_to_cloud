@@ -12,7 +12,8 @@ object TaskListScreen : KScreen<TaskListScreen>() {
     override val viewClass: Class<*>?
         get() = null
 
-    val createTestTaskButton = KButton { withId(R.id.createTestTaskButton) }
+    val createSyncTestTaskButton = KButton { withId(R.id.createSyncTestTaskButton) }
+    val createMirrorTestTaskButton = KButton { withId(R.id.createMirrorTestTaskButton) }
 
     val recyclerView = KRecyclerView(
         builder = { withId(R.id.recyclerView) },
