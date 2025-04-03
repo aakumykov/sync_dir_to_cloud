@@ -159,4 +159,5 @@
     <string name="SYNC_OPERATION_deleting_from_target">Удаление из приёника</string>
     <string name="SYNC_OPERATION_backing_up_in_source">Бекап в источнике</string>
     <string name="SYNC_OPERATION_backing_up_in_target">Бекап в приёмнике</string>
+    <string name="description_task_list_item_sync_mode_icon">Режим работы</string>
 </resources>

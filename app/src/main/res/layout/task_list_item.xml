@@ -83,6 +83,16 @@
                 android:visibility="gone"
                 tools:ignore="ContentDescription" />
 
+            <ImageView
+                android:id="@+id/syncModeIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_weight="0"
+                android:contentDescription="@string/description_task_list_item_sync_mode_icon"
+                tools:src="@drawable/ic_sync_mode_mirror"/>
+
             <TextView
                 android:id="@+id/schedulingStateView"
                 android:layout_width="match_parent"

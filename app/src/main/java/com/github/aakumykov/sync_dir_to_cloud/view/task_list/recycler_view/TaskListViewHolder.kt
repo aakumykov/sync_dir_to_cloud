@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconProvider
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.ItemClickCallback
 
@@ -23,6 +24,8 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
     private val sourcePathView: TextView
     private val targetPathView: TextView
+
+    private val syncModeIcon: ImageView
 
     private val schedulingStateView: TextView
     private val stateView: ImageView
@@ -41,6 +44,8 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
             sourcePathView = findViewById(R.id.sourcePath)
             targetPathView = findViewById(R.id.targetPath)
+
+            syncModeIcon = findViewById(R.id.syncModeIcon)
 
             schedulingStateView = findViewById(R.id.schedulingStateView)
             stateView = findViewById(R.id.taskStateView)
@@ -72,12 +77,22 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
         currentTask = syncTask
 
+        displaySyncMode()
         displayStorageTypes()
         displayStoragePaths()
 //        displayTitle()
         displaySchedulingState()
         displayExecutionState()
         displayStartStopButton()
+    }
+
+    private fun displaySyncMode() {
+        syncModeIcon.setImageResource(
+            when (currentTask.syncMode!!) {
+                SyncMode.SYNC -> R.drawable.ic_sync_mode_sync
+                SyncMode.MIRROR -> R.drawable.ic_sync_mode_mirror
+            }
+        )
     }
 
     private fun displayStorageTypes() {
