@@ -49,7 +49,7 @@ class TestTaskCreator @Inject constructor(
             targetPath = testTaskLocalTargetPath,
             sourceStorageType = StorageType.LOCAL,
             targetStorageType = StorageType.LOCAL,
-            syncMode = SyncMode.SYNC,
+            syncMode = syncMode,
             intervalHours = 0,
             intervalMinutes = 0,
         ).apply {
