@@ -95,6 +95,12 @@ class TaskCreationTest : TestCase(
             }
         }
 
+
+        step("Подготовка тестовых файлов") {
+
+        }
+
+
         // TODO: как проверять, что задача запустилась:
         //  через БД или графический интерфейс?
         step("Запуск задачи") {
@@ -112,6 +118,9 @@ class TaskCreationTest : TestCase(
         }
 
 
+        step("Проверка результатов запуска") {
+
+        }
     }
 
     private val targetDir: File
