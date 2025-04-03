@@ -85,6 +85,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
+import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestFilesCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
@@ -235,6 +236,8 @@ interface AppComponent {
     fun getSyncInstructionRepository6(): SyncInstructionRepository6
 
     fun getTestTaskCreator(): TestTaskCreator
+
+    fun getTestFilesCreator(): TestFilesCreator
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListItemScreen
 import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
+import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestFilesCreator
 import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestTaskCreator
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Description
 import org.junit.After
@@ -41,10 +43,16 @@ class TaskCreationTest : TestCase(
         }
     )
 ) {
+    private val taskId: String = TestTaskCreator.TEST_ID
+
     private fun syncTaskExecutor(scope: CoroutineScope): SyncTaskExecutor {
         return appComponent
             .getSyncTaskExecutorAssistedFactory()
             .create(scope)
+    }
+
+    private val testFilesCreator: TestFilesCreator by lazy {
+        appComponent.getTestFilesCreator()
     }
 
     // storage support for Android API 29-
@@ -66,9 +74,9 @@ class TaskCreationTest : TestCase(
     @Test
     fun newTaskCanBeCreated() = run {
 
-        step("Нажать кнопку Добавить") {
+        step("Создать тестовую задачу типа 'SYNC'") {
             TaskListScreen {
-                createSyncTestTaskButton.apply {
+                createMirrorTestTaskButton.apply {
                     isVisible()
                     isClickable()
                     click()
@@ -109,18 +117,16 @@ class TaskCreationTest : TestCase(
             }
         }
 
-
-        step("Подготовка тестовых файлов") {
-            runTest {
-                syncTaskExecutor(this).executeSyncTask(TestTaskCreator.TEST_ID)
+        step("Подготовка тестовых файлов в Источнике") {
+            runBlocking {
+                testFilesCreator.createFileInSource(taskId)
             }
         }
-
 
         // TODO: как проверять, что задача запустилась:
         //  через БД или графический интерфейс?
         step("Запуск задачи") {
-            TaskListScreen {
+            /*TaskListScreen {
                 recyclerView {
                     firstChild<TaskListItemScreen> {
                         runButton {
@@ -130,9 +136,36 @@ class TaskCreationTest : TestCase(
                         }
                     }
                 }
+            }*/
+            runTest {
+                syncTaskExecutor(this).executeSyncTask(TestTaskCreator.TEST_ID)
             }
         }
 
+        step("Подготовка тестовых файлов в Приёмнике") {
+            runBlocking {
+                testFilesCreator.createFileInTarget(taskId)
+            }
+        }
+
+        // TODO: как проверять, что задача запустилась:
+        //  через БД или графический интерфейс?
+        step("Запуск задачи") {
+            /*TaskListScreen {
+                recyclerView {
+                    firstChild<TaskListItemScreen> {
+                        runButton {
+                            isVisible()
+                            isClickable()
+                            click()
+                        }
+                    }
+                }
+            }*/
+            runTest {
+                syncTaskExecutor(this).executeSyncTask(TestTaskCreator.TEST_ID)
+            }
+        }
 
         step("Проверка результатов запуска") {
 
