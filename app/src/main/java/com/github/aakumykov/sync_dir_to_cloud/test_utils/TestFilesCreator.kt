@@ -12,20 +12,22 @@ import kotlin.random.Random
 class TestFilesCreator @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
 ) {
-    suspend fun createFileInSource(taskId: String) {
-        syncTaskReader.getSyncTask(taskId).also {
+    suspend fun createFileInSource(taskId: String): File {
+        return syncTaskReader.getSyncTask(taskId).let {
             createFileIn(it.sourcePath!!)
         }
     }
 
-    suspend fun createFileInTarget(taskId: String) {
-        syncTaskReader.getSyncTask(taskId).also {
+    suspend fun createFileInTarget(taskId: String): File {
+        return syncTaskReader.getSyncTask(taskId).let {
             createFileIn(it.targetPath!!)
         }
     }
 
-    private suspend fun createFileIn(absolutePath: String) {
-        File(absolutePath, randomName).createNewFile()
+    private suspend fun createFileIn(absolutePath: String): File {
+        return File(absolutePath, randomName).apply {
+            createNewFile()
+        }
     }
 
     private val randomName: String

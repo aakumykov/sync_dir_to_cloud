@@ -2,15 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.scenario
 
 import android.content.Context
 import androidx.room.Room
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_AUTH_ID
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_AUTH_NAME
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_AUTH_TOKEN
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_STORAGE_TYPE
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_TASK_SOURCE_PATH
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_TASK_STORAGE_TYPE
-import com.github.aakumykov.sync_dir_to_cloud.TaskCreationTest2.Companion.TEST_TASK_TARGET_PATH
-import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.AUTH_ID
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.AUTH_NAME
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.AUTH_TOKEN
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.STORAGE_TYPE
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.ID
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.SOURCE_PATH
+import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.TARGET_PATH
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
@@ -30,21 +28,20 @@ class CreateLocalTask(
     private val appDatabase by lazy { Room.inMemoryDatabaseBuilder(targetContext, AppDatabase::class.java).build() }
     private val cloudAuthDAO: CloudAuthDAO by lazy { appDatabase.getCloudAuthDAO() }
     private val syncTaskDAO: SyncTaskDAO by lazy { appDatabase.getSyncTaskDAO() }
-    private val testTaskCreator by lazy { appComponent.getTestTaskCreator() }
 
 
     override val steps: TestContext<Unit>.() -> Unit = {
         step("Создание CloudAuth") {
             runTest {
                 val cloudAuth = CloudAuth(
-                    id = TEST_AUTH_ID,
-                    name = TEST_AUTH_NAME,
-                    authToken = TEST_AUTH_TOKEN,
-                    storageType = TEST_STORAGE_TYPE,
+                    id = AUTH_ID,
+                    name = AUTH_NAME,
+                    authToken = AUTH_TOKEN,
+                    storageType = STORAGE_TYPE,
                 )
                 cloudAuthDAO.add(cloudAuth)
 
-                val readedCloudAuth = cloudAuthDAO.get(TEST_AUTH_ID)
+                val readedCloudAuth = cloudAuthDAO.get(AUTH_ID)
 
                 Assert.assertEquals(cloudAuth.id, readedCloudAuth.id)
                 Assert.assertEquals(cloudAuth.name, readedCloudAuth.name)
@@ -52,12 +49,13 @@ class CreateLocalTask(
                 Assert.assertEquals(cloudAuth.storageType, readedCloudAuth.storageType)
             }
         }
+
         step("Создание SyncTask (типа SYNC)") {
             runTest {
                 val syncTask = syncTaskWithMode(syncMode)
                 syncTaskDAO.add(syncTask)
 
-                val readedSyncTask = syncTaskDAO.get(TEST_TASK_ID)
+                val readedSyncTask = syncTaskDAO.get(ID)
 
                 Assert.assertEquals(syncTask.id, readedSyncTask.id)
                 Assert.assertEquals(syncTask.syncMode, readedSyncTask.syncMode)
@@ -74,16 +72,16 @@ class CreateLocalTask(
     }
 
     private fun syncTaskWithMode(syncMode: SyncMode): SyncTask = SyncTask(
-        sourcePath = TEST_TASK_SOURCE_PATH,
-        targetPath = TEST_TASK_TARGET_PATH,
-        sourceStorageType = TEST_TASK_STORAGE_TYPE,
-        targetStorageType = TEST_TASK_STORAGE_TYPE,
+        sourcePath = SOURCE_PATH,
+        targetPath = TARGET_PATH,
+        sourceStorageType = STORAGE_TYPE,
+        targetStorageType = STORAGE_TYPE,
         syncMode = syncMode,
         intervalHours = 0,
         intervalMinutes = 0,
     ).apply {
-        id = TEST_TASK_ID
-        this.sourceAuthId = TEST_AUTH_ID
-        this.targetAuthId = TEST_AUTH_ID
+        id = ID
+        this.sourceAuthId = AUTH_ID
+        this.targetAuthId = AUTH_ID
     }
 }
