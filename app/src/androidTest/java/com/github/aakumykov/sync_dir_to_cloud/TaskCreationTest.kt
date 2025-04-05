@@ -1,179 +1,61 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
-import androidx.test.espresso.Espresso.onData
-import androidx.test.espresso.matcher.BoundedMatcher
-import androidx.test.ext.junit.rules.activityScenarioRule
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.GrantPermissionRule
-import androidx.test.uiautomator.UiDevice
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListItemScreen
-import com.github.aakumykov.sync_dir_to_cloud.screens.TaskListScreen
+import com.github.aakumykov.sync_dir_to_cloud.common.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
+import com.github.aakumykov.sync_dir_to_cloud.common.TestDbStuff
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.scenario.CreateAndCheckLocalTask
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
-import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestFilesCreator
-import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestTaskCreator
-import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
-import com.kaspersky.kaspresso.kaspresso.Kaspresso
-import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import kotlinx.coroutines.CancellationException
+import com.github.aakumykov.sync_dir_to_cloud.utils.TestFilesCreator2
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Description
-import org.junit.After
 import org.junit.Assert
-import org.junit.Rule
 import org.junit.Test
 import java.io.File
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.CoroutineContext
 
-class TaskCreationTest : StorageAccessTestCase() {
-    private val taskId: String = TestTaskCreator.TEST_ID
+class TaskCreationTest() : StorageAccessTestCase() {
 
-    private fun syncTaskExecutor(scope: CoroutineScope): SyncTaskExecutor {
-        return appComponent
-            .getSyncTaskExecutorAssistedFactory()
-            .create(scope)
-    }
-
-    private val testFilesCreator: TestFilesCreator by lazy {
-        appComponent.getTestFilesCreator()
-    }
-
-
-    @get:Rule
-    val activityScenarioRule = activityScenarioRule<MainActivity>()
-
-
-    @After
-    fun delayAfterTest() = TimeUnit.SECONDS.sleep(2)
-
+    private val dbStuff = TestDbStuff.get(device.targetContext)
+    private val testFilesCreator by lazy { TestFilesCreator2(dbStuff) }
 
     @Test
-    fun newTaskCanBeCreated() = run {
+    fun when_create_test_task_then_correct_entities_are_created() = run {
+        scenario(
+            CreateAndCheckLocalTask(
+                syncMode = SyncMode.SYNC,
+                dbStuff = dbStuff
+            )
+        )
 
-        step("Создать тестовую задачу типа 'SYNC'") {
-            TaskListScreen {
-                createMirrorTestTaskButton.apply {
-                    isVisible()
-                    isClickable()
-                    click()
-                }
+        step("Удаление старого и создание нового каталога приёмника") {
+            File(TestTaskConfig.TARGET_PATH).also { targetDir: File ->
+                targetDir.deleteRecursively()
+                Assert.assertFalse(targetDir.exists())
+
+                targetDir.mkdir()
+                Assert.assertTrue(targetDir.exists())
             }
         }
 
-        step("Проверка, что задача создалась") {
-            TaskListScreen {
-                recyclerView {
-                    /*firstChild<TaskListItemScreen> {
-                        isVisible()
-                    }*/
-                    childWith<TaskListItemScreen> {
-                        // FIXME: должна быть ошибка, но её нет
-                        onData(withTaskId(TestTaskCreator.TEST_ID+"@")).apply {
-                            isDisplayed()
-                        }
-                    }
-                }
-            }
-        }
-
-        step("Удаление старой целевой папки") {
-            targetDir.apply {
-                Assert.assertTrue(
-                    if (exists()) deleteRecursively()
-                    else true
-                )
-            }
-        }
-
-        step("Создание целевой папки") {
-            targetDir.also {
-                Assert.assertTrue(
-                    it.exists() || it.mkdirs()
-                )
-            }
-        }
-
-        step("Подготовка тестовых файлов в Источнике") {
-            runBlocking {
-                testFilesCreator.createFileInSource(taskId)
-            }
-        }
-
-        // TODO: как проверять, что задача запустилась:
-        //  через БД или графический интерфейс?
-        step("Запуск задачи") {
-            /*TaskListScreen {
-                recyclerView {
-                    firstChild<TaskListItemScreen> {
-                        runButton {
-                            isVisible()
-                            isClickable()
-                            click()
-                        }
-                    }
-                }
-            }*/
+        step("Создание тестового файла в источнике") {
             runTest {
-                syncTaskExecutor(this).executeSyncTask(TestTaskCreator.TEST_ID)
-            }
-        }
-
-        step("Подготовка тестовых файлов в Приёмнике") {
-            runBlocking {
-                testFilesCreator.createFileInTarget(taskId)
-            }
-        }
-
-        // TODO: как проверять, что задача запустилась:
-        //  через БД или графический интерфейс?
-        step("Запуск задачи") {
-            /*TaskListScreen {
-                recyclerView {
-                    firstChild<TaskListItemScreen> {
-                        runButton {
-                            isVisible()
-                            isClickable()
-                            click()
-                        }
-                    }
+                val fileSizeKb = 10
+                testFilesCreator.createFileInSource("file1.txt", fileSizeKb).also {
+                    Assert.assertTrue(it.exists())
+                    Assert.assertEquals(fileSizeKb, it.length().toInt())
                 }
-            }*/
-            runTest {
-                syncTaskExecutor(this).executeSyncTask(TestTaskCreator.TEST_ID)
             }
         }
 
-        step("Проверка результатов запуска") {
-
+        step("Запуск задачи") {
+            runTest {
+                syncTaskExecutor(this).executeSyncTask(TestTaskConfig.ID)
+            }
         }
     }
 
-    private val targetDir: File
-        get() = File(TestTaskCreator.testTaskLocalTargetPath)
 
-    companion object {
-        fun withTaskId(taskId: String) = SyncTaskMatcher(taskId)
-    }
-}
-
-class SyncTaskMatcher(
-    private val taskId: String,
-    /*taskName: String, sourcePath: String, targetPath: String*/
-) : BoundedMatcher<Any?, SyncTask>(SyncTask::class.java) {
-
-    override fun describeTo(description: Description) {
-        description.appendText("SyncTask with id: $taskId")
-    }
-
-    override fun matchesSafely(item: SyncTask?): Boolean {
-        return item?.let {
-            it.id == taskId
-        } ?: false
+    private fun syncTaskExecutor(scope: CoroutineScope): SyncTaskExecutor {
+        return appComponent.getSyncTaskExecutorAssistedFactory().create(scope)
     }
 }

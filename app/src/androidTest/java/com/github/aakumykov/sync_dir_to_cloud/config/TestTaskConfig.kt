@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud
+package com.github.aakumykov.sync_dir_to_cloud.config
 
 import android.os.Build
 import android.os.Environment

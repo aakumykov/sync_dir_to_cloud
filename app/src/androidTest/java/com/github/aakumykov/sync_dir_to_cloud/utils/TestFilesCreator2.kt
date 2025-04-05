@@ -1,7 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud
+package com.github.aakumykov.sync_dir_to_cloud.utils
 
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.parent_child.TestDbStuff
+import com.github.aakumykov.sync_dir_to_cloud.common.TestDbStuff
 import java.io.File
 import kotlin.random.Random
 

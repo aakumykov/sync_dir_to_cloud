@@ -1,16 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.scenario
 
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.AUTH_ID
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.AUTH_NAME
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.AUTH_TOKEN
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.ID
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.SOURCE_PATH
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.STORAGE_TYPE
-import com.github.aakumykov.sync_dir_to_cloud.TestTaskConfig.TARGET_PATH
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_ID
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_NAME
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_TOKEN
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.ID
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.SOURCE_PATH
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.STORAGE_TYPE
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.TARGET_PATH
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
-import com.github.aakumykov.sync_dir_to_cloud.parent_child.DbStuff
+import com.github.aakumykov.sync_dir_to_cloud.common.DbStuff
 import com.kaspersky.kaspresso.testcases.api.scenario.Scenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import kotlinx.coroutines.test.runTest

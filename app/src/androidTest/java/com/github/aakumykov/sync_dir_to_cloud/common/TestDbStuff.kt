@@ -1,7 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.parent_child
+package com.github.aakumykov.sync_dir_to_cloud.common
 
 import android.content.Context
-import androidx.room.Room
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
