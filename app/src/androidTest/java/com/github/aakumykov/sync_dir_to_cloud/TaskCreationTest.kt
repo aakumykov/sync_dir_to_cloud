@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.common.TestDbStuff
 import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.scenario.CreateAndCheckLocalTask
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
-import com.github.aakumykov.sync_dir_to_cloud.utils.TestFilesCreator2
+import com.github.aakumykov.sync_dir_to_cloud.utils.TestFilesCreator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
@@ -15,15 +15,14 @@ import java.io.File
 
 class TaskCreationTest() : StorageAccessTestCase() {
 
-    private val dbStuff = TestDbStuff.get(device.targetContext)
-    private val testFilesCreator by lazy { TestFilesCreator2(dbStuff) }
+    private val testFilesCreator by lazy { TestFilesCreator(TestTaskConfig) }
 
     @Test
     fun when_create_test_task_then_correct_entities_are_created() = run {
         scenario(
             CreateAndCheckLocalTask(
                 syncMode = SyncMode.SYNC,
-                dbStuff = dbStuff
+                dbStuff = TestDbStuff.get(device.targetContext)
             )
         )
 
@@ -39,17 +38,25 @@ class TaskCreationTest() : StorageAccessTestCase() {
 
         step("Создание тестового файла в источнике") {
             runTest {
-                val fileSizeKb = 10
-                testFilesCreator.createFileInSource("file1.txt", fileSizeKb).also {
+                testFilesCreator.createFileInSource(FILE_1_NAME, FILE_1_SIZE).also {
                     Assert.assertTrue(it.exists())
-                    Assert.assertEquals(fileSizeKb, it.length().toInt())
+                    Assert.assertEquals(FILE_1_SIZE, it.length().toInt())
                 }
             }
         }
 
         step("Запуск задачи") {
             runTest {
-                syncTaskExecutor(this).executeSyncTask(TestTaskConfig.ID)
+                syncTaskExecutor(this).executeSyncTask(TestTaskConfig.TASK_ID)
+            }
+        }
+
+        step("Проверка, что синхронизация одного файла прошла корректно") {
+            run {
+                testFilesCreator.fileInTarget(FILE_1_NAME).also {
+                    Assert.assertTrue(it.exists())
+                    Assert.assertEquals(it.length().toInt(),FILE_1_SIZE)
+                }
             }
         }
     }
@@ -57,5 +64,10 @@ class TaskCreationTest() : StorageAccessTestCase() {
 
     private fun syncTaskExecutor(scope: CoroutineScope): SyncTaskExecutor {
         return appComponent.getSyncTaskExecutorAssistedFactory().create(scope)
+    }
+
+    companion object {
+        const val FILE_1_NAME = "file1.txt"
+        const val FILE_1_SIZE = 1024
     }
 }

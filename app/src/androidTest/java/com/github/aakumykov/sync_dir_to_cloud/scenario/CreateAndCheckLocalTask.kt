@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.scenario
 import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_ID
 import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_NAME
 import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_TOKEN
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.ID
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.SOURCE_PATH
 import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.STORAGE_TYPE
 import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.TARGET_PATH
@@ -46,7 +46,7 @@ class CreateAndCheckLocalTask(
                 val syncTask = syncTaskWithMode(syncMode)
                 syncTaskDAO.add(syncTask)
 
-                val readSyncTask = syncTaskDAO.get(ID)
+                val readSyncTask = syncTaskDAO.get(TASK_ID)
 
                 Assert.assertEquals(syncTask.id, readSyncTask.id)
                 Assert.assertEquals(syncTask.syncMode, readSyncTask.syncMode)
@@ -71,7 +71,7 @@ class CreateAndCheckLocalTask(
         intervalHours = 0,
         intervalMinutes = 0,
     ).apply {
-        id = ID
+        id = TASK_ID
         this.sourceAuthId = AUTH_ID
         this.targetAuthId = AUTH_ID
     }
