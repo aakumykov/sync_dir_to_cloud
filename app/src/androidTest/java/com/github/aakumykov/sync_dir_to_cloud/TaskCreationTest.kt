@@ -31,18 +31,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
-class TaskCreationTest : TestCase(
-    kaspressoBuilder = Kaspresso.Builder.simple( // simple/advanced - it doesn't matter
-        customize = {
-            // storage support for Android API 30+
-            if (isAndroidRuntime) {
-                UiDevice
-                    .getInstance(instrumentation)
-                    .executeShellCommand("appops set --uid ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
-            }
-        }
-    )
-) {
+class TaskCreationTest : StorageAccessTestCase() {
     private val taskId: String = TestTaskCreator.TEST_ID
 
     private fun syncTaskExecutor(scope: CoroutineScope): SyncTaskExecutor {
@@ -54,13 +43,6 @@ class TaskCreationTest : TestCase(
     private val testFilesCreator: TestFilesCreator by lazy {
         appComponent.getTestFilesCreator()
     }
-
-    // storage support for Android API 29-
-    @get:Rule
-    val runtimePermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        android.Manifest.permission.READ_EXTERNAL_STORAGE
-    )
 
 
     @get:Rule
