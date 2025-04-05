@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
-import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestTaskCreator
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_target.TargetReader
@@ -85,7 +84,6 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecuto
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
-import com.github.aakumykov.sync_dir_to_cloud.test_utils.TestFilesCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
@@ -234,10 +232,6 @@ interface AppComponent {
     fun getSyncObjectDeleter(): SyncObjectDeleter
 
     fun getSyncInstructionRepository6(): SyncInstructionRepository6
-
-    fun getTestTaskCreator(): TestTaskCreator
-
-    fun getTestFilesCreator(): TestFilesCreator
 }
 
 val authHolder: AuthHolder get() = appComponent.getAuthHolder()

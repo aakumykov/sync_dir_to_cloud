@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_list
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -21,7 +20,6 @@ import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
 import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -246,8 +244,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         binding.addButton.setOnClickListener { requestNotificationPermission() }
         binding.backupButton.setOnClickListener { backupTasks() }
         binding.restoreButton.setOnClickListener { restoreTasks() }
-        binding.createSyncTestTaskButton.setOnClickListener { createTestTask(SyncMode.SYNC) }
-        binding.createMirrorTestTaskButton.setOnClickListener { createTestTask(SyncMode.MIRROR) }
     }
 
     private fun backupTasks() {
@@ -258,15 +254,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         lifecycleScope.launch (Dispatchers.IO) { backuperRestorer.restoreTasks() }
     }
 
-    private fun createTestTask(syncMode: SyncMode) {
-        Log.d(TAG, "createTestTask('$syncMode') called")
-        lifecycleScope.launch (Dispatchers.IO) {
-            testTaskCreator.createTestTask(syncMode)
-        }
-    }
-
     private val backuperRestorer by lazy { appComponent.getBackuperRestorer() }
-    private val testTaskCreator by lazy { appComponent.getTestTaskCreator() }
 
     private fun requestNotificationPermission() {
         if (isAndroidTiramisuOrLater()) {
