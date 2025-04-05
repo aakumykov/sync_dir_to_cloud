@@ -1,10 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.utils
 
 import com.github.aakumykov.sync_dir_to_cloud.config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig
 import java.io.File
 import kotlin.random.Random
 
-class TestFilesCreator(private val taskConfig: TaskConfig) {
+class TestFilesManager(private val taskConfig: TaskConfig = TestTaskConfig) {
 
     fun createFileInSource(fileName: String, sizeKb: Int = 1024): File {
         return createFile(fileInSource(fileName), sizeKb)
@@ -20,6 +21,12 @@ class TestFilesCreator(private val taskConfig: TaskConfig) {
 
     fun createDirInTarget(dirName: String): File {
         return createDir(taskConfig.TARGET_PATH, dirName)
+    }
+
+    fun deleteFileFromSource(fileName: String): File {
+        return fileInSource(fileName).apply {
+            delete()
+        }
     }
 
     private fun createDir(parentDirPath: String, dirName: String): File {
