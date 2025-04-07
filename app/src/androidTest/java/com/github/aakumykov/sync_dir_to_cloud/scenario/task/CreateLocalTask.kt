@@ -1,23 +1,21 @@
-package com.github.aakumykov.sync_dir_to_cloud.scenario
+package com.github.aakumykov.sync_dir_to_cloud.scenario.task
 
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_ID
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_NAME
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.AUTH_TOKEN
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.SOURCE_PATH
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.STORAGE_TYPE
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.TARGET_PATH
+import com.github.aakumykov.sync_dir_to_cloud.config.task_config.LocalTaskConfig.AUTH_ID
+import com.github.aakumykov.sync_dir_to_cloud.config.task_config.LocalTaskConfig.TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.config.task_config.LocalTaskConfig.SOURCE_PATH
+import com.github.aakumykov.sync_dir_to_cloud.config.task_config.LocalTaskConfig.STORAGE_TYPE
+import com.github.aakumykov.sync_dir_to_cloud.config.task_config.LocalTaskConfig.TARGET_PATH
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
-import com.github.aakumykov.sync_dir_to_cloud.common.DaoSet
+import com.github.aakumykov.sync_dir_to_cloud.common.dao_set.DaoSet
+import com.github.aakumykov.sync_dir_to_cloud.config.task_config.TaskConfig
 import com.kaspersky.kaspresso.testcases.api.scenario.Scenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
 
 class CreateLocalTask(
-    private val syncMode: SyncMode,
+    private val taskConfig: TaskConfig,
     private val daoSet: DaoSet,
 ) : Scenario(), DaoSet by daoSet {
 
@@ -25,10 +23,10 @@ class CreateLocalTask(
         step("Создание CloudAuth") {
             runTest {
                 val cloudAuth = CloudAuth(
-                    id = AUTH_ID,
-                    name = AUTH_NAME,
-                    authToken = AUTH_TOKEN,
-                    storageType = STORAGE_TYPE,
+                    id = taskConfig.AUTH_ID,
+                    name = taskConfig.AUTH_NAME,
+                    authToken = taskConfig.AUTH_TOKEN,
+                    storageType = taskConfig.STORAGE_TYPE,
                 )
                 cloudAuthDAO.add(cloudAuth)
 
@@ -41,9 +39,9 @@ class CreateLocalTask(
             }
         }
 
-        step("Создание SyncTask (типа SYNC)") {
+        step("Создание SyncTask (типа '${taskConfig.SYNC_MODE}')") {
             runTest {
-                val syncTask = syncTaskWithMode(syncMode)
+                val syncTask = syncTaskWithMode(taskConfig.SYNC_MODE)
                 syncTaskDAO.add(syncTask)
 
 //                val readSyncTask = syncTaskDAO.get(TASK_ID)

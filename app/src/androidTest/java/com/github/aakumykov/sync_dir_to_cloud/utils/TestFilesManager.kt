@@ -1,19 +1,39 @@
 package com.github.aakumykov.sync_dir_to_cloud.utils
 
-import com.github.aakumykov.sync_dir_to_cloud.config.TaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.config.file_config.LocalFileCofnig
+import com.github.aakumykov.sync_dir_to_cloud.config.task_config.TaskConfig
 import java.io.File
 import kotlin.random.Random
 
-class TestFilesManager(private val taskConfig: TaskConfig = TestTaskConfig) {
+class TestFilesManager(private val taskConfig: TaskConfig,
+                       private val fileCofnig: LocalFileCofnig) {
 
-    fun createFileInSource(fileName: String, sizeKb: Int = 1024): File {
+    val sourceFile: File
+        get() = fileInSource(fileCofnig.FILE_1_NAME)
+
+    val targetFile: File
+        get() = fileInTarget(fileCofnig.FILE_1_NAME)
+
+
+    val sourceFileContents: ByteArray
+        get() = sourceFile.readBytes()
+
+    val targetFileContents: ByteArray
+        get() = targetFile.readBytes()
+
+
+    fun createFileInSource(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return createFile(fileInSource(fileName), sizeKb)
     }
 
-    fun createFileInTarget(fileName: String, sizeKb: Int = 1024): File {
+    fun createFileInSource(fileName: String, fileContents: ByteArray): File {
+        return createFile(fileInSource(fileName), fileContents)
+    }
+
+    fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return createFile(fileInTarget(fileName), sizeKb)
     }
+
 
     fun createDirInSource(dirName: String): File {
         return createDir(taskConfig.SOURCE_PATH, dirName)
@@ -23,11 +43,19 @@ class TestFilesManager(private val taskConfig: TaskConfig = TestTaskConfig) {
         return createDir(taskConfig.TARGET_PATH, dirName)
     }
 
+
     fun deleteFileFromSource(fileName: String): File {
         return fileInSource(fileName).apply {
             delete()
         }
     }
+
+    fun deleteFileFromTarget(fileName: String): File {
+        return fileInTarget(fileName).apply {
+            delete()
+        }
+    }
+
 
     private fun createDir(parentDirPath: String, dirName: String): File {
         return File(parentDirPath, dirName).apply {
@@ -44,7 +72,13 @@ class TestFilesManager(private val taskConfig: TaskConfig = TestTaskConfig) {
 
     private fun createFile(file: File, sizeKb: Int): File {
         return file.apply {
-            writeBytes(Random.nextBytes(sizeKb))
+            writeBytes(randomBytes(sizeKb))
+        }
+    }
+
+    private fun createFile(file: File, fileContents: ByteArray): File {
+        return file.apply {
+            writeBytes(fileContents)
         }
     }
 
@@ -56,7 +90,21 @@ class TestFilesManager(private val taskConfig: TaskConfig = TestTaskConfig) {
         get() = randomUUID.split("-").first()*/
 
     fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
+
     fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
+
+
+    fun modifyFileInSource(fileName: String, fileContents: ByteArray): File {
+        return createFileInSource(fileName, fileContents)
+    }
+
+    fun modifyFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+        return createFileInTarget(fileName, sizeKb)
+    }
+
+    companion object {
+        const val DEFAULT_FILE_SIZE_KB = 10
+    }
 }
 
 

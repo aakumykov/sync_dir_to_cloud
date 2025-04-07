@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.common
+package com.github.aakumykov.sync_dir_to_cloud.common.test_case
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
