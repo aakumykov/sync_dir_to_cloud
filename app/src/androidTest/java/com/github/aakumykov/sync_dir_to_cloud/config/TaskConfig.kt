@@ -7,6 +7,9 @@ interface TaskConfig {
     val STORAGE_TYPE: StorageType
     val SOURCE_PATH: String
     val TARGET_PATH: String
+    val INTERVAL_HOURS: Int
+    val INTERVAL_MINUTES: Int
+
     val AUTH_ID: String
     val AUTH_NAME: String
     val AUTH_TOKEN: String

@@ -17,6 +17,9 @@ object TestTaskConfig : TaskConfig {
         "d${Build.VERSION.SDK_INT}"
     ).absolutePath
 
+    override val INTERVAL_HOURS = 0
+    override val INTERVAL_MINUTES = 0
+
     override val AUTH_ID = "authId1"
     override val AUTH_NAME = "test_auth_local"
     override val AUTH_TOKEN = "test_auth_token"

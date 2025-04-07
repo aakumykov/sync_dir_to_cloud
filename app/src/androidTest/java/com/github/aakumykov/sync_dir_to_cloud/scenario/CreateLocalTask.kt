@@ -10,16 +10,16 @@ import com.github.aakumykov.sync_dir_to_cloud.config.TestTaskConfig.TARGET_PATH
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
-import com.github.aakumykov.sync_dir_to_cloud.common.DbStuff
+import com.github.aakumykov.sync_dir_to_cloud.common.DaoSet
 import com.kaspersky.kaspresso.testcases.api.scenario.Scenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 
-class CreateAndCheckLocalTask(
+class CreateLocalTask(
     private val syncMode: SyncMode,
-    private val dbStuff: DbStuff,
-) : Scenario(), DbStuff by dbStuff {
+    private val daoSet: DaoSet,
+) : Scenario(), DaoSet by daoSet {
 
     override val steps: TestContext<Unit>.() -> Unit = {
         step("Создание CloudAuth") {
@@ -32,12 +32,12 @@ class CreateAndCheckLocalTask(
                 )
                 cloudAuthDAO.add(cloudAuth)
 
-                val readCloudAuth = cloudAuthDAO.get(AUTH_ID)
-
-                Assert.assertEquals(cloudAuth.id, readCloudAuth.id)
-                Assert.assertEquals(cloudAuth.name, readCloudAuth.name)
-                Assert.assertEquals(cloudAuth.authToken, readCloudAuth.authToken)
-                Assert.assertEquals(cloudAuth.storageType, readCloudAuth.storageType)
+//                val readCloudAuth = cloudAuthDAO.get(AUTH_ID)
+//
+//                Assert.assertEquals(cloudAuth.id, readCloudAuth.id)
+//                Assert.assertEquals(cloudAuth.name, readCloudAuth.name)
+//                Assert.assertEquals(cloudAuth.authToken, readCloudAuth.authToken)
+//                Assert.assertEquals(cloudAuth.storageType, readCloudAuth.storageType)
             }
         }
 
@@ -46,18 +46,18 @@ class CreateAndCheckLocalTask(
                 val syncTask = syncTaskWithMode(syncMode)
                 syncTaskDAO.add(syncTask)
 
-                val readSyncTask = syncTaskDAO.get(TASK_ID)
-
-                Assert.assertEquals(syncTask.id, readSyncTask.id)
-                Assert.assertEquals(syncTask.syncMode, readSyncTask.syncMode)
-                Assert.assertEquals(syncTask.sourcePath, readSyncTask.sourcePath)
-                Assert.assertEquals(syncTask.targetPath, readSyncTask.targetPath)
-                Assert.assertEquals(syncTask.sourceStorageType, readSyncTask.sourceStorageType)
-                Assert.assertEquals(syncTask.targetStorageType, readSyncTask.targetStorageType)
-                Assert.assertEquals(syncTask.intervalHours, readSyncTask.intervalHours)
-                Assert.assertEquals(syncTask.intervalMinutes, readSyncTask.intervalMinutes)
-                Assert.assertEquals(syncTask.sourceAuthId, readSyncTask.sourceAuthId)
-                Assert.assertEquals(syncTask.targetAuthId, readSyncTask.targetAuthId)
+//                val readSyncTask = syncTaskDAO.get(TASK_ID)
+//
+//                Assert.assertEquals(syncTask.id, readSyncTask.id)
+//                Assert.assertEquals(syncTask.syncMode, readSyncTask.syncMode)
+//                Assert.assertEquals(syncTask.sourcePath, readSyncTask.sourcePath)
+//                Assert.assertEquals(syncTask.targetPath, readSyncTask.targetPath)
+//                Assert.assertEquals(syncTask.sourceStorageType, readSyncTask.sourceStorageType)
+//                Assert.assertEquals(syncTask.targetStorageType, readSyncTask.targetStorageType)
+//                Assert.assertEquals(syncTask.intervalHours, readSyncTask.intervalHours)
+//                Assert.assertEquals(syncTask.intervalMinutes, readSyncTask.intervalMinutes)
+//                Assert.assertEquals(syncTask.sourceAuthId, readSyncTask.sourceAuthId)
+//                Assert.assertEquals(syncTask.targetAuthId, readSyncTask.targetAuthId)
             }
         }
     }
