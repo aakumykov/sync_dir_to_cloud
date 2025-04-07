@@ -74,4 +74,7 @@ abstract class SyncObjectLogDAO {
         executionId: String,
         progress: Int
     )
+
+    @Query("SELECT * FROM sync_object_logs")
+    abstract suspend fun testListAllLogItems(): List<SyncObjectLogItem>
 }
