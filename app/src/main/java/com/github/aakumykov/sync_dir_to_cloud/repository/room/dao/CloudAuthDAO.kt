@@ -26,4 +26,7 @@ interface CloudAuthDAO {
 
     @Query("SELECT * FROM cloud_auth WHERE id = :authId")
     suspend fun getNullable(authId: String): CloudAuth?
+
+    @Query("DELETE FROM cloud_auth WHERE id = :authId")
+    suspend fun testDelete(authId: String)
 }
