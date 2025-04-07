@@ -17,6 +17,7 @@ interface SyncTaskDAO {
     suspend fun addSuspend(syncTask: SyncTask)
 
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
+    @Deprecated("Должен возвращать nullable-тип")
     suspend fun get(id: String): SyncTask
 
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
