@@ -1,12 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.scenario.file.creation
 
 import com.github.aakumykov.sync_dir_to_cloud.config.file_config.FileConfig
-import com.github.aakumykov.sync_dir_to_cloud.scenario.file.FileManipulationScenario
+import com.github.aakumykov.sync_dir_to_cloud.scenario.common.FileScenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 
-class CreateTargetFile(fileConfig: FileConfig) : FileManipulationScenario() {
+class CreateTargetFile(fileConfig: FileConfig) : FileScenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {
 

@@ -1,10 +1,10 @@
-package com.github.aakumykov.sync_dir_to_cloud.scenario.checks
+package com.github.aakumykov.sync_dir_to_cloud.scenario.checks.file_checks.db_checks
 
-import com.github.aakumykov.sync_dir_to_cloud.scenario.file.FileManipulationScenario
+import com.github.aakumykov.sync_dir_to_cloud.scenario.common.FileScenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import org.junit.Assert
 
-class SourceAndTargetFilesAreEquals : FileManipulationScenario() {
+class SourceAndTargetFilesAreEquals : FileScenario() {
     override val steps: TestContext<Unit>.() -> Unit
         get() = {
             val sourceFile = testFilesManager.sourceFile

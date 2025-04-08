@@ -178,4 +178,7 @@ interface SyncObjectDAO {
             "AND state_in_storage = 'DELETED' " +
             "AND task_id = :taskId")
     fun deleteProcessedObjectsWithDeletedState(taskId: String)
+
+    @Query("SELECT * FROM sync_objects")
+    fun testListAllObjects(): List<SyncObject>
 }
