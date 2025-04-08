@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
 import android.util.Log
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.aakumykov.sync_dir_to_cloud.utils.ProgressCalculator
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
