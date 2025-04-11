@@ -11,12 +11,13 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 
-class App : Application() {
+open class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        prepareAppComponent(this, this)
+        _appComponent = createComponent()
+
         prepareAndGetAppDatabase(this)
     }
 
@@ -33,14 +34,6 @@ class App : Application() {
             return _appDatabase!!
         }
 
-        fun prepareAppComponent(application: Application, appContext: Context) {
-            _appComponent = DaggerAppComponent.builder()
-                .contextModule(ContextModule(appContext))
-                .applicationModule(ApplicationModule(application))
-                .roomDAOModule(RoomDAOModule(prepareAndGetAppDatabase(appContext)))
-                .build()
-        }
-
         fun prepareAndGetAppDatabase(appContext: Context): AppDatabase {
             _appDatabase = Room
                 .databaseBuilder(appContext, AppDatabase::class.java, DbConfig.APP_DB_NAME)
@@ -49,6 +42,14 @@ class App : Application() {
                 .build()
             return _appDatabase!!
         }
+    }
+
+    open fun createComponent(): AppComponent {
+        return DaggerAppComponent.builder()
+            .contextModule(ContextModule(this.applicationContext))
+            .applicationModule(ApplicationModule(this))
+            .roomDAOModule(RoomDAOModule(prepareAndGetAppDatabase(this.applicationContext)))
+            .build()
     }
 }
 
