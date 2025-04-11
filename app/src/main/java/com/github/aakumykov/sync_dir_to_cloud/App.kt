@@ -51,6 +51,10 @@ open class App : Application() {
             .roomDAOModule(RoomDAOModule(prepareAndGetAppDatabase(this.applicationContext)))
             .build()
     }
+
+    fun component(): AppComponent {
+        return App.getAppComponent()
+    }
 }
 
 val appComponent: AppComponent get() = App.getAppComponent()
