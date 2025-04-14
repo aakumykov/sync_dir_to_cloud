@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_old.utils
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.file_config.LocalFileCofnig
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
 import kotlin.random.Random
 

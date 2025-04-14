@@ -5,7 +5,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.TestComponent
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TASK_SYNC
+import org.junit.Assert
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
@@ -14,7 +17,7 @@ import javax.inject.Inject
 class InstrumentedTest1 {
 
     @Inject
-    lateinit var testSyncTaskDAO: TestSyncTaskDAO
+    lateinit var dao: TestSyncTaskDAO
 
     @Before
     fun prepare() {
@@ -28,7 +31,22 @@ class InstrumentedTest1 {
     }
 
     @Test
-    fun test1() {
+    fun when_deleteing_all_taks_then_its_count_is_zero() {
+        dao.apply {
+            deleteAll()
+            Assert.assertEquals(
+                0,
+                dao.count()
+            )
+        }
+    }
 
+    @Test
+    fun when_add_sync_task_then_count_equals_one() {
+        dao.apply {
+            deleteAll()
+            add(TASK_SYNC)
+            Assert.assertEquals(1, dao.count())
+        }
     }
 }

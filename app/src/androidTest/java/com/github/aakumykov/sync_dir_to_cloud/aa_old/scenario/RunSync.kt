@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.LocalTaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.kaspersky.kaspresso.testcases.api.scenario.Scenario

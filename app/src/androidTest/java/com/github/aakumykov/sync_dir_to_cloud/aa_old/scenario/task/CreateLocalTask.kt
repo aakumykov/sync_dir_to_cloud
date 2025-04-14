@@ -1,12 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.dao_set.DaoSet
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.LocalTaskConfig.AUTH_ID
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.LocalTaskConfig.SOURCE_PATH
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.LocalTaskConfig.STORAGE_TYPE
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.LocalTaskConfig.TARGET_PATH
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.LocalTaskConfig.TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.AUTH_ID
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.SOURCE_PATH
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.STORAGE_TYPE
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.TARGET_PATH
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode

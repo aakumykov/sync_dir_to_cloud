@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.dao_set.DaoSet
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import kotlinx.coroutines.test.runTest

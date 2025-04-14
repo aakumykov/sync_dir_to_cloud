@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.file.modification
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.file_config.LocalFileCofnig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.common.FileScenario
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.utils.randomBytes
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext

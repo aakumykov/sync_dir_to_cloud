@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode

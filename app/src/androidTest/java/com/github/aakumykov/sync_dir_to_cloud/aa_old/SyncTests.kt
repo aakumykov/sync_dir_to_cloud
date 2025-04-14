@@ -2,8 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_old
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.dao_set.TestDaoSet
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.test_case.StorageAccessTestCase
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.file_config.LocalFileCofnig
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.config.task_config.LocalTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.RunSync
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.dir.CreateTargetDir
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.file.creation.CreateSourceFile
@@ -36,7 +36,9 @@ class SyncTests : StorageAccessTestCase() {
     @Before
     fun reCreateTargetDir() = run {
         scenario(
-            com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.dir.DeleteTargetDir(LocalTaskConfig)
+            com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.dir.DeleteTargetDir(
+                LocalTaskConfig
+            )
         )
         scenario(
             CreateTargetDir(LocalTaskConfig)
