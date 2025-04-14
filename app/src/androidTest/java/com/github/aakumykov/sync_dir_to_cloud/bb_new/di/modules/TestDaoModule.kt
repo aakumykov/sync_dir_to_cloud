@@ -7,12 +7,11 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class TestDaoModule(
-    @AppScope private val testDatabase: TestDatabase
-) {
+class TestDaoModule() {
+
     @AppScope
     @Provides
-    fun provideTestSyncTaskDAO(): TestSyncTaskDAO {
+    fun provideTestSyncTaskDAO(@AppScope testDatabase: TestDatabase): TestSyncTaskDAO {
         return testDatabase.getTestSyncTaskDAO()
     }
 }

@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.di
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.InstrumentedTest1
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules.TestDaoModule
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules.TestDatabaseModule
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.ResourcesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -37,6 +38,7 @@ import dagger.Component
 
 @Component(
     modules = [
+        TestDatabaseModule::class,
         TestDaoModule::class,
 
         ContextModule::class,
