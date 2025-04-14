@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import dagger.Module
 import dagger.Provides
 
+// FIXME: непонятно, зачем он нужен
 @Module
 class ApplicationModule(private val application: Application) {
 

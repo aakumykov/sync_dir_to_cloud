@@ -7,10 +7,10 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.TestComponent
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTest1 {
-
 
 
     @Before
