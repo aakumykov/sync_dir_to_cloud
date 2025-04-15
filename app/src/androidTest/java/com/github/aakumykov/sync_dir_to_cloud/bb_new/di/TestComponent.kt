@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.di
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules.TestDaoModule
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules.TestDatabaseModule
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.ResourcesModule
@@ -74,5 +75,6 @@ import dagger.Component
 @AppScope
 @ExecutionScope
 interface TestComponent : AppComponent {
-    fun getTestSyncTaskDAO(): TestSyncTaskDAO
+    fun testSyncTaskDAO(): TestSyncTaskDAO
+    fun testCloudAuthDAO(): TestCloudAuthDAO
 }

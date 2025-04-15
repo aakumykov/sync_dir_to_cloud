@@ -17,8 +17,8 @@ class DeleteLocalTask(
             step("Удаление задачи"){
 
                 val taskId = taskConfig.TASK_ID
-                val sourceAuthId = taskConfig.AUTH_ID
-                val targetAuthId = taskConfig.AUTH_ID
+                val sourceAuthId = taskConfig.SOURCE_AUTH_ID
+                val targetAuthId = taskConfig.SOURCE_AUTH_ID
 
                 runTest {
                     syncTaskDAO.get(taskId)?.also { syncTask: SyncTask ->

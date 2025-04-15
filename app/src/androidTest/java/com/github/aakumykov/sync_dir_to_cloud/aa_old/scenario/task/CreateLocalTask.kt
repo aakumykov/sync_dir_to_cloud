@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.dao_set.DaoSet
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.AUTH_ID
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.SOURCE_AUTH_ID
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.SOURCE_PATH
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.STORAGE_TYPE
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.TARGET_PATH
@@ -23,9 +23,9 @@ class CreateLocalTask(
         step("Создание CloudAuth") {
             runTest {
                 val cloudAuth = CloudAuth(
-                    id = taskConfig.AUTH_ID,
-                    name = taskConfig.AUTH_NAME,
-                    authToken = taskConfig.AUTH_TOKEN,
+                    id = taskConfig.SOURCE_AUTH_ID,
+                    name = taskConfig.SOURCE_AUTH_NAME,
+                    authToken = taskConfig.SOURCE_AUTH_TOKEN,
                     storageType = taskConfig.STORAGE_TYPE,
                 )
                 cloudAuthDAO.add(cloudAuth)
@@ -70,7 +70,7 @@ class CreateLocalTask(
         intervalMinutes = 0,
     ).apply {
         id = TASK_ID
-        this.sourceAuthId = AUTH_ID
-        this.targetAuthId = AUTH_ID
+        this.sourceAuthId = SOURCE_AUTH_ID
+        this.targetAuthId = SOURCE_AUTH_ID
     }
 }
