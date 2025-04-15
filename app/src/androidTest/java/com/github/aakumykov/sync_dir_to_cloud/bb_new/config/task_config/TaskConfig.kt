@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
@@ -21,4 +22,7 @@ interface TaskConfig {
     val AUTH_ID: String
     val AUTH_NAME: String
     val AUTH_TOKEN: String
+
+    val TASK_SYNC: SyncTask
+    val TASK_MIRROR: SyncTask
 }

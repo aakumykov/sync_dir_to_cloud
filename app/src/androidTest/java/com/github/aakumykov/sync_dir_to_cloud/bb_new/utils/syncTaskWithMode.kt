@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTas
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 
-private fun syncTaskWithMode(syncMode: SyncMode): SyncTask = SyncTask(
+fun syncTaskWithMode(syncMode: SyncMode): SyncTask = SyncTask(
     sourcePath = SOURCE_PATH,
     targetPath = TARGET_PATH,
     sourceStorageType = STORAGE_TYPE,
@@ -21,6 +21,3 @@ private fun syncTaskWithMode(syncMode: SyncMode): SyncTask = SyncTask(
     this.sourceAuthId = AUTH_ID
     this.targetAuthId = AUTH_ID
 }
-
-val TASK_SYNC: SyncTask = syncTaskWithMode(SyncMode.SYNC)
-val TASK_MIRROR: SyncTask = syncTaskWithMode(SyncMode.MIRROR)

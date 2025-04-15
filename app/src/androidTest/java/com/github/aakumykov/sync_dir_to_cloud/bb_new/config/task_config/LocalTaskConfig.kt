@@ -2,6 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
 import android.os.Build
 import android.os.Environment
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.syncTaskWithMode
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
@@ -26,4 +28,7 @@ object LocalTaskConfig : TaskConfig {
     override val AUTH_ID = "authId1"
     override val AUTH_NAME = "test_auth_local"
     override val AUTH_TOKEN = "test_auth_token"
+
+    override val TASK_SYNC: SyncTask = syncTaskWithMode(SyncMode.SYNC)
+    override val TASK_MIRROR: SyncTask = syncTaskWithMode(SyncMode.MIRROR)
 }

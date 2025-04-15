@@ -7,8 +7,6 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTas
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.TestComponent
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestSyncTaskDAO
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TASK_MIRROR
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TASK_SYNC
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Assert
@@ -29,6 +27,9 @@ class TaskCreationDeletionTest : TestCase() {
 
     @Inject
     lateinit var dao: TestSyncTaskDAO
+
+    val taskConfig = LocalTaskConfig
+
 
     @Before
     fun prepare() {
@@ -58,7 +59,7 @@ class TaskCreationDeletionTest : TestCase() {
     fun task_adds_and_deletes() = run {
         step("При добавлении задачи добавляются, при удалении удаляются") {
             step("Проверка добавления задания") {
-                dao.add(TASK_SYNC)
+                dao.add(taskConfig.TASK_SYNC)
                 Assert.assertEquals(1, dao.count())
             }
             step("Проверка удаления") {
@@ -73,7 +74,7 @@ class TaskCreationDeletionTest : TestCase() {
     @Test
     fun when_add_sync_task_then_count_equals_one() {
         dao.apply {
-            add(TASK_SYNC)
+            add(taskConfig.TASK_SYNC)
             Assert.assertEquals(1, dao.count())
         }
     }
@@ -84,7 +85,7 @@ class TaskCreationDeletionTest : TestCase() {
 
         dao.apply {
             deleteAll()
-            add(TASK_SYNC)
+            add(taskConfig.TASK_SYNC)
             Assert.assertEquals(
                 dao.get(TASK_ID)?.syncMode,
                 SyncMode.SYNC
@@ -93,7 +94,7 @@ class TaskCreationDeletionTest : TestCase() {
 
         dao.apply {
             deleteAll()
-            add(TASK_MIRROR)
+            add(taskConfig.TASK_MIRROR)
             Assert.assertEquals(
                 dao.get(TASK_ID)?.syncMode,
                 SyncMode.MIRROR
