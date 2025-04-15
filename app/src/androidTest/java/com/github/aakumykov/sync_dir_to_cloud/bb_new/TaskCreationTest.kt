@@ -1,21 +1,19 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.SyncTaskTestCase
-import org.junit.Assert
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.CreateTaskScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.DeleteTaskScenario
+import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Test
 
-class TaskCreationTest : SyncTaskTestCase() {
+class TaskCreationTest : TestCase() {
 
     @Test
-    fun creatingTask() = run {
-        createTask()
-        checkTaskExists()
+    fun createTask() = run {
+        scenario(CreateTaskScenario())
     }
 
-
     @Test
-    fun deletingTask() = run {
-        deleteTask()
-        checkTaskNotExists()
+    fun deleteTask() = run {
+        scenario(DeleteTaskScenario())
     }
 }
