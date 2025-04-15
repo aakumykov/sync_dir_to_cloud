@@ -10,14 +10,15 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TASK_MIRROR
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TASK_SYNC
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
+import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
 
-@RunWith(AndroidJUnit4::class)
-class TaskCreationDeletionTest {
+
+class TaskCreationDeletionTest : TestCase() {
 
     //
     // Создание.
@@ -53,10 +54,21 @@ class TaskCreationDeletionTest {
     }
 
 
-    /*@Test
-    fun task_adds_and_deletes() {
+    @Test
+    fun task_adds_and_deletes() = run {
+        step("При добавлении задачи добавляются, при удалении удаляются") {
+            step("Проверка добавления задания") {
+                dao.add(TASK_SYNC)
+                Assert.assertEquals(1, dao.count())
+            }
+            step("Проверка удаления") {
+                dao.delete(TASK_ID)
+                Assert.assertEquals(0, dao.count())
+                Assert.assertNull(dao.get(TASK_ID))
+            }
+        }
+    }
 
-    }*/
 
     @Test
     fun when_add_sync_task_then_count_equals_one() {
