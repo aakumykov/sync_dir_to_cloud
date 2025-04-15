@@ -16,7 +16,7 @@ android {
         versionCode 7
         versionName "0.0.7-alpha"
 
-        testInstrumentationRunner "com.github.aakumykov.sync_dir_to_cloud.bb_new.TestRunner"
+        testInstrumentationRunner "com.github.aakumykov.sync_dir_to_cloud.bb_new.system.TestRunner"
 
         kapt {
             arguments {

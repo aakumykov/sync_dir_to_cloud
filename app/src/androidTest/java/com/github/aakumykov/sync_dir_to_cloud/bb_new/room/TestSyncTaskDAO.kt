@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.room
 
 import androidx.room.Dao
 import androidx.room.Insert

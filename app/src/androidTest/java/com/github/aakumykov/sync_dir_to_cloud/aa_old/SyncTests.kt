@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_old
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.dao_set.TestDaoSet
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.test_case.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.RunSync
@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.file.creation.Crea
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.file.modification.ModifySourceFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.task.CreateLocalTask
 import com.github.aakumykov.sync_dir_to_cloud.aa_old.scenario.task.DeleteLocalTask
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.utils.TestFilesManager
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TestFilesManager
 import com.github.aakumykov.sync_dir_to_cloud.scenario.checks.file_checks.db_checks.NoSyncActionsOccurs
 import com.github.aakumykov.sync_dir_to_cloud.scenario.checks.file_checks.db_checks.SourceAndTargetFilesAreEquals
 import org.junit.Assert

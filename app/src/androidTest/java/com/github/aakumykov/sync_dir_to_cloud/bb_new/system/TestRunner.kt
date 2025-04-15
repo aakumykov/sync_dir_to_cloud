@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.system
 
 import android.app.Application
 import android.content.Context

@@ -10,14 +10,18 @@ object LocalTaskConfig : TaskConfig {
 
     override val TASK_ID = "taskId1"
     override val STORAGE_TYPE = StorageType.LOCAL
+    override val SYNC_MODE: SyncMode = SyncMode.SYNC
+    override val INTERVAL_HOURS = 0
+    override val INTERVAL_MINUTES = 0
+
     override val SOURCE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
     override val TARGET_PATH: String = File(
         Environment.getExternalStorageDirectory(),
         "d${Build.VERSION.SDK_INT}"
     ).absolutePath
-    override val SYNC_MODE: SyncMode = SyncMode.SYNC
-    override val INTERVAL_HOURS = 0
-    override val INTERVAL_MINUTES = 0
+
+    override val SOURCE_DIR: File = File(SOURCE_PATH)
+    override val TARGET_DIR: File = File(TARGET_PATH)
 
     override val AUTH_ID = "authId1"
     override val AUTH_NAME = "test_auth_local"

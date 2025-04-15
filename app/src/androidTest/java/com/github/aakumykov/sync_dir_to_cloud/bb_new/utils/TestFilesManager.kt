@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_old.utils
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig

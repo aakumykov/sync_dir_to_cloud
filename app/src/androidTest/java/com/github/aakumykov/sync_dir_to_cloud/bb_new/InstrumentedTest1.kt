@@ -4,11 +4,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.TestComponent
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TASK_SYNC
 import org.junit.Assert
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
