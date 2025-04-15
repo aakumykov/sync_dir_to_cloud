@@ -15,7 +15,7 @@ class CreateSourceFile(fileConfig: FileConfig) : FileScenario() {
 
         step("Создание тестового файла '$fileName' размером $fileSize в источнике") {
             runTest {
-                testFilesManager.createFileInSource(fileName, fileSize).also {
+                testFileManager.createFileInSource(fileName, fileSize).also {
                     Assert.assertTrue(it.exists())
                     Assert.assertEquals(fileSize, it.length().toInt())
                 }

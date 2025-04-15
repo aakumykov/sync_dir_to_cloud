@@ -8,7 +8,7 @@ class DeleteSourceFile(fileName: String) : FileScenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {
         step("Удаление из источника файла '$fileName'") {
-            testFilesManager.deleteFileFromSource(fileName).also {
+            testFileManager.deleteFileFromSource(fileName).also {
                 Assert.assertFalse(it.exists())
             }
         }

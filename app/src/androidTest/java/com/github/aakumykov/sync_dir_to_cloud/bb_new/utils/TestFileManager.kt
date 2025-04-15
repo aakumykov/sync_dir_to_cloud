@@ -1,12 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.FileConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
 import kotlin.random.Random
 
-class TestFilesManager(private val taskConfig: TaskConfig,
-                       private val fileCofnig: LocalFileCofnig
+class TestFileManager(
+    private val taskConfig: TaskConfig = LocalTaskConfig,
+    private val fileCofnig: FileConfig = LocalFileCofnig,
 ) {
 
     val sourceFile: File

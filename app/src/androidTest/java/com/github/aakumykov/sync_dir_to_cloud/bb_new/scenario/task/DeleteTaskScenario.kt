@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig

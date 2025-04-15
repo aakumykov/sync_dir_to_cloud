@@ -15,7 +15,7 @@ class CreateTargetFile(fileConfig: FileConfig) : FileScenario() {
 
         step("Создание тестового файла '$fileName' размером $fileSize в приёмнике") {
             runTest {
-                testFilesManager.createFileInTarget(fileName, fileSize).also {
+                testFileManager.createFileInTarget(fileName, fileSize).also {
                     Assert.assertTrue(it.exists())
                     Assert.assertEquals(fileSize, it.length().toInt())
                 }

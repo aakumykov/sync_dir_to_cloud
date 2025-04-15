@@ -7,15 +7,15 @@ import org.junit.Assert
 class SourceAndTargetFilesAreEquals : FileScenario() {
     override val steps: TestContext<Unit>.() -> Unit
         get() = {
-            val sourceFile = testFilesManager.sourceFile
-            val targetFile = testFilesManager.sourceFile
+            val sourceFile = testFileManager.sourceFile
+            val targetFile = testFileManager.sourceFile
 
             Assert.assertTrue(sourceFile.exists())
             Assert.assertTrue(targetFile.exists())
 
             Assert.assertEquals(
-                testFilesManager.sourceFileContents.joinToString(""),
-                testFilesManager.targetFileContents.joinToString(""),
+                testFileManager.sourceFileContents.joinToString(""),
+                testFileManager.targetFileContents.joinToString(""),
             )
         }
 }

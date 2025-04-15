@@ -10,7 +10,7 @@ class ModifySourceFile(private val localFileCofnig: LocalFileCofnig) : FileScena
     override val steps: TestContext<Unit>.() -> Unit
         get() = {
             val newFileContents = randomBytes(15)
-            testFilesManager.modifyFileInSource(
+            testFileManager.modifyFileInSource(
                 fileName = localFileCofnig.FILE_1_NAME,
                 fileContents = newFileContents
             ).also {
