@@ -26,8 +26,8 @@ object LocalTaskConfig : TaskConfig {
     override val SOURCE_DIR: File = File(SOURCE_PATH)
     override val TARGET_DIR: File = File(TARGET_PATH)
 
-    override val TASK_SYNC: SyncTask = syncTaskWithMode(SyncMode.SYNC)
-    override val TASK_MIRROR: SyncTask = syncTaskWithMode(SyncMode.MIRROR)
+    override val TASK_SYNC: SyncTask = syncTaskWithMode(SyncMode.SYNC, this)
+    override val TASK_MIRROR: SyncTask = syncTaskWithMode(SyncMode.MIRROR, this)
 
     private val AUTH_ID = "authId1"
     override val SOURCE_AUTH_ID = AUTH_ID
