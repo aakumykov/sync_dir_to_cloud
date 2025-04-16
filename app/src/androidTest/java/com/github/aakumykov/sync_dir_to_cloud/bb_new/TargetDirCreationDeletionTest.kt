@@ -5,14 +5,14 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFil
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.TARGET_DIR
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.TestComponentHolder
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalTestFileManager
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 
 class TargetDirCreationDeletionTest() : StorageAccessTestCase() {
 
-    private val localTestFileManager by lazy { LocalTestFileManager(LocalTaskConfig, LocalFileCofnig) }
+    private val localFileHelper by lazy { LocalFileHelper(LocalTaskConfig, LocalFileCofnig) }
     private val syncTaskDAO get() = TestComponentHolder.testSyncTaskDAO
 
     @Test
