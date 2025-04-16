@@ -1,11 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.dao_set.DaoSet
-import com.github.aakumykov.sync_dir_to_cloud.aa_old.common.dao_set.TestDaoSet
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.TARGET_DIR
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.system.TestComponentHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TestFileManager
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
@@ -14,8 +13,7 @@ import org.junit.Test
 class DirsCreationTest() : StorageAccessTestCase() {
 
     private val testFileManager by lazy { TestFileManager(LocalTaskConfig, LocalFileCofnig) }
-    private val daoSet: DaoSet get() = TestDaoSet.get(device.targetContext)
-    private val syncTaskDAO get() = daoSet.syncTaskDAO
+    private val syncTaskDAO get() = TestComponentHolder.testSyncTaskDAO
 
 
     @Test

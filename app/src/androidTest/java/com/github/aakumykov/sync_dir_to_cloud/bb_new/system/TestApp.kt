@@ -15,7 +15,6 @@ class TestApp : App() {
             .contextModule(ContextModule(this))
             .applicationModule(ApplicationModule(this))
 //            .testApplicationModule(TestApplicationModule(this))
-            .roomDAOModule(RoomDAOModule(prepareAndGetAppDatabase(this.applicationContext)))
             .build()
     }
 }

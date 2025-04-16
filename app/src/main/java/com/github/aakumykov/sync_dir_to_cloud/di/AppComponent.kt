@@ -32,6 +32,7 @@ import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.BetterTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
@@ -94,6 +95,7 @@ import dagger.Component
         ContextModule::class,
         ResourcesModule::class,
         NotificationModule::class,
+        AppDatabaseModule::class,
         RoomDAOModule::class,
         SyncTaskRepositoryInterfacesModule::class,
         SyncTaskLoggerInterfacesModule::class,

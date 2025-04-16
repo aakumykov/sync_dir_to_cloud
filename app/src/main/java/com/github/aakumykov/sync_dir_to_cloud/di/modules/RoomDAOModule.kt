@@ -23,87 +23,87 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class RoomDAOModule(private val appDatabase: AppDatabase) {
+class RoomDAOModule {
 
     @Provides
-    fun provideSyncTaskDAO(): SyncTaskDAO {
+    fun provideSyncTaskDAO(appDatabase: AppDatabase): SyncTaskDAO {
         return appDatabase.getSyncTaskDAO()
     }
 
     @Provides
-    fun provideSyncTaskStateDAO(): SyncTaskStateDAO = appDatabase.getSyncTaskStateDAO()
+    fun provideSyncTaskStateDAO(appDatabase: AppDatabase): SyncTaskStateDAO = appDatabase.getSyncTaskStateDAO()
 
     @Provides
-    fun provideSyncTaskRunningTimeDAO(): SyncTaskRunningTimeDAO = appDatabase.getSyncTaskRunningTimeDAO()
+    fun provideSyncTaskRunningTimeDAO(appDatabase: AppDatabase): SyncTaskRunningTimeDAO = appDatabase.getSyncTaskRunningTimeDAO()
 
     @Provides
-    fun provideSyncTaskSchedulingStateDAO(): SyncTaskSchedulingStateDAO = appDatabase.getSyncTaskSchedulingStateDAO()
+    fun provideSyncTaskSchedulingStateDAO(appDatabase: AppDatabase): SyncTaskSchedulingStateDAO = appDatabase.getSyncTaskSchedulingStateDAO()
 
     @Provides
-    fun provideSyncTaskExecutionStateDAO(): SyncTaskSyncStateDAO = appDatabase.getSyncTaskExecutionStateDAO()
+    fun provideSyncTaskExecutionStateDAO(appDatabase: AppDatabase): SyncTaskSyncStateDAO = appDatabase.getSyncTaskExecutionStateDAO()
 
     @Provides
-    fun provideCloudAuthDAO(): CloudAuthDAO {
+    fun provideCloudAuthDAO(appDatabase: AppDatabase): CloudAuthDAO {
         return appDatabase.getCloudAuthDAO()
     }
 
     @Provides
-    fun provideSyncObjectDAO(): SyncObjectDAO {
+    fun provideSyncObjectDAO(appDatabase: AppDatabase): SyncObjectDAO {
         return appDatabase.getSyncObjectDAO()
     }
 
     @Provides
-    fun provideSyncTaskResettingDAO(): SyncTaskResettingDAO {
+    fun provideSyncTaskResettingDAO(appDatabase: AppDatabase): SyncTaskResettingDAO {
         return appDatabase.getSyncTaskResettingDAO()
     }
 
     @Provides
-    fun provideSyncObjectStateDAO(): SyncObjectStateSetterDAO {
+    fun provideSyncObjectStateDAO(appDatabase: AppDatabase): SyncObjectStateSetterDAO {
         return appDatabase.getSyncObjectStateDAO()
     }
 
     @Provides
-    fun provideSyncObjectStateResettingDAO(): SyncObjectBadStateResettingDAO {
+    fun provideSyncObjectStateResettingDAO(appDatabase: AppDatabase): SyncObjectBadStateResettingDAO {
         return appDatabase.getSyncObjectBadStateResettingDAO()
     }
 
     @Provides
-    fun provideSyncObjectResettingDAO(): BadObjectStateResettingDAO {
+    fun provideSyncObjectResettingDAO(appDatabase: AppDatabase): BadObjectStateResettingDAO {
         return appDatabase.getSyncObjectResettingDAO()
     }
 
     @Provides
-    fun provideTaskLogDAO(): SyncTaskLogDAO {
+    fun provideTaskLogDAO(appDatabase: AppDatabase): SyncTaskLogDAO {
         return appDatabase.getTaskLogDAO()
     }
 
     @Provides
-    fun provideSyncObjectLogDAO(): SyncObjectLogDAO {
+    fun provideSyncObjectLogDAO(appDatabase: AppDatabase): SyncObjectLogDAO {
         return appDatabase.getSyncObjectLogDAO()
     }
 
     @Provides
-    fun provideExecutionLogDAO(): ExecutionLogDAO {
+    fun provideExecutionLogDAO(appDatabase: AppDatabase): ExecutionLogDAO {
         return appDatabase.getExecutionLogDAO()
     }
 
     @Provides
-    fun provideSyncInstructionDAO(): SyncInstructionDAO {
+    fun provideSyncInstructionDAO(appDatabase: AppDatabase): SyncInstructionDAO {
         return appDatabase.getSyncInstructionDAO()
     }
 
     @Provides
-    fun provideComparisonStateDAO(): ComparisonStateDAO {
+    fun provideComparisonStateDAO(appDatabase: AppDatabase): ComparisonStateDAO {
         return appDatabase.getComparisonStateDAO()
     }
 
     @Provides
-    fun provideSyncInstructionDAO6(): SyncInstructionDAO6 {
+    fun provideSyncInstructionDAO6(appDatabase: AppDatabase): SyncInstructionDAO6 {
         return appDatabase.getSyncInstructionDAO6()
     }
 
     @Provides
-    fun provideSyncOperationLoggerDAO(): SyncOperationLoggerDAO {
+    fun provideSyncOperationLoggerDAO(appDatabase: AppDatabase): SyncOperationLoggerDAO {
         return appDatabase.getSyncOperationLoggerDAO()
     }
 }

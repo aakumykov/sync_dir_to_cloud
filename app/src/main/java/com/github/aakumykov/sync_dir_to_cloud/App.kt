@@ -15,32 +15,15 @@ open class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         _appComponent = createComponent()
-
-        prepareAndGetAppDatabase(this)
     }
 
     companion object {
 
         private var _appComponent: AppComponent? = null
-        private var _appDatabase: AppDatabase? = null
 
         fun getAppComponent(): AppComponent {
             return _appComponent!!
-        }
-
-        fun appDatabase(): AppDatabase {
-            return _appDatabase!!
-        }
-
-        fun prepareAndGetAppDatabase(appContext: Context): AppDatabase {
-            _appDatabase = Room
-                .databaseBuilder(appContext, AppDatabase::class.java, DbConfig.APP_DB_NAME)
-                // FIXME: убрать
-//                .fallbackToDestructiveMigration()
-                .build()
-            return _appDatabase!!
         }
     }
 
@@ -48,7 +31,6 @@ open class App : Application() {
         return DaggerAppComponent.builder()
             .contextModule(ContextModule(this.applicationContext))
             .applicationModule(ApplicationModule(this))
-            .roomDAOModule(RoomDAOModule(prepareAndGetAppDatabase(this.applicationContext)))
             .build()
     }
 
@@ -58,5 +40,3 @@ open class App : Application() {
 }
 
 val appComponent: AppComponent get() = App.getAppComponent()
-
-val appDatabase: AppDatabase get() = App.appDatabase()
