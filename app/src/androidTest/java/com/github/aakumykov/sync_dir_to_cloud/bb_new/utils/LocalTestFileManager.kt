@@ -7,27 +7,78 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConf
 import java.io.File
 import kotlin.random.Random
 
-class TestFileManager(
+open class LocalTestFileManager(
     private val taskConfig: TaskConfig = LocalTaskConfig,
-    private val fileCofnig: FileConfig = LocalFileCofnig,
+    private val fileConfig: FileConfig = LocalFileCofnig,
 ) {
 
-    val sourceFile: File
-        get() = fileInSource(fileCofnig.FILE_1_NAME)
+    val sourceFile1: File
+        get() = fileInSource(fileConfig.FILE_1_NAME)
 
-    val targetFile: File
-        get() = fileInTarget(fileCofnig.FILE_1_NAME)
+    val sourceFile2: File
+        get() = fileInSource(fileConfig.FILE_2_NAME)
+
+
+    val targetFile1: File
+        get() = fileInTarget(fileConfig.FILE_1_NAME)
+
+    val targetFile2: File
+        get() = fileInTarget(fileConfig.FILE_2_NAME)
 
 
     val sourceFileContents: ByteArray
-        get() = sourceFile.readBytes()
+        get() = sourceFile1.readBytes()
 
     val targetFileContents: ByteArray
-        get() = targetFile.readBytes()
+        get() = targetFile1.readBytes()
 
 
-    fun createFileInSource(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return createFile(fileInSource(fileName), sizeKb)
+
+    fun createSourceFile1(): File {
+        return createFileInSource(fileConfig.FILE_1_NAME, fileConfig.FILE_1_SIZE)
+    }
+
+    fun createSourceFile2(): File {
+        return createFileInSource(fileConfig.FILE_2_NAME, fileConfig.FILE_2_SIZE)
+    }
+
+
+    fun createTargetFile1(): File {
+        return createFileInTarget(fileConfig.FILE_1_NAME, fileConfig.FILE_1_SIZE)
+    }
+
+    fun createTargetFile2(): File {
+        return createFileInTarget(fileConfig.FILE_2_NAME, fileConfig.FILE_2_SIZE)
+    }
+
+
+    fun deleteSourceFile1() {
+        deleteFileFromSource(fileConfig.FILE_1_NAME)
+    }
+
+    fun deleteSourceFile2() {
+        deleteFileFromSource(fileConfig.FILE_2_NAME)
+    }
+
+
+    fun deleteTargetFile1() {
+        deleteFileFromTarget(fileConfig.FILE_1_NAME)
+    }
+
+    fun deleteTargetFile2() {
+        deleteFileFromTarget(fileConfig.FILE_2_NAME)
+    }
+
+
+    fun sourceFile1Exists(): Boolean = sourceFile1.exists()
+    fun sourceFile2Exists(): Boolean = sourceFile2.exists()
+    fun targetFile1Exists(): Boolean = targetFile1.exists()
+    fun targetFile2Exists(): Boolean = targetFile2.exists()
+
+
+
+    fun createFileInSource(name: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+        return createFile(fileInSource(name), sizeKb)
     }
 
     fun createFileInSource(fileName: String, fileContents: ByteArray): File {
@@ -104,6 +155,22 @@ class TestFileManager(
 
     fun modifyFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return createFileInTarget(fileName, sizeKb)
+    }
+
+    fun deleteSourceDir() {
+        taskConfig.SOURCE_DIR.deleteRecursively()
+    }
+
+    fun deleteTargetDir() {
+        taskConfig.TARGET_DIR.deleteRecursively()
+    }
+
+    fun createSourceDir() {
+        taskConfig.SOURCE_DIR.mkdir()
+    }
+
+    fun createTargetDir() {
+        taskConfig.TARGET_DIR.mkdir()
     }
 
     companion object {

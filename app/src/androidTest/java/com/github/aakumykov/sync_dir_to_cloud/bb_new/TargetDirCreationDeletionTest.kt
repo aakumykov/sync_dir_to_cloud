@@ -4,17 +4,16 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTest
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig.TARGET_DIR
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.system.TestComponentHolder
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.TestFileManager
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.TestComponentHolder
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalTestFileManager
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 
-class DirsCreationTest() : StorageAccessTestCase() {
+class TargetDirCreationDeletionTest() : StorageAccessTestCase() {
 
-    private val testFileManager by lazy { TestFileManager(LocalTaskConfig, LocalFileCofnig) }
+    private val localTestFileManager by lazy { LocalTestFileManager(LocalTaskConfig, LocalFileCofnig) }
     private val syncTaskDAO get() = TestComponentHolder.testSyncTaskDAO
-
 
     @Test
     fun when_recreate_target_dir_when_it_recreated() = run {
@@ -37,4 +36,6 @@ class DirsCreationTest() : StorageAccessTestCase() {
             }
         }
     }
+
+
 }
