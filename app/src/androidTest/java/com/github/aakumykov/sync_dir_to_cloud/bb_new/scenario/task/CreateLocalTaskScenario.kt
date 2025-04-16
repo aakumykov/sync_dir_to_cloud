@@ -20,9 +20,17 @@ class CreateLocalTaskScenario(
             Assert.assertNotNull(authDao.get(authId))
         }
 
+        // FIXME: проверять, что у задачи установлены AuthId
+
         step("Создание задачи с id='${taskId}'") {
             taskDao.add(taskConfig.TASK_SYNC)
-            Assert.assertNotNull(taskDao.get(taskId))
+
+            taskDao.get(taskId)?.also {
+                Assert.assertNotNull(it)
+                Assert.assertNotNull(it.sourceAuthId)
+                Assert.assertNotNull(it.targetAuthId)
+
+            } ?: throw NoSuchElementException("Нет задачи задачи с id='${taskId}'")
         }
     }
 }

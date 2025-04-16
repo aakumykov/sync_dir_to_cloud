@@ -5,12 +5,10 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTas
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.LocalFileHelperHolder
 import com.kaspersky.kaspresso.testcases.api.scenario.Scenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
-import org.junit.Assert
-import org.junit.Before
 
 
 abstract class FileScenario : Scenario() {
-    val fileManager = LocalFileHelperHolder.fileHelper
+    val fileHelper = LocalFileHelperHolder.fileHelper
     val taskConfig = LocalTaskConfig
     val fileConfig = LocalFileCofnig
 }
@@ -18,6 +16,9 @@ abstract class FileScenario : Scenario() {
 
 class CreateOneSourceFileScenario : FileScenario() {
     override val steps: TestContext<Unit>.() -> Unit = {
-
+        step("Создание одного файла в источнике") {
+            fileHelper.createSourceFile1()
+            // FIXME: по идее, нужно проверять здесь. Но зачем тогда тест FileHelper-а?
+        }
     }
 }

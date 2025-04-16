@@ -20,18 +20,20 @@ interface TaskConfig {
     val SOURCE_DIR: File
     val TARGET_DIR: File
 
+    val AUTH_ID: String
     val SOURCE_AUTH_ID: String
     val TARGET_AUTH_ID: String
 
+    val AUTH_NAME: String
     val SOURCE_AUTH_NAME: String
     val TARGET_AUTH_NAME: String
 
+    val AUTH_TOKEN: String
     val SOURCE_AUTH_TOKEN: String
     val TARGET_AUTH_TOKEN: String
 
-    val SOURCE_AUTH: CloudAuth
-    val TARGET_AUTH: CloudAuth
-
     val TASK_SYNC: SyncTask
     val TASK_MIRROR: SyncTask
+
+    val SOURCE_AUTH: CloudAuth
 }

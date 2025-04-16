@@ -22,6 +22,6 @@ fun syncTaskWithMode(
     intervalMinutes = taskConfig.INTERVAL_MINUTES,
 ).apply {
     id = taskConfig.TASK_ID
-    this.sourceAuthId = taskConfig.SOURCE_AUTH_ID
-    this.targetAuthId = taskConfig.TARGET_AUTH_ID
+    sourceAuthId = taskConfig.SOURCE_AUTH_ID
+    targetAuthId = taskConfig.TARGET_AUTH_ID
 }

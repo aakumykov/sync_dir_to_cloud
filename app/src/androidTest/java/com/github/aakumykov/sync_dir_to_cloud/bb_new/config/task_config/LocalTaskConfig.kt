@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
 import android.os.Build
 import android.os.Environment
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.syncTaskWithMode
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -10,6 +11,10 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
 object LocalTaskConfig : TaskConfig {
+
+    init {
+        Log.d("LocalTaskConfig","init{}")
+    }
 
     override val TASK_ID = "taskId1"
     override val STORAGE_TYPE = StorageType.LOCAL
@@ -26,28 +31,25 @@ object LocalTaskConfig : TaskConfig {
     override val SOURCE_DIR: File = File(SOURCE_PATH)
     override val TARGET_DIR: File = File(TARGET_PATH)
 
-    override val TASK_SYNC: SyncTask = syncTaskWithMode(SyncMode.SYNC, this)
-    override val TASK_MIRROR: SyncTask = syncTaskWithMode(SyncMode.MIRROR, this)
+    override val TASK_SYNC: SyncTask get() = syncTaskWithMode(SyncMode.SYNC, this)
+    override val TASK_MIRROR: SyncTask get() = syncTaskWithMode(SyncMode.MIRROR, this)
 
-    private val AUTH_ID = "authId1"
-    override val SOURCE_AUTH_ID = AUTH_ID
-    override val TARGET_AUTH_ID: String = AUTH_ID
+    override val AUTH_ID = "authId1"
+    override val SOURCE_AUTH_ID: String get() = AUTH_ID
+    override val TARGET_AUTH_ID: String get() = AUTH_ID
 
-    private val AUTH_NAME = "test_auth_local"
+    override val AUTH_NAME = "test_auth_local"
     override val TARGET_AUTH_NAME: String = AUTH_NAME
     override val SOURCE_AUTH_NAME = AUTH_NAME
 
-    private val AUTH_TOKEN = "test_auth_token"
+    override val AUTH_TOKEN = "test_auth_token"
     override val SOURCE_AUTH_TOKEN = AUTH_TOKEN
     override val TARGET_AUTH_TOKEN = AUTH_TOKEN
 
-    private val localAuth = CloudAuth(
+    override val SOURCE_AUTH: CloudAuth = CloudAuth(
         id = SOURCE_AUTH_ID,
         name = SOURCE_AUTH_NAME,
-        storageType = STORAGE_TYPE,
-        authToken = SOURCE_AUTH_TOKEN
+        authToken = SOURCE_AUTH_TOKEN,
+        storageType = STORAGE_TYPE
     )
-
-    override val SOURCE_AUTH: CloudAuth = localAuth
-    override val TARGET_AUTH: CloudAuth = localAuth
 }
