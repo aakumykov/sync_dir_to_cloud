@@ -1,10 +1,9 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.room
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 
 @Dao
 interface TestSyncTaskDAO {

@@ -3,8 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.system
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.TestComponent
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestCloudAuthDAO
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestSyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
 
 object TestComponentHolder {
 
