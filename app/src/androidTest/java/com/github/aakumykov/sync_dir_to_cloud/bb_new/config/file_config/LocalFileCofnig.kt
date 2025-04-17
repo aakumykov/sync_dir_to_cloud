@@ -9,6 +9,10 @@ object LocalFileCofnig : FileConfig {
         get() = "file2.txt"
 
 
+    override val DEFAULT_FILE_SIZE: Int
+        get() = 10
+
+
     override val FILE_1_SIZE: Int
         get() = 10
 
