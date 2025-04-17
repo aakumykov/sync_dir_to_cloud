@@ -31,12 +31,14 @@ object LocalTaskConfig : TaskConfig {
     override val SOURCE_DIR: File = File(SOURCE_PATH)
     override val TARGET_DIR: File = File(TARGET_PATH)
 
+    // Геттеры у TASK_SYNC и TASK_MIRROR необходимы: без них
+    // создаваемая задача не имеет ряд полей, которые инициализируются ниже.
     override val TASK_SYNC: SyncTask get() = syncTaskWithMode(SyncMode.SYNC, this)
     override val TASK_MIRROR: SyncTask get() = syncTaskWithMode(SyncMode.MIRROR, this)
 
     override val AUTH_ID = "authId1"
-    override val SOURCE_AUTH_ID: String get() = AUTH_ID
-    override val TARGET_AUTH_ID: String get() = AUTH_ID
+    override val SOURCE_AUTH_ID: String = AUTH_ID
+    override val TARGET_AUTH_ID: String = AUTH_ID
 
     override val AUTH_NAME = "test_auth_local"
     override val TARGET_AUTH_NAME: String = AUTH_NAME
