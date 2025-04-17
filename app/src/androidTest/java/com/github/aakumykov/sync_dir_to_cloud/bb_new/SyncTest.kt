@@ -2,12 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.LocalFileHelperHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateOneSourceFileScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.deletion.DeleteAllFilesInSourceScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.deletion.DeleteAllFilesInTargetScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -19,22 +20,26 @@ class SyncTest : StorageAccessTestCase() {
     // TODO: передавать каталог источника, не равный системному!
 
     @Before
-    fun deleteAllFilesInSource() {
-        // TODO: сделать!
+    fun deleteLocalTask() = run {
+        scenario(DeleteLocalTaskScenario())
+        scenario(CreateLocalTaskScenario())
     }
 
-    @After
-    fun deleteAllFilesInTarget() {
-        // TODO: сделать!
+
+    @Before
+    fun deleteAllFilesInSourceAndTarget() = run {
+        scenario(DeleteAllFilesInSourceScenario())
+        scenario(DeleteAllFilesInTargetScenario())
     }
+
 
     @Test
     fun syncOneFile() = run {
         runBlocking {
-            scenario(CreateLocalTaskScenario())
             scenario(CreateOneSourceFileScenario())
             scenario(RunSyncScenario())
             Assert.assertTrue(fileHelper.targetFile1Exists())
+            // TODO: выводить содержимое файлов до и после
         }
     }
 }
