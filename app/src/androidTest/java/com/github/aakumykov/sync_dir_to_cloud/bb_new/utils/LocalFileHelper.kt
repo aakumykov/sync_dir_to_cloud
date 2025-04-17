@@ -12,17 +12,17 @@ open class LocalFileHelper(
     private val fileConfig: FileConfig = LocalFileCofnig,
 ) {
 
-    private val sourceFile1: File
+    val sourceFile1: File
         get() = fileInSource(fileConfig.FILE_1_NAME)
 
-    private val sourceFile2: File
+    val sourceFile2: File
         get() = fileInSource(fileConfig.FILE_2_NAME)
 
 
-    private val targetFile1: File
+    val targetFile1: File
         get() = fileInTarget(fileConfig.FILE_1_NAME)
 
-    private val targetFile2: File
+    val targetFile2: File
         get() = fileInTarget(fileConfig.FILE_2_NAME)
 
 
