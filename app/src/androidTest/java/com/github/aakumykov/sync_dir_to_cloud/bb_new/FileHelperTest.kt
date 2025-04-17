@@ -3,8 +3,12 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.LocalFileHelperHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
+import java.util.UUID
 
 
 //
@@ -104,6 +108,43 @@ class FileHelperTest : StorageAccessTestCase() {
         step("Удаление файла-2  в приёмнике") {
             fileHelper.deleteTargetFile2()
             Assert.assertFalse(fileHelper.targetFile2Exists())
+        }
+    }
+
+
+    @Test
+    fun deleteFilesInDir() = run {
+        step("Создание тестового каталога с содержимым и удаление этого содержимого") {
+
+            val dir0 = File(device.targetContext.cacheDir, randomName)
+
+            step("Создание начального каталога ('${dir0.absolutePath}')") {
+                dir0.mkdirs()
+                Assert.assertTrue(dir0.exists())
+
+                val file1 = File(dir0, randomName)
+                step("Создание файла в начальном каталоге ('${file1.absolutePath}')") {
+                    file1.writeBytes(randomBytes(10))
+                    Assert.assertTrue(file1.exists())
+                }
+
+                val dir1 = File(dir0, randomName)
+                step("Создание подкаталога ('${dir1.absolutePath}')") {
+                    dir1.mkdir()
+                    Assert.assertTrue(dir1.exists())
+
+                    val file2 = File(dir1, randomName)
+                    step("Создание файла в подкаталоге ('${file2.absolutePath}')") {
+                        file2.writeBytes(randomBytes(5))
+                        Assert.assertTrue(file2.exists())
+                    }
+                }
+
+                step("Удаление содержимого начального каталога ('${dir0.absolutePath}')") {
+                    fileHelper.deleteAllFilesInDir(dir0)
+                    Assert.assertEquals(0, dir0.list()?.size ?: -1)
+                }
+            }
         }
     }
 }

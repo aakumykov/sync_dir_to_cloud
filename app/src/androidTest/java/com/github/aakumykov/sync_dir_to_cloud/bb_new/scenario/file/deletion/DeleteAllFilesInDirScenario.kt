@@ -9,21 +9,11 @@ import java.io.File
 abstract class DeleteAllFilesInDirScenario : FileScenario() {
 
     abstract val dir: File
-    
+
     override val steps: TestContext<Unit>.() -> Unit = {
         step("Удаление содержимого каталога '${dir.absolutePath}'") {
-            deleteAllFilesInDirWithCheck(dir)
-            Assert.assertEquals(0, dir.list()?.size ?: 0)
-        }
-    }
-
-    private fun deleteAllFilesInDirWithCheck(dir: File) {
-
-        if (!dir.isDirectory)
-            throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
-
-        dir.listFiles()?.forEach {
-            it.deleteRecursively()
+            fileHelper.deleteAllFilesInDir(dir)
+            Assert.assertEquals(0, dir.list()?.size ?: -1)
         }
     }
 }

@@ -88,6 +88,18 @@ open class LocalFileHelper(
     }
 
 
+
+    fun deleteAllFilesInDir(dir: File) {
+        if (!dir.isDirectory)
+            throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
+
+        dir.listFiles()?.forEach {
+            it.deleteRecursively()
+        }
+    }
+
+
+
     fun sourceFile1Exists(): Boolean = sourceFile1.exists()
 
     fun sourceFile2Exists(): Boolean = sourceFile2.exists()
