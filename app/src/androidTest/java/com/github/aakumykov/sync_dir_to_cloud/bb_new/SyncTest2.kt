@@ -34,16 +34,17 @@ class SyncTest2 : StorageAccessTestCase() {
     //
     // Не выдумываю фантастических сценариев, воспроизвожу реалистичный
     //
-    /*
-    1) Файл появляется в источнике.
-    1.1) Меняется в источнике
-    1.2) Меняется в приёмнике
-    1.3) Меняется и там, и там
-    1.4) Удаляется в источнике
-    1.5) Удаляется в приёмнике
-    1.6) Удаляется и там, и там
-    2) Файл появляется в приёмнике.
-    2ю)
+    /**
+    0) Нет файлов ни там, ни там [sync_two_empty_dirs]
+    1) Файл появляется в источнике [new_file_in_source]
+    1.1) Меняется в источнике [modified_file_in_source_unchanged_in_target]
+    1.2) Меняется в приёмнике [modified_file_in_target_and_unchanged_in_source]
+    1.3) Меняется и там, и там [modified_file_in_source_and_modified_in_target]
+    1.4) Удаляется в источнике [file_deleted_in_target]
+    1.5) Удаляется в приёмнике [file_deleted_in_source]
+    1.6) Удаляется и там, и там [file_deleted_in_source_and_target]
+    2) Файл появляется в приёмнике [new_file_in_target]
+    ...)
 
      */
 
@@ -77,15 +78,125 @@ class SyncTest2 : StorageAccessTestCase() {
         scenario(RunSync())
     }
 
+    private fun syncAndCheckFile1Equals() {
+        sync()
+        Assert.assertEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
+    }
+
+
     @Test
     fun new_file_in_source() {
         fileHelper.createSourceFile1()
         sync()
-        Assert.assertEquals(fileHelper.sourceFile1Content(),fileHelper.targetFile1Content())
+        Assert.assertEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
     }
+
 
     @Test
     fun modified_file_in_source_unchanged_in_target() {
 
+        new_file_in_source()
+
+        fileHelper.modifySourceFile1()
+        Assert.assertNotEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
+
+        syncAndCheckFile1Equals()
+    }
+
+
+    @Test
+    fun modified_file_in_target_and_unchanged_in_source() {
+
+        new_file_in_source()
+
+        fileHelper.modifyTargetFile1()
+        Assert.assertNotEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
+
+        sync()
+        syncAndCheckFile1Equals()
+    }
+
+
+    @Test
+    fun modified_file_in_source_and_modified_in_target() {
+
+        new_file_in_source()
+
+        fileHelper.modifyTargetFile1()
+        fileHelper.modifySourceFile1()
+        Assert.assertNotEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
+
+        sync()
+        syncAndCheckFile1Equals()
+    }
+
+
+    @Test
+    fun file_deleted_in_target() {
+
+        new_file_in_source()
+
+        fileHelper.deleteTargetFile1()
+        Assert.assertFalse(fileHelper.targetFile1Exists())
+
+        sync()
+        syncAndCheckFile1Equals()
+    }
+
+
+    @Test
+    fun file_deleted_in_source() {
+
+        new_file_in_source()
+
+        fileHelper.deleteSourceFile1()
+        Assert.assertFalse(fileHelper.sourceFile1Exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.targetFile1Exists())
+    }
+
+
+    @Test
+    fun file_deleted_in_source_and_target() {
+
+        new_file_in_source()
+
+        fileHelper.deleteSourceFile1()
+        Assert.assertFalse(fileHelper.sourceFile1Exists())
+
+        fileHelper.deleteTargetFile1()
+        Assert.assertFalse(fileHelper.targetFile1Exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.sourceFile1Exists())
+        Assert.assertFalse(fileHelper.targetFile1Exists())
+    }
+
+
+    @Test
+    fun new_file_in_target() {
+
+        new_file_in_source()
+
+        fileHelper.createTargetFile2()
+
+        sync()
+        Assert.assertFalse(fileHelper.sourceFile2Exists())
     }
 }
