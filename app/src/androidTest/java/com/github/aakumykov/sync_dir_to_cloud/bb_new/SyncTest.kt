@@ -128,4 +128,83 @@ class SyncTest : StorageAccessTestCase() {
             fileHelper.targetFile1Content(),
         )
     }
+
+    @Test
+    fun kak_ya_hochu() {
+        /*
+        // Синхронизация Отсутствующего с Отсутствующим
+        sync()
+        Assert.assertEquals(0, fileHelper.listSource())
+        Assert.assertEquals(0, fileHelper.listTarget())
+
+        // Синхронизация Отсутствующего с Прежним
+        val file = createTargetFile(fileName)
+        sync()
+        markTargetFileAs(UNCHANGED, fileName)
+        sync()
+        // checkSourceIsEmpty()
+        Assert.assertEquals(0, fileHelper.listSource())
+        checkFilesEquals(file, fileHelper.targetFile1)
+
+
+        // Синхронизация Отсутствующего с Новым
+        val file = createTargetFile(fileName)
+        markTargetFileAs(NEW, fileName)
+        sync()
+        // checkSourceIsEmpty()
+        Assert.assertEquals(0, fileHelper.listSource())
+        checkFilesEquals(file, fileHelper.targetFile1)
+
+
+        // Синхронизация Отсутствующего с Изменённым
+        val file = createTargetFile(fileName)
+        markTargetFileAs(MODIFIED, fileName)
+        sync()
+        // checkSourceIsEmpty()
+        Assert.assertEquals(0, fileHelper.listSource())
+        checkFilesEquals(file, fileHelper.targetFile1)
+
+
+        // Простая синхронизация (Синхронизация
+        createSourceFile(fileName)
+        sync()
+        checkFilesAreEquals(fileName, fileName)
+
+
+        // Синхронизация Прежнего с Новым
+        createSourceFile(fileName)
+
+        sync()
+        checkFilesAreEquals(fileName, fileName)
+
+        markTargetFileAs(NEW, fileName)
+
+        sync()
+        checkFilesAreEquals(fileName, fileName)
+
+
+        // Синхронизация Прежнего с Изменённым
+        createSourceFile(fileName)
+
+        sync()
+        checkFilesAreEquals(fileName, fileName)
+
+        modifyTargetFile(fileName)
+
+        sync()
+        checkFilesAreEquals(fileName, fileName)
+
+
+        // Синхронизация Прежнего с Удалённым
+        createSourceFile(fileName)
+
+        sync()
+        checkFilesAreEquals(fileName, fileName)
+
+        deleteTargetFile(fileName)
+
+        sync()
+        checkFilesAreEquals(fileName, fileName)
+         */
+    }
 }
