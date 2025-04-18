@@ -98,8 +98,10 @@ class SyncTest2 : StorageAccessTestCase() {
     }
 
 
+    // Ошибочный при массовом запуске
+    // Ошибочный при индивидуальном запуске
     @Test
-    fun modified_file_in_source_unchanged_in_target() {
+    fun e1_e2_modified_file_in_source_unchanged_in_target() {
 
         new_file_in_source()
 
@@ -113,8 +115,10 @@ class SyncTest2 : StorageAccessTestCase() {
     }
 
 
+    // Ошибочный при массовом запуске
+    // Ошибочный при индивидуальном запуске
     @Test
-    fun modified_file_in_target_and_unchanged_in_source() {
+    fun e1_e2_modified_file_in_target_and_unchanged_in_source() {
 
         new_file_in_source()
 
@@ -129,8 +133,14 @@ class SyncTest2 : StorageAccessTestCase() {
     }
 
 
+    // Запустился при массовом запуске после [sync_two_empty_dirs].
+    // Запустился при индивидуальном запуске.
+
+    // Ошибочный при массовом запуске после [sync_two_empty_dirs].
+    // Запустился при индивидуальном запуске.
+    // Ошибочный при индивидуальном запуске.
     @Test
-    fun modified_file_in_source_and_modified_in_target() {
+    fun e1_e2_modified_file_in_source_and_modified_in_target() {
 
         new_file_in_source()
 
