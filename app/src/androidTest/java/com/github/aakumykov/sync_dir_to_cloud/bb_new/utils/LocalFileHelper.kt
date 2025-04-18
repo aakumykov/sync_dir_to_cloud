@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFil
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
+import java.io.IOException
 import kotlin.random.Random
 
 open class LocalFileHelper(
@@ -205,6 +206,23 @@ open class LocalFileHelper(
 
     fun targetFile1Content(): String = targetFile1.readBytes().joinToString("")
     fun targetFile2Content(): String = targetFile2.readBytes().joinToString("")
+
+
+    // TODO: тестировать
+    fun listSourceDir(): Array<out File> {
+        return listDir(taskConfig.SOURCE_DIR)
+    }
+
+    // TODO: тестировать
+    fun listTargetDir(): Array<out File> {
+        return listDir(taskConfig.TARGET_DIR)
+    }
+
+    // TODO: тестировать
+    private fun listDir(dir: File): Array<out File> {
+        return dir.listFiles()
+            ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
+    }
 
     companion object {
         const val DEFAULT_FILE_SIZE_KB = 10
