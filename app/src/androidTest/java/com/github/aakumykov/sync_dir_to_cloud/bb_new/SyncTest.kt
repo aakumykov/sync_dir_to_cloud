@@ -1,20 +1,18 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import android.provider.CalendarContract
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.LocalFileHelperHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateFirstSourceFileScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateFirstTargetFileScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateSecondSourceFileScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateSourceFileScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateSourceFile
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.MarkTargetFileAsNew
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.deletion.DeleteAllFilesInSourceScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.deletion.DeleteAllFilesInTargetScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSync
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
@@ -46,7 +44,7 @@ class SyncTest : StorageAccessTestCase() {
     fun syncOneFile() = run {
         runBlocking {
             scenario(CreateFirstSourceFileScenario())
-            scenario(RunSyncScenario())
+            scenario(RunSync())
             // TODO: сравнивать содержимое файлов
             Assert.assertTrue(fileHelper.targetFile1Exists())
             // TODO: выводить содержимое файлов до и после
@@ -60,7 +58,7 @@ class SyncTest : StorageAccessTestCase() {
             scenario(CreateFirstSourceFileScenario())
             scenario(CreateSecondSourceFileScenario())
 
-            scenario(RunSyncScenario())
+            scenario(RunSync())
 
             Assert.assertTrue(fileHelper.targetFile1Exists())
             Assert.assertTrue(fileHelper.targetFile2Exists())
@@ -79,7 +77,7 @@ class SyncTest : StorageAccessTestCase() {
                 fileHelper.targetFile1Content(),
             )
 
-            scenario(RunSyncScenario())
+            scenario(RunSync())
 
             Assert.assertTrue(fileHelper.sourceFile1Exists())
             Assert.assertTrue(fileHelper.targetFile1Exists())
@@ -102,7 +100,7 @@ class SyncTest : StorageAccessTestCase() {
             val oldModificationTime: Long = fileHelper.targetFile1.lastModified()
             val oldContent = fileHelper.targetFile1Content()
 
-            scenario(RunSyncScenario())
+            scenario(RunSync())
 
             val newModificationTime: Long = fileHelper.targetFile1.lastModified()
             val newContent = fileHelper.targetFile1Content()
@@ -117,8 +115,17 @@ class SyncTest : StorageAccessTestCase() {
     //
     @Test
     fun sync_unchanged_and_new_file() = run {
-        scenario(CreateSourceFileScenario(fileConfig.FILE_1_NAME, StateInStorage.UNCHANGED))
-        scenario(RunSyncScenario())
+        scenario(CreateSourceFile(fileConfig.FILE_1_NAME))
+        scenario(RunSync())
+        Assert.assertTrue(fileHelper.targetFile1Exists())
 
+        fileHelper.modifyTargetFile1()
+        scenario(MarkTargetFileAsNew(fileConfig.FILE_1_NAME))
+        scenario(RunSync())
+
+        Assert.assertEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content(),
+        )
     }
 }

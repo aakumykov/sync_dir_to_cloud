@@ -118,7 +118,7 @@ open class LocalFileHelper(
         return createFile(fileInSource(fileName), fileContents)
     }
 
-    private fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+    fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return createFile(fileInTarget(fileName), sizeKb)
     }
 

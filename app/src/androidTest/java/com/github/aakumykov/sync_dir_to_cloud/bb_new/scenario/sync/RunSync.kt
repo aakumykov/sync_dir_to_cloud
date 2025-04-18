@@ -4,9 +4,8 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTas
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 
-class RunSyncScenario(
+class RunSync(
     private val taskConfig: TaskConfig = LocalTaskConfig
 ) : SyncScenario() {
 
