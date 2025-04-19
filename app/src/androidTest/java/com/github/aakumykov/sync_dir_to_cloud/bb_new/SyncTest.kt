@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert

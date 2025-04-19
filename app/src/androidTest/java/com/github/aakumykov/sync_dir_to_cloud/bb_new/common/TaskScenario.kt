@@ -1,6 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.common
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.common
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.TestComponentHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO

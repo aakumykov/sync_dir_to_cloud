@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName

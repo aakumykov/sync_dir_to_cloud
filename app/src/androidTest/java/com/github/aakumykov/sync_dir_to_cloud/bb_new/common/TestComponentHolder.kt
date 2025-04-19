@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.objects
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.common
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.sync_dir_to_cloud.App
