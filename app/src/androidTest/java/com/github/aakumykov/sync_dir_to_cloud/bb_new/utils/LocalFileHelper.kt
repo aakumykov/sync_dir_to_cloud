@@ -14,6 +14,11 @@ open class LocalFileHelper(
     private val taskConfig: TaskConfig = LocalTaskConfig(),
     private val fileConfig: FileConfig = LocalFileCofnig,
 ) {
+    val sourceDir: File
+        get() = taskConfig.SOURCE_DIR
+
+    val targetDir: File
+        get() = taskConfig.TARGET_DIR
 
     val sourceFile1: File
         get() = fileInSource(fileConfig.FILE_1_NAME)
@@ -195,11 +200,12 @@ open class LocalFileHelper(
         taskConfig.TARGET_DIR.deleteRecursively()
     }
 
-    private fun createSourceDir() {
+    // FIXME: Не тестировано. А нужно ли их тестировать?
+    fun createSourceDir() {
         taskConfig.SOURCE_DIR.mkdir()
     }
 
-    private fun createTargetDir() {
+    fun createTargetDir() {
         taskConfig.TARGET_DIR.mkdir()
     }
 
@@ -224,6 +230,26 @@ open class LocalFileHelper(
     private fun listDir(dir: File): Array<out File> {
         return dir.listFiles()
             ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
+    }
+
+    fun targetDirExists(): Boolean = targetDir.exists()
+
+    fun sourceDirExists(): Boolean = sourceDir.exists()
+
+    fun deleteAllFilesInSource() {
+        deleteAllFilesInDir(sourceDir)
+    }
+
+    fun deleteAllFilesInTarget() {
+        deleteAllFilesInDir(targetDir)
+    }
+
+    fun sourceDirIsEmpty(): Boolean {
+        return sourceDir.list()?.isEmpty() ?: false
+    }
+
+    fun targetDirIsEmpty(): Boolean {
+        return targetDir.list()?.isEmpty() ?: false
     }
 
     companion object {

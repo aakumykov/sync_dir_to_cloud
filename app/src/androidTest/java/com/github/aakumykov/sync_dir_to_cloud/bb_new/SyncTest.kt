@@ -1,7 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.DeleteAllFilesInSourceScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.DeleteAllFilesInTargetScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
@@ -20,17 +18,29 @@ class SyncTest : StorageAccessTestCase() {
 
 
     @Before
-    fun deleteLocalTask() = run {
+    fun reCreateLocalTask() = run {
         scenario(DeleteLocalTaskScenario())
         scenario(CreateLocalTaskScenario())
     }
 
 
     @Before
-    fun deleteAllFilesInSourceAndTarget() = run {
-        scenario(DeleteAllFilesInSourceScenario())
-        scenario(DeleteAllFilesInTargetScenario())
+    fun prepareSourceAndTargetDirs() = run {
+        fileHelper.createSourceDir()
+        Assert.assertTrue(fileHelper.sourceDirExists())
+
+        fileHelper.createTargetDir()
+        Assert.assertTrue(fileHelper.targetDirExists())
+
+        fileHelper.deleteAllFilesInSource()
+        Assert.assertTrue(fileHelper.sourceDirIsEmpty())
+
+        fileHelper.deleteAllFilesInTarget()
+        Assert.assertTrue(fileHelper.targetDirIsEmpty())
     }
+
+    @Test
+    fun emptyTest() {}
 
 
     //

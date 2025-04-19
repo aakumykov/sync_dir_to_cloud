@@ -1,9 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
-import android.os.Build
-import android.os.Environment
-import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.apiDirInDownloads
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultSourceDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultTargetDir
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.syncTaskWithMode
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -11,7 +9,10 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
-class LocalTaskConfig(sourceDir: File = apiDirInDownloads) : TaskConfig {
+class LocalTaskConfig(
+    sourceDir: File = defaultSourceDir,
+    targetDir: File = defaultTargetDir
+) : TaskConfig {
 
     override val TASK_ID = "taskId1"
     override val STORAGE_TYPE = StorageType.LOCAL
@@ -20,14 +21,10 @@ class LocalTaskConfig(sourceDir: File = apiDirInDownloads) : TaskConfig {
     override val INTERVAL_MINUTES = 0
 
     override val SOURCE_PATH = sourceDir.absolutePath
+    override val TARGET_PATH: String = targetDir.absolutePath
 
-    override val TARGET_PATH: String = File(
-        Environment.getExternalStorageDirectory(),
-        "d${Build.VERSION.SDK_INT}"
-    ).absolutePath
-
-    override val SOURCE_DIR: File = File(SOURCE_PATH)
-    override val TARGET_DIR: File = File(TARGET_PATH)
+    override val SOURCE_DIR: File = sourceDir
+    override val TARGET_DIR: File = targetDir
 
     // Геттеры у TASK_SYNC и TASK_MIRROR необходимы: без них
     // создаваемая задача не имеет ряд полей, которые инициализируются ниже.
