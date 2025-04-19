@@ -15,6 +15,8 @@ import org.junit.Test
 
 class SyncTest2 : StorageAccessTestCase() {
 
+    private val sleepTimeout: Long = 750
+
     private val fileHelper = LocalFileHelperHolder.fileHelper
 
     @Before
@@ -101,11 +103,14 @@ class SyncTest2 : StorageAccessTestCase() {
     // Ошибочный при массовом запуске
     // Ошибочный при индивидуальном запуске
     @Test
-    fun e1_e2_modified_file_in_source_unchanged_in_target() {
+    fun e1_e2_modified_file_in_source_unchanged_in_target() = run {
 
         new_file_in_source()
 
+        Thread.sleep(sleepTimeout)
+
         fileHelper.modifySourceFile1()
+
         Assert.assertNotEquals(
             fileHelper.sourceFile1Content(),
             fileHelper.targetFile1Content()
@@ -121,6 +126,8 @@ class SyncTest2 : StorageAccessTestCase() {
     fun e1_e2_modified_file_in_target_and_unchanged_in_source() {
 
         new_file_in_source()
+
+        Thread.sleep(sleepTimeout)
 
         fileHelper.modifyTargetFile1()
         Assert.assertNotEquals(
@@ -143,6 +150,8 @@ class SyncTest2 : StorageAccessTestCase() {
     fun e1_e2_modified_file_in_source_and_modified_in_target() {
 
         new_file_in_source()
+
+        Thread.sleep(sleepTimeout)
 
         fileHelper.modifyTargetFile1()
         fileHelper.modifySourceFile1()
