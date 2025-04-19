@@ -39,9 +39,6 @@ class SyncTest : StorageAccessTestCase() {
         Assert.assertTrue(fileHelper.targetDirIsEmpty())
     }
 
-    @Test
-    fun emptyTest() {}
-
 
     //
     // Не выдумываю фантастических сценариев, воспроизвожу реалистичный
@@ -66,37 +63,6 @@ class SyncTest : StorageAccessTestCase() {
         sync()
         checkSourceDirIsEmpty()
         checkTargetDirIsEmpty()
-    }
-
-
-    private fun checkSourceDirIsEmpty() {
-        checkDirIsEmpty(SyncSide.SOURCE)
-    }
-
-    private fun checkTargetDirIsEmpty() {
-        checkDirIsEmpty(SyncSide.TARGET)
-    }
-
-    private fun checkDirIsEmpty(syncSide: SyncSide) {
-        Assert.assertEquals(
-            0,
-            when(syncSide) {
-                SyncSide.SOURCE -> fileHelper.listSourceDir()
-                SyncSide.TARGET -> fileHelper.listTargetDir()
-            }.size
-        )
-    }
-
-    private fun sync() = run {
-        scenario(RunSyncScenario())
-    }
-
-    private fun syncAndCheckFile1Equals() {
-        sync()
-        Assert.assertEquals(
-            fileHelper.sourceFile1Content(),
-            fileHelper.targetFile1Content()
-        )
     }
 
 
@@ -228,5 +194,36 @@ class SyncTest : StorageAccessTestCase() {
 
         sync()
         Assert.assertFalse(fileHelper.sourceFile2Exists())
+    }
+
+
+    private fun checkSourceDirIsEmpty() {
+        checkDirIsEmpty(SyncSide.SOURCE)
+    }
+
+    private fun checkTargetDirIsEmpty() {
+        checkDirIsEmpty(SyncSide.TARGET)
+    }
+
+    private fun checkDirIsEmpty(syncSide: SyncSide) {
+        Assert.assertEquals(
+            0,
+            when(syncSide) {
+                SyncSide.SOURCE -> fileHelper.listSourceDir()
+                SyncSide.TARGET -> fileHelper.listTargetDir()
+            }.size
+        )
+    }
+
+    private fun sync() = run {
+        scenario(RunSyncScenario())
+    }
+
+    private fun syncAndCheckFile1Equals() {
+        sync()
+        Assert.assertEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
     }
 }
