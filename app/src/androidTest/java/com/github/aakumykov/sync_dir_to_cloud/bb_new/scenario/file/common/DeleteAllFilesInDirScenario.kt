@@ -1,6 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.deletion
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.common
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.common.FileScenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import org.junit.Assert
 import java.io.File

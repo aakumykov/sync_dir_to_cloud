@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.apiDirInDownloads
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.syncTaskWithMode
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -10,11 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
-object LocalTaskConfig : TaskConfig {
-
-    init {
-        Log.d("LocalTaskConfig","init{}")
-    }
+class LocalTaskConfig(sourceDir: File = apiDirInDownloads) : TaskConfig {
 
     override val TASK_ID = "taskId1"
     override val STORAGE_TYPE = StorageType.LOCAL
@@ -22,7 +19,8 @@ object LocalTaskConfig : TaskConfig {
     override val INTERVAL_HOURS = 0
     override val INTERVAL_MINUTES = 0
 
-    override val SOURCE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+    override val SOURCE_PATH = sourceDir.absolutePath
+
     override val TARGET_PATH: String = File(
         Environment.getExternalStorageDirectory(),
         "d${Build.VERSION.SDK_INT}"

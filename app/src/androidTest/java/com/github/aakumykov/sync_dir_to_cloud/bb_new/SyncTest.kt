@@ -1,30 +1,23 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.LocalFileHelperHolder
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateFirstSourceFileScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateFirstTargetFileScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateSecondSourceFileScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.CreateSourceFile
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.MarkTargetFileAsNew
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.deletion.DeleteAllFilesInSourceScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.deletion.DeleteAllFilesInTargetScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSync
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.DeleteAllFilesInSourceScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.file.DeleteAllFilesInTargetScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 class SyncTest : StorageAccessTestCase() {
 
-    private val fileHelper = LocalFileHelperHolder.fileHelper
-    private val fileConfig = LocalFileCofnig
+    private val sleepTimeout: Long = 750
 
-    // TODO: передавать каталог источника, не равный системному!
+    private val fileHelper = LocalFileHelper()
+
 
     @Before
     fun deleteLocalTask() = run {
@@ -40,171 +33,190 @@ class SyncTest : StorageAccessTestCase() {
     }
 
 
+    //
+    // Не выдумываю фантастических сценариев, воспроизвожу реалистичный
+    //
+    /**
+    0) Нет файлов ни там, ни там [sync_two_empty_dirs]
+
+    1) Файл появляется в источнике [new_file_in_source]
+    1.1) Меняется в источнике [modified_file_in_source_unchanged_in_target]
+    1.2) Меняется в приёмнике [modified_file_in_target_and_unchanged_in_source]
+    1.3) Меняется и там, и там [modified_file_in_source_and_modified_in_target]
+    1.4) Удаляется в источнике [file_deleted_in_target]
+    1.5) Удаляется в приёмнике [file_deleted_in_source]
+    1.6) Удаляется и там, и там [file_deleted_in_source_and_target]
+    2) Файл появляется в приёмнике [new_file_in_target]
+    ...)
+
+     */
+
     @Test
-    fun syncOneFile() = run {
-        runBlocking {
-            scenario(CreateFirstSourceFileScenario())
-            scenario(RunSync())
-            // TODO: сравнивать содержимое файлов
-            Assert.assertTrue(fileHelper.targetFile1Exists())
-            // TODO: выводить содержимое файлов до и после
-        }
+    fun sync_two_empty_dirs() = run {
+        sync()
+        checkSourceDirIsEmpty()
+        checkTargetDirIsEmpty()
     }
 
 
-    @Test
-    fun syncTwoFiles() = run {
-        runBlocking {
-            scenario(CreateFirstSourceFileScenario())
-            scenario(CreateSecondSourceFileScenario())
-
-            scenario(RunSync())
-
-            Assert.assertTrue(fileHelper.targetFile1Exists())
-            Assert.assertTrue(fileHelper.targetFile2Exists())
-        }
+    private fun checkSourceDirIsEmpty() {
+        checkDirIsEmpty(SyncSide.SOURCE)
     }
 
-
-    @Test
-    fun sync_one_file_overwriting_in_target() = run {
-        runTest {
-            scenario(CreateFirstSourceFileScenario())
-            scenario(CreateFirstTargetFileScenario())
-
-            Assert.assertNotEquals(
-                fileHelper.sourceFile1Content(),
-                fileHelper.targetFile1Content(),
-            )
-
-            scenario(RunSync())
-
-            Assert.assertTrue(fileHelper.sourceFile1Exists())
-            Assert.assertTrue(fileHelper.targetFile1Exists())
-
-            Assert.assertEquals(
-                fileHelper.sourceFile1Content(),
-                fileHelper.targetFile1Content(),
-            )
-        }
+    private fun checkTargetDirIsEmpty() {
+        checkDirIsEmpty(SyncSide.TARGET)
     }
 
-    //
-    // Прежний файл - Прежний файл
-    //
-    @Test
-    fun sync_two_unchanged_files() {
-        run {
-            syncOneFile()
-
-            val oldModificationTime: Long = fileHelper.targetFile1.lastModified()
-            val oldContent = fileHelper.targetFile1Content()
-
-            scenario(RunSync())
-
-            val newModificationTime: Long = fileHelper.targetFile1.lastModified()
-            val newContent = fileHelper.targetFile1Content()
-
-            Assert.assertEquals(oldModificationTime, newModificationTime)
-            Assert.assertEquals(oldContent, newContent)
-        }
-    }
-
-    //
-    // Прежний файл - Новый файл
-    //
-    @Test
-    fun sync_unchanged_and_new_file() = run {
-        scenario(CreateSourceFile(fileConfig.FILE_1_NAME))
-        scenario(RunSync())
-        Assert.assertTrue(fileHelper.targetFile1Exists())
-
-        fileHelper.modifyTargetFile1()
-        scenario(MarkTargetFileAsNew(fileConfig.FILE_1_NAME))
-        scenario(RunSync())
-
+    private fun checkDirIsEmpty(syncSide: SyncSide) {
         Assert.assertEquals(
-            fileHelper.sourceFile1Content(),
-            fileHelper.targetFile1Content(),
+            0,
+            when(syncSide) {
+                SyncSide.SOURCE -> fileHelper.listSourceDir()
+                SyncSide.TARGET -> fileHelper.listTargetDir()
+            }.size
         )
     }
 
+    private fun sync() = run {
+        scenario(RunSyncScenario())
+    }
+
+    private fun syncAndCheckFile1Equals() {
+        sync()
+        Assert.assertEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
+    }
+
+
     @Test
-    fun kak_ya_hochu() {
-        /*
-        // Синхронизация Отсутствующего с Отсутствующим
+    fun new_file_in_source() {
+        fileHelper.createSourceFile1()
         sync()
-        Assert.assertEquals(0, fileHelper.listSource())
-        Assert.assertEquals(0, fileHelper.listTarget())
-
-        // Синхронизация Отсутствующего с Прежним
-        val file = createTargetFile(fileName)
-        sync()
-        markTargetFileAs(UNCHANGED, fileName)
-        sync()
-        // checkSourceIsEmpty()
-        Assert.assertEquals(0, fileHelper.listSource())
-        checkFilesEquals(file, fileHelper.targetFile1)
+        Assert.assertEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
+    }
 
 
-        // Синхронизация Отсутствующего с Новым
-        val file = createTargetFile(fileName)
-        markTargetFileAs(NEW, fileName)
-        sync()
-        // checkSourceIsEmpty()
-        Assert.assertEquals(0, fileHelper.listSource())
-        checkFilesEquals(file, fileHelper.targetFile1)
+    // Ошибочный при массовом запуске
+    // Ошибочный при индивидуальном запуске
+    @Test
+    fun e1_e2_modified_file_in_source_unchanged_in_target() = run {
+
+        new_file_in_source()
+
+        Thread.sleep(sleepTimeout)
+
+        fileHelper.modifySourceFile1()
+
+        Assert.assertNotEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
+
+        syncAndCheckFile1Equals()
+    }
 
 
-        // Синхронизация Отсутствующего с Изменённым
-        val file = createTargetFile(fileName)
-        markTargetFileAs(MODIFIED, fileName)
-        sync()
-        // checkSourceIsEmpty()
-        Assert.assertEquals(0, fileHelper.listSource())
-        checkFilesEquals(file, fileHelper.targetFile1)
+    // Ошибочный при массовом запуске
+    // Ошибочный при индивидуальном запуске
+    @Test
+    fun e1_e2_modified_file_in_target_and_unchanged_in_source() {
 
+        new_file_in_source()
 
-        // Простая синхронизация (Синхронизация
-        createSourceFile(fileName)
-        sync()
-        checkFilesAreEquals(fileName, fileName)
+        Thread.sleep(sleepTimeout)
 
-
-        // Синхронизация Прежнего с Новым
-        createSourceFile(fileName)
-
-        sync()
-        checkFilesAreEquals(fileName, fileName)
-
-        markTargetFileAs(NEW, fileName)
+        fileHelper.modifyTargetFile1()
+        Assert.assertNotEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
 
         sync()
-        checkFilesAreEquals(fileName, fileName)
+        syncAndCheckFile1Equals()
+    }
 
 
-        // Синхронизация Прежнего с Изменённым
-        createSourceFile(fileName)
+    // Запустился при массовом запуске после [sync_two_empty_dirs].
+    // Запустился при индивидуальном запуске.
+
+    // Ошибочный при массовом запуске после [sync_two_empty_dirs].
+    // Запустился при индивидуальном запуске.
+    // Ошибочный при индивидуальном запуске.
+    @Test
+    fun e1_e2_modified_file_in_source_and_modified_in_target() {
+
+        new_file_in_source()
+
+        Thread.sleep(sleepTimeout)
+
+        fileHelper.modifyTargetFile1()
+        fileHelper.modifySourceFile1()
+        Assert.assertNotEquals(
+            fileHelper.sourceFile1Content(),
+            fileHelper.targetFile1Content()
+        )
 
         sync()
-        checkFilesAreEquals(fileName, fileName)
-
-        modifyTargetFile(fileName)
-
-        sync()
-        checkFilesAreEquals(fileName, fileName)
+        syncAndCheckFile1Equals()
+    }
 
 
-        // Синхронизация Прежнего с Удалённым
-        createSourceFile(fileName)
+    @Test
+    fun file_deleted_in_target() {
 
-        sync()
-        checkFilesAreEquals(fileName, fileName)
+        new_file_in_source()
 
-        deleteTargetFile(fileName)
+        fileHelper.deleteTargetFile1()
+        Assert.assertFalse(fileHelper.targetFile1Exists())
 
         sync()
-        checkFilesAreEquals(fileName, fileName)
-         */
+        syncAndCheckFile1Equals()
+    }
+
+
+    @Test
+    fun file_deleted_in_source() {
+
+        new_file_in_source()
+
+        fileHelper.deleteSourceFile1()
+        Assert.assertFalse(fileHelper.sourceFile1Exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.targetFile1Exists())
+    }
+
+
+    @Test
+    fun file_deleted_in_source_and_target() {
+
+        new_file_in_source()
+
+        fileHelper.deleteSourceFile1()
+        Assert.assertFalse(fileHelper.sourceFile1Exists())
+
+        fileHelper.deleteTargetFile1()
+        Assert.assertFalse(fileHelper.targetFile1Exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.sourceFile1Exists())
+        Assert.assertFalse(fileHelper.targetFile1Exists())
+    }
+
+
+    @Test
+    fun new_file_in_target() {
+
+        new_file_in_source()
+
+        fileHelper.createTargetFile2()
+
+        sync()
+        Assert.assertFalse(fileHelper.sourceFile2Exists())
     }
 }

@@ -10,7 +10,7 @@ import org.junit.Assert
 
 
 class CreateLocalTaskScenario(
-    override val taskConfig: TaskConfig = LocalTaskConfig
+    override val taskConfig: TaskConfig = LocalTaskConfig()
 ) : LocalTaskScenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {

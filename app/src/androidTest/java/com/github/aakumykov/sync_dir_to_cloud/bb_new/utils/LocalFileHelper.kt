@@ -1,5 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 
+import android.os.Build
+import android.os.Environment
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.FileConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
@@ -9,7 +11,7 @@ import java.io.IOException
 import kotlin.random.Random
 
 open class LocalFileHelper(
-    private val taskConfig: TaskConfig = LocalTaskConfig,
+    private val taskConfig: TaskConfig = LocalTaskConfig(),
     private val fileConfig: FileConfig = LocalFileCofnig,
 ) {
 

@@ -1,14 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.objects.LocalFileHelperHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.test_case.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
-import java.util.UUID
 
 
 //
@@ -17,7 +15,7 @@ import java.util.UUID
 //
 class FileHelperTest : StorageAccessTestCase() {
 
-    private val fileHelper = LocalFileHelperHolder.fileHelper
+    private val fileHelper = LocalFileHelper()
 
 
     @Test

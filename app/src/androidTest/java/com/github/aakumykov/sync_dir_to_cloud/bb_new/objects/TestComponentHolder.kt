@@ -9,10 +9,13 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
 
 object TestComponentHolder {
 
-    val testComponent: TestComponent
     val testSyncTaskDAO: TestSyncTaskDAO
     val testCloudAuthDAO: TestCloudAuthDAO
-    val testSyncObjectDAO: TestSyncObjectDAO
+
+    @Deprecated("Не используется")
+    private val testSyncObjectDAO: TestSyncObjectDAO
+
+    internal val testComponent: TestComponent
 
     init {
         val instrumentation = InstrumentationRegistry.getInstrumentation()

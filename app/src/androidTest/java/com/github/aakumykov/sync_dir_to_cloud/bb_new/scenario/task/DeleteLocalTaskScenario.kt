@@ -8,7 +8,7 @@ import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import org.junit.Assert
 
 class DeleteLocalTaskScenario(
-    override val taskConfig: TaskConfig = LocalTaskConfig
+    override val taskConfig: TaskConfig = LocalTaskConfig()
 ) : LocalTaskScenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {
