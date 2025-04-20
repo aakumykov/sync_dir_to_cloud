@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenar
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert
@@ -15,6 +16,7 @@ class SyncTest : StorageAccessTestCase() {
     private val sleepTimeoutMs: Long = 1000
 
     private val fileHelper = LocalFileHelper()
+    private val fileConfig = LocalFileCofnig
 
 
     @Before
@@ -40,6 +42,11 @@ class SyncTest : StorageAccessTestCase() {
     }
 
 
+    @Test
+    fun emptyTest() {
+
+    }
+
     //
     // Не выдумываю фантастических сценариев, воспроизвожу реалистичный
     //
@@ -62,6 +69,13 @@ class SyncTest : StorageAccessTestCase() {
     3.1) удаляется в источнике [dir_deleted_in_source]
     3.2) появляется в приёмнике [new_dir_in_target]
     3.3) появляется одноимённый в источнике. [same_dir_in_source]
+
+     4) Каталог второго уровня появляется в источнике [two_level_dir_in_source]
+     4.1) удаляется из источника [two_level_dir_deleted_from_source]
+     4.2) удаляется из приёмника [two_level_dir_deleted_from_target]
+     4.3) появляется в приёмнике [two_devel_dir_in_target]
+     4.4) одноимённый в источнике [same_two_level_dir_in_source]
+
 
      */
 
@@ -266,6 +280,62 @@ class SyncTest : StorageAccessTestCase() {
         sync()
         Assert.assertTrue(fileHelper.sourceDir1.exists())
         Assert.assertTrue(fileHelper.targetDir1.exists())
+    }
+
+    @Test
+    fun two_level_dir_in_source() {
+
+        fileHelper.createDirInSource(fileHelper.twoLevelDirName)
+        Assert.assertTrue(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
+
+        sync()
+        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+    }
+
+    @Test
+    fun two_level_dir_deleted_from_source() {
+
+        two_level_dir_in_source()
+
+        fileHelper.deleteDirFromSource(fileHelper.twoLevelDirName)
+        Assert.assertFalse(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+    }
+
+    @Test
+    fun two_level_dir_deleted_from_target() {
+
+        two_level_dir_in_source()
+
+        fileHelper.deleteDirFromTarget(fileHelper.twoLevelDirName)
+        Assert.assertFalse(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+
+        sync()
+        Assert.assertTrue(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
+        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+    }
+
+    @Test
+    fun two_devel_dir_in_target() {
+
+        fileHelper.createDirInTarget(fileHelper.twoLevelDirName)
+        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
+        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+    }
+
+    @Test
+    fun same_two_level_dir_in_source() {
+
+        two_devel_dir_in_target()
+        two_level_dir_in_source()
+
+        Assert.assertTrue(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
+        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
     }
 
 

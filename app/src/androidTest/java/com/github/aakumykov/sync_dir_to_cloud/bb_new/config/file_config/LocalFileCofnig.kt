@@ -29,4 +29,6 @@ object LocalFileCofnig : FileConfig {
     override val DIR_1_NAME: String = "dir1"
 
     override val DIR_2_NAME: String = "dir2"
+
+    override val TWO_LEVEL_DIR_NAME: String = "dir1/dir2"
 }

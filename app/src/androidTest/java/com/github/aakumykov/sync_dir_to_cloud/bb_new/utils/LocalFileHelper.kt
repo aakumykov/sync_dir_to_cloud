@@ -45,6 +45,10 @@ open class LocalFileHelper(
         get() = fileInTarget(fileConfig.DIR_2_NAME)
 
 
+    val twoLevelDirName: String
+        get() = fileConfig.TWO_LEVEL_DIR_NAME
+
+
     private val sourceFileContents: ByteArray
         get() = sourceFile1.readBytes()
 
@@ -142,11 +146,11 @@ open class LocalFileHelper(
     }
 
 
-    private fun createDirInSource(dirName: String): File {
+    fun createDirInSource(dirName: String): File {
         return createDir(taskConfig.SOURCE_PATH, dirName)
     }
 
-    private fun createDirInTarget(dirName: String): File {
+    fun createDirInTarget(dirName: String): File {
         return createDir(taskConfig.TARGET_PATH, dirName)
     }
 
@@ -166,7 +170,7 @@ open class LocalFileHelper(
 
     private fun createDir(parentDirPath: String, dirName: String): File {
         return File(parentDirPath, dirName).apply {
-            mkdir()
+            mkdirs()
         }
     }
 
@@ -281,6 +285,22 @@ open class LocalFileHelper(
 
     fun deleteSourceDir1() {
         sourceDir1.deleteRecursively()
+    }
+
+    fun dirInSource(dirName: String): File {
+        return File(taskConfig.SOURCE_PATH, dirName)
+    }
+
+    fun dirInTarget(dirName: String): File {
+        return File(taskConfig.TARGET_PATH, dirName)
+    }
+
+    fun deleteDirFromSource(dirName: String) {
+        dirInSource(dirName).deleteRecursively()
+    }
+
+    fun deleteDirFromTarget(dirName: String) {
+        dirInTarget(dirName).deleteRecursively()
     }
 
     companion object {

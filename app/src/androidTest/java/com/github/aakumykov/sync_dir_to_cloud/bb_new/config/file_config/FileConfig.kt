@@ -15,4 +15,6 @@ interface FileConfig {
 
     val DIR_1_NAME: String
     val DIR_2_NAME: String
+
+    val TWO_LEVEL_DIR_NAME: String
 }
