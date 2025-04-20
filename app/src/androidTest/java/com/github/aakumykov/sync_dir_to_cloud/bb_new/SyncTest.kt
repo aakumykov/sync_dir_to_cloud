@@ -12,7 +12,7 @@ import org.junit.Test
 
 class SyncTest : StorageAccessTestCase() {
 
-    private val sleepTimeout: Long = 750
+    private val sleepTimeoutMs: Long = 1000
 
     private val fileHelper = LocalFileHelper()
 
@@ -53,8 +53,15 @@ class SyncTest : StorageAccessTestCase() {
     1.4) Удаляется в источнике [file_deleted_in_target]
     1.5) Удаляется в приёмнике [file_deleted_in_source]
     1.6) Удаляется и там, и там [file_deleted_in_source_and_target]
+
     2) Файл появляется в приёмнике [new_file_in_target]
-    ...)
+    2.1) Другой файл появляется в источнике [other_file_in_source]
+    2.2) Одноимённый файл появляется в источнике [same_file_in_source]
+
+    3) Каталог появляется в источнике [new_dir_in_source]
+    3.1) удаляется в источнике [dir_deleted_in_source]
+    3.2) появляется в приёмнике [new_dir_in_target]
+    3.3) появляется одноимённый в источнике. [same_dir_in_source]
 
      */
 
@@ -80,11 +87,11 @@ class SyncTest : StorageAccessTestCase() {
     // Ошибочный при массовом запуске
     // Ошибочный при индивидуальном запуске
     @Test
-    fun e1_e2_modified_file_in_source_unchanged_in_target() = run {
+    fun modified_file_in_source_unchanged_in_target() = run {
 
         new_file_in_source()
 
-        Thread.sleep(sleepTimeout)
+        Thread.sleep(sleepTimeoutMs)
 
         fileHelper.modifySourceFile1()
 
@@ -100,11 +107,11 @@ class SyncTest : StorageAccessTestCase() {
     // Ошибочный при массовом запуске
     // Ошибочный при индивидуальном запуске
     @Test
-    fun e1_e2_modified_file_in_target_and_unchanged_in_source() {
+    fun modified_file_in_target_and_unchanged_in_source() {
 
         new_file_in_source()
 
-        Thread.sleep(sleepTimeout)
+        Thread.sleep(sleepTimeoutMs)
 
         fileHelper.modifyTargetFile1()
         Assert.assertNotEquals(
@@ -124,11 +131,11 @@ class SyncTest : StorageAccessTestCase() {
     // Запустился при индивидуальном запуске.
     // Ошибочный при индивидуальном запуске.
     @Test
-    fun e1_e2_modified_file_in_source_and_modified_in_target() {
+    fun modified_file_in_source_and_modified_in_target() {
 
         new_file_in_source()
 
-        Thread.sleep(sleepTimeout)
+        Thread.sleep(sleepTimeoutMs)
 
         fileHelper.modifyTargetFile1()
         fileHelper.modifySourceFile1()
@@ -187,13 +194,78 @@ class SyncTest : StorageAccessTestCase() {
 
     @Test
     fun new_file_in_target() {
-
-        new_file_in_source()
-
-        fileHelper.createTargetFile2()
+        fileHelper.createTargetFile1()
+        Assert.assertTrue(fileHelper.targetFile1.exists())
 
         sync()
-        Assert.assertFalse(fileHelper.sourceFile2Exists())
+        Assert.assertFalse(fileHelper.sourceFile1.exists())
+    }
+
+
+    @Test
+    fun other_file_in_source() {
+        new_file_in_source()
+
+        fileHelper.createSourceFile2()
+        Assert.assertTrue(fileHelper.sourceFile2.exists())
+
+        sync()
+        Assert.assertTrue(fileHelper.sourceFile1.exists())
+        Assert.assertTrue(fileHelper.targetFile2.exists())
+    }
+
+
+    @Test
+    fun same_file_in_source() {
+
+        new_file_in_target()
+
+        fileHelper.createSourceFile1()
+        sync()
+
+        Assert.assertTrue(fileHelper.sourceFile1.exists())
+        Assert.assertTrue(fileHelper.targetFile1.exists())
+    }
+
+
+    @Test
+    fun new_dir_in_source() {
+        fileHelper.createDir1InSource()
+        Assert.assertTrue(fileHelper.sourceDir1.exists())
+
+        sync()
+        Assert.assertTrue(fileHelper.targetDir1.exists())
+    }
+
+    @Test
+    fun dir_deleted_in_source() {
+        new_dir_in_source()
+
+        fileHelper.deleteSourceDir1()
+        Assert.assertFalse(fileHelper.sourceDir1.exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.targetDir1.exists())
+    }
+
+    @Test
+    fun new_dir_in_target() {
+        fileHelper.createDir1InTarget()
+        Assert.assertTrue(fileHelper.targetDir1.exists())
+
+        sync()
+        Assert.assertFalse(fileHelper.sourceDir1.exists())
+    }
+
+    @Test
+    fun same_dir_in_source() {
+        new_dir_in_target()
+
+        fileHelper.createDir1InSource()
+
+        sync()
+        Assert.assertTrue(fileHelper.sourceDir1.exists())
+        Assert.assertTrue(fileHelper.targetDir1.exists())
     }
 
 

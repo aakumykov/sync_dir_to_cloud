@@ -25,4 +25,8 @@ object LocalFileCofnig : FileConfig {
 
     override val FILE_2_SIZE_MOD: Int
         get() = 16
+
+    override val DIR_1_NAME: String = "dir1"
+
+    override val DIR_2_NAME: String = "dir2"
 }

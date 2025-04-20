@@ -12,4 +12,7 @@ interface FileConfig {
 
     val FILE_1_SIZE_MOD: Int
     val FILE_2_SIZE_MOD: Int
+
+    val DIR_1_NAME: String
+    val DIR_2_NAME: String
 }

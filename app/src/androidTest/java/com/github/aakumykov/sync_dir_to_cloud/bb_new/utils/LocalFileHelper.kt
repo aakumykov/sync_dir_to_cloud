@@ -1,13 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 
-import android.os.Build
-import android.os.Environment
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.FileConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
-import java.io.IOException
 import kotlin.random.Random
 
 open class LocalFileHelper(
@@ -32,6 +29,20 @@ open class LocalFileHelper(
 
     val targetFile2: File
         get() = fileInTarget(fileConfig.FILE_2_NAME)
+
+
+    val sourceDir1: File
+        get() = fileInSource(fileConfig.DIR_1_NAME)
+
+    val sourceDir2: File
+        get() = fileInSource(fileConfig.DIR_2_NAME)
+
+
+    val targetDir1: File
+        get() = fileInTarget(fileConfig.DIR_1_NAME)
+
+    val targetDir2: File
+        get() = fileInTarget(fileConfig.DIR_2_NAME)
 
 
     private val sourceFileContents: ByteArray
@@ -250,6 +261,26 @@ open class LocalFileHelper(
 
     fun targetDirIsEmpty(): Boolean {
         return targetDir.list()?.isEmpty() ?: false
+    }
+
+    fun createDir1InSource() {
+        sourceDir1.mkdir()
+    }
+
+    fun createDir2InSource() {
+        sourceDir2.mkdir()
+    }
+
+    fun createDir1InTarget() {
+        targetDir1.mkdir()
+    }
+
+    fun createDir2InTarget() {
+        targetDir2.mkdir()
+    }
+
+    fun deleteSourceDir1() {
+        sourceDir1.deleteRecursively()
     }
 
     companion object {
