@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import java.io.File
 
@@ -16,6 +17,22 @@ import java.io.File
 class FileHelperTest : StorageAccessTestCase() {
 
     private val fileHelper = LocalFileHelper()
+
+
+    @Before
+    fun prepareSourceAndTargetDirs() = run {
+        fileHelper.createSourceDir()
+        Assert.assertTrue(fileHelper.sourceDirExists())
+
+        fileHelper.createTargetDir()
+        Assert.assertTrue(fileHelper.targetDirExists())
+
+        fileHelper.deleteAllFilesInSource()
+        Assert.assertTrue(fileHelper.sourceDirIsEmpty())
+
+        fileHelper.deleteAllFilesInTarget()
+        Assert.assertTrue(fileHelper.targetDirIsEmpty())
+    }
 
 
     @Test
