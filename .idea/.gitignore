@@ -1,11 +1,3 @@
 # Default ignored files
 /shelf/
-/misc.xml
-/workspace.xml
-/deploymentTargetDropDown.xml
-/gradle.xml
-/deploymentTargetSelector.xml
-/dictionaries/*.xml
-/other.xml
-/androidTestResultsUserPreferences.xml
-/runConfigurations.xml
+/*.xml
