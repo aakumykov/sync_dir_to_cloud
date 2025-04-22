@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 class SyncTest : StorageAccessTestCase() {
 
@@ -65,18 +66,18 @@ class SyncTest : StorageAccessTestCase() {
     2.1) Другой файл появляется в источнике [other_file_in_source]
     2.2) Одноимённый файл появляется в источнике [same_file_in_source]
 
-    3) Каталог появляется в источнике [new_dir_in_source]
+    3) Каталог первого уровня появляется в источнике [new_dir_in_source]
     3.1) удаляется в источнике [dir_deleted_in_source]
     3.2) появляется в приёмнике [new_dir_in_target]
     3.3) появляется одноимённый в источнике. [same_dir_in_source]
 
-     4) Каталог второго уровня появляется в источнике [two_level_dir_in_source]
-     4.1) удаляется из источника [two_level_dir_deleted_from_source]
-     4.2) удаляется из приёмника [two_level_dir_deleted_from_target]
-     4.3) появляется в приёмнике [two_devel_dir_in_target]
-     4.4) одноимённый в источнике [same_two_level_dir_in_source]
+    4) Каталог второго уровня появляется в источнике [two_level_dir_in_source]
+    4.1) удаляется из источника [two_level_dir_deleted_from_source]
+    4.2) удаляется из приёмника [two_level_dir_deleted_from_target]
+    4.3) появляется в приёмнике [two_devel_dir_in_target]
+    4.4) одноимённый в источнике [same_two_level_dir_in_source]
 
-
+    5) Файл и рядом каталог с файлом [small_tree_in_source]
      */
 
     @Test
@@ -336,6 +337,30 @@ class SyncTest : StorageAccessTestCase() {
 
         Assert.assertTrue(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
         Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+    }
+
+
+    @Test
+    fun small_tree_in_source() {
+        fileHelper.createDir1InSource()
+        Assert.assertTrue(fileHelper.sourceDir1.exists())
+
+        fileHelper.createSourceFile1()
+        Assert.assertTrue(fileHelper.sourceFile1.exists())
+
+        val sourceFileIndir = File(fileHelper.sourceDir1, fileConfig.FILE_1_NAME)
+        fileHelper.createFile(sourceFileIndir)
+        Assert.assertTrue(sourceFileIndir.exists())
+
+        sync()
+
+        Assert.assertTrue(fileHelper.targetFile1.exists())
+        Assert.assertTrue(fileHelper.targetDir1.exists())
+        val targetFileIndir = File(fileHelper.sourceDir1, fileConfig.FILE_1_NAME)
+        Assert.assertTrue(targetFileIndir.exists())
+
+        Assert.assertEquals(fileHelper.sourceFile1Content(),fileHelper.targetFile1Content())
+        Assert.assertEquals(fileHelper.fileContents(sourceFileIndir),fileHelper.fileContents(targetFileIndir))
     }
 
 

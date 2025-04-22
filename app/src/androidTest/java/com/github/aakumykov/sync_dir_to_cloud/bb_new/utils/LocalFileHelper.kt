@@ -181,7 +181,7 @@ open class LocalFileHelper(
         }
     }
 
-    private fun createFile(file: File, sizeKb: Int): File {
+    fun createFile(file: File, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return file.apply {
             writeBytes(randomBytes(sizeKb))
         }
@@ -224,11 +224,11 @@ open class LocalFileHelper(
         taskConfig.TARGET_DIR.mkdir()
     }
 
-    fun sourceFile1Content(): String = sourceFile1.readBytes().joinToString("")
-    fun sourceFile2Content(): String = sourceFile2.readBytes().joinToString("")
+    fun sourceFile1Content(): String = fileContents(sourceFile1)
+    fun sourceFile2Content(): String = fileContents(sourceFile2)
 
-    fun targetFile1Content(): String = targetFile1.readBytes().joinToString("")
-    fun targetFile2Content(): String = targetFile2.readBytes().joinToString("")
+    fun targetFile1Content(): String = fileContents(targetFile1)
+    fun targetFile2Content(): String = fileContents(targetFile2)
 
 
     // TODO: тестировать
@@ -291,6 +291,11 @@ open class LocalFileHelper(
         return File(taskConfig.SOURCE_PATH, dirName)
     }
 
+    fun createFileInDir(dir: File, fileName: String) {
+        val file =  File(dir, fileName)
+        createFile(file)
+    }
+
     fun dirInTarget(dirName: String): File {
         return File(taskConfig.TARGET_PATH, dirName)
     }
@@ -301,6 +306,10 @@ open class LocalFileHelper(
 
     fun deleteDirFromTarget(dirName: String) {
         dirInTarget(dirName).deleteRecursively()
+    }
+
+    fun fileContents(file: File): String {
+        return file.readBytes().joinToString("")
     }
 
     companion object {
