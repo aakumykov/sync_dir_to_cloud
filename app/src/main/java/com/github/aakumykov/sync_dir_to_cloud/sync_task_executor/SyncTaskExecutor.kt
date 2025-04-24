@@ -7,33 +7,32 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_di
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_to_target_writer2.SyncObjectToTargetWriter2Creator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.SizeAndModificationTimeChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.SizeAndModificationTimeChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -80,8 +79,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskLogger: SyncTaskLogger,
     private val taskStateLogger: TaskStateLogger,
     private val executionLogger: ExecutionLogger,
-
-    private val syncInstructionRepository: SyncInstructionRepository,
 
     private val resources: Resources,
 
