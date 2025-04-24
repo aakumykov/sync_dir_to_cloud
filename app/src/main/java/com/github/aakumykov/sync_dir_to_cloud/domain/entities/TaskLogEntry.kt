@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.RenameTable
@@ -11,7 +12,15 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import java.util.UUID
 
 @Entity(
-    tableName = TaskLogEntry.TABLE_NAME
+    tableName = TaskLogEntry.TABLE_NAME,
+    foreignKeys = [
+        ForeignKey(
+            entity = SyncTask::class,
+            parentColumns = ["id"],
+            childColumns = ["task_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 class TaskLogEntry(
     @PrimaryKey val id: String,
