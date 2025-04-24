@@ -109,8 +109,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationL
         AutoMigration(from = 112, to = 113), // Новый объект SyncOperationLogItem
         AutoMigration(from = 113, to = 114), // Новое поле SyncOperationLogItem.errorMsg
         AutoMigration(from = 114, to = 115), // Внешний ключ в SyncOperationLogItem
+        AutoMigration(from = 115, to = 116), // Внешний ключ в ExecutionLogItem
     ],
-    version = 115,
+    version = 116,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
