@@ -81,7 +81,6 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ProbeFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
@@ -158,8 +157,6 @@ interface AppComponent {
     fun getGson(): Gson
 
     fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
-
-    fun getStorageReaderCreator(): StorageReaderCreator
 
     fun getSourceFileStreamSupplierCreator(): SourceFileStreamSupplierCreator
 

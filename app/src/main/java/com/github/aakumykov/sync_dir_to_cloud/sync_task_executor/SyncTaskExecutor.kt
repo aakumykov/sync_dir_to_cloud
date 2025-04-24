@@ -26,7 +26,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_to_target_writer2.SyncObjectToTargetWriter2Creator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.creator.StorageReaderCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.SizeAndModificationTimeChangesDetectionStrategy
@@ -65,8 +64,6 @@ FIXME: удалённо пропал и локально пропал...
 class SyncTaskExecutor @AssistedInject constructor(
 
     @Assisted private val coroutineScope: CoroutineScope,
-
-    private val storageReaderCreator: StorageReaderCreator,
 
     private val cloudAuthReader: CloudAuthReader,
 
@@ -110,7 +107,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             currentTask = syncTask
-            prepareReader(syncTask)
             doWork(syncTask)
         }
 
@@ -509,19 +505,6 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
     }
 
-
-    private suspend fun prepareReader(syncTask: SyncTask) {
-        syncTask.sourceAuthId?.also { sourceAuthId ->
-            cloudAuthReader.getCloudAuth(sourceAuthId)?.also { sourceCloudAuth ->
-                storageReader = storageReaderCreator.create(
-                    syncTask.sourceStorageType,
-                    sourceCloudAuth.authToken,
-                    syncTask.id,
-                    changesDetectionStrategy
-                )
-            }
-        }
-    }
 
 
     suspend fun stopExecutingTask(taskId: String) {
