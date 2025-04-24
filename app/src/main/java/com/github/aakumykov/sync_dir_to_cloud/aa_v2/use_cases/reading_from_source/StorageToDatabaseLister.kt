@@ -18,7 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject

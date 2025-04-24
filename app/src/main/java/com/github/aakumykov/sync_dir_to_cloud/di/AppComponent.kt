@@ -45,8 +45,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageReaderAssistedFactoriesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.StorageWriterFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
@@ -105,7 +103,6 @@ import dagger.Component
         WorkerModule::class,
         CoroutineModule::class,
         ViewModelsModule::class,
-        StorageReaderAssistedFactoriesModule::class,
         OkhttpModule::class,
         GsonModule::class,
         SourceFileStreamSupplierFactoryModule::class,
@@ -113,7 +110,6 @@ import dagger.Component
         FileListerCreatorsModule::class,
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
-        StorageWriterFactoriesModule::class,
         StorageWriters2_Module::class,
         TaskLoggerModule::class,
     ]

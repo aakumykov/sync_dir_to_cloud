@@ -25,11 +25,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
+import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_to_target_writer2.SyncObjectToTargetWriter2Creator
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.interfaces.StorageReader
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.SizeAndModificationTimeChangesDetectionStrategy
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
@@ -80,17 +77,11 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
 
-    private val changesDetectionStrategy: SizeAndModificationTimeChangesDetectionStrategy, // FIXME: это не нужно передавать через конструктор
-
     private val syncObjectToTargetWriter2Creator: SyncObjectToTargetWriter2Creator,
 ) {
     private val executionId: String get() = hashCode().toString()
 
     private var currentTask: SyncTask? = null
-    private var storageReader: StorageReader? = null
-
-    @Deprecated("Не используется")
-    private var storageWriter: StorageWriter? = null
 
     private val dirsBackuperCreator: DirsBackuperCreator by lazy { appComponent.getDirsBackuperCreator() }
     private val filesBackuperCreator: FilesBackuperCreator by lazy { appComponent.getFilesBackuperCreator() }
