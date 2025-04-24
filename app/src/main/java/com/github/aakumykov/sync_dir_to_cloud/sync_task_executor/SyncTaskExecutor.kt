@@ -31,7 +31,6 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_reader.strategy.SizeAndModificationTimeChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.StorageWriter
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.storage_writer.factory_and_creator.StorageWriterCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
@@ -68,7 +67,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     @Assisted private val coroutineScope: CoroutineScope,
 
     private val storageReaderCreator: StorageReaderCreator,
-    private val storageWriterCreator: StorageWriterCreator,
 
     private val cloudAuthReader: CloudAuthReader,
 
@@ -113,7 +111,6 @@ class SyncTaskExecutor @AssistedInject constructor(
         syncTaskReader.getSyncTask(taskId).also {  syncTask ->
             currentTask = syncTask
             prepareReader(syncTask)
-            prepareWriter(syncTask)
             doWork(syncTask)
         }
 
@@ -521,20 +518,6 @@ class SyncTaskExecutor @AssistedInject constructor(
                     sourceCloudAuth.authToken,
                     syncTask.id,
                     changesDetectionStrategy
-                )
-            }
-        }
-    }
-
-    private suspend fun prepareWriter(syncTask: SyncTask) {
-        syncTask.targetAuthId?.also { targetAuthId ->
-            cloudAuthReader.getCloudAuth(targetAuthId)?.also { targetCloudAuth ->
-                storageWriter = storageWriterCreator.create(
-                    syncTask.targetStorageType!!,
-                    targetCloudAuth.authToken,
-                    syncTask.id,
-                    syncTask.sourcePath!!,
-                    syncTask.targetPath!!
                 )
             }
         }
