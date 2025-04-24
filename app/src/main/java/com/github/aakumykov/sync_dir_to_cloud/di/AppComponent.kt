@@ -24,7 +24,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstr
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
-import com.github.aakumykov.sync_dir_to_cloud.better_task_executor.BetterTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
@@ -114,8 +113,6 @@ import dagger.Component
 @AppScope
 @ExecutionScope
 interface AppComponent {
-
-    fun getBetterTaskExecutor(): BetterTaskExecutor
 
     fun getViewModelFactory(): ViewModelFactory
 
