@@ -12,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.dirs_de
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.deleter.files_deleter.TaskFilesDeleterCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.writing_to_target.DatabaseToStorageWriterOld
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SourceWithTargetComparator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
@@ -210,7 +209,6 @@ interface AppComponent {
 
     fun getExecutionLogCleaner(): ExecutionLogCleaner
 
-    fun getSourceWithTargetComparator(): SourceWithTargetComparator
     fun getSourceWithTargetComparatorAssistedFactory5(): SourceWithTargetComparatorAssistedFactory5
 
     fun getSyncInstructionRepository(): SyncInstructionRepository
