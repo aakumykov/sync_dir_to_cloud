@@ -4,7 +4,7 @@ import android.content.res.Resources
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
@@ -21,8 +21,8 @@ class SyncOperationLogger @AssistedInject constructor(
     private val repository: SyncOperationLogRepository,
     private val resources: Resources,
 ) {
-    suspend fun logWaiting(syncInstruction6: SyncInstruction6): String {
-        return syncInstructionWithState(syncInstruction6, OperationState.WAITING).let {
+    suspend fun logWaiting(syncInstruction: SyncInstruction): String {
+        return syncInstructionWithState(syncInstruction, OperationState.WAITING).let {
             repository.add(it)
             it.id
         }
@@ -37,7 +37,7 @@ class SyncOperationLogger @AssistedInject constructor(
     }
 
 
-    private fun syncInstructionWithState(syncInstruction: SyncInstruction6, operationState: OperationState): SyncOperationLogItem {
+    private fun syncInstructionWithState(syncInstruction: SyncInstruction, operationState: OperationState): SyncOperationLogItem {
         return SyncOperationLogItem(
             id = randomUUID,
             taskId = taskId,

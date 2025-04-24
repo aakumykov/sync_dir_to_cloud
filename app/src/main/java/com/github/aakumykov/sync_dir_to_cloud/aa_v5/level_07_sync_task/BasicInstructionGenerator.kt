@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
@@ -27,7 +27,7 @@ open class BasicInstructionGenerator(
         syncInstructionRepository.apply {
             comparisonStateList.forEach { comparisonState ->
                 add(
-                    SyncInstruction6.from(
+                    SyncInstruction.from(
                         comparisonState = comparisonState,
                         operation = syncOperation6,
                         orderNum = n++

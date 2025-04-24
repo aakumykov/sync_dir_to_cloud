@@ -12,7 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 
 @Entity(
-    tableName = "sync_instructions_6",
+    tableName = "sync_instructions",
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -23,7 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.randomUUID
         )
     ],
 )
-class SyncInstruction6 (
+class SyncInstruction (
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
@@ -56,7 +56,7 @@ class SyncInstruction6 (
                 SyncOperation6.COPY_FROM_SOURCE_TO_TARGET == operation
 
     override fun toString(): String {
-        return SyncInstruction6::class.java.simpleName + "{ $operation, $relativePath }"
+        return SyncInstruction::class.java.simpleName + "{ $operation, $relativePath }"
     }
 
     @RenameColumn(
@@ -74,7 +74,7 @@ class SyncInstruction6 (
             comparisonState: ComparisonState,
             operation: SyncOperation6,
             orderNum: Int,
-        ): SyncInstruction6 = SyncInstruction6(
+        ): SyncInstruction = SyncInstruction(
             id = randomUUID,
             taskId = comparisonState.taskId,
             executionId = comparisonState.executionId,

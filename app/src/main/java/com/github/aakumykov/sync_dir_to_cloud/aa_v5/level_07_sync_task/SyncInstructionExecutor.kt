@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopierAssistedFactory5
@@ -35,7 +35,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
     private val syncInstructionUpdater: SyncInstructionUpdater,
     private val syncOperationLoggerAssistedFactory: SyncOperationLoggerAssistedFactory,
 ){
-    suspend fun execute(instruction: SyncInstruction6) {
+    suspend fun execute(instruction: SyncInstruction) {
 
         when(instruction.operation) {
             SyncOperation6.RESOLVE_COLLISION -> resolveCollisionFor(instruction)
@@ -54,7 +54,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncInstructionUpdater.markAsProcessed(instruction.id)
     }
 
-    private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction6) {
+    private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction) {
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             try {
                 collisionResolver.resolveCollision(syncInstruction.objectIdInSource!!, syncInstruction.objectIdInTarget!!)
@@ -66,7 +66,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         }
     }
 
-    private suspend fun copyFromSourceToTarget(syncInstruction: SyncInstruction6) {
+    private suspend fun copyFromSourceToTarget(syncInstruction: SyncInstruction) {
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             try {
                 val sourceObjectId = syncInstruction.objectIdInSource!!
@@ -83,7 +83,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         }
     }
 
-    private suspend fun copyFromTargetToSource(syncInstruction: SyncInstruction6) {
+    private suspend fun copyFromTargetToSource(syncInstruction: SyncInstruction) {
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             try {
                 val targetObjectId = syncInstruction.objectIdInTarget!!
@@ -105,7 +105,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
      * // FIXME: удалять сначала файлы, потом каталоги...
      * // Это делается в [SyncInstructionsProcessor6.processInstructions]
      */
-    private suspend fun deleteInSource(syncInstruction: SyncInstruction6) {
+    private suspend fun deleteInSource(syncInstruction: SyncInstruction) {
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             val sourceItemId = syncInstruction.objectIdInSource!!
             try {
@@ -122,7 +122,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         }
     }
 
-    private suspend fun deleteInTarget(syncInstruction: SyncInstruction6) {
+    private suspend fun deleteInTarget(syncInstruction: SyncInstruction) {
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             val targetItemId = syncInstruction.objectIdInTarget!!
             try {

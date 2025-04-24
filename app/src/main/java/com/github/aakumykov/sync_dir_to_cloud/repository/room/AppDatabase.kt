@@ -5,10 +5,11 @@ import androidx.room.Database
 import androidx.room.DeleteColumn
 import androidx.room.DeleteTable
 import androidx.room.RenameColumn
+import androidx.room.RenameTable
 import androidx.room.RoomDatabase
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO6
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
@@ -43,7 +44,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationL
         SyncObjectLogItem::class,
         ExecutionLogItem::class,
         ComparisonState::class,
-        SyncInstruction6::class,
+        SyncInstruction::class,
         SyncOperationLogItem::class,
    ],
     autoMigrations = [
@@ -89,7 +90,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationL
         AutoMigration(from = 95, to = 96), // Новое поле SyncTask.withBackup
         AutoMigration(from = 96, to = 97), // ComparisonState
         AutoMigration(from = 97, to = 98), // SyncInstruction6
-        AutoMigration(from = 98, to = 99, spec = SyncInstruction6.RenameObjectIdColumnsMigration1::class),
+        AutoMigration(from = 98, to = 99, spec = SyncInstruction.RenameObjectIdColumnsMigration1::class),
         AutoMigration(from = 99, to = 100), // Новое поле ComparisonState.isDir
         AutoMigration(from = 100, to = 101), // null-able поля в SyncInstruction6
         AutoMigration(from = 101, to = 102), // Новое поле SyncInstruction6.relativePath
@@ -109,8 +110,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationL
         AutoMigration(from = 115, to = 116), // Внешний ключ в ExecutionLogItem
         AutoMigration(from = 116, to = 117), // Внешний ключ в TaskLogEntry
         AutoMigration(from = 117, to = 118, spec = DeleteTableSyncInstructions::class), // Удалил SyncInstruction
+        AutoMigration(from = 118, to = 119, spec = RenameTableFromSyncInstructions6ToSyncInstructions::class), // Удалил SyncInstruction
     ],
-    version = 118,
+    version = 119,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -160,4 +162,7 @@ class DeleteTableSyncInstructions5 : AutoMigrationSpec
 @DeleteTable(tableName = "sync_instructions")
 class DeleteTableSyncInstructions : AutoMigrationSpec
 
+
+@RenameTable(fromTableName = "sync_instructions_6", toTableName = "sync_instructions")
+class RenameTableFromSyncInstructions6ToSyncInstructions : AutoMigrationSpec
 

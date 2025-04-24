@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
@@ -45,7 +45,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
         processFilesCopying(list)
     }
 
-    private suspend fun processCollisionResolution(isDir: Boolean, list: Iterable<SyncInstruction6>) {
+    private suspend fun processCollisionResolution(isDir: Boolean, list: Iterable<SyncInstruction>) {
         list
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isCollisionResolution }
@@ -55,7 +55,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     }
 
 
-    private suspend fun deleteFiles(list: Iterable<SyncInstruction6>) {
+    private suspend fun deleteFiles(list: Iterable<SyncInstruction>) {
         list
             .filter { it.isFile }
             .filter { it.isDeletion }
@@ -64,7 +64,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun deleteDirs(list: Iterable<SyncInstruction6>) {
+    private suspend fun deleteDirs(list: Iterable<SyncInstruction>) {
         list
             .filter { it.isDir }
             .filter { it.isDeletion }
@@ -73,7 +73,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processDirsDirsCreation(list: Iterable<SyncInstruction6>) {
+    private suspend fun processDirsDirsCreation(list: Iterable<SyncInstruction>) {
         list
             .filter { it.isDir }
             .filter { it.notDeletion }
@@ -82,7 +82,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
             }
     }
 
-    private suspend fun processFilesCopying(list: Iterable<SyncInstruction6>) {
+    private suspend fun processFilesCopying(list: Iterable<SyncInstruction>) {
         list
             .filter { it.isFile }
             .filter { it.isCopying }
@@ -93,12 +93,12 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     }
 
 
-    private suspend fun getCurentSyncInstructions(): Iterable<SyncInstruction6> {
+    private suspend fun getCurentSyncInstructions(): Iterable<SyncInstruction> {
         return syncInstructionRepository6
             .getAllFor(syncTask.id, executionId)
     }
 
-    private suspend fun getAllUnprocessedSyncInstructions(): Iterable<SyncInstruction6> {
+    private suspend fun getAllUnprocessedSyncInstructions(): Iterable<SyncInstruction> {
         return syncInstructionRepository6
             .getAllWithoutExecutionId(syncTask.id)
             .filter { !it.isProcessed }

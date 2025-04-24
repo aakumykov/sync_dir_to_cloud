@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
@@ -129,7 +129,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
         list.forEach { comparisonState ->
             syncInstructionRepository6.apply {
                 syncOperationList.forEach { syncOperation ->
-                    add(SyncInstruction6.from(
+                    add(SyncInstruction.from(
                         comparisonState = comparisonState,
                         operation = syncOperation,
                         orderNum = n++
