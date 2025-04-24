@@ -29,7 +29,8 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
 
     private suspend fun processInstructions(selectUnprocessed: Boolean) {
 
-        val list = if (selectUnprocessed) getAllUnprocessedSyncInstructions() else getCurentSyncInstructions()
+        val list = if (selectUnprocessed) getAllUnprocessedSyncInstructions()
+                    else getCurentSyncInstructions()
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
 //        backupFilesAndDirs()

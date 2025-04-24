@@ -169,6 +169,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             generateSyncInstructions(syncTask)
 
             processSyncInstructions(syncTask)
+
             clearProcessedSyncObjectsWithDeletedState(syncTask)
 
             // Сравнить источник с приёмником
