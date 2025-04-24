@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.backuper_restorer
 
 import android.content.Context
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
@@ -22,23 +23,27 @@ class BackuperRestorer @Inject constructor(
         backupDir.mkdir()
     }
 
-    suspend fun backupTasks() {
-        syncTaskRepository.getAllTasks().also { allTasks ->
-            writeToBackupFile(gson.toJson(allTasks))
-            allTasks.forEach {
-                syncTaskManagingUseCase.deleteSyncTask(it)
-                syncTaskSchedulingUseCase.unScheduleSyncTask(it)
-            }
+    suspend fun backupTasks(): Int? {
+        return syncTaskRepository.getAllTasks().let { allTasks ->
+            if (allTasks.size > 0) {
+                writeToBackupFile(gson.toJson(allTasks))
+                allTasks.forEach {
+                    syncTaskManagingUseCase.deleteSyncTask(it)
+                    syncTaskSchedulingUseCase.unScheduleSyncTask(it)
+                }
+                allTasks.size
+            } else null
         }
     }
 
-    suspend fun restoreTasks() {
-        readFromBackupFile().also { json ->
+    suspend fun restoreTasks(): Int? {
+        return readFromBackupFile()?.let { json ->
             val type = object : TypeToken<List<SyncTask>>() {}.type
             val list = gson.fromJson<List<SyncTask>>(json, type)
             list.forEach { syncTask ->
                 syncTaskRepository.createSyncTask(syncTask)
             }
+            list.size
         }
     }
 
@@ -46,15 +51,26 @@ class BackuperRestorer @Inject constructor(
        backupFile.writeBytes(data.toByteArray())
    }
 
-    private fun readFromBackupFile(): String {
-        return backupFile.readText()
+    private fun readFromBackupFile(): String? {
+        return backupFile.let {
+            if (it.exists()) it.readText()
+            else null
+        }
     }
+
 
     private val backupDir: File
         get() = File(appContext.cacheDir, "backup")
 
+
     private val backupFile: File
         get() = File(backupDir, "sync_tasks.json")
 
+
     private val gson: Gson by lazy { Gson() }
+
+
+    companion object {
+        val TAG: String = BackuperRestorer::class.java.simpleName
+    }
 }

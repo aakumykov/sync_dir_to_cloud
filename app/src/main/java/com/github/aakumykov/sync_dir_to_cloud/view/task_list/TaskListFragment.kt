@@ -26,12 +26,14 @@ import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.recycler_view.TaskListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import permissions.dispatcher.ktx.constructPermissionsRequest
 
 class TaskListFragment : Fragment(R.layout.fragment_task_list),
@@ -247,11 +249,23 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
     }
 
     private fun backupTasks() {
-        lifecycleScope.launch (Dispatchers.IO) { backuperRestorer.backupTasks() }
+        lifecycleScope.launch (Dispatchers.IO) {
+            backuperRestorer.backupTasks() ?: run {
+                withContext(Dispatchers.Main) {
+                    showToast("Нечего бекапить")
+                }
+            }
+        }
     }
 
     private fun restoreTasks() {
-        lifecycleScope.launch (Dispatchers.IO) { backuperRestorer.restoreTasks() }
+        lifecycleScope.launch (Dispatchers.IO) {
+            backuperRestorer.restoreTasks() ?: run {
+                withContext(Dispatchers.Main) {
+                    showToast("Нет бекапов")
+                }
+            }
+        }
     }
 
     private val backuperRestorer by lazy { appComponent.getBackuperRestorer() }
