@@ -38,11 +38,19 @@ class BackuperRestorer @Inject constructor(
 
     suspend fun restoreTasks(): Int? {
         return readFromBackupFile()?.let { json ->
+
+            // Удаляю существующие задачи, если есть, что восстанавливать.
+            for (task in syncTaskRepository.getAllTasks()) {
+                syncTaskRepository.deleteSyncTask(task)
+            }
+
             val type = object : TypeToken<List<SyncTask>>() {}.type
             val list = gson.fromJson<List<SyncTask>>(json, type)
+
             list.forEach { syncTask ->
                 syncTaskRepository.createSyncTask(syncTask)
             }
+
             list.size
         }
     }
