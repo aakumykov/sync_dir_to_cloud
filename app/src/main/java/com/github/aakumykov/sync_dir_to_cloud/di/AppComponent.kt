@@ -22,7 +22,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.Instructi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWithTargetComparatorAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionsProcessorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
@@ -71,7 +70,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.AuthHolder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ProbeFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
@@ -150,8 +148,6 @@ interface AppComponent {
 
     fun getSourceFileStreamSupplierCreator(): SourceFileStreamSupplierCreator
 
-    fun getAuthHolder(): AuthHolder
-
     fun getProgressInfoHolder(): ProgressInfoHolder
 
     fun getStorageToDatabaseLister(): StorageToDatabaseLister
@@ -207,5 +203,3 @@ interface AppComponent {
 
     fun getSyncInstructionRepository6(): SyncInstructionRepository6
 }
-
-val authHolder: AuthHolder get() = appComponent.getAuthHolder()
