@@ -5,7 +5,6 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -31,7 +30,6 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -76,7 +74,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private val dirsBackuperCreator: DirsBackuperCreator by lazy { appComponent.getDirsBackuperCreator() }
     private val filesBackuperCreator: FilesBackuperCreator by lazy { appComponent.getFilesBackuperCreator() }
-    private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
@@ -320,36 +317,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             ?.backupModifiedFilesOfTask(syncTask)
             ?: { Log.e(TAG, "Не удалось создать бэкапер для изменившихся файлов для задачи ${syncTask.description}") }
     }
-
-    private suspend fun copyLostFilesAgain(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyInTargetLostFiles(
-            syncTask = syncTask,
-            scope = coroutineScope,
-        )
-    }
-
-
-    private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyPreviouslyForgottenFilesInCoroutine(
-            syncTask = syncTask,
-            scope = coroutineScope,
-        )
-    }
-
-    private suspend fun copyModifiedFiles(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyModifiedFilesForSyncTask(
-            syncTask = syncTask,
-            scope = coroutineScope,
-        )
-    }
-
-    private suspend fun copyNewFiles(syncTask: SyncTask): Job? {
-        return syncTaskFilesCopier.copyNewFilesForSyncTaskInCoroutine(
-            syncTask = syncTask,
-            scope = coroutineScope,
-        )
-    }
-
 
 
     private suspend fun resetTaskBadStates(taskId: String) {
