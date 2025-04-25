@@ -246,16 +246,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             .generate()
     }
 
-
-    @Throws(Exception::class)
-    private suspend fun copyFilesProbe(syncTask: SyncTask): Job {
-        return appComponent
-            .getProbeFilesCopier()
-            .copyFiles(syncTask, coroutineScope)
-
-//        return qwertyScope(coroutineScope)
-    }
-
     private fun qwertyScope(scope: CoroutineScope): Job {
         return scope.launch {
             try {

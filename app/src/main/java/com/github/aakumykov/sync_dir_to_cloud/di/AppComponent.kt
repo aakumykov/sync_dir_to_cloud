@@ -64,15 +64,14 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ProbeFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
@@ -186,8 +185,6 @@ interface AppComponent {
     fun getSyncInstructionsProcessorAssistedFactory6(): SyncInstructionsProcessorAssistedFactory6
 
     fun getSyncObjectCopierAssistedFactory(): SyncObjectCopierAssistedFactory
-
-    fun getProbeFilesCopier(): ProbeFilesCopier
 
     fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
 
