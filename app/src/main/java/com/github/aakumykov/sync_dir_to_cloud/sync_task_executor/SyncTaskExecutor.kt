@@ -6,7 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.copy_files.SyncTaskFilesCopier
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.create_dirs.SyncTaskDirsCreator
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -31,14 +30,8 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import java.util.concurrent.TimeUnit
-import kotlin.concurrent.thread
-import kotlin.coroutines.resume
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -83,7 +76,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private val dirsBackuperCreator: DirsBackuperCreator by lazy { appComponent.getDirsBackuperCreator() }
     private val filesBackuperCreator: FilesBackuperCreator by lazy { appComponent.getFilesBackuperCreator() }
-    private val syncTaskDirCreator: SyncTaskDirsCreator by lazy { appComponent.getSyncTaskDirsCreatorAssistedFactory().create(executionId) }
     private val syncTaskFilesCopier: SyncTaskFilesCopier by lazy { appComponent.getSyncTaskFilesCopierAssistedFactory().create(executionId) }
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
@@ -350,10 +342,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             ?: { Log.e(TAG, "Не удалось создать бэкапер для изменившихся файлов для задачи ${syncTask.description}") }
     }
 
-    private suspend fun createLostDirsAgain(syncTask: SyncTask) {
-        syncTaskDirCreator.createInTargetLostDirs(syncTask)
-    }
-
     private suspend fun copyLostFilesAgain(syncTask: SyncTask): Job? {
         return syncTaskFilesCopier.copyInTargetLostFiles(
             syncTask = syncTask,
@@ -361,9 +349,6 @@ class SyncTaskExecutor @AssistedInject constructor(
         )
     }
 
-    private suspend fun createNeverSyncedDirs(syncTask: SyncTask) {
-        syncTaskDirCreator.createNeverProcessedDirs(syncTask)
-    }
 
     private suspend fun copyPreviouslyForgottenFiles(syncTask: SyncTask): Job? {
         return syncTaskFilesCopier.copyPreviouslyForgottenFilesInCoroutine(
@@ -386,9 +371,6 @@ class SyncTaskExecutor @AssistedInject constructor(
         )
     }
 
-    private suspend fun createNewDirs(syncTask: SyncTask) {
-        syncTaskDirCreator.createNewDirs(syncTask)
-    }
 
 
     private suspend fun resetTaskBadStates(taskId: String) {
