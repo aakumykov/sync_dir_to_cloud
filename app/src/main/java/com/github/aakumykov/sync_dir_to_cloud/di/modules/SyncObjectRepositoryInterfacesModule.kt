@@ -1,12 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskDirObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncObjectRepository
@@ -54,11 +53,6 @@ class SyncObjectRepositoryInterfacesModule {
 
     @Provides
     fun provideSyncTaskFileObjectReader(syncObjectRepository: SyncObjectRepository): SyncTaskFileObjectReader {
-        return syncObjectRepository
-    }
-
-    @Provides
-    fun provideSyncTaskDirObjectReader(syncObjectRepository: SyncObjectRepository): SyncTaskDirObjectReader {
         return syncObjectRepository
     }
 }
