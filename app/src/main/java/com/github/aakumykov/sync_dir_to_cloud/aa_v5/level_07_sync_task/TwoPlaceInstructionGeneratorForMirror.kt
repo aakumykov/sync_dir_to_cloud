@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
@@ -23,7 +23,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
-    private val syncInstructionRepository6: SyncInstructionRepository6,
+    private val syncInstructionRepository: SyncInstructionRepository,
 ) {
     suspend fun generate(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
@@ -127,7 +127,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     ): Int {
         var n = nextOrderNum
         list.forEach { comparisonState ->
-            syncInstructionRepository6.apply {
+            syncInstructionRepository.apply {
                 syncOperationList.forEach { syncOperation ->
                     add(SyncInstruction.from(
                         comparisonState = comparisonState,

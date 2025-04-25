@@ -66,7 +66,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
@@ -196,5 +196,5 @@ interface AppComponent {
 
     fun getSyncObjectDeleter(): SyncObjectDeleter
 
-    fun getSyncInstructionRepository6(): SyncInstructionRepository6
+    fun getSyncInstructionRepository6(): SyncInstructionRepository
 }

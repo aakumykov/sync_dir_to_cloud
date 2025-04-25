@@ -4,7 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,7 +16,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
     private val syncOptions: SyncOptions,
-    private val syncInstructionRepository6: SyncInstructionRepository6,
+    private val syncInstructionRepository: SyncInstructionRepository,
     private val syncInstructionExecutorAssistedFactory: SyncInstructionExecutorAssistedFactory,
 ) {
     suspend fun processUnprocessedInstructions() {
@@ -94,12 +94,12 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
 
 
     private suspend fun getCurentSyncInstructions(): Iterable<SyncInstruction> {
-        return syncInstructionRepository6
+        return syncInstructionRepository
             .getAllFor(syncTask.id, executionId)
     }
 
     private suspend fun getAllUnprocessedSyncInstructions(): Iterable<SyncInstruction> {
-        return syncInstructionRepository6
+        return syncInstructionRepository
             .getAllWithoutExecutionId(syncTask.id)
             .filter { !it.isProcessed }
     }

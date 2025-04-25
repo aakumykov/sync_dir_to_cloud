@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSour
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInSource
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -22,7 +22,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
-    private val syncInstructionRepository6: SyncInstructionRepository6,
+    private val syncInstructionRepository: SyncInstructionRepository,
 ) {
     /**
      * @return Увеличенный порядковый номер
@@ -113,7 +113,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     ): Int {
         var n = nextOrderNum
         list.forEach { comparisonState ->
-            syncInstructionRepository6.add(
+            syncInstructionRepository.add(
                 SyncInstruction.from(comparisonState, syncOperation, n++)
             )
         }

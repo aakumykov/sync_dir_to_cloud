@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructio
 import okhttp3.internal.toImmutableList
 import javax.inject.Inject
 
-class SyncInstructionRepository6 @Inject constructor(
+class SyncInstructionRepository @Inject constructor(
     private val syncInstructionDAO6: SyncInstructionDAO6,
 )
     : SyncInstructionUpdater
