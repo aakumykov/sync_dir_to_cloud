@@ -15,7 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogReader
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -69,7 +69,7 @@ class ViewModelsModule {
     fun provideTaskInfoViewModel(syncTaskReader: SyncTaskReader,
                                  syncObjectReader: SyncObjectReader,
                                  startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
-                                 syncTaskLogRepository: SyncTaskLogRepository,
+                                 taskLogRepository: TaskLogRepository,
                                  taskStateLogger: TaskStateLogger,
     ): ViewModel
     {
@@ -77,7 +77,7 @@ class ViewModelsModule {
             syncTaskReader,
             syncObjectReader,
             startStopSyncTaskUseCase,
-            syncTaskLogRepository,
+            taskLogRepository,
             taskStateLogger,
         )
     }

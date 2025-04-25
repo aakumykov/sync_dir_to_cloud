@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.SyncTaskLogDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import dagger.Binds
 import dagger.Module
 
@@ -10,8 +10,8 @@ import dagger.Module
 interface SyncTaskLoggerInterfacesModule {
 
     @Binds
-    fun bindSyncTaskLogDeleter(syncTaskLogRepository: SyncTaskLogRepository): SyncTaskLogDeleter
+    fun bindSyncTaskLogDeleter(taskLogRepository: TaskLogRepository): SyncTaskLogDeleter
 
     @Binds
-    fun bindTaskStateLogger(syncTaskLogRepository: SyncTaskLogRepository): TaskStateLogger
+    fun bindTaskStateLogger(taskLogRepository: TaskLogRepository): TaskStateLogger
 }

@@ -9,14 +9,14 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartSt
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import kotlinx.coroutines.launch
 
 class TaskStateViewModel(
     private var syncTaskReader: SyncTaskReader,
     private val syncObjectReader: SyncObjectReader,
     private val startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
-    private val syncTaskLogRepository: SyncTaskLogRepository,
+    private val taskLogRepository: TaskLogRepository,
     private val taskStateLogger: TaskStateLogger
 
     ) : ViewModel() {
@@ -33,5 +33,5 @@ class TaskStateViewModel(
         viewModelScope.launch { startStopSyncTaskUseCase.startStopSyncTask(taskId) }
     }
 
-    fun getTaskLogsLiveData(taskId: String) = syncTaskLogRepository.getLogsForTask(taskId)
+    fun getTaskLogsLiveData(taskId: String) = taskLogRepository.getLogsForTask(taskId)
 }

@@ -11,8 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-@Deprecated("Переименовать в TaskLogRepository")
-class SyncTaskLogRepository @Inject constructor(
+class TaskLogRepository @Inject constructor(
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
     private val syncTaskLogDAO: SyncTaskLogDAO
 )
