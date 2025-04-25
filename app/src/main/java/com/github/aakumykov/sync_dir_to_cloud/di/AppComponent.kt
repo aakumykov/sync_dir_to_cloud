@@ -69,7 +69,6 @@ import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoH
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
-import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
@@ -103,7 +102,6 @@ import dagger.Component
         FileListerCreatorsModule::class,
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
-        StorageWriters2_Module::class,
         TaskLoggerModule::class,
     ]
 )

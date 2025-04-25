@@ -33,7 +33,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.TaskLoggerModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
-import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Module
 import dagger.Component
 
 @Component(
@@ -65,7 +64,6 @@ import dagger.Component
         FileListerCreatorsModule::class,
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
-        StorageWriters2_Module::class,
         TaskLoggerModule::class,
     ]
 )
