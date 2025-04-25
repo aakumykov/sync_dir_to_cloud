@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -13,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSucce
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskDirObjectReader
@@ -24,10 +24,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ReadingStrategy
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import javax.inject.Inject
 
@@ -111,15 +110,6 @@ class SyncObjectRepository @Inject constructor(
             name = syncObject.name,
             relativeParentDirPath = syncObject.relativeParentDirPath,
         )
-    }
-
-    override suspend fun getList(
-        taskId: String,
-        readingStrategy: ReadingStrategy
-    ): List<SyncObject> {
-        return syncObjectDAO.getObjectsForTask(taskId).filter {
-            readingStrategy.isAcceptedForSync(it)
-        }
     }
 
     override suspend fun markAsBusy(objectId: String) {
