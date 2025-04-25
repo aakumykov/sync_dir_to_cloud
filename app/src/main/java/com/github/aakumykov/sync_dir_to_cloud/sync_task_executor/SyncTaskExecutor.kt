@@ -311,15 +311,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             }
     }
 
-    private suspend fun deleteDeletedFiles(syncTask: SyncTask) {
-        appComponent
-            .getTaskFilesDeleterCreator()
-            .createDeletedFilesDeleterForTask(syncTask, executionId)
-            ?.deleteDeletedFilesForTask(syncTask)
-            ?: {
-                Log.e(TAG, "Не удалось создать удалятель файлов для задачи ${syncTask.description}")
-            }
-    }
 
     private suspend fun backupDeletedDirs(syncTask: SyncTask) {
         dirsBackuperCreator
