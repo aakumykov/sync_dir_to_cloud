@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
+package com.github.aakumykov.sync_dir_to_cloud
 
 import com.github.aakumykov.sync_dir_to_cloud.di.creators.CloudReadersHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
