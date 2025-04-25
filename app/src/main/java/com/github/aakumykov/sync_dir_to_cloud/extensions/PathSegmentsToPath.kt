@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.fs_item_ext
+package com.github.aakumykov.sync_dir_to_cloud.extensions
 
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 
