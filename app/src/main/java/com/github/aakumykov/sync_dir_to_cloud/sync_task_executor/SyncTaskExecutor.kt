@@ -143,6 +143,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             markAllNotCheckedObjectsAsDeleted(taskId)
 
             deleteOldComparisonStates(syncTask)
+
             compareSourceWithTarget(syncTask)
 
             generateSyncInstructions(syncTask)
@@ -241,33 +242,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             .getInstructionsGeneratorAssistedFactory6()
             .create(syncTask,executionId)
             .generate()
-    }
-
-    private fun qwertyScope(scope: CoroutineScope): Job {
-        return scope.launch {
-            try {
-                qwerty()
-            } catch (e: CancellationException) {
-                Log.e(TAG, e.errorMsg)
-            }
-        }
-    }
-
-    private suspend fun qwerty() {
-        return suspendCancellableCoroutine { cont ->
-            cont.invokeOnCancellation {
-                Log.d(TAG, it?.errorMsg ?: "")
-            }
-            thread {
-                repeat(5) { i->
-                    if (!cont.isActive)
-                        return@repeat
-                    Log.d(TAG, "qwerty(), $i")
-                    TimeUnit.SECONDS.sleep(1)
-                }
-                cont.resume(Unit)
-            }
-        }
     }
 
 
@@ -468,11 +442,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun compareSourceWithTarget(syncTask: SyncTask) {
         appComponent
-            .getSourceWithTargetComparatorAssistedFactory5()
+            .getSourceWithTargetComparatorAssistedFactory()
             .create(syncTask = syncTask, executionId = executionId)
-            .apply {
-                compareSourceWithTarget()
-            }
+            .compareSourceWithTarget()
     }
 
 

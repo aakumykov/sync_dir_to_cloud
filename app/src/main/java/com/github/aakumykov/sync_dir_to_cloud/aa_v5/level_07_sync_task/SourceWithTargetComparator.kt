@@ -15,7 +15,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class SourceWithTargetComparator5 @AssistedInject constructor(
+class SourceWithTargetComparator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val syncObjectReader: SyncObjectReader,
@@ -87,6 +87,6 @@ class SourceWithTargetComparator5 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface SourceWithTargetComparatorAssistedFactory5 {
-    fun create(syncTask: SyncTask, executionId: String): SourceWithTargetComparator5
+interface SourceWithTargetComparatorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): SourceWithTargetComparator
 }
