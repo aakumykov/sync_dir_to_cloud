@@ -72,7 +72,7 @@ import com.github.aakumykov.sync_dir_to_cloud.storage_writer2.StorageWriters2_Mo
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.ProbeFilesCopier
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
