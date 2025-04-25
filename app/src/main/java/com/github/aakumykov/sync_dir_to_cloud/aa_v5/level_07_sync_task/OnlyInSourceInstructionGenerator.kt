@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
@@ -52,7 +52,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum)
             }
     }
 
@@ -61,7 +61,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum)
             }
     }
 
@@ -74,7 +74,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .let {
                 generateSyncInstructionsFrom(
                     it,
-                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
                     nextOrderNum
                 )
             }
@@ -90,7 +90,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
             .let {
                 generateSyncInstructionsFrom(
                     it,
-                    SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
+                    SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
                     nextOrderNum
                 )
             }

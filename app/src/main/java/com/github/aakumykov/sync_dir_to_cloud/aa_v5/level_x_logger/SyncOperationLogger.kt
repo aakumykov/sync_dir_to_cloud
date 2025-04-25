@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
@@ -51,15 +51,15 @@ class SyncOperationLogger @AssistedInject constructor(
         )
     }
 
-    private fun operationNameFor(operation: SyncOperation6): String {
+    private fun operationNameFor(operation: SyncOperation): String {
         return resources.getString(when(operation) {
-            SyncOperation6.RESOLVE_COLLISION -> R.string.SYNC_OBJECT_LOGGER_resolving_collision
-            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> R.string.SYNC_OPERATION_copying_from_source_to_target
-            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> R.string.SYNC_OPERATION_copying_from_target_to_source
-            SyncOperation6.DELETE_IN_SOURCE -> R.string.SYNC_OPERATION_deleting_from_source
-            SyncOperation6.DELETE_IN_TARGET -> R.string.SYNC_OPERATION_deleting_from_target
-            SyncOperation6.BACKUP_IN_SOURCE -> R.string.SYNC_OPERATION_backing_up_in_source
-            SyncOperation6.BACKUP_IN_TARGET -> R.string.SYNC_OPERATION_backing_up_in_target
+            SyncOperation.RESOLVE_COLLISION -> R.string.SYNC_OBJECT_LOGGER_resolving_collision
+            SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> R.string.SYNC_OPERATION_copying_from_source_to_target
+            SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> R.string.SYNC_OPERATION_copying_from_target_to_source
+            SyncOperation.DELETE_IN_SOURCE -> R.string.SYNC_OPERATION_deleting_from_source
+            SyncOperation.DELETE_IN_TARGET -> R.string.SYNC_OPERATION_deleting_from_target
+            SyncOperation.BACKUP_IN_SOURCE -> R.string.SYNC_OPERATION_backing_up_in_source
+            SyncOperation.BACKUP_IN_TARGET -> R.string.SYNC_OPERATION_backing_up_in_target
         })
     }
 }

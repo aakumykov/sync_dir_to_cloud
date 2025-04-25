@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 
@@ -20,7 +20,7 @@ open class BasicInstructionGenerator(
 
     suspend fun generateSyncInstructionsFrom(
         comparisonStateList: Iterable<ComparisonState>,
-        syncOperation6: SyncOperation6,
+        syncOperation: SyncOperation,
         nextOrderNum: Int
     ): Int {
         var n = nextOrderNum
@@ -29,7 +29,7 @@ open class BasicInstructionGenerator(
                 add(
                     SyncInstruction.from(
                         comparisonState = comparisonState,
-                        operation = syncOperation6,
+                        operation = syncOperation,
                         orderNum = n++
                     )
                 )

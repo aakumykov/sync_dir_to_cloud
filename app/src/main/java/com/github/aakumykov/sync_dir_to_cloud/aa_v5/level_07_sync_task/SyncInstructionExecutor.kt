@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object.ItemDeleter5
@@ -38,16 +38,16 @@ class SyncInstructionExecutor @AssistedInject constructor(
     suspend fun execute(instruction: SyncInstruction) {
 
         when(instruction.operation) {
-            SyncOperation6.RESOLVE_COLLISION -> resolveCollisionFor(instruction)
+            SyncOperation.RESOLVE_COLLISION -> resolveCollisionFor(instruction)
 
-            SyncOperation6.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(instruction)
-            SyncOperation6.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(instruction)
+            SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(instruction)
+            SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> copyFromTargetToSource(instruction)
 
-            SyncOperation6.DELETE_IN_SOURCE -> deleteInSource(instruction)
-            SyncOperation6.DELETE_IN_TARGET -> deleteInTarget(instruction)
+            SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
+            SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-            SyncOperation6.BACKUP_IN_SOURCE -> { /*backuper.backupInSource(instruction)*/ }
-            SyncOperation6.BACKUP_IN_TARGET -> { /*backuper.backupInTarget(instruction)*/ }
+            SyncOperation.BACKUP_IN_SOURCE -> { /*backuper.backupInSource(instruction)*/ }
+            SyncOperation.BACKUP_IN_TARGET -> { /*backuper.backupInTarget(instruction)*/ }
         }
 
         // Спорно делать это здесь, а не в каждом конкретном методе...

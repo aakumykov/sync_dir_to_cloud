@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
@@ -53,7 +53,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isDeletedInSource }
             .filter { it.isUnchangedInTarget }
-            .let { createSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum) }
+            .let { createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum) }
     }
 
     private suspend fun deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir: Boolean, nextOrderNum: Int): Int {
@@ -61,7 +61,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isDeletedInTarget }
             .filter { it.isUnchangedInSource }
-            .let { createSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum) }
+            .let { createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum) }
     }
 
 
@@ -82,9 +82,9 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
                 createSyncInstructionsFrom(
                     it,
                     listOf(
-                        SyncOperation6.RESOLVE_COLLISION,
-                        SyncOperation6.COPY_FROM_SOURCE_TO_TARGET,
-                        SyncOperation6.COPY_FROM_TARGET_TO_SOURCE
+                        SyncOperation.RESOLVE_COLLISION,
+                        SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
+                        SyncOperation.COPY_FROM_TARGET_TO_SOURCE
                     ),
                     nextOrderNum
                 )
@@ -106,7 +106,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInTarget }
             .filter { it.isUnchangedOrDeletedInSource }
-            .let { createSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
+            .let { createSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
     }
 
 
@@ -115,14 +115,14 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInSource }
             .filter { it.isUnchangedOrDeletedInTarget }
-            .let { createSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
+            .let { createSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
     }
 
 
 
     private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
-        syncOperationList: List<SyncOperation6>,
+        syncOperationList: List<SyncOperation>,
         nextOrderNum: Int
     ): Int {
         var n = nextOrderNum
@@ -142,7 +142,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
     private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
-        syncOperation: SyncOperation6,
+        syncOperation: SyncOperation,
         nextOrderNum: Int
     ): Int {
         return createSyncInstructionsFrom(

@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
@@ -54,7 +54,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isFile}
             .filter { it.isDeletedInSource }
             .filter { it.notDeletedInTarget }
-            .let { createInstructionsFor(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum) }
     }
 
     private suspend fun deleteDirsInTargetDeletedInSource(nextOrderNum: Int): Int {
@@ -62,7 +62,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInSource }
             .filter { it.notDeletedInTarget }
-            .let { createInstructionsFor(it, SyncOperation6.DELETE_IN_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum) }
     }
 
 
@@ -84,7 +84,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .filter { it.notDeletedInSource }
-            .let { createInstructionsFor(it, SyncOperation6.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it, SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
     }
 
     private suspend fun copyToTargetFilesNewAndModifiedInSource(nextOrderNum: Int): Int {
@@ -92,7 +92,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInSource }
             .filter { it.notDeletedInSource }
-            .let { createInstructionsFor(it,SyncOperation6.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it,SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
 
     }
 
@@ -102,13 +102,13 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isNewModifiedDeletedInTarget }
             .filter { it.notDeletedInSource }
             .filter { it.isUnchangedInSource }
-            .let { createInstructionsFor(it, SyncOperation6.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it, SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
     }
 
 
     private suspend fun createInstructionsFor(
         list: List<ComparisonState>,
-        syncOperation: SyncOperation6,
+        syncOperation: SyncOperation,
         nextOrderNum: Int
     ): Int {
         var n = nextOrderNum

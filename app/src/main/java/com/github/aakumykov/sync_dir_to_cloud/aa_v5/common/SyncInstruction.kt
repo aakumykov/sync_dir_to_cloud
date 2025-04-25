@@ -35,25 +35,25 @@ class SyncInstruction (
     @ColumnInfo(name = "object_id_in_target") val objectIdInTarget: String?,
 
     @ColumnInfo(name = "order_num", defaultValue = "0") val orderNum: Int,
-    @ColumnInfo(name = "operation") val operation: SyncOperation6,
+    @ColumnInfo(name = "operation") val operation: SyncOperation,
 
     @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
     @ColumnInfo(name = "relative_path", defaultValue = "") val relativePath: String,
 
     @ColumnInfo(name = "is_processed", defaultValue = "0") val isProcessed: Boolean,
 ) {
-    @Ignore val isDeletion: Boolean = SyncOperation6.DELETE_IN_TARGET == operation ||
-            SyncOperation6.DELETE_IN_SOURCE == operation
+    @Ignore val isDeletion: Boolean = SyncOperation.DELETE_IN_TARGET == operation ||
+            SyncOperation.DELETE_IN_SOURCE == operation
 
-    @Ignore val isCollisionResolution: Boolean = SyncOperation6.RESOLVE_COLLISION == operation
+    @Ignore val isCollisionResolution: Boolean = SyncOperation.RESOLVE_COLLISION == operation
 
     @Ignore val notDeletion: Boolean =
-        SyncOperation6.DELETE_IN_TARGET != operation &&
-                SyncOperation6.DELETE_IN_SOURCE != operation
+        SyncOperation.DELETE_IN_TARGET != operation &&
+                SyncOperation.DELETE_IN_SOURCE != operation
 
     @Ignore val isCopying: Boolean =
-        SyncOperation6.COPY_FROM_TARGET_TO_SOURCE == operation ||
-                SyncOperation6.COPY_FROM_SOURCE_TO_TARGET == operation
+        SyncOperation.COPY_FROM_TARGET_TO_SOURCE == operation ||
+                SyncOperation.COPY_FROM_SOURCE_TO_TARGET == operation
 
     override fun toString(): String {
         return SyncInstruction::class.java.simpleName + "{ $operation, $relativePath }"
@@ -72,7 +72,7 @@ class SyncInstruction (
     companion object {
         fun from(
             comparisonState: ComparisonState,
-            operation: SyncOperation6,
+            operation: SyncOperation,
             orderNum: Int,
         ): SyncInstruction = SyncInstruction(
             id = randomUUID,

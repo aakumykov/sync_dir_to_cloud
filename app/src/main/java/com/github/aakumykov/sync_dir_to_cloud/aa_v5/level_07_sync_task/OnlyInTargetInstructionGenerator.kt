@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
@@ -60,7 +60,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum)
             }
     }
 
@@ -69,7 +69,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum)
             }
     }
 
@@ -80,7 +80,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.notMutuallyUnchanged }
             .filter { it.notDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
             }
     }
 
@@ -91,7 +91,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.notMutuallyUnchanged }
             .filter { it.notDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation6.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
             }
     }
 
