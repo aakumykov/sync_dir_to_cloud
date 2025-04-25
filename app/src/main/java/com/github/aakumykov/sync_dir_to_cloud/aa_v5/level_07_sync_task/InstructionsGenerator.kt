@@ -6,7 +6,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class InstructionsGenerator6 @AssistedInject constructor(
+class InstructionsGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val onlyInSourceInstructionGeneratorAssistedFactory: OnlyInSourceInstructionGeneratorAssistedFactory,
@@ -52,5 +52,5 @@ class InstructionsGenerator6 @AssistedInject constructor(
 
 @AssistedFactory
 interface InstructionsGeneratorAssistedFactory6 {
-    fun create(syncTask: SyncTask, executionId: String): InstructionsGenerator6
+    fun create(syncTask: SyncTask, executionId: String): InstructionsGenerator
 }
