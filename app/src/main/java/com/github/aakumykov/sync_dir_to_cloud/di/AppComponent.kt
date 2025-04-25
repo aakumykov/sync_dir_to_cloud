@@ -9,7 +9,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCan
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_creator.DirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_deleter.DirDeleterAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.file_copier.FileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
 import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.SyncObjectCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.ComparisonsDeleter6
@@ -155,8 +154,6 @@ interface AppComponent {
     fun getDirBackuperAssistedFactory(): DirBackuperAssistedFactory
     fun getDirDeleterAssistedFactory(): DirDeleterAssistedFactory
     fun getDirCreatorAssistedFactory(): DirCreatorAssistedFactory
-
-    fun getFileCopierAssistedFactory(): FileCopierAssistedFactory
 
     fun getOperationCancellationHolder(): OperationCancellationHolder
     fun getTaskCancellationHolder(): TaskCancellationHolder
