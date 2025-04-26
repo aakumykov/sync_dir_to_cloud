@@ -12,8 +12,10 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlin.jvm.Throws
+
 
 class BackupDirCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -37,12 +39,12 @@ class BackupDirCreator @AssistedInject constructor(
 
     private suspend fun createBackupDirInTarget() {
         val dirName = createBackupDir(targetCloudReader, targetCloudWriter, syncTask.targetPath!!)
-        syncTaskUpdater.setTargetBackupDir(dirName)
+        syncTaskUpdater.setTargetBackupDir(syncTask.id, dirName)
     }
 
     private suspend fun createBackupDirInSource() {
         val dirName = createBackupDir(sourceCloudReader, sourceCloudWriter, syncTask.targetPath!!)
-        syncTaskUpdater.setSourceBackupDir(dirName)
+        syncTaskUpdater.setSourceBackupDir(syncTask.id, dirName)
     }
 
 
@@ -109,4 +111,10 @@ class BackupDirCreator @AssistedInject constructor(
     private val sourceCloudReader: CloudReader by lazy {
         cloudReaderGetter.getSourceCloudReaderFor(syncTask)
     }
+}
+
+
+@AssistedFactory
+interface BackupDirCreatorAssistedFactory {
+    fun create(syncTask: SyncTask): BackupDirCreator
 }

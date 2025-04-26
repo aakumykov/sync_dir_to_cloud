@@ -34,6 +34,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStat
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 
 @Database(
     entities = [
@@ -134,6 +135,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
     abstract fun getSyncInstructionDAO6(): SyncInstructionDAO6
     abstract fun getSyncOperationLoggerDAO(): SyncOperationLoggerDAO
+    abstract fun getSyncTaskBackupDirDAO(): SyncTaskBackupDirDAO
+
     class FirstAddThisObjectSpec : AutoMigrationSpec {}
 
     @DeleteColumn(tableName = "sync_instructions", columnName = "execution_id")

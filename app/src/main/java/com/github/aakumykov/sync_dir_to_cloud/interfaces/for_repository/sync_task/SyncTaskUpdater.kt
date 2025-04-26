@@ -4,4 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 interface SyncTaskUpdater {
     fun updateSyncTask(syncTask: SyncTask)
+    fun setTargetBackupDir(taskId: String, dirName: String)
+    fun setSourceBackupDir(taskId: String, dirName: String)
 }

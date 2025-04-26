@@ -17,6 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStat
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import dagger.Module
 import dagger.Provides
@@ -37,6 +38,9 @@ class RoomDAOModule {
 
     @Provides
     fun provideSyncTaskSchedulingStateDAO(appDatabase: AppDatabase): SyncTaskSchedulingStateDAO = appDatabase.getSyncTaskSchedulingStateDAO()
+
+    @Provides
+    fun provideSyncTaskBackupDirDAO(appDatabase: AppDatabase): SyncTaskBackupDirDAO = appDatabase.getSyncTaskBackupDirDAO()
 
     @Provides
     fun provideSyncTaskExecutionStateDAO(appDatabase: AppDatabase): SyncTaskSyncStateDAO = appDatabase.getSyncTaskExecutionStateDAO()

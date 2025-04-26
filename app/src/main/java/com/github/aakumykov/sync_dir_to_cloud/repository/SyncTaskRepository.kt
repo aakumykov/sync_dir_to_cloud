@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
@@ -34,6 +35,7 @@ class SyncTaskRepository @Inject constructor(
     private val syncTaskRunningTimeDAO: SyncTaskRunningTimeDAO,
     private val syncTaskSchedulingStateDAO: SyncTaskSchedulingStateDAO,
     private val syncTaskExecutionStateDAO: SyncTaskSyncStateDAO,
+    private val syncTaskBackupDirDAO: SyncTaskBackupDirDAO,
     private val coroutineScope: CoroutineScope,
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher // FIXME: не нравится мне это здесь
 )
@@ -80,6 +82,14 @@ class SyncTaskRepository @Inject constructor(
 
     override suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean) {
         syncTaskStateDAO.setEnabled(taskId, isEnabled)
+    }
+
+    override fun setTargetBackupDir(taskId: String, dirName: String) {
+        syncTaskBackupDirDAO.setTargetBackupDir(taskId, dirName)
+    }
+
+    override fun setSourceBackupDir(taskId: String, dirName: String) {
+        syncTaskBackupDirDAO.setSourceBackupDir(taskId, dirName)
     }
 
     override suspend fun setSourceReadingState(taskId: String, state: ExecutionState, errorMsg: String?) {
