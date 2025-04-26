@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -33,7 +34,7 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
                     else getCurentSyncInstructions()
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
-//        backupFilesAndDirs()
+        backupFilesAndDirs(list)
 
         deleteFiles(list)
         deleteDirs(list)
@@ -43,6 +44,21 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
 
         processDirsDirsCreation(list)
         processFilesCopying(list)
+    }
+
+    //  TODO: в источнике/приёмнике
+    private fun backupFilesAndDirs(list: Iterable<SyncInstruction>) {
+        list.filter { it.isBackup }
+        backupDirs(list.filter { it.isDir })
+        backupFiles(list.filter { it.isFile })
+    }
+
+    private fun backupDirs(dirInstructionsList: List<SyncInstruction>) {
+        Log.d(TAG, dirInstructionsList.toString())
+    }
+
+    private fun backupFiles(fileInstructionsList: List<SyncInstruction>) {
+        Log.d(TAG, fileInstructionsList.toString())
     }
 
     private suspend fun processCollisionResolution(isDir: Boolean, list: Iterable<SyncInstruction>) {
@@ -107,6 +123,10 @@ class SyncInstructionsProcessor6 @AssistedInject constructor(
 
     private val syncInstructionExecutor by lazy {
         syncInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
+    }
+
+    companion object {
+        val TAG: String = SyncInstructionsProcessor6::class.java.simpleName
     }
 }
 
