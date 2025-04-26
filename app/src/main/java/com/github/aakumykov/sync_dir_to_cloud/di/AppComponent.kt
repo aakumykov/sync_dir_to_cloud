@@ -13,6 +13,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.Instructi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWithTargetComparatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionsProcessorAssistedFactory6
+import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6
+import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
@@ -28,6 +30,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModul
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.PreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
@@ -94,6 +97,7 @@ import dagger.Component
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
         TaskLoggerModule::class,
+        PreferencesModule::class,
     ]
 )
 @AppScope
@@ -172,4 +176,9 @@ interface AppComponent {
     fun getSyncObjectDeleter(): SyncObjectDeleter
 
     fun getSyncInstructionRepository6(): SyncInstructionRepository
+
+    fun injectBackuper6(backuper6: Backuper6)
+
+    fun getBackuper6AssistedFactory(): Backuper6AssistedFactory
+
 }
