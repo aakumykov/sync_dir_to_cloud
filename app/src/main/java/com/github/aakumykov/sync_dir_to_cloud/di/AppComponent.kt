@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.Operati
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
-import com.github.aakumykov.sync_dir_to_cloud.aa_v4.low_level.SyncObjectCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.ComparisonsDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWithTargetComparatorAssistedFactory
@@ -159,8 +158,6 @@ interface AppComponent {
     fun getSourceWithTargetComparatorAssistedFactory(): SourceWithTargetComparatorAssistedFactory
 
     fun getSyncInstructionsProcessorAssistedFactory6(): SyncInstructionsProcessorAssistedFactory6
-
-    fun getSyncObjectCopierAssistedFactory(): SyncObjectCopierAssistedFactory
 
     fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
 
