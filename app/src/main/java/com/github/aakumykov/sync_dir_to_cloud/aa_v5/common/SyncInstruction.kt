@@ -47,6 +47,10 @@ class SyncInstruction (
 
     @Ignore val isCollisionResolution: Boolean = SyncOperation.RESOLVE_COLLISION == operation
 
+    @Ignore val isBackup: Boolean =
+        SyncOperation.BACKUP_IN_SOURCE == operation ||
+        SyncOperation.BACKUP_IN_TARGET == operation
+
     @Ignore val notDeletion: Boolean =
         SyncOperation.DELETE_IN_TARGET != operation &&
                 SyncOperation.DELETE_IN_SOURCE != operation
