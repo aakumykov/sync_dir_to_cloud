@@ -19,6 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlin.jvm.Throws
 
 /**
  * После выполнения операции копирования необходимо добавить в БД
@@ -96,10 +97,11 @@ class SyncObjectActualizer @AssistedInject constructor(
             }
     }
 
+    @Throws(NullPointerException::class)
     private suspend fun getFileMetadata(syncSide: SyncSide, absolutePath: String): FileMetadata {
         return cloudReader(syncSide)
             .getFileMetadata(absolutePath)
-            .getOrThrow()
+            .getOrThrow()!!
     }
 
     private fun absolutePathFor(syncObject: SyncObject, syncSide: SyncSide): String {
