@@ -2,6 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff
 
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v1.BackupDirNamer
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v1.BackupDirSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncObjectLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.operation_logger.OperationLoggerAssistedFactory

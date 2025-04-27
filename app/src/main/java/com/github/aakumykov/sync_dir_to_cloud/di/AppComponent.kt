@@ -2,17 +2,17 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.reading_from_source.StorageToDatabaseLister
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.dirs_backuper.DirsBackuperCreator
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.dir_backuper.DirBackuperAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v1.DirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.ComparisonsDeleter6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.InstructionsGeneratorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SourceWithTargetComparatorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionDeleter6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncInstructionsProcessorAssistedFactory6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_comparison.ComparisonsDeleter6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_08_instructions.generator.InstructionsGeneratorAssistedFactory6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_comparison.SourceWithTargetComparatorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_08_instructions.SyncInstructionDeleter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_08_instructions.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6
 import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
@@ -165,7 +165,7 @@ interface AppComponent {
 
     fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
 
-    fun getInstructionsDeleter6(): SyncInstructionDeleter6
+    fun getInstructionsDeleter6(): SyncInstructionDeleter
 
     fun getComparisonsDeleter6(): ComparisonsDeleter6
 

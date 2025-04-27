@@ -3,8 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.dirs_backuper.DirsBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.aa_v2.use_cases.v3.backup_files_dirs.files_backuper.FilesBackuperCreator
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.dirs_backuper.DirsBackuperCreator
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask

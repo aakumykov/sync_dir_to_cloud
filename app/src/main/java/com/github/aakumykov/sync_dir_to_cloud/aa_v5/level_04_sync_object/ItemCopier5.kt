@@ -2,8 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_04_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_02_file.DirCreator5AssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncObjectActualizer
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_07_sync_task.SyncObjectActualizerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
