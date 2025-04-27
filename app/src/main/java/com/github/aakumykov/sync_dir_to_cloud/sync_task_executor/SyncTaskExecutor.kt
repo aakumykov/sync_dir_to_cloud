@@ -128,6 +128,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
+            prepareBackupDirs(syncTask)
+
             // Отметить все не найденные объекты как удалённые
             markAllNotCheckedObjectsAsDeleted(taskId)
 
@@ -196,6 +198,13 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    private suspend fun prepareBackupDirs(syncTask: SyncTask) {
+        appComponent
+            .getBackuperNewAssistedFactory()
+            .create(syncTask, executionId)
+            .prepareBackup()
     }
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions(syncTask: SyncTask) {

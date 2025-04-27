@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import javax.inject.Inject
 import kotlin.jvm.Throws
 
 
@@ -22,29 +23,33 @@ class BackupDirCreator @AssistedInject constructor(
     private val preferences: AppPreferences,
     private val cloudWriterGetter: CloudWriterGetter,
     private val cloudReaderGetter: CloudReaderGetter,
-    private val syncTaskUpdater: SyncTaskUpdater,
 ) {
-    private val backupDirName: String = "${BACKUPS_TOP_DIR_NAME}_${syncTask.id}"
+    private fun backupDirName(taskId: String): String = "${BACKUPS_TOP_DIR_NAME}_${taskId}"
     private val newBackupDirName: String get() = "${BACKUPS_TOP_DIR_NAME}_${randomUUID}"
 
-    suspend fun createBackupDirsFor(syncTask: SyncTask) {
-        when (syncTask.syncMode!!) {
-            SyncMode.SYNC -> createBackupDirInTarget()
-            SyncMode.MIRROR -> {
-                createBackupDirInSource()
-                createBackupDirInTarget()
-            }
-        }
+    /**
+     * @return Name of the created dir.
+     */
+    suspend fun createBackupDirInTarget(syncTask: SyncTask): String {
+        return createBackupDir(
+            taskId = syncTask.id,
+            cloudReader = targetCloudReader,
+            cloudWriter = targetCloudWriter,
+            backupDirBasePath = syncTask.targetPath!!
+        )
     }
 
-    private suspend fun createBackupDirInTarget() {
-        val dirName = createBackupDir(targetCloudReader, targetCloudWriter, syncTask.targetPath!!)
-        syncTaskUpdater.setTargetBackupDir(syncTask.id, dirName)
-    }
 
-    private suspend fun createBackupDirInSource() {
-        val dirName = createBackupDir(sourceCloudReader, sourceCloudWriter, syncTask.targetPath!!)
-        syncTaskUpdater.setSourceBackupDir(syncTask.id, dirName)
+    /**
+     * @return Name of the created dir.
+     */
+    suspend fun createBackupDirInSource(syncTask: SyncTask): String {
+        return createBackupDir(
+            taskId = syncTask.id,
+            cloudReader = sourceCloudReader,
+            cloudWriter = sourceCloudWriter,
+            backupDirBasePath = syncTask.sourcePath!!
+        )
     }
 
 
@@ -52,20 +57,29 @@ class BackupDirCreator @AssistedInject constructor(
      * @return Name of dir for backups in task target dir.
      */
     private suspend fun createBackupDir(
+        taskId: String,
         cloudReader: CloudReader,
         cloudWriter: CloudWriter,
         backupDirBasePath: String
     ): String {
-        cloudReader.getFileMetadata(backupDirBasePath, backupDirName).getOrThrow()?.also { metadata ->
+        val initialDirName = backupDirName(taskId)
+
+        cloudReader.getFileMetadata(backupDirBasePath, initialDirName).getOrThrow()?.also { metadata ->
 
             // Если каталог существует, и он пустой, или можно использовать существующий.
             if (metadata.isDir) {
                 if (0 == metadata.childCount || preferences.BACKUP_USE_EXISTING_DIR)
-                    return backupDirName
+                    return initialDirName
             }
         }
+
         // Объект - файл или каталог, который нельзя использовать.
-        return createDirUntilSuccess(backupDirBasePath, cloudReader, cloudWriter)
+        return createDirUntilSuccess(
+            initialDirName = initialDirName,
+            backupDirBasePath = backupDirBasePath,
+            cloudReader,
+            cloudWriter
+        )
     }
 
     /**
@@ -74,6 +88,7 @@ class BackupDirCreator @AssistedInject constructor(
      */
     @Throws(RuntimeException::class)
     private suspend fun createDirUntilSuccess(
+        initialDirName: String,
         backupDirBasePath: String,
         cloudReader: CloudReader,
         cloudWriter: CloudWriter,
@@ -81,11 +96,11 @@ class BackupDirCreator @AssistedInject constructor(
     ): String {
 
         var tryCount = 0
-        var dirNameToCreate = newBackupDirName
+        var dirNameToCreate = initialDirName
 
-        while (cloudReader.dirExists(backupDirBasePath,dirNameToCreate).getOrThrow()) {
+        while (!cloudReader.dirExists(backupDirBasePath, dirNameToCreate).getOrThrow()) {
             dirNameToCreate = newBackupDirName
-            cloudWriter.createDir(backupDirBasePath, backupDirName)
+            cloudWriter.createDir(backupDirBasePath, dirNameToCreate)
 
             tryCount++
             if (tryCount > maxAttemptsCount)
