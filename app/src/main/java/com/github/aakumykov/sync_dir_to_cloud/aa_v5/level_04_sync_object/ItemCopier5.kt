@@ -29,6 +29,7 @@ class ItemCopier5 @AssistedInject constructor(
 
     @Throws(Exception::class)
     suspend fun copyItemFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
+
         if (syncObject.isDir) createDirInTarget(syncObject)
         else copyFileFromSourceToTarget(syncObject, overwriteIfExists)
 
