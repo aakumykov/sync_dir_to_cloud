@@ -7,30 +7,32 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import javax.inject.Named
 
 class BackuperNew @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
+    @Assisted @Named("executionId") private val executionId: String,
+    @Assisted @Named("topLevelDirPrefix") private val topLevelDirPrefix: String,
     private val backupDirCreatorFactory: BackupDirCreatorAssistedFactory,
     private val syncTaskUpdater: SyncTaskUpdater,
 ) {
     suspend fun prepareBackup() {
         when(syncTask.syncMode!!) {
-            SyncMode.SYNC -> prepareBackupDirInSource()
+            SyncMode.SYNC -> prepareTopLevelBackupDirInSource()
             SyncMode.MIRROR -> {
-                prepareBackupDirInSource()
-                prepareBackupDirInTarget()
+                prepareTopLevelBackupDirInSource()
+                prepareTopLevelBackupDirInTarget()
             }
         }
     }
 
-    private suspend fun prepareBackupDirInSource() {
-        val dirName = backupDirCreator.createBackupDirInSource(syncTask)
+    private suspend fun prepareTopLevelBackupDirInSource() {
+        val dirName = backupDirCreator.createBackupDirInSource(syncTask, topLevelDirPrefix)
         syncTaskUpdater.setSourceBackupDir(syncTask.id, dirName)
     }
 
-    private suspend fun prepareBackupDirInTarget() {
-        val dirName = backupDirCreator.createBackupDirInTarget(syncTask)
+    private suspend fun prepareTopLevelBackupDirInTarget() {
+        val dirName = backupDirCreator.createBackupDirInTarget(syncTask, topLevelDirPrefix)
         syncTaskUpdater.setTargetBackupDir(syncTask.id, dirName)
     }
 
@@ -43,5 +45,9 @@ class BackuperNew @AssistedInject constructor(
 
 @AssistedFactory
 interface BackuperNewAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): BackuperNew
+    fun create(
+        syncTask: SyncTask,
+        @Named("executionId") executionId: String,
+        @Named("topLevelDirPrefix") topLevelDirPrefix: String
+    ): BackuperNew
 }

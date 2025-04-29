@@ -21,7 +21,7 @@ class BackupDirCreator (
 
         val dateSuffix = formattedDateTime(syncTask.lastStart ?: currentTime())
         val backupDirName = "${BackupConfig.BACKUP_DIR_PREFIX}_${dateSuffix}"
-        val backupParentDir = File(syncTask.targetPath!!, BackupConfig.BACKUPS_TOP_DIR_NAME).absolutePath
+        val backupParentDir = File(syncTask.targetPath!!, BackupConfig.BACKUPS_TOP_DIR_PREFIX).absolutePath
 
         return try {
             Result.success(cloudWriter.createDirResult(backupParentDir, backupDirName).getOrThrow())

@@ -14,7 +14,7 @@ class BackupDirNamer @Inject constructor() {
         val dateSuffix = CurrentDateTime.format(syncTask.lastStart ?: Date().time)
 
         val backupDirName = "${BackupConfig.BACKUP_DIR_PREFIX}_${dateSuffix}"
-        val backupParentDirPath = File(syncTask.targetPath!!, BackupConfig.BACKUPS_TOP_DIR_NAME).absolutePath
+        val backupParentDirPath = File(syncTask.targetPath!!, BackupConfig.BACKUPS_TOP_DIR_PREFIX).absolutePath
 
         return BackupDirSpec(
             backupDirName =  backupDirName,

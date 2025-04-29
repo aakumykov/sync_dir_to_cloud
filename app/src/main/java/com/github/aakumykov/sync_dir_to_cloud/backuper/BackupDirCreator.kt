@@ -6,36 +6,30 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudReader
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
-import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig.Companion.BACKUPS_TOP_DIR_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
-import kotlin.jvm.Throws
 
 
 class BackupDirCreator @AssistedInject constructor(
+    @Assisted private val dirPrefix: String,
     @Assisted private val syncTask: SyncTask,
     private val preferences: AppPreferences,
     private val cloudWriterGetter: CloudWriterGetter,
     private val cloudReaderGetter: CloudReaderGetter,
 ) {
-    private fun backupDirName(taskId: String): String = "${BACKUPS_TOP_DIR_NAME}_${taskId}"
-    private val newBackupDirName: String get() = "${BACKUPS_TOP_DIR_NAME}_${randomUUID}"
-
     /**
      * @return Name of the created dir.
      */
-    suspend fun createBackupDirInTarget(syncTask: SyncTask): String {
+    suspend fun createBackupDirInTarget(syncTask: SyncTask, dirPrefix: String): String {
         return createBackupDir(
             taskId = syncTask.id,
             cloudReader = targetCloudReader,
             cloudWriter = targetCloudWriter,
-            backupDirBasePath = syncTask.targetPath!!
+            backupDirBasePath = syncTask.targetPath!!,
+            dirPrefix = dirPrefix
         )
     }
 
@@ -43,12 +37,13 @@ class BackupDirCreator @AssistedInject constructor(
     /**
      * @return Name of the created dir.
      */
-    suspend fun createBackupDirInSource(syncTask: SyncTask): String {
+    suspend fun createBackupDirInSource(syncTask: SyncTask, dirPrefix: String): String {
         return createBackupDir(
             taskId = syncTask.id,
             cloudReader = sourceCloudReader,
             cloudWriter = sourceCloudWriter,
-            backupDirBasePath = syncTask.sourcePath!!
+            backupDirBasePath = syncTask.sourcePath!!,
+            dirPrefix = dirPrefix
         )
     }
 
@@ -60,9 +55,11 @@ class BackupDirCreator @AssistedInject constructor(
         taskId: String,
         cloudReader: CloudReader,
         cloudWriter: CloudWriter,
-        backupDirBasePath: String
+        backupDirBasePath: String,
+        dirPrefix: String
     ): String {
-        val initialDirName = backupDirName(taskId)
+
+        val initialDirName = backupDirName(taskId, dirPrefix)
 
         cloudReader.getFileMetadata(backupDirBasePath, initialDirName).getOrThrow()?.also { metadata ->
 
@@ -126,6 +123,10 @@ class BackupDirCreator @AssistedInject constructor(
     private val sourceCloudReader: CloudReader by lazy {
         cloudReaderGetter.getSourceCloudReaderFor(syncTask)
     }
+
+    private fun backupDirName(taskId: String, dirPrefix: String): String = "${dirPrefix}_${taskId}"
+
+    private val newBackupDirName: String get() = "${dirPrefix}_${randomUUID}"
 }
 
 
