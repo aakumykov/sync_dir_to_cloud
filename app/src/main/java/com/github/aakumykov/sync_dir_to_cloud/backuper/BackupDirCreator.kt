@@ -132,5 +132,8 @@ class BackupDirCreator @AssistedInject constructor(
 
 @AssistedFactory
 interface BackupDirCreatorAssistedFactory {
-    fun create(syncTask: SyncTask): BackupDirCreator
+    fun create(
+        dirPrefix: String,
+        syncTask: SyncTask
+    ): BackupDirCreator
 }

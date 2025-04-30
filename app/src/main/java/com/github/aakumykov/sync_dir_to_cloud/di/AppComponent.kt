@@ -182,5 +182,10 @@ interface AppComponent {
 
     fun getBackuper6AssistedFactory(): Backuper6AssistedFactory
 
+    fun getBackupDirCreatorAssistedFactory(): BackupDirCreatorAssistedFactory
+
     fun getBackuperNewAssistedFactory(): BackuperNewAssistedFactory
+
+    fun getBackupDirCreator2AssistedFactory(): BackupDirCreator2AssistedFactory
+
 }
