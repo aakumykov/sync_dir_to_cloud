@@ -1,0 +1,37 @@
+1) Тчение источника:
+CloudReader (специфический для разных хранилищ) - читает из специфического источника,
+    выдаёт стандартизированные объекты.
+StorageToDatabaseReader - сохраняет эти объекты в БД, добавляя новые или обновляя существующие.
+
+Как создаётся и используется CloudReader
+
+CloudReader <-- CloudReaderFactory <-- (сборка в словарь Dagger-ом) <-- CloudReaderCreator()
+
+
+========================= Вывожу по-новому =========================
+
+[SyncTaskExecutor]
+
+[источник] StorageToDatabaseLister.listFromPathToDatabase() --------> [ База данных ]
+[приёмник] StorageToDatabaseLister.listFromPathToDatabase() --------> [ База данных ]
+|
+|
+(RecursiveDirReaderFactory)
+RecursiveDirReader
+|
+|
+FileLister
+
+
+
+SourceWithTargetComparator ---------> [ База данных сравнений ]
+
+
+InstructionsGenerator ---------> [ База данных инструкций ]
+
+
+
+
+
+
+
