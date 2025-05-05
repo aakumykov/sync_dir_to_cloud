@@ -51,6 +51,7 @@ class SyncObjectRepository @Inject constructor(
         = syncObjectDAO.updateMetadata(objectId = objectId, size = size, mTime = mTime)
 
 
+    @Deprecated("Пересмотреть использование")
     override suspend fun getObjectsNeedsToBeSynced(taskId: String): List<SyncObject> {
 
         val neverSyncedObjects: List<SyncObject> = syncObjectDAO.getObjectsWithSyncState(taskId, ExecutionState.NEVER)
@@ -79,6 +80,7 @@ class SyncObjectRepository @Inject constructor(
     }
 
 
+    @Deprecated("Сделать отдельные методы для файлов и каталогов")
     override suspend fun getObjectsForTaskWithModificationState(
         taskId: String,
         stateInStorage: StateInStorage
@@ -86,6 +88,7 @@ class SyncObjectRepository @Inject constructor(
         return syncObjectDAO.getObjectsWithModificationState(taskId, stateInStorage)
     }
 
+    @Deprecated("Сделать отдельные методы для файлов и каталогов")
     override suspend fun getObjectsForTaskWithSyncState(
         taskId: String,
         syncState: ExecutionState

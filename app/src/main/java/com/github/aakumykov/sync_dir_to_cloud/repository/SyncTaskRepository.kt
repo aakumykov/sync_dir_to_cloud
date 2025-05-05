@@ -46,11 +46,13 @@ class SyncTaskRepository @Inject constructor(
     SyncTaskStateChanger,
     SyncTaskRunningTimeUpdater
 {
+    @Deprecated("Сделать возвращаемые значения nullable")
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
 //        return syncTaskLocalDataSource.listSyncTasks()
         return syncTaskDAO.list()
     }
 
+    @Deprecated("Сделать возвращаемые значения nullable")
     override suspend fun getSyncTask(id: String): SyncTask {
 //        return syncTaskLocalDataSource.getTask(id)
         return syncTaskDAO.get(id)
@@ -60,6 +62,7 @@ class SyncTaskRepository @Inject constructor(
         return syncTaskDAO.getNullable(id)
     }
 
+    @Deprecated("Сделать возвращаемые значения nullable")
     override suspend fun getSyncTaskAsLiveData(taskId: String): LiveData<SyncTask> {
         return syncTaskDAO.getAsLiveData(taskId)
     }

@@ -26,6 +26,7 @@ class ExecutionLogRepository @Inject constructor(
         return executionLogDAO.getLogsAsLiveData(taskId, executionId)
     }
 
+    @Deprecated("удалить")
     override suspend fun clearExecutionLog() {
         executionLogDAO.clear()
     }
