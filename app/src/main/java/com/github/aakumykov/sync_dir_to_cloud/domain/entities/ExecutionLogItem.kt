@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.DeleteColumn
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
@@ -21,6 +22,9 @@ import java.util.UUID
             childColumns = ["task_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["task_id"])
     ]
     /*indices = [
         Index(value = [

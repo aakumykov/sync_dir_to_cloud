@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.RenameTable
@@ -20,6 +21,9 @@ import java.util.UUID
             childColumns = ["task_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["task_id"])
     ]
 )
 class TaskLogEntry(

@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
@@ -18,6 +19,9 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
             onUpdate = CASCADE
         )
     ],
+    indices = [
+        Index(value = ["task_id"])
+    ]
 )
 class SyncOperationLogItem(
 

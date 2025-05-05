@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Ignore
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -20,6 +21,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
             onUpdate = CASCADE
         )
     ],
+    indices = [
+        Index(value = ["task_id"])
+    ]
 )
 class ComparisonState (
     @PrimaryKey val id: String,
