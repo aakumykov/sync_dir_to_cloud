@@ -87,9 +87,9 @@ class BackupDirCreator2 @AssistedInject constructor(
 @AssistedFactory
 interface BackupDirCreator2AssistedFactory {
     fun create(
-        private val syncTask: SyncTask,
-        @Assisted("prefix") private val dirNamePrefixSupplier: Supplier<String>,
-        @Assisted("suffix") private val dirNameSuffixSupplier: Supplier<String>,
-        private val maxCreationAttemptsCount: Int,
+        syncTask: SyncTask,
+        @Assisted("prefix") dirNamePrefixSupplier: Supplier<String>,
+        @Assisted("suffix") dirNameSuffixSupplier: Supplier<String>,
+        maxCreationAttemptsCount: Int,
     ): BackupDirCreator2
 }
