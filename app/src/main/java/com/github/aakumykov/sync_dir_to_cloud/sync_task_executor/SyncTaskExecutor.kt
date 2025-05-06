@@ -202,8 +202,12 @@ class SyncTaskExecutor @AssistedInject constructor(
         appComponent
             .getBackupPreparerAssistedFactory()
             .create(syncTask, executionId = executionId, topLevelDirPrefix = BackupConfig.BACKUPS_TOP_DIR_PREFIX)
+            .prepareTaskBackupDirs()
+
+        appComponent
+            .getExecutionBackupDirPreparerAssistedFactory()
+            .create(syncTask)
             .apply {
-                prepareTaskBackupDirs()
                 createExecutionBackupDirInSource()
                 createExecutionBackupDirInTarget()
             }

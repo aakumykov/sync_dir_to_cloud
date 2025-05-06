@@ -5,16 +5,14 @@ import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreatorAssistedF
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
-import com.github.aakumykov.sync_dir_to_cloud.extensions.lastStartTime
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskMetadataReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
-import com.github.aakumykov.sync_dir_to_cloud.utils.formattedDateTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class BackupDirPreparer @AssistedInject constructor(
+class SyncTaskBackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted("executionId") private val executionId: String,
     @Assisted("topLevelDirPrefix") private val topLevelDirPrefix: String,
@@ -31,22 +29,6 @@ class BackupDirPreparer @AssistedInject constructor(
                 prepareTopLevelBackupDirInTarget()
             }
         }
-    }
-
-
-    /**
-     * Создаёт каталог для бекапов текущего выполнения в источнике.
-     */
-    suspend fun createExecutionBackupDirInSource(): String {
-        return executionBackupDirCreator.createBaseBackupDirInSource()
-    }
-
-
-    /**
-     * Создаёт каталог для бекапов текущего выполнения в приёмнике.
-     */
-    suspend fun createExecutionBackupDirInTarget(): String {
-        return executionBackupDirCreator.createBaseBackupDirInSource()
     }
 
 
@@ -70,28 +52,14 @@ class BackupDirPreparer @AssistedInject constructor(
             appPreferences.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT
         )
     }
-
-
-    private val executionBackupDirCreator: BackupDirCreator by lazy {
-        backupDirCreatorAssistedFactory.create(
-            syncTask = syncTask,
-            dirNamePrefixSupplier = { appPreferences.BACKUPS_DIR_PREFIX },
-            dirNameSuffixSupplier = { "${formattedDateTime(syncTask.lastStartTime)}${executionBackupDirAppendix}" },
-            appPreferences.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT
-        )
-    }
-
-    private var _executionBackupDirAppendix: Int? = null
-    private val executionBackupDirAppendix: String
-        get() = _executionBackupDirAppendix?.let { "_${it}" } ?: ""
 }
 
 
 @AssistedFactory
-interface BackupDirPreparerAssistedFactory {
+interface SyncTaskBackupDirPreparerAssistedFactory {
     fun create(
         syncTask: SyncTask,
         @Assisted("executionId") executionId: String,
         @Assisted("topLevelDirPrefix") topLevelDirPrefix: String
-    ): BackupDirPreparer
+    ): SyncTaskBackupDirPreparer
 }
