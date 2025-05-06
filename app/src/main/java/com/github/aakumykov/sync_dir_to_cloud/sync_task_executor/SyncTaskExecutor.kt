@@ -201,11 +201,12 @@ class SyncTaskExecutor @AssistedInject constructor(
         }
     }
 
+    // TODO: делать это при непосредственной необходимости бекапа
     private suspend fun prepareBackupDirs(syncTask: SyncTask) {
         appComponent
             .getBackupPreparerAssistedFactory()
             .create(syncTask, executionId = executionId, topLevelDirPrefix = BackupConfig.BACKUPS_TOP_DIR_PREFIX)
-            .prepareBackupDirs()
+            .prepareTaskBackupDirs()
     }
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions(syncTask: SyncTask) {
