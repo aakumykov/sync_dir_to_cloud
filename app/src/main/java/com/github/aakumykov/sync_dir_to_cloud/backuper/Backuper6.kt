@@ -11,13 +11,13 @@ import javax.inject.Inject
 class Backuper6 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask
 ) {
-    @Inject
-    lateinit var backupDirCreatorFactory: BackupDirCreatorAssistedFactory
+//    @Inject
+//    lateinit var backupDirCreatorFactory: BackupDirCreatorAssistedFactory
 
-    val backupDirCreator by lazy { backupDirCreatorFactory.create(
+    /*val backupDirCreator by lazy { backupDirCreatorFactory.create(
         dirPrefix = BackupConfig.BACKUPS_TOP_DIR_PREFIX,
         syncTask = syncTask
-    ) }
+    ) }*/
 
     init {
         appComponent.injectBackuper6(this)

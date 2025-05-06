@@ -1,20 +1,19 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
+import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v1.DirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.dirs_backuper.DirsBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v1.DirBackuperAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreatorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6
 import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
@@ -182,8 +181,6 @@ interface AppComponent {
     fun injectBackuper6(backuper6: Backuper6)
 
     fun getBackuper6AssistedFactory(): Backuper6AssistedFactory
-
-    fun getBackupDirCreatorAssistedFactory(): BackupDirCreatorAssistedFactory
 
     fun getBackupPreparerAssistedFactory(): BackupDirPreparerAssistedFactory
 
