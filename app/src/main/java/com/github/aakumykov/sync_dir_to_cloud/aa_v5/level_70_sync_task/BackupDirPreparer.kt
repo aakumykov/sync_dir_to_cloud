@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreator2
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreator2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreator
+import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
@@ -15,7 +15,7 @@ class BackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted("executionId") private val executionId: String,
     @Assisted("topLevelDirPrefix") private val topLevelDirPrefix: String,
-    private val backupDirCreator2AssistedFactory: BackupDirCreator2AssistedFactory,
+    private val backupDirCreatorAssistedFactory: BackupDirCreatorAssistedFactory,
     private val syncTaskUpdater: SyncTaskUpdater,
 ) {
     suspend fun prepareBackupDirs() {
@@ -31,7 +31,7 @@ class BackupDirPreparer @AssistedInject constructor(
     private suspend fun prepareTopLevelBackupDirInSource() {
         val dirName =
 //            backupDirCreator.createBackupDirInSource(syncTask, topLevelDirPrefix)
-            backupDirCreator2.createBaseBackupDirInSource()
+            backupDirCreator.createBaseBackupDirInSource()
         syncTaskUpdater.setSourceBackupDir(syncTask.id, dirName)
     }
 
@@ -39,13 +39,13 @@ class BackupDirPreparer @AssistedInject constructor(
     private suspend fun prepareTopLevelBackupDirInTarget() {
         val dirName =
 //            backupDirCreator.createBackupDirInTarget(syncTask, topLevelDirPrefix)
-            backupDirCreator2.createBaseBackupDirInTarget()
+            backupDirCreator.createBaseBackupDirInTarget()
         syncTaskUpdater.setTargetBackupDir(syncTask.id, dirName)
     }
 
 
-    private val backupDirCreator2: BackupDirCreator2 by lazy {
-        backupDirCreator2AssistedFactory.create(
+    private val backupDirCreator: BackupDirCreator by lazy {
+        backupDirCreatorAssistedFactory.create(
             syncTask = syncTask,
             dirNamePrefixSupplier = { BackupConfig.BACKUPS_TOP_DIR_PREFIX },
             dirNameSuffixSupplier = { randomUUID },

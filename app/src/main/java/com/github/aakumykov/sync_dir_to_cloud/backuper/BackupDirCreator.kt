@@ -11,9 +11,8 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import javax.inject.Named
 
-class BackupDirCreator2 @AssistedInject constructor(
+class BackupDirCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted("prefix") private val dirNamePrefixSupplier: Supplier<String>,
     @Assisted("suffix") private val dirNameSuffixSupplier: Supplier<String>,
@@ -90,11 +89,11 @@ class BackupDirCreator2 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface BackupDirCreator2AssistedFactory {
+interface BackupDirCreatorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         @Assisted("prefix") dirNamePrefixSupplier: Supplier<String>,
         @Assisted("suffix") dirNameSuffixSupplier: Supplier<String>,
         maxCreationAttemptsCount: Int,
-    ): BackupDirCreator2
+    ): BackupDirCreator
 }
