@@ -21,23 +21,24 @@ class BackupDirCreator2 @AssistedInject constructor(
     private val cloudReaderGetter: CloudReaderGetter,
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
-    private suspend fun createBaseBackupDirInSource(): String {
+    suspend fun createBaseBackupDirInSource(): String {
         return createDirUntilNotUnique(
             syncSide = SyncSide.SOURCE,
             parentDirPath = syncTask.sourcePath!!,
         )
     }
 
-    private suspend fun createBaseBackupDirInTarget(): String {
+    suspend fun createBaseBackupDirInTarget(): String {
         return createDirUntilNotUnique(
             syncSide = SyncSide.TARGET,
             parentDirPath = syncTask.targetPath!!,
         )
     }
 
-    private suspend fun createBackupDirIn(syncSide: SyncSide, parentDirPath: String): String {
+    suspend fun createBackupDirIn(syncSide: SyncSide, parentDirPath: String): String {
         return createDirUntilNotUnique(syncSide = syncSide, parentDirPath = parentDirPath)
     }
+
 
     @Throws(RuntimeException::class)
     private suspend fun createDirUntilNotUnique(
@@ -54,7 +55,10 @@ class BackupDirCreator2 @AssistedInject constructor(
         return createDir(syncSide, dirName, parentDirPath)
     }
 
-    private val newDirName: String get() = dirNamePrefixSupplier.get() + dirNameSuffixSupplier.get()
+
+    private val newDirName: String
+        get() = "${dirNamePrefixSupplier.get()}_${dirNameSuffixSupplier.get()}"
+
 
     private suspend fun dirExists(syncSide: SyncSide, dirName: String, parentDirPath: String): Boolean {
         return when(syncSide) {
@@ -62,6 +66,7 @@ class BackupDirCreator2 @AssistedInject constructor(
             SyncSide.TARGET -> targetCloudReader.dirExists(parentDirPath, dirName).getOrThrow()
         }
     }
+
 
     private fun createDir(
         syncSide: SyncSide,

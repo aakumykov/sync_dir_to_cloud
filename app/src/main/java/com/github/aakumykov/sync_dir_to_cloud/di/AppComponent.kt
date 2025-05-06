@@ -8,13 +8,12 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCan
 import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v1.DirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackuperNewAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreator2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6
 import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6AssistedFactory
@@ -186,8 +185,7 @@ interface AppComponent {
 
     fun getBackupDirCreatorAssistedFactory(): BackupDirCreatorAssistedFactory
 
-    fun getBackuperNewAssistedFactory(): BackuperNewAssistedFactory
+    fun getBackupPreparerAssistedFactory(): BackupDirPreparerAssistedFactory
 
-    fun getBackupDirCreator2AssistedFactory(): BackupDirCreator2AssistedFactory
 
 }
