@@ -46,7 +46,7 @@ class ExecutionBackupDirPreparer @AssistedInject constructor(
 
 
     private val dirNameSuffix: String
-        get() = "${formattedDateTime(taskStartTime)}${executionBackupDirAppendix}"
+        get() = "${formattedDateTime(0L)}${executionBackupDirAppendix}"
 
 
     private var _executionBackupDirAppendix: Int? = null
