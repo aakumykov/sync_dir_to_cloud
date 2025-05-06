@@ -76,14 +76,14 @@ class BackupDirPreparer @AssistedInject constructor(
         backupDirCreatorAssistedFactory.create(
             syncTask = syncTask,
             dirNamePrefixSupplier = { appPreferences.BACKUPS_DIR_PREFIX },
-            dirNameSuffixSupplier = { "${formattedDateTime(syncTask.lastStartTime)}_${executionBackupDirIndex}" },
+            dirNameSuffixSupplier = { "${formattedDateTime(syncTask.lastStartTime)}${executionBackupDirAppendix}" },
             appPreferences.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT
         )
     }
 
-    private var _executionBackupDirIndex: Int? = null
-    private val executionBackupDirIndex: String
-        get() = _executionBackupDirIndex?.toString() ?: ""
+    private var _executionBackupDirAppendix: Int? = null
+    private val executionBackupDirAppendix: String
+        get() = _executionBackupDirAppendix?.let { "_${it}" } ?: ""
 }
 
 
