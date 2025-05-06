@@ -14,8 +14,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6
-import com.github.aakumykov.sync_dir_to_cloud.backuper.Backuper6AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.backuper.FileAndDirBackuper
+import com.github.aakumykov.sync_dir_to_cloud.backuper.FileAndDirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
@@ -178,9 +178,9 @@ interface AppComponent {
 
     fun getSyncInstructionRepository6(): SyncInstructionRepository
 
-    fun injectBackuper6(backuper6: Backuper6)
+    fun injectBackuper6(fileAndDirBackuper: FileAndDirBackuper)
 
-    fun getBackuper6AssistedFactory(): Backuper6AssistedFactory
+    fun getFileAndDirBackuperAssistedFactory(): FileAndDirBackuperAssistedFactory
 
     fun getBackupPreparerAssistedFactory(): BackupDirPreparerAssistedFactory
 

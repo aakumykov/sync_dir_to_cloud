@@ -1,14 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.backuper
 
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
-class Backuper6 @AssistedInject constructor(
+class FileAndDirBackuper @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask
 ) {
 //    @Inject
@@ -26,6 +24,6 @@ class Backuper6 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface Backuper6AssistedFactory {
-    fun create(syncTask: SyncTask): Backuper6
+interface FileAndDirBackuperAssistedFactory {
+    fun create(syncTask: SyncTask): FileAndDirBackuper
 }
