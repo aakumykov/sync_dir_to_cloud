@@ -3,8 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.dirs_backuper.DirsBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
@@ -73,8 +71,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private var currentTask: SyncTask? = null
 
-    private val dirsBackuperCreator: DirsBackuperCreator by lazy { appComponent.getDirsBackuperCreator() }
-    private val filesBackuperCreator: FilesBackuperCreator by lazy { appComponent.getFilesBackuperCreator() }
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
@@ -310,29 +306,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             errorMsg = null
         ))
     }
-
-
-    private suspend fun backupDeletedDirs(syncTask: SyncTask) {
-        dirsBackuperCreator
-            .createDirsBackuperForTask(syncTask, executionId)
-            ?.backupDeletedDirsOfTask(syncTask)
-            ?: { Log.e(TAG, "Не удалось создать бэкапер каталогов для задачи ${syncTask.description}") }
-    }
-
-    private suspend fun backupDeletedFiles(syncTask: SyncTask) {
-        filesBackuperCreator
-            .createFilesBackuperForSyncTask(syncTask, executionId)
-            ?.backupDeletedFilesOfTask(syncTask)
-            ?: { Log.e(TAG, "Не удалось создать бэкапер для удалённых файлов для задачи ${syncTask.description}") }
-    }
-
-    private suspend fun backupModifiedFiles(syncTask: SyncTask) {
-        filesBackuperCreator
-            .createFilesBackuperForSyncTask(syncTask, executionId)
-            ?.backupModifiedFilesOfTask(syncTask)
-            ?: { Log.e(TAG, "Не удалось создать бэкапер для изменившихся файлов для задачи ${syncTask.description}") }
-    }
-
 
     private suspend fun resetTaskBadStates(taskId: String) {
         syncTaskStateChanger.resetSourceReadingBadState(taskId)

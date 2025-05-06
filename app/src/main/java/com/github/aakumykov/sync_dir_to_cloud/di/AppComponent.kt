@@ -2,8 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v1.DirBackuperAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.dirs_backuper.DirsBackuperCreator
-import com.github.aakumykov.sync_dir_to_cloud.a0_backupers.v2_ugly.files_backuper.FilesBackuperCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.sync_stuff.SyncStuff
@@ -144,10 +142,6 @@ interface AppComponent {
     fun getProgressInfoHolder(): ProgressInfoHolder
 
     fun getStorageToDatabaseLister(): StorageToDatabaseLister
-
-    fun getFilesBackuperCreator(): FilesBackuperCreator
-
-    fun getDirsBackuperCreator(): DirsBackuperCreator
 
     fun getSyncObjectLogger(): SyncObjectLogger
 
