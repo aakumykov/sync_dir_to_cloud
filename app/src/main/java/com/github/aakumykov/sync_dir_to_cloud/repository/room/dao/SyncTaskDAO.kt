@@ -51,5 +51,5 @@ interface SyncTaskDAO {
     suspend fun getTargetBackupsDir(taskId: String): String?
 
     @Query("SELECT last_start FROM sync_tasks WHERE id = :taskId")
-    suspend fun getStartingTime(taskId: String): Long?
+    fun getStartingTime(taskId: String): Long?
 }

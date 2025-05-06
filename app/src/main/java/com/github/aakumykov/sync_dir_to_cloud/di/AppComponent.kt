@@ -4,7 +4,8 @@ import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirPreparerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.ExecutionBackupDirPreparerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.SyncTaskBackupDirPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
@@ -170,7 +171,7 @@ interface AppComponent {
 
     fun getFileAndDirBackuperAssistedFactory(): FileAndDirBackuperAssistedFactory
 
-    fun getBackupPreparerAssistedFactory(): BackupDirPreparerAssistedFactory
+    fun getBackupPreparerAssistedFactory(): SyncTaskBackupDirPreparerAssistedFactory
 
-
+    fun getExecutionBackupDirPreparerAssistedFactory(): ExecutionBackupDirPreparerAssistedFactory
 }

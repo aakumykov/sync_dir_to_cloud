@@ -192,7 +192,7 @@ class SyncTaskRepository @Inject constructor(
         return syncTaskDAO.getTargetBackupsDir(taskId)
     }
 
-    override suspend fun getStartingTime(taskId: String): Long? {
+    override fun getStartingTime(taskId: String): Long? {
         return syncTaskDAO.getStartingTime(taskId)
     }
 }
