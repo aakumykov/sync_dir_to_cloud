@@ -2,12 +2,12 @@ package com.github.aakumykov.sync_dir_to_cloud.backuper
 
 import androidx.core.util.Supplier
 import com.github.aakumykov.cloud_reader.CloudReader
-import com.github.aakumykov.cloud_reader.absolutePathFrom
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -78,7 +78,7 @@ class BackupDirCreator @AssistedInject constructor(
             SyncSide.SOURCE -> sourceCloudWriter.createDir(parentDirPath, dirName)
             SyncSide.TARGET -> targetCloudWriter.createDir(parentDirPath, dirName)
         }
-        return absolutePathFrom(parentDirPath,dirName)
+        return combineFSPaths(parentDirPath, dirName)
     }
 
 

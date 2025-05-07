@@ -171,7 +171,7 @@ interface AppComponent {
 
     fun getFileAndDirBackuperAssistedFactory(): FileAndDirBackuperAssistedFactory
 
-    fun getBackupPreparerAssistedFactory(): SyncTaskBackupDirPreparerAssistedFactory
+    fun getSyncTaskBackupDirPreparerAssistedFactory(): SyncTaskBackupDirPreparerAssistedFactory
 
     fun getExecutionBackupDirPreparerAssistedFactory(): ExecutionBackupDirPreparerAssistedFactory
 }
