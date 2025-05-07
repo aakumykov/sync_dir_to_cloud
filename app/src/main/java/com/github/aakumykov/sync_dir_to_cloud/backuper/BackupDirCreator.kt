@@ -21,37 +21,39 @@ class BackupDirCreator @AssistedInject constructor(
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
     suspend fun createBaseBackupDirInSource(): String {
-        return createDirUntilNotUnique(
+        return createBackupDirIn(
             syncSide = SyncSide.SOURCE,
             parentDirPath = syncTask.sourcePath!!,
         )
     }
 
     suspend fun createBaseBackupDirInTarget(): String {
-        return createDirUntilNotUnique(
+        return createBackupDirIn(
             syncSide = SyncSide.TARGET,
             parentDirPath = syncTask.targetPath!!,
         )
     }
 
+
     suspend fun createBackupDirIn(syncSide: SyncSide, parentDirPath: String): String {
-        return createDirUntilNotUnique(syncSide = syncSide, parentDirPath = parentDirPath)
+        val dirName = getUniqueDirName(syncSide, parentDirPath)
+        return createDir(syncSide, dirName, parentDirPath)
     }
 
 
     @Throws(RuntimeException::class)
-    private suspend fun createDirUntilNotUnique(
-        syncSide: SyncSide,
-        parentDirPath: String,
-    ): String {
+    private suspend fun getUniqueDirName(syncSide: SyncSide, parentDirPath: String): String {
+
         var dirName = newDirName
         var attemptCount = 1
+
         while(dirExists(syncSide, dirName = dirName, parentDirPath = parentDirPath)) {
            dirName =  newDirName
             if (attemptCount++ > maxCreationAttemptsCount)
-                throw RuntimeException("Unable to create dir '$dirName' in path '$parentDirPath' for $attemptCount times.")
+                throw RuntimeException("Unable to create unique dir name in path '$parentDirPath' for $attemptCount times.")
         }
-        return createDir(syncSide, dirName, parentDirPath)
+
+        return dirName
     }
 
 

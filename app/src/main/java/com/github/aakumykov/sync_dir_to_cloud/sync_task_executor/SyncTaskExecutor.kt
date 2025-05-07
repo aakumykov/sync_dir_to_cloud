@@ -206,11 +206,13 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         appComponent
             .getExecutionBackupDirPreparerAssistedFactory()
-            .create(syncTask)
-            .apply {
-                createExecutionBackupDirInSource()
-                createExecutionBackupDirInTarget()
-            }
+            .create(syncTask, SyncSide.SOURCE)
+            .createExecutionBackupDir()
+
+        appComponent
+            .getExecutionBackupDirPreparerAssistedFactory()
+            .create(syncTask, SyncSide.TARGET)
+            .createExecutionBackupDir()
     }
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions(syncTask: SyncTask) {
