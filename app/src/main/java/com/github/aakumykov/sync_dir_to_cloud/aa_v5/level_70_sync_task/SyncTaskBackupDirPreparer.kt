@@ -14,8 +14,7 @@ import dagger.assisted.AssistedInject
 
 class SyncTaskBackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    @Assisted("executionId") private val executionId: String,
-    @Assisted("topLevelDirPrefix") private val topLevelDirPrefix: String,
+    @Assisted private val topLevelDirPrefix: String,
     private val backupDirCreatorAssistedFactory: BackupDirCreatorAssistedFactory,
     private val syncTaskUpdater: SyncTaskUpdater,
     private val appPreferences: AppPreferences,
@@ -57,9 +56,5 @@ class SyncTaskBackupDirPreparer @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncTaskBackupDirPreparerAssistedFactory {
-    fun create(
-        syncTask: SyncTask,
-        @Assisted("executionId") executionId: String,
-        @Assisted("topLevelDirPrefix") topLevelDirPrefix: String
-    ): SyncTaskBackupDirPreparer
+    fun create(syncTask: SyncTask, topLevelDirPrefix: String): SyncTaskBackupDirPreparer
 }

@@ -201,7 +201,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun prepareBackupDirs(syncTask: SyncTask) {
         appComponent
             .getSyncTaskBackupDirPreparerAssistedFactory()
-            .create(syncTask, executionId = executionId, topLevelDirPrefix = BackupConfig.BACKUPS_TOP_DIR_PREFIX)
+            .create(syncTask, BackupConfig.BACKUPS_TOP_DIR_PREFIX)
             .prepareTaskBackupDirs()
 
         appComponent
