@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskMetadataReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskResetter
@@ -34,6 +35,11 @@ class SyncTaskRepositoryInterfacesModule {
 
     @Provides
     fun provideSyncTaskCreatorDeleter(syncTaskRepository: SyncTaskRepository): SyncTaskCreatorDeleter {
+        return syncTaskRepository
+    }
+
+    @Provides
+    fun provideSyncTaskMetadataReader(syncTaskRepository: SyncTaskRepository): SyncTaskMetadataReader {
         return syncTaskRepository
     }
 }

@@ -160,4 +160,6 @@
     <string name="SYNC_OPERATION_backing_up_in_source">Backuing up in source</string>
     <string name="SYNC_OPERATION_backing_up_in_target">Backuing up in target</string>
     <string name="description_task_list_item_sync_mode_icon">Work mode</string>
+    <string name="TOGGLE_with_backup_on">With backups</string>
+    <string name="TOGGLE_with_backup_off">Without backups</string>
 </resources>

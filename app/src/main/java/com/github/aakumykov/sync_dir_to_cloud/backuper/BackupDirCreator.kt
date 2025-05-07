@@ -1,139 +1,112 @@
 package com.github.aakumykov.sync_dir_to_cloud.backuper
 
+import androidx.core.util.Supplier
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
-import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
-import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-
 class BackupDirCreator @AssistedInject constructor(
-    @Assisted private val dirPrefix: String,
     @Assisted private val syncTask: SyncTask,
-    private val preferences: AppPreferences,
-    private val cloudWriterGetter: CloudWriterGetter,
+    @Assisted("prefix") private val dirNamePrefixSupplier: Supplier<String>,
+    @Assisted("suffix") private val dirNameSuffixSupplier: Supplier<String>,
+    @Assisted private val maxCreationAttemptsCount: Int,
     private val cloudReaderGetter: CloudReaderGetter,
+    private val cloudWriterGetter: CloudWriterGetter,
 ) {
     /**
-     * @return Name of the created dir.
+     * @return Имя созданного каталога
      */
-    suspend fun createBackupDirInTarget(syncTask: SyncTask, dirPrefix: String): String {
-        return createBackupDir(
-            taskId = syncTask.id,
-            cloudReader = targetCloudReader,
-            cloudWriter = targetCloudWriter,
-            backupDirBasePath = syncTask.targetPath!!,
-            dirPrefix = dirPrefix
-        )
-    }
-
-
-    /**
-     * @return Name of the created dir.
-     */
-    suspend fun createBackupDirInSource(syncTask: SyncTask, dirPrefix: String): String {
-        return createBackupDir(
-            taskId = syncTask.id,
-            cloudReader = sourceCloudReader,
-            cloudWriter = sourceCloudWriter,
-            backupDirBasePath = syncTask.sourcePath!!,
-            dirPrefix = dirPrefix
-        )
-    }
-
-
-    /**
-     * @return Name of dir for backups in task target dir.
-     */
-    private suspend fun createBackupDir(
-        taskId: String,
-        cloudReader: CloudReader,
-        cloudWriter: CloudWriter,
-        backupDirBasePath: String,
-        dirPrefix: String
-    ): String {
-
-        val initialDirName = backupDirName(taskId, dirPrefix)
-
-        cloudReader.getFileMetadata(backupDirBasePath, initialDirName).getOrThrow()?.also { metadata ->
-
-            // Если каталог существует, и он пустой, или можно использовать существующий.
-            if (metadata.isDir) {
-                if (0 == metadata.childCount || preferences.BACKUP_USE_EXISTING_DIR)
-                    return initialDirName
-            }
-        }
-
-        // Объект - файл или каталог, который нельзя использовать.
-        return createDirUntilSuccess(
-            initialDirName = initialDirName,
-            backupDirBasePath = backupDirBasePath,
-            cloudReader,
-            cloudWriter
+    suspend fun createBaseBackupDirInSource(): String {
+        return createBackupDirIn(
+            syncSide = SyncSide.SOURCE,
+            parentDirPath = syncTask.sourcePath!!,
         )
     }
 
     /**
-     * @return Name of created dir.
-     * @throws RuntimeException if unable to create dir more then [BackupConfig.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT] times.
+     * @return Имя созданного каталога
      */
+    suspend fun createBaseBackupDirInTarget(): String {
+        return createBackupDirIn(
+            syncSide = SyncSide.TARGET,
+            parentDirPath = syncTask.targetPath!!,
+        )
+    }
+
+    /**
+     * @return Имя созданного каталога
+     */
+    suspend fun createBackupDirIn(syncSide: SyncSide, parentDirPath: String): String {
+        val dirName = getUniqueDirName(syncSide, parentDirPath)
+        return createDir(syncSide, dirName, parentDirPath)
+    }
+
+
     @Throws(RuntimeException::class)
-    private suspend fun createDirUntilSuccess(
-        initialDirName: String,
-        backupDirBasePath: String,
-        cloudReader: CloudReader,
-        cloudWriter: CloudWriter,
-        maxAttemptsCount: Int = BackupConfig.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT,
-    ): String {
+    private suspend fun getUniqueDirName(syncSide: SyncSide, parentDirPath: String): String {
 
-        var tryCount = 0
-        var dirNameToCreate = initialDirName
+        var dirName = newDirName
+        var attemptCount = 1
 
-        while (!cloudReader.dirExists(backupDirBasePath, dirNameToCreate).getOrThrow()) {
-            dirNameToCreate = newBackupDirName
-            cloudWriter.createDir(backupDirBasePath, dirNameToCreate)
-
-            tryCount++
-            if (tryCount > maxAttemptsCount)
-                throw RuntimeException("Unable to create dir '$dirNameToCreate' in path '$backupDirBasePath' for $tryCount times.")
+        while(dirExists(syncSide, dirName = dirName, parentDirPath = parentDirPath)) {
+           dirName =  newDirName
+            if (attemptCount++ > maxCreationAttemptsCount)
+                throw RuntimeException("Unable to create unique dir name in path '$parentDirPath' for $attemptCount times.")
         }
 
-        return dirNameToCreate
+        return dirName
     }
 
 
-    private val sourceCloudWriter: CloudWriter by lazy {
-        cloudWriterGetter.getSourceCloudWriter(syncTask)
+    private val newDirName: String
+        get() = "${dirNamePrefixSupplier.get()}_${dirNameSuffixSupplier.get()}"
+
+
+    private suspend fun dirExists(syncSide: SyncSide, dirName: String, parentDirPath: String): Boolean {
+        return when(syncSide) {
+            SyncSide.SOURCE -> sourceCloudReader.dirExists(parentDirPath, dirName).getOrThrow()
+            SyncSide.TARGET -> targetCloudReader.dirExists(parentDirPath, dirName).getOrThrow()
+        }
     }
 
-    private val targetCloudWriter: CloudWriter by lazy {
-        cloudWriterGetter.getTargetCloudWriter(syncTask)
+
+    /**
+     * @return Имя созданного каталога.
+     */
+    private fun createDir(
+        syncSide: SyncSide,
+        dirName: String,
+        parentDirPath: String,
+    ): String {
+        when(syncSide) {
+            SyncSide.SOURCE -> sourceCloudWriter.createDir(parentDirPath, dirName)
+            SyncSide.TARGET -> targetCloudWriter.createDir(parentDirPath, dirName)
+        }
+        return dirName
     }
 
-    private val targetCloudReader: CloudReader by lazy {
-        cloudReaderGetter.getTargetCloudReaderFor(syncTask)
-    }
 
-    private val sourceCloudReader: CloudReader by lazy {
-        cloudReaderGetter.getSourceCloudReaderFor(syncTask)
-    }
+    private val sourceCloudWriter: CloudWriter get() = cloudWriterGetter.getSourceCloudWriter(syncTask)
+    private val targetCloudWriter: CloudWriter get() = cloudWriterGetter.getTargetCloudWriter(syncTask)
 
-    private fun backupDirName(taskId: String, dirPrefix: String): String = "${dirPrefix}_${taskId}"
-
-    private val newBackupDirName: String get() = "${dirPrefix}_${randomUUID}"
+    private val sourceCloudReader: CloudReader get() = cloudReaderGetter.getSourceCloudReaderFor(syncTask)
+    private val targetCloudReader: CloudReader get() = cloudReaderGetter.getSourceCloudReaderFor(syncTask)
 }
 
 
 @AssistedFactory
 interface BackupDirCreatorAssistedFactory {
     fun create(
-        dirPrefix: String,
-        syncTask: SyncTask
+        syncTask: SyncTask,
+        @Assisted("prefix") dirNamePrefixSupplier: Supplier<String>,
+        @Assisted("suffix") dirNameSuffixSupplier: Supplier<String>,
+        maxCreationAttemptsCount: Int,
     ): BackupDirCreator
 }

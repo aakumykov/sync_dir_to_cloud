@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskMetadataReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskCreatorDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskResetter
@@ -44,7 +45,8 @@ class SyncTaskRepository @Inject constructor(
     SyncTaskReader,
     SyncTaskUpdater,
     SyncTaskStateChanger,
-    SyncTaskRunningTimeUpdater
+    SyncTaskRunningTimeUpdater,
+    SyncTaskMetadataReader
 {
     @Deprecated("Сделать возвращаемые значения nullable")
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
@@ -180,6 +182,18 @@ class SyncTaskRepository @Inject constructor(
 
     suspend fun exists(taskId: String): Boolean {
         return null != getSyncTaskNullable(taskId)
+    }
+
+    override suspend fun getSourceBackupsDir(taskId: String): String? {
+        return syncTaskDAO.getSourceBackupsDir(taskId)
+    }
+
+    override suspend fun getTargetBackupsDir(taskId: String): String? {
+        return syncTaskDAO.getTargetBackupsDir(taskId)
+    }
+
+    override fun getStartingTime(taskId: String): Long? {
+        return syncTaskDAO.getStartingTime(taskId)
     }
 }
 
