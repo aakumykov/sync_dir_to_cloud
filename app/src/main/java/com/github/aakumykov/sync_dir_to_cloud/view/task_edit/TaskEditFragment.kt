@@ -263,6 +263,15 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         binding.intervalMinutes.doOnTextChanged { text, start, before, count ->
             taskEditViewModel.setIntervalMinutes(text.toString().toInt())
         }
+
+        binding.withBackupTtoggleButton.setOnCheckedChangeListener { buttonView, isChecked ->
+            onWithBackupChanged(isChecked)
+        }
+    }
+
+
+    private fun onWithBackupChanged(isChecked: Boolean) {
+        currentTask?.withBackup = isChecked
     }
 
 
@@ -450,6 +459,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         fillStorageTypeButtons(syncTask)
         fillPeriodView(syncTask)
         initSpinner()
+        initBackupToggler(syncTask)
+    }
+
+    private fun initBackupToggler(syncTask: SyncTask) {
+        binding.withBackupTtoggleButton.isChecked = syncTask.withBackup
     }
 
     private fun fillStorageTypeButtons(syncTask: SyncTask) {

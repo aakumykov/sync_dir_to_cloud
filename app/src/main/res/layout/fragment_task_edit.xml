@@ -150,6 +150,14 @@
 
         </LinearLayout>
 
+        <ToggleButton
+            android:id="@+id/withBackupTtoggleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:textOn="@string/TOGGLE_with_backup_on"
+            android:textOff="@string/TOGGLE_with_backup_off" />
+
         <Button
             android:id="@+id/saveButton"
             android:layout_width="match_parent"
