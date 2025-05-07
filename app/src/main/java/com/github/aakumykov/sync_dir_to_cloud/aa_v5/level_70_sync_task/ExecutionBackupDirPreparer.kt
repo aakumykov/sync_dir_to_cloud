@@ -35,16 +35,12 @@ class ExecutionBackupDirPreparer @AssistedInject constructor(
 
 
     private suspend fun createExecutionBackupDirInSource(): String {
-        return executionBackupDirCreator.createBaseBackupDirInSource(
-            syncTask.sourcePath!!
-        )
+        return executionBackupDirCreator.createBaseBackupDirInSource()
     }
 
 
     private suspend fun createExecutionBackupDirInTarget(): String {
-        return executionBackupDirCreator.createBaseBackupDirInTarget(
-
-        )
+        return executionBackupDirCreator.createBaseBackupDirInTarget()
     }
 
 

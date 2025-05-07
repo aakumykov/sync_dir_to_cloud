@@ -20,6 +20,9 @@ class BackupDirCreator @AssistedInject constructor(
     private val cloudReaderGetter: CloudReaderGetter,
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
+    /**
+     * @return Имя созданного каталога
+     */
     suspend fun createBaseBackupDirInSource(): String {
         return createBackupDirIn(
             syncSide = SyncSide.SOURCE,
@@ -27,6 +30,9 @@ class BackupDirCreator @AssistedInject constructor(
         )
     }
 
+    /**
+     * @return Имя созданного каталога
+     */
     suspend fun createBaseBackupDirInTarget(): String {
         return createBackupDirIn(
             syncSide = SyncSide.TARGET,
@@ -34,7 +40,9 @@ class BackupDirCreator @AssistedInject constructor(
         )
     }
 
-
+    /**
+     * @return Имя созданного каталога
+     */
     suspend fun createBackupDirIn(syncSide: SyncSide, parentDirPath: String): String {
         val dirName = getUniqueDirName(syncSide, parentDirPath)
         return createDir(syncSide, dirName, parentDirPath)
@@ -69,6 +77,9 @@ class BackupDirCreator @AssistedInject constructor(
     }
 
 
+    /**
+     * @return Имя созданного каталога.
+     */
     private fun createDir(
         syncSide: SyncSide,
         dirName: String,
@@ -78,7 +89,7 @@ class BackupDirCreator @AssistedInject constructor(
             SyncSide.SOURCE -> sourceCloudWriter.createDir(parentDirPath, dirName)
             SyncSide.TARGET -> targetCloudWriter.createDir(parentDirPath, dirName)
         }
-        return combineFSPaths(parentDirPath, dirName)
+        return dirName
     }
 
 

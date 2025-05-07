@@ -22,25 +22,33 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
     private val appPreferences: AppPreferences,
     private val taskMetadataReader: SyncTaskMetadataReader,
 ){
-    /**
-     * @param subdirPath Относительный путь к подкаталогу в Источнике.
-     */
-    suspend fun createBaseBackupDirInSource(subdirPath: String): String {
+    @Throws(IllegalStateException::class)
+    suspend fun createBaseBackupDirInSource(): String {
+
         generationCounter = 0
+
+        val sourceBackupsDir = taskMetadataReader.getSourceBackupsDir(syncTask.id)
+        if (null == sourceBackupsDir)
+            throw IllegalStateException("There is no source backups dir property in task with id='${syncTask.id}'")
+
         return backupDirCreator.createBackupDirIn(
             SyncSide.SOURCE,
-            syncTask.sourcePath!!
+            combineFSPaths(syncTask.sourcePath!!, sourceBackupsDir)
         )
     }
 
-    /**
-     * @param subdirPath Относительный путь к подкаталогу в Приёмнике.
-     */
-    suspend fun createBaseBackupDirInTarget(subdirPath: String): String {
+
+    suspend fun createBaseBackupDirInTarget(): String {
+
         generationCounter = 0
+
+        val targetBackupsDir = taskMetadataReader.getTargetBackupsDir(syncTask.id)
+        if (null == targetBackupsDir)
+            throw IllegalStateException("There is no target backups dir property in task with id='${syncTask.id}'")
+
         return backupDirCreator.createBackupDirIn(
             SyncSide.TARGET,
-            combineFSPaths(syncTask.targetPath!!, subdirPath)
+            combineFSPaths(syncTask.targetPath!!, targetBackupsDir)
         )
     }
 
