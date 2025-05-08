@@ -6,4 +6,6 @@ interface SyncTaskUpdater {
     fun updateSyncTask(syncTask: SyncTask)
     fun setTargetBackupDir(taskId: String, dirName: String)
     fun setSourceBackupDir(taskId: String, dirName: String)
+    fun setSourceExecutionBackupDir(taskId: String, dirName: String)
+    fun setTargetExecutionBackupDir(taskId: String, dirName: String)
 }

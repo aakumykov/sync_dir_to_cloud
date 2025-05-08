@@ -101,6 +101,14 @@ class SyncTaskRepository @Inject constructor(
         syncTaskStateDAO.setSourceReadingState(taskId, state, errorMsg)
     }
 
+    override fun setSourceExecutionBackupDir(taskId: String, dirName: String) {
+        syncTaskBackupDirDAO.setSourceExecutionBackupDir(taskId, dirName)
+    }
+
+    override fun setTargetExecutionBackupDir(taskId: String, dirName: String) {
+        syncTaskBackupDirDAO.setTargetExecutionBackupDir(taskId, dirName)
+    }
+
     override suspend fun resetSourceReadingBadState(taskId: String) {
         syncTaskStateDAO.resetSourceReadingBadState(taskId)
     }
