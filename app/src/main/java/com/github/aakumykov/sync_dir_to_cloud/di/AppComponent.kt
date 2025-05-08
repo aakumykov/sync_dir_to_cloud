@@ -10,9 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.backuper.FileAndDirBackuper
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.backuper.FileAndDirBackuperAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
@@ -61,6 +58,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionReposito
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
@@ -165,10 +163,6 @@ interface AppComponent {
     fun getSyncObjectDeleter(): SyncObjectDeleter
 
     fun getSyncInstructionRepository6(): SyncInstructionRepository
-
-    fun injectBackuper6(fileAndDirBackuper: FileAndDirBackuper)
-
-    fun getFileAndDirBackuperAssistedFactory(): FileAndDirBackuperAssistedFactory
 
     fun getBackupDirsPreparerAssistedFactory(): BackupDirsPreparerAssistedFactory
 }
