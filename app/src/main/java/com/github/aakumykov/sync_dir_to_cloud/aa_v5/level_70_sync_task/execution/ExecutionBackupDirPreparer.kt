@@ -2,13 +2,15 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.executio
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class ExecutionBackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    private val executionBackupDirCreatorAssistedFactory: ExecutionBackupDirCreatorAssistedFactory
+    private val executionBackupDirCreatorAssistedFactory: ExecutionBackupDirCreatorAssistedFactory,
+    private val syncTaskUpdater: SyncTaskUpdater,
 ) {
     //
     // ExecutionBackupDirCreator - класс, обладающий внутренним состоянием
@@ -17,13 +19,26 @@ class ExecutionBackupDirPreparer @AssistedInject constructor(
     // отдельного экземпляра для работу в Источнике или Приёмнике.
     //
 
-    suspend fun prepareExecutionBackupDirs(): String {
+    suspend fun prepareExecutionBackupDirs() {
         return when (syncTask.syncMode!!) {
-            SyncMode.SYNC -> createExecutionBackupDirInTarget()
+            SyncMode.SYNC -> prepareExecutionBackupDirInTarget()
             SyncMode.MIRROR -> {
-                createExecutionBackupDirInSource()
-                createExecutionBackupDirInTarget()
+                prepareExecutionBackupDirInSource()
+                prepareExecutionBackupDirInTarget()
             }
+        }
+    }
+
+    private suspend fun prepareExecutionBackupDirInSource() {
+        createExecutionBackupDirInSource().also { dirName ->
+            syncTaskUpdater.setSourceExecutionBackupDir(syncTask.id, dirName)
+        }
+    }
+
+
+    private suspend fun prepareExecutionBackupDirInTarget() {
+        createExecutionBackupDirInTarget().also { dirName ->
+            syncTaskUpdater.setTargetExecutionBackupDir(syncTask.id, dirName)
         }
     }
 
