@@ -1,7 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.backuper_restorer
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer
 
 import android.content.Context
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase

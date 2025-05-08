@@ -12,7 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncIn
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.backuper.FileAndDirBackuper
 import com.github.aakumykov.sync_dir_to_cloud.backuper.FileAndDirBackuperAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.backuper_restorer.BackuperRestorer
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
