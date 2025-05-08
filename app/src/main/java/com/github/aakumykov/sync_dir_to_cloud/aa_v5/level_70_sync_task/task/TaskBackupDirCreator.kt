@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.backuper
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task
 
 import androidx.core.util.Supplier
 import com.github.aakumykov.cloud_reader.CloudReader
@@ -7,12 +7,11 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudReader
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class BackupDirCreator @AssistedInject constructor(
+class TaskBackupDirCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted("prefix") private val dirNamePrefixSupplier: Supplier<String>,
     @Assisted("suffix") private val dirNameSuffixSupplier: Supplier<String>,
@@ -102,11 +101,11 @@ class BackupDirCreator @AssistedInject constructor(
 
 
 @AssistedFactory
-interface BackupDirCreatorAssistedFactory {
+interface TaskBackupDirCreatorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         @Assisted("prefix") dirNamePrefixSupplier: Supplier<String>,
         @Assisted("suffix") dirNameSuffixSupplier: Supplier<String>,
         maxCreationAttemptsCount: Int,
-    ): BackupDirCreator
+    ): TaskBackupDirCreator
 }

@@ -1,7 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task
 
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreator
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
@@ -15,7 +13,7 @@ import dagger.assisted.AssistedInject
 class TaskBackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val topLevelDirPrefix: String,
-    private val backupDirCreatorAssistedFactory: BackupDirCreatorAssistedFactory,
+    private val taskBackupDirCreatorAssistedFactory: TaskBackupDirCreatorAssistedFactory,
     private val syncTaskUpdater: SyncTaskUpdater,
     private val appPreferences: AppPreferences,
     private val taskMetadataReader: SyncTaskMetadataReader,
@@ -43,8 +41,8 @@ class TaskBackupDirPreparer @AssistedInject constructor(
     }
 
 
-    private val taskBackupDirCreator: BackupDirCreator by lazy {
-        backupDirCreatorAssistedFactory.create(
+    private val taskBackupDirCreator: TaskBackupDirCreator by lazy {
+        taskBackupDirCreatorAssistedFactory.create(
             syncTask = syncTask,
             dirNamePrefixSupplier = { appPreferences.BACKUPS_TOP_DIR_PREFIX },
             dirNameSuffixSupplier = { randomUUID },

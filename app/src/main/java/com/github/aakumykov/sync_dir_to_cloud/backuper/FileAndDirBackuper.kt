@@ -1,5 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.backuper
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task.TaskBackupDirCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task.TaskBackupDirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -13,9 +15,9 @@ class FileAndDirBackuper @AssistedInject constructor(
     private val appPreferences: AppPreferences,
 ) {
     @Inject
-    lateinit var backupDirCreatorFactory: BackupDirCreatorAssistedFactory
+    lateinit var backupDirCreatorFactory: TaskBackupDirCreatorAssistedFactory
 
-    private val backupDirCreator: BackupDirCreator by lazy {
+    private val taskBackupDirCreator: TaskBackupDirCreator by lazy {
         backupDirCreatorFactory.create(
             syncTask = syncTask,
             dirNamePrefixSupplier = { "" },

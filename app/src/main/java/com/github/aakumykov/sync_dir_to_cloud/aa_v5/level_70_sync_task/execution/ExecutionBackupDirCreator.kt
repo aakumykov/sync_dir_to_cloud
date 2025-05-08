@@ -1,8 +1,7 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.execution
 
-import com.github.aakumykov.cloud_reader.absolutePathFrom
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreator
-import com.github.aakumykov.sync_dir_to_cloud.backuper.BackupDirCreatorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task.TaskBackupDirCreator
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task.TaskBackupDirCreatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -18,7 +17,7 @@ import dagger.assisted.AssistedInject
  */
 class ExecutionBackupDirCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    private val backupDirCreatorAssistedFactory: BackupDirCreatorAssistedFactory,
+    private val taskBackupDirCreatorAssistedFactory: TaskBackupDirCreatorAssistedFactory,
     private val appPreferences: AppPreferences,
     private val taskMetadataReader: SyncTaskMetadataReader,
 ){
@@ -31,7 +30,7 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
         if (null == sourceBackupsDir)
             throw IllegalStateException("There is no source backups dir property in task with id='${syncTask.id}'")
 
-        return backupDirCreator.createBackupDirIn(
+        return taskBackupDirCreator.createBackupDirIn(
             SyncSide.SOURCE,
             combineFSPaths(syncTask.sourcePath!!, sourceBackupsDir)
         )
@@ -46,15 +45,15 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
         if (null == targetBackupsDir)
             throw IllegalStateException("There is no target backups dir property in task with id='${syncTask.id}'")
 
-        return backupDirCreator.createBackupDirIn(
+        return taskBackupDirCreator.createBackupDirIn(
             SyncSide.TARGET,
             combineFSPaths(syncTask.targetPath!!, targetBackupsDir)
         )
     }
 
 
-    private val backupDirCreator: BackupDirCreator by lazy {
-        backupDirCreatorAssistedFactory.create(
+    private val taskBackupDirCreator: TaskBackupDirCreator by lazy {
+        taskBackupDirCreatorAssistedFactory.create(
             syncTask = syncTask,
             dirNamePrefixSupplier = { appPreferences.BACKUPS_DIR_PREFIX },
             dirNameSuffixSupplier = { dirNameSuffix },
