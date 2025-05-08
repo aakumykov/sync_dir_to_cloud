@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.DirDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.DirDeleterAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.FileDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.FileDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile

@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.DirCreator5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.DirCreator5AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState

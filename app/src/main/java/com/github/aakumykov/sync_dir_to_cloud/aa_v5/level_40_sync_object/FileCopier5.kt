@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.FileWriter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.FileWriter5AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.FileWriter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.FileWriter5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject

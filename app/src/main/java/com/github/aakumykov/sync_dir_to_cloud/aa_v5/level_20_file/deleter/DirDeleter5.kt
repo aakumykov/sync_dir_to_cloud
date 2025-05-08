@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
