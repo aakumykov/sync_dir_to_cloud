@@ -83,6 +83,9 @@ class SyncTask {
     @ColumnInfo(name = "source_backup_dir", defaultValue = "null") var sourceBackupDir: String? = null
     @ColumnInfo(name = "target_backup_dir", defaultValue = "null") var targetBackupDir: String? = null
 
+    @ColumnInfo(name = "source_execution_backup_dir", defaultValue = "null") var sourceExecutionBackupDir: String? = null
+    @ColumnInfo(name = "target_execution_backup_dir", defaultValue = "null") var targetExecutionBackupDir: String? = null
+
     @Ignore
     constructor() {
         this.sourceStorageType = null
