@@ -157,8 +157,10 @@
     <string name="SYNC_OPERATION_copying_from_target_to_source">Copying from target to source</string>
     <string name="SYNC_OPERATION_deleting_from_source">Deleting from source</string>
     <string name="SYNC_OPERATION_deleting_from_target">Deleting from target</string>
-    <string name="SYNC_OPERATION_backing_up_in_source">Backuing up in source</string>
-    <string name="SYNC_OPERATION_backing_up_in_target">Backuing up in target</string>
+    <string name="SYNC_OPERATION_backing_up_in_source_with_copy">Backuing up in source with copy</string>
+    <string name="SYNC_OPERATION_backing_up_in_source_with_move">Backuing up in source with move</string>
+    <string name="SYNC_OPERATION_backing_up_in_target_with_copy">Backuing up in target with copy</string>
+    <string name="SYNC_OPERATION_backing_up_in_target_with_move">Backuing up in target with move</string>
     <string name="description_task_list_item_sync_mode_icon">Work mode</string>
     <string name="TOGGLE_with_backup_on">With backups</string>
     <string name="TOGGLE_with_backup_off">Without backups</string>

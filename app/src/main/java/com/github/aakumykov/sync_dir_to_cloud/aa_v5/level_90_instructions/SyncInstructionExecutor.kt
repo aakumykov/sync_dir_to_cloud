@@ -46,8 +46,11 @@ class SyncInstructionExecutor @AssistedInject constructor(
             SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
             SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-            SyncOperation.BACKUP_IN_SOURCE -> { /*backuper.backupInSource(instruction)*/ }
-            SyncOperation.BACKUP_IN_TARGET -> { /*backuper.backupInTarget(instruction)*/ }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { /*backuper.backupInSource(instruction)*/ }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { /*backuper.backupInSource(instruction)*/ }
+
+            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { /*backuper.backupInTarget(instruction)*/ }
+            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { /*backuper.backupInTarget(instruction)*/ }
         }
 
         // Спорно делать это здесь, а не в каждом конкретном методе...

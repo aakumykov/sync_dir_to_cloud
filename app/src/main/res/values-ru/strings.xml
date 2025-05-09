@@ -157,8 +157,10 @@
     <string name="SYNC_OPERATION_copying_from_target_to_source">Копирование из приёмника в источник</string>
     <string name="SYNC_OPERATION_deleting_from_source">Удаление из источника</string>
     <string name="SYNC_OPERATION_deleting_from_target">Удаление из приёника</string>
-    <string name="SYNC_OPERATION_backing_up_in_source">Бекап в источнике</string>
-    <string name="SYNC_OPERATION_backing_up_in_target">Бекап в приёмнике</string>
+    <string name="SYNC_OPERATION_backing_up_in_source_with_copy">Бекап в источнике копированием</string>
+    <string name="SYNC_OPERATION_backing_up_in_source_with_move">Бекап в источнике перемещением</string>
+    <string name="SYNC_OPERATION_backing_up_in_target_with_copy">Бекап в приёмнике копированием</string>
+    <string name="SYNC_OPERATION_backing_up_in_target_with_move">Бекап в приёмнике перемещением</string>
     <string name="description_task_list_item_sync_mode_icon">Режим работы</string>
     <string name="TOGGLE_with_backup_on">С бекапами</string>
     <string name="TOGGLE_with_backup_off">Без бекапов</string>
