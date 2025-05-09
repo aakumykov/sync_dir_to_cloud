@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules.TestDatabaseModu
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.ResourcesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -20,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModul
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.PreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
@@ -65,6 +67,7 @@ import dagger.Component
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
         TaskLoggerModule::class,
+        PreferencesModule::class
     ]
 )
 @AppScope
