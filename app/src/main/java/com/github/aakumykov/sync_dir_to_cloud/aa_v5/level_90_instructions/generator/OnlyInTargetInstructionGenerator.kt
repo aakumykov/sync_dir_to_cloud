@@ -21,8 +21,8 @@ import dagger.assisted.AssistedInject
 class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val comparisonStateRepository: ComparisonStateRepository,
-    private val syncInstructionRepository: SyncInstructionRepository,
+    comparisonStateRepository: ComparisonStateRepository,
+    syncInstructionRepository: SyncInstructionRepository,
 )
     : BasicInstructionGenerator(
         taskId = syncTask.id,
@@ -34,9 +34,8 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     /**
      * @return Порядковый номер для следующего генератора инструкций.
      */
-    suspend fun generateForSync(initialOrderNum: Int): Int {
-        var nextOrderNum = initialOrderNum
-        return nextOrderNum
+    fun generateForSync(initialOrderNum: Int): Int {
+        return initialOrderNum
     }
 
     /**

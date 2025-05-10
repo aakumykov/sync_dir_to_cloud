@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -37,31 +38,74 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
 
     private suspend fun processWhatToDelete(nextOrderNum: Int): Int {
-        var n = nextOrderNum
-        // Сначала каталоги, потом файлы! Чтобы не путаться,
-        // хорошо бы эту логику инкапсулировать.
-        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = false, nextOrderNum = n)
-        n = deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir = false, nextOrderNum = n)
 
-        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = true, nextOrderNum = n)
-        n = deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir = true, nextOrderNum = n)
+        var n = nextOrderNum
+
+        // Сначала файлы, потом каталоги (связано с тем, что удаление непустых
+        // каталогов в облачных API не определено по времени)!
+        // Чтобы не путаться, хорошо бы эту логику инкапсулировать.
+
+        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = false, withBackup = syncTask.withBackup, nextOrderNum = n)
+        n = deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir = false, withBackup = syncTask.withBackup, nextOrderNum = n)
+
+        n = deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir = true, withBackup = syncTask.withBackup, nextOrderNum = n)
+        n = deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir = true, withBackup = syncTask.withBackup, nextOrderNum = n)
+
         return n
     }
 
-    private suspend fun deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir: Boolean, nextOrderNum: Int): Int {
+    private suspend fun deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(
+        isDir: Boolean,
+        withBackup: Boolean,
+        nextOrderNum: Int,
+    ): Int {
         return getAllBilateralComparisonStates()
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isDeletedInSource }
             .filter { it.isUnchangedInTarget }
-            .let { createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum) }
+            .let { list ->
+
+                if (withBackup) {
+                    createSyncInstructionsFrom(
+                        list = list,
+                        syncOperation = SyncOperation.BACKUP_IN_TARGET_WITH_MOVE,
+                        nextOrderNum = nextOrderNum
+                    )
+                }
+
+                createSyncInstructionsFrom(
+                    list = list,
+                    syncOperation = SyncOperation.DELETE_IN_TARGET,
+                    nextOrderNum = nextOrderNum
+                )
+            }
     }
 
-    private suspend fun deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir: Boolean, nextOrderNum: Int): Int {
+    private suspend fun deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(
+        isDir: Boolean,
+        withBackup: Boolean,
+        nextOrderNum: Int,
+    ): Int {
         return getAllBilateralComparisonStates()
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isDeletedInTarget }
             .filter { it.isUnchangedInSource }
-            .let { createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum) }
+            .let { list ->
+
+                if (withBackup) {
+                    createSyncInstructionsFrom(
+                        list = list,
+                        syncOperation = SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE,
+                        nextOrderNum = nextOrderNum
+                    )
+                }
+
+                createSyncInstructionsFrom(
+                    list,
+                    SyncOperation.DELETE_IN_SOURCE,
+                    nextOrderNum
+                )
+            }
     }
 
 
@@ -106,7 +150,24 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInTarget }
             .filter { it.isUnchangedOrDeletedInSource }
-            .let { createSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
+            .let { list ->
+
+                if (withBackup) {
+                    list.filter { it.isUnchangedInSource }.also {
+                        createSyncInstructionsFrom(
+                            it,
+                            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE,
+                            nextOrderNum
+                        )
+                    }
+                }
+
+                createSyncInstructionsFrom(
+                    list,
+                    SyncOperation.COPY_FROM_TARGET_TO_SOURCE,
+                    nextOrderNum
+                )
+            }
     }
 
 
@@ -115,7 +176,24 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInSource }
             .filter { it.isUnchangedOrDeletedInTarget }
-            .let { createSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
+            .let { list ->
+
+                if (withBackup) {
+                    list.filter { it.isUnchangedInTarget }.also {
+                        createSyncInstructionsFrom(
+                            list,
+                            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE,
+                            nextOrderNum
+                        )
+                    }
+                }
+
+                createSyncInstructionsFrom(
+                    list,
+                    SyncOperation.COPY_FROM_TARGET_TO_SOURCE,
+                    nextOrderNum
+                )
+            }
     }
 
 
@@ -159,6 +237,10 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
         = comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
             .filter { it.isBilateral }
+
+
+    private val withBackup: Boolean
+        get() = syncTask.withBackup
 
     companion object {
         val TAG: String = TwoPlaceInstructionGeneratorForMirror::class.java.simpleName
