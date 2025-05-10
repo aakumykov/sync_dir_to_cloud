@@ -15,8 +15,8 @@ import dagger.assisted.AssistedInject
 class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    comparisonStateRepository: ComparisonStateRepository,
-    syncInstructionRepository: SyncInstructionRepository,
+    private val comparisonStateRepository: ComparisonStateRepository,
+    private val syncInstructionRepository: SyncInstructionRepository,
 )
     : BasicInstructionGenerator(
         taskId = syncTask.id,
