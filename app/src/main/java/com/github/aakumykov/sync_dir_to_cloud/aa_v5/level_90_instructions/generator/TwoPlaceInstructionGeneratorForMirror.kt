@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -132,6 +133,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             syncInstructionRepository.apply {
                 syncOperationList.forEach { syncOperation ->
                     add(SyncInstruction.from(
+                        partsLabel = PartsLabel.ST,
                         comparisonState = comparisonState,
                         operation = syncOperation,
                         orderNum = n++

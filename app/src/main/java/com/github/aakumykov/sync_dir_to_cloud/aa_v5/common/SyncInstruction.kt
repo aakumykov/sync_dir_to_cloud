@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 
 @Entity(
@@ -28,6 +29,9 @@ import com.github.aakumykov.sync_dir_to_cloud.randomUUID
     ]
 )
 class SyncInstruction (
+
+    @ColumnInfo(name = "parts_label", defaultValue = "") val partsLabel: PartsLabel,
+
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
@@ -83,8 +87,10 @@ class SyncInstruction (
         fun from(
             comparisonState: ComparisonState,
             operation: SyncOperation,
+            partsLabel: PartsLabel,
             orderNum: Int,
         ): SyncInstruction = SyncInstruction(
+            partsLabel = partsLabel,
             id = randomUUID,
             taskId = comparisonState.taskId,
             executionId = comparisonState.executionId,

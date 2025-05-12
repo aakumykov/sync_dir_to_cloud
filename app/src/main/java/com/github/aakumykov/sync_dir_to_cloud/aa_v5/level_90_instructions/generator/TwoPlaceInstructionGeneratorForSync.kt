@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInSource
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -114,7 +115,12 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
         var n = nextOrderNum
         list.forEach { comparisonState ->
             syncInstructionRepository.add(
-                SyncInstruction.from(comparisonState, syncOperation, n++)
+                SyncInstruction.from(
+                    partsLabel = PartsLabel.ST,
+                    comparisonState = comparisonState,
+                    operation = syncOperation,
+                    orderNum = n++
+                )
             )
         }
         return n

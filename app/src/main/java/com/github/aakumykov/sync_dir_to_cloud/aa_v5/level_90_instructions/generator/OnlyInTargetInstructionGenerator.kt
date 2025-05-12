@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -60,7 +61,12 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(
+                    partsLabel = PartsLabel.T,
+                    comparisonStateList = it,
+                    syncOperation = SyncOperation.DELETE_IN_SOURCE,
+                    nextOrderNum = nextOrderNum
+                )
             }
     }
 
@@ -69,7 +75,12 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(
+                    partsLabel = PartsLabel.T,
+                    comparisonStateList = it,
+                    syncOperation = SyncOperation.DELETE_IN_SOURCE,
+                    nextOrderNum = nextOrderNum
+                )
             }
     }
 
@@ -80,7 +91,12 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.notMutuallyUnchanged }
             .filter { it.notDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(
+                    partsLabel = PartsLabel.T,
+                    comparisonStateList = it,
+                    syncOperation = SyncOperation.COPY_FROM_TARGET_TO_SOURCE,
+                    nextOrderNum = nextOrderNum,
+                )
             }
     }
 
@@ -91,7 +107,12 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
             .filter { it.notMutuallyUnchanged }
             .filter { it.notDeletedInTarget }
             .let {
-                generateSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum)
+                generateSyncInstructionsFrom(
+                    partsLabel = PartsLabel.T,
+                    comparisonStateList = it,
+                    syncOperation = SyncOperation.COPY_FROM_TARGET_TO_SOURCE,
+                    nextOrderNum = nextOrderNum
+                )
             }
     }
 
