@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCollisionResolverAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
@@ -37,7 +38,9 @@ class SyncInstructionExecutor @AssistedInject constructor(
 ){
     suspend fun execute(instruction: SyncInstruction) {
 
-        when(instruction.operation) {
+        val operation = instruction.operation
+
+        when(operation) {
             SyncOperation.RESOLVE_COLLISION -> resolveCollisionFor(instruction)
 
             SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyFromSourceToTarget(instruction)
@@ -46,14 +49,32 @@ class SyncInstructionExecutor @AssistedInject constructor(
             SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
             SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { /*backuper.backupInSource(instruction)*/ }
-            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { /*backuper.backupInSource(instruction)*/ }
-
-            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { /*backuper.backupInTarget(instruction)*/ }
-            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { /*backuper.backupInTarget(instruction)*/ }
+//            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { /*backuper.backupInSource(instruction)*/ }
+//            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { /*backuper.backupInSource(instruction)*/ }
+//
+//            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { /*backuper.backupInTarget(instruction)*/ }
+//            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { /*backuper.backupInTarget(instruction)*/ }
 
             SyncOperation.DO_NOTHING_IN_SOURCE -> {}
             SyncOperation.DO_NOTHING_IN_TARGET -> {}
+
+            // Будь внимателен: сюда должны попадать только бекапы.
+            else -> {
+                if (operation !in setOf(
+                        SyncOperation.BACKUP_IN_SOURCE_WITH_COPY,
+                        SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE,
+                        SyncOperation.BACKUP_IN_TARGET_WITH_COPY,
+                        SyncOperation.BACKUP_IN_TARGET_WITH_MOVE,
+                )) throw IllegalArgumentException("Else block receive operation that is not kind of 'backup' (is ${operation})")
+
+                /*if (operation in setOf(SyncOperation.BACKUP_IN_SOURCE_WITH_COPY, SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE)) {
+                    prepareBackupDirInSource()
+                } else {
+                    prepareBackupDirInTarget()
+                }*/
+
+                backupDirsPreparer.prepareBackupDirs()
+            }
         }
 
         // Спорно делать это здесь, а не в каждом конкретном методе...
@@ -182,6 +203,12 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
     private fun logE(errorMsg: String) {
         Log.e(TAG, errorMsg)
+    }
+
+    private val backupDirsPreparer by lazy {
+        appComponent
+            .getBackupDirsPreparerAssistedFactory()
+            .create(syncTask)
     }
 
     companion object {

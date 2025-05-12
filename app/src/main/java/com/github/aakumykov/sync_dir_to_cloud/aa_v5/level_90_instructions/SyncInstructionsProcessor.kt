@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -11,7 +10,10 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
-
+//
+// Задача класса - выбирать инструкции для текущей задачи и отправлять их на
+// выполнение в соответствии с логикой работы.
+//
 class SyncInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
@@ -47,18 +49,10 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
     //  TODO: в источнике/приёмнике
-    private fun backupFilesAndDirs(list: Iterable<SyncInstruction>) {
-        list.filter { it.isBackup }
-        backupDirs(list.filter { it.isDir })
-        backupFiles(list.filter { it.isFile })
-    }
-
-    private fun backupDirs(dirInstructionsList: List<SyncInstruction>) {
-        Log.d(TAG, dirInstructionsList.toString())
-    }
-
-    private fun backupFiles(fileInstructionsList: List<SyncInstruction>) {
-        Log.d(TAG, fileInstructionsList.toString())
+    private suspend fun backupFilesAndDirs(list: Iterable<SyncInstruction>) {
+        list.filter { it.isBackup }.forEach { syncInstruction ->
+            syncInstructionExecutor.execute(syncInstruction)
+        }
     }
 
     private suspend fun processCollisionResolution(isDir: Boolean, list: Iterable<SyncInstruction>) {

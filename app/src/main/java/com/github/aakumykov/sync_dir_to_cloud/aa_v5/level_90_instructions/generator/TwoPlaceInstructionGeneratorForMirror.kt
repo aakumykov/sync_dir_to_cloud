@@ -37,13 +37,13 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     }
 
 
-    private suspend fun processWhatToBackup(isDir: Boolean, nextOrderNum: Int): Int {
+    /*private suspend fun processWhatToBackup(isDir: Boolean, nextOrderNum: Int): Int {
         return createSyncInstructionsFrom(
             getStatesForDeletionInTarget(isDir),
             SyncOperation.BACKUP_IN_TARGET_WITH_MOVE,
             nextOrderNum
         )
-    }
+    }*/
 
 
     private suspend fun processWhatToDelete(nextOrderNum: Int): Int {

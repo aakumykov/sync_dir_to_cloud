@@ -125,7 +125,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
-            prepareBackupDirs(syncTask)
+//            prepareBackupDirs(syncTask)
 
             // Отметить все не найденные объекты как удалённые
             markAllNotCheckedObjectsAsDeleted(taskId)
