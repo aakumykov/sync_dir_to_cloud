@@ -161,6 +161,8 @@
     <string name="SYNC_OPERATION_backing_up_in_source_with_move">Backuing up in source with move</string>
     <string name="SYNC_OPERATION_backing_up_in_target_with_copy">Backuing up in target with copy</string>
     <string name="SYNC_OPERATION_backing_up_in_target_with_move">Backuing up in target with move</string>
+    <string name="SYNC_OPERATION_do_nothing_in_source">Doing nothing in source</string>
+    <string name="SYNC_OPERATION_do_nothing_in_target">Doing nothing in target</string>
     <string name="description_task_list_item_sync_mode_icon">Work mode</string>
     <string name="TOGGLE_with_backup_on">With backups</string>
     <string name="TOGGLE_with_backup_off">Without backups</string>

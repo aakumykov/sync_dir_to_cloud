@@ -51,6 +51,9 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
             SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { /*backuper.backupInTarget(instruction)*/ }
             SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { /*backuper.backupInTarget(instruction)*/ }
+
+            SyncOperation.DO_NOTHING_IN_SOURCE -> {}
+            SyncOperation.DO_NOTHING_IN_TARGET -> {}
         }
 
         // Спорно делать это здесь, а не в каждом конкретном методе...

@@ -161,6 +161,8 @@
     <string name="SYNC_OPERATION_backing_up_in_source_with_move">Бекап в источнике перемещением</string>
     <string name="SYNC_OPERATION_backing_up_in_target_with_copy">Бекап в приёмнике копированием</string>
     <string name="SYNC_OPERATION_backing_up_in_target_with_move">Бекап в приёмнике перемещением</string>
+    <string name="SYNC_OPERATION_do_nothing_in_source">Ничего не делаем в источнике</string>
+    <string name="SYNC_OPERATION_do_nothing_in_target">Ничего не делаем в приёмнике</string>
     <string name="description_task_list_item_sync_mode_icon">Режим работы</string>
     <string name="TOGGLE_with_backup_on">С бекапами</string>
     <string name="TOGGLE_with_backup_off">Без бекапов</string>

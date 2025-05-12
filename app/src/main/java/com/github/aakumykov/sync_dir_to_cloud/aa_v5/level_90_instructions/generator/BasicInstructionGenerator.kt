@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 
+
 open class BasicInstructionGenerator(
     private val taskId: String,
     private val executionId: String,

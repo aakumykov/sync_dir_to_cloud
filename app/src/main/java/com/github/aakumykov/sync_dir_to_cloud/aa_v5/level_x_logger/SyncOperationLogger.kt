@@ -62,6 +62,8 @@ class SyncOperationLogger @AssistedInject constructor(
             SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> R.string.SYNC_OPERATION_backing_up_in_source_with_move
             SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> R.string.SYNC_OPERATION_backing_up_in_target_with_copy
             SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> R.string.SYNC_OPERATION_backing_up_in_target_with_move
+            SyncOperation.DO_NOTHING_IN_SOURCE -> R.string.SYNC_OPERATION_do_nothing_in_target
+            SyncOperation.DO_NOTHING_IN_TARGET -> R.string.SYNC_OPERATION_do_nothing_in_target
         })
     }
 }

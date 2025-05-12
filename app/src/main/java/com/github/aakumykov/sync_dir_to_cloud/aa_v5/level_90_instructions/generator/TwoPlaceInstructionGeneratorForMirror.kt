@@ -37,6 +37,15 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     }
 
 
+    private suspend fun processWhatToBackup(isDir: Boolean, nextOrderNum: Int): Int {
+        return createSyncInstructionsFrom(
+            getStatesForDeletionInTarget(isDir),
+            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE,
+            nextOrderNum
+        )
+    }
+
+
     private suspend fun processWhatToDelete(nextOrderNum: Int): Int {
         var n = nextOrderNum
         // Сначала каталоги, потом файлы! Чтобы не путаться,
@@ -50,23 +59,49 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     }
 
     private suspend fun deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir: Boolean, nextOrderNum: Int): Int {
-        return getAllBilateralComparisonStates()
-            .filter { if (isDir) it.isDir else it.isFile }
-            .filter { it.isDeletedInSource }
-            .filter { it.isUnchangedInTarget }
-            .let { createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum) }
+        return createSyncInstructionsFrom(
+            getStatesForDeletionInTarget(isDir),
+            deleteOrBackupInTarget(),
+            nextOrderNum
+        )
     }
 
     private suspend fun deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir: Boolean, nextOrderNum: Int): Int {
-        return getAllBilateralComparisonStates()
-            .filter { if (isDir) it.isDir else it.isFile }
-            .filter { it.isDeletedInTarget }
-            .filter { it.isUnchangedInSource }
-            .let {
-                createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum)
-            }
+        return createSyncInstructionsFrom(
+            getStatesForDeletionInSource(isDir),
+            deleteOrBackupInSource(),
+            nextOrderNum
+        )
     }
 
+
+    private fun deleteOrBackupInTarget(): SyncOperation {
+        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_TARGET_WITH_MOVE
+        else SyncOperation.DELETE_IN_TARGET
+    }
+
+    private fun deleteOrBackupInSource(): SyncOperation {
+        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE
+        else SyncOperation.DELETE_IN_SOURCE
+    }
+
+
+    private suspend fun getStatesForDeletionInSource(isDir: Boolean): List<ComparisonState> {
+        return getBilateralStatesOfObjectType(isDir)
+            .filter { it.isDeletedInTarget }
+            .filter { it.isUnchangedInSource }
+    }
+
+    private suspend fun getStatesForDeletionInTarget(isDir: Boolean): List<ComparisonState> {
+        return getBilateralStatesOfObjectType(isDir)
+            .filter { it.isDeletedInSource }
+            .filter { it.isUnchangedInTarget }
+    }
+
+    private suspend fun getBilateralStatesOfObjectType(isDir: Boolean): List<ComparisonState> {
+        return getAllBilateralComparisonStates()
+            .filter { if (isDir) it.isDir else it.isFile }
+    }
 
     private suspend fun processWhatToRename(nextOrderNum: Int): Int {
         var n = nextOrderNum
@@ -104,21 +139,74 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
 
     private suspend fun copyFilesFromTargetToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(nextOrderNum: Int): Int {
+
+        var non = nextOrderNum
+
         return getAllBilateralComparisonStates()
-            .let { it }
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInTarget }
             .filter { it.isUnchangedOrDeletedInSource }
-            .let { createSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
+            .forEach { comparisonState ->
+
+                SyncInstruction.from(
+                    partsLabel = PartsLabel.ST,
+                    comparisonState = comparisonState,
+                    operation = doNothingOrBackupInSource(comparisonState),
+                    orderNum = non++
+                )
+
+                SyncInstruction.from(
+                    partsLabel = PartsLabel.ST,
+                    comparisonState = comparisonState,
+                    operation = SyncOperation.COPY_FROM_TARGET_TO_SOURCE,
+                    orderNum = non++
+                )
+            }
+            .let {
+                non
+            }
+    }
+
+
+    private fun doNothingOrBackupInSource(comparisonState: ComparisonState): SyncOperation {
+        return if (comparisonState.isUnchangedInSource) SyncOperation.BACKUP_IN_SOURCE_WITH_COPY
+        else SyncOperation.DO_NOTHING_IN_SOURCE
+    }
+
+
+    private fun doNothingOrBackupInTarget(comparisonState: ComparisonState): SyncOperation {
+        return if (comparisonState.isUnchangedInTarget) SyncOperation.BACKUP_IN_TARGET_WITH_COPY
+        else SyncOperation.DO_NOTHING_IN_TARGET
     }
 
 
     private suspend fun copyFilesFromSourceToTargetNewOrModifiedInSourceAndUnchangedOrDeletedInTarget(nextOrderNum: Int): Int {
+
+        var non = nextOrderNum
+
         return getAllBilateralComparisonStates()
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInSource }
             .filter { it.isUnchangedOrDeletedInTarget }
-            .let { createSyncInstructionsFrom(it, SyncOperation.COPY_FROM_TARGET_TO_SOURCE, nextOrderNum) }
+            .forEach { comparisonState ->
+
+                SyncInstruction.from(
+                    partsLabel = PartsLabel.ST,
+                    comparisonState = comparisonState,
+                    operation = doNothingOrBackupInTarget(comparisonState),
+                    orderNum = non++
+                )
+
+                SyncInstruction.from(
+                    partsLabel = PartsLabel.ST,
+                    comparisonState = comparisonState,
+                    operation = SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
+                    orderNum = non++
+                )
+            }
+            .let {
+                non
+            }
     }
 
 
@@ -163,6 +251,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
         = comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
             .filter { it.isBilateral }
+
 
     companion object {
         val TAG: String = TwoPlaceInstructionGeneratorForMirror::class.java.simpleName
