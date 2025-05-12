@@ -14,9 +14,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 /**
- * У файлов, находящихся только в приёмнике, два пути:
+ * У файлов, находящихся только в приёмнике, такие пути:
  * 1) в режиме SYNC они игнорируются;
- * 2) в режиме MIRROR копируются в источник.
+ * 2) в режиме MIRROR копируются в источник или удаляются из источника.
  */
 class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,

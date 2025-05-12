@@ -17,7 +17,9 @@ open class BasicInstructionGenerator(
             .getAllFor(taskId, executionId)
     }
 
-
+    /**
+     * @return Порядковый номер для следующего генератора инструкций.
+     */
     suspend fun generateSyncInstructionsFrom(
         comparisonStateList: Iterable<ComparisonState>,
         syncOperation: SyncOperation,

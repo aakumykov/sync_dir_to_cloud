@@ -12,11 +12,14 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
+/**
+ * У файлов, находящихся только в источнике, один путь: копируются в приёмник (да?)
+ */
 class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val comparisonStateRepository: ComparisonStateRepository,
-    private val syncInstructionRepository: SyncInstructionRepository,
+    comparisonStateRepository: ComparisonStateRepository,
+    syncInstructionRepository: SyncInstructionRepository,
 )
     : BasicInstructionGenerator(
         taskId = syncTask.id,

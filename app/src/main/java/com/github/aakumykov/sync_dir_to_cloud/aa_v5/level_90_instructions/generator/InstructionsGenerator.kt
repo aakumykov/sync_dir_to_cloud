@@ -20,11 +20,16 @@ class InstructionsGenerator @AssistedInject constructor(
 
         when(syncTask.syncMode!!) {
             SyncMode.SYNC -> {
+//                nextOrderNum = onlyInTargetInstructionGenerator.generateBackupForSync(nextOrderNum)
+
                 nextOrderNum = onlyInSourceInstructionGenerator.generateForSync(nextOrderNum)
                 nextOrderNum = onlyInTargetInstructionGenerator.generateForSync(nextOrderNum)
                 nextOrderNum = twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
             }
             SyncMode.MIRROR -> {
+//                nextOrderNum = onlyInSourceInstructionGenerator.generateBackupForMirror(nextOrderNum)
+//                nextOrderNum = onlyInTargetInstructionGenerator.generateBackupForMirror(nextOrderNum)
+
                 nextOrderNum = onlyInSourceInstructionGenerator.generateForMirror(nextOrderNum)
                 nextOrderNum = onlyInTargetInstructionGenerator.generateForMirror(nextOrderNum)
                 nextOrderNum = twoPlaceItemsMirrorInstructionGenerator.generate(nextOrderNum)

@@ -61,7 +61,9 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isDeletedInTarget }
             .filter { it.isUnchangedInSource }
-            .let { createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum) }
+            .let {
+                createSyncInstructionsFrom(it, SyncOperation.DELETE_IN_SOURCE, nextOrderNum)
+            }
     }
 
 
