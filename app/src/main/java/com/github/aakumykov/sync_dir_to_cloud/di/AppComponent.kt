@@ -137,8 +137,6 @@ interface AppComponent {
 
     fun getProgressInfoHolder(): ProgressInfoHolder
 
-    fun getStorageToDatabaseLister(): StorageToDatabaseLister
-
     fun getSyncObjectLogger(): SyncObjectLogger
 
     fun getOperationCancellationHolder(): OperationCancellationHolder

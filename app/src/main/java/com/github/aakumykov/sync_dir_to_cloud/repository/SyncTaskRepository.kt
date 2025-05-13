@@ -192,11 +192,11 @@ class SyncTaskRepository @Inject constructor(
         return null != getSyncTaskNullable(taskId)
     }
 
-    override suspend fun getSourceBackupsDir(taskId: String): String? {
+    override suspend fun getSourceBackupsDirName(taskId: String): String? {
         return syncTaskDAO.getSourceBackupsDir(taskId)
     }
 
-    override suspend fun getTargetBackupsDir(taskId: String): String? {
+    override suspend fun getTargetBackupsDirName(taskId: String): String? {
         return syncTaskDAO.getTargetBackupsDir(taskId)
     }
 

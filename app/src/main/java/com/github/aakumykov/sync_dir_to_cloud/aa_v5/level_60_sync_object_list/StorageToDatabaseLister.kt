@@ -12,26 +12,33 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceBackupsDirPath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.targetBackupsDirPath
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskMetadataReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-class StorageToDatabaseLister @Inject constructor(
+class StorageToDatabaseLister @AssistedInject constructor(
+    @Assisted private val taskId: String,
+
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
 
+    private val syncTaskReader: SyncTaskReader,
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
 
-    private val syncTaskMetadataReader: SyncTaskMetadataReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val executionLogger: ExecutionLogger,
 
@@ -42,11 +49,12 @@ class StorageToDatabaseLister @Inject constructor(
         pathReadingFrom: String?,
         changesDetectionStrategy: ChangesDetectionStrategy,
         cloudAuth: CloudAuth?,
-        taskId: String,
         executionId: String,
     ): Result<Boolean> {
 
         Log.d(TAG, "readFromPath('$pathReadingFrom')")
+
+        val syncTask = syncTaskReader.getSyncTask(taskId)
 
         return try {
 
@@ -65,18 +73,20 @@ class StorageToDatabaseLister @Inject constructor(
 
             syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
 
-            val sourceBackupsDir: String? = syncTaskMetadataReader.getSourceBackupsDir(taskId)
-            val targetBackupsDir: String? = syncTaskMetadataReader.getTargetBackupsDir(taskId)
-
             recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
                 ?.listDirRecursively(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
-                ?.filter { fileListItem ->
-                    Log.d(TAG, fileListItem.toString())
-                    // Отфильтровываю каталоги бекапа
-                    true
+                ?.filterNot { fileListItem ->
+                    filterOutBackupDir(
+                        syncSide,
+                        syncTask.sourceBackupsDirPath,
+                        syncTask.targetBackupsDirPath,
+                        fileListItem)
+                }
+                ?.let {
+                    it
                 }
                 ?.apply {
                     syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
@@ -109,6 +119,20 @@ class StorageToDatabaseLister @Inject constructor(
             Result.failure(e)
         }
     }
+
+
+    // FIXME: убрать костыль
+    private fun filterOutBackupDir(
+        syncSide: SyncSide,
+        sourceBackupsDirPath: String?,
+        targetBackupsDirPath: String?,
+        fileListItem: RecursiveDirReader.FileListItem
+    ): Boolean = fileListItem.absolutePath.startsWith(
+        when(syncSide) {
+            SyncSide.SOURCE -> sourceBackupsDirPath ?: fileListItem.absolutePath.reversed()
+            SyncSide.TARGET -> targetBackupsDirPath ?: fileListItem.absolutePath.reversed()
+        }
+    )
 
 
     private suspend fun logExecutionStarted(taskId: String, executionId: String, message: String) {
@@ -232,4 +256,9 @@ class StorageToDatabaseLister @Inject constructor(
     companion object {
         val TAG: String = StorageToDatabaseLister::class.java.simpleName
     }
+}
+
+@AssistedFactory
+interface StorageToDatabaseListerAssistedFactory {
+    fun create(taskId: String): StorageToDatabaseLister
 }

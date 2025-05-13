@@ -3,6 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseListerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -65,6 +67,8 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
+
+    private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
 ) {
     private val executionId: String get() = hashCode().toString()
 
@@ -316,11 +320,9 @@ class SyncTaskExecutor @AssistedInject constructor(
      * @return Флаг успешности чтения источника.
      */
     private suspend fun readSource(syncTask: SyncTask): Result<Boolean> {
-        return appComponent
-            .getStorageToDatabaseLister()
+        return storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.SOURCE,
-                taskId = syncTask.id,
                 executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!),
                 pathReadingFrom = syncTask.sourcePath,
@@ -330,16 +332,20 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun readTarget(syncTask: SyncTask) {
-        appComponent
-            .getStorageToDatabaseLister()
+        storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.TARGET,
-                taskId = syncTask.id,
                 executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!),
                 pathReadingFrom = syncTask.targetPath,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
+    }
+
+
+    // FIXME: логика
+    private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
+        storageToDatabaseListerAssistedFactory.create(currentTask!!.id)
     }
 
 
