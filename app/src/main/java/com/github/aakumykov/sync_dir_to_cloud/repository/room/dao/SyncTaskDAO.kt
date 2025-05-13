@@ -44,10 +44,10 @@ interface SyncTaskDAO {
     suspend fun getAllTasks(): List<SyncTask>
 
 
-    @Query("SELECT source_backup_dir_name FROM sync_tasks WHERE id = :taskId")
+    @Query("SELECT source_backup_dir FROM sync_tasks WHERE id = :taskId")
     suspend fun getSourceBackupsDir(taskId: String): String?
 
-    @Query("SELECT target_backup_dir_name FROM sync_tasks WHERE id = :taskId")
+    @Query("SELECT target_backup_dir FROM sync_tasks WHERE id = :taskId")
     suspend fun getTargetBackupsDir(taskId: String): String?
 
     @Query("SELECT last_start FROM sync_tasks WHERE id = :taskId")
