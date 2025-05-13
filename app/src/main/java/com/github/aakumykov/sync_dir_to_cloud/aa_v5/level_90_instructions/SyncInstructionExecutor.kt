@@ -49,36 +49,21 @@ class SyncInstructionExecutor @AssistedInject constructor(
             SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
             SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-//            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { /*backuper.backupInSource(instruction)*/ }
-//            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { /*backuper.backupInSource(instruction)*/ }
-//
-//            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { /*backuper.backupInTarget(instruction)*/ }
-//            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { /*backuper.backupInTarget(instruction)*/ }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { prepareBackupDirs() }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { prepareBackupDirs() }
+            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { prepareBackupDirs() }
+            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { prepareBackupDirs() }
 
             SyncOperation.DO_NOTHING_IN_SOURCE -> {}
             SyncOperation.DO_NOTHING_IN_TARGET -> {}
-
-            // Будь внимателен: сюда должны попадать только бекапы.
-            else -> {
-                if (operation !in setOf(
-                        SyncOperation.BACKUP_IN_SOURCE_WITH_COPY,
-                        SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE,
-                        SyncOperation.BACKUP_IN_TARGET_WITH_COPY,
-                        SyncOperation.BACKUP_IN_TARGET_WITH_MOVE,
-                )) throw IllegalArgumentException("Else block receive operation that is not kind of 'backup' (is ${operation})")
-
-                /*if (operation in setOf(SyncOperation.BACKUP_IN_SOURCE_WITH_COPY, SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE)) {
-                    prepareBackupDirInSource()
-                } else {
-                    prepareBackupDirInTarget()
-                }*/
-
-                backupDirsPreparer.prepareBackupDirs()
-            }
         }
 
         // Спорно делать это здесь, а не в каждом конкретном методе...
         syncInstructionUpdater.markAsProcessed(instruction.id)
+    }
+
+    private suspend fun prepareBackupDirs() {
+        backupDirsPreparer.prepareBackupDirs()
     }
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction) {
