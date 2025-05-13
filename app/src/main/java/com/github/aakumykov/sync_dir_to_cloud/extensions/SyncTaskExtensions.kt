@@ -4,14 +4,14 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 val SyncTask.currentSourceBackupsDir: String?
     get() = sourcePath?.plus(
-        sourceBackupDir?.plus(
-            sourceExecutionBackupDir
+        sourceBackupDirName?.plus(
+            sourceExecutionBackupDirName
         )
     )
 
 val SyncTask.currentTargetBackupsDir: String?
     get() = targetPath?.plus(
-        targetBackupDir?.plus(
-            targetExecutionBackupDir
+        targetBackupDirName?.plus(
+            targetExecutionBackupDirName
         )
     )
