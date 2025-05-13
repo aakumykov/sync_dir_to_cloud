@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.executio
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,12 +20,14 @@ class ExecutionBackupDirPreparer @AssistedInject constructor(
     // отдельного экземпляра для работу в Источнике или Приёмнике.
     //
 
-    suspend fun prepareExecutionBackupDirs() {
+    suspend fun prepareExecutionBackupDirs(syncSide: SyncSide) {
         return when (syncTask.syncMode!!) {
             SyncMode.SYNC -> prepareExecutionBackupDirInTarget()
             SyncMode.MIRROR -> {
-                prepareExecutionBackupDirInSource()
-                prepareExecutionBackupDirInTarget()
+                when(syncSide) {
+                    SyncSide.SOURCE -> prepareExecutionBackupDirInSource()
+                    SyncSide.TARGET -> prepareExecutionBackupDirInTarget()
+                }
             }
         }
     }

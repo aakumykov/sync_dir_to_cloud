@@ -15,6 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
@@ -49,10 +50,10 @@ class SyncInstructionExecutor @AssistedInject constructor(
             SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
             SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { prepareBackupDirs() }
-            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { prepareBackupDirs() }
-            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { prepareBackupDirs() }
-            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { prepareBackupDirs() }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { prepareBackupDirs(SyncSide.SOURCE) }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { prepareBackupDirs(SyncSide.SOURCE) }
+            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { prepareBackupDirs(SyncSide.TARGET) }
+            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { prepareBackupDirs(SyncSide.TARGET) }
 
             SyncOperation.DO_NOTHING_IN_SOURCE -> {}
             SyncOperation.DO_NOTHING_IN_TARGET -> {}
@@ -62,8 +63,8 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncInstructionUpdater.markAsProcessed(instruction.id)
     }
 
-    private suspend fun prepareBackupDirs() {
-        backupDirsPreparer.prepareBackupDirs()
+    private suspend fun prepareBackupDirs(syncSide: SyncSide) {
+        backupDirsPreparer.prepareBackupDirs(syncSide)
     }
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction) {

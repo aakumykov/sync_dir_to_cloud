@@ -48,12 +48,16 @@ class SyncInstructionsProcessor @AssistedInject constructor(
         processFilesCopying(list)
     }
 
+
     //  TODO: в источнике/приёмнике
     private suspend fun backupFilesAndDirs(list: Iterable<SyncInstruction>) {
-        list.filter { it.isBackup }.forEach { syncInstruction ->
-            syncInstructionExecutor.execute(syncInstruction)
-        }
+        list
+            .filter { it.isBackup }
+            .forEach { syncInstruction ->
+                syncInstructionExecutor.execute(syncInstruction)
+            }
     }
+
 
     private suspend fun processCollisionResolution(isDir: Boolean, list: Iterable<SyncInstruction>) {
         list

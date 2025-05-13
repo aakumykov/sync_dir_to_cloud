@@ -4,7 +4,6 @@ import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.config.BackupConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
@@ -196,13 +195,6 @@ class SyncTaskExecutor @AssistedInject constructor(
         }
     }
 
-    // TODO: делать это при непосредственной необходимости бекапа
-    private suspend fun prepareBackupDirs(syncTask: SyncTask) {
-        appComponent
-            .getBackupDirsPreparerAssistedFactory()
-            .create(syncTask)
-            .prepareBackupDirs()
-    }
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions(syncTask: SyncTask) {
         appComponent
