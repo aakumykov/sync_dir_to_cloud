@@ -17,6 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.executio
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskMetadataReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
@@ -25,11 +26,15 @@ import javax.inject.Inject
 
 class StorageToDatabaseLister @Inject constructor(
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
+
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
+
+    private val syncTaskMetadataReader: SyncTaskMetadataReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val executionLogger: ExecutionLogger,
+
     private val resources: Resources,
 ) {
     suspend fun listFromPathToDatabase(
@@ -60,11 +65,19 @@ class StorageToDatabaseLister @Inject constructor(
 
             syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
 
+            val sourceBackupsDir: String? = syncTaskMetadataReader.getSourceBackupsDir(taskId)
+            val targetBackupsDir: String? = syncTaskMetadataReader.getTargetBackupsDir(taskId)
+
             recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
                 ?.listDirRecursively(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
+                ?.filter { fileListItem ->
+                    Log.d(TAG, fileListItem.toString())
+                    // Отфильтровываю каталоги бекапа
+                    true
+                }
                 ?.apply {
                     syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
                 }
