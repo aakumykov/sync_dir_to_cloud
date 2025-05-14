@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import com.github.aakumykov.sync_dir_to_cloud.functions.fileNameFromPath
 import com.github.aakumykov.sync_dir_to_cloud.functions.relativeParentDirPath
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class FileAndDirBackuper @AssistedInject constructor(
@@ -115,4 +116,10 @@ class FileAndDirBackuper @AssistedInject constructor(
         val sourceAbsolutePath: String,
         val targetAbsolutePath: String,
     ) : Pair<String,String>(sourceAbsolutePath, targetAbsolutePath)
+}
+
+
+@AssistedFactory
+interface FileAndDirBackuperAssistedFactory {
+    fun create(syncTask: SyncTask, syncSide: SyncSide): FileAndDirBackuper
 }

@@ -5,5 +5,8 @@ interface SyncTaskMetadataReader {
     suspend fun getSourceBackupsDirName(taskId: String): String?
     suspend fun getTargetBackupsDirName(taskId: String): String?
 
+    suspend fun getSourceExecutionBackupsDirName(taskId: String): String?
+    suspend fun getTargetExecutionBackupsDirName(taskId: String): String?
+
     fun getStartingTime(taskId: String): Long?
 }

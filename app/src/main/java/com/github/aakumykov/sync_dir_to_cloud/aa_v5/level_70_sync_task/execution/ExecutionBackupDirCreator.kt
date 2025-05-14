@@ -27,8 +27,7 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
         generationCounter = 0
 
         val sourceBackupsDir = taskMetadataReader.getSourceBackupsDirName(syncTask.id)
-        if (null == sourceBackupsDir)
-            throw IllegalStateException("There is no source backups dir property in task with id='${syncTask.id}'")
+            ?: throw IllegalStateException("There is no source backups dir property in task with id='${syncTask.id}'")
 
         return taskBackupDirCreator.createBackupDirIn(
             SyncSide.SOURCE,
@@ -42,8 +41,7 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
         generationCounter = 0
 
         val targetBackupsDir = taskMetadataReader.getTargetBackupsDirName(syncTask.id)
-        if (null == targetBackupsDir)
-            throw IllegalStateException("There is no target backups dir property in task with id='${syncTask.id}'")
+            ?: throw IllegalStateException("There is no target backups dir property in task with id='${syncTask.id}'")
 
         return taskBackupDirCreator.createBackupDirIn(
             SyncSide.TARGET,

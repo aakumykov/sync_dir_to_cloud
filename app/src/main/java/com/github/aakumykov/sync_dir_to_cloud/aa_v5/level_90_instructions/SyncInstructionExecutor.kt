@@ -4,6 +4,8 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.backuper.FileAndDirBackuper
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.backuper.FileAndDirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleter5
@@ -36,7 +38,24 @@ class SyncInstructionExecutor @AssistedInject constructor(
     private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
     private val syncOperationLoggerAssistedFactory: SyncOperationLoggerAssistedFactory,
+    private val fileAndDirBackuperAssistedFactory: FileAndDirBackuperAssistedFactory,
 ){
+    private var _sourceFileAndDirBackuper: FileAndDirBackuper? = null
+    private fun sourceFileAndDirBackuper(syncSide: SyncSide): FileAndDirBackuper {
+        if (null == _sourceFileAndDirBackuper)
+            _sourceFileAndDirBackuper = fileAndDirBackuperAssistedFactory.create(syncTask, syncSide)
+        return _sourceFileAndDirBackuper!!
+    }
+
+
+    private var _targetFileAndDirBackuper: FileAndDirBackuper? = null
+    private fun targetFileAndDirBackuper(syncSide: SyncSide): FileAndDirBackuper {
+        if (null == _targetFileAndDirBackuper)
+            _targetFileAndDirBackuper = fileAndDirBackuperAssistedFactory.create(syncTask, syncSide)
+        return _targetFileAndDirBackuper!!
+    }
+
+
     suspend fun execute(instruction: SyncInstruction) {
 
         val operation = instruction.operation
@@ -50,10 +69,10 @@ class SyncInstructionExecutor @AssistedInject constructor(
             SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
             SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { prepareBackupDirs(SyncSide.SOURCE) }
-            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { prepareBackupDirs(SyncSide.SOURCE) }
-            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { prepareBackupDirs(SyncSide.TARGET) }
-            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { prepareBackupDirs(SyncSide.TARGET) }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { backupItem(SyncSide.SOURCE) }
+            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { backupItem(SyncSide.SOURCE) }
+            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { backupItem(SyncSide.TARGET) }
+            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { backupItem(SyncSide.TARGET) }
 
             SyncOperation.DO_NOTHING_IN_SOURCE -> {}
             SyncOperation.DO_NOTHING_IN_TARGET -> {}
@@ -63,8 +82,8 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncInstructionUpdater.markAsProcessed(instruction.id)
     }
 
-    private suspend fun prepareBackupDirs(syncSide: SyncSide) {
-        backupDirsPreparer.prepareBackupDirs(syncSide)
+    private suspend fun backupItem(syncSide: SyncSide) {
+
     }
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction) {
