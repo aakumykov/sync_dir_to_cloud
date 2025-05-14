@@ -30,6 +30,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -128,7 +129,11 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(syncTask)
 
-//            prepareBackupDirs(syncTask)
+            // Подготовка каталогов бекапа после чтения источника и приёмника,
+            // но перед выполнением инструкций.
+            prepareBackupDirs(syncTask)
+            // После подготовки нужно перечитать SyncTask.
+            currentTask = syncTaskReader.getSyncTask(taskId)
 
             // Отметить все не найденные объекты как удалённые
             markAllNotCheckedObjectsAsDeleted(taskId)
@@ -197,6 +202,18 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
         }
+    }
+
+    private fun prepareBackupDirs(syncTask: SyncTask) {
+        appComponent
+            .getBackupDirsPreparerAssistedFactory()
+            .create(syncTask)
+            .apply {
+                coroutineScope.launch {
+                    prepareBackupDirs(SyncSide.SOURCE)
+                    prepareBackupDirs(SyncSide.TARGET)
+                }
+            }
     }
 
 

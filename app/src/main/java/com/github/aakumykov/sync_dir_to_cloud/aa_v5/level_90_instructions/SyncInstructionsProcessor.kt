@@ -41,7 +41,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
                     else getCurentSyncInstructions()
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
-        prepareBackupDirs(list)
+//        prepareBackupDirs(list)
         backupFilesAndDirs(list)
 
         deleteFiles(list)

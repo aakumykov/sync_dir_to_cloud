@@ -14,9 +14,8 @@ import dagger.assisted.AssistedInject
 
 class BackupDirsPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    private val taskMetadataReader: SyncTaskMetadataReader,
-    private val executionBackupDirPreparerAssistedFactory: ExecutionBackupDirPreparerAssistedFactory,
     private val taskBackupDirPreparerAssistedFactory: TaskBackupDirPreparerAssistedFactory,
+    private val executionBackupDirPreparerAssistedFactory: ExecutionBackupDirPreparerAssistedFactory,
     private val appPreferences: AppPreferences,
 ) {
     suspend fun prepareBackupDirs(syncSide: SyncSide) {

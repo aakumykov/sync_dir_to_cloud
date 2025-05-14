@@ -17,7 +17,6 @@ class TaskBackupDirPreparer @AssistedInject constructor(
     private val taskBackupDirCreatorAssistedFactory: TaskBackupDirCreatorAssistedFactory,
     private val syncTaskUpdater: SyncTaskUpdater,
     private val appPreferences: AppPreferences,
-    private val taskMetadataReader: SyncTaskMetadataReader,
 ) {
     suspend fun prepareTaskBackupDirs(syncSide: SyncSide) {
         when(syncTask.syncMode!!) {

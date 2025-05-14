@@ -6,7 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskMetadataReader
 import com.github.aakumykov.sync_dir_to_cloud.utils.formattedDateTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,15 +18,14 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val taskBackupDirCreatorAssistedFactory: TaskBackupDirCreatorAssistedFactory,
     private val appPreferences: AppPreferences,
-    private val taskMetadataReader: SyncTaskMetadataReader,
 ){
     @Throws(IllegalStateException::class)
     suspend fun createBaseBackupDirInSource(): String {
 
         generationCounter = 0
 
-        val sourceBackupsDir = taskMetadataReader.getSourceBackupsDirName(syncTask.id)
-            ?: throw IllegalStateException("There is no source backups dir property in task with id='${syncTask.id}'")
+        val sourceBackupsDir = syncTask.sourceExecutionBackupDirName
+            ?: throw IllegalStateException("There is no source execution backup dir property in task with id='${syncTask.id}'")
 
         return taskBackupDirCreator.createBackupDirIn(
             SyncSide.SOURCE,
@@ -40,8 +38,8 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
 
         generationCounter = 0
 
-        val targetBackupsDir = taskMetadataReader.getTargetBackupsDirName(syncTask.id)
-            ?: throw IllegalStateException("There is no target backups dir property in task with id='${syncTask.id}'")
+        val targetBackupsDir = syncTask.targetExecutionBackupDirName
+            ?: throw IllegalStateException("There is no target execution backup dir property in task with id='${syncTask.id}'")
 
         return taskBackupDirCreator.createBackupDirIn(
             SyncSide.TARGET,
@@ -72,7 +70,7 @@ class ExecutionBackupDirCreator @AssistedInject constructor(
 
 
     private val taskStartTime: Long
-        get() = taskMetadataReader.getStartingTime(syncTask.id) ?: throw IllegalStateException("SyncTask has no info about its starting time")
+        get() = syncTask.lastStart ?: throw IllegalStateException("SyncTask has no info about its starting time")
 
 
     // Это поле является "состоянием" объекта.
