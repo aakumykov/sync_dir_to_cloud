@@ -10,17 +10,14 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceBackupsDirPath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.targetBackupsDirPath
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskMetadataReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
@@ -30,11 +27,13 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class StorageToDatabaseLister @AssistedInject constructor(
-    @Assisted private val taskId: String,
+
+    @Assisted private val syncTask: SyncTask,
 
     private val recursiveDirReaderFactory: RecursiveDirReaderFactory,
 
-    private val syncTaskReader: SyncTaskReader,
+    private val backupDirsFilterAssistedFactory: BackupDirsFilterAssistedFactory,
+
     private val syncObjectReader: SyncObjectReader,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
@@ -53,8 +52,6 @@ class StorageToDatabaseLister @AssistedInject constructor(
     ): Result<Boolean> {
 
         Log.d(TAG, "readFromPath('$pathReadingFrom')")
-
-        val syncTask = syncTaskReader.getSyncTask(taskId)
 
         return try {
 
@@ -79,11 +76,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
                     foldersFirst = true
                 )
                 ?.filterNot { fileListItem ->
-                    filterOutBackupDir(
-                        syncSide,
-                        syncTask.sourceBackupsDirPath,
-                        syncTask.targetBackupsDirPath,
-                        fileListItem)
+                    backupDirsFilter.isBackupDir(syncSide, fileListItem)
                 }
                 ?.let {
                     it
@@ -119,20 +112,6 @@ class StorageToDatabaseLister @AssistedInject constructor(
             Result.failure(e)
         }
     }
-
-
-    // FIXME: убрать костыль
-    private fun filterOutBackupDir(
-        syncSide: SyncSide,
-        sourceBackupsDirPath: String?,
-        targetBackupsDirPath: String?,
-        fileListItem: RecursiveDirReader.FileListItem
-    ): Boolean = fileListItem.absolutePath.startsWith(
-        when(syncSide) {
-            SyncSide.SOURCE -> sourceBackupsDirPath ?: fileListItem.absolutePath.reversed()
-            SyncSide.TARGET -> targetBackupsDirPath ?: fileListItem.absolutePath.reversed()
-        }
-    )
 
 
     private suspend fun logExecutionStarted(taskId: String, executionId: String, message: String) {
@@ -253,6 +232,13 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
 
+    private val backupDirsFilter by lazy {
+        backupDirsFilterAssistedFactory.create(syncTask)
+    }
+
+    private val taskId: String
+        get() = syncTask.id
+
     companion object {
         val TAG: String = StorageToDatabaseLister::class.java.simpleName
     }
@@ -260,5 +246,5 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
 @AssistedFactory
 interface StorageToDatabaseListerAssistedFactory {
-    fun create(taskId: String): StorageToDatabaseLister
+    fun create(syncTask: SyncTask): StorageToDatabaseLister
 }

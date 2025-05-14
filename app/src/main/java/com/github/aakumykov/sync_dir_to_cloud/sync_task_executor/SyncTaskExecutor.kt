@@ -345,7 +345,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     // FIXME: логика
     private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
-        storageToDatabaseListerAssistedFactory.create(currentTask!!.id)
+        storageToDatabaseListerAssistedFactory.create(currentTask!!)
     }
 
 
