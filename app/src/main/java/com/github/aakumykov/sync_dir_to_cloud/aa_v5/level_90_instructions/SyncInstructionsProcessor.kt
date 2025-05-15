@@ -56,8 +56,8 @@ class SyncInstructionsProcessor @AssistedInject constructor(
 
 
     private suspend fun prepareBackupDirs(list: Iterable<SyncInstruction>) {
-        if (list.hasSourceBackups) backupDirsPreparer.prepareBackupDirs(SyncSide.SOURCE)
-        if (list.hasTargetBackups) backupDirsPreparer.prepareBackupDirs(SyncSide.TARGET)
+        if (list.hasSourceBackups) backupDirsPreparer.prepareBackupDirs()
+        if (list.hasTargetBackups) backupDirsPreparer.prepareBackupDirs()
     }
 
 

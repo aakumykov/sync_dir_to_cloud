@@ -30,6 +30,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /*
@@ -107,15 +108,17 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         try {
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
+            // Вынужденная мера, так как обновляется объект в БД...
+            currentTask = syncTaskReader.getSyncTask(taskId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
             // Удалить выполненные инструкции
-            deleteProcessedSyncInstructions(syncTask)
+            deleteProcessedSyncInstructions(currentTask!!)
 
             // Выполнить недоделанные инструкции
-            removeDuplicatedUnprocessedSyncInstructions(syncTask)
-            processUnprocessedSyncInstructions(syncTask)
+            removeDuplicatedUnprocessedSyncInstructions(currentTask!!)
+            processUnprocessedSyncInstructions(currentTask!!)
 
             // Выполнить подготовку
             resetTaskBadStates(taskId)
@@ -124,27 +127,29 @@ class SyncTaskExecutor @AssistedInject constructor(
             markAllObjectsAsNotChecked(taskId)
 
             // Прочитать источник
-            readSource(syncTask).getOrThrow()
+            readSource(currentTask!!)
 
             // Прочитать приёмник
-            readTarget(syncTask)
+            readTarget(currentTask!!)
 
             // Подготовка каталогов бекапа после чтения источника и приёмника,
             // но перед выполнением инструкций.
-            prepareBackupDirs(syncTask)
-            // После подготовки нужно перечитать SyncTask.
+            prepareBackupDirs(currentTask!!)
+
+            // После подготовки нужно перечитать SyncTask (!)
+            // Вынужденная мера, так как обновляется объект в БД...
             currentTask = syncTaskReader.getSyncTask(taskId)
 
             // Отметить все не найденные объекты как удалённые
             markAllNotCheckedObjectsAsDeleted(taskId)
 
-            deleteOldComparisonStates(syncTask)
+            deleteOldComparisonStates(currentTask!!)
 
-            compareSourceWithTarget(syncTask)
+            compareSourceWithTarget(currentTask!!)
 
-            generateSyncInstructions(syncTask)
+            generateSyncInstructions(currentTask!!)
 
-            processSyncInstructions(syncTask)
+            processSyncInstructions(currentTask!!)
             clearProcessedSyncObjectsWithDeletedState(syncTask)
 
             // Сравнить источник с приёмником
@@ -201,19 +206,15 @@ class SyncTaskExecutor @AssistedInject constructor(
         finally {
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
+            currentTask = syncTaskReader.getSyncTask(taskId)
         }
     }
 
-    private fun prepareBackupDirs(syncTask: SyncTask) {
+    private suspend fun prepareBackupDirs(syncTask: SyncTask) {
         appComponent
             .getBackupDirsPreparerAssistedFactory()
             .create(syncTask)
-            .apply {
-                coroutineScope.launch {
-                    prepareBackupDirs(SyncSide.SOURCE)
-                    prepareBackupDirs(SyncSide.TARGET)
-                }
-            }
+            .prepareBackupDirs()
     }
 
 

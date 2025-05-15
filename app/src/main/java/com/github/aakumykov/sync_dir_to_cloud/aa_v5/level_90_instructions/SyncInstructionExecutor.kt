@@ -210,12 +210,6 @@ class SyncInstructionExecutor @AssistedInject constructor(
         Log.e(TAG, errorMsg)
     }
 
-    private val backupDirsPreparer by lazy {
-        appComponent
-            .getBackupDirsPreparerAssistedFactory()
-            .create(syncTask)
-    }
-
     companion object {
         val TAG: String = SyncInstructionExecutor::class.java.simpleName
     }

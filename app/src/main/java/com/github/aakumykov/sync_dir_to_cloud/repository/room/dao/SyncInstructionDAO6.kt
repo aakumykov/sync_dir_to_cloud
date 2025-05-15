@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 
 @Dao
 interface SyncInstructionDAO6 {
@@ -33,4 +34,7 @@ interface SyncInstructionDAO6 {
 
     @Query("DELETE FROM sync_instructions WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("SELECT * FROM sync_instructions WHERE task_id = :taskId")
+    fun getSyncInstructionsFor(taskId: String): List<SyncInstruction>
 }

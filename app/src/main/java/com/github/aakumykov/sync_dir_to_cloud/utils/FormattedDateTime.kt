@@ -8,3 +8,9 @@ fun formattedDateTime(timestamp: Long): String = SimpleDateFormat(
     BackupConfig.BACKUP_DIR_DATE_TIME_FORMAT,
     Locale.getDefault()
 ).format(timestamp)
+
+
+fun backupDirFormattedDateTime(timestamp: Long): String = SimpleDateFormat(
+    BackupConfig.BACKUP_DIR_DATE_TIME_FORMAT,
+    Locale.getDefault()
+).format(timestamp)
