@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.extensions
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 
@@ -41,3 +42,7 @@ val SyncTask.sourceBackupDirsPrepared: Boolean
     get() = sourceBackupDirName != null && sourceExecutionBackupDirName != null
 
 */
+
+val SyncTask.isNotLocal: Boolean
+    get() = StorageType.LOCAL != sourceStorageType!! || StorageType.LOCAL != targetStorageType!!
+
