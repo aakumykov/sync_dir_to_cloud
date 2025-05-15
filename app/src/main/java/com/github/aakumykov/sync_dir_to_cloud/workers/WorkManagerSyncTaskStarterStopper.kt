@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.workers
 import androidx.work.*
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.isNotLocal
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
 import javax.inject.Inject
 
@@ -30,10 +31,16 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
             setRequiresBatteryNotLow(true)
         }.build()*/
 
+        // TODO: надо учитывать, локальное или сетевое копирование.
+        //  Для локального учитывать наличие подключения не нужно (!)
+
         val manualSyncStartWorkRequest: OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(SyncTaskWorker::class.java)
                 .setInputData(inputData)
-                .setConstraints(networkConstraints)
+                .apply {
+                    if (syncTask.isNotLocal)
+                        setConstraints(networkConstraints)
+                }
 //            .setConstraints(batteryConstraints) // FIXME: при ручном запуске это ограничение неуместно
             .setExpedited(OutOfQuotaPolicy.DROP_WORK_REQUEST)
             .build()
