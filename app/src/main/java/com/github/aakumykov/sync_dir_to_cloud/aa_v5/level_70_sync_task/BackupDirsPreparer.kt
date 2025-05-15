@@ -36,25 +36,32 @@ class BackupDirsPreparer @AssistedInject constructor(
 
 
     private fun hasBackupsInSource(): Boolean {
-        return null != syncInstructionList.firstOrNull { it.isBackupInSource }.let { it }
+        return null != syncInstructionList
+            .firstOrNull { it.isBackupInSource }
+            .let { it }
     }
 
 
     private fun hasBackupsInTarget(): Boolean {
-        return null != syncInstructionList.firstOrNull { it.isBackupInTarget }.let { it }
+        return null != syncInstructionList
+            .firstOrNull { it.isBackupInTarget }
+            .let { it }
     }
 
 
     private suspend fun createBackupDirsInSource() {
         taskBackupDirCreator.createBackupDirIn(SyncSide.SOURCE, syncTask.sourcePath!!)
-            .also { dirName ->
-                syncTaskUpdater.setSourceBackupDirName(syncTask.id, dirName)
-            }.also {
+            .also { taskBackupsDirNameInSource ->
+                syncTaskUpdater.setSourceBackupDirName(syncTask.id, taskBackupsDirNameInSource)
+            }.also { taskBackupsDirNameInSource ->
+                // Хотя SyncTaskUpdater и записывает сведения о каталоге бекапа в БД,
+                // в экземпляре syncTask эта информация не обновляется. Поэтому нужно
+                // передавать и использовать имя каталога через переменную.
                 executionBackupDirCreator.createBackupDirIn(
                     SyncSide.SOURCE,
-                    combineFSPaths(syncTask.sourcePath!!, it)
-                ).also { dirName ->
-                    syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, dirName)
+                    combineFSPaths(syncTask.sourcePath!!, taskBackupsDirNameInSource)
+                ).also { executionBackupDirInSource ->
+                    syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, executionBackupDirInSource)
                 }
             }
     }
