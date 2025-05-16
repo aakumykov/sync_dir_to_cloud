@@ -34,14 +34,14 @@ class ExecutionBackupDirPreparer @AssistedInject constructor(
 
     private suspend fun prepareExecutionBackupDirInSource() {
         createExecutionBackupDirInSource().also { dirName ->
-            syncTaskUpdater.setSourceExecutionBackupDir(syncTask.id, dirName)
+            syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, dirName)
         }
     }
 
 
     private suspend fun prepareExecutionBackupDirInTarget() {
         createExecutionBackupDirInTarget().also { dirName ->
-            syncTaskUpdater.setTargetExecutionBackupDir(syncTask.id, dirName)
+            syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, dirName)
         }
     }
 

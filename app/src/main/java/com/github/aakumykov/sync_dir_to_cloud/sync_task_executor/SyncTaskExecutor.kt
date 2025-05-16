@@ -132,14 +132,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Прочитать приёмник
             readTarget(currentTask!!)
 
-            // Подготовка каталогов бекапа после чтения источника и приёмника,
-            // но перед выполнением инструкций.
-            prepareBackupDirs(currentTask!!)
-
-            // После подготовки нужно перечитать SyncTask (!)
-            // Вынужденная мера, так как обновляется объект в БД...
-            currentTask = syncTaskReader.getSyncTask(taskId)
-
             // Отметить все не найденные объекты как удалённые
             markAllNotCheckedObjectsAsDeleted(taskId)
 
@@ -149,9 +141,19 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             generateSyncInstructions(currentTask!!)
 
+            // Подготовка каталогов бекапа после
+            // чтения источника и приёмника,
+            // создания инструкция,
+            // но перед выполнением инструкций.
+            prepareBackupDirs(currentTask!!)
+
+            // После подготовки нужно перечитать SyncTask.
+            // Вынужденная мера, так как обновляется объект в БД...
+            currentTask = syncTaskReader.getSyncTask(taskId)
+
+
             processSyncInstructions(currentTask!!)
             clearProcessedSyncObjectsWithDeletedState(syncTask)
-
 
 
 
@@ -214,10 +216,10 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
     private suspend fun prepareBackupDirs(syncTask: SyncTask) {
-        /*appComponent
+        appComponent
             .getBackupDirsPreparerAssistedFactory()
             .create(syncTask)
-            .prepareBackupDirs()*/
+            .prepareBackupDirs()
     }
 
 

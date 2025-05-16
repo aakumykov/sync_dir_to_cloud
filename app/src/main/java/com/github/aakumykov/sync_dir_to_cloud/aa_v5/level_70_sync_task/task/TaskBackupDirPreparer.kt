@@ -33,13 +33,13 @@ class TaskBackupDirPreparer @AssistedInject constructor(
 
     private suspend fun prepareTopLevelBackupDirInSource() {
         val dirName = taskBackupDirCreator.createBaseBackupDirInSource()
-        syncTaskUpdater.setSourceBackupDir(syncTask.id, dirName)
+        syncTaskUpdater.setSourceBackupDirName(syncTask.id, dirName)
     }
 
 
     private suspend fun prepareTopLevelBackupDirInTarget() {
         val dirName = taskBackupDirCreator.createBaseBackupDirInTarget()
-        syncTaskUpdater.setTargetBackupDir(syncTask.id, dirName)
+        syncTaskUpdater.setTargetBackupDirName(syncTask.id, dirName)
     }
 
 
