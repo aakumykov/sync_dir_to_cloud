@@ -37,12 +37,12 @@ class ExecutionBackupDirPreparer3 @AssistedInject constructor(
 
 
     private fun sourceBackupDirNameFor(syncTask: SyncTask): String {
-        return syncTask.sourceExecutionBackupDirName ?: uniqueDirNameMaker.getUniqueDirName()
+        return uniqueDirNameMaker.getUniqueDirName()
     }
 
 
     private fun targetBackupDirNameFor(syncTask: SyncTask): String {
-        return syncTask.targetExecutionBackupDirName ?: uniqueDirNameMaker.getUniqueDirName()
+        return uniqueDirNameMaker.getUniqueDirName()
     }
 
 
