@@ -18,4 +18,4 @@ fun backupDirFormattedDateTime(timestamp: Long): String = SimpleDateFormat(
 
 
 val backupDirFormattedDateTime: String
-    get() = backupDirFormattedDateTime(currentTime())
+    get() = backupDirFormattedDateTime(currentTime)

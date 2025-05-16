@@ -40,7 +40,7 @@ class TaskLogRepository @Inject constructor(
             syncTaskLogDAO.updateAsSuccess(
                 taskLogEntry.taskId,
                 taskLogEntry.executionId,
-                currentTime(),
+                currentTime,
             )
         }
     }
@@ -50,7 +50,7 @@ class TaskLogRepository @Inject constructor(
             syncTaskLogDAO.updateAsError(
                 taskLogEntry.taskId,
                 taskLogEntry.executionId,
-                finishTime = currentTime(),
+                finishTime = currentTime,
                 errorMsg = taskLogEntry.errorMsg,
             )
         }

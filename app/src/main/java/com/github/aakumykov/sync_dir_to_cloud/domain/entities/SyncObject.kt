@@ -136,7 +136,7 @@ class SyncObject (
                 deletionState = ExecutionState.NEVER,
                 restorationState = ExecutionState.NEVER,
                 syncState = ExecutionState.NEVER,
-                syncDate = currentTime(),
+                syncDate = currentTime,
                 syncError = "",
                 justChecked = true,
                 stateInStorage = StateInStorage.NEW,

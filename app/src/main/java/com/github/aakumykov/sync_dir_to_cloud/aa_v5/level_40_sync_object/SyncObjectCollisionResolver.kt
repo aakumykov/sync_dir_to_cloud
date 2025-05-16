@@ -32,7 +32,7 @@ class SyncObjectCollisionResolver @AssistedInject constructor(
             throw IllegalStateException("Target object with id='$sourceObjectId' not found!")
 
         // Суффикс с датой и временем должен быть единым для источника и приёмника!
-        val dateTimeSuffix = formattedDateTime(currentTime())
+        val dateTimeSuffix = formattedDateTime(currentTime)
 
         val newNameForSource = newNameFor(CollisionResolverConfig.SOURCE_SUFFIX, dateTimeSuffix, sourceObject)
         val newNameForTarget = newNameFor(CollisionResolverConfig.TARGET_SUFFIX, dateTimeSuffix, targetObject)

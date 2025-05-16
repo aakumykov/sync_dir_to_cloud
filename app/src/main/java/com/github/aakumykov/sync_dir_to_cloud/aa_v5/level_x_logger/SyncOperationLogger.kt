@@ -42,7 +42,7 @@ class SyncOperationLogger @AssistedInject constructor(
             id = randomUUID,
             taskId = taskId,
             executionId = executionId,
-            timestamp = currentTime(),
+            timestamp = currentTime,
             sourceObjectId = syncInstruction.objectIdInSource,
             targetObjectId = syncInstruction.objectIdInTarget,
             operationName = operationNameFor(syncInstruction.operation),

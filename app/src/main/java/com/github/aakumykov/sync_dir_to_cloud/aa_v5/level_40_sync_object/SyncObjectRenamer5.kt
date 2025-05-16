@@ -71,7 +71,7 @@ class SyncObjectRenamer5 @AssistedInject constructor(
 
 
     private fun newNameFor(prefix: String, syncObject: SyncObject): String {
-        return "${syncObject.name}_${prefix}_${formattedDateTime(currentTime())}"
+        return "${syncObject.name}_${prefix}_${formattedDateTime(currentTime)}"
     }
 
 

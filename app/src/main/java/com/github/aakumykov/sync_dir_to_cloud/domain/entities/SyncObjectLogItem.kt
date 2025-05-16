@@ -112,7 +112,7 @@ data class SyncObjectLogItem (
                 taskId = taskId,
                 objectId = syncObject.id,
                 executionId = executionId,
-                timestamp = currentTime(),
+                timestamp = currentTime,
                 itemName = syncObject.name,
                 size = syncObject.actualSize,
                 operationName = operationName,

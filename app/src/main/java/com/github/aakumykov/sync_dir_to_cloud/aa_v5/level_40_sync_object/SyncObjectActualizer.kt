@@ -130,7 +130,7 @@ class SyncObjectActualizer @AssistedInject constructor(
         syncSide = syncSide,
         relativeParentDirPath = relativeParentDirPath,
         isExistsInTarget = true,
-        syncDate = currentTime(),
+        syncDate = currentTime,
         syncError = "",
         name = fileMetadata.name,
         mTime = fileMetadata.modified,

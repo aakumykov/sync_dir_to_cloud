@@ -47,8 +47,8 @@ class TaskLogEntry(
         executionId = executionId,
         taskId = taskId,
         entryType = entryType,
-        startTime = currentTime(),
-        finishTime = currentTime(),
+        startTime = currentTime,
+        finishTime = currentTime,
         errorMsg = errorMsg
     )
 
