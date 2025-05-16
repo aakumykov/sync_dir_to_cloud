@@ -9,7 +9,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TaskBackupDirPreparer3 @AssistedInject constructor(
+class TaskBackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val appPreferences: AppPreferences,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
@@ -61,6 +61,6 @@ class TaskBackupDirPreparer3 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface TaskBackupDirPreparer3AssistedFactory {
-    fun create(syncTask: SyncTask): TaskBackupDirPreparer3
+interface TaskBackupDirPreparerAssistedFactory {
+    fun create(syncTask: SyncTask): TaskBackupDirPreparer
 }

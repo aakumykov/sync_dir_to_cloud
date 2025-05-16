@@ -5,14 +5,12 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCre
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.utils.backupDirFormattedDateTime
-import com.github.aakumykov.sync_dir_to_cloud.utils.formattedDateTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class ExecutionBackupDirPreparer3 @AssistedInject constructor(
+class ExecutionBackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val appPreferences: AppPreferences,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
@@ -63,6 +61,6 @@ class ExecutionBackupDirPreparer3 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface ExecutionBackupDirPreparer3AssistedFactory {
-    fun create(syncTask: SyncTask): ExecutionBackupDirPreparer3
+interface ExecutionBackupDirPreparerAssistedFactory {
+    fun create(syncTask: SyncTask): ExecutionBackupDirPreparer
 }
