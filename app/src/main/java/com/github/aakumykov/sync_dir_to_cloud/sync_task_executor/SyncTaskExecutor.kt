@@ -136,7 +136,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             // но перед выполнением инструкций.
             prepareBackupDirs(currentTask!!)
 
-
             // После подготовки нужно перечитать SyncTask (!)
             // Вынужденная мера, так как обновляется объект в БД...
             currentTask = syncTaskReader.getSyncTask(taskId)
@@ -152,9 +151,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             processSyncInstructions(currentTask!!)
             clearProcessedSyncObjectsWithDeletedState(syncTask)
-
-
-
 
             // Сравнить источник с приёмником
 //            compareSourceWithTarget(syncTask.id)

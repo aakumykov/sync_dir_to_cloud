@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.BackupDirCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.BackupDirCreatorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task_backup_dir_preparer3.TaskBackupDirPreparer3AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -20,7 +19,10 @@ import dagger.assisted.AssistedInject
 class BackupDirsPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val syncInstructionReader: SyncInstructionReader,
-    private val taskBackupDirPreparer3AssistedFactory: TaskBackupDirPreparer3AssistedFactory,
+
+    private val backupDirCreatorAssistedFactory: BackupDirCreatorAssistedFactory,
+
+    private val appPreferences: AppPreferences,
     private val syncTaskUpdater: SyncTaskUpdater,
 ) {
     //
@@ -35,7 +37,6 @@ class BackupDirsPreparer @AssistedInject constructor(
 
     private fun hasBackupsInSource(): Boolean {
         return null != syncInstructionList
-            .let { it }
             .firstOrNull { it.isBackupInSource }
             .let { it }
     }
@@ -43,14 +44,13 @@ class BackupDirsPreparer @AssistedInject constructor(
 
     private fun hasBackupsInTarget(): Boolean {
         return null != syncInstructionList
-            .let { it }
             .firstOrNull { it.isBackupInTarget }
             .let { it }
     }
 
 
     private suspend fun createBackupDirsInSource() {
-        /*taskBackupDirCreator.createBackupDirIn(SyncSide.SOURCE, syncTask.sourcePath!!)
+        taskBackupDirCreator.createBackupDirIn(SyncSide.SOURCE, syncTask.sourcePath!!)
             .also { taskBackupsDirNameInSource ->
                 syncTaskUpdater.setSourceBackupDirName(syncTask.id, taskBackupsDirNameInSource)
             }.also { taskBackupsDirNameInSource ->
@@ -63,40 +63,46 @@ class BackupDirsPreparer @AssistedInject constructor(
                 ).also { executionBackupDirInSource ->
                     syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, executionBackupDirInSource)
                 }
-            }*/
-
-        taskBackupDirPreparer.prepareSourceBackupDir().also { dirName ->
-            syncTaskUpdater.setSourceBackupDirName(syncTask.id, dirName)
-        }
+            }
     }
 
 
     private suspend fun createBackupDirsInTarget() {
 
-        /*taskBackupDirCreator.createBackupDirIn(SyncSide.TARGET, syncTask.targetPath!!).also { dirName ->
+        taskBackupDirCreator.createBackupDirIn(SyncSide.TARGET, syncTask.targetPath!!).also { dirName ->
             syncTaskUpdater.setTargetBackupDirName(syncTask.id, dirName)
         }
 
         executionBackupDirCreator.createBackupDirInTarget().also { dirName ->
             syncTaskUpdater.setTargetExecutionBackupDirName(syncTask.id, dirName)
-        }*/
-
-        taskBackupDirPreparer.prepareTargetBackupDir().also { dirName ->
-            syncTaskUpdater.setTargetBackupDirName(syncTask.id, dirName)
         }
     }
 
 
-    /*private val syncInstructionList: List<SyncInstruction> by lazy {
+    private val syncInstructionList: List<SyncInstruction> by lazy {
         syncInstructionReader.getSyncInstructionsFor(syncTask.id)
-    }*/
-
-    private val syncInstructionList: List<SyncInstruction>
-        get() = syncInstructionReader.getSyncInstructionsFor(syncTask.id)
+    }
 
 
+    private val taskBackupDirCreator: BackupDirCreator by lazy {
+        backupDirCreatorAssistedFactory.create(
+            syncTask = syncTask,
+            dirNamePrefixSupplier = { appPreferences.BACKUPS_TOP_DIR_PREFIX },
+            dirNameSuffixSupplier = { randomUUID },
+            appPreferences.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT
+        )
+    }
 
-   /* // FIXME: вот это здесь ни к чему
+    private val executionBackupDirCreator: BackupDirCreator by lazy {
+        backupDirCreatorAssistedFactory.create(
+            syncTask = syncTask,
+            dirNamePrefixSupplier = { appPreferences.BACKUPS_DIR_PREFIX },
+            dirNameSuffixSupplier = { executionDirNameSuffix },
+            appPreferences.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT
+        )
+    }
+
+    // FIXME: вот это здесь ни к чему
     private val executionDirNameSuffix: String
         get() = "${backupDirFormattedDateTime(taskStartTime)}${createExecutionBackupDirAppendix()}"
 
@@ -116,12 +122,6 @@ class BackupDirsPreparer @AssistedInject constructor(
     // Бесконфликтная работа обеспечена тем, что его значение меняется
     // строго последовательно внутри этого класса.
     private var generationCounter: Int = 0
-    */
-
-
-    private val taskBackupDirPreparer by lazy {
-        taskBackupDirPreparer3AssistedFactory.create(syncTask)
-    }
 }
 
 

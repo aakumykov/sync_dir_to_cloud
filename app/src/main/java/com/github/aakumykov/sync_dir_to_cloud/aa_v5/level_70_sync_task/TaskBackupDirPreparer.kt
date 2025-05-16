@@ -2,13 +2,14 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.backup_dir_preparer2.UniqueDirNameMakerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.UniqueDirNameMakerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import okio.Path
 
 //
 // Задача класса - посмотреть, есть ли имя каталога бекапов в SyncTask,
@@ -48,7 +49,6 @@ class TaskBackupDirPreparer @AssistedInject constructor(
 
     private val uniqueDirNameMaker by lazy {
         uniqueDirNameMakerAssistedFactory.create(
-            syncTask,
             dirNamePrefixSupplier = { appPreferences.BACKUPS_TOP_DIR_PREFIX },
             dirNameSuffixSupplier = { randomUUID },
             appPreferences.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT
