@@ -19,6 +19,7 @@ class BackupDirsPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val syncInstructionReader: SyncInstructionReader,
     private val taskBackupDirPreparer3AssistedFactory: TaskBackupDirPreparer3AssistedFactory,
+    private val executionBackupDirPreparer3AssistedFactory: ExecutionBackupDirPreparer3AssistedFactory,
     private val syncTaskUpdater: SyncTaskUpdater,
 ) {
     //
@@ -48,39 +49,23 @@ class BackupDirsPreparer @AssistedInject constructor(
 
 
     private suspend fun createBackupDirsInSource() {
-        /*taskBackupDirCreator.createBackupDirIn(SyncSide.SOURCE, syncTask.sourcePath!!)
-            .also { taskBackupsDirNameInSource ->
-                syncTaskUpdater.setSourceBackupDirName(syncTask.id, taskBackupsDirNameInSource)
-            }.also { taskBackupsDirNameInSource ->
-                // Хотя SyncTaskUpdater и записывает сведения о каталоге бекапа в БД,
-                // в экземпляре syncTask эта информация не обновляется. Поэтому нужно
-                // передавать и использовать имя каталога через переменную.
-                executionBackupDirCreator.createBackupDirIn(
-                    SyncSide.SOURCE,
-                    combineFSPaths(syncTask.sourcePath!!, taskBackupsDirNameInSource)
-                ).also { executionBackupDirInSource ->
-                    syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, executionBackupDirInSource)
-                }
-            }*/
-
         taskBackupDirPreparer.prepareSourceBackupDir().also { dirName ->
             syncTaskUpdater.setSourceBackupDirName(syncTask.id, dirName)
+
+            executionBackupDirPreparer.prepareSourceExecutionBackupDir(dirName).also { dirName ->
+                syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, dirName)
+            }
         }
     }
 
 
     private suspend fun createBackupDirsInTarget() {
-
-        /*taskBackupDirCreator.createBackupDirIn(SyncSide.TARGET, syncTask.targetPath!!).also { dirName ->
-            syncTaskUpdater.setTargetBackupDirName(syncTask.id, dirName)
-        }
-
-        executionBackupDirCreator.createBackupDirInTarget().also { dirName ->
-            syncTaskUpdater.setTargetExecutionBackupDirName(syncTask.id, dirName)
-        }*/
-
         taskBackupDirPreparer.prepareTargetBackupDir().also { dirName ->
             syncTaskUpdater.setTargetBackupDirName(syncTask.id, dirName)
+
+            executionBackupDirPreparer.prepareTargetExecutionBackupDir(dirName).also { dirName ->
+                syncTaskUpdater.setTargetExecutionBackupDirName(syncTask.id, dirName)
+            }
         }
     }
 
@@ -119,6 +104,10 @@ class BackupDirsPreparer @AssistedInject constructor(
 
     private val taskBackupDirPreparer by lazy {
         taskBackupDirPreparer3AssistedFactory.create(syncTask)
+    }
+
+    private val executionBackupDirPreparer by lazy {
+        executionBackupDirPreparer3AssistedFactory.create(syncTask)
     }
 }
 

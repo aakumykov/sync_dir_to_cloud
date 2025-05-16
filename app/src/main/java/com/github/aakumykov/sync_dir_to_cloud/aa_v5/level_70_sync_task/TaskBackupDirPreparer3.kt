@@ -13,7 +13,7 @@ class TaskBackupDirPreparer3 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val appPreferences: AppPreferences,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
-    private val uniqueDirNameMakerAssistedFactory: UniqueDirNameMakerAssistedFactory,
+    private val taskUniqueDirNameMakerAssistedFactory: TaskUniqueDirNameMakerAssistedFactory,
 ){
     /**
      * @return Имя созданного каталога бекапов.
@@ -49,8 +49,8 @@ class TaskBackupDirPreparer3 @AssistedInject constructor(
         dirCreator5AssistedFactory.create(syncTask)
     }
 
-    private val taskUniqueDirNameMaker: UniqueDirNameMaker by lazy{
-        uniqueDirNameMakerAssistedFactory.create(
+    private val taskUniqueDirNameMaker: TaskUniqueDirNameMaker by lazy{
+        taskUniqueDirNameMakerAssistedFactory.create(
             syncTask,
             dirNamePrefixSupplier = { appPreferences.BACKUPS_TOP_DIR_PREFIX },
             dirNameSuffixSupplier = { randomUUID },

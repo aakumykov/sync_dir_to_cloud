@@ -8,7 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class UniqueDirNameMaker @AssistedInject constructor(
+class ExecutionUniqueDirNameMaker @AssistedInject constructor(
     @Assisted syncTask: SyncTask,
     @Assisted("prefix") private val dirNamePrefixSupplier: Supplier<String>,
     @Assisted("suffix") private val dirNameSuffixSupplier: Supplier<String>,
@@ -16,6 +16,7 @@ class UniqueDirNameMaker @AssistedInject constructor(
     private val cloudReaderGetter: CloudReaderGetter,
 ) {
     private var attemptCount = 0
+    private var appendixNumber = 0
 
     @Throws(RuntimeException::class)
     fun getUniqueDirName(): String {
@@ -23,11 +24,15 @@ class UniqueDirNameMaker @AssistedInject constructor(
         if (attemptCount++ > maxCreationAttemptsCount)
             throw RuntimeException("Maximum dir creation attempts count ($maxCreationAttemptsCount) exceeded.")
 
-        val dirName = "${dirNamePrefixSupplier.get()}_${dirNameSuffixSupplier.get()}"
+        val dirName = "${dirNamePrefixSupplier.get()}_${dirNameSuffixSupplier.get()}${appendix}"
 
         return dirName
     }
 
+    private val appendix: String get() {
+        return if (0 == appendixNumber) ""
+        else "_${appendixNumber++}"
+    }
 
     private val sourceCloudReader: CloudReader by lazy {
         cloudReaderGetter.getSourceCloudReaderFor(syncTask)
@@ -40,11 +45,11 @@ class UniqueDirNameMaker @AssistedInject constructor(
 
 
 @AssistedFactory
-interface UniqueDirNameMakerAssistedFactory {
+interface ExecutionUniqueDirNameMakerAssistedFactory {
     fun create(
         syncTask: SyncTask,
         @Assisted("prefix") dirNamePrefixSupplier: Supplier<String>,
         @Assisted("suffix") dirNameSuffixSupplier: Supplier<String>,
         maxCreationAttemptsCount: Int
-    ): UniqueDirNameMaker
+    ): ExecutionUniqueDirNameMaker
 }
