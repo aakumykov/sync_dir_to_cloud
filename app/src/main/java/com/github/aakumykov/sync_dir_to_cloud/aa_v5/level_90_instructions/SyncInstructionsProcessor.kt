@@ -55,10 +55,10 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun prepareBackupDirs(list: Iterable<SyncInstruction>) {
+    /*private suspend fun prepareBackupDirs(list: Iterable<SyncInstruction>) {
         if (list.hasSourceBackups) backupDirsPreparer.prepareBackupDirs()
         if (list.hasTargetBackups) backupDirsPreparer.prepareBackupDirs()
-    }
+    }*/
 
 
     //  TODO: в источнике/приёмнике
