@@ -13,8 +13,8 @@ interface SyncTaskBackupDirDAO {
     fun setTargetBackupDir(taskId: String, dirName: String)
 
     @Query("UPDATE sync_tasks SET source_execution_backup_dir_name = :dirName WHERE id = :taskId")
-    fun setSourceExecutionBackupDirName(taskId: String, dirName: String)
+    fun setSourceExecutionBackupDir(taskId: String, dirName: String)
 
     @Query("UPDATE sync_tasks SET target_execution_backup_dir_name = :dirName WHERE id = :taskId")
-    fun setTargetExecutionBackupDirName(taskId: String, dirName: String)
+    fun setTargetExecutionBackupDir(taskId: String, dirName: String)
 }

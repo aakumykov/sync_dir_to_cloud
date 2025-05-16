@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.task
 
 import androidx.core.util.Supplier
 import com.github.aakumykov.cloud_reader.CloudReader
@@ -11,7 +11,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class BackupDirCreator @AssistedInject constructor(
+class TaskBackupDirCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted("prefix") private val dirNamePrefixSupplier: Supplier<String>,
     @Assisted("suffix") private val dirNameSuffixSupplier: Supplier<String>,
@@ -22,29 +22,29 @@ class BackupDirCreator @AssistedInject constructor(
     /**
      * @return Имя созданного каталога
      */
-    suspend fun createBackupDirInSource(): String {
+    suspend fun createBaseBackupDirInSource(): String {
         return createBackupDirIn(
             syncSide = SyncSide.SOURCE,
-            dirPathToCreateIn = syncTask.sourcePath!!,
+            parentDirPath = syncTask.sourcePath!!,
         )
     }
 
     /**
      * @return Имя созданного каталога
      */
-    suspend fun createBackupDirInTarget(): String {
+    suspend fun createBaseBackupDirInTarget(): String {
         return createBackupDirIn(
             syncSide = SyncSide.TARGET,
-            dirPathToCreateIn = syncTask.targetPath!!,
+            parentDirPath = syncTask.targetPath!!,
         )
     }
 
     /**
      * @return Имя созданного каталога
      */
-    suspend fun createBackupDirIn(syncSide: SyncSide, dirPathToCreateIn: String): String {
-        val dirName = getUniqueDirName(syncSide, dirPathToCreateIn)
-        return createDir(syncSide, dirName, dirPathToCreateIn)
+    suspend fun createBackupDirIn(syncSide: SyncSide, parentDirPath: String): String {
+        val dirName = getUniqueDirName(syncSide, parentDirPath)
+        return createDir(syncSide, dirName, parentDirPath)
     }
 
 
@@ -101,11 +101,11 @@ class BackupDirCreator @AssistedInject constructor(
 
 
 @AssistedFactory
-interface BackupDirCreatorAssistedFactory {
+interface TaskBackupDirCreatorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         @Assisted("prefix") dirNamePrefixSupplier: Supplier<String>,
         @Assisted("suffix") dirNameSuffixSupplier: Supplier<String>,
         maxCreationAttemptsCount: Int,
-    ): BackupDirCreator
+    ): TaskBackupDirCreator
 }
