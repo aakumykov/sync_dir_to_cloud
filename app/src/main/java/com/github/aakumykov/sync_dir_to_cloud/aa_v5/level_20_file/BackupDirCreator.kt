@@ -43,12 +43,7 @@ class BackupDirCreator @AssistedInject constructor(
      * @return Имя созданного каталога
      */
     suspend fun createBackupDirIn(syncSide: SyncSide, dirPathToCreateIn: String): String {
-
-        val dirName = when(syncSide) {
-            SyncSide.SOURCE -> syncTask.sourceBackupDirName
-            SyncSide.TARGET -> syncTask.targetBackupDirName
-        } ?: getUniqueDirName(syncSide, dirPathToCreateIn)
-
+        val dirName = getUniqueDirName(syncSide, dirPathToCreateIn)
         return createDir(syncSide, dirName, dirPathToCreateIn)
     }
 
