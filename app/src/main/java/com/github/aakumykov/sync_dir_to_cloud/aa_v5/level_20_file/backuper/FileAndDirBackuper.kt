@@ -6,7 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.executionBackupDirRelativePathInTarget
 import com.github.aakumykov.sync_dir_to_cloud.extensions.executionBackupDirRelativePathInSource
 import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceExecutionBackupDirPath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirPath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirPath
 import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import com.github.aakumykov.sync_dir_to_cloud.functions.fileNameFromPath
@@ -56,24 +55,27 @@ class FileAndDirBackuper @AssistedInject constructor(
     }
 
 
-    @Throws(IllegalArgumentException::class)
-    fun backupFileByMove(backupedFileAbsolutePath: String, syncSide: SyncSide) {
+    @Throws(IllegalArgumentException::class, RuntimeException::class)
+    fun backupFileByMove(backupingFileAbsolutePath: String, syncSide: SyncSide) {
 
         val backupDirAbsolutePath = when(syncSide) {
             SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirPath!!
             SyncSide.TARGET -> syncTask.targetExecutionBackupDirPath!!
         }
 
-        val destinationFilePath = combineFSPaths(
+        val destinationPath = combineFSPaths(
             backupDirAbsolutePath,
-            fileNameFromPath(backupedFileAbsolutePath)
+            fileNameFromPath(backupingFileAbsolutePath)
         )
 
         cloudWriter.moveFileOrEmptyDir(
-            fromAbsolutePath = backupedFileAbsolutePath,
-            toAbsolutePath = destinationFilePath,
+            fromAbsolutePath = backupingFileAbsolutePath,
+            toAbsolutePath = destinationPath,
             overwriteIfExists = true
-        )
+        ).also { isMoved ->
+            if (!isMoved)
+                throw RuntimeException("File '$backupingFileAbsolutePath' not moved to '$destinationPath' in '$syncSide'.")
+        }
     }
 
 
