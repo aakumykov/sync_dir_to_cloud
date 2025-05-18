@@ -29,11 +29,11 @@ val SyncTask.targetTaskBackupsDirPath: String?
 
 
 val SyncTask.sourceExecutionBackupDirPath: String?
-    get() = sourceExecutionBackupDirName?.let { combineFSPaths(sourcePath!!, it) }
+    get() = sourceExecutionBackupDirName?.let { combineFSPaths(sourceTaskBackupsDirPath!!, it) }
 
 
 val SyncTask.targetExecutionBackupDirPath: String?
-    get() = targetExecutionBackupDirName?.let { combineFSPaths(targetPath!!, it) }
+    get() = targetExecutionBackupDirName?.let { combineFSPaths(targetTaskBackupsDirPath!!, it) }
 
 
 val SyncTask.isNotLocal: Boolean
