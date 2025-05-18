@@ -10,7 +10,7 @@ class SyncObjectDeleterWithBackup5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val syncObjectDeleterAssistedFactory5: SyncObjectDeleterAssistedFactory5,
-    private val syncObjectBackuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
+    private val syncObjectBackuperAssistedFactory: SyncObjectBackuperAssistedFactory,
 ){
     fun deleteInSourceWithBackup(syncObject: SyncObject) {
 
@@ -25,7 +25,7 @@ class SyncObjectDeleterWithBackup5 @AssistedInject constructor(
     }
 
     private val backuper: SyncObjectBackuper5 by lazy {
-        syncObjectBackuperAssistedFactory5.create(syncTask, executionId)
+        syncObjectBackuperAssistedFactory.create(syncTask, executionId)
     }
 }
 

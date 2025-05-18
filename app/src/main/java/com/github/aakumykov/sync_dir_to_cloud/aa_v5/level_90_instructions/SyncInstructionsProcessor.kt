@@ -65,10 +65,18 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     private suspend fun backupFilesAndDirs(list: Iterable<SyncInstruction>) {
         list
             .filter { it.isBackup }
-            .filter { it.isDir }
-            .forEach { syncInstruction ->
-                syncInstructionExecutor.execute(syncInstruction)
+            .apply {
+                filter { it.isDir }
+                    .forEach { syncInstruction ->
+                        syncInstructionExecutor.execute(syncInstruction)
+                    }
+
+                filter { it.isFile }
+                    .forEach { syncInstruction ->
+                        syncInstructionExecutor.execute(syncInstruction)
+                    }
             }
+
     }
 
 

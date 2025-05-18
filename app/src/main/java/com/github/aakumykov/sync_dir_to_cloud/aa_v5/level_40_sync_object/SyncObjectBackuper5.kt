@@ -33,6 +33,6 @@ class SyncObjectBackuper5 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface SyncObjectBackuperAssistedFactory5 {
+interface SyncObjectBackuperAssistedFactory {
     fun create(syncTask: SyncTask, executionId: String): SyncObjectBackuper5
 }

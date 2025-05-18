@@ -12,7 +12,7 @@ class SyncObjectCopierWithBackup5 @AssistedInject constructor(
     @Assisted private val executionId: String,
     private val syncOptions: SyncOptions,
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
-    private val syncObjectBackuperAssistedFactory5: SyncObjectBackuperAssistedFactory5,
+    private val syncObjectBackuperAssistedFactory: SyncObjectBackuperAssistedFactory,
 ) {
     suspend fun copyFromSourceToTargetWithBackup(syncObject: SyncObject) {
         backuper.backupInTarget(syncObject)
@@ -29,7 +29,7 @@ class SyncObjectCopierWithBackup5 @AssistedInject constructor(
     }
 
     private val backuper: SyncObjectBackuper5 by lazy {
-        syncObjectBackuperAssistedFactory5.create(syncTask, executionId)
+        syncObjectBackuperAssistedFactory.create(syncTask, executionId)
     }
 }
 
