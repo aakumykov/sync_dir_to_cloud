@@ -11,8 +11,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
@@ -67,7 +67,7 @@ class ViewModelsModule {
     @IntoMap
     @ViewModelKey(TaskStateViewModel::class)
     fun provideTaskInfoViewModel(syncTaskReader: SyncTaskReader,
-                                 syncObjectReader: SyncObjectReader,
+                                 syncObjectDBReader: SyncObjectDBReader,
                                  startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
                                  taskLogRepository: TaskLogRepository,
                                  taskStateLogger: TaskStateLogger,
@@ -75,7 +75,7 @@ class ViewModelsModule {
     {
         return TaskStateViewModel(
             syncTaskReader,
-            syncObjectReader,
+            syncObjectDBReader,
             startStopSyncTaskUseCase,
             taskLogRepository,
             taskStateLogger,
@@ -111,7 +111,7 @@ class ViewModelsModule {
                                  syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
                                  syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
                                  syncTaskNotificator: SyncTaskNotificator,
-                                 syncObjectDeleter: SyncObjectDeleter,
+                                 syncObjectDBDeleter: SyncObjectDBDeleter,
                                  taskCancellationHolder: TaskCancellationHolder,
     ): ViewModel {
         return TaskListViewModel(
@@ -120,7 +120,7 @@ class ViewModelsModule {
             syncTaskStartStopUseCase = syncTaskStartStopUseCase,
             syncTaskSchedulingUseCase = syncTaskSchedulingUseCase,
             syncTaskNotificator = syncTaskNotificator,
-            syncObjectDeleter = syncObjectDeleter,
+            syncObjectDBDeleter = syncObjectDBDeleter,
             taskCancellationHolder = taskCancellationHolder,
         )
     }

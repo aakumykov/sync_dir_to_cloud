@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
@@ -16,6 +17,11 @@ class SyncInstructionRepositoryInterfacesModule {
 
     @Provides
     fun provideSyncInstructionReader(syncInstructionRepository: SyncInstructionRepository): SyncInstructionReader {
+        return syncInstructionRepository
+    }
+
+    @Provides
+    fun provideSyncInstructionDeleter(syncInstructionRepository: SyncInstructionRepository): SyncInstructionDeleter {
         return syncInstructionRepository
     }
 }

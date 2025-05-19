@@ -1,45 +1,43 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO6
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import okhttp3.internal.toImmutableList
 import javax.inject.Inject
 
 class SyncInstructionRepository @Inject constructor(
-    private val syncInstructionDAO6: SyncInstructionDAO6,
+    private val syncInstructionDAO: SyncInstructionDAO,
 )
     : SyncInstructionUpdater,
-    SyncInstructionReader
+    SyncInstructionReader,
+    SyncInstructionDeleter
 {
     suspend fun add(syncInstruction: SyncInstruction) {
-        syncInstructionDAO6.add(syncInstruction)
+        syncInstructionDAO.add(syncInstruction)
     }
 
-    suspend fun getAllFor(taskId: String, executionId: String): List<SyncInstruction> {
-        return syncInstructionDAO6.getAllFor(taskId, executionId)
+    override suspend fun getAllFor(taskId: String, executionId: String): List<SyncInstruction> {
+        return syncInstructionDAO.getAllFor(taskId, executionId)
     }
 
-    suspend fun getAllWithoutExecutionId(taskId: String): List<SyncInstruction> {
-        return syncInstructionDAO6.getAllWithoutExecutionId(taskId)
+    override suspend fun getAllWithoutExecutionId(taskId: String): List<SyncInstruction> {
+        return syncInstructionDAO.getAllWithoutExecutionId(taskId)
     }
 
-    suspend fun deleteFinishedInstructionsForTask(taskId: String) {
-        syncInstructionDAO6.deleteFinishedInstructionsForTask(taskId)
-    }
-
-    suspend fun deleteInstruction(id: String) {
-        syncInstructionDAO6.delete(id)
+    private suspend fun deleteInstruction(id: String) {
+        syncInstructionDAO.delete(id)
     }
 
     override suspend fun markAsProcessed(instructionId: String) {
-        syncInstructionDAO6.markAsProcessed(instructionId)
+        syncInstructionDAO.markAsProcessed(instructionId)
     }
 
     suspend fun deleteUnprocessedDuplicatedInstructions(taskId: String) {
 
-        val initialList = syncInstructionDAO6.getAllWithoutExecutionId(taskId).toMutableList()
+        val initialList = syncInstructionDAO.getAllWithoutExecutionId(taskId).toMutableList()
 
         initialList.toImmutableList()
             .distinctBy {
@@ -54,7 +52,11 @@ class SyncInstructionRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteFinishedInstructionsFor(taskId: String) {
+        syncInstructionDAO.deleteFinishedInstructionsForTask(taskId)
+    }
+
     override fun getSyncInstructionsFor(taskId: String): List<SyncInstruction> {
-        return syncInstructionDAO6.getSyncInstructionsFor(taskId)
+        return syncInstructionDAO.getSyncInstructionsFor(taskId)
     }
 }

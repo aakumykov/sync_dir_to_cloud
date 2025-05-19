@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO6
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -138,7 +138,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncObjectLogDAO(): SyncObjectLogDAO
     abstract fun getExecutionLogDAO(): ExecutionLogDAO
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
-    abstract fun getSyncInstructionDAO6(): SyncInstructionDAO6
+    abstract fun getSyncInstructionDAO6(): SyncInstructionDAO
     abstract fun getSyncOperationLoggerDAO(): SyncOperationLoggerDAO
     abstract fun getSyncTaskBackupDirDAO(): SyncTaskBackupDirDAO
 

@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 import com.github.aakumykov.sync_dir_to_cloud.config.CollisionResolverConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.formattedDateTime
 import dagger.assisted.Assisted
@@ -17,13 +17,13 @@ import dagger.assisted.AssistedInject
  */
 class SyncObjectCollisionResolver @AssistedInject constructor(
     @Assisted syncTask: SyncTask,
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectRenamer5assistedFactory: SyncObjectRenamerAssistedFactory5,
 ) {
     suspend fun resolveCollision(sourceObjectId: String, targetObjectId: String) {
 
-        val sourceObject = syncObjectReader.getSyncObject(sourceObjectId)
-        val targetObject = syncObjectReader.getSyncObject(targetObjectId)
+        val sourceObject = syncObjectDBReader.getSyncObject(sourceObjectId)
+        val targetObject = syncObjectDBReader.getSyncObject(targetObjectId)
 
         if (null == sourceObject)
             throw IllegalStateException("Source object with id='$sourceObjectId' not found!")

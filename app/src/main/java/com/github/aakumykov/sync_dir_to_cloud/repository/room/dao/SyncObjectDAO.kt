@@ -181,4 +181,7 @@ interface SyncObjectDAO {
 
     @Query("SELECT * FROM sync_objects")
     fun testListAllObjects(): List<SyncObject>
+
+    @Query("DELETE FROM sync_objects WHERE id = :objectId")
+    fun deleteObjectWithId(objectId: String)
 }

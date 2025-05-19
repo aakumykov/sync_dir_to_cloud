@@ -16,7 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
@@ -34,7 +34,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
     private val backupDirsFilterAssistedFactory: BackupDirsFilterAssistedFactory,
 
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
 
@@ -151,7 +151,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
     ) {
         val parentDirPath = calculateRelativeParentDirPath(fileListItem, pathReadingFrom)
 
-        val existingObject = syncObjectReader.getSyncObject(
+        val existingObject = syncObjectDBReader.getSyncObject(
             taskId,
             syncSide,
             fileListItem.name,

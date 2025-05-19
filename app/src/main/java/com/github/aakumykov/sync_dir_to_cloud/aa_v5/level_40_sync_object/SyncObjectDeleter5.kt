@@ -12,6 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
+@Deprecated("FIXME: 'deleter' означает и интерфейс БД, и удаляльщик файлов")
 class SyncObjectDeleter5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,

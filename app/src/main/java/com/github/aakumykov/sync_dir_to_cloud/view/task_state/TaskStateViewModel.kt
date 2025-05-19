@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class TaskStateViewModel(
     private var syncTaskReader: SyncTaskReader,
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
     private val startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
     private val taskLogRepository: TaskLogRepository,
     private val taskStateLogger: TaskStateLogger
@@ -26,7 +26,7 @@ class TaskStateViewModel(
     }
 
     suspend fun getSyncObjectList(taskId: String): LiveData<List<SyncObject>> {
-        return syncObjectReader.getSyncObjectListAsLiveData(taskId)
+        return syncObjectDBReader.getSyncObjectListAsLiveData(taskId)
     }
 
     fun startStopTask(taskId: String) {

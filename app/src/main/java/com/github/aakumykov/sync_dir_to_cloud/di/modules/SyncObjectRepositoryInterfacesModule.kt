@@ -2,8 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
@@ -32,7 +32,7 @@ class SyncObjectRepositoryInterfacesModule {
     }
 
     @Provides
-    fun provideSyncObjectReader(syncObjectRepository: SyncObjectRepository): SyncObjectReader {
+    fun provideSyncObjectReader(syncObjectRepository: SyncObjectRepository): SyncObjectDBReader {
         return syncObjectRepository
     }
 
@@ -47,7 +47,7 @@ class SyncObjectRepositoryInterfacesModule {
     }
 
     @Provides
-    fun provideSyncObjectDeleter(syncObjectRepository: SyncObjectRepository): SyncObjectDeleter {
+    fun provideSyncObjectDeleter(syncObjectRepository: SyncObjectRepository): SyncObjectDBDeleter {
         return syncObjectRepository
     }
 

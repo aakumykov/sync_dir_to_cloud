@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -16,7 +16,7 @@ class MutualRenamerAndCopier5 @AssistedInject constructor(
     private val renamerAssistedFactory5: SyncObjectRenamerAssistedFactory5,
     private val syncObjectCopierAssistedFactory5: SyncObjectCopierAssistedFactory5,
     private val syncObjectUpdater: SyncObjectUpdater,
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectRegistratorAssistedFactory: SyncObjectRegistratorAssistedFactory,
     ){
     suspend fun mutualRenameAndCopy(sourceObject: SyncObject, targetObject: SyncObject) {
@@ -27,8 +27,8 @@ class MutualRenamerAndCopier5 @AssistedInject constructor(
         syncObjectUpdater.updateName(sourceObject.id, newSourceObjectName)
         syncObjectUpdater.updateName(targetObject.id, newTargetObjectName)
 
-        val newSourceObject = syncObjectReader.getSyncObject(sourceObject.id)
-        val newTargetObject = syncObjectReader.getSyncObject(targetObject.id)
+        val newSourceObject = syncObjectDBReader.getSyncObject(sourceObject.id)
+        val newTargetObject = syncObjectDBReader.getSyncObject(targetObject.id)
 
         // FIXME: избавиться от "!!"
         copier.copyFromSourceToTarget(newSourceObject!!, syncOptions.overwriteIfExists)

@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
@@ -34,7 +34,7 @@ import kotlin.jvm.Throws
 class SyncObjectActualizer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
     private val cloudReaderGetter: CloudReaderGetter,
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
@@ -46,7 +46,7 @@ class SyncObjectActualizer @AssistedInject constructor(
         syncState: ExecutionState,
     ) {
         // FIXME: сложная спорная логика
-        syncObjectReader.getSyncObject(
+        syncObjectDBReader.getSyncObject(
             taskId = correspondingObject.taskId,
             syncSide = syncSide,
             name = correspondingObject.name,

@@ -16,8 +16,8 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
@@ -36,10 +36,10 @@ class SyncObjectRepository @Inject constructor(
     private val badObjectStateResettingDAO: BadObjectStateResettingDAO,
 )
     : SyncObjectAdder,
-        SyncObjectReader,
+        SyncObjectDBReader,
         SyncObjectStateChanger,
         SyncObjectStateResetter,
-        SyncObjectDeleter,
+        SyncObjectDBDeleter,
         SyncObjectUpdater,
 
         SyncTaskFileObjectReader
@@ -144,6 +144,10 @@ class SyncObjectRepository @Inject constructor(
 
     override suspend fun deleteProcessedObjectsWithDeletedState(taskId: String) {
         syncObjectDAO.deleteProcessedObjectsWithDeletedState(taskId)
+    }
+
+    override suspend fun deleteObjectWithId(objectId: String) {
+        syncObjectDAO.deleteObjectWithId(objectId)
     }
 
     override suspend fun setDeletionState(

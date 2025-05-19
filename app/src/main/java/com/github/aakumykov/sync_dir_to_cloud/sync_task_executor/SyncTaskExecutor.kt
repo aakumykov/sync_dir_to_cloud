@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
@@ -30,8 +30,6 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -67,7 +65,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private val resources: Resources,
 
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
 
     private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
@@ -247,7 +245,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun deleteProcessedSyncInstructions(syncTask: SyncTask) {
         appComponent
-            .getInstructionsDeleter6()
+            .getInstructionsDeleter()
             .deleteFinishedInstructionsFor(syncTask.id)
     }
 

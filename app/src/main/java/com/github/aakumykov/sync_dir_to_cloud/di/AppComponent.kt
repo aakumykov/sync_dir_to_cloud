@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
@@ -47,8 +46,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -121,7 +120,7 @@ interface AppComponent {
 
     fun getSyncTaskNotificator(): SyncTaskNotificator
 
-    fun getSyncObjectReader(): SyncObjectReader
+    fun getSyncObjectReader(): SyncObjectDBReader
 
     fun getSyncTaskStateChanger(): SyncTaskStateChanger
 
@@ -150,7 +149,7 @@ interface AppComponent {
 
     fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
 
-    fun getInstructionsDeleter6(): SyncInstructionDeleter
+    fun getInstructionsDeleter(): SyncInstructionDeleter
 
     fun getComparisonsDeleter6(): ComparisonsDeleter6
 
@@ -158,7 +157,7 @@ interface AppComponent {
 
     fun getNotificationChannelHelper(): NotificationChannelHelper
 
-    fun getSyncObjectDeleter(): SyncObjectDeleter
+    fun getSyncObjectDeleter(): SyncObjectDBDeleter
 
     fun getSyncInstructionRepository6(): SyncInstructionRepository
 

@@ -4,10 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 
 @Dao
-interface SyncInstructionDAO6 {
+interface SyncInstructionDAO {
     @Insert
     suspend fun add(syncInstruction: SyncInstruction)
 

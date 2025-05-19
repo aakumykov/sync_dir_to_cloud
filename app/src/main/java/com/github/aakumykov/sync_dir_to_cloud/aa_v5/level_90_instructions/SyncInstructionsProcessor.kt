@@ -4,9 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.hasSourceBackups
-import com.github.aakumykov.sync_dir_to_cloud.extensions.hasTargetBackups
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
@@ -38,7 +35,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     private suspend fun processInstructions(selectUnprocessed: Boolean) {
 
         val list = if (selectUnprocessed) getAllUnprocessedSyncInstructions()
-                    else getCurentSyncInstructions()
+                    else getCurrentSyncInstructions()
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
 //        prepareBackupDirs(list)
@@ -128,7 +125,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun getCurentSyncInstructions(): Iterable<SyncInstruction> {
+    private suspend fun getCurrentSyncInstructions(): Iterable<SyncInstruction> {
         return syncInstructionRepository
             .getAllFor(syncTask.id, executionId)
     }

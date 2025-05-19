@@ -4,22 +4,20 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.backuper.FileAndDirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopier5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleterAssistedFactory5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectBackuper5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectBackuper
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCollisionResolverAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -31,16 +29,16 @@ class SyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
 
     private val syncOptions: SyncOptions,
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
 
     private val itemCopierAssistedFactory: ItemCopierAssistedFactory5,
     private val itemDeleterAssistedFactory5: ItemDeleterAssistedFactory5,
     private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
 
     private val syncInstructionUpdater: SyncInstructionUpdater,
+
     private val syncOperationLoggerAssistedFactory: SyncOperationLoggerAssistedFactory,
 
-    private val fileAndDirBackuperAssistedFactory: FileAndDirBackuperAssistedFactory,
     private val syncObjectBackuperAssistedFactory: SyncObjectBackuperAssistedFactory,
 ){
     suspend fun execute(instruction: SyncInstruction) {
@@ -69,6 +67,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncInstructionUpdater.markAsProcessed(instruction.id)
     }
 
+
     private suspend fun backupItem(syncInstruction: SyncInstruction, syncSide: SyncSide) {
         when(val operation = syncInstruction.operation) {
             SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { backupWithCopy(syncInstruction, syncSide) }
@@ -81,61 +80,18 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
     private suspend fun backupWithCopy(syncInstruction: SyncInstruction, syncSide: SyncSide) {
         when(syncSide) {
-            SyncSide.SOURCE -> backupWithCopyInSource(syncInstruction)
-            SyncSide.TARGET -> backupWithCopyInTarget(syncInstruction)
-        }
-    }
-
-    private suspend fun backupWithCopyInSource(syncInstruction: SyncInstruction) {
-
-        val syncObject = syncObjectReader.getSyncObject(syncInstruction.objectIdInSource!!)
-        val absolutePath = syncObject!!.absolutePathIn(syncTask.sourcePath!!)
-
-        sourceBackuper.apply {
-            if (syncInstruction.isDir) backupDir(absolutePath)
-            else backupFileByCopy(absolutePath)
-        }
-    }
-
-    private suspend fun backupWithCopyInTarget(syncInstruction: SyncInstruction) {
-
-        val syncObject = syncObjectReader.getSyncObject(syncInstruction.objectIdInTarget!!)
-        val absolutePath = syncObject!!.absolutePathIn(syncTask.targetPath!!)
-
-        targetBackuper.apply {
-            if (syncInstruction.isDir) backupDir(absolutePath)
-            else backupFileByCopy(absolutePath)
+            SyncSide.SOURCE -> syncObjectBackuper.backupWithCopyInSource(syncInstruction)
+            SyncSide.TARGET -> syncObjectBackuper.backupWithCopyInTarget(syncInstruction)
         }
     }
 
     private suspend fun backupWithMove(syncInstruction: SyncInstruction, syncSide: SyncSide) {
         when(syncSide) {
-            SyncSide.SOURCE -> backupWithMoveInSource(syncInstruction)
-            SyncSide.TARGET -> backupWithMoveInTarget(syncInstruction)
+            SyncSide.SOURCE -> syncObjectBackuper.backupWithMoveInSource(syncInstruction)
+            SyncSide.TARGET -> syncObjectBackuper.backupWithMoveInTarget(syncInstruction)
         }
     }
 
-    private suspend fun backupWithMoveInSource(syncInstruction: SyncInstruction) {
-
-        val syncObject = syncObjectReader.getSyncObject(syncInstruction.objectIdInSource!!)
-        val absolutePath = syncObject!!.absolutePathIn(syncTask.sourcePath!!)
-
-        sourceBackuper.apply {
-            if (syncInstruction.isDir) backupDir(absolutePath)
-            else backupFileByMove(absolutePath, SyncSide.SOURCE)
-        }
-    }
-
-    private suspend fun backupWithMoveInTarget(syncInstruction: SyncInstruction) {
-
-        val syncObject = syncObjectReader.getSyncObject(syncInstruction.objectIdInTarget!!)
-        val absolutePath = syncObject!!.absolutePathIn(syncTask.targetPath!!)
-
-        targetBackuper.apply {
-            if (syncInstruction.isDir) backupDir(absolutePath)
-            else backupFileByMove(absolutePath, SyncSide.TARGET)
-        }
-    }
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction) {
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
@@ -153,7 +109,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             try {
                 val sourceObjectId = syncInstruction.objectIdInSource!!
-                syncObjectReader.getSyncObject(sourceObjectId)?.also {
+                syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
                     itemCopier.copyItemFromSourceToTarget(it, syncOptions.overwriteIfExists)
                 } ?: {
                     throw NoSourceObjectInDatabase(sourceObjectId)
@@ -170,7 +126,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             try {
                 val targetObjectId = syncInstruction.objectIdInTarget!!
-                syncObjectReader.getSyncObject(targetObjectId)?.also {
+                syncObjectDBReader.getSyncObject(targetObjectId)?.also {
                     itemCopier.copyItemFromTargetToSource(it, syncOptions.overwriteIfExists)
                 } ?: run {
                     throw NoTargetObjectInDatabase(targetObjectId)
@@ -192,7 +148,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             val sourceItemId = syncInstruction.objectIdInSource!!
             try {
-                syncObjectReader.getSyncObject(sourceItemId)?.also {
+                syncObjectDBReader.getSyncObject(sourceItemId)?.also {
                     itemDeleter.deleteItemInSource(it)
                 } ?: {
                     throw NoSourceObjectInDatabase(sourceItemId)
@@ -209,7 +165,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             val targetItemId = syncInstruction.objectIdInTarget!!
             try {
-                syncObjectReader.getSyncObject(targetItemId)?.also {
+                syncObjectDBReader.getSyncObject(targetItemId)?.also {
                     itemDeleter.deleteItemInTarget(it)
                 } ?: {
                     throw NoTargetObjectInDatabase(targetItemId)
@@ -236,9 +192,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         itemCopierAssistedFactory.create(syncTask, executionId)
     }
 
-    private val backuper: SyncObjectBackuper5 by lazy {
-        syncObjectBackuperAssistedFactory.create(syncTask, executionId)
-    }
+
 
     private val itemDeleter: ItemDeleter5 by lazy {
         itemDeleterAssistedFactory5.create(syncTask, executionId)
@@ -261,12 +215,8 @@ class SyncInstructionExecutor @AssistedInject constructor(
         Log.e(TAG, errorMsg)
     }
 
-    private val sourceBackuper by lazy {
-        fileAndDirBackuperAssistedFactory.create(syncTask, SyncSide.SOURCE)
-    }
-
-    private val targetBackuper by lazy {
-        fileAndDirBackuperAssistedFactory.create(syncTask, SyncSide.TARGET)
+    private val syncObjectBackuper: SyncObjectBackuper by lazy {
+        syncObjectBackuperAssistedFactory.create(syncTask)
     }
 
     companion object {

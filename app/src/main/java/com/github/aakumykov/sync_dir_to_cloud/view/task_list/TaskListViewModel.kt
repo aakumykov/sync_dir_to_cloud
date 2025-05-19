@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDeleter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
 import kotlinx.coroutines.CancellationException
@@ -23,7 +23,7 @@ class TaskListViewModel(
     private val syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
     private val syncTaskNotificator: SyncTaskNotificator,
-    private val syncObjectDeleter: SyncObjectDeleter,
+    private val syncObjectDBDeleter: SyncObjectDBDeleter,
     private val taskCancellationHolder: TaskCancellationHolder,
 )
     : PageOpStateViewModel(application)
@@ -69,7 +69,7 @@ class TaskListViewModel(
     fun resetTask(taskId: String) {
         viewModelScope.launch (Dispatchers.IO) {
             syncTaskManagingUseCase.resetSyncTask(taskId)
-            syncObjectDeleter.deleteAllObjectsForTask(taskId)
+            syncObjectDBDeleter.deleteAllObjectsForTask(taskId)
         }
     }
 

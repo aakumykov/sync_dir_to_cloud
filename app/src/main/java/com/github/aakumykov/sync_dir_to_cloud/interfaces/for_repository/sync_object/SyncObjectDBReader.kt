@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 
-interface SyncObjectReader {
+interface SyncObjectDBReader {
 
     @Deprecated("Пересмотреть использование")
     suspend fun getObjectsNeedsToBeSynced(taskId: String): List<SyncObject>

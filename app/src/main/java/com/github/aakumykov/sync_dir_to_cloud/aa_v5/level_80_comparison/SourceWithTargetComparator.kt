@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.intersectBy
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isSameWith
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.subtractBy
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
@@ -18,16 +18,16 @@ import dagger.assisted.AssistedInject
 class SourceWithTargetComparator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val syncObjectReader: SyncObjectReader,
+    private val syncObjectDBReader: SyncObjectDBReader,
     private val comparisonStateRepository: ComparisonStateRepository,
 ) {
     suspend fun compareSourceWithTarget() {
 
-        val sourceObjectsList = syncObjectReader
+        val sourceObjectsList = syncObjectDBReader
             .getAllObjectsForTask(SyncSide.SOURCE, syncTask.id)
             .toMutableList()
 
-        val targetObjectsList = syncObjectReader
+        val targetObjectsList = syncObjectDBReader
             .getAllObjectsForTask(SyncSide.TARGET, syncTask.id)
             .toMutableList()
 
