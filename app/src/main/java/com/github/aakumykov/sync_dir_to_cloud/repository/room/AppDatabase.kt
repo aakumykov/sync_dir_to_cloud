@@ -116,9 +116,10 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackup
         AutoMigration(from = 120, to = 121), // Индексы поля task_id в ComparisonState, SyncInstruction, ExecutionLogItem, SyncOperationLogItem, TaskLogEntry.
         AutoMigration(from = 121, to = 122), // Новые поля SyncTask.sourceExecutionBackupDir, targetExecutionBackupDir
         AutoMigration(from = 122, to = 123), // Новое поле SyncInstruction.partsLabel
-        AutoMigration(from = 123, to = 124, spec = RenameSyncTaskBackupDirToDirName::class), // Удалил SyncInstruction
+        AutoMigration(from = 123, to = 124, spec = RenameSyncTaskBackupDirToDirName::class),
+        AutoMigration(from = 124, to = 125, spec = RenameSyncTaskBackupDirNameToTaskBackupDirName::class),
     ],
-    version = 124,
+    version = 125,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -175,8 +176,15 @@ class DeleteTableSyncInstructions : AutoMigrationSpec
 class RenameTableFromSyncInstructions6ToSyncInstructions : AutoMigrationSpec
 
 
-@RenameColumn(tableName = "sync_tasks", fromColumnName = "source_backup_dir", toColumnName = "source_backup_dir_name")
-@RenameColumn(tableName = "sync_tasks", fromColumnName = "target_backup_dir", toColumnName = "target_backup_dir_name")
+@RenameColumn(tableName = "sync_tasks", fromColumnName = "source_backup_dir", toColumnName = "source_task_backup_dir_name")
+@RenameColumn(tableName = "sync_tasks", fromColumnName = "target_backup_dir", toColumnName = "target_task_backup_dir_name")
 @RenameColumn(tableName = "sync_tasks", fromColumnName = "source_execution_backup_dir", toColumnName = "source_execution_backup_dir_name")
 @RenameColumn(tableName = "sync_tasks", fromColumnName = "target_execution_backup_dir", toColumnName = "target_execution_backup_dir_name")
 class RenameSyncTaskBackupDirToDirName : AutoMigrationSpec
+
+
+@RenameColumn(tableName = "sync_tasks", fromColumnName = "source_backup_dir_name", toColumnName = "source_task_backup_dir_name")
+@RenameColumn(tableName = "sync_tasks", fromColumnName = "target_backup_dir_name", toColumnName = "target_task_backup_dir_name")
+class RenameSyncTaskBackupDirNameToTaskBackupDirName : AutoMigrationSpec
+
+

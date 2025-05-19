@@ -8,23 +8,23 @@ import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 val SyncTask.executionBackupDirRelativePathInSource: String?
     get() = sourcePath?.let {
         if (anyIsNull(sourceTaskBackupsDirPath, sourceExecutionBackupDirName)) null
-        else combineFSPaths(sourceBackupDirName!!, sourceExecutionBackupDirName!!)
+        else combineFSPaths(sourceTaskBackupDirName!!, sourceExecutionBackupDirName!!)
     }
 
 
 val SyncTask.executionBackupDirRelativePathInTarget: String?
     get() = targetPath?.let {
         if (anyIsNull(targetTaskBackupsDirPath, targetExecutionBackupDirName)) null
-        else combineFSPaths(targetBackupDirName!!, targetExecutionBackupDirName!!)
+        else combineFSPaths(targetTaskBackupDirName!!, targetExecutionBackupDirName!!)
     }
 
 
 val SyncTask.sourceTaskBackupsDirPath: String?
-    get() = sourceBackupDirName?.let { combineFSPaths(sourcePath!!, it) }
+    get() = sourceTaskBackupDirName?.let { combineFSPaths(sourcePath!!, it) }
 
 
 val SyncTask.targetTaskBackupsDirPath: String?
-    get() = targetBackupDirName?.let { combineFSPaths(targetPath!!, it) }
+    get() = targetTaskBackupDirName?.let { combineFSPaths(targetPath!!, it) }
 
 
 

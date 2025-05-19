@@ -80,8 +80,8 @@ class SyncTask {
 
     @ColumnInfo(name = "with_backup", defaultValue = "false") var withBackup = false
 
-    @ColumnInfo(name = "source_backup_dir_name", defaultValue = "null") var sourceBackupDirName: String? = null
-    @ColumnInfo(name = "target_backup_dir_name", defaultValue = "null") var targetBackupDirName: String? = null
+    @ColumnInfo(name = "source_task_backup_dir_name", defaultValue = "null") var sourceTaskBackupDirName: String? = null
+    @ColumnInfo(name = "target_task_backup_dir_name", defaultValue = "null") var targetTaskBackupDirName: String? = null
 
     @ColumnInfo(name = "source_execution_backup_dir_name", defaultValue = "null") var sourceExecutionBackupDirName: String? = null
     @ColumnInfo(name = "target_execution_backup_dir_name", defaultValue = "null") var targetExecutionBackupDirName: String? = null
