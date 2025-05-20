@@ -14,3 +14,7 @@ val Iterable<SyncInstruction>.hasSourceBackups: Boolean get() {
 val Iterable<SyncInstruction>.hasTargetBackups: Boolean get() {
     return firstOrNull { it.isBackupInTarget }.let { true }
 }
+
+val SyncInstruction.notProcessed: Boolean
+    get() = !isProcessed
+
