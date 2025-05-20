@@ -14,8 +14,8 @@ enum class SyncOperation {
     DELETE_IN_TARGET,
 
     BACKUP_IN_SOURCE_WITH_MOVE,
-    BACKUP_IN_SOURCE_WITH_COPY,
+    @Deprecated("Нужен ли вообще?") BACKUP_IN_SOURCE_WITH_COPY,
 
     BACKUP_IN_TARGET_WITH_MOVE,
-    BACKUP_IN_TARGET_WITH_COPY,
+    @Deprecated("Нужен ли вообще?") BACKUP_IN_TARGET_WITH_COPY,
 }

@@ -7,6 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInSource
@@ -29,8 +31,13 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     suspend fun generate(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
 
+        // Удалённые в одном месте и неизменные в другом.
         nextOrderNum = processWhatToDelete(nextOrderNum)
+
+        // Новые или изменившиеся в обеих местах.
         nextOrderNum = processWhatToRename(nextOrderNum)
+
+        // Новые или изменившиеся в одном месте и прежние или удалённые в другом.
         nextOrderNum = processWhatToCopy(nextOrderNum)
 
         return nextOrderNum
@@ -132,8 +139,8 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
     private suspend fun processWhatToCopy(nextOrderNum: Int): Int {
         var n = nextOrderNum
-        n = copyFilesFromTargetToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(n)
         n = copyFilesFromSourceToTargetNewOrModifiedInSourceAndUnchangedOrDeletedInTarget(n)
+        n = copyFilesFromTargetToSourceNewOrModifiedInTargetAndUnchangedOrDeletedInSource(n)
         return n
     }
 
@@ -144,8 +151,11 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
         return getAllBilateralComparisonStates()
             .filter { it.isFile }
+            .let { it }
             .filter { it.isNewOrModifiedInTarget }
+            .let { it }
             .filter { it.isUnchangedOrDeletedInSource }
+            .let { it }
             .forEach { comparisonState ->
 
                 SyncInstruction.from(
@@ -153,14 +163,18 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
                     comparisonState = comparisonState,
                     operation = doNothingOrBackupInSource(comparisonState),
                     orderNum = non++
-                )
+                ).also {
+                    syncInstructionRepository.add(it)
+                }
 
                 SyncInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
                     operation = SyncOperation.COPY_FROM_TARGET_TO_SOURCE,
                     orderNum = non++
-                )
+                ).also {
+                    syncInstructionRepository.add(it)
+                }
             }
             .let {
                 non
@@ -168,14 +182,17 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     }
 
 
+
     private fun doNothingOrBackupInSource(comparisonState: ComparisonState): SyncOperation {
-        return if (comparisonState.isUnchangedInSource) SyncOperation.BACKUP_IN_SOURCE_WITH_COPY
+        return if (syncTask.withBackup && comparisonState.isModifiedInSource)
+            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY
         else SyncOperation.DO_NOTHING_IN_SOURCE
     }
 
 
     private fun doNothingOrBackupInTarget(comparisonState: ComparisonState): SyncOperation {
-        return if (comparisonState.isUnchangedInTarget) SyncOperation.BACKUP_IN_TARGET_WITH_COPY
+        return if (syncTask.withBackup && comparisonState.isModifiedInTarget)
+            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY
         else SyncOperation.DO_NOTHING_IN_TARGET
     }
 
@@ -195,14 +212,18 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
                     comparisonState = comparisonState,
                     operation = doNothingOrBackupInTarget(comparisonState),
                     orderNum = non++
-                )
+                ).also {
+                    syncInstructionRepository.add(it)
+                }
 
                 SyncInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
                     operation = SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
                     orderNum = non++
-                )
+                ).also {
+                    syncInstructionRepository.add(it)
+                }
             }
             .let {
                 non
