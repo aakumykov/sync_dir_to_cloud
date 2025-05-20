@@ -82,8 +82,8 @@ class FileAndDirBackuper @AssistedInject constructor(
     @Throws(IllegalStateException::class)
     private fun backupsDirPathFor(syncSide: SyncSide): String {
         return when(syncSide) {
-            SyncSide.SOURCE -> syncTask.executionBackupDirRelativePathInSource
-            SyncSide.TARGET -> syncTask.executionBackupDirRelativePathInTarget
+            SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirPath
+            SyncSide.TARGET -> syncTask.targetExecutionBackupDirPath
         }.let { path ->
             path ?: throw IllegalStateException("SyncTask does not contains full info about backup dirs: $syncTask")
         }
