@@ -51,13 +51,16 @@ class SyncObjectBackuper @AssistedInject constructor(
 
     @Throws(RuntimeException::class)
     private suspend fun getItemAbsolutePath(syncInstruction: SyncInstruction, syncSide: SyncSide): String {
+
         val objectId = when(syncSide) {
             SyncSide.SOURCE -> syncInstruction.objectIdInSource!!
             SyncSide.TARGET -> syncInstruction.objectIdInTarget!!
         }
 
         val syncObject = syncObjectDBReader.getSyncObject(objectId)
-            ?: throw RuntimeException("SyncObject with id '$objectId' in '$syncSide' location not found.")
+            ?: run {
+                throw RuntimeException("SyncObject with id '$objectId' in '$syncSide' location not found.")
+            }
 
         return syncObject.absolutePathIn(when(syncSide){
             SyncSide.SOURCE -> syncTask.sourcePath!!
