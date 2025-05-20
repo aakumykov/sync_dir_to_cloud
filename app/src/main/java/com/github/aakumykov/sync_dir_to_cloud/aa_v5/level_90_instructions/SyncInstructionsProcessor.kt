@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -10,8 +11,8 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
 //
-// Задача класса - выбирать инструкции для текущей задачи и отправлять их на
-// выполнение в соответствии с логикой работы.
+// Выполняет логические этапы синхронизации,
+// путём отбора и выполнения наборов инструкций определённого типа.
 //
 class SyncInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -28,23 +29,25 @@ class SyncInstructionsProcessor @AssistedInject constructor(
         processInstructions(false)
     }
 
-    private suspend fun processInstructions(selectUnprocessed: Boolean) {
+    private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
+        return if (selectUnprocessed) getNonProcessedInstructionsForTask()
+        else getNonProcessedSyncInstructionsForTaskAndExecution()
+    }
 
-        val list = if (selectUnprocessed) getAllUnprocessedSyncInstructions()
-                    else getCurrentSyncInstructions()
+    private suspend fun processInstructions(selectUnprocessed: Boolean) {
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
 //        prepareBackupDirs(list)
-        backupFilesAndDirs(list)
+        backupFilesAndDirs(list(selectUnprocessed))
 
-        deleteFiles(list)
-        deleteDirs(list)
+        deleteFiles(list(selectUnprocessed))
+        deleteDirs(list(selectUnprocessed))
 
-        processCollisionResolution(true, list)
-        processCollisionResolution(false, list)
+        processCollisionResolution(true, list(selectUnprocessed))
+        processCollisionResolution(false, list(selectUnprocessed))
 
-        processDirsDirsCreation(list)
-        processFilesCopying(list)
+        processDirsCreation(list(selectUnprocessed))
+        processFilesCopying(list(selectUnprocessed))
     }
 
 
@@ -101,7 +104,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             }
     }
 
-    private suspend fun processDirsDirsCreation(list: Iterable<SyncInstruction>) {
+    private suspend fun processDirsCreation(list: Iterable<SyncInstruction>) {
         list
             .filter { it.isDir }
             .filter { it.notDeletion }
@@ -120,15 +123,16 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun getCurrentSyncInstructions(): Iterable<SyncInstruction> {
+    private suspend fun getNonProcessedSyncInstructionsForTaskAndExecution(): Iterable<SyncInstruction> {
         return syncInstructionRepository
             .getAllFor(syncTask.id, executionId)
+            .filter { it.notProcessed }
     }
 
-    private suspend fun getAllUnprocessedSyncInstructions(): Iterable<SyncInstruction> {
+    private suspend fun getNonProcessedInstructionsForTask(): Iterable<SyncInstruction> {
         return syncInstructionRepository
             .getAllWithoutExecutionId(syncTask.id)
-            .filter { !it.isProcessed }
+            .filter { it.notProcessed }
     }
 
 
