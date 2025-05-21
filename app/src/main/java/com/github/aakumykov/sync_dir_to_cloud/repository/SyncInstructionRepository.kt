@@ -35,6 +35,10 @@ class SyncInstructionRepository @Inject constructor(
         syncInstructionDAO.markAsProcessed(instructionId)
     }
 
+    override fun getSyncInstructionsForObjectInSource(syncObjectId: String): List<SyncInstruction> {
+        return syncInstructionDAO.getSyncInstructionsForSourceId(syncObjectId)
+    }
+
     suspend fun deleteUnprocessedDuplicatedInstructions(taskId: String) {
 
         val initialList = syncInstructionDAO.getAllWithoutExecutionId(taskId).toMutableList()

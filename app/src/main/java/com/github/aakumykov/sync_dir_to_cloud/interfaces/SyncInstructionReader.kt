@@ -6,4 +6,5 @@ interface SyncInstructionReader {
     fun getSyncInstructionsFor(taskId: String): List<SyncInstruction>
     suspend fun getAllFor(taskId: String, executionId: String): List<SyncInstruction>
     suspend fun getAllWithoutExecutionId(taskId: String): List<SyncInstruction>
+    fun getSyncInstructionsForObjectInSource(syncObjectId: String): List<SyncInstruction>
 }

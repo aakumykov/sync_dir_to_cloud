@@ -40,6 +40,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
     private val syncOperationLoggerAssistedFactory: SyncOperationLoggerAssistedFactory,
 
     private val syncObjectBackuperAssistedFactory: SyncObjectBackuperAssistedFactory,
+    private val backupInstructionExecutorAssistedFactory: BackupInstructionExecutorAssistedFactory,
 ){
     suspend fun execute(instruction: SyncInstruction) {
 
@@ -79,17 +80,21 @@ class SyncInstructionExecutor @AssistedInject constructor(
     }
 
     private suspend fun backupWithCopy(syncInstruction: SyncInstruction, syncSide: SyncSide) {
-        when(syncSide) {
+        /*when(syncSide) {
             SyncSide.SOURCE -> syncObjectBackuper.backupWithCopyInSource(syncInstruction)
             SyncSide.TARGET -> syncObjectBackuper.backupWithCopyInTarget(syncInstruction)
-        }
+        }*/
+
+        backupInstructionExecutor.backupWithCopy(syncInstruction, syncSide)
     }
 
     private suspend fun backupWithMove(syncInstruction: SyncInstruction, syncSide: SyncSide) {
-        when(syncSide) {
+        /*when(syncSide) {
             SyncSide.SOURCE -> syncObjectBackuper.backupWithMoveInSource(syncInstruction)
             SyncSide.TARGET -> syncObjectBackuper.backupWithMoveInTarget(syncInstruction)
-        }
+        }*/
+
+        backupInstructionExecutor.backupWithMove(syncInstruction, syncSide)
     }
 
 
@@ -217,6 +222,10 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
     private val syncObjectBackuper: SyncObjectBackuper by lazy {
         syncObjectBackuperAssistedFactory.create(syncTask)
+    }
+
+    private val backupInstructionExecutor: BackupInstructionExecutor by lazy {
+        backupInstructionExecutorAssistedFactory.create(syncTask)
     }
 
     companion object {

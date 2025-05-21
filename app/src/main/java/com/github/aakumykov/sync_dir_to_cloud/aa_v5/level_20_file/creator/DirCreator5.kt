@@ -9,6 +9,7 @@ import dagger.assisted.AssistedInject
 
 // TODO: сделать suspend-функции отменяемыми, если возможно.
 
+@Deprecated("Как бы и не очень нужен?")
 class DirCreator5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter

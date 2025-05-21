@@ -36,4 +36,8 @@ interface SyncInstructionDAO {
 
     @Query("SELECT * FROM sync_instructions WHERE task_id = :taskId")
     fun getSyncInstructionsFor(taskId: String): List<SyncInstruction>
+
+
+    @Query("SELECT * FROM sync_instructions WHERE object_id_in_source = :objectId")
+    fun getSyncInstructionsForSourceId(objectId: String): List<SyncInstruction>
 }

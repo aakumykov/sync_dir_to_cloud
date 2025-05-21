@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,26 +17,46 @@ class FileDeleter5 @AssistedInject constructor(
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
     @Throws(Exception::class)
-    suspend fun deleteFileInSource(basePath: String, fileName: String) {
-        return deleteFileWith(cloudWriterGetter.getSourceCloudWriter(syncTask), basePath, fileName);
+    suspend fun deleteFileInSource(relativeParentDirPath: String, fileName: String) {
+        return deleteFileWith(
+            sourceCloudWriter,
+            combineFSPaths(syncTask.sourcePath!!, relativeParentDirPath),
+            fileName
+        );
     }
 
     @Throws(Exception::class)
-    suspend fun deleteFileInTarget(basePath: String, fileName: String) {
-        return deleteFileWith(cloudWriterGetter.getTargetCloudWriter(syncTask), basePath, fileName);
+    suspend fun deleteFileInTarget(relativeParentDirPath: String, fileName: String) {
+        return deleteFileWith(
+            targetCloudWriter,
+            combineFSPaths(syncTask.targetPath!!, relativeParentDirPath),
+            fileName
+        )
     }
 
-    private suspend fun deleteFileWith(cloudWriter: CloudWriter, basePath: String, fileName: String) {
+    private suspend fun deleteFileWith(
+        cloudWriter: CloudWriter,
+        absoluteParentDirPath: String,
+        fileName: String
+    ) {
         return suspendCoroutine { continuation ->
             thread {
                 try {
-                    cloudWriter.deleteFile(basePath, fileName)
+                    cloudWriter.deleteFile(absoluteParentDirPath, fileName)
                     continuation.resume(Unit)
                 } catch (e: Exception) {
                     continuation.resumeWithException(e)
                 }
             }
         }
+    }
+
+    private val sourceCloudWriter: CloudWriter by lazy {
+        cloudWriterGetter.getSourceCloudWriter(syncTask)
+    }
+
+    private val targetCloudWriter: CloudWriter by lazy {
+        cloudWriterGetter.getTargetCloudWriter(syncTask)
     }
 }
 
