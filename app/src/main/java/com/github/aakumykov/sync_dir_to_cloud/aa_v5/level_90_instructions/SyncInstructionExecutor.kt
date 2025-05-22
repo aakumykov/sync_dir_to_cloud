@@ -26,7 +26,6 @@ import kotlinx.coroutines.CoroutineScope
 class SyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    @Assisted private val scope: CoroutineScope,
 
     private val syncOptions: SyncOptions,
     private val syncObjectDBReader: SyncObjectDBReader,
@@ -39,8 +38,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
     private val syncOperationLoggerAssistedFactory: SyncOperationLoggerAssistedFactory,
 
-    private val syncObjectBackuperAssistedFactory: SyncObjectBackuperAssistedFactory,
-    private val backupInstructionExecutorAssistedFactory: BackupInstructionExecutorAssistedFactory,
+    private val backupInstructionExecutorAssistedFactory: BackupInstructionExecutor2AssistedFactory,
 ){
     suspend fun execute(instruction: SyncInstruction) {
 
@@ -55,10 +53,8 @@ class SyncInstructionExecutor @AssistedInject constructor(
             SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
             SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { backupItem(instruction, SyncSide.SOURCE) }
-            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { backupItem(instruction, SyncSide.SOURCE) }
-            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { backupItem(instruction, SyncSide.TARGET) }
-            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { backupItem(instruction, SyncSide.TARGET) }
+            SyncOperation.BACKUP_IN_SOURCE -> { backupInstructionExecutor.backupInSource(instruction) }
+            SyncOperation.BACKUP_IN_TARGET -> { backupInstructionExecutor.backupInTarget(instruction) }
 
             SyncOperation.DO_NOTHING_IN_SOURCE -> {}
             SyncOperation.DO_NOTHING_IN_TARGET -> {}
@@ -69,33 +65,41 @@ class SyncInstructionExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun backupItem(syncInstruction: SyncInstruction, syncSide: SyncSide) {
+    /**
+     * Работа выполняется в [BackupInstructionExecutor2.execute]
+     */
+    private fun stubBackup() {
+
+    }
+
+
+    /*private suspend fun backupItem(syncInstruction: SyncInstruction, syncSide: SyncSide) {
         when(val operation = syncInstruction.operation) {
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> { backupWithCopy(syncInstruction, syncSide) }
+            SyncOperation.BACKUP_IN_SOURCE -> { backupWithCopy(syncInstruction, syncSide) }
             SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> { backupWithMove(syncInstruction, syncSide) }
             SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> { backupWithCopy(syncInstruction, syncSide) }
             SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> { backupWithMove(syncInstruction, syncSide) }
             else -> throw IllegalArgumentException("Argument must contains a kind of 'BACKUP' operation, now it is '${operation}'")
         }
-    }
+    }*/
 
-    private suspend fun backupWithCopy(syncInstruction: SyncInstruction, syncSide: SyncSide) {
-        /*when(syncSide) {
+    /*private suspend fun backupWithCopy(syncInstruction: SyncInstruction, syncSide: SyncSide) {
+        *//*when(syncSide) {
             SyncSide.SOURCE -> syncObjectBackuper.backupWithCopyInSource(syncInstruction)
             SyncSide.TARGET -> syncObjectBackuper.backupWithCopyInTarget(syncInstruction)
-        }*/
+        }*//*
 
         backupInstructionExecutor.backupWithCopy(syncInstruction, syncSide)
-    }
+    }*/
 
-    private suspend fun backupWithMove(syncInstruction: SyncInstruction, syncSide: SyncSide) {
-        /*when(syncSide) {
+    /*private suspend fun backupWithMove(syncInstruction: SyncInstruction, syncSide: SyncSide) {
+        *//*when(syncSide) {
             SyncSide.SOURCE -> syncObjectBackuper.backupWithMoveInSource(syncInstruction)
             SyncSide.TARGET -> syncObjectBackuper.backupWithMoveInTarget(syncInstruction)
-        }*/
+        }*//*
 
         backupInstructionExecutor.backupWithMove(syncInstruction, syncSide)
-    }
+    }*/
 
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction) {
@@ -220,11 +224,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
         Log.e(TAG, errorMsg)
     }
 
-    private val syncObjectBackuper: SyncObjectBackuper by lazy {
-        syncObjectBackuperAssistedFactory.create(syncTask)
-    }
-
-    private val backupInstructionExecutor: BackupInstructionExecutor by lazy {
+    private val backupInstructionExecutor: BackupInstructionExecutor2 by lazy {
         backupInstructionExecutorAssistedFactory.create(syncTask)
     }
 
@@ -236,10 +236,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncInstructionExecutorAssistedFactory {
-    fun create(
-        syncTask: SyncTask,
-        executionId: String,
-        scope: CoroutineScope): SyncInstructionExecutor
+    fun create(syncTask: SyncTask, executionId: String): SyncInstructionExecutor
 }
 
 

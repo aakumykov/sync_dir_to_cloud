@@ -60,12 +60,10 @@ class SyncInstruction (
     val isBackup: Boolean get() = isBackupInSource || isBackupInTarget
 
     @Ignore val isBackupInSource: Boolean =
-        SyncOperation.BACKUP_IN_SOURCE_WITH_COPY == operation ||
-        SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE == operation
+        SyncOperation.BACKUP_IN_SOURCE == operation
 
     @Ignore val isBackupInTarget: Boolean =
-        SyncOperation.BACKUP_IN_TARGET_WITH_COPY == operation ||
-        SyncOperation.BACKUP_IN_TARGET_WITH_MOVE == operation
+        SyncOperation.BACKUP_IN_TARGET == operation
 
     @Ignore val notDeletion: Boolean =
         SyncOperation.DELETE_IN_TARGET != operation &&

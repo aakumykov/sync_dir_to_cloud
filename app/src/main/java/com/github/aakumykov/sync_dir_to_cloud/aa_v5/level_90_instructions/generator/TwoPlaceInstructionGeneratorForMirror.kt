@@ -83,12 +83,12 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
 
     private fun deleteOrBackupInTarget(): SyncOperation {
-        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_TARGET_WITH_MOVE
+        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_TARGET
         else SyncOperation.DELETE_IN_TARGET
     }
 
     private fun deleteOrBackupInSource(): SyncOperation {
-        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE
+        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_SOURCE
         else SyncOperation.DELETE_IN_SOURCE
     }
 
@@ -185,14 +185,14 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
     private fun doNothingOrBackupInSource(comparisonState: ComparisonState): SyncOperation {
         return if (syncTask.withBackup && comparisonState.isModifiedInSource)
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY
+            SyncOperation.BACKUP_IN_SOURCE
         else SyncOperation.DO_NOTHING_IN_SOURCE
     }
 
 
     private fun doNothingOrBackupInTarget(comparisonState: ComparisonState): SyncOperation {
         return if (syncTask.withBackup && comparisonState.isModifiedInTarget)
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY
+            SyncOperation.BACKUP_IN_SOURCE
         else SyncOperation.DO_NOTHING_IN_TARGET
     }
 

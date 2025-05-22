@@ -11,8 +11,8 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
 //
-// Выполняет логические этапы синхронизации,
-// путём отбора и выполнения наборов инструкций определённого типа.
+// Задача ПроцессораИнструкций отправить разные их виды
+// на исполненеи в определённом порядке.
 //
 class SyncInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -62,6 +62,8 @@ class SyncInstructionsProcessor @AssistedInject constructor(
         list
             .filter { it.isBackup }
             .apply {
+                // Cначала бекапятся (создаются) каталоги, потом файлы.
+
                 filter { it.isDir }
                     .forEach { syncInstruction ->
                         syncInstructionExecutor.execute(syncInstruction)
@@ -135,9 +137,8 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { it.notProcessed }
     }
 
-
     private val syncInstructionExecutor by lazy {
-        syncInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
+        syncInstructionExecutorAssistedFactory.create(syncTask, executionId)
     }
 
     companion object {

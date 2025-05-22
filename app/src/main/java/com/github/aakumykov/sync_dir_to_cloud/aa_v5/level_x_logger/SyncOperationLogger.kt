@@ -58,10 +58,8 @@ class SyncOperationLogger @AssistedInject constructor(
             SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> R.string.SYNC_OPERATION_copying_from_target_to_source
             SyncOperation.DELETE_IN_SOURCE -> R.string.SYNC_OPERATION_deleting_from_source
             SyncOperation.DELETE_IN_TARGET -> R.string.SYNC_OPERATION_deleting_from_target
-            SyncOperation.BACKUP_IN_SOURCE_WITH_COPY -> R.string.SYNC_OPERATION_backing_up_in_source_with_copy
-            SyncOperation.BACKUP_IN_SOURCE_WITH_MOVE -> R.string.SYNC_OPERATION_backing_up_in_source_with_move
-            SyncOperation.BACKUP_IN_TARGET_WITH_COPY -> R.string.SYNC_OPERATION_backing_up_in_target_with_copy
-            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE -> R.string.SYNC_OPERATION_backing_up_in_target_with_move
+            SyncOperation.BACKUP_IN_SOURCE -> R.string.SYNC_OPERATION_backing_up_in_source
+            SyncOperation.BACKUP_IN_TARGET -> R.string.SYNC_OPERATION_backing_up_in_source
             SyncOperation.DO_NOTHING_IN_SOURCE -> R.string.SYNC_OPERATION_do_nothing_in_target
             SyncOperation.DO_NOTHING_IN_TARGET -> R.string.SYNC_OPERATION_do_nothing_in_target
         })
