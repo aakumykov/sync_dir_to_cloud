@@ -55,7 +55,13 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isFile}
             .filter { it.isDeletedInSource }
             .filter { it.notDeletedInTarget }
-            .let { createInstructionsFor(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum) }
+            .let {
+                createInstructionsFor(
+                    it,
+                    deleteOrBackupInTarget(isDir = false),
+                    nextOrderNum
+                )
+            }
     }
 
     private suspend fun deleteDirsInTargetDeletedInSource(nextOrderNum: Int): Int {
@@ -63,7 +69,26 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInSource }
             .filter { it.notDeletedInTarget }
-            .let { createInstructionsFor(it, SyncOperation.DELETE_IN_TARGET, nextOrderNum) }
+            .let {
+                createInstructionsFor(
+                    list = it,
+                    deleteOrBackupInTarget(isDir = true),
+                    nextOrderNum = nextOrderNum
+                )
+            }
+    }
+
+    private fun deleteOrBackupInTarget(isDir: Boolean): List<SyncOperation> {
+        return buildList {
+            if (syncTask.withBackup) {
+                add(SyncOperation.BACKUP_IN_TARGET)
+                // Бекап файла делается перемещением, что эквивалентно удалению,
+                // поэтому собственно удаление требуется только каталогу.
+                if (isDir)
+                    add(SyncOperation.DELETE_IN_TARGET)
+            }
+            else add(SyncOperation.DELETE_IN_TARGET)
+        }
     }
 
 
@@ -106,24 +131,39 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
             .let { createInstructionsFor(it, SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
     }
 
+    private suspend fun createInstructionsFor(
+        list: List<ComparisonState>,
+        syncOperationList: List<SyncOperation>,
+        nextOrderNum: Int
+    ): Int {
+        var n = nextOrderNum
+        list.forEach { comparisonState ->
+            syncInstructionRepository.apply {
+                syncOperationList.forEach { syncOperation ->
+                    add(
+                        SyncInstruction.from(
+                            partsLabel = PartsLabel.ST,
+                            comparisonState = comparisonState,
+                            operation = syncOperation,
+                            orderNum = n++
+                        )
+                    )
+                }
+            }
+        }
+        return n
+    }
 
     private suspend fun createInstructionsFor(
         list: List<ComparisonState>,
         syncOperation: SyncOperation,
         nextOrderNum: Int
     ): Int {
-        var n = nextOrderNum
-        list.forEach { comparisonState ->
-            syncInstructionRepository.add(
-                SyncInstruction.from(
-                    partsLabel = PartsLabel.ST,
-                    comparisonState = comparisonState,
-                    operation = syncOperation,
-                    orderNum = n++
-                )
-            )
-        }
-        return n
+        return createInstructionsFor(
+            list = list,
+            syncOperationList = listOf(syncOperation),
+            nextOrderNum = nextOrderNum
+        )
     }
 
     private suspend fun getAllBilateralComparisonStates(): Iterable<ComparisonState> {
