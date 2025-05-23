@@ -68,7 +68,7 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     private suspend fun deleteObjectsFromTargetDeletedInSourceAndUnchangedInTarget(isDir: Boolean, nextOrderNum: Int): Int {
         return createSyncInstructionsFrom(
             getStatesForDeletionInTarget(isDir),
-            deleteOrBackupInTarget(),
+            deleteOrBackupInTarget(isDir),
             nextOrderNum
         )
     }
@@ -76,20 +76,36 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     private suspend fun deleteObjectsFromSourceDeletedInTargetAndUnchangedInSource(isDir: Boolean, nextOrderNum: Int): Int {
         return createSyncInstructionsFrom(
             getStatesForDeletionInSource(isDir),
-            deleteOrBackupInSource(),
+            deleteOrBackupInSource(isDir),
             nextOrderNum
         )
     }
 
 
-    private fun deleteOrBackupInTarget(): SyncOperation {
-        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_TARGET
-        else SyncOperation.DELETE_IN_TARGET
+    private fun deleteOrBackupInTarget(isDir: Boolean): List<SyncOperation> {
+        return buildList {
+            if (syncTask.withBackup) {
+                add(SyncOperation.BACKUP_IN_TARGET)
+                // Бекап файла делается перемещением, что эквивалентно удалению,
+                // поэтому собственно удаление требуется только каталогу.
+                if (isDir)
+                    add(SyncOperation.DELETE_IN_TARGET)
+            }
+            else add(SyncOperation.DELETE_IN_TARGET)
+        }
     }
 
-    private fun deleteOrBackupInSource(): SyncOperation {
-        return if (syncTask.withBackup) SyncOperation.BACKUP_IN_SOURCE
-        else SyncOperation.DELETE_IN_SOURCE
+    private fun deleteOrBackupInSource(isDir: Boolean): List<SyncOperation> {
+        return buildList {
+            if (syncTask.withBackup) {
+                add(SyncOperation.BACKUP_IN_SOURCE)
+                // Бекап файла делается перемещением, что эквивалентно удалению,
+                // поэтому собственно удаление требуется только каталогу.
+                if (isDir)
+                    add(SyncOperation.DELETE_IN_SOURCE)
+            }
+            else add(SyncOperation.DELETE_IN_SOURCE)
+        }
     }
 
 
