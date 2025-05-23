@@ -39,13 +39,7 @@ class SyncObjectBackuper3 @AssistedInject constructor(
     }
 
 
-    //
-    // Забекапить каталог значит:
-    // 1) создать в каталоге бекапов одноимённый каталог с полным путём;
-    // 2) удалить каталог в текущем месте;
-    // 3) удалить из БД запись о том, что он был в "текущем месте".
-    //
-    private suspend fun backupDir(syncObject: SyncObject) {
+    private fun backupDir(syncObject: SyncObject) {
         if (syncObject.isFile) throw IllegalArgumentException("SyncObject is not a dir: $syncObject")
         when(syncObject.syncSide) {
             SyncSide.SOURCE -> backupDirInSource(syncObject)
@@ -53,28 +47,27 @@ class SyncObjectBackuper3 @AssistedInject constructor(
         }
     }
 
-
-    private suspend fun backupDirInSource(syncObject: SyncObject) {
+    // Забекапить каталог означает просто создать его в папке бекапов.
+    // Удалён он будет на этапе удаления, ибо инструкция удаления добавляется
+    // при генерации инструкции бекапа каталога.
+    private fun backupDirInSource(syncObject: SyncObject) {
         sourceInBackupsFileHelper.createDir(syncObject.relativePath)
-        fileDeleter.deleteFileInSource(syncObject.relativeParentDirPath, syncObject.name)
-        syncObjectDBDeleter.deleteObjectWithId(syncObject.id)
     }
 
-
-    private suspend fun backupDirInTarget(syncObject: SyncObject) {
+    //
+    // См. описание метода [backupDirInSource].
+    //
+    private fun backupDirInTarget(syncObject: SyncObject) {
         targetInBackupsFileHelper.createDir(syncObject.relativePath)
-        fileDeleter.deleteFileInTarget(syncObject.relativeParentDirPath, syncObject.name)
-        syncObjectDBDeleter.deleteObjectWithId(syncObject.id)
     }
 
 
     //
     // Забекапить файл значит:
-    // 10) создать в каталоге бекапов родительский каталог для этого файла,
-    // аналогичный исходному;
-    // 20) переместить его в этот каталог;
-    // 25)
-    // 30) удалить из БД запись о том, что он был в "текущем месте".
+    // 10) создать в каталоге бекапов родительский каталог для этого файла, аналогичный исходному;
+    // 20) переместить файл в этот каталог;
+    // 30) удалить из БД запись о том, что файл был в "текущем месте", чтобы
+    //     не смущать программу.
     //
     private suspend fun backupFile(syncObject: SyncObject) {
         if (syncObject.isDir) throw IllegalArgumentException("SyncObject is not a file: $syncObject")
