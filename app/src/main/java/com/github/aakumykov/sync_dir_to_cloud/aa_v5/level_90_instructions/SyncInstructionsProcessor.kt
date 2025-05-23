@@ -101,6 +101,9 @@ class SyncInstructionsProcessor @AssistedInject constructor(
         list
             .filter { it.isDir }
             .filter { it.isDeletion }
+            .sortedBy { it.relativePath.length }
+            .reversed()
+            .let { it }
             .forEach { syncInstruction ->
                 syncInstructionExecutor.execute(syncInstruction)
             }
