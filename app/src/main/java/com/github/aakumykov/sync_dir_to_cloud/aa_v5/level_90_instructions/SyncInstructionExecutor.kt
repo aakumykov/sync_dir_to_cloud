@@ -204,7 +204,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
 
     private val itemDeleter: ItemDeleter5 by lazy {
-        itemDeleterAssistedFactory5.create(syncTask, executionId)
+        itemDeleterAssistedFactory5.create(syncTask)
     }
 
     private val collisionResolver by lazy {

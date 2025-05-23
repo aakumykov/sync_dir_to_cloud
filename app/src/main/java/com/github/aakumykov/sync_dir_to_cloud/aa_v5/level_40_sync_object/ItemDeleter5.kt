@@ -14,7 +14,6 @@ import dagger.assisted.AssistedInject
 
 class ItemDeleter5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
     private val fileDeleterAssistedFactory: FileDeleterAssistedFactory5,
     private val dirDeleterAssistedFactory: DirDeleterAssistedFactory5,
     private val syncObjectUpdater: SyncObjectUpdater,
@@ -70,5 +69,5 @@ class ItemDeleter5 @AssistedInject constructor(
 
 @AssistedFactory
 interface ItemDeleterAssistedFactory5 {
-    fun create(syncTask: SyncTask, executionId: String): ItemDeleter5
+    fun create(syncTask: SyncTask): ItemDeleter5
 }

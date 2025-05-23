@@ -103,7 +103,6 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { it.isDeletion }
             .sortedBy { it.relativePath.length }
             .reversed()
-            .let { it }
             .forEach { syncInstruction ->
                 syncInstructionExecutor.execute(syncInstruction)
             }
