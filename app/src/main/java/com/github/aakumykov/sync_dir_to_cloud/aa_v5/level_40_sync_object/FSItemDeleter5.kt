@@ -19,14 +19,14 @@ class FSItemDeleter5 @AssistedInject constructor(
     private val syncObjectUpdater: SyncObjectUpdater,
 ) {
     suspend fun deleteItemInSource(syncObject: SyncObject) {
-        if (syncObject.isDir) deleteDirInSource(syncObject)
+        if (syncObject.isDir) deleteEmptyDirInSource(syncObject)
         else deleteFileInSource(syncObject)
 
         syncObjectUpdater.markAsDeleted(syncObject.id)
     }
 
     suspend fun deleteItemInTarget(syncObject: SyncObject) {
-        if (syncObject.isDir) deleteDirInTarget(syncObject)
+        if (syncObject.isDir) deleteEmptyDirInTarget(syncObject)
         else deleteFileInTarget(syncObject)
 
         syncObjectUpdater.markAsDeleted(syncObject.id)
@@ -47,17 +47,19 @@ class FSItemDeleter5 @AssistedInject constructor(
         )
     }
 
-    private suspend fun deleteDirInSource(syncObject: SyncObject) {
+    // FIXME: логика путей неправильная, но работает
+    private suspend fun deleteEmptyDirInSource(syncObject: SyncObject) {
         dirDeleter.deleteEmptyDirInSource(
-            syncTask.sourcePath!!,
-            syncObject.relativePath
+            basePath = syncTask.sourcePath!!,
+            dirName = syncObject.relativePath
         )
     }
 
-    private suspend fun deleteDirInTarget(syncObject: SyncObject) {
+    // FIXME: логика путей неправильная, но работает
+    private suspend fun deleteEmptyDirInTarget(syncObject: SyncObject) {
         dirDeleter.deleteEmptyDirInTarget(
-            syncTask.targetPath!!,
-            syncObject.relativePath
+            basePath = syncTask.targetPath!!,
+            dirName = syncObject.relativePath
         )
     }
 

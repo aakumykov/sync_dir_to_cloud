@@ -23,13 +23,21 @@ class DirDeleter5 @AssistedInject constructor(
      */
     @Throws(Exception::class)
     suspend fun deleteEmptyDirInTarget(basePath: String, dirName: String) {
-        deleteDirWith(basePath, dirName, targetCloudWriter)
+        deleteDirWith(
+            basePath = basePath,
+            dirName = dirName,
+            cloudWriter = targetCloudWriter
+        )
     }
 
 
     @Throws(Exception::class)
     suspend fun deleteEmptyDirInSource(basePath: String, dirName: String) {
-        deleteDirWith(basePath, dirName, sourceCloudWriter)
+        deleteDirWith(
+            basePath = basePath,
+            dirName = dirName,
+            cloudWriter = targetCloudWriter
+        )
     }
 
 
@@ -38,7 +46,7 @@ class DirDeleter5 @AssistedInject constructor(
         return suspendCoroutine { cont ->
             thread {
                 try {
-                    targetCloudWriter.deleteDir(basePath, dirName)
+                    cloudWriter.deleteDir(basePath, dirName)
                     cont.resume(Unit)
                 } catch (e: Exception) {
                     cont.resumeWithException(e)
