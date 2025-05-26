@@ -26,7 +26,7 @@ class LogItemDetailsDialog : DialogFragment() {
 
         arguments?.getParcelable<Data>(DATA)?.also { logItem ->
             alertDialog.setView(buildInfoView(logItem))
-            alertDialog.setTitle(logItem.name)
+//            alertDialog.setTitle(logItem.name)
         } ?: {
             alertDialog.setView(buildErrorView(R.string.LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied))
             alertDialog.setTitle(R.string.LOG_ITEM_DETAILS_DIALOG_title)
