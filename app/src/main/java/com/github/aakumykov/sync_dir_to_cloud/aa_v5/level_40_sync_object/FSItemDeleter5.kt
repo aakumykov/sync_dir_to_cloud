@@ -35,15 +35,15 @@ class FSItemDeleter5 @AssistedInject constructor(
 
     private suspend fun deleteFileInSource(syncObject: SyncObject) {
         fileDeleter.deleteFileInSource(
-            syncTask.sourcePath!!,
-            syncObject.relativePath
+            relativeParentDirPath = syncObject.relativeParentDirPath,
+            fileName = syncObject.name
         )
     }
 
     private suspend fun deleteFileInTarget(syncObject: SyncObject) {
         fileDeleter.deleteFileInTarget(
-            syncTask.targetPath!!,
-            syncObject.relativePath
+            relativeParentDirPath = syncObject.relativeParentDirPath,
+            fileName = syncObject.name
         )
     }
 
