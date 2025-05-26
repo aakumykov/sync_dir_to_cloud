@@ -74,11 +74,11 @@ class ViewModelsModule {
     ): ViewModel
     {
         return TaskStateViewModel(
-            syncTaskReader,
-            syncObjectDBReader,
-            startStopSyncTaskUseCase,
-            taskLogRepository,
-            taskStateLogger,
+            syncTaskReader = syncTaskReader,
+            syncObjectDBReader = syncObjectDBReader,
+            startStopSyncTaskUseCase = startStopSyncTaskUseCase,
+            taskLogRepository = taskLogRepository,
+            taskStateLogger = taskStateLogger,
         )
     }
 

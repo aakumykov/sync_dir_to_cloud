@@ -18,7 +18,7 @@ class TaskStateViewModel(
     private val startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
     private val taskLogRepository: TaskLogRepository,
     private val taskStateLogger: TaskStateLogger,
-    private val taskLogProvider: TaskLogProvider,
+//    private val taskLogProvider: TaskLogProvider,
 
     ) : ViewModel() {
 
@@ -36,5 +36,5 @@ class TaskStateViewModel(
 
     fun getTaskLogsLiveData(taskId: String) = taskLogRepository.getLogsForTask(taskId)
 
-    fun getTaskLogsFlow(taskId: String) = taskLogProvider.taskLogsFlow
+//    fun getTaskLogsFlow(taskId: String) = taskLogProvider.taskLogsFlow
 }
