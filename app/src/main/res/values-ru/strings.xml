@@ -164,4 +164,7 @@
     <string name="description_task_list_item_sync_mode_icon">Режим работы</string>
     <string name="TOGGLE_with_backup_on">С бекапами</string>
     <string name="TOGGLE_with_backup_off">Без бекапов</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_task_id">Id задачи: %1$s</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_execution_id">Id запуска: %1$s</string>
+    <string name="LOG_ITEM_DETAILS_DIALOG_date_time">Время: %1$s</string>
 </resources>

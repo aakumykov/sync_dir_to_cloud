@@ -39,10 +39,14 @@ class LogItemDetailsDialog : DialogFragment() {
         return requireActivity().layoutInflater
             .inflate(R.layout.dialog_log_item_details, null, false)
             .apply {
-                findViewById<TextView>(R.id.syncLogItemDetailsId).text = data.taskId
+
+                findViewById<TextView>(R.id.syncLogItemDetailsTaskId).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_task_id, data.taskId)
+                findViewById<TextView>(R.id.syncLogItemDetailsExecutionId).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_execution_id, data.executionId)
+
 //                findViewById<TextView>(R.id.syncLogItemDetailsMessage).text = logItem.operationName
+
                 findViewById<TextView>(R.id.syncLogItemDetailsItemName).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_item_name_quotes, data.name)
-                findViewById<TextView>(R.id.syncLogItemDetailsTime).text = CurrentDateTime.format(data.timestamp)
+                findViewById<TextView>(R.id.syncLogItemDetailsTime).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_date_time, CurrentDateTime.format(data.timestamp))
 
                 val errorView = findViewById<TextView>(R.id.syncLogItemError)
                 data.errorMsg?.also {
@@ -85,8 +89,8 @@ class LogItemDetailsDialog : DialogFragment() {
                 DATA to Data(
                     name = logOfSync.text,
                     timestamp = logOfSync.timestamp,
-                    taskId = "item.id",
-                    executionId = "executionId",
+                    taskId = logOfSync.taskId,
+                    executionId = logOfSync.executionId,
                     errorMsg = logOfSync.operationState.let {
                         if (it == OperationState.ERROR) it.name
                         else null

@@ -7,6 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 data class LogOfSync(
+    val taskId: String,
+    val executionId: String,
     val text: String,
     val subText: String,
     val timestamp: Long,
@@ -15,31 +17,37 @@ data class LogOfSync(
 ) {
     companion object {
 
-        fun from(executionLogItem: ExecutionLogItem): LogOfSync {
+        fun from(item: ExecutionLogItem): LogOfSync {
             return LogOfSync(
-                text = executionLogItem.message,
-                subText = executionLogItem.type.name,
-                timestamp = executionLogItem.timestamp,
-                operationState = executionLogItemTypeToOperationState(executionLogItem.type),
+                taskId = item.taskId,
+                executionId = item.executionId,
+                text = item.message,
+                subText = item.type.name,
+                timestamp = item.timestamp,
+                operationState = executionLogItemTypeToOperationState(item.type),
             )
         }
 
-        fun from(syncObjectLogItem: SyncObjectLogItem): LogOfSync {
+        fun from(item: SyncObjectLogItem): LogOfSync {
             return LogOfSync(
-                text = syncObjectLogItem.operationName,
-                timestamp = syncObjectLogItem.timestamp,
-                subText = syncObjectLogItem.itemName,
-                operationState = syncObjectLogItem.operationState,
-                progress = syncObjectLogItem.progress,
+                taskId = item.taskId,
+                executionId = item.executionId,
+                text = item.operationName,
+                timestamp = item.timestamp,
+                subText = item.itemName,
+                operationState = item.operationState,
+                progress = item.progress,
             )
         }
 
-        fun from(logItem: SyncOperationLogItem): LogOfSync {
+        fun from(item: SyncOperationLogItem): LogOfSync {
             return LogOfSync(
-                text = logItem.operationName,
-                timestamp = logItem.timestamp,
-                subText = logItem.objectName,
-                operationState = logItem.operationState,
+                taskId = item.taskId,
+                executionId = item.executionId,
+                text = item.operationName,
+                timestamp = item.timestamp,
+                subText = item.objectName,
+                operationState = item.operationState,
                 progress = null,
             )
         }

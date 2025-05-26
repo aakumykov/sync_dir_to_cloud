@@ -34,11 +34,18 @@
             tools:text="дата и время" />
 
         <TextView
-            android:id="@+id/syncLogItemDetailsId"
+            android:id="@+id/syncLogItemDetailsTaskId"
             style="@style/sync_log_item_details_text_row"
             android:layout_weight="0"
             android:textSize="12sp"
-            tools:text="id" />
+            tools:text="taskId" />
+
+        <TextView
+            android:id="@+id/syncLogItemDetailsExecutionId"
+            style="@style/sync_log_item_details_text_row"
+            android:layout_weight="0"
+            android:textSize="12sp"
+            tools:text="executionId" />
 
         <TextView
             android:id="@+id/syncLogItemError"
