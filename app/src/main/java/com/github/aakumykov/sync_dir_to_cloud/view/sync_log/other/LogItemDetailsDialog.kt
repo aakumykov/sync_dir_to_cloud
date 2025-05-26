@@ -45,7 +45,7 @@ class LogItemDetailsDialog : DialogFragment() {
 
 //                findViewById<TextView>(R.id.syncLogItemDetailsMessage).text = logItem.operationName
 
-                findViewById<TextView>(R.id.syncLogItemDetailsItemName).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_item_name_quotes, data.name)
+                findViewById<TextView>(R.id.syncLogItemDetailsItemName).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_item_name_quotes, data.text)
                 findViewById<TextView>(R.id.syncLogItemDetailsTime).text = getString(R.string.LOG_ITEM_DETAILS_DIALOG_date_time, CurrentDateTime.format(data.timestamp))
 
                 val errorView = findViewById<TextView>(R.id.syncLogItemError)
@@ -87,12 +87,13 @@ class LogItemDetailsDialog : DialogFragment() {
         fun create(logOfSync: LogOfSync): LogItemDetailsDialog = LogItemDetailsDialog().apply {
             arguments = bundleOf(
                 DATA to Data(
-                    name = logOfSync.text,
+                    text = logOfSync.text,
+                    subText = logOfSync.subText,
                     timestamp = logOfSync.timestamp,
                     taskId = logOfSync.taskId,
                     executionId = logOfSync.executionId,
                     errorMsg = logOfSync.operationState.let {
-                        if (it == OperationState.ERROR) it.name
+                        if (it == OperationState.ERROR) logOfSync.subText
                         else null
                     }
                 )
@@ -102,7 +103,8 @@ class LogItemDetailsDialog : DialogFragment() {
 
     @Parcelize
     data class Data(
-        val name: String,
+        val text: String,
+        val subText: String,
         val timestamp: Long,
         val taskId: String,
         val executionId: String,
