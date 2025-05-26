@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.other
 
 import android.app.AlertDialog
 import android.app.Dialog

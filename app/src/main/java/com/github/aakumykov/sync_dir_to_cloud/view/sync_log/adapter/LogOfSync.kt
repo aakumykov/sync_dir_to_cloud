@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.adapter
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem

@@ -12,6 +12,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.adapter.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.adapter.LogOfSyncAdapter
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.other.LogItemDetailsDialog
 
 class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 
