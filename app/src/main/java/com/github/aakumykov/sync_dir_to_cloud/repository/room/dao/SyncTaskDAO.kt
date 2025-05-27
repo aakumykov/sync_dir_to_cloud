@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SyncTaskDAO {
@@ -19,6 +20,9 @@ interface SyncTaskDAO {
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
     @Deprecated("Должен возвращать nullable-тип")
     suspend fun get(id: String): SyncTask
+
+    @Query("SELECT * FROM sync_tasks WHERE id = :taskId")
+    suspend fun getAsFlow(taskId: String): Flow<SyncTask>
 
     @Query("SELECT * FROM sync_tasks WHERE id = :id")
     suspend fun getNullable(id: String): SyncTask?

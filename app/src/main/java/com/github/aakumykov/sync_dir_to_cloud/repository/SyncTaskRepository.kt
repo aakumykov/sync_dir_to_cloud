@@ -25,6 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -167,6 +168,10 @@ class SyncTaskRepository @Inject constructor(
 
     override suspend fun getAllTasks(): List<SyncTask> {
         return syncTaskDAO.getAllTasks()
+    }
+
+    override suspend fun getSyncTaskAsFlow(taskId: String): Flow<SyncTask> {
+        return syncTaskDAO.getAsFlow(taskId)
     }
 
     override suspend fun clearFinishTime(taskId: String) {
