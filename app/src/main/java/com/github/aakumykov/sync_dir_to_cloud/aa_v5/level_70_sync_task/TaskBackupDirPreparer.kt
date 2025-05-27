@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.checker.FileExistenceCheckerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
@@ -12,6 +13,7 @@ import dagger.assisted.AssistedInject
 class TaskBackupDirPreparer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val appPreferences: AppPreferences,
+    private val fileExistenceCheckerAssistedFactory: FileExistenceCheckerAssistedFactory,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
     private val taskUniqueDirNameMakerAssistedFactory: TaskUniqueDirNameMakerAssistedFactory,
 ){
@@ -19,8 +21,14 @@ class TaskBackupDirPreparer @AssistedInject constructor(
      * @return Имя созданного каталога бекапов.
      */
     suspend fun prepareSourceBackupDir(): String {
+
         val dirName = sourceBackupDirNameFor(syncTask)
-        dirCreator.createDirInSource(basePath = syncTask.sourcePath!!, dirName = dirName)
+
+        if (fileExistenceChecker.dirNotExistsInSource(dirName))
+            dirCreator.createDirInSource(
+                basePath = syncTask.sourcePath!!,
+                dirName = dirName)
+
         return dirName
     }
 
@@ -28,8 +36,14 @@ class TaskBackupDirPreparer @AssistedInject constructor(
      * @return Имя созданного каталога бекапов.
      */
     suspend fun prepareTargetBackupDir(): String {
+
         val dirName = targetBackupDirNameFor(syncTask)
-        dirCreator.createDirInTarget(basePath = syncTask.targetPath!!, dirName = dirName)
+
+        if (fileExistenceChecker.dirNotExistsInTarget(dirName))
+            dirCreator.createDirInTarget(
+                basePath = syncTask.targetPath!!,
+                dirName = dirName)
+
         return dirName
     }
 
@@ -44,6 +58,9 @@ class TaskBackupDirPreparer @AssistedInject constructor(
     }
 
 
+    private val fileExistenceChecker by lazy {
+        fileExistenceCheckerAssistedFactory.create(syncTask)
+    }
 
     private val dirCreator: DirCreator5 by lazy {
         dirCreator5AssistedFactory.create(syncTask)

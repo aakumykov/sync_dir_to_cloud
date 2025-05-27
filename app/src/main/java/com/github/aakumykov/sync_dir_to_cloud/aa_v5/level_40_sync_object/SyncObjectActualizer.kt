@@ -23,10 +23,11 @@ import kotlin.jvm.Throws
 
 /**
  * После выполнения операции копирования необходимо добавить в БД
- * запись о новом объекте в хринилище. Эта запись должна содержать
- * аткуальные метаданные, иначе объект будет ошибочно распознан как
+ * запись о новом объекте в хранилище. Эта запись должна содержать
+ * актуальные метаданные, иначе объект будет ошибочно распознан как
  * изменившийся при следующем запуске синхронизации.
- * Делается актуализация путём считывания данных о файле (папке?)
+
+ * Актуализация производится путём считывания данных о файле (папке?)
  * из хранилища.
  *
  * // FIXME: неудачное название. Действительная функция - добавление объекта.
@@ -54,7 +55,7 @@ class SyncObjectActualizer @AssistedInject constructor(
         )?.also { foundSyncObject ->
             if (foundSyncObject.isDeleted) {
                 // Новый объект вместо удалённого.
-                addNewSuccesscullySyncedSyncObject(syncSide, correspondingObject)
+                addNewSuccessfullySyncedSyncObject(syncSide, correspondingObject)
             } else {
                 // Обновление существующего объекта.
                 updateSyncObjectMetadata(foundSyncObject)
@@ -62,7 +63,7 @@ class SyncObjectActualizer @AssistedInject constructor(
             }
         } ?: run {
             // Новый объект на пустое место.
-            addNewSuccesscullySyncedSyncObject(syncSide, correspondingObject)
+            addNewSuccessfullySyncedSyncObject(syncSide, correspondingObject)
         }
     }
 
@@ -81,7 +82,7 @@ class SyncObjectActualizer @AssistedInject constructor(
             }
     }
 
-    private suspend fun addNewSuccesscullySyncedSyncObject(
+    private suspend fun addNewSuccessfullySyncedSyncObject(
         syncSide: SyncSide,
         correspondingObject: SyncObject,
     ) {
@@ -101,6 +102,7 @@ class SyncObjectActualizer @AssistedInject constructor(
     private suspend fun getFileMetadata(syncSide: SyncSide, absolutePath: String): FileMetadata {
         return cloudReader(syncSide)
             .getFileMetadata(absolutePath)
+            .let { it }
             .getOrThrow()!!
     }
 
@@ -112,8 +114,12 @@ class SyncObjectActualizer @AssistedInject constructor(
     }
 
     private suspend fun cloudReader(syncSide: SyncSide): CloudReader = when(syncSide) {
-            SyncSide.SOURCE -> cloudReaderGetter.getSourceCloudReaderFor(syncTask)
-            SyncSide.TARGET -> cloudReaderGetter.getTargetCloudReaderFor(syncTask)
+            SyncSide.SOURCE -> {
+                cloudReaderGetter.getSourceCloudReaderFor(syncTask)
+            }
+            SyncSide.TARGET -> {
+                cloudReaderGetter.getTargetCloudReaderFor(syncTask)
+            }
     }
 
     private fun newSuccessfullySyncedObject(

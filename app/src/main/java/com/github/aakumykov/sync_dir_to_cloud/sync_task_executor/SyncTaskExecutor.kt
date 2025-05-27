@@ -116,6 +116,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             // Выполнить недоделанные инструкции
             removeDuplicatedUnprocessedSyncInstructions(currentTask!!)
+
+            prepareBackupDirs(currentTask!!)
+
             processUnprocessedSyncInstructions(currentTask!!)
 
             // Выполнить подготовку
@@ -141,9 +144,10 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             // Подготовка каталогов бекапа после
             // чтения источника и приёмника,
-            // создания инструкция,
-            // но перед выполнением инструкций.
-            prepareBackupDirs(currentTask!!)
+            // создания инструкций,
+            // но перед выполнением этих инструкций.
+//            prepareBackupDirs(currentTask!!)
+
 
             // После подготовки нужно перечитать SyncTask.
             // Вынужденная мера, так как обновляется объект в БД...

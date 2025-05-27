@@ -121,6 +121,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
                 }
                 syncOperationLogger.logSuccess(logItemId)
             } catch (e: Exception) {
+                // FIXME: эта ошибка должна отображаться в интерфейсе!
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
             }
@@ -138,6 +139,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
                 }
                 syncOperationLogger.logSuccess(logItemId)
             } catch (e: Exception) {
+                // FIXME: эта ошибка должна отображаться в интерфейсе!
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
             }
