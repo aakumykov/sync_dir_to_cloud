@@ -18,5 +18,5 @@ interface SyncTaskReader {
 
     suspend fun getAllTasks(): List<SyncTask>
 
-    suspend fun getSyncTaskAsFlow(taskId: String): Flow<SyncTask>
+    fun getSyncTaskAsFlow(taskId: String): Flow<SyncTask>
 }
