@@ -170,7 +170,7 @@ class SyncTaskRepository @Inject constructor(
         return syncTaskDAO.getAllTasks()
     }
 
-    override suspend fun getSyncTaskAsFlow(taskId: String): Flow<SyncTask> {
+    override fun getSyncTaskAsFlow(taskId: String): Flow<SyncTask> {
         return syncTaskDAO.getAsFlow(taskId)
     }
 
