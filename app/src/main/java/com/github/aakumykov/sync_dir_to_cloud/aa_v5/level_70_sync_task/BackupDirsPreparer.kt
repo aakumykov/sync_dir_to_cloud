@@ -28,12 +28,14 @@ class BackupDirsPreparer @AssistedInject constructor(
 
     private fun hasBackupsInSource(): Boolean {
         return null != syncInstructionList
+            .let { it }
             .firstOrNull { it.isBackupInSource }
     }
 
 
     private fun hasBackupsInTarget(): Boolean {
         return null != syncInstructionList
+            .let { it }
             .firstOrNull { it.isBackupInTarget }
     }
 
