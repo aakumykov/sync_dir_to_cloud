@@ -26,11 +26,21 @@
         android:textColor="@color/sync_log_message_color"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/syncLogStateIconView"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Название операции" />
+
+    <TextView
+        android:id="@+id/syncLogOperationTimeView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center_vertical|end"
+        app:layout_constraintBottom_toBottomOf="@id/syncLogOperationNameView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/syncLogOperationNameView"
+        app:layout_constraintTop_toTopOf="@id/syncLogOperationNameView"
+        tools:text="1970.01.01, 13:14:15" />
 
     <TextView
         android:id="@+id/syncLogDetailsView"

@@ -8,10 +8,12 @@ import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
+import com.github.aakumykov.sync_dir_to_cloud.utils.syncLogFormattedDateTime
 
 class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
     private lateinit var operationNameView: TextView
+    private lateinit var timeView: TextView
     private lateinit var detailsView: TextView
     private lateinit var sizeView: TextView
     private lateinit var stateIconView: ImageView
@@ -21,6 +23,7 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
     override fun init(itemView: View) {
         operationNameView = itemView.findViewById(R.id.syncLogOperationNameView)
+        timeView = itemView.findViewById(R.id.syncLogOperationTimeView)
         detailsView = itemView.findViewById(R.id.syncLogDetailsView)
 
         sizeView = itemView.findViewById(R.id.syncLogSizeView)
@@ -39,6 +42,8 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
         detailsView.text = item.subText
 
 //        sizeView.text = FileSizeHelper.bytes2size(context, item.size)
+
+        timeView.text = syncLogFormattedDateTime(item.timestamp)
 
 
         stateIconView.setImageResource(when(item.operationState){
