@@ -142,16 +142,21 @@ class SyncTask {
     }
 
 
-    override fun toString(): String {
+    /*override fun toString(): String {
         return SyncTask::class.simpleName +
                 " { " +
                 (if(isEnabled) "[enabled]" else "[disabled]") +
                 ": $sourceStorageType($sourcePath) -> $targetStorageType($targetPath) " +
                 "}"
-    }
+    }*/
+
+
 
     @Ignore
     fun summary() = "SyncTask($id): [$sourceStorageType] $sourcePath --> [$targetStorageType] $targetPath"
+    override fun toString(): String {
+        return "SyncTask(id='$id', notificationId=$notificationId, state=$state, isEnabled=$isEnabled, schedulingState=$schedulingState, schedulingError=$schedulingError, executionState=$executionState, executionError=$executionError, sourceReadingState=$sourceReadingState, sourceReadingError=$sourceReadingError, sourceStorageType=$sourceStorageType, targetStorageType=$targetStorageType, sourcePath=$sourcePath, targetPath=$targetPath, syncMode=$syncMode, intervalHours=$intervalHours, intervalMinutes=$intervalMinutes, oldIntervalH=$oldIntervalH, oldIntervalM=$oldIntervalM, sourceAuthId=$sourceAuthId, targetAuthId=$targetAuthId, cTime=$cTime, lastStart=$lastStart, lastFinish=$lastFinish, totalObjectsCount=$totalObjectsCount, syncedObjectsCount=$syncedObjectsCount, withBackup=$withBackup, sourceTaskBackupDirName=$sourceTaskBackupDirName, targetTaskBackupDirName=$targetTaskBackupDirName, sourceExecutionBackupDirName=$sourceExecutionBackupDirName, targetExecutionBackupDirName=$targetExecutionBackupDirName)"
+    }
 
     val description: String get() = summary()
 

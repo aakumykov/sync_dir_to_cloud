@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.checker.FileExistenceCheckerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -43,9 +44,11 @@ class BackupDirsPreparer @AssistedInject constructor(
     private suspend fun createBackupDirsInSource() {
         taskBackupDirPreparer.prepareSourceBackupDir().also { taskBackupsName ->
             syncTaskUpdater.setSourceBackupDirName(syncTask.id, taskBackupsName)
+            Log.d(TAG, "")
 
             executionBackupDirPreparer.prepareSourceExecutionBackupDir(taskBackupsName).also { executionBackupsDirName ->
                 syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, executionBackupsDirName)
+                Log.d(TAG, "")
             }
         }
     }
@@ -54,9 +57,11 @@ class BackupDirsPreparer @AssistedInject constructor(
     private suspend fun createBackupDirsInTarget() {
         taskBackupDirPreparer.prepareTargetBackupDir().also { taskBackupsName ->
             syncTaskUpdater.setTargetBackupDirName(syncTask.id, taskBackupsName)
+            Log.d(TAG, "")
 
             executionBackupDirPreparer.prepareTargetExecutionBackupDir(taskBackupsName).also { executionBackupsDirName ->
                 syncTaskUpdater.setTargetExecutionBackupDirName(syncTask.id, executionBackupsDirName)
+                Log.d(TAG, "")
             }
         }
     }
@@ -99,6 +104,10 @@ class BackupDirsPreparer @AssistedInject constructor(
 
     private val executionBackupDirPreparer by lazy {
         executionBackupDirPreparerAssistedFactory.create(syncTask)
+    }
+
+    companion object {
+        val TAG: String = BackupDirsPreparer::class.java.simpleName
     }
 }
 

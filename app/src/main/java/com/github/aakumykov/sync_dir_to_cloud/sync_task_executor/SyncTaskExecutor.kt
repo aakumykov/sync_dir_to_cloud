@@ -76,10 +76,9 @@ class SyncTaskExecutor @AssistedInject constructor(
     private var _currentTaskId: String? = null
     private val currentTaskId get(): String = _currentTaskId!!
 
-    private val currentTask: SyncTask
-        get() = runBlocking {
-            syncTaskReader.getSyncTask(currentTaskId)
-        }
+    private val currentTask: SyncTask get() = runBlocking {
+        syncTaskReader.getSyncTask(currentTaskId)
+    }
 
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
@@ -120,7 +119,11 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Выполнить недоделанные инструкции
             removeDuplicatedUnprocessedSyncInstructions()
 
+            val task1 = currentTask
             prepareBackupDirs()
+            val task2 = currentTask
+            Log.d(TAG, "$task1 | $task2")
+
 
             processUnprocessedSyncInstructions()
 
