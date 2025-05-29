@@ -24,34 +24,35 @@
             style="@style/sync_log_item_details_text_row"
             android:layout_weight="0"
             android:textStyle="bold"
+            android:textSize="@dimen/log_details_dialog_font_size"
             tools:text="Имя файла / каталога" />
 
         <TextView
             android:id="@+id/syncLogItemDetailsTime"
             style="@style/sync_log_item_details_text_row"
             android:layout_weight="0"
-            android:textSize="12sp"
+            android:textSize="@dimen/log_details_dialog_font_size"
             tools:text="дата и время" />
 
         <TextView
             android:id="@+id/syncLogItemDetailsTaskId"
             style="@style/sync_log_item_details_text_row"
             android:layout_weight="0"
-            android:textSize="12sp"
+            android:textSize="@dimen/log_details_dialog_font_size"
             tools:text="taskId" />
 
         <TextView
             android:id="@+id/syncLogItemDetailsExecutionId"
             style="@style/sync_log_item_details_text_row"
             android:layout_weight="0"
-            android:textSize="12sp"
+            android:textSize="@dimen/log_details_dialog_font_size"
             tools:text="executionId" />
 
         <TextView
             android:id="@+id/syncLogItemError"
             style="@style/sync_log_item_details_text_row"
             android:textColor="@color/error"
-            android:textSize="12sp"
+            android:textSize="@dimen/log_details_dialog_font_size"
             tools:text="Ошибка" />
 
     </LinearLayout>
