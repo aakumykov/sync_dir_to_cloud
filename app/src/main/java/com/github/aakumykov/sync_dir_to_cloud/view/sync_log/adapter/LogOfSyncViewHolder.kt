@@ -11,18 +11,19 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
-    private lateinit var nameView: TextView
+    private lateinit var operationNameView: TextView
+    private lateinit var detailsView: TextView
     private lateinit var sizeView: TextView
-    private lateinit var messageView: TextView
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
 
-    private val context: Context get() = nameView.context
+    private val context: Context get() = detailsView.context
 
     override fun init(itemView: View) {
-        nameView = itemView.findViewById(R.id.syncLogNameView)
+        operationNameView = itemView.findViewById(R.id.syncLogOperationNameView)
+        detailsView = itemView.findViewById(R.id.syncLogDetailsView)
+
         sizeView = itemView.findViewById(R.id.syncLogSizeView)
-        messageView = itemView.findViewById(R.id.syncLogMessageView)
         stateIconView = itemView.findViewById(R.id.syncLogStateIconView)
 
         progressBar = itemView.findViewById<ProgressBar>(R.id.syncLogProgressBar).apply {
@@ -33,11 +34,12 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
     override fun fill(item: LogOfSync, isSelected: Boolean) {
 
-        nameView.text = item.subText
+        operationNameView.text = item.text
+
+        detailsView.text = item.subText
 
 //        sizeView.text = FileSizeHelper.bytes2size(context, item.size)
 
-        messageView.text = item.text
 
         stateIconView.setImageResource(when(item.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success

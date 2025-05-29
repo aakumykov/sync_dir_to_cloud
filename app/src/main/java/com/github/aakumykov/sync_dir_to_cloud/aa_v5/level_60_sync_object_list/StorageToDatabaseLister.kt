@@ -127,7 +127,8 @@ class StorageToDatabaseLister @AssistedInject constructor(
         executionLogger.updateLog(ExecutionLogItem.createErrorItem(
             taskId = taskId,
             executionId = executionId,
-            message = errorMsg
+            message = errorMsg,
+            details = null,
         ))
     }
 

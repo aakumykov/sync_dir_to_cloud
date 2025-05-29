@@ -9,7 +9,6 @@ import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
-import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import java.util.Date
 import java.util.UUID
 
@@ -56,6 +55,7 @@ class ExecutionLogItem (
             executionId = executionId,
             itemType = ExecutionLogItemType.START,
             message = message,
+            details = null,
         )
 
 
@@ -67,17 +67,20 @@ class ExecutionLogItem (
             executionId = executionId,
             itemType = ExecutionLogItemType.FINISH,
             message = message,
+            details = null,
         )
 
 
         fun createErrorItem(taskId: String,
                             executionId: String,
                             message: String,
+                            details: String?,
         ): ExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
             itemType = ExecutionLogItemType.ERROR,
             message = message,
+            details = details,
         )
 
 
@@ -85,6 +88,7 @@ class ExecutionLogItem (
                            executionId: String,
                            itemType: ExecutionLogItemType,
                            message: String,
+                           details: String?,
         ): ExecutionLogItem = ExecutionLogItem(
             id = UUID.randomUUID().toString(),
             taskId = taskId,
@@ -92,6 +96,7 @@ class ExecutionLogItem (
             timestamp = Date().time,
             type = itemType,
             message = message,
+            details = details,
         )
 
         const val TABLE_NAME = "execution_log"

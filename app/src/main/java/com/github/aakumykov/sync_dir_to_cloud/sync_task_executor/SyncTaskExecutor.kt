@@ -315,7 +315,8 @@ class SyncTaskExecutor @AssistedInject constructor(
         executionLogger.log(ExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
-            message = resources.getString(R.string.EXECUTION_LOG_work_error)
+            message = resources.getString(R.string.EXECUTION_LOG_work_error),
+            details = t.errorMsg
         ))
 
         taskStateLogger.logError(TaskLogEntry(

@@ -22,7 +22,7 @@ data class LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
                 text = item.message,
-                subText = item.type.name,
+                subText = item.details ?: "",
                 timestamp = item.timestamp,
                 operationState = executionLogItemTypeToOperationState(item.type),
             )
