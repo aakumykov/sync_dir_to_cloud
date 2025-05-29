@@ -149,14 +149,14 @@ class SyncTaskExecutor @AssistedInject constructor(
             generateSyncInstructions()
 
 
-//            processSyncInstructions()
+            processSyncInstructions()
 
 
             clearProcessedSyncObjectsWithDeletedState()
 
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
 
-            logExecutionFinish(syncTaskReader)
+            logExecutionFinish()
         }
         catch (t: Throwable) {
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
@@ -248,7 +248,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         ))
     }
 
-    private suspend fun logExecutionFinish(syncTaskReader: SyncTaskReader) {
+    private suspend fun logExecutionFinish() {
 
         executionLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = currentTaskId,
