@@ -104,7 +104,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 //        showReadingSourceNotification(syncTask.notificationId)
 
-        logExecutionStart(currentTask, executionId)
+        logExecutionStart(currentTaskId, executionId)
 
         try {
             syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
@@ -148,64 +148,11 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             generateSyncInstructions()
 
-            // Подготовка каталогов бекапа после
-            // чтения источника и приёмника,
-            // создания инструкций,
-            // но перед выполнением этих инструкций.
-//            prepareBackupDirs(currentTask!!)
+
+//            processSyncInstructions()
 
 
-            // После подготовки нужно перечитать SyncTask.
-            // Вынужденная мера, так как обновляется объект в БД...
-//            currentTask = syncTaskReader.getSyncTask(taskId)
-
-
-            processSyncInstructions()
             clearProcessedSyncObjectsWithDeletedState()
-
-
-
-            // Сравнить источник с приёмником
-//            compareSourceWithTarget(syncTask.id)
-
-//            copyFilesProbe(syncTask).join()
-
-            // Выполнить инструкции синхронизации
-//            processSyncInstructions(syncTask)
-
-            // Забэкапить удалённое
-//            backupDeletedDirs(syncTask)
-//            backupDeletedFiles(syncTask)
-
-            // Забэкапить изменившееся
-//            backupModifiedFiles(syncTask)
-
-            // Удалить удалённые файлы
-//            deleteDeletedFiles(syncTask) // Выполнять перед удалением каталогов
-
-            // Удалить удалённые каталоги
-//            deleteDeletedDirs(syncTask) // Выполнять после удаления файлов
-
-            // TODO: очистка БД от удалённых элементов как отдельный этап?
-
-            // Создать новые каталоги, восстановить утраченные (перед копированием файлов)
-//            createNewDirs(syncTask)
-//            createLostDirsAgain(syncTask)
-
-            // Создать никогда не создававшиеся каталоги (перед файлами) ЛОГИЧНЕЕ ПОСЛЕ ФАЙЛОВ ИНАЧЕ НОВЫЕ ОБРАБАТЫВАЮТСЯ КАК ...
-//            createNeverSyncedDirs(syncTask)
-
-            // Скопировать новые файлы
-//            copyNewFiles(syncTask)?.join()
-
-            // Скопировать забытые с прошлого раза файлы
-//            copyPreviouslyForgottenFiles(syncTask)?.join()
-
-            // Скопировать изменившееся
-//            copyModifiedFiles(syncTask)?.join()
-
-            // Восстановить утраченные файлы
-//            copyLostFilesAgain(syncTask)?.join()
 
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
 
@@ -286,17 +233,17 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun logExecutionStart(syncTask: SyncTask, executionId: String) {
+    private suspend fun logExecutionStart(taskId: String, executionId: String) {
 
         executionLogger.log(ExecutionLogItem.createFinishingItem(
-            taskId = syncTask.id,
+            taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_begins)
         ))
 
         taskStateLogger.logRunning(TaskLogEntry(
             executionId = hashCode().toString(),
-            taskId = syncTask.id,
+            taskId = taskId,
             entryType = ExecutionLogItemType.START
         ))
     }
