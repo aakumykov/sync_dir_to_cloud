@@ -44,6 +44,7 @@ class ExecutionLogItem (
     @ColumnInfo(name = TIMESTAMP_FIELD_NAME) val timestamp: Long,
     @ColumnInfo(name = TYPE_FIELD_NAME) val type: ExecutionLogItemType,
     val message: String,
+    @ColumnInfo(defaultValue = "null") val details: String? = null,
 ) {
     companion object {
 

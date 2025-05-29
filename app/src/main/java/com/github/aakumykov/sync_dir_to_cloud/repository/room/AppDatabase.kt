@@ -118,8 +118,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackup
         AutoMigration(from = 122, to = 123), // Новое поле SyncInstruction.partsLabel
         AutoMigration(from = 123, to = 124, spec = RenameSyncTaskBackupDirToDirName::class),
         AutoMigration(from = 124, to = 125, spec = RenameSyncTaskBackupDirNameToTaskBackupDirName::class),
+        AutoMigration(from = 125, to = 126), // Новое поле ExecutionLogItem.details: String?
     ],
-    version = 125,
+    version = 126,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
