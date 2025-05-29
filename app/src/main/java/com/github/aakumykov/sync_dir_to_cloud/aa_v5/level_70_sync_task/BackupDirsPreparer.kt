@@ -41,22 +41,22 @@ class BackupDirsPreparer @AssistedInject constructor(
 
 
     private suspend fun createBackupDirsInSource() {
-        taskBackupDirPreparer.prepareSourceBackupDir().also { dirName ->
-            syncTaskUpdater.setSourceBackupDirName(syncTask.id, dirName)
+        taskBackupDirPreparer.prepareSourceBackupDir().also { taskBackupsName ->
+            syncTaskUpdater.setSourceBackupDirName(syncTask.id, taskBackupsName)
 
-            executionBackupDirPreparer.prepareSourceExecutionBackupDir(dirName).also { dirName ->
-                syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, dirName)
+            executionBackupDirPreparer.prepareSourceExecutionBackupDir(taskBackupsName).also { executionBackupsDirName ->
+                syncTaskUpdater.setSourceExecutionBackupDirName(syncTask.id, executionBackupsDirName)
             }
         }
     }
 
 
     private suspend fun createBackupDirsInTarget() {
-        taskBackupDirPreparer.prepareTargetBackupDir().also { dirName ->
-            syncTaskUpdater.setTargetBackupDirName(syncTask.id, dirName)
+        taskBackupDirPreparer.prepareTargetBackupDir().also { taskBackupsName ->
+            syncTaskUpdater.setTargetBackupDirName(syncTask.id, taskBackupsName)
 
-            executionBackupDirPreparer.prepareTargetExecutionBackupDir(dirName).also { dirName ->
-                syncTaskUpdater.setTargetExecutionBackupDirName(syncTask.id, dirName)
+            executionBackupDirPreparer.prepareTargetExecutionBackupDir(taskBackupsName).also { executionBackupsDirName ->
+                syncTaskUpdater.setTargetExecutionBackupDirName(syncTask.id, executionBackupsDirName)
             }
         }
     }
