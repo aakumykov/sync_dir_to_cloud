@@ -30,9 +30,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.runBlocking
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -75,7 +73,13 @@ class SyncTaskExecutor @AssistedInject constructor(
 ) {
     private val executionId: String get() = hashCode().toString()
 
-    private var currentTask: SyncTask? = null
+    private var _currentTaskId: String? = null
+    private val currentTaskId get(): String = _currentTaskId!!
+
+    private val currentTask: SyncTask
+        get() = runBlocking {
+            syncTaskReader.getSyncTask(currentTaskId)
+        }
 
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
@@ -86,10 +90,9 @@ class SyncTaskExecutor @AssistedInject constructor(
         Log.d(TAG, "")
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
 
-        syncTaskReader.getSyncTask(taskId).also {  syncTask ->
-            currentTask = syncTask
-            doWork(syncTask, syncTaskReader.getSyncTaskAsFlow(taskId))
-        }
+        _currentTaskId = taskId
+
+        doWork()
 
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
     }
@@ -98,52 +101,49 @@ class SyncTaskExecutor @AssistedInject constructor(
      * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
      * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
      */
-    private suspend fun doWork(syncTask: SyncTask, syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun doWork() {
 
-        val taskId = syncTask.id
-        val notificationId = syncTask.notificationId
+//        showReadingSourceNotification(syncTask.notificationId)
 
-//        showReadingSourceNotification(syncTask)
-
-        logExecutionStart(syncTask, executionId)
+        logExecutionStart(currentTask, executionId)
 
         try {
-            syncTaskRunningTimeUpdater.updateStartTime(taskId)
+            syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
             // Вынужденная мера, так как обновляется объект в БД...
 //            currentTask = syncTaskReader.getSyncTask(taskId)
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.RUNNING)
 
             // Удалить выполненные инструкции
-            deleteProcessedSyncInstructions(syncTaskFlow)
+            deleteProcessedSyncInstructions()
 
             // Выполнить недоделанные инструкции
-            removeDuplicatedUnprocessedSyncInstructions(syncTaskFlow)
+            removeDuplicatedUnprocessedSyncInstructions()
 
-            prepareBackupDirs(syncTaskFlow)
+            prepareBackupDirs()
 
-            processUnprocessedSyncInstructions(syncTaskFlow)
+            processUnprocessedSyncInstructions()
 
             // Выполнить подготовку
-            resetTaskBadStates(taskId)
-            resetObjectsBadState(taskId)
+            resetTaskBadStates(currentTaskId)
+            resetObjectsBadState(currentTaskId)
 
-            markAllObjectsAsNotChecked(taskId)
+            markAllObjectsAsNotChecked(currentTaskId)
 
             // Прочитать источник
-            readSource(syncTaskFlow)
+            readSource()
 
             // Прочитать приёмник
-            readTarget(syncTaskFlow)
+            readTarget()
 
             // Отметить все не найденные объекты как удалённые
-            markAllNotCheckedObjectsAsDeleted(taskId)
+            markAllNotCheckedObjectsAsDeleted(currentTaskId)
 
-            deleteOldComparisonStates(syncTaskFlow)
+            deleteOldComparisonStates()
 
-            compareSourceWithTarget(syncTaskFlow)
+            compareSourceWithTarget()
 
-            generateSyncInstructions(syncTaskFlow)
+            generateSyncInstructions()
 
             // Подготовка каталогов бекапа после
             // чтения источника и приёмника,
@@ -157,8 +157,8 @@ class SyncTaskExecutor @AssistedInject constructor(
 //            currentTask = syncTaskReader.getSyncTask(taskId)
 
 
-            processSyncInstructions(syncTaskFlow)
-            clearProcessedSyncObjectsWithDeletedState(syncTaskFlow)
+            processSyncInstructions()
+            clearProcessedSyncObjectsWithDeletedState()
 
 
 
@@ -204,78 +204,81 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Восстановить утраченные файлы
 //            copyLostFilesAgain(syncTask)?.join()
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
 
-            logExecutionFinish(syncTaskFlow)
+            logExecutionFinish(syncTaskReader)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, t.errorMsg)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
             Log.e(TAG, t.errorMsg, t)
-            logExecutionError(syncTask, t)
+            logExecutionError(currentTask, t)
         }
         finally {
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
-            syncTaskRunningTimeUpdater.updateFinishTime(taskId)
-            currentTask = syncTaskReader.getSyncTask(taskId)
+
+            syncTaskRunningTimeUpdater.updateFinishTime(currentTaskId)
+
+        // Зачем это?
+//            currentTask = syncTaskReader.getSyncTask(currentTaskId)
         }
     }
 
-    private suspend fun prepareBackupDirs(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun prepareBackupDirs() {
         appComponent
             .getBackupDirsPreparerAssistedFactory()
-            .create(syncTaskFlow.first())
+            .create(currentTask)
             .prepareBackupDirs()
     }
 
 
-    private suspend fun removeDuplicatedUnprocessedSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
         appComponent
             .getSyncInstructionRepository6()
-            .deleteUnprocessedDuplicatedInstructions(syncTaskFlow.first().id)
+            .deleteUnprocessedDuplicatedInstructions(currentTaskId)
     }
 
-    private suspend fun clearProcessedSyncObjectsWithDeletedState(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun clearProcessedSyncObjectsWithDeletedState() {
         appComponent
             .getSyncObjectDeleter()
-            .deleteProcessedObjectsWithDeletedState(syncTaskFlow.first().id)
+            .deleteProcessedObjectsWithDeletedState(currentTaskId)
     }
 
     private suspend fun markAllNotCheckedObjectsAsDeleted(taskId: String) {
         syncObjectStateResetter.markAllNotCheckedObjectsAsDeleted(taskId)
     }
 
-    private suspend fun deleteOldComparisonStates(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun deleteOldComparisonStates() {
         appComponent
             .getComparisonsDeleter6()
-            .deleteAllFor(syncTaskFlow.first().id)
+            .deleteAllFor(currentTaskId)
     }
 
-    private suspend fun deleteProcessedSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun deleteProcessedSyncInstructions() {
         appComponent
             .getInstructionsDeleter()
-            .deleteFinishedInstructionsFor(syncTaskFlow.first().id)
+            .deleteFinishedInstructionsFor(currentTaskId)
     }
 
-    private suspend fun generateSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun generateSyncInstructions() {
         appComponent
             .getInstructionsGeneratorAssistedFactory6()
-            .create(syncTaskFlow.first(), executionId)
+            .create(currentTask, executionId)
             .generate()
     }
 
 
-    private suspend fun processUnprocessedSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun processUnprocessedSyncInstructions() {
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
-            .create(syncTaskFlow.first(), executionId, coroutineScope)
+            .create(currentTask, executionId, coroutineScope)
             .processUnprocessedInstructions()
     }
 
 
-    private suspend fun processSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun processSyncInstructions() {
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
-            .create(syncTaskFlow.first(), executionId, coroutineScope)
+            .create(currentTask, executionId, coroutineScope)
             .processCurrentInstructions()
     }
 
@@ -295,17 +298,17 @@ class SyncTaskExecutor @AssistedInject constructor(
         ))
     }
 
-    private suspend fun logExecutionFinish(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun logExecutionFinish(syncTaskReader: SyncTaskReader) {
 
         executionLogger.log(ExecutionLogItem.createFinishingItem(
-            taskId = syncTaskFlow.first().id,
+            taskId = currentTaskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
         ))
 
         taskStateLogger.logSuccess(TaskLogEntry(
             executionId = hashCode().toString(),
-            taskId = syncTaskFlow.first().id,
+            taskId = currentTaskId,
             entryType = ExecutionLogItemType.FINISH
         ))
     }
@@ -348,27 +351,25 @@ class SyncTaskExecutor @AssistedInject constructor(
     /**
      * @return Флаг успешности чтения источника.
      */
-    private suspend fun readSource(syncTaskFlow: Flow<SyncTask>): Result<Boolean> {
-        val syncTask = syncTaskFlow.first()
+    private suspend fun readSource(): Result<Boolean> {
         return storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.SOURCE,
                 executionId = executionId,
-                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!),
-                pathReadingFrom = syncTask.sourcePath!!,
+                cloudAuth = cloudAuthReader.getCloudAuth(currentTask.sourceAuthId!!),
+                pathReadingFrom = currentTask.sourcePath!!,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
     }
 
 
-    private suspend fun readTarget(syncTaskFlow: Flow<SyncTask>) {
-        val syncTask = syncTaskFlow.first()
+    private suspend fun readTarget() {
         storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.TARGET,
                 executionId = executionId,
-                cloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!),
-                pathReadingFrom = syncTask.targetPath!!,
+                cloudAuth = cloudAuthReader.getCloudAuth(currentTask.targetAuthId!!),
+                pathReadingFrom = currentTask.targetPath!!,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
             )
     }
@@ -376,14 +377,14 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     // FIXME: логика
     private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
-        storageToDatabaseListerAssistedFactory.create(currentTask!!)
+        storageToDatabaseListerAssistedFactory.create(currentTask)
     }
 
 
-    private suspend fun compareSourceWithTarget(syncTaskFlow: Flow<SyncTask>) {
+    private suspend fun compareSourceWithTarget() {
         appComponent
             .getSourceWithTargetComparatorAssistedFactory()
-            .create(syncTask = syncTaskFlow.first(), executionId = executionId)
+            .create(currentTask, executionId = executionId)
             .compareSourceWithTarget()
     }
 
