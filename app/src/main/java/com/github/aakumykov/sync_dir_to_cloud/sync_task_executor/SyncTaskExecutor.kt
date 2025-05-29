@@ -31,6 +31,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.single
 
 /*
@@ -222,7 +223,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun prepareBackupDirs(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getBackupDirsPreparerAssistedFactory()
-            .create(syncTaskFlow.single())
+            .create(syncTaskFlow.first())
             .prepareBackupDirs()
     }
 
@@ -230,13 +231,13 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun removeDuplicatedUnprocessedSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getSyncInstructionRepository6()
-            .deleteUnprocessedDuplicatedInstructions(syncTaskFlow.single().id)
+            .deleteUnprocessedDuplicatedInstructions(syncTaskFlow.first().id)
     }
 
     private suspend fun clearProcessedSyncObjectsWithDeletedState(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getSyncObjectDeleter()
-            .deleteProcessedObjectsWithDeletedState(syncTaskFlow.single().id)
+            .deleteProcessedObjectsWithDeletedState(syncTaskFlow.first().id)
     }
 
     private suspend fun markAllNotCheckedObjectsAsDeleted(taskId: String) {
@@ -246,19 +247,19 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun deleteOldComparisonStates(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getComparisonsDeleter6()
-            .deleteAllFor(syncTaskFlow.single().id)
+            .deleteAllFor(syncTaskFlow.first().id)
     }
 
     private suspend fun deleteProcessedSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getInstructionsDeleter()
-            .deleteFinishedInstructionsFor(syncTaskFlow.single().id)
+            .deleteFinishedInstructionsFor(syncTaskFlow.first().id)
     }
 
     private suspend fun generateSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getInstructionsGeneratorAssistedFactory6()
-            .create(syncTaskFlow.single(), executionId)
+            .create(syncTaskFlow.first(), executionId)
             .generate()
     }
 
@@ -266,7 +267,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun processUnprocessedSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
-            .create(syncTaskFlow.single(), executionId, coroutineScope)
+            .create(syncTaskFlow.first(), executionId, coroutineScope)
             .processUnprocessedInstructions()
     }
 
@@ -274,7 +275,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun processSyncInstructions(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
-            .create(syncTaskFlow.single(), executionId, coroutineScope)
+            .create(syncTaskFlow.first(), executionId, coroutineScope)
             .processCurrentInstructions()
     }
 
@@ -297,14 +298,14 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun logExecutionFinish(syncTaskFlow: Flow<SyncTask>) {
 
         executionLogger.log(ExecutionLogItem.createFinishingItem(
-            taskId = syncTaskFlow.single().id,
+            taskId = syncTaskFlow.first().id,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
         ))
 
         taskStateLogger.logSuccess(TaskLogEntry(
             executionId = hashCode().toString(),
-            taskId = syncTaskFlow.single().id,
+            taskId = syncTaskFlow.first().id,
             entryType = ExecutionLogItemType.FINISH
         ))
     }
@@ -347,7 +348,7 @@ class SyncTaskExecutor @AssistedInject constructor(
      * @return Флаг успешности чтения источника.
      */
     private suspend fun readSource(syncTaskFlow: Flow<SyncTask>): Result<Boolean> {
-        val syncTask = syncTaskFlow.single()
+        val syncTask = syncTaskFlow.first()
         return storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.SOURCE,
@@ -360,7 +361,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     private suspend fun readTarget(syncTaskFlow: Flow<SyncTask>) {
-        val syncTask = syncTaskFlow.single()
+        val syncTask = syncTaskFlow.first()
         storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.TARGET,
@@ -381,7 +382,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun compareSourceWithTarget(syncTaskFlow: Flow<SyncTask>) {
         appComponent
             .getSourceWithTargetComparatorAssistedFactory()
-            .create(syncTask = syncTaskFlow.single(), executionId = executionId)
+            .create(syncTask = syncTaskFlow.first(), executionId = executionId)
             .compareSourceWithTarget()
     }
 
