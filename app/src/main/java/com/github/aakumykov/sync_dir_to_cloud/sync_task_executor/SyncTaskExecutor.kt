@@ -30,6 +30,9 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /*
@@ -88,6 +91,12 @@ class SyncTaskExecutor @AssistedInject constructor(
         Log.d(TAG, "")
         Log.d(TAG, "")
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
+
+        coroutineScope.launch (Dispatchers.IO) {
+            syncTaskReader.getSyncTaskAsFlow(taskId).collectLatest { syncTask ->
+                Log.d(TAG, "${syncTask.sourceTaskBackupDirName}, ${syncTask.targetTaskBackupDirName}, ${syncTask.sourceExecutionBackupDirName}, ${syncTask.targetExecutionBackupDirName}")
+            }
+        }
 
         _currentTaskId = taskId
 
