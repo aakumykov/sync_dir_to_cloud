@@ -167,4 +167,5 @@
     <string name="LOG_ITEM_DETAILS_DIALOG_task_id">Id задачи: %1$s</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_execution_id">Id запуска: %1$s</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_date_time">Время: %1$s</string>
+    <string name="description_task_list_item_with_backup">С бекапом</string>
 </resources>
