@@ -88,13 +88,15 @@ class SyncTaskExecutor @AssistedInject constructor(
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
+        // TODO: выбрасываьт ошибку и смотреть, что будет
+
         Log.d(TAG, "")
         Log.d(TAG, "")
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
 
         coroutineScope.launch (Dispatchers.IO) {
             syncTaskReader.getSyncTaskAsFlow(taskId).collectLatest { syncTask ->
-                Log.d(TAG, "${syncTask.sourceTaskBackupDirName}, ${syncTask.targetTaskBackupDirName}, ${syncTask.sourceExecutionBackupDirName}, ${syncTask.targetExecutionBackupDirName}")
+                Log.d(TAG, "$syncTask")
             }
         }
 
