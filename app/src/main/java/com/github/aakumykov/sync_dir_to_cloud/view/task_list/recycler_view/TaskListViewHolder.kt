@@ -26,6 +26,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
     private val targetPathView: TextView
 
     private val syncModeIcon: ImageView
+    private val backupModeIcon: ImageView
 
     private val schedulingStateView: TextView
     private val stateView: ImageView
@@ -46,6 +47,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
             targetPathView = findViewById(R.id.targetPath)
 
             syncModeIcon = findViewById(R.id.syncModeIcon)
+            backupModeIcon = findViewById(R.id.backupModeIcon)
 
             schedulingStateView = findViewById(R.id.schedulingStateView)
             stateView = findViewById(R.id.taskStateView)
@@ -78,12 +80,20 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
         currentTask = syncTask
 
         displaySyncMode()
+        displayBackupMode()
         displayStorageTypes()
         displayStoragePaths()
 //        displayTitle()
         displaySchedulingState()
         displayExecutionState()
         displayStartStopButton()
+    }
+
+    private fun displayBackupMode() {
+        backupModeIcon.visibility = when(currentTask.withBackup) {
+            true -> View.VISIBLE
+            false -> View.INVISIBLE
+        }
     }
 
     private fun displaySyncMode() {

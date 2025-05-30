@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:minLines="1"
             android:maxLines="2"
+            android:ellipsize="marquee"
             app:layout_constraintStart_toEndOf="@id/sourceTypeIcon"
             app:layout_constraintTop_toTopOf="@id/sourceTypeIcon"
             app:layout_constraintBottom_toBottomOf="@id/sourceTypeIcon"
@@ -35,8 +36,6 @@
             android:layout_marginEnd="48dp"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:ellipsize="marquee"
-
             tools:text="/path/to/source/very/long/path/to/source/path/to/source/very/long/path/to/source" />
 
         <ImageView
@@ -54,6 +53,7 @@
             android:layout_height="wrap_content"
             android:minLines="1"
             android:maxLines="2"
+            android:ellipsize="marquee"
             app:layout_constraintEnd_toStartOf="@id/targetTypeIcon"
             app:layout_constraintTop_toTopOf="@id/targetTypeIcon"
             app:layout_constraintBottom_toBottomOf="@id/targetTypeIcon"
@@ -93,6 +93,18 @@
                 android:contentDescription="@string/description_task_list_item_sync_mode_icon"
                 tools:src="@drawable/ic_sync_mode_mirror"/>
 
+            <ImageView
+                android:id="@+id/backupModeIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_weight="0"
+                android:contentDescription="@string/description_task_list_item_with_backup"
+                android:src="@drawable/ic_with_backup"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+
             <TextView
                 android:id="@+id/schedulingStateView"
                 android:layout_width="match_parent"
@@ -103,7 +115,7 @@
                 android:textSize="18sp"
                 android:singleLine="true"
                 android:textAlignment="textEnd"
-                tools:text="Заголовок" />
+                tools:text="Отключена" />
 
             <ImageView
                 android:id="@+id/taskStateView"

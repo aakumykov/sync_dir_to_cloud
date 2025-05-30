@@ -167,4 +167,5 @@
     <string name="LOG_ITEM_DETAILS_DIALOG_task_id">Task id: %1$s</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_execution_id">Execution id: %1$s</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_date_time">Time: %1$s</string>
+    <string name="description_task_list_item_with_backup">With backup</string>
 </resources>
