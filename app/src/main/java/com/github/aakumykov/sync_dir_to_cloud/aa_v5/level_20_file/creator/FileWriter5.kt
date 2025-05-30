@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -54,20 +55,25 @@ class FileWriter5 @AssistedInject constructor(
 
             cont.invokeOnCancellation { inputStream.close() }
 
-            cloudWriter
-                .putStream(
-                    inputStream = inputStream,
-                    targetPath = filePath,
-                    overwriteIfExists = overwriteIfExists,
-                    writingCallback = { progress ->
-                        if (!cont.isActive)
-                            return@putStream
-                        Log.d(TAG, "progress: $progress")
-                    },
-                    finishCallback = { _,_ ->
-                        cont.resume(Unit)
-                    }
-                )
+            try {
+                cloudWriter
+                    .putStream(
+                        inputStream = inputStream,
+                        targetPath = filePath,
+                        overwriteIfExists = overwriteIfExists,
+                        writingCallback = { progress ->
+                            if (!cont.isActive)
+                                return@putStream
+                            Log.d(TAG, "progress: $progress")
+                        },
+                        finishCallback = { _,_ ->
+                            cont.resume(Unit)
+                        }
+                    )
+            } catch (t: Throwable) {
+                Log.d(TAG, t.errorMsg)
+                throw t
+            }
         }
     }
 
