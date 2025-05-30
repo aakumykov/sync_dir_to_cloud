@@ -88,21 +88,41 @@ class SyncTaskExecutor @AssistedInject constructor(
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
-        // TODO: выбрасываьт ошибку и смотреть, что будет
+        try {
+//            throw RuntimeException(">:-(")
 
-        Log.d(TAG, "")
-        Log.d(TAG, "")
-        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
+            Log.d(TAG, "")
+            Log.d(TAG, "")
+            Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
 
-        coroutineScope.launch (Dispatchers.IO) {
-            syncTaskReader.getSyncTaskAsFlow(taskId).collectLatest { syncTask ->
-                Log.d(TAG, "$syncTask")
+            coroutineScope.launch(Dispatchers.IO) {
+                syncTaskReader.getSyncTaskAsFlow(taskId).collectLatest { syncTask ->
+                    Log.d(TAG, "${syncTask.sourceExecutionBackupDirName}")
+                }
             }
+
+            _currentTaskId = taskId
+
+            doWork()
         }
+        catch (t: Throwable) {
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
+            Log.e(TAG, t.errorMsg, t)
+            logExecutionError(currentTask, t)
+        }
+        finally {
+//            syncTaskNotificator.hideNotification(taskId, notificationId)
 
-        _currentTaskId = taskId
+            if (null != _currentTaskId)
+                syncTaskRunningTimeUpdater.updateFinishTime(_currentTaskId!!)
+            else
+                Log.e(TAG, "================================================================")
+                Log.e(TAG, "CANNOT UPDATE TASK FINISH TIME, BECAUSE CURRENT TASK ID IS NULL.")
+                Log.e(TAG, "================================================================")
 
-        doWork()
+            // Зачем это?
+//            currentTask = syncTaskReader.getSyncTask(currentTaskId)
+        }
 
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
     }
@@ -117,7 +137,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         logExecutionStart(currentTaskId, executionId)
 
-        try {
+
             syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
             // Вынужденная мера, так как обновляется объект в БД...
 //            currentTask = syncTaskReader.getSyncTask(taskId)
@@ -168,20 +188,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
 
             logExecutionFinish()
-        }
-        catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
-            Log.e(TAG, t.errorMsg, t)
-            logExecutionError(currentTask, t)
-        }
-        finally {
-//            syncTaskNotificator.hideNotification(taskId, notificationId)
-
-            syncTaskRunningTimeUpdater.updateFinishTime(currentTaskId)
-
-        // Зачем это?
-//            currentTask = syncTaskReader.getSyncTask(currentTaskId)
-        }
     }
 
     private suspend fun prepareBackupDirs() {
