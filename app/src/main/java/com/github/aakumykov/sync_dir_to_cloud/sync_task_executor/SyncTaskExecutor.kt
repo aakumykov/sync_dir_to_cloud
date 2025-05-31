@@ -97,7 +97,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             coroutineScope.launch(Dispatchers.IO) {
                 syncTaskReader.getSyncTaskAsFlow(taskId).collectLatest { syncTask ->
-                    Log.d(TAG, "${syncTask.sourceExecutionBackupDirName}")
+                    Log.d(TAG, "$syncTask")
                 }
             }
 
