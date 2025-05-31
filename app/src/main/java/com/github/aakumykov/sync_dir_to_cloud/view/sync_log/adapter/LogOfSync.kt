@@ -45,7 +45,7 @@ data class LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
                 text = item.operationName,
-                subText = item.errorMsg ?: item.operationState.name,
+                subText = item.errorMsg ?: item.objectName,
                 timestamp = item.timestamp,
                 operationState = item.operationState,
                 progress = null,
