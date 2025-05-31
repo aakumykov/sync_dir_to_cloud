@@ -30,6 +30,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -72,7 +73,14 @@ class SyncTaskExecutor @AssistedInject constructor(
 ) {
     private val executionId: String get() = hashCode().toString()
 
-    private var currentTask: SyncTask? = null
+    private var _currentTaskId: String? = null
+    private val currentTaskId: String get() = _currentTaskId!!
+
+    private val currentTask: SyncTask get() {
+        return runBlocking {
+            syncTaskReader.getSyncTask(currentTaskId)
+        }
+    }
 
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
@@ -83,10 +91,9 @@ class SyncTaskExecutor @AssistedInject constructor(
         Log.d(TAG, "")
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
 
-        syncTaskReader.getSyncTask(taskId).also {  syncTask ->
-            currentTask = syncTask
-            doWork(syncTask)
-        }
+        _currentTaskId = taskId
+
+        doWork()
 
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
     }
@@ -95,68 +102,59 @@ class SyncTaskExecutor @AssistedInject constructor(
      * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
      * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
      */
-    private suspend fun doWork(syncTask: SyncTask) {
+    private suspend fun doWork() {
 
-        val taskId = syncTask.id
-        val notificationId = syncTask.notificationId
+        val notificationId = currentTask.notificationId
 
 //        showReadingSourceNotification(syncTask)
 
-        logExecutionStart(syncTask, executionId)
+        logExecutionStart(currentTask, executionId)
 
         try {
-            syncTaskRunningTimeUpdater.updateStartTime(taskId)
-            // Вынужденная мера, так как обновляется объект в БД...
-            currentTask = syncTaskReader.getSyncTask(taskId)
+            syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.RUNNING)
 
             // Удалить выполненные инструкции
-            deleteProcessedSyncInstructions(currentTask!!)
+            deleteProcessedSyncInstructions(currentTask)
 
             // Выполнить недоделанные инструкции
-            removeDuplicatedUnprocessedSyncInstructions(currentTask!!)
+            removeDuplicatedUnprocessedSyncInstructions(currentTask)
 
-            prepareBackupDirs(currentTask!!)
+            prepareBackupDirs(currentTask)
 
-            processUnprocessedSyncInstructions(currentTask!!)
+            processUnprocessedSyncInstructions(currentTask)
 
             // Выполнить подготовку
-            resetTaskBadStates(taskId)
-            resetObjectsBadState(taskId)
+            resetTaskBadStates(currentTaskId)
+            resetObjectsBadState(currentTaskId)
 
-            markAllObjectsAsNotChecked(taskId)
+            markAllObjectsAsNotChecked(currentTaskId)
 
             // Прочитать источник
-            readSource(currentTask!!)
+            readSource(currentTask)
 
             // Прочитать приёмник
-            readTarget(currentTask!!)
+            readTarget(currentTask)
 
             // Отметить все не найденные объекты как удалённые
-            markAllNotCheckedObjectsAsDeleted(taskId)
+            markAllNotCheckedObjectsAsDeleted(currentTaskId)
 
-            deleteOldComparisonStates(currentTask!!)
+            deleteOldComparisonStates(currentTask)
 
-            compareSourceWithTarget(currentTask!!)
+            compareSourceWithTarget(currentTask)
 
-            generateSyncInstructions(currentTask!!)
+            generateSyncInstructions(currentTask)
 
             // Подготовка каталогов бекапа после
             // чтения источника и приёмника,
             // создания инструкций,
             // но перед выполнением этих инструкций.
-//            prepareBackupDirs(currentTask!!)
+//            prepareBackupDirs(currentTask)
 
 
-            // После подготовки нужно перечитать SyncTask.
-            // Вынужденная мера, так как обновляется объект в БД...
-            currentTask = syncTaskReader.getSyncTask(taskId)
-
-
-            processSyncInstructions(currentTask!!)
-            clearProcessedSyncObjectsWithDeletedState(syncTask)
-
+            processSyncInstructions(currentTask)
+            clearProcessedSyncObjectsWithDeletedState(currentTask)
 
 
             // Сравнить источник с приёмником
@@ -201,19 +199,18 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Восстановить утраченные файлы
 //            copyLostFilesAgain(syncTask)?.join()
 
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
 
-            logExecutionFinish(syncTask)
+            logExecutionFinish(currentTask)
         }
         catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, t.errorMsg)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
             Log.e(TAG, t.errorMsg, t)
-            logExecutionError(syncTask, t)
+            logExecutionError(currentTask, t)
         }
         finally {
 //            syncTaskNotificator.hideNotification(taskId, notificationId)
-            syncTaskRunningTimeUpdater.updateFinishTime(taskId)
-            currentTask = syncTaskReader.getSyncTask(taskId)
+            syncTaskRunningTimeUpdater.updateFinishTime(currentTaskId)
         }
     }
 
@@ -370,7 +367,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     // FIXME: логика
     private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
-        storageToDatabaseListerAssistedFactory.create(currentTask!!)
+        storageToDatabaseListerAssistedFactory.create(currentTask)
     }
 
 
