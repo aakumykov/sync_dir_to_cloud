@@ -25,7 +25,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
     private val sourcePathView: TextView
     private val targetPathView: TextView
 
-    private val syncModeIcon: ImageView
+    private val workModeIcon: ImageView
     private val backupModeIcon: ImageView
 
     private val schedulingStateView: TextView
@@ -46,7 +46,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
             sourcePathView = findViewById(R.id.sourcePath)
             targetPathView = findViewById(R.id.targetPath)
 
-            syncModeIcon = findViewById(R.id.syncModeIcon)
+            workModeIcon = findViewById(R.id.workModeIcon)
             backupModeIcon = findViewById(R.id.backupModeIcon)
 
             schedulingStateView = findViewById(R.id.schedulingStateView)
@@ -97,10 +97,10 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
     }
 
     private fun displaySyncMode() {
-        syncModeIcon.setImageResource(
+        workModeIcon.setImageResource(
             when (currentTask.syncMode!!) {
-                SyncMode.SYNC -> R.drawable.ic_sync_mode_sync
-                SyncMode.MIRROR -> R.drawable.ic_sync_mode_mirror
+                SyncMode.SYNC -> R.drawable.ic_work_mode_sync
+                SyncMode.MIRROR -> R.drawable.ic_work_mode_mirror
             }
         )
     }
