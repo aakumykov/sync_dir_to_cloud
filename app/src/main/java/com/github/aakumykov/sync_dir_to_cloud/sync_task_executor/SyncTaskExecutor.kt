@@ -115,11 +115,11 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             if (null != _currentTaskId)
                 syncTaskRunningTimeUpdater.updateFinishTime(_currentTaskId!!)
-            else
+            else {
                 Log.e(TAG, "================================================================")
                 Log.e(TAG, "CANNOT UPDATE TASK FINISH TIME, BECAUSE CURRENT TASK ID IS NULL.")
                 Log.e(TAG, "================================================================")
-
+            }
             // Зачем это?
 //            currentTask = syncTaskReader.getSyncTask(currentTaskId)
         }
