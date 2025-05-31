@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.Operati
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogReader
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.adapter.LogOfSync
 import kotlinx.coroutines.cancelAndJoin
@@ -60,10 +59,10 @@ class SyncLogViewModel(
         logOfSyncList.apply {
             clear()
 
-            val syncLog = currentSyncOperationLogItemList.map { LogOfSync.from(it) }
+            val syncLog = currentSyncOperationLogItemList.map { LogOfSync.fromSyncOperationLogItem(it) }
             addAll(syncLog)
 
-            val executionLog = currentExecutionLogItemList.map { LogOfSync.from(it) }
+            val executionLog = currentExecutionLogItemList.map { LogOfSync.fromExecutionLogItem(it) }
             addAll(executionLog)
 
             sortBy { it.timestamp }

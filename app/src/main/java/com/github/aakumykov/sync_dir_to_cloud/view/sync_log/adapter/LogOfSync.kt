@@ -17,7 +17,7 @@ data class LogOfSync(
 ) {
     companion object {
 
-        fun from(item: ExecutionLogItem): LogOfSync {
+        fun fromExecutionLogItem(item: ExecutionLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
@@ -28,7 +28,7 @@ data class LogOfSync(
             )
         }
 
-        fun from(item: SyncObjectLogItem): LogOfSync {
+        fun fromSyncObjectLogItem(item: SyncObjectLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
@@ -40,7 +40,7 @@ data class LogOfSync(
             )
         }
 
-        fun from(item: SyncOperationLogItem): LogOfSync {
+        fun fromSyncOperationLogItem(item: SyncOperationLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
