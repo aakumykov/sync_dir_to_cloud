@@ -84,14 +84,14 @@
                 tools:ignore="ContentDescription" />
 
             <ImageView
-                android:id="@+id/syncModeIcon"
+                android:id="@+id/workModeIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:layout_weight="0"
                 android:contentDescription="@string/description_task_list_item_sync_mode_icon"
-                tools:src="@drawable/ic_sync_mode_mirror"/>
+                tools:src="@drawable/ic_work_mode_mirror"/>
 
             <ImageView
                 android:id="@+id/backupModeIcon"
