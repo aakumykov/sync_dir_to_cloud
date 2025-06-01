@@ -29,11 +29,6 @@ class SyncInstructionsProcessor @AssistedInject constructor(
         processInstructions(false)
     }
 
-    private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
-        return if (selectUnprocessed) getNonProcessedInstructionsForTask()
-        else getNonProcessedSyncInstructionsForTaskAndExecution()
-    }
-
     private suspend fun processInstructions(selectUnprocessed: Boolean) {
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
@@ -48,6 +43,11 @@ class SyncInstructionsProcessor @AssistedInject constructor(
 
         processDirsCreation(list(selectUnprocessed))
         processFilesCopying(list(selectUnprocessed))
+    }
+
+    private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
+        return if (selectUnprocessed) getNonProcessedInstructionsForTask()
+        else getNonProcessedSyncInstructionsForTaskAndExecution()
     }
 
 

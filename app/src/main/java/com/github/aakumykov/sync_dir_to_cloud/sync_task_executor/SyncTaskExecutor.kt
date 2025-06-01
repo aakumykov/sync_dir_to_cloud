@@ -121,8 +121,6 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Выполнить недоделанные инструкции
             removeDuplicatedUnprocessedSyncInstructions(currentTask)
 
-            prepareBackupDirs(currentTask)
-
             processUnprocessedSyncInstructions(currentTask)
 
             // Выполнить подготовку
@@ -146,6 +144,8 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             generateSyncInstructions(currentTask)
 
+            prepareBackupDirs(currentTask)
+
             // Подготовка каталогов бекапа после
             // чтения источника и приёмника,
             // создания инструкций,
@@ -154,6 +154,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
             processSyncInstructions(currentTask)
+
             clearProcessedSyncObjectsWithDeletedState(currentTask)
 
 
