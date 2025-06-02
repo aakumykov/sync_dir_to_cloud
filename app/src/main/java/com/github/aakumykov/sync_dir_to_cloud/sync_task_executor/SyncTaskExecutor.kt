@@ -88,7 +88,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
-        try {
+//        try {
 //            throw RuntimeException(">:-(")
 
             Log.d(TAG, "")
@@ -104,7 +104,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             _currentTaskId = taskId
 
             doWork()
-        }
+        /*}
         catch (t: Throwable) {
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
             Log.e(TAG, t.errorMsg, t)
@@ -122,7 +122,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             }
             // Зачем это?
 //            currentTask = syncTaskReader.getSyncTask(currentTaskId)
-        }
+        }*/
 
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
     }
