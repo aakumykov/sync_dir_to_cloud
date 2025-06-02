@@ -30,9 +30,6 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /*
@@ -153,11 +150,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             // Выполнить недоделанные инструкции
             removeDuplicatedUnprocessedSyncInstructions()
 
-            val task1 = currentTask
             prepareBackupDirs()
-            val task2 = currentTask
-            Log.d(TAG, "$task1 | $task2")
-
 
             processUnprocessedSyncInstructions()
 
@@ -182,6 +175,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             generateSyncInstructions()
 
+            prepareBackupDirs()
 
             processSyncInstructions()
 
