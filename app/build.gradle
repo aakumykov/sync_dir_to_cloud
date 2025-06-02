@@ -85,17 +85,9 @@ android {
         }
     }
 
-    flavorDimensions 'stability', 'installation_source'
+    flavorDimensions 'installation_source'
 
     productFlavors {
-        working {
-            dimension 'stability'
-            getIsDefault().set(true)
-        }
-        experimental {
-            dimension 'stability'
-            applicationIdSuffix '.experimental'
-        }
         local {
             dimension 'installation_source'
             applicationIdSuffix '.local'
