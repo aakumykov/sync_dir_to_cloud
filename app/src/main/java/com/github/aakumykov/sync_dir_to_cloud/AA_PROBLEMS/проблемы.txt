@@ -1,2 +1,7 @@
 100-synctask-flow:37f0aa26
 Worker не завершается после завершения задачи.
+
+99-task-info-provider:abbaab57
+Ошибка "Already resumed, but proposed with update" при копировании из локального
+в Яндекс.Диск здесь уже существует.
+
