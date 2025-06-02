@@ -88,23 +88,26 @@ class SyncTaskExecutor @AssistedInject constructor(
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
     suspend fun executeSyncTask(taskId: String) {
 
-//        try {
-//            throw RuntimeException(">:-(")
-
+        try {
             Log.d(TAG, "")
             Log.d(TAG, "")
             Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
 
-            coroutineScope.launch(Dispatchers.IO) {
+            //
+            // TODO: Эта подписка мешает SyncTaskWorker завершиться.
+            //  А как сделать её автоматически отменяемой?
+            //  По идее, надо отменять coroutineScope, в котором она выполняется...
+            //
+            /*coroutineScope.launch(Dispatchers.IO) {
                 syncTaskReader.getSyncTaskAsFlow(taskId).collectLatest { syncTask ->
                     Log.d(TAG, "$syncTask")
                 }
-            }
+            }*/
 
             _currentTaskId = taskId
 
             doWork()
-        /*}
+        }
         catch (t: Throwable) {
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
             Log.e(TAG, t.errorMsg, t)
@@ -122,7 +125,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             }
             // Зачем это?
 //            currentTask = syncTaskReader.getSyncTask(currentTaskId)
-        }*/
+        }
 
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
     }
