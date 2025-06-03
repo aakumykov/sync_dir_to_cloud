@@ -52,7 +52,7 @@ class SourceTargetFileHelper @AssistedInject constructor(
 
 
     fun moveFileInTarget(oldAbsoluteFilePath: String, newAbsolutePath: String) {
-        sourceCloudWriter.moveFileOrEmptyDir(
+        targetCloudWriter.moveFileOrEmptyDir(
             oldAbsoluteFilePath,
             newAbsolutePath,
             true
