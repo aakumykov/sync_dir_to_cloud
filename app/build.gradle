@@ -7,14 +7,14 @@ plugins {
 
 android {
     namespace 'com.github.aakumykov.sync_dir_to_cloud'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.github.aakumykov.sync_dir_to_cloud"
         minSdk 21
-        targetSdk 34
-        versionCode 7
-        versionName "0.0.7-alpha"
+        targetSdk 35
+        versionCode 9
+        versionName "0.0.9-alpha"
 
         testInstrumentationRunner "com.github.aakumykov.sync_dir_to_cloud.bb_new.system.TestRunner"
 
