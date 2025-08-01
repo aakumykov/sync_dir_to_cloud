@@ -142,7 +142,9 @@ dependencies {
     implementation "androidx.room:room-ktx:2.6.1"
 
     implementation 'com.github.aakumykov:exception_utils:0.4'
-    implementation 'com.yandex.android:authsdk:3.1.0'
+
+//    implementation 'com.yandex.android:authsdk:3.1.0'
+    implementation 'com.github.aakumykov:yandex-login-sdk-android-ng:3.1.0'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
