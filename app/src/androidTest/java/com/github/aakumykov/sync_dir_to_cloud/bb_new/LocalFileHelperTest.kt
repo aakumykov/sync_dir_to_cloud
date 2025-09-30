@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCas
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -35,6 +36,12 @@ class LocalFileHelperTest : StorageAccessTestCase() {
         fileHelper.deleteAllFilesInTarget()
         Assert.assertTrue(fileHelper.targetDirIsEmpty())
     }
+
+
+    /*@After
+    fun deleteSourceAndTargetDirs() = run {
+
+    }*/
 
 
     @Test
