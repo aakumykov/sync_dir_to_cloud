@@ -1,15 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.FileConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.TestFilesConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
 import kotlin.random.Random
 
 open class LocalFileHelper(
-    private val taskConfig: TaskConfig = LocalTaskConfig(),
-    private val fileConfig: FileConfig = LocalFileCofnig,
+    private val taskConfig: TaskConfig = LocalToLocalTaskConfig(),
+    private val testFilesConfig: TestFilesConfig = LocalTestFilesConfig,
 ) {
     val sourceDir: File
         get() = taskConfig.SOURCE_DIR
@@ -18,35 +18,35 @@ open class LocalFileHelper(
         get() = taskConfig.TARGET_DIR
 
     val sourceFile1: File
-        get() = fileInSource(fileConfig.FILE_1_NAME)
+        get() = fileInSource(testFilesConfig.FILE_1_NAME)
 
     val sourceFile2: File
-        get() = fileInSource(fileConfig.FILE_2_NAME)
+        get() = fileInSource(testFilesConfig.FILE_2_NAME)
 
 
     val targetFile1: File
-        get() = fileInTarget(fileConfig.FILE_1_NAME)
+        get() = fileInTarget(testFilesConfig.FILE_1_NAME)
 
     val targetFile2: File
-        get() = fileInTarget(fileConfig.FILE_2_NAME)
+        get() = fileInTarget(testFilesConfig.FILE_2_NAME)
 
 
     val sourceDir1: File
-        get() = fileInSource(fileConfig.DIR_1_NAME)
+        get() = fileInSource(testFilesConfig.DIR_1_NAME)
 
     val sourceDir2: File
-        get() = fileInSource(fileConfig.DIR_2_NAME)
+        get() = fileInSource(testFilesConfig.DIR_2_NAME)
 
 
     val targetDir1: File
-        get() = fileInTarget(fileConfig.DIR_1_NAME)
+        get() = fileInTarget(testFilesConfig.DIR_1_NAME)
 
     val targetDir2: File
-        get() = fileInTarget(fileConfig.DIR_2_NAME)
+        get() = fileInTarget(testFilesConfig.DIR_2_NAME)
 
 
     val twoLevelDirName: String
-        get() = fileConfig.TWO_LEVEL_DIR_NAME
+        get() = testFilesConfig.TWO_LEVEL_DIR_NAME
 
 
     private val sourceFileContents: ByteArray
@@ -58,20 +58,20 @@ open class LocalFileHelper(
 
 
     fun createSourceFile1(): File {
-        return createFileInSource(fileConfig.FILE_1_NAME, fileConfig.FILE_1_SIZE)
+        return createFileInSource(testFilesConfig.FILE_1_NAME, testFilesConfig.FILE_1_ORIG_SIZE)
     }
 
     fun createSourceFile2(): File {
-        return createFileInSource(fileConfig.FILE_2_NAME, fileConfig.FILE_2_SIZE)
+        return createFileInSource(testFilesConfig.FILE_2_NAME, testFilesConfig.FILE_2_ORIG_SIZE)
     }
 
 
     fun createTargetFile1(): File {
-        return createFileInTarget(fileConfig.FILE_1_NAME, fileConfig.FILE_1_SIZE)
+        return createFileInTarget(testFilesConfig.FILE_1_NAME, testFilesConfig.FILE_1_ORIG_SIZE)
     }
 
     fun createTargetFile2(): File {
-        return createFileInTarget(fileConfig.FILE_2_NAME, fileConfig.FILE_2_SIZE)
+        return createFileInTarget(testFilesConfig.FILE_2_NAME, testFilesConfig.FILE_2_ORIG_SIZE)
     }
 
 
@@ -94,20 +94,20 @@ open class LocalFileHelper(
 
 
     fun deleteSourceFile1() {
-        deleteFileFromSource(fileConfig.FILE_1_NAME)
+        deleteFileFromSource(testFilesConfig.FILE_1_NAME)
     }
 
     fun deleteSourceFile2() {
-        deleteFileFromSource(fileConfig.FILE_2_NAME)
+        deleteFileFromSource(testFilesConfig.FILE_2_NAME)
     }
 
 
     fun deleteTargetFile1() {
-        deleteFileFromTarget(fileConfig.FILE_1_NAME)
+        deleteFileFromTarget(testFilesConfig.FILE_1_NAME)
     }
 
     fun deleteTargetFile2() {
-        deleteFileFromTarget(fileConfig.FILE_2_NAME)
+        deleteFileFromTarget(testFilesConfig.FILE_2_NAME)
     }
 
 

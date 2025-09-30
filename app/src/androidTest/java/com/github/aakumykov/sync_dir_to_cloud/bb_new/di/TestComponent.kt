@@ -39,9 +39,11 @@ import dagger.Component
 
 @Component(
     modules = [
+        // Тестовые
         TestDatabaseModule::class,
         TestDaoModule::class,
 
+        // Настоящие
         ContextModule::class,
         ApplicationModule::class,
         ResourcesModule::class,

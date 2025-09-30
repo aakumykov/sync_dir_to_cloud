@@ -5,7 +5,7 @@ import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Assert
 import org.junit.Test
 
-class normalizeAbsolutePathInstrumentedTests : TestCase() {
+class NormalizeAbsolutePathInstrumentedTests : TestCase() {
 
     @Test
     fun when_normalize_path_with_tailing_slash_then_result_is_without_slash() {

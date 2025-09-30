@@ -9,10 +9,14 @@ import java.io.File
 interface TaskConfig {
 
     val TASK_ID: String
-    val STORAGE_TYPE: StorageType
+
+    val SOURCE_STORAGE_TYPE: StorageType
+    val TARGET_STORAGE_TYPE: StorageType
+
+    val SYNC_MODE: SyncMode
+
     val INTERVAL_HOURS: Int
     val INTERVAL_MINUTES: Int
-    val SYNC_MODE: SyncMode
 
     val SOURCE_PATH: String
     val TARGET_PATH: String
@@ -20,15 +24,12 @@ interface TaskConfig {
     val SOURCE_DIR: File
     val TARGET_DIR: File
 
-    val AUTH_ID: String
     val SOURCE_AUTH_ID: String
     val TARGET_AUTH_ID: String
 
-    val AUTH_NAME: String
     val SOURCE_AUTH_NAME: String
     val TARGET_AUTH_NAME: String
 
-    val AUTH_TOKEN: String
     val SOURCE_AUTH_TOKEN: String
     val TARGET_AUTH_TOKEN: String
 

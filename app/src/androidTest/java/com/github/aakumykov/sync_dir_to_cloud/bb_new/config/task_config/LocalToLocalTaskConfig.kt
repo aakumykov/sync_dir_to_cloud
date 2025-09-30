@@ -9,14 +9,18 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
-class LocalTaskConfig(
+class LocalToLocalTaskConfig(
     sourceDir: File = defaultSourceDir,
     targetDir: File = defaultTargetDir
 ) : TaskConfig {
 
     override val TASK_ID = "taskId1"
-    override val STORAGE_TYPE = StorageType.LOCAL
+
+    override val SOURCE_STORAGE_TYPE = StorageType.LOCAL
+    override val TARGET_STORAGE_TYPE = StorageType.LOCAL
+
     override val SYNC_MODE: SyncMode = SyncMode.SYNC
+
     override val INTERVAL_HOURS = 0
     override val INTERVAL_MINUTES = 0
 
@@ -31,22 +35,19 @@ class LocalTaskConfig(
     override val TASK_SYNC: SyncTask get() = syncTaskWithMode(SyncMode.SYNC, this)
     override val TASK_MIRROR: SyncTask get() = syncTaskWithMode(SyncMode.MIRROR, this)
 
-    override val AUTH_ID = "authId1"
-    override val SOURCE_AUTH_ID: String = AUTH_ID
-    override val TARGET_AUTH_ID: String = AUTH_ID
+    override val SOURCE_AUTH_ID: String = "authId1"
+    override val TARGET_AUTH_ID: String = "authId1"
 
-    override val AUTH_NAME = "test_auth_local"
-    override val TARGET_AUTH_NAME: String = AUTH_NAME
-    override val SOURCE_AUTH_NAME = AUTH_NAME
+    override val TARGET_AUTH_NAME: String = "test_auth_local"
+    override val SOURCE_AUTH_NAME = "test_auth_local"
 
-    override val AUTH_TOKEN = "test_auth_token"
-    override val SOURCE_AUTH_TOKEN = AUTH_TOKEN
-    override val TARGET_AUTH_TOKEN = AUTH_TOKEN
+    override val SOURCE_AUTH_TOKEN = "test_auth_token"
+    override val TARGET_AUTH_TOKEN = "test_auth_token"
 
     override val SOURCE_AUTH: CloudAuth = CloudAuth(
         id = SOURCE_AUTH_ID,
         name = SOURCE_AUTH_NAME,
         authToken = SOURCE_AUTH_TOKEN,
-        storageType = STORAGE_TYPE
+        storageType = SOURCE_STORAGE_TYPE
     )
 }

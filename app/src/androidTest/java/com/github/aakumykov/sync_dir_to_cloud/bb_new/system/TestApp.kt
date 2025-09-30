@@ -11,10 +11,8 @@ class TestApp : App() {
 
     override fun createComponent(): TestComponent {
         return DaggerTestComponent.builder()
-//            .testContextModule(TestContextModule(this))
             .contextModule(ContextModule(this))
             .applicationModule(ApplicationModule(this))
-//            .testApplicationModule(TestApplicationModule(this))
             .build()
     }
 }

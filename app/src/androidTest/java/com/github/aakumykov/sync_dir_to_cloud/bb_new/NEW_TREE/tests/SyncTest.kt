@@ -1,10 +1,10 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalFileCofnig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert
@@ -17,9 +17,10 @@ class SyncTest : StorageAccessTestCase() {
     private val sleepTimeoutMs: Long = 1000
 
     private val fileHelper = LocalFileHelper()
-    private val fileConfig = LocalFileCofnig
+    private val testFilesConfig = LocalTestFilesConfig
 
 
+    // TODO: фактически, пока сценарии не нужны, ибо используются в одном месте.
     @Before
     fun reCreateLocalTask() = run {
         scenario(DeleteLocalTaskScenario())
@@ -152,8 +153,10 @@ class SyncTest : StorageAccessTestCase() {
 
         Thread.sleep(sleepTimeoutMs)
 
+        // FIXME: а где создание файла в приёмнике?
         fileHelper.modifyTargetFile1()
         fileHelper.modifySourceFile1()
+
         Assert.assertNotEquals(
             fileHelper.sourceFile1Content(),
             fileHelper.targetFile1Content()
@@ -348,7 +351,7 @@ class SyncTest : StorageAccessTestCase() {
         fileHelper.createSourceFile1()
         Assert.assertTrue(fileHelper.sourceFile1.exists())
 
-        val sourceFileIndir = File(fileHelper.sourceDir1, fileConfig.FILE_1_NAME)
+        val sourceFileIndir = File(fileHelper.sourceDir1, testFilesConfig.FILE_1_NAME)
         fileHelper.createFile(sourceFileIndir)
         Assert.assertTrue(sourceFileIndir.exists())
 
@@ -356,7 +359,7 @@ class SyncTest : StorageAccessTestCase() {
 
         Assert.assertTrue(fileHelper.targetFile1.exists())
         Assert.assertTrue(fileHelper.targetDir1.exists())
-        val targetFileIndir = File(fileHelper.sourceDir1, fileConfig.FILE_1_NAME)
+        val targetFileIndir = File(fileHelper.sourceDir1, testFilesConfig.FILE_1_NAME)
         Assert.assertTrue(targetFileIndir.exists())
 
         Assert.assertEquals(fileHelper.sourceFile1Content(),fileHelper.targetFile1Content())

@@ -7,7 +7,7 @@ import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
-class relativeParentDirPathInstrumentedTests : TestCase() {
+class RelativeParentDirPathInstrumentedTests : TestCase() {
 
     @Test
     fun when_empty_path_then_result_is_empty(){

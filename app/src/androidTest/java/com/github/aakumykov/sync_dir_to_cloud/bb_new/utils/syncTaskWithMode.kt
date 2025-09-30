@@ -10,8 +10,8 @@ fun syncTaskWithMode(
 ): SyncTask = SyncTask(
     sourcePath = taskConfig.SOURCE_PATH,
     targetPath = taskConfig.TARGET_PATH,
-    sourceStorageType = taskConfig.STORAGE_TYPE,
-    targetStorageType = taskConfig.STORAGE_TYPE,
+    sourceStorageType = taskConfig.SOURCE_STORAGE_TYPE,
+    targetStorageType = taskConfig.SOURCE_STORAGE_TYPE,
     syncMode = syncMode,
     intervalHours = taskConfig.INTERVAL_HOURS,
     intervalMinutes = taskConfig.INTERVAL_MINUTES,

@@ -1,13 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.LocalTaskScenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import org.junit.Assert
 
 class DeleteLocalTaskScenario(
-    override val taskConfig: TaskConfig = LocalTaskConfig()
+    override val taskConfig: TaskConfig = LocalToLocalTaskConfig()
 ) : LocalTaskScenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {
