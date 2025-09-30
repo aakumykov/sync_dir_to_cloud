@@ -9,12 +9,14 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-
-//
-// Задача теста - убедиться, что методы FileHelper-а
-// по созданию, удалению файлов/папок работают корректно.
-//
-class FileHelperTest : StorageAccessTestCase() {
+/*
+*  Задача теста - убедиться, что методы FileHelper-а
+* по созданию, удалению файлов/папок работают корректно.
+*
+* Довольно странно из теста проверять часть его самого,
+* но приходится...
+* */
+class LocalFileHelperTest : StorageAccessTestCase() {
 
     private val fileHelper = LocalFileHelper()
 
