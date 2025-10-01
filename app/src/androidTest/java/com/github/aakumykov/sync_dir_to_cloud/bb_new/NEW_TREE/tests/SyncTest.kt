@@ -214,9 +214,9 @@ class SyncTest : StorageAccessTestCase() {
     fun new_file_in_target() {
         fileHelper.createTargetFile1()
 
-        Assert.assertTrue(fileHelper.newTargetFile1.exists())
+        Assert.assertTrue(fileHelper.targetFile1.exists())
         sync()
-        Assert.assertFalse(fileHelper.newSourceFile1.exists())
+        Assert.assertFalse(fileHelper.sourceFile1.exists())
     }
 
 
@@ -225,11 +225,11 @@ class SyncTest : StorageAccessTestCase() {
         new_file_in_source()
 
         fileHelper.createSourceFile2()
-        Assert.assertTrue(fileHelper.newSourceFile2.exists())
+        Assert.assertTrue(fileHelper.sourceFile2.exists())
 
         sync()
-        Assert.assertTrue(fileHelper.newSourceFile1.exists())
-        Assert.assertTrue(fileHelper.newTargetFile2.exists())
+        Assert.assertTrue(fileHelper.sourceFile1.exists())
+        Assert.assertTrue(fileHelper.targetFile2.exists())
     }
 
 
@@ -241,18 +241,18 @@ class SyncTest : StorageAccessTestCase() {
         fileHelper.createSourceFile1()
         sync()
 
-        Assert.assertTrue(fileHelper.newSourceFile1.exists())
-        Assert.assertTrue(fileHelper.newTargetFile1.exists())
+        Assert.assertTrue(fileHelper.sourceFile1.exists())
+        Assert.assertTrue(fileHelper.targetFile1.exists())
     }
 
 
     @Test
     fun new_dir_in_source() {
         fileHelper.createDir1InSource()
-        Assert.assertTrue(fileHelper.newSourceDir1.exists())
+        Assert.assertTrue(fileHelper.sourceDir1.exists())
 
         sync()
-        Assert.assertTrue(fileHelper.newTargetDir1.exists())
+        Assert.assertTrue(fileHelper.targetDir1.exists())
     }
 
     @Test
@@ -260,19 +260,19 @@ class SyncTest : StorageAccessTestCase() {
         new_dir_in_source()
 
         fileHelper.deleteDir1InSource()
-        Assert.assertFalse(fileHelper.newSourceDir1.exists())
+        Assert.assertFalse(fileHelper.sourceDir1.exists())
 
         sync()
-        Assert.assertFalse(fileHelper.newTargetDir1.exists())
+        Assert.assertFalse(fileHelper.targetDir1.exists())
     }
 
     @Test
     fun new_dir_in_target() {
         fileHelper.createDir1InTarget()
-        Assert.assertTrue(fileHelper.newTargetDir1.exists())
+        Assert.assertTrue(fileHelper.targetDir1.exists())
 
         sync()
-        Assert.assertFalse(fileHelper.newSourceDir1.exists())
+        Assert.assertFalse(fileHelper.sourceDir1.exists())
     }
 
     @Test
@@ -282,8 +282,8 @@ class SyncTest : StorageAccessTestCase() {
         fileHelper.createDir1InSource()
 
         sync()
-        Assert.assertTrue(fileHelper.newSourceDir1.exists())
-        Assert.assertTrue(fileHelper.newTargetDir1.exists())
+        Assert.assertTrue(fileHelper.sourceDir1.exists())
+        Assert.assertTrue(fileHelper.targetDir1.exists())
     }
 
     @Test
@@ -346,20 +346,20 @@ class SyncTest : StorageAccessTestCase() {
     @Test
     fun small_tree_in_source() {
         fileHelper.createDir1InSource()
-        Assert.assertTrue(fileHelper.newSourceDir1.exists())
+        Assert.assertTrue(fileHelper.sourceDir1.exists())
 
         fileHelper.createSourceFile1()
-        Assert.assertTrue(fileHelper.newSourceFile1.exists())
+        Assert.assertTrue(fileHelper.sourceFile1.exists())
 
-        val sourceFileInDir = File(fileHelper.newSourceDir1, testFilesConfig.FILE_1_NAME)
+        val sourceFileInDir = File(fileHelper.sourceDir1, testFilesConfig.FILE_1_NAME)
         fileHelper.createFileOfSize(sourceFileInDir)
         Assert.assertTrue(sourceFileInDir.exists())
 
         sync()
 
-        Assert.assertTrue(fileHelper.newTargetFile1.exists())
-        Assert.assertTrue(fileHelper.newTargetDir1.exists())
-        val targetFileIndir = File(fileHelper.newSourceDir1, testFilesConfig.FILE_1_NAME)
+        Assert.assertTrue(fileHelper.targetFile1.exists())
+        Assert.assertTrue(fileHelper.targetDir1.exists())
+        val targetFileIndir = File(fileHelper.sourceDir1, testFilesConfig.FILE_1_NAME)
         Assert.assertTrue(targetFileIndir.exists())
 
         Assert.assertEquals(fileHelper.sourceFile1Content(),fileHelper.targetFile1Content())
