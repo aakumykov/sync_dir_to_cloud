@@ -64,6 +64,9 @@ open class LocalFileHelper(
 
     // Геттеры используются потому, что taskConfig.SOURCE_PATH, taskConfig.TARGET_PATH
     // определяются в рантайме. По сути эти свойства константны.
+    //
+    // А может, не обязательно использовать геттеры, ведь это инструментальный тест,
+    // для него специально создаётся работающее устройство?
 
     val sourceFile1: File get() = fileInSource(filesConfig.FILE_1_NAME)
     val sourceFile2: File get() = fileInSource(filesConfig.FILE_2_NAME)
@@ -83,8 +86,8 @@ open class LocalFileHelper(
     private val dir2InSource: File get() = dirInSource(filesConfig.DIR_2_NAME)
 
 
-    private fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
-    private fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
+    fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
+    fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
 
     fun dirInSource(dirName: String): File = File(taskConfig.SOURCE_PATH, dirName)
     fun dirInTarget(dirName: String): File = File(taskConfig.TARGET_PATH, dirName)
@@ -168,7 +171,7 @@ open class LocalFileHelper(
     //
 
     // Create
-    private fun createFileInSource(name: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+    fun createFileInSource(name: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return createFileOfSize(fileInSource(name), sizeKb)
     }
 
@@ -176,7 +179,7 @@ open class LocalFileHelper(
         return createFileWithContents(fileInSource(fileName), fileContents)
     }*/
 
-    private fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+    fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return createFileOfSize(fileInTarget(fileName), sizeKb)
     }
 
@@ -197,7 +200,7 @@ open class LocalFileHelper(
 
     fun createDirInTarget(dirName: String): File = createDir(taskConfig.TARGET_PATH, dirName)
 
-    private fun createDir(parentDirPath: String, dirName: String): File {
+    fun createDir(parentDirPath: String, dirName: String): File {
         return File(parentDirPath, dirName).apply {
             mkdirs()
         }
@@ -218,9 +221,9 @@ open class LocalFileHelper(
 
 
     // Delete
-    private fun deleteFileFromSource(fileName: String): File = fileInSource(fileName).apply { delete() }
+    fun deleteFileFromSource(fileName: String): File = fileInSource(fileName).apply { delete() }
 
-    private fun deleteFileFromTarget(fileName: String): File = fileInTarget(fileName).apply { delete() }
+    fun deleteFileFromTarget(fileName: String): File = fileInTarget(fileName).apply { delete() }
 
     fun deleteDirFromSource(dirName: String) = dirInSource(dirName).deleteRecursively()
 

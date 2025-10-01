@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
@@ -19,7 +20,7 @@ import java.io.File
 class LocalFileHelperTest : StorageAccessTestCase() {
 
     private val fileHelper = LocalFileHelper()
-
+    private val fileConfig = LocalTestFilesConfig
 
     @Before
     fun prepareSourceAndTargetDirs() = run {
@@ -45,23 +46,29 @@ class LocalFileHelperTest : StorageAccessTestCase() {
 
     @Test
     fun sourceFile1() = run {
+        val fileName = fileConfig.FILE_1_NAME
+        val file = fileHelper.fileInSource(fileName)
+
         step("Предварительное удаление файла-1 в источнике") {
-            fileHelper.deleteSourceFile1()
-            Assert.assertFalse(fileHelper.sourceFile1Exists())
+            fileHelper.deleteFileFromSource(fileName)
+            Assert.assertFalse(file.exists())
         }
+
         step("Создание файла-1 в источнике") {
-            fileHelper.createSourceFile1()
-            Assert.assertTrue(fileHelper.sourceFile1Exists())
+            fileHelper.createFileInSource(fileName)
+            Assert.assertTrue(file.exists())
         }
+
         step("Изменение файла-1 в источнике") {
-            val oldContent = fileHelper.sourceFile1Content()
-            fileHelper.modifySourceFile1()
-            val newContent = fileHelper.sourceFile1Content()
+            val oldContent = fileHelper.fileContents(file)
+             fileHelper.modifyFileInSource(fileName)
+            val newContent = fileHelper.fileContents(file)
             Assert.assertNotEquals(oldContent, newContent)
         }
+
         step("Удаление файла-1  в источнике") {
-            fileHelper.deleteSourceFile1()
-            Assert.assertFalse(fileHelper.sourceFile1Exists())
+            fileHelper.deleteFileFromSource(fileName)
+            Assert.assertFalse(file.exists())
         }
     }
 
