@@ -10,6 +10,52 @@ open class LocalFileHelper(
     private val taskConfig: TaskConfig = LocalToLocalTaskConfig(),
     private val filesConfig: TestFilesConfig = LocalTestFilesConfig,
 ) {
+    // ===============================================================
+    //       1. Действия с самими каталогами ИСТОЧНИКА, ПРИЁМНИКА
+    // ===============================================================
+
+    //
+    // Создают каталог источника/приёмника.
+    //
+    // FIXME: Не тестировано. А нужно ли их тестировать?
+    fun createSourceDir() = taskConfig.SOURCE_DIR.mkdir()
+    fun createTargetDir() = taskConfig.TARGET_DIR.mkdir()
+
+    //
+    //  Читает содержимое каталога источника/приёмника.
+    //
+    // TODO: тестировать
+    fun listSourceDir(): Array<out File> = listDir(taskConfig.SOURCE_DIR)
+    fun listTargetDir(): Array<out File> = listDir(taskConfig.TARGET_DIR)
+
+    private fun listDir(dir: File): Array<out File> {
+        return dir.listFiles() ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
+    }
+
+    //
+    // Рекурсивно удаляют каталог источника или приёмника.
+    //
+    fun deleteAllFilesInSource() = deleteAllFilesInDir(taskConfig.SOURCE_DIR)
+    fun deleteAllFilesInTarget() = deleteAllFilesInDir(taskConfig.TARGET_DIR)
+
+    fun deleteAllFilesInDir(dir: File) {
+        if (!dir.isDirectory)
+            throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
+        dir.listFiles()?.forEach { it.deleteRecursively() }
+    }
+
+    //
+    // Проверяет существование каталога источника/приёмника.
+    //
+    fun isTargetDirExists(): Boolean = taskConfig.TARGET_DIR.exists()
+    fun isSourceDirExists(): Boolean = taskConfig.SOURCE_DIR.exists()
+
+
+
+    // =======================================================================
+    //      2. Предопределённые файлы в источнике, приёмнике.
+    // =======================================================================
+
     val newSourceFile1: File get() = fileInSource(filesConfig.FILE_1_NAME)
     val newSourceFile2: File get() = fileInSource(filesConfig.FILE_2_NAME)
 
@@ -24,6 +70,20 @@ open class LocalFileHelper(
     val newTargetDir2: File get() = fileInTarget(filesConfig.DIR_2_NAME)
 
 
+    private val newDir1InSource: File get() = dirInSource(filesConfig.DIR_1_NAME)
+    private val newDir2InSource: File get() = dirInSource(filesConfig.DIR_2_NAME)
+
+
+    private fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
+    private fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
+
+    fun dirInSource(dirName: String): File = File(taskConfig.SOURCE_PATH, dirName)
+    fun dirInTarget(dirName: String): File = File(taskConfig.TARGET_PATH, dirName)
+
+
+    // =======================================================================
+    //      3. Действия с файлами в каталогах источника, приёмника.
+    // =======================================================================
     val contentsOfNewSourceFile: ByteArray get() = newSourceFile1.readBytes()
     val contentsOfNewTargetFile: ByteArray get() = newTargetFile1.readBytes()
 
@@ -56,33 +116,6 @@ open class LocalFileHelper(
     fun targetFile2Exists(): Boolean = fileInTarget(filesConfig.FILE_2_NAME).exists()
 
 
-
-    //
-    // Предоставляют объект File в источнике или приёмнике.
-    //
-    private fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
-    private fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
-
-
-    private val dir1InSource: File get() = dirInSource(filesConfig.DIR_1_NAME)
-    private val dir2InSource: File get() = dirInSource(filesConfig.DIR_2_NAME)
-
-    fun dirInSource(dirName: String): File = File(taskConfig.SOURCE_PATH, dirName)
-    fun dirInTarget(dirName: String): File = File(taskConfig.TARGET_PATH, dirName)
-
-
-
-    // FIXME: Не тестировано. А нужно ли их тестировать?
-    //
-    // Создают каталог источника/приёмника.
-    //
-    fun createSourceDir() {
-        taskConfig.SOURCE_DIR.mkdir()
-    }
-
-    fun createTargetDir() {
-        taskConfig.TARGET_DIR.mkdir()
-    }
 
 
 
@@ -152,21 +185,7 @@ open class LocalFileHelper(
 
 
 
-    //
-    // Рекурсивно удаляют каталог источника или приёмника.
-    //
-    fun deleteAllFilesInSource() = deleteAllFilesInDir(taskConfig.SOURCE_DIR)
 
-    fun deleteAllFilesInTarget() = deleteAllFilesInDir(taskConfig.TARGET_DIR)
-
-    fun deleteAllFilesInDir(dir: File) {
-        if (!dir.isDirectory)
-            throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
-
-        dir.listFiles()?.forEach {
-            it.deleteRecursively()
-        }
-    }
 
 
 
@@ -182,25 +201,11 @@ open class LocalFileHelper(
     fun fileContents(file: File): String = file.readBytes().joinToString("")
 
 
-    // TODO: тестировать
-    //
-    //  Возвращает список содержимого каталога источника/приёмника.
-    //
-    fun listSourceDir(): Array<out File> = listDir(taskConfig.SOURCE_DIR)
-
-    fun listTargetDir(): Array<out File> = listDir(taskConfig.TARGET_DIR)
-
-    private fun listDir(dir: File): Array<out File> {
-        return dir.listFiles() ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
-    }
 
 
 
-    //
-    // Проверяет существование каталога источника/приёмника.
-    //
-    fun isTargetDirExists(): Boolean = taskConfig.TARGET_DIR.exists()
-    fun isSourceDirExists(): Boolean = taskConfig.SOURCE_DIR.exists()
+
+
 
 
     //
@@ -212,8 +217,8 @@ open class LocalFileHelper(
 
 
 
-    fun deleteDir1InSource() = dir1InSource.deleteRecursively()
-    fun deleteDir2InSource() = dir2InSource.deleteRecursively()
+    fun deleteDir1InSource() = newDir1InSource.deleteRecursively()
+    fun deleteDir2InSource() = newDir2InSource.deleteRecursively()
 
 
     fun deleteDirFromSource(dirName: String) = dirInSource(dirName).deleteRecursively()
