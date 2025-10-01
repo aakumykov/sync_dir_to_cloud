@@ -5,112 +5,159 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
-import kotlin.random.Random
 
 open class LocalFileHelper(
     private val taskConfig: TaskConfig = LocalToLocalTaskConfig(),
-    private val testFilesConfig: TestFilesConfig = LocalTestFilesConfig,
+    private val filesConfig: TestFilesConfig = LocalTestFilesConfig,
 ) {
-    val sourceDir: File
-        get() = taskConfig.SOURCE_DIR
+    val newSourceFile1: File get() = fileInSource(filesConfig.FILE_1_NAME)
+    val newSourceFile2: File get() = fileInSource(filesConfig.FILE_2_NAME)
 
-    val targetDir: File
-        get() = taskConfig.TARGET_DIR
-
-    val sourceFile1: File
-        get() = fileInSource(testFilesConfig.FILE_1_NAME)
-
-    val sourceFile2: File
-        get() = fileInSource(testFilesConfig.FILE_2_NAME)
+    val newTargetFile1: File get() = fileInTarget(filesConfig.FILE_1_NAME)
+    val newTargetFile2: File get() = fileInTarget(filesConfig.FILE_2_NAME)
 
 
-    val targetFile1: File
-        get() = fileInTarget(testFilesConfig.FILE_1_NAME)
+    val newSourceDir1: File get() = fileInSource(filesConfig.DIR_1_NAME)
+    val newSourceDir2: File get() = fileInSource(filesConfig.DIR_2_NAME)
 
-    val targetFile2: File
-        get() = fileInTarget(testFilesConfig.FILE_2_NAME)
-
-
-    val sourceDir1: File
-        get() = fileInSource(testFilesConfig.DIR_1_NAME)
-
-    val sourceDir2: File
-        get() = fileInSource(testFilesConfig.DIR_2_NAME)
+    val newTargetDir1: File get() = fileInTarget(filesConfig.DIR_1_NAME)
+    val newTargetDir2: File get() = fileInTarget(filesConfig.DIR_2_NAME)
 
 
-    val targetDir1: File
-        get() = fileInTarget(testFilesConfig.DIR_1_NAME)
-
-    val targetDir2: File
-        get() = fileInTarget(testFilesConfig.DIR_2_NAME)
+    val contentsOfNewSourceFile: ByteArray get() = newSourceFile1.readBytes()
+    val contentsOfNewTargetFile: ByteArray get() = newTargetFile1.readBytes()
 
 
-    val twoLevelDirName: String
-        get() = testFilesConfig.TWO_LEVEL_DIR_NAME
+    fun createSourceFile1(): File = createFileInSource(filesConfig.FILE_1_NAME, filesConfig.FILE_1_ORIG_SIZE)
+    fun createSourceFile2(): File = createFileInSource(filesConfig.FILE_2_NAME, filesConfig.FILE_2_ORIG_SIZE)
+
+    fun createTargetFile1(): File = createFileInTarget(filesConfig.FILE_1_NAME, filesConfig.FILE_1_ORIG_SIZE)
+    fun createTargetFile2(): File = createFileInTarget(filesConfig.FILE_2_NAME, filesConfig.FILE_2_ORIG_SIZE)
 
 
-    private val sourceFileContents: ByteArray
-        get() = sourceFile1.readBytes()
+    fun modifySourceFile1(): File = createSourceFile1()
+    fun modifySourceFile2(): File = createSourceFile2()
 
-    private val targetFileContents: ByteArray
-        get() = targetFile1.readBytes()
+    fun modifyTargetFile1(): File = createTargetFile1()
+    fun modifyTargetFile2(): File = createTargetFile2()
+
+
+    fun deleteSourceFile1() = deleteFileFromSource(filesConfig.FILE_1_NAME)
+    fun deleteSourceFile2() = deleteFileFromSource(filesConfig.FILE_2_NAME)
+
+    fun deleteTargetFile1() = deleteFileFromTarget(filesConfig.FILE_1_NAME)
+    fun deleteTargetFile2() = deleteFileFromTarget(filesConfig.FILE_2_NAME)
+
+
+    fun sourceFile1Exists(): Boolean = fileInSource(filesConfig.FILE_1_NAME).exists()
+    fun sourceFile2Exists(): Boolean = fileInSource(filesConfig.FILE_2_NAME).exists()
+
+    fun targetFile1Exists(): Boolean = fileInTarget(filesConfig.FILE_1_NAME).exists()
+    fun targetFile2Exists(): Boolean = fileInTarget(filesConfig.FILE_2_NAME).exists()
 
 
 
-    fun createSourceFile1(): File {
-        return createFileInSource(testFilesConfig.FILE_1_NAME, testFilesConfig.FILE_1_ORIG_SIZE)
+    //
+    // Предоставляют объект File в источнике или приёмнике.
+    //
+    private fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
+    private fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
+
+
+    private val dir1InSource: File get() = dirInSource(filesConfig.DIR_1_NAME)
+    private val dir2InSource: File get() = dirInSource(filesConfig.DIR_2_NAME)
+
+    fun dirInSource(dirName: String): File = File(taskConfig.SOURCE_PATH, dirName)
+    fun dirInTarget(dirName: String): File = File(taskConfig.TARGET_PATH, dirName)
+
+
+
+    // FIXME: Не тестировано. А нужно ли их тестировать?
+    //
+    // Создают каталог источника/приёмника.
+    //
+    fun createSourceDir() {
+        taskConfig.SOURCE_DIR.mkdir()
     }
 
-    fun createSourceFile2(): File {
-        return createFileInSource(testFilesConfig.FILE_2_NAME, testFilesConfig.FILE_2_ORIG_SIZE)
-    }
-
-
-    fun createTargetFile1(): File {
-        return createFileInTarget(testFilesConfig.FILE_1_NAME, testFilesConfig.FILE_1_ORIG_SIZE)
-    }
-
-    fun createTargetFile2(): File {
-        return createFileInTarget(testFilesConfig.FILE_2_NAME, testFilesConfig.FILE_2_ORIG_SIZE)
-    }
-
-
-    fun modifySourceFile1(): File {
-        return createSourceFile1()
-    }
-
-    fun modifySourceFile2(): File {
-        return createSourceFile2()
-    }
-
-    fun modifyTargetFile1(): File {
-        return createTargetFile1()
-    }
-
-    fun modifyTargetFile2(): File {
-        return createTargetFile2()
+    fun createTargetDir() {
+        taskConfig.TARGET_DIR.mkdir()
     }
 
 
 
-    fun deleteSourceFile1() {
-        deleteFileFromSource(testFilesConfig.FILE_1_NAME)
+    //
+    // Создают файл в источнике/приёмнике с заданными именем, размером/содержимым.
+    //
+    private fun createFileInSource(name: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+        return createFileOfSize(fileInSource(name), sizeKb)
     }
 
-    fun deleteSourceFile2() {
-        deleteFileFromSource(testFilesConfig.FILE_2_NAME)
+    private fun createFileInSourceWithContents(fileName: String, fileContents: ByteArray): File {
+        return createFileWithContents(fileInSource(fileName), fileContents)
+    }
+
+    private fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+        return createFileOfSize(fileInTarget(fileName), sizeKb)
     }
 
 
-    fun deleteTargetFile1() {
-        deleteFileFromTarget(testFilesConfig.FILE_1_NAME)
+    //
+    // Создают предопределённые каталоги в источнике, приёмнике.
+    //
+    fun createDir1InSource() = newSourceDir1.mkdir()
+    fun createDir2InSource() = newSourceDir2.mkdir()
+
+    fun createDir1InTarget() = newTargetDir1.mkdir()
+    fun createDir2InTarget() = newTargetDir2.mkdir()
+
+
+
+    //
+    // Создают каталог в источнике, приёмнике с заданным именем.
+    //
+    fun createDirInSource(dirName: String): File = createDir(taskConfig.SOURCE_PATH, dirName)
+    fun createDirInTarget(dirName: String): File = createDir(taskConfig.TARGET_PATH, dirName)
+
+    private fun createDir(parentDirPath: String, dirName: String): File {
+        return File(parentDirPath, dirName).apply {
+            mkdirs()
+        }
     }
 
-    fun deleteTargetFile2() {
-        deleteFileFromTarget(testFilesConfig.FILE_2_NAME)
+
+
+    //
+    // Удаляют файл с именем из источника/приёмника.
+    //
+    private fun deleteFileFromSource(fileName: String): File = fileInSource(fileName).apply { delete() }
+    private fun deleteFileFromTarget(fileName: String): File = fileInTarget(fileName).apply { delete() }
+
+
+
+    //
+    // Создают реальные файлы из объекта File.
+    //
+    fun createFileOfSize(file: File, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
+        return file.apply {
+            writeBytes(randomBytes(sizeKb))
+        }
+    }
+
+    fun createFileWithContents(file: File, fileContents: ByteArray): File {
+        return file.apply {
+            writeBytes(fileContents)
+        }
     }
 
 
+
+    //
+    // Рекурсивно удаляют каталог источника или приёмника.
+    //
+    fun deleteAllFilesInSource() = deleteAllFilesInDir(taskConfig.SOURCE_DIR)
+
+    fun deleteAllFilesInTarget() = deleteAllFilesInDir(taskConfig.TARGET_DIR)
 
     fun deleteAllFilesInDir(dir: File) {
         if (!dir.isDirectory)
@@ -123,194 +170,55 @@ open class LocalFileHelper(
 
 
 
-    fun sourceFile1Exists(): Boolean = sourceFile1.exists()
+    //
+    // Возвращают содержимое файлов в источнике, приёмнике.
+    //
+    fun sourceFile1Content(): String = fileContents(newSourceFile1)
+    fun sourceFile2Content(): String = fileContents(newSourceFile2)
 
-    fun sourceFile2Exists(): Boolean = sourceFile2.exists()
+    fun targetFile1Content(): String = fileContents(newTargetFile1)
+    fun targetFile2Content(): String = fileContents(newTargetFile2)
 
-    fun targetFile1Exists(): Boolean = targetFile1.exists()
-
-    fun targetFile2Exists(): Boolean = targetFile2.exists()
-
-
-
-    fun createFileInSource(name: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return createFile(fileInSource(name), sizeKb)
-    }
-
-    private fun createFileInSource(fileName: String, fileContents: ByteArray): File {
-        return createFile(fileInSource(fileName), fileContents)
-    }
-
-    fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return createFile(fileInTarget(fileName), sizeKb)
-    }
-
-
-    fun createDirInSource(dirName: String): File {
-        return createDir(taskConfig.SOURCE_PATH, dirName)
-    }
-
-    fun createDirInTarget(dirName: String): File {
-        return createDir(taskConfig.TARGET_PATH, dirName)
-    }
-
-
-    private fun deleteFileFromSource(fileName: String): File {
-        return fileInSource(fileName).apply {
-            delete()
-        }
-    }
-
-    private fun deleteFileFromTarget(fileName: String): File {
-        return fileInTarget(fileName).apply {
-            delete()
-        }
-    }
-
-
-    private fun createDir(parentDirPath: String, dirName: String): File {
-        return File(parentDirPath, dirName).apply {
-            mkdirs()
-        }
-    }
-
-    private fun createFile(dirPath: String, fileName: String, sizeKb: Int): File {
-        return File(dirPath, fileName).apply {
-            createNewFile()
-            writeBytes(Random.nextBytes(sizeKb))
-        }
-    }
-
-    fun createFile(file: File, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return file.apply {
-            writeBytes(randomBytes(sizeKb))
-        }
-    }
-
-    private fun createFile(file: File, fileContents: ByteArray): File {
-        return file.apply {
-            writeBytes(fileContents)
-        }
-    }
-
-
-    private fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
-
-    private fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
-
-
-    private fun modifyFileInSource(fileName: String, fileContents: ByteArray): File {
-        return createFileInSource(fileName, fileContents)
-    }
-
-    private fun modifyFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return createFileInTarget(fileName, sizeKb)
-    }
-
-    private fun deleteSourceDir() {
-        taskConfig.SOURCE_DIR.deleteRecursively()
-    }
-
-    private fun deleteTargetDir() {
-        taskConfig.TARGET_DIR.deleteRecursively()
-    }
-
-    // FIXME: Не тестировано. А нужно ли их тестировать?
-    fun createSourceDir() {
-        taskConfig.SOURCE_DIR.mkdir()
-    }
-
-    fun createTargetDir() {
-        taskConfig.TARGET_DIR.mkdir()
-    }
-
-    fun sourceFile1Content(): String = fileContents(sourceFile1)
-    fun sourceFile2Content(): String = fileContents(sourceFile2)
-
-    fun targetFile1Content(): String = fileContents(targetFile1)
-    fun targetFile2Content(): String = fileContents(targetFile2)
+    fun fileContents(file: File): String = file.readBytes().joinToString("")
 
 
     // TODO: тестировать
-    fun listSourceDir(): Array<out File> {
-        return listDir(taskConfig.SOURCE_DIR)
-    }
+    //
+    //  Возвращает список содержимого каталога источника/приёмника.
+    //
+    fun listSourceDir(): Array<out File> = listDir(taskConfig.SOURCE_DIR)
 
-    // TODO: тестировать
-    fun listTargetDir(): Array<out File> {
-        return listDir(taskConfig.TARGET_DIR)
-    }
+    fun listTargetDir(): Array<out File> = listDir(taskConfig.TARGET_DIR)
 
-    // TODO: тестировать
     private fun listDir(dir: File): Array<out File> {
-        return dir.listFiles()
-            ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
+        return dir.listFiles() ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
     }
 
-    fun targetDirExists(): Boolean = targetDir.exists()
 
-    fun sourceDirExists(): Boolean = sourceDir.exists()
 
-    fun deleteAllFilesInSource() {
-        deleteAllFilesInDir(sourceDir)
-    }
+    //
+    // Проверяет существование каталога источника/приёмника.
+    //
+    fun isTargetDirExists(): Boolean = taskConfig.TARGET_DIR.exists()
+    fun isSourceDirExists(): Boolean = taskConfig.SOURCE_DIR.exists()
 
-    fun deleteAllFilesInTarget() {
-        deleteAllFilesInDir(targetDir)
-    }
 
-    fun sourceDirIsEmpty(): Boolean {
-        return sourceDir.list()?.isEmpty() ?: false
-    }
+    //
+    // Проверяет пуст ли каталог источника/приёмника.
+    //
+    fun isSourceDirEmpty(): Boolean = taskConfig.SOURCE_DIR.list()?.isEmpty() ?: false
+    fun isTargetDirEmpty(): Boolean = taskConfig.TARGET_DIR.list()?.isEmpty() ?: false
 
-    fun targetDirIsEmpty(): Boolean {
-        return targetDir.list()?.isEmpty() ?: false
-    }
 
-    fun createDir1InSource() {
-        sourceDir1.mkdir()
-    }
 
-    fun createDir2InSource() {
-        sourceDir2.mkdir()
-    }
 
-    fun createDir1InTarget() {
-        targetDir1.mkdir()
-    }
+    fun deleteDir1InSource() = dir1InSource.deleteRecursively()
+    fun deleteDir2InSource() = dir2InSource.deleteRecursively()
 
-    fun createDir2InTarget() {
-        targetDir2.mkdir()
-    }
 
-    fun deleteSourceDir1() {
-        sourceDir1.deleteRecursively()
-    }
+    fun deleteDirFromSource(dirName: String) = dirInSource(dirName).deleteRecursively()
+    fun deleteDirFromTarget(dirName: String) = dirInTarget(dirName).deleteRecursively()
 
-    fun dirInSource(dirName: String): File {
-        return File(taskConfig.SOURCE_PATH, dirName)
-    }
-
-    fun createFileInDir(dir: File, fileName: String) {
-        val file =  File(dir, fileName)
-        createFile(file)
-    }
-
-    fun dirInTarget(dirName: String): File {
-        return File(taskConfig.TARGET_PATH, dirName)
-    }
-
-    fun deleteDirFromSource(dirName: String) {
-        dirInSource(dirName).deleteRecursively()
-    }
-
-    fun deleteDirFromTarget(dirName: String) {
-        dirInTarget(dirName).deleteRecursively()
-    }
-
-    fun fileContents(file: File): String {
-        return file.readBytes().joinToString("")
-    }
 
     companion object {
         const val DEFAULT_FILE_SIZE_KB = 10

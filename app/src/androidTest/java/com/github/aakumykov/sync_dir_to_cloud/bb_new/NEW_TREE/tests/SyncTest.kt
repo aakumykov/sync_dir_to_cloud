@@ -31,16 +31,16 @@ class SyncTest : StorageAccessTestCase() {
     @Before
     fun prepareSourceAndTargetDirs() = run {
         fileHelper.createSourceDir()
-        Assert.assertTrue(fileHelper.sourceDirExists())
+        Assert.assertTrue(fileHelper.isSourceDirExists())
 
         fileHelper.createTargetDir()
-        Assert.assertTrue(fileHelper.targetDirExists())
+        Assert.assertTrue(fileHelper.isTargetDirExists())
 
         fileHelper.deleteAllFilesInSource()
-        Assert.assertTrue(fileHelper.sourceDirIsEmpty())
+        Assert.assertTrue(fileHelper.isSourceDirEmpty())
 
         fileHelper.deleteAllFilesInTarget()
-        Assert.assertTrue(fileHelper.targetDirIsEmpty())
+        Assert.assertTrue(fileHelper.isTargetDirEmpty())
     }
 
 
@@ -213,10 +213,10 @@ class SyncTest : StorageAccessTestCase() {
     @Test
     fun new_file_in_target() {
         fileHelper.createTargetFile1()
-        Assert.assertTrue(fileHelper.targetFile1.exists())
 
+        Assert.assertTrue(fileHelper.newTargetFile1.exists())
         sync()
-        Assert.assertFalse(fileHelper.sourceFile1.exists())
+        Assert.assertFalse(fileHelper.newSourceFile1.exists())
     }
 
 
@@ -225,11 +225,11 @@ class SyncTest : StorageAccessTestCase() {
         new_file_in_source()
 
         fileHelper.createSourceFile2()
-        Assert.assertTrue(fileHelper.sourceFile2.exists())
+        Assert.assertTrue(fileHelper.newSourceFile2.exists())
 
         sync()
-        Assert.assertTrue(fileHelper.sourceFile1.exists())
-        Assert.assertTrue(fileHelper.targetFile2.exists())
+        Assert.assertTrue(fileHelper.newSourceFile1.exists())
+        Assert.assertTrue(fileHelper.newTargetFile2.exists())
     }
 
 
@@ -241,38 +241,38 @@ class SyncTest : StorageAccessTestCase() {
         fileHelper.createSourceFile1()
         sync()
 
-        Assert.assertTrue(fileHelper.sourceFile1.exists())
-        Assert.assertTrue(fileHelper.targetFile1.exists())
+        Assert.assertTrue(fileHelper.newSourceFile1.exists())
+        Assert.assertTrue(fileHelper.newTargetFile1.exists())
     }
 
 
     @Test
     fun new_dir_in_source() {
         fileHelper.createDir1InSource()
-        Assert.assertTrue(fileHelper.sourceDir1.exists())
+        Assert.assertTrue(fileHelper.newSourceDir1.exists())
 
         sync()
-        Assert.assertTrue(fileHelper.targetDir1.exists())
+        Assert.assertTrue(fileHelper.newTargetDir1.exists())
     }
 
     @Test
     fun dir_deleted_in_source() {
         new_dir_in_source()
 
-        fileHelper.deleteSourceDir1()
-        Assert.assertFalse(fileHelper.sourceDir1.exists())
+        fileHelper.deleteDir1InSource()
+        Assert.assertFalse(fileHelper.newSourceDir1.exists())
 
         sync()
-        Assert.assertFalse(fileHelper.targetDir1.exists())
+        Assert.assertFalse(fileHelper.newTargetDir1.exists())
     }
 
     @Test
     fun new_dir_in_target() {
         fileHelper.createDir1InTarget()
-        Assert.assertTrue(fileHelper.targetDir1.exists())
+        Assert.assertTrue(fileHelper.newTargetDir1.exists())
 
         sync()
-        Assert.assertFalse(fileHelper.sourceDir1.exists())
+        Assert.assertFalse(fileHelper.newSourceDir1.exists())
     }
 
     @Test
@@ -282,18 +282,18 @@ class SyncTest : StorageAccessTestCase() {
         fileHelper.createDir1InSource()
 
         sync()
-        Assert.assertTrue(fileHelper.sourceDir1.exists())
-        Assert.assertTrue(fileHelper.targetDir1.exists())
+        Assert.assertTrue(fileHelper.newSourceDir1.exists())
+        Assert.assertTrue(fileHelper.newTargetDir1.exists())
     }
 
     @Test
     fun two_level_dir_in_source() {
 
-        fileHelper.createDirInSource(fileHelper.twoLevelDirName)
-        Assert.assertTrue(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
+        fileHelper.createDirInSource(testFilesConfig.TWO_LEVEL_DIR_NAME)
+        Assert.assertTrue(fileHelper.dirInSource(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
 
         sync()
-        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+        Assert.assertTrue(fileHelper.dirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
     }
 
     @Test
@@ -301,11 +301,11 @@ class SyncTest : StorageAccessTestCase() {
 
         two_level_dir_in_source()
 
-        fileHelper.deleteDirFromSource(fileHelper.twoLevelDirName)
-        Assert.assertFalse(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
+        fileHelper.deleteDirFromSource(testFilesConfig.TWO_LEVEL_DIR_NAME)
+        Assert.assertFalse(fileHelper.dirInSource(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
 
         sync()
-        Assert.assertFalse(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+        Assert.assertFalse(fileHelper.dirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
     }
 
     @Test
@@ -313,23 +313,23 @@ class SyncTest : StorageAccessTestCase() {
 
         two_level_dir_in_source()
 
-        fileHelper.deleteDirFromTarget(fileHelper.twoLevelDirName)
-        Assert.assertFalse(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+        fileHelper.deleteDirFromTarget(testFilesConfig.TWO_LEVEL_DIR_NAME)
+        Assert.assertFalse(fileHelper.dirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
 
         sync()
-        Assert.assertTrue(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
-        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+        Assert.assertTrue(fileHelper.dirInSource(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
+        Assert.assertTrue(fileHelper.dirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
     }
 
     @Test
     fun two_devel_dir_in_target() {
 
-        fileHelper.createDirInTarget(fileHelper.twoLevelDirName)
-        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+        fileHelper.createDirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME)
+        Assert.assertTrue(fileHelper.dirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
 
         sync()
-        Assert.assertFalse(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
-        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+        Assert.assertFalse(fileHelper.dirInSource(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
+        Assert.assertTrue(fileHelper.dirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
     }
 
     @Test
@@ -338,32 +338,32 @@ class SyncTest : StorageAccessTestCase() {
         two_devel_dir_in_target()
         two_level_dir_in_source()
 
-        Assert.assertTrue(fileHelper.dirInSource(fileHelper.twoLevelDirName).exists())
-        Assert.assertTrue(fileHelper.dirInTarget(fileHelper.twoLevelDirName).exists())
+        Assert.assertTrue(fileHelper.dirInSource(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
+        Assert.assertTrue(fileHelper.dirInTarget(testFilesConfig.TWO_LEVEL_DIR_NAME).exists())
     }
 
 
     @Test
     fun small_tree_in_source() {
         fileHelper.createDir1InSource()
-        Assert.assertTrue(fileHelper.sourceDir1.exists())
+        Assert.assertTrue(fileHelper.newSourceDir1.exists())
 
         fileHelper.createSourceFile1()
-        Assert.assertTrue(fileHelper.sourceFile1.exists())
+        Assert.assertTrue(fileHelper.newSourceFile1.exists())
 
-        val sourceFileIndir = File(fileHelper.sourceDir1, testFilesConfig.FILE_1_NAME)
-        fileHelper.createFile(sourceFileIndir)
-        Assert.assertTrue(sourceFileIndir.exists())
+        val sourceFileInDir = File(fileHelper.newSourceDir1, testFilesConfig.FILE_1_NAME)
+        fileHelper.createFileOfSize(sourceFileInDir)
+        Assert.assertTrue(sourceFileInDir.exists())
 
         sync()
 
-        Assert.assertTrue(fileHelper.targetFile1.exists())
-        Assert.assertTrue(fileHelper.targetDir1.exists())
-        val targetFileIndir = File(fileHelper.sourceDir1, testFilesConfig.FILE_1_NAME)
+        Assert.assertTrue(fileHelper.newTargetFile1.exists())
+        Assert.assertTrue(fileHelper.newTargetDir1.exists())
+        val targetFileIndir = File(fileHelper.newSourceDir1, testFilesConfig.FILE_1_NAME)
         Assert.assertTrue(targetFileIndir.exists())
 
         Assert.assertEquals(fileHelper.sourceFile1Content(),fileHelper.targetFile1Content())
-        Assert.assertEquals(fileHelper.fileContents(sourceFileIndir),fileHelper.fileContents(targetFileIndir))
+        Assert.assertEquals(fileHelper.fileContents(sourceFileInDir),fileHelper.fileContents(targetFileIndir))
     }
 
 
