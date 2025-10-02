@@ -2,9 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
-import java.io.File
 
 /*
 *  Задача теста - убедиться, что методы FileHelper-а

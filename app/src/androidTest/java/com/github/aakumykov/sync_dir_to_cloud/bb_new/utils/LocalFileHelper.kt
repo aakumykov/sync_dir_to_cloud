@@ -1,8 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.TestFilesConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
 
@@ -10,6 +8,17 @@ open class LocalFileHelper(
     private val taskConfig: TaskConfig,
     private val filesConfig: TestFilesConfig,
 ) {
+    // ===============================================================
+    //       0. Вспомогательные методы
+    // ===============================================================
+    fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
+    fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
+
+    fun dirInSource(dirName: String): File = File(taskConfig.SOURCE_PATH, dirName)
+    fun dirInTarget(dirName: String): File = File(taskConfig.TARGET_PATH, dirName)
+
+
+
     // ===============================================================
     //       1. Действия с самими каталогами ИСТОЧНИКА, ПРИЁМНИКА
     // ===============================================================
@@ -61,43 +70,62 @@ open class LocalFileHelper(
     // I. CRUD
     //
 
-    // Create
-    fun createFileInSource(name: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return createFileOfSize(fileInSource(name), sizeKb)
+    //
+    // Создание
+    //
+
+    // Файл простой
+
+    fun createFileInSource(fileName: String, fileContents: ByteArray = randomBytes): File {
+        return createFileWithContents(fileInSource(fileName), fileContents)
     }
 
-    fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return createFileOfSize(fileInTarget(fileName), sizeKb)
+    fun createFileInTarget(fileName: String, fileContents: ByteArray = randomBytes): File {
+        return createFileWithContents(fileInTarget(fileName), fileContents)
     }
 
-    /*private fun createFileInSourceWithContents(fileName: String, fileContents: ByteArray): File {
-    return createFileWithContents(fileInSource(fileName), fileContents)
-}*/
-
-    fun createFileOfSize(file: File, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
-        return file.apply {
-            writeBytes(randomBytes(sizeKb))
-        }
-    }
-
-    fun createFileWithContents(file: File, fileContents: ByteArray): File {
+    private fun createFileWithContents(file: File, fileContents: ByteArray): File {
         return file.apply {
             writeBytes(fileContents)
         }
     }
 
 
+    // Файл глубокий
+
+    fun createDeepFileInSource(deepDirName: String, fileName: String, fileContents: ByteArray = randomBytes): File {
+        createDirInSource(deepDirName)
+        return createDeepFileWithContents(fileInSource(deepDirName), fileName, fileContents)
+    }
+
+    fun createDeepFileInTarget(deepDirName: String, fileName: String, fileContents: ByteArray = randomBytes): File {
+        createDirInTarget(deepDirName)
+        return createDeepFileWithContents(fileInTarget(deepDirName), fileName, fileContents)
+    }
+
+    private fun createDeepFileWithContents(deepDir: File, fileName: String, fileContents: ByteArray): File {
+        return createFileWithContents(File(deepDir, fileName), fileContents)
+    }
+
+
+    // Каталог
+
     fun createDirInSource(dirName: String): File = createDir(taskConfig.SOURCE_PATH, dirName)
 
     fun createDirInTarget(dirName: String): File = createDir(taskConfig.TARGET_PATH, dirName)
 
-    fun createDir(parentDirPath: String, dirName: String): File {
+    private fun createDir(parentDirPath: String, dirName: String): File {
         return File(parentDirPath, dirName).apply {
             mkdirs()
         }
     }
 
-    // Read
+
+
+    //
+    // Чтение
+    //
+
     fun fileContents(file: File): String = file.readBytes().joinToString("")
 
     /**
@@ -123,6 +151,7 @@ open class LocalFileHelper(
 
     fun deleteDirFromTarget(dirName: String) = dirInTarget(dirName).deleteRecursively()
 
+    @Deprecated("убрать")
     fun deleteAllFilesInDir(dir: File) {
         if (!dir.isDirectory)
             throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
@@ -140,17 +169,6 @@ open class LocalFileHelper(
     fun isDirInTargetEmpty(dirName: String): Boolean {
         return dirInTarget(dirName).list()?.isEmpty() ?: false
     }
-
-
-    //
-    // Вспомогательные методы
-    //
-    // TODO: тестировать!
-    fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
-    fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
-
-    fun dirInSource(dirName: String): File = File(taskConfig.SOURCE_PATH, dirName)
-    fun dirInTarget(dirName: String): File = File(taskConfig.TARGET_PATH, dirName)
 
 
     companion object {

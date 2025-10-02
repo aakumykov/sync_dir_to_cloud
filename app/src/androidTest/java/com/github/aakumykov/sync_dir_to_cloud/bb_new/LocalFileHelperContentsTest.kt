@@ -1,6 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
+import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
@@ -9,102 +11,187 @@ import kotlin.random.Random
 
 class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
+    companion object {
+        const val DEEP_DIR_MIN_DEPTH = 2
+        const val DEEP_DIR_MAX_DEPTH = 10
+    }
     private val randomSize get() = Random.nextInt(1,101)
 
-    // TODO: негативное тестирование
+    // TODO: негативное тестирование (НО НУЖНО ЛИ?)
+
+    //
+    // Вспомогательные методы
+    //
+
+    // Файлы
+
+    @Test
+    fun file_in_source() = run {
+        val fileName = randomName
+        val refFile = File(taskConfig.SOURCE_DIR, fileName)
+        fileHelper.fileInSource(fileName).also {
+            Assert.assertEquals(
+                refFile.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
+
+    @Test
+    fun file_in_target() = run {
+        val fileName = randomName
+        val refFile = File(taskConfig.TARGET_DIR, fileName)
+        fileHelper.fileInTarget(fileName).also {
+            Assert.assertEquals(
+                refFile.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
+
+
+    // Каталоги
+
+    @Test
+    fun dir_in_source() = run {
+        val dirName = randomName
+        val refDir = File(taskConfig.SOURCE_DIR, dirName)
+        fileHelper.dirInSource(dirName).also {
+            Assert.assertEquals(
+                refDir.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
+
+    @Test
+    fun dir_in_target() = run {
+        val dirName = randomName
+        val refDir = File(taskConfig.TARGET_DIR, dirName)
+        fileHelper.dirInTarget(dirName).also {
+            Assert.assertEquals(
+                refDir.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
+
+
 
     //
     // Создание файла
     //
 
-    /**
-     * [LocalFileHelper.createFileInSource]
-     */
+    // Простого файла с заданным содержимым
+
     @Test
-    fun create_file_in_source() = run {
+    fun create_file_with_data_in_source() = run {
+        val data = randomBytes
         fileHelper.createSourceDir()
-        fileHelper.createFileInSource(fileConfig.FILE_1_NAME).also {
+        fileHelper.createFileInSource(randomName, data).also {
             Assert.assertTrue(it.exists())
+            Assert.assertEquals(data.size.toLong(), it.length())
+            Assert.assertEquals(
+                data.joinToString(),
+                it.readBytes().joinToString()
+            )
         }
     }
 
-    /**
-     * [LocalFileHelper.createFileInTarget]
-     */
+
     @Test
-    fun create_file_in_target() = run {
+    fun create_file_with_data_in_target() = run {
+        val data = randomBytes
         fileHelper.createTargetDir()
-        fileHelper.createFileInTarget(fileConfig.FILE_1_NAME).also {
+        fileHelper.createFileInTarget(randomName, data).also {
             Assert.assertTrue(it.exists())
+            Assert.assertEquals(data.size.toLong(), it.length())
+            Assert.assertEquals(
+                data.joinToString(),
+                it.readBytes().joinToString()
+            )
         }
     }
 
-    /**
-     * [LocalFileHelper.createFileOfSize]
-     */
-    @Test
-    fun create_file_with_custom_size_in_source() = run {
-        val size = randomSize
-        val file = fileHelper.fileInSource(fileConfig.FILE_1_NAME)
-        fileHelper.createSourceDir()
-        fileHelper.createFileOfSize(file, size).also {
-            Assert.assertTrue(it.exists())
-            Assert.assertEquals(size, it.length().toInt())
-        }
-    }
 
-    /**
-     * [LocalFileHelper.createFileOfSize]
-     */
-    @Test
-    fun create_file_with_custom_size_in_target() = run {
-        val size = randomSize
-        val file = fileHelper.fileInTarget(fileConfig.FILE_1_NAME)
-        fileHelper.createTargetDir()
-        fileHelper.createFileOfSize(file, size).also {
-            Assert.assertTrue(it.exists())
-            Assert.assertEquals(size, it.length().toInt())
-        }
-    }
+    // Глубокого файла с заданным содержимым
 
-    /**
-     * [LocalFileHelper.createFileOfSize]
-     */
     @Test
-    fun create_file_with_custom_size_in_source_deep_dir() = run {
-        val deepDirName = "1/2/3"
-        val deepDir = fileHelper.dirInSource(deepDirName)
+    fun create_deep_file_with_data_in_source() = run {
+        val deepDirName = randomDeepDirName
+        val fileName = randomName
+        val data = randomBytes
 
         fileHelper.createSourceDir()
-        fileHelper.createDirInSource(deepDirName)
 
-        val file = File(deepDir, randomName)
-        val size = randomSize
-
-        fileHelper.createFileOfSize(file, size)
-        Assert.assertTrue(file.exists())
-        Assert.assertEquals(size.toLong(), file.length())
+        fileHelper.createDeepFileInSource(deepDirName, fileName, data).also {
+            Assert.assertTrue(it.exists())
+            Assert.assertEquals(
+                data.joinToString(),
+                it.readBytes().joinToString()
+            )
+        }
     }
 
-    /**
-     * [LocalFileHelper.createFileOfSize]
-     */
+
     @Test
-    fun create_file_with_custom_size_in_target_deep_dir() = run {
-        val deepDirName = "1/2/3"
-        val deepDir = fileHelper.dirInTarget(deepDirName)
+    fun create_deep_file_with_data_in_target() = run {
+        val deepDirName = randomDeepDirName
+        val fileName = randomName
+        val data = randomBytes
 
-        fileHelper.createTargetDir()
-        fileHelper.createDirInTarget(deepDirName)
+        fileHelper.createSourceDir()
 
-        val file = File(deepDir, randomName)
-        val size = randomSize
-
-        fileHelper.createFileOfSize(file, size)
-        Assert.assertTrue(file.exists())
-        Assert.assertEquals(size.toLong(), file.length())
+        fileHelper.createDeepFileInTarget(deepDirName, fileName, data).also {
+            Assert.assertTrue(it.exists())
+            Assert.assertEquals(
+                data.joinToString(),
+                it.readBytes().joinToString()
+            )
+        }
     }
 
+
+
+    // Создание простого каталога
+
+    @Test
+    fun create_dir_in_source() = run {
+        val dirName = randomName
+        val dir = fileHelper.fileInSource(dirName)
+        fileHelper.createDirInSource(dirName)
+        Assert.assertTrue(dir.isDirectory)
+        Assert.assertTrue(dir.exists())
+    }
+
+    @Test
+    fun create_dir_in_target() = run {
+        val dirName = randomName
+        val dir = fileHelper.fileInTarget(dirName)
+        fileHelper.createDirInTarget(dirName)
+        Assert.assertTrue(dir.isDirectory)
+        Assert.assertTrue(dir.exists())
+    }
+
+
+
+    // Создание глубокого каталога
+
+    @Test
+    fun create_deep_dir_in_source() = run {
+        val deepDirName = randomDeepDirName()
+        fileHelper.createDirInSource(deepDirName).also {
+            Assert.assertTrue(it.exists())
+        }
+    }
+
+    @Test
+    fun create_deep_dir_in_target() = run {
+        val deepDirName = randomDeepDirName()
+        fileHelper.createDirInTarget(deepDirName).also {
+            Assert.assertTrue(it.exists())
+        }
+    }
 
 
 
@@ -113,23 +200,16 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     /**
      * [LocalFileHelper.deleteAllFilesInDir]
      */
-    @Test
-    fun delete_all_files_in_deep_dir() = run {
+    // TODO
 
-        val deepDirName = "1/2/3"
-        val deepDir = fileHelper.dirInTarget(deepDirName)
-        deepDir.mkdirs()
-        Assert.assertTrue(deepDir.exists())
 
-        val nestedFile = File(deepDir, "file1.txt")
-        fileHelper.createFileOfSize(nestedFile)
-        Assert.assertTrue(nestedFile.exists())
-
-        fileHelper.deleteAllFilesInDir(deepDir)
-
-        Assert.assertFalse(nestedFile.exists())
-        Assert.assertTrue(deepDir.exists())
-        Assert.assertEquals(0, fileHelper.listDir(deepDir).size)
+    private fun randomDeepDirName(minDepth: Int = DEEP_DIR_MIN_DEPTH, maxDepth: Int = DEEP_DIR_MAX_DEPTH): String {
+        return buildList {
+            repeat(Random.nextInt(minDepth, maxDepth+1)) {
+                add(randomName)
+            }
+        }.joinToString(CloudWriter.DS)
     }
 
+    private val randomDeepDirName: String = randomDeepDirName()
 }
