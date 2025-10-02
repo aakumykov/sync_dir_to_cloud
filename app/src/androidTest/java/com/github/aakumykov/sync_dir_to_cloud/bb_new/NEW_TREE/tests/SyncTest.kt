@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTa
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert
@@ -16,8 +17,9 @@ class SyncTest : StorageAccessTestCase() {
 
     private val sleepTimeoutMs: Long = 1000
 
-    private val fileHelper = LocalFileHelper()
     private val testFilesConfig = LocalTestFilesConfig
+    private val taskConfig = LocalToLocalTaskConfig()
+    private val fileHelper = LocalFileHelper(taskConfig, testFilesConfig)
 
 
     // TODO: фактически, пока сценарии не нужны, ибо используются в одном месте.

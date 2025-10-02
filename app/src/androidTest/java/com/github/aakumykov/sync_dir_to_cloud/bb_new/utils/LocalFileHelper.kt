@@ -7,8 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConf
 import java.io.File
 
 open class LocalFileHelper(
-    private val taskConfig: TaskConfig = LocalToLocalTaskConfig(),
-    private val filesConfig: TestFilesConfig = LocalTestFilesConfig,
+    private val taskConfig: TaskConfig,
+    private val filesConfig: TestFilesConfig,
 ) {
     // ===============================================================
     //       1. Действия с самими каталогами ИСТОЧНИКА, ПРИЁМНИКА
@@ -31,7 +31,13 @@ open class LocalFileHelper(
     fun listTargetDir(): Array<out File> = listDir(taskConfig.TARGET_DIR)
 
     //
-    // Рекурсивно удаляют каталог источника или приёмника.
+    // Удаляют каталог источника или приёмника.
+    //
+    fun deleteSourceDir() = taskConfig.SOURCE_DIR.delete()
+    fun deleteTargetDir() = taskConfig.TARGET_DIR.delete()
+
+    //
+    // Удаляют содержимое каталогов источника или приёмника.
     //
     fun deleteAllFilesInSource() = deleteAllFilesInDir(taskConfig.SOURCE_DIR)
     fun deleteAllFilesInTarget() = deleteAllFilesInDir(taskConfig.TARGET_DIR)
