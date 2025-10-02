@@ -1,13 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
-import kotlinx.coroutines.test.TestResult
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -20,12 +13,7 @@ import java.io.File
 * Довольно странно из теста проверять часть его самого,
 * но приходится...
 * */
-class LocalFileHelperTopDirsTest : StorageAccessTestCase() {
-
-    private val fileConfig = LocalTestFilesConfig
-    private val taskConfig = LocalToLocalTaskConfig()
-    private val fileHelper = LocalFileHelper(taskConfig, fileConfig)
-
+class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
 
     // TODO: негативное тестирование
 
