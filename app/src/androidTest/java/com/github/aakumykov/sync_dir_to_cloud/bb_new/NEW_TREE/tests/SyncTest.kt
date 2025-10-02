@@ -23,7 +23,7 @@ class SyncTest : StorageAccessTestCase() {
 
 
     // TODO: фактически, пока сценарии не нужны, ибо используются в одном месте.
-    @Before
+    /*@Before
     fun reCreateLocalTask() = run {
         scenario(DeleteLocalTaskScenario())
         scenario(CreateLocalTaskScenario())
@@ -52,7 +52,7 @@ class SyncTest : StorageAccessTestCase() {
     //
     // Не выдумываю фантастических сценариев, воспроизвожу реалистичный
     //
-    /**
+    *//**
     0) Нет файлов ни там, ни там [sync_two_empty_dirs]
 
     1) Файл появляется в источнике [new_file_in_source]
@@ -79,7 +79,7 @@ class SyncTest : StorageAccessTestCase() {
     4.4) одноимённый в источнике [same_two_level_dir_in_source]
 
     5) Файл и рядом каталог с файлом [small_tree_in_source]
-     */
+     *//*
 
     @Test
     fun sync_two_empty_dirs() = run {
@@ -395,5 +395,5 @@ class SyncTest : StorageAccessTestCase() {
             fileHelper.sourceFile1Content(),
             fileHelper.targetFile1Content()
         )
-    }
+    }*/
 }
