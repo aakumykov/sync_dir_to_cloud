@@ -2,53 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.io.File
-
-abstract class LocalFileHelperTestBase() : StorageAccessTestCase() {
-
-    protected val fileConfig = LocalTestFilesConfig
-    protected val taskConfig = LocalToLocalTaskConfig()
-    protected val fileHelper = LocalFileHelper(taskConfig, fileConfig)
-
-    /**
-     * Внимание: работа метода основана на
-     * методах [LocalFileHelperIsDirEmptyTests.isSourceDirEmpty],
-     * [LocalFileHelperIsDirEmptyTests.isTargetDirEmpty], которые
-     * обязаны быть полностью протестированы.
-     */
-    protected fun deleteSourceAndTargetDirs() = run {
-        fileHelper.deleteAllFilesInSource()
-        Assert.assertTrue(fileHelper.isSourceDirEmpty())
-
-        fileHelper.deleteAllFilesInTarget()
-        Assert.assertTrue(fileHelper.isTargetDirEmpty())
-
-
-        fileHelper.deleteSourceDir()
-        Assert.assertFalse(taskConfig.SOURCE_DIR.exists())
-
-        fileHelper.deleteTargetDir()
-        Assert.assertFalse(taskConfig.TARGET_DIR.exists())
-    }
-
-    protected fun createSourceAndTargetDirs() {
-        fileHelper.createSourceDir()
-        Assert.assertTrue(taskConfig.SOURCE_DIR.exists())
-        Assert.assertTrue(fileHelper.isSourceDirExists())
-
-        fileHelper.createTargetDir()
-        Assert.assertTrue(taskConfig.TARGET_DIR.exists())
-        Assert.assertTrue(fileHelper.isTargetDirEmpty())
-    }
-}
 
 /*
 *  Задача теста - убедиться, что методы FileHelper-а
@@ -57,17 +17,31 @@ abstract class LocalFileHelperTestBase() : StorageAccessTestCase() {
 * Довольно странно из теста проверять часть его самого,
 * но приходится...
 * */
-class LocalFileHelperTest : LocalFileHelperTestBase() {
+class LocalFileHelperTest : StorageAccessTestCase() {
+
+    private val fileHelper = LocalFileHelper()
+    private val fileConfig = LocalTestFilesConfig
 
     @Before
     fun prepareSourceAndTargetDirs() = run {
-        createSourceAndTargetDirs()
+        fileHelper.createSourceDir()
+        Assert.assertTrue(fileHelper.isSourceDirExists())
+
+        fileHelper.createTargetDir()
+        Assert.assertTrue(fileHelper.isTargetDirExists())
+
+        fileHelper.deleteAllFilesInSource()
+        Assert.assertTrue(fileHelper.isSourceDirEmpty())
+
+        fileHelper.deleteAllFilesInTarget()
+        Assert.assertTrue(fileHelper.isTargetDirEmpty())
     }
 
-    @After
-    fun removeSourceAndTargetDirs() = run {
-        deleteSourceAndTargetDirs()
-    }
+
+    /*@After
+    fun deleteSourceAndTargetDirs() = run {
+
+    }*/
 
 
     @Test
