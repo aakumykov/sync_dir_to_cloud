@@ -20,6 +20,7 @@ open class LocalFileHelper(
     fun createSourceDir() = taskConfig.SOURCE_DIR.mkdir()
     fun createTargetDir() = taskConfig.TARGET_DIR.mkdir()
 
+
     //
     //  Читает содержимое каталога источника/приёмника.
     //
@@ -33,20 +34,14 @@ open class LocalFileHelper(
      */
     fun listTargetDir(): Array<out File> = listDir(taskConfig.TARGET_DIR)
 
+
     //
     // Удаляют каталог источника или приёмника.
     //
     fun deleteSourceDirRecursively() = taskConfig.SOURCE_DIR.deleteRecursively()
+
     fun deleteTargetDirRecursively() = taskConfig.TARGET_DIR.deleteRecursively()
 
-    //
-    // Удаляют содержимое каталога.
-    //
-    fun deleteAllFilesInDir(dir: File) {
-        if (!dir.isDirectory)
-            throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
-        dir.listFiles()?.forEach { it.deleteRecursively() }
-    }
 
     //
     // Проверяет существование каталога источника/приёмника.
@@ -71,13 +66,13 @@ open class LocalFileHelper(
         return createFileOfSize(fileInSource(name), sizeKb)
     }
 
-    /*private fun createFileInSourceWithContents(fileName: String, fileContents: ByteArray): File {
-        return createFileWithContents(fileInSource(fileName), fileContents)
-    }*/
-
     fun createFileInTarget(fileName: String, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return createFileOfSize(fileInTarget(fileName), sizeKb)
     }
+
+    /*private fun createFileInSourceWithContents(fileName: String, fileContents: ByteArray): File {
+    return createFileWithContents(fileInSource(fileName), fileContents)
+}*/
 
     fun createFileOfSize(file: File, sizeKb: Int = DEFAULT_FILE_SIZE_KB): File {
         return file.apply {
@@ -85,11 +80,11 @@ open class LocalFileHelper(
         }
     }
 
-    /*fun createFileWithContents(file: File, fileContents: ByteArray): File {
+    fun createFileWithContents(file: File, fileContents: ByteArray): File {
         return file.apply {
             writeBytes(fileContents)
         }
-    }*/
+    }
 
 
     fun createDirInSource(dirName: String): File = createDir(taskConfig.SOURCE_PATH, dirName)
@@ -128,6 +123,12 @@ open class LocalFileHelper(
 
     fun deleteDirFromTarget(dirName: String) = dirInTarget(dirName).deleteRecursively()
 
+    fun deleteAllFilesInDir(dir: File) {
+        if (!dir.isDirectory)
+            throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
+        dir.listFiles()?.forEach { it.deleteRecursively() }
+    }
+
 
     //
     // II. Проверка каталогов на пустоту
@@ -144,6 +145,7 @@ open class LocalFileHelper(
     //
     // Вспомогательные методы
     //
+    // TODO: тестировать!
     fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
     fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
 

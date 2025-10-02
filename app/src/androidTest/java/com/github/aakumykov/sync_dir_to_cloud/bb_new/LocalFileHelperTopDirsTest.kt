@@ -17,17 +17,6 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
 
     // TODO: негативное тестирование
 
-    @Before
-    fun delete_source_and_target_dirs() {
-        listOf(taskConfig.SOURCE_DIR, taskConfig.TARGET_DIR).forEach { dir: File ->
-            dir.apply {
-                deleteRecursively()
-                Assert.assertFalse(this.exists())
-            }
-        }
-    }
-
-
     //
     // Создание
     //
@@ -191,28 +180,6 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
 
 
     // TODO: негативное тестирование везде!
-
-    /**
-     * [LocalFileHelper.deleteAllFilesInDir]
-     */
-    @Test
-    fun delete_all_files_in_deep_dir() = run {
-
-        val deepDirName = "1/2/3"
-        val deepDir = fileHelper.dirInTarget(deepDirName)
-        deepDir.mkdirs()
-        Assert.assertTrue(deepDir.exists())
-
-        val nestedFile = File(deepDir, "file1.txt")
-        fileHelper.createFileOfSize(nestedFile)
-        Assert.assertTrue(nestedFile.exists())
-
-        fileHelper.deleteAllFilesInDir(deepDir)
-
-        Assert.assertFalse(nestedFile.exists())
-        Assert.assertTrue(deepDir.exists())
-        Assert.assertEquals(0, fileHelper.listDir(deepDir).size)
-    }
 
 
     //

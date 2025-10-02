@@ -4,10 +4,23 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCas
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
+import org.junit.Assert
+import org.junit.Before
+import java.io.File
 
 abstract class LocalFileHelperTestBase : StorageAccessTestCase() {
 
     protected val fileConfig = LocalTestFilesConfig
     protected val taskConfig = LocalToLocalTaskConfig()
     protected val fileHelper = LocalFileHelper(taskConfig, fileConfig)
+
+    @Before
+    fun delete_source_and_target_dirs() {
+        listOf(taskConfig.SOURCE_DIR, taskConfig.TARGET_DIR).forEach { dir: File ->
+            dir.apply {
+                deleteRecursively()
+                Assert.assertFalse(this.exists())
+            }
+        }
+    }
 }
