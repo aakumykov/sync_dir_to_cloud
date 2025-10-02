@@ -2,9 +2,11 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -19,33 +21,32 @@ import java.io.File
 * */
 class LocalFileHelperTest : StorageAccessTestCase() {
 
-    private val fileHelper = LocalFileHelper()
     private val fileConfig = LocalTestFilesConfig
+    private val taskConfig = LocalToLocalTaskConfig()
+    private val fileHelper = LocalFileHelper(taskConfig, fileConfig)
 
     @Before
-    fun prepareSourceAndTargetDirs() = run {
-        fileHelper.createSourceDir()
-        Assert.assertTrue(fileHelper.isSourceDirExists())
-
-        fileHelper.createTargetDir()
-        Assert.assertTrue(fileHelper.isTargetDirExists())
-
-        fileHelper.deleteAllFilesInSource()
-        Assert.assertTrue(fileHelper.isSourceDirEmpty())
-
-        fileHelper.deleteAllFilesInTarget()
-        Assert.assertTrue(fileHelper.isTargetDirEmpty())
+    fun createSourceAndTargetDirs() = run {
+        Assert.assertFalse(taskConfig.SOURCE_DIR.exists())
+        Assert.assertFalse(taskConfig.TARGET_DIR.exists())
+         fileHelper.createSourceDir()
+         fileHelper.createTargetDir()
+        Assert.assertTrue(taskConfig.SOURCE_DIR.exists())
+        Assert.assertTrue(taskConfig.TARGET_DIR.exists())
     }
 
-
-    /*@After
+    @After
     fun deleteSourceAndTargetDirs() = run {
-
-    }*/
+        fileHelper.deleteSourceDirRecursively()
+        fileHelper.deleteTargetDirRecursively()
+        Assert.assertFalse(taskConfig.SOURCE_DIR.exists())
+        Assert.assertFalse(taskConfig.TARGET_DIR.exists())
+    }
 
 
     @Test
     fun sourceFile1() = run {
+
         val fileName = fileConfig.FILE_1_NAME
         val file = fileHelper.fileInSource(fileName)
 
