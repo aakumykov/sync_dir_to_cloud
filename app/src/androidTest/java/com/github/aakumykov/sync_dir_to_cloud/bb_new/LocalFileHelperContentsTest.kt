@@ -16,7 +16,6 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
         const val DEEP_DIR_MIN_DEPTH = 2
         const val DEEP_DIR_MAX_DEPTH = 10
     }
-    private val randomSize get() = Random.nextInt(1,101)
 
     // TODO: негативное тестирование (НО НУЖНО ЛИ?)
 
@@ -467,7 +466,93 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
     // Файлов
 
-//    @Test
+    @Test
+    fun delete_simple_file_from_source() = run {
+        val fileName = randomName
+
+        fileHelper.createSourceDir()
+
+        fileHelper.createFileInSource(fileName).also {
+            Assert.assertTrue(it.exists()) }
+
+        fileHelper.deleteFileFromSource(fileName).also {
+            Assert.assertFalse(it.exists()) }
+    }
+
+    @Test
+    fun delete_simple_file_from_target() = run {
+        val fileName = randomName
+
+        fileHelper.createTargetDir()
+
+        fileHelper.createFileInTarget(fileName).also {
+            Assert.assertTrue(it.exists()) }
+
+        fileHelper.deleteFileFromTarget(fileName).also {
+            Assert.assertFalse(it.exists()) }
+    }
+
+
+    @Test
+    fun delete_deep_file_from_source() = run {
+        val fileName = randomName
+        val deepDirName = randomDeepDirName
+
+        fileHelper.createSourceDir()
+
+        fileHelper.createDeepFileInSource(deepDirName, fileName).also {
+            Assert.assertTrue(it.exists()) }
+
+        fileHelper.deleteDeepFileFromSource(deepDirName, fileName).also {
+            Assert.assertFalse(it.exists()) }
+    }
+
+    @Test
+    fun delete_deep_file_from_target() = run {
+        val fileName = randomName
+        val deepDirName = randomDeepDirName
+
+        fileHelper.createTargetDir()
+
+        fileHelper.createDeepFileInTarget(deepDirName, fileName).also {
+            Assert.assertTrue(it.exists()) }
+
+        fileHelper.deleteDeepFileFromTarget(deepDirName, fileName).also {
+            Assert.assertFalse(it.exists()) }
+    }
+
+
+    @Test
+    fun throws_exception_on_delete_simple_file_from_source() = run {
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.deleteFileFromSource(randomName)
+        }
+    }
+
+    @Test
+    fun throws_exception_on_delete_simple_file_from_target() = run {
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.deleteFileFromTarget(randomName)
+        }
+    }
+
+
+    @Test
+    fun throws_exception_on_delete_deep_file_from_source() = run {
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.deleteDeepFileFromSource(randomDeepDirName, randomName)
+        }
+    }
+
+    @Test
+    fun throws_exception_on_delete_deep_file_from_target() = run {
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.deleteDeepFileFromTarget(randomDeepDirName, randomName)
+        }
+    }
+
+
+    // Удаление неудаляемых файлов пока не проверяю...
 
 
 }

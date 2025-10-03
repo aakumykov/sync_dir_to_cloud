@@ -3,6 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.TestFilesConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 
 open class LocalFileHelper(
     private val taskConfig: TaskConfig,
@@ -171,11 +173,30 @@ open class LocalFileHelper(
 
 
     // Delete
-    fun deleteFileFromSource(fileName: String): File = fileInSource(fileName).apply { delete() }
 
-    fun deleteFileFromTarget(fileName: String): File = fileInTarget(fileName).apply { delete() }
+    @Throws(IOException::class)
+    fun deleteFileFromSource(fileName: String): File = fileInSource(fileName).apply {
+        if (this.exists()) delete()
+        else throw FileNotFoundException("'${this.absolutePath}'")
+    }
 
-//    fun deleteFileFromSource(dirName: String, fileName: String): File =
+    @Throws(IOException::class)
+    fun deleteFileFromTarget(fileName: String): File = fileInTarget(fileName).apply {
+        if (this.exists()) delete()
+        else throw FileNotFoundException("'${this.absolutePath}'")
+    }
+
+    @Throws(IOException::class)
+    fun deleteDeepFileFromSource(dirName: String, fileName: String): File = deepFileInSource(dirName, fileName).apply {
+        if (this.exists()) delete()
+        else throw FileNotFoundException("'${this.absolutePath}'")
+    }
+
+    @Throws(IOException::class)
+    fun deleteDeepFileFromTarget(dirName: String, fileName: String): File = deepFileInTarget(dirName, fileName).apply {
+        if (this.exists()) delete()
+        else throw FileNotFoundException("'${this.absolutePath}'")
+    }
 
 
     fun deleteDirFromSource(dirName: String) = dirInSource(dirName).deleteRecursively()
