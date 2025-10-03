@@ -175,33 +175,40 @@ open class LocalFileHelper(
     // Delete
 
     @Throws(IOException::class)
-    fun deleteFileFromSource(fileName: String): File = fileInSource(fileName).apply {
-        if (this.exists()) delete()
-        else throw FileNotFoundException("'${this.absolutePath}'")
+    fun deleteFileFromSource(fileName: String): File = deleteFile(fileInSource(fileName))
+
+    @Throws(IOException::class)
+    fun deleteFileFromTarget(fileName: String): File = deleteFile(fileInTarget(fileName))
+
+    @Throws(IOException::class)
+    fun deleteDeepFileFromSource(dirName: String, fileName: String): File = deleteFile(deepFileInSource(dirName, fileName))
+
+    @Throws(IOException::class)
+    fun deleteDeepFileFromTarget(dirName: String, fileName: String): File = deleteFile(deepFileInTarget(dirName, fileName))
+
+    @Throws(IOException::class)
+    private fun deleteFile(file: File): File {
+        return if (!file.delete()) throw IOException("'${file.absolutePath}'")
+        else file
+    }
+
+
+    @Throws(IOException::class)
+    fun deleteDirFromSource(dirName: String): File {
+        return dirInSource(dirName).let {
+            if (!it.delete()) throw IOException("Error deleting '${it.absolutePath}'")
+            else it
+        }
     }
 
     @Throws(IOException::class)
-    fun deleteFileFromTarget(fileName: String): File = fileInTarget(fileName).apply {
-        if (this.exists()) delete()
-        else throw FileNotFoundException("'${this.absolutePath}'")
+    fun deleteDirFromTarget(dirName: String): File {
+        return dirInTarget(dirName).let {
+            if (!it.delete()) throw IOException("Error deleting '${it.absolutePath}'")
+            else it
+        }
     }
 
-    @Throws(IOException::class)
-    fun deleteDeepFileFromSource(dirName: String, fileName: String): File = deepFileInSource(dirName, fileName).apply {
-        if (this.exists()) delete()
-        else throw FileNotFoundException("'${this.absolutePath}'")
-    }
-
-    @Throws(IOException::class)
-    fun deleteDeepFileFromTarget(dirName: String, fileName: String): File = deepFileInTarget(dirName, fileName).apply {
-        if (this.exists()) delete()
-        else throw FileNotFoundException("'${this.absolutePath}'")
-    }
-
-
-    fun deleteDirFromSource(dirName: String) = dirInSource(dirName).deleteRecursively()
-
-    fun deleteDirFromTarget(dirName: String) = dirInTarget(dirName).deleteRecursively()
 
     @Deprecated("убрать")
     fun deleteAllFilesInDir(dir: File) {

@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomDeepDirName
@@ -7,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import kotlin.random.Random
 
@@ -15,10 +17,17 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     companion object {
         const val DEEP_DIR_MIN_DEPTH = 2
         const val DEEP_DIR_MAX_DEPTH = 10
+
+        const val READ_ONLY_FILE = "/proc/cpuinfo"
+
+        const val READ_ONLY_DEEP_DIR = "proc"
+        const val READ_ONLY_DEEP_FILE_NAME = "cpuinfo"
     }
 
     // TODO: негативное тестирование (НО НУЖНО ЛИ?)
 
+    private val rootDirTaskConfig = LocalToLocalTaskConfig(File("/"),File("/"))
+    private val rootFileHelper = LocalFileHelper(rootDirTaskConfig, fileConfig)
 
     //
     // Вспомогательные методы
@@ -552,7 +561,70 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     }
 
 
-    // Удаление неудаляемых файлов пока не проверяю...
+    @Test
+    fun throws_exception_deleting_read_only_file() = run {
+
+        Assert.assertThrows(IOException::class.java) {
+            rootFileHelper.deleteFileFromSource(READ_ONLY_FILE)
+        }
+
+        Assert.assertThrows(IOException::class.java) {
+            rootFileHelper.deleteFileFromTarget(READ_ONLY_FILE)
+        }
+    }
+
+    @Test
+    fun throws_exception_deleting_deep_read_only_file() = run {
+
+        Assert.assertThrows(IOException::class.java) {
+            rootFileHelper.deleteDeepFileFromSource(READ_ONLY_DEEP_DIR, READ_ONLY_DEEP_FILE_NAME)
+        }
+
+        Assert.assertThrows(IOException::class.java) {
+            rootFileHelper.deleteDeepFileFromTarget(READ_ONLY_DEEP_DIR, READ_ONLY_DEEP_FILE_NAME)
+        }
+    }
+
+
+    // Каталогов
+
+    @Test
+    fun delete_dir_from_source() = run {
+        fileHelper.createSourceDir()
+        val dirName = randomName
+        fileHelper.createDirInSource(dirName).also { Assert.assertTrue(it.exists()) }
+        fileHelper.deleteDirFromSource(dirName).also { Assert.assertFalse(it.exists()) }
+    }
+
+    @Test
+    fun delete_dir_from_target() = run {
+        fileHelper.createTargetDir()
+        val dirName = randomName
+        fileHelper.createDirInTarget(dirName).also { Assert.assertTrue(it.exists()) }
+        fileHelper.deleteDirFromTarget(dirName).also { Assert.assertFalse(it.exists()) }
+    }
+
+    @Test
+    fun throws_exception_deleting_unexistent_dir() = run {
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.deleteDirFromSource(randomName)
+        }
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.deleteDirFromTarget(randomName)
+        }
+    }
+
+
+    @Test
+    fun throws_exception_deleting_read_only_dir() = run {
+        Assert.assertThrows(IOException::class.java) {
+            rootFileHelper.deleteDirFromSource(READ_ONLY_DEEP_DIR)
+        }
+        Assert.assertThrows(IOException::class.java) {
+            rootFileHelper.deleteDirFromTarget(READ_ONLY_DEEP_DIR)
+        }
+    }
+
 
 
 }
