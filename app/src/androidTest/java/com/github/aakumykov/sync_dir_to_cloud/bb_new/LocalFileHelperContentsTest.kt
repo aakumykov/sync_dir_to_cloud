@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.io.IOException
 import kotlin.random.Random
 
 class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
@@ -19,11 +20,12 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
     // TODO: негативное тестирование (НО НУЖНО ЛИ?)
 
+
     //
     // Вспомогательные методы
     //
 
-    // Файлы
+    // Дая файлов
 
     @Test
     fun file_in_source() = run {
@@ -50,7 +52,7 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     }
 
 
-    // Каталоги
+    // Для каталогов
 
     @Test
     fun dir_in_source() = run {
@@ -152,8 +154,11 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     }
 
 
+    //
+    // Создание каталога
+    //
 
-    // Создание простого каталога
+    // Простого каталога
 
     @Test
     fun create_dir_in_source() = run {
@@ -175,8 +180,11 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
 
 
-    // Создание глубокого каталога
+    // Глубокого каталога
 
+    /**
+     * [LocalFileHelper.createDirInSource]
+     */
     @Test
     fun create_deep_dir_in_source() = run {
         val deepDirName = randomDeepDirName()
@@ -185,6 +193,9 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
         }
     }
 
+    /**
+     * [LocalFileHelper.createDirInTarget]
+     */
     @Test
     fun create_deep_dir_in_target() = run {
         val deepDirName = randomDeepDirName()
@@ -193,6 +204,47 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
         }
     }
 
+
+    //
+    // Чтение
+    //
+
+    // Файлов
+    @Test
+    fun read_file_contents_from_source() = run {
+        fileHelper.createSourceDir()
+        val data = randomBytes
+        fileHelper.createFileInSource(randomName, data).also {
+            Assert.assertEquals(
+                data.joinToString(),
+                fileHelper.getFileContents(it).joinToString()
+            )
+        }
+    }
+
+    @Test
+    fun read_file_contents_from_target() = run {
+        fileHelper.createTargetDir()
+        val data = randomBytes
+        fileHelper.createFileInTarget(randomName, data).also {
+            Assert.assertEquals(
+                data.joinToString(),
+                fileHelper.getFileContents(it).joinToString()
+            )
+        }
+    }
+
+    @Test
+    fun throws_exception_on_read_unexistent_file_from_target() = run {
+        val fileName = randomName
+        val file = fileHelper.createFileInTarget(fileName).apply {
+            delete()
+            Assert.assertFalse(this.exists())
+        }
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.getFileContents(file)
+        }
+    }
 
 
 

@@ -126,7 +126,7 @@ open class LocalFileHelper(
     // Чтение
     //
 
-    fun fileContents(file: File): String = file.readBytes().joinToString("")
+    fun getFileContents(file: File): ByteArray = file.readBytes()
 
     /**
      * @throws RuntimeException при невозможности прочесть каталог по какой-либо причине.
