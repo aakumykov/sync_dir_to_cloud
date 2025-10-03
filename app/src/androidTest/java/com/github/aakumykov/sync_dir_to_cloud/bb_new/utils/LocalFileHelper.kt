@@ -14,9 +14,14 @@ open class LocalFileHelper(
     fun fileInSource(fileName: String): File = File(taskConfig.SOURCE_PATH, fileName)
     fun fileInTarget(fileName: String): File = File(taskConfig.TARGET_PATH, fileName)
 
+    fun deepFileInSource(dirName: String, fileName: String): File = File(fileInSource(dirName), fileName)
+    fun deepFileInTarget(dirName: String, fileName: String): File = File(fileInTarget(dirName), fileName)
+
     fun dirInSource(dirName: String): File = File(taskConfig.SOURCE_PATH, dirName)
     fun dirInTarget(dirName: String): File = File(taskConfig.TARGET_PATH, dirName)
 
+    fun deepDirInSource(parentDirName: String, childDirName: String): File = File(dirInSource(parentDirName), childDirName)
+    fun deepDirInTarget(parentDirName: String, childDirName: String): File = File(dirInTarget(parentDirName), childDirName)
 
 
     // ===============================================================
@@ -169,6 +174,9 @@ open class LocalFileHelper(
     fun deleteFileFromSource(fileName: String): File = fileInSource(fileName).apply { delete() }
 
     fun deleteFileFromTarget(fileName: String): File = fileInTarget(fileName).apply { delete() }
+
+//    fun deleteFileFromSource(dirName: String, fileName: String): File =
+
 
     fun deleteDirFromSource(dirName: String) = dirInSource(dirName).deleteRecursively()
 

@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomDeepDirName
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
@@ -51,6 +51,34 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
         }
     }
 
+    @Test
+    fun deep_file_in_source() = run {
+        val fileName = randomName
+        val dirName = randomDeepDirName
+        val refFile = File(File(taskConfig.SOURCE_DIR,dirName), fileName)
+
+        fileHelper.deepFileInSource(dirName, fileName).also {
+            Assert.assertEquals(
+                refFile.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
+
+    @Test
+    fun deep_file_in_target() = run {
+        val fileName = randomName
+        val dirName = randomDeepDirName
+        val refFile = File(File(taskConfig.TARGET_DIR,dirName), fileName)
+
+        fileHelper.deepFileInTarget(dirName, fileName).also {
+            Assert.assertEquals(
+                refFile.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
+
 
     // Для каталогов
 
@@ -78,7 +106,37 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
         }
     }
 
+    @Test
+    fun deep_dir_in_source() = run {
+        val childDirName = randomName
+        val parentDirName = randomDeepDirName
 
+        val parentDir = File(taskConfig.SOURCE_DIR, parentDirName)
+        val refDir = File(parentDir, childDirName)
+
+        fileHelper.deepDirInSource(parentDirName, childDirName).also {
+            Assert.assertEquals(
+                refDir.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
+
+    @Test
+    fun deep_dir_in_target() = run {
+        val childDirName = randomName
+        val parentDirName = randomDeepDirName
+
+        val parentDir = File(taskConfig.TARGET_DIR, parentDirName)
+        val refDir = File(parentDir, childDirName)
+
+        fileHelper.deepDirInTarget(parentDirName, childDirName).also {
+            Assert.assertEquals(
+                refDir.absolutePath,
+                it.absolutePath
+            )
+        }
+    }
 
     //
     // Создание файла
@@ -355,7 +413,7 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     }
 
 
-    // Обновление
+    // Обновление файлов
 
     /**
      * [LocalFileHelper.modifyFileInSource]
@@ -403,20 +461,13 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     }
 
 
+    //
+    // Удаление
+    //
 
-    /**
-     * [LocalFileHelper.deleteAllFilesInDir]
-     */
-    // TODO
+    // Файлов
+
+//    @Test
 
 
-    private fun randomDeepDirName(minDepth: Int = DEEP_DIR_MIN_DEPTH, maxDepth: Int = DEEP_DIR_MAX_DEPTH): String {
-        return buildList {
-            repeat(Random.nextInt(minDepth, maxDepth+1)) {
-                add(randomName)
-            }
-        }.joinToString(CloudWriter.DS)
-    }
-
-    private val randomDeepDirName: String = randomDeepDirName()
 }
