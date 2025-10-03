@@ -355,6 +355,54 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     }
 
 
+    // Обновление
+
+    /**
+     * [LocalFileHelper.modifyFileInSource]
+     * [LocalFileHelper.modifyFileInTarget]
+     */
+
+    @Test
+    fun modify_file_in_source() = run {
+        val fileName = randomName
+        val dirName = randomDeepDirName
+        val data = randomBytes
+
+        fileHelper.createSourceDir().also { Assert.assertTrue(it) }
+
+        fileHelper.createDeepFileInSource(dirName, fileName, data).also {
+            Assert.assertTrue(it.exists()) }
+
+        fileHelper.modifyFileInSource(dirName, fileName).also {
+            Assert.assertTrue(it.exists())
+            Assert.assertNotEquals(
+                data.joinToString(),
+                it.readBytes().joinToString()
+            )
+        }
+    }
+
+    @Test
+    fun modify_file_in_target() = run {
+        val fileName = randomName
+        val dirName = randomDeepDirName
+        val data = randomBytes
+
+        fileHelper.createTargetDir().also { Assert.assertTrue(it) }
+
+        fileHelper.createDeepFileInTarget(dirName, fileName, data).also {
+            Assert.assertTrue(it.exists()) }
+
+        fileHelper.modifyFileInTarget(dirName, fileName).also {
+            Assert.assertTrue(it.exists())
+            Assert.assertNotEquals(
+                data.joinToString(),
+                it.readBytes().joinToString()
+            )
+        }
+    }
+
+
 
     /**
      * [LocalFileHelper.deleteAllFilesInDir]

@@ -160,9 +160,9 @@ open class LocalFileHelper(
 
 
     // Update
-    fun modifyFileInSource(fileName: String) = createFileInSource(fileName)
+    fun modifyFileInSource(dirName: String, fileName: String): File = createDeepFileInSource(dirName, fileName)
 
-    fun modifyFileInTarget(fileName: String) = createFileInTarget(fileName)
+    fun modifyFileInTarget(dirName: String, fileName: String): File = createDeepFileInTarget(dirName, fileName)
 
 
     // Delete
