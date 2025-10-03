@@ -43,6 +43,13 @@ open class LocalFileHelper(
      */
     fun listTargetDir(): Array<out File> = listDir(taskConfig.TARGET_DIR)
 
+    /**
+     * @throws RuntimeException при невозможности прочесть каталог по какой-либо причине.
+     */
+    private fun listDir(dir: File): Array<out File> {
+        return dir.listFiles() ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
+    }
+
 
     //
     // Удаляют каталог источника или приёмника.
@@ -93,11 +100,19 @@ open class LocalFileHelper(
 
     // Файл глубокий
 
+    /**
+     * Создаёт файл в указанном "глубоком" каталоге в ИСТОЧЕНИКЕ,
+     * создавая попутно и сам этот каталог.
+     */
     fun createDeepFileInSource(deepDirName: String, fileName: String, fileContents: ByteArray = randomBytes): File {
         createDirInSource(deepDirName)
         return createDeepFileWithContents(fileInSource(deepDirName), fileName, fileContents)
     }
 
+    /**
+     * Создаёт файл в указанном "глубоком" каталоге в ПРИЁМНИКЕ,
+     * создавая попутно и сам этот каталог.
+     */
     fun createDeepFileInTarget(deepDirName: String, fileName: String, fileContents: ByteArray = randomBytes): File {
         createDirInTarget(deepDirName)
         return createDeepFileWithContents(fileInTarget(deepDirName), fileName, fileContents)
@@ -126,13 +141,21 @@ open class LocalFileHelper(
     // Чтение
     //
 
+    // Файла
     fun getFileContents(file: File): ByteArray = file.readBytes()
 
-    /**
-     * @throws RuntimeException при невозможности прочесть каталог по какой-либо причине.
-     */
-    fun listDir(dir: File): Array<out File> {
-        return dir.listFiles() ?: throw RuntimeException("Cannot list '${dir.absolutePath}'")
+
+    // Каталога
+    fun listDirInSource(dirName: String): Array<out File> {
+        return dirInSource(dirName).let {
+            it.listFiles() ?: throw RuntimeException("Cannot list '${it.absolutePath}'")
+        }
+    }
+
+    fun listDirInTarget(dirName: String): Array<out File> {
+        return dirInTarget(dirName).let {
+            it.listFiles() ?: throw RuntimeException("Cannot list '${it.absolutePath}'")
+        }
     }
 
 

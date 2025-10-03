@@ -210,6 +210,11 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     //
 
     // Файлов
+
+    /**
+     * [LocalFileHelper.getFileContents]
+     */
+
     @Test
     fun read_file_contents_from_source() = run {
         fileHelper.createSourceDir()
@@ -234,18 +239,120 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
         }
     }
 
+
     @Test
-    fun throws_exception_on_read_unexistent_file_from_target() = run {
-        val fileName = randomName
-        val file = fileHelper.createFileInTarget(fileName).apply {
+    fun throws_exception_on_read_unexistent_file_from_source() = run {
+
+        fileHelper.createSourceDir()
+
+        val file = fileHelper.createFileInSource(randomName).apply {
+            Assert.assertTrue(this.exists())
             delete()
             Assert.assertFalse(this.exists())
         }
+
         Assert.assertThrows(IOException::class.java) {
             fileHelper.getFileContents(file)
         }
     }
 
+    @Test
+    fun throws_exception_on_read_unexistent_file_from_target() = run {
+
+        fileHelper.createTargetDir()
+
+        val file = fileHelper.createFileInTarget(randomName).apply {
+            Assert.assertTrue(this.exists())
+            delete()
+            Assert.assertFalse(this.exists())
+        }
+
+        Assert.assertThrows(IOException::class.java) {
+            fileHelper.getFileContents(file)
+        }
+    }
+
+
+    // Каталогов
+
+    /**
+     * [LocalFileHelper.listDirInSource]
+     * [LocalFileHelper.listDirInTarget]
+     */
+
+    @Test
+    fun list_empty_dir_in_source() = run {
+        val deepDirName = randomDeepDirName
+
+        fileHelper.createSourceDir()
+
+        fileHelper.createDirInSource(deepDirName).also {
+            Assert.assertTrue(it.exists())
+        }
+
+        fileHelper.listDirInSource(deepDirName).also { list ->
+            Assert.assertTrue(list.isEmpty())
+            Assert.assertEquals(0, list.size)
+        }
+    }
+
+    @Test
+    fun list_empty_dir_in_target() = run {
+        val deepDirName = randomDeepDirName
+
+        fileHelper.createTargetDir()
+
+        fileHelper.createDirInTarget(deepDirName).also {
+            Assert.assertTrue(it.exists())
+        }
+
+        fileHelper.listDirInTarget(deepDirName).also { list ->
+            Assert.assertTrue(list.isEmpty())
+            Assert.assertEquals(0, list.size)
+        }
+    }
+
+
+    @Test
+    fun list_non_empty_dir_in_source() = run {
+        val deepDirName = randomDeepDirName
+
+        fileHelper.createDeepFileInSource(deepDirName, randomName).also {
+            Assert.assertTrue(it.exists())
+        }
+
+        fileHelper.listDirInSource(deepDirName).also {
+            Assert.assertEquals(1, it.size)
+        }
+    }
+
+    @Test
+    fun list_non_empty_dir_in_target() = run {
+        val deepDirName = randomDeepDirName
+
+        fileHelper.createDeepFileInTarget(deepDirName, randomName).also {
+            Assert.assertTrue(it.exists())
+        }
+
+        fileHelper.listDirInTarget(deepDirName).also {
+            Assert.assertEquals(1, it.size)
+        }
+    }
+
+
+    @Test
+    fun throws_exception_listing_unexistent_dir_in_source() = run {
+        Assert.assertThrows(RuntimeException::class.java) {
+            fileHelper.listDirInSource(randomDeepDirName())
+        }
+    }
+
+    @Test
+    fun throws_exception_listing_unexistent_dir_in_target() = run {
+        Assert.assertThrows(RuntimeException::class.java) {
+            fileHelper.listDirInTarget(randomDeepDirName())
+        }
+    }
 
 
 
