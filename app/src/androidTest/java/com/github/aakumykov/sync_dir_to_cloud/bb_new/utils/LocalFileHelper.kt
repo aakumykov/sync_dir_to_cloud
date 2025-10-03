@@ -1,15 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.TestFilesConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 
-open class LocalFileHelper(
-    private val taskConfig: TaskConfig,
-    private val filesConfig: TestFilesConfig,
-) {
+open class LocalFileHelper(private val taskConfig: TaskConfig) {
+
     // ===============================================================
     //       0. Вспомогательные методы
     // ===============================================================
@@ -215,22 +211,5 @@ open class LocalFileHelper(
         if (!dir.isDirectory)
             throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
         dir.listFiles()?.forEach { it.deleteRecursively() }
-    }
-
-
-    //
-    // II. Проверка каталогов на пустоту
-    //
-    fun isDirInSourceEmpty(dirName: String): Boolean {
-        return dirInSource(dirName).list()?.isEmpty() ?: false
-    }
-
-    fun isDirInTargetEmpty(dirName: String): Boolean {
-        return dirInTarget(dirName).list()?.isEmpty() ?: false
-    }
-
-
-    companion object {
-        const val DEFAULT_FILE_SIZE_KB = 10
     }
 }

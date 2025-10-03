@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
 
@@ -43,7 +44,7 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
         fileHelper.createSourceDir()
         Assert.assertEquals(0, fileHelper.listSourceDir().size)
 
-        fileHelper.createFileInSource(fileConfig.FILE_1_NAME)
+        fileHelper.createFileInSource(randomName)
         Assert.assertEquals(1, fileHelper.listSourceDir().size)
     }
 
@@ -55,7 +56,7 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
         fileHelper.createTargetDir()
         Assert.assertEquals(0, fileHelper.listTargetDir().size)
 
-        fileHelper.createFileInTarget(fileConfig.FILE_1_NAME)
+        fileHelper.createFileInTarget(randomName)
         Assert.assertEquals(1, fileHelper.listTargetDir().size)
     }
 
@@ -114,7 +115,7 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
     fun delete_source_dir_with_contents() = run {
         fileHelper.createSourceDir()
 
-        val fileName = fileConfig.FILE_1_NAME
+        val fileName = randomName
         val nestedFile = fileHelper.fileInSource(fileName)
 
         fileHelper.createFileInSource(fileName)
@@ -133,7 +134,7 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
     fun delete_target_dir_with_contents() = run {
         fileHelper.createTargetDir()
 
-        val fileName = fileConfig.FILE_1_NAME
+        val fileName = randomName
         val nestedFile = fileHelper.fileInTarget(fileName)
 
         fileHelper.createFileInTarget(fileName)
@@ -152,8 +153,8 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
     fun delete_all_files_in_source_dir() = run {
         fileHelper.createSourceDir()
 
-        fileHelper.createDirInSource(fileConfig.DIR_1_NAME)
-        fileHelper.createFileInSource(fileConfig.FILE_1_NAME)
+        fileHelper.createDirInSource(randomName)
+        fileHelper.createFileInSource(randomName)
         Assert.assertEquals(2, fileHelper.listSourceDir().size)
 
         fileHelper.deleteAllFilesInDir(taskConfig.SOURCE_DIR)
@@ -168,8 +169,8 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
     fun delete_all_files_in_target_dir() = run {
         fileHelper.createTargetDir()
 
-        fileHelper.createDirInTarget(fileConfig.DIR_1_NAME)
-        fileHelper.createFileInTarget(fileConfig.FILE_1_NAME)
+        fileHelper.createDirInTarget(randomName)
+        fileHelper.createFileInTarget(randomName)
         Assert.assertEquals(2, fileHelper.listTargetDir().size)
 
         fileHelper.deleteAllFilesInDir(taskConfig.TARGET_DIR)

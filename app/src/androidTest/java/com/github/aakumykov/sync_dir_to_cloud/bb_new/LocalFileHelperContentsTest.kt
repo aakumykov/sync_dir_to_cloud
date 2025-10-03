@@ -8,9 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
-import kotlin.random.Random
 
 class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
@@ -26,8 +24,9 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
     // TODO: негативное тестирование (НО НУЖНО ЛИ?)
 
-    private val rootDirTaskConfig = LocalToLocalTaskConfig(File("/"),File("/"))
-    private val rootFileHelper = LocalFileHelper(rootDirTaskConfig, fileConfig)
+    private val rootFileHelper = LocalFileHelper(
+        LocalToLocalTaskConfig(File("/"),File("/"))
+    )
 
     //
     // Вспомогательные методы
