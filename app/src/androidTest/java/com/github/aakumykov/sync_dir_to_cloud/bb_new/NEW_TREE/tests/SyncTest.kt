@@ -1,17 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.file_config.LocalTestFilesConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
-import java.io.File
 
 class SyncTest : StorageAccessTestCase() {
 
@@ -19,7 +11,7 @@ class SyncTest : StorageAccessTestCase() {
 
     private val testFilesConfig = LocalTestFilesConfig
     private val taskConfig = LocalToLocalTaskConfig()
-    private val fileHelper = LocalFileHelper(taskConfig, testFilesConfig)
+    private val fileHelper = LocalFileHelper(taskConfig)
 
 
     // TODO: фактически, пока сценарии не нужны, ибо используются в одном месте.
