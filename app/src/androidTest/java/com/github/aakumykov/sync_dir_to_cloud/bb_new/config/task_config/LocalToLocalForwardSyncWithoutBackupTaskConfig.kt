@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultSourceDir
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultTargetDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultLocalSourceDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultLocalTargetDir
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.syncTaskWithMode
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -9,9 +9,9 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
-class LocalToLocalTaskConfig(
-    sourceDir: File = defaultSourceDir,
-    targetDir: File = defaultTargetDir
+class LocalToLocalForwardSyncWithoutBackupTaskConfig(
+    sourceDir: File = defaultLocalSourceDir,
+    targetDir: File = defaultLocalTargetDir
 ) : TaskConfig {
 
     override val TASK_ID = "taskId1"
@@ -50,4 +50,7 @@ class LocalToLocalTaskConfig(
         authToken = SOURCE_AUTH_TOKEN,
         storageType = SOURCE_STORAGE_TYPE
     )
+
+    override val TARGET_AUTH: CloudAuth
+        get() = SOURCE_AUTH
 }

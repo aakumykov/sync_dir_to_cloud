@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalForwardSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomDeepDirName
@@ -25,125 +25,9 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     // TODO: негативное тестирование (НО НУЖНО ЛИ?)
 
     private val rootFileHelper = LocalFileHelper(
-        LocalToLocalTaskConfig(File("/"),File("/"))
+        LocalToLocalForwardSyncWithoutBackupTaskConfig(File("/"),File("/"))
     )
 
-    //
-    // Вспомогательные методы
-    //
-
-    // Дая файлов
-
-    @Test
-    fun file_in_source() = run {
-        val fileName = randomName
-        val refFile = File(taskConfig.SOURCE_DIR, fileName)
-        fileHelper.fileInSource(fileName).also {
-            Assert.assertEquals(
-                refFile.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
-
-    @Test
-    fun file_in_target() = run {
-        val fileName = randomName
-        val refFile = File(taskConfig.TARGET_DIR, fileName)
-        fileHelper.fileInTarget(fileName).also {
-            Assert.assertEquals(
-                refFile.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
-
-    @Test
-    fun deep_file_in_source() = run {
-        val fileName = randomName
-        val dirName = randomDeepDirName
-        val refFile = File(File(taskConfig.SOURCE_DIR,dirName), fileName)
-
-        fileHelper.deepFileInSource(dirName, fileName).also {
-            Assert.assertEquals(
-                refFile.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
-
-    @Test
-    fun deep_file_in_target() = run {
-        val fileName = randomName
-        val dirName = randomDeepDirName
-        val refFile = File(File(taskConfig.TARGET_DIR,dirName), fileName)
-
-        fileHelper.deepFileInTarget(dirName, fileName).also {
-            Assert.assertEquals(
-                refFile.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
-
-
-    // Для каталогов
-
-    @Test
-    fun dir_in_source() = run {
-        val dirName = randomName
-        val refDir = File(taskConfig.SOURCE_DIR, dirName)
-        fileHelper.dirInSource(dirName).also {
-            Assert.assertEquals(
-                refDir.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
-
-    @Test
-    fun dir_in_target() = run {
-        val dirName = randomName
-        val refDir = File(taskConfig.TARGET_DIR, dirName)
-        fileHelper.dirInTarget(dirName).also {
-            Assert.assertEquals(
-                refDir.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
-
-    @Test
-    fun deep_dir_in_source() = run {
-        val childDirName = randomName
-        val parentDirName = randomDeepDirName
-
-        val parentDir = File(taskConfig.SOURCE_DIR, parentDirName)
-        val refDir = File(parentDir, childDirName)
-
-        fileHelper.deepDirInSource(parentDirName, childDirName).also {
-            Assert.assertEquals(
-                refDir.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
-
-    @Test
-    fun deep_dir_in_target() = run {
-        val childDirName = randomName
-        val parentDirName = randomDeepDirName
-
-        val parentDir = File(taskConfig.TARGET_DIR, parentDirName)
-        val refDir = File(parentDir, childDirName)
-
-        fileHelper.deepDirInTarget(parentDirName, childDirName).also {
-            Assert.assertEquals(
-                refDir.absolutePath,
-                it.absolutePath
-            )
-        }
-    }
 
     //
     // Создание файла
@@ -227,20 +111,20 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
     @Test
     fun create_dir_in_source() = run {
-        val dirName = randomName
-        val dir = fileHelper.fileInSource(dirName)
-        fileHelper.createDirInSource(dirName)
-        Assert.assertTrue(dir.isDirectory)
-        Assert.assertTrue(dir.exists())
+        fileHelper.createDirInSource(randomName).also {
+            Assert.assertTrue(it.exists())
+            Assert.assertTrue(it.isDirectory)
+            Assert.assertEquals(0, it.list()?.size)
+        }
     }
 
     @Test
     fun create_dir_in_target() = run {
-        val dirName = randomName
-        val dir = fileHelper.fileInTarget(dirName)
-        fileHelper.createDirInTarget(dirName)
-        Assert.assertTrue(dir.isDirectory)
-        Assert.assertTrue(dir.exists())
+        fileHelper.createDirInTarget(randomName).also {
+            Assert.assertTrue(it.exists())
+            Assert.assertTrue(it.isDirectory)
+            Assert.assertEquals(0, it.list()?.size)
+        }
     }
 
 

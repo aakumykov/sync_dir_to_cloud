@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalForwardSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import org.junit.Assert
 import org.junit.Before
@@ -9,7 +9,7 @@ import java.io.File
 
 abstract class LocalFileHelperTestBase : StorageAccessTestCase() {
 
-    protected val taskConfig = LocalToLocalTaskConfig()
+    protected val taskConfig = LocalToLocalForwardSyncWithoutBackupTaskConfig()
     protected val fileHelper = LocalFileHelper(taskConfig)
 
     @Before

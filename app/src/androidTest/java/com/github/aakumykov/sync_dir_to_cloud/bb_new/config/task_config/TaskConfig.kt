@@ -6,6 +6,9 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
+/**
+ * Интерфейс, представляющий параметры для создания тестового SyncTask.
+ */
 interface TaskConfig {
 
     val TASK_ID: String
@@ -37,4 +40,5 @@ interface TaskConfig {
     val TASK_MIRROR: SyncTask
 
     val SOURCE_AUTH: CloudAuth
+    val TARGET_AUTH: CloudAuth
 }

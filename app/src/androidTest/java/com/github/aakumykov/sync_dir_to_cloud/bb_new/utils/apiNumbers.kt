@@ -8,13 +8,15 @@ val apiNumber: Int
     get() = Build.VERSION.SDK_INT
 
 
-val defaultSourceDir: File
+// TODO: вынести в подходящее место
+
+val defaultLocalSourceDir: File
     get() = File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
         "s${apiNumber}"
     )
 
-val defaultTargetDir: File
+val defaultLocalTargetDir: File
     get() = File(
         Environment.getExternalStorageDirectory(),
         "d${apiNumber}"
