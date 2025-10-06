@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.extensions
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty
 
 import java.io.File
 import java.io.FileNotFoundException
