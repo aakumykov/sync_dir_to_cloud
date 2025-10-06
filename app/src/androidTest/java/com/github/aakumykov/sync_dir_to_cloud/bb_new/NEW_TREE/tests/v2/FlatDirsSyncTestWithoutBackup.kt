@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.extensions.dirIsEmpty
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.extensions.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
 import org.junit.Assert
@@ -71,7 +71,7 @@ class FlatDirsSyncTestWithoutBackup : SyncTestBase() {
         Assert.assertFalse(sDir.exists())
         Assert.assertTrue(tDir.exists())
 
-        Assert.assertTrue(tDir.dirIsEmpty)
+        Assert.assertTrue(tDir.isEmpty)
     }
 
 
@@ -88,8 +88,8 @@ class FlatDirsSyncTestWithoutBackup : SyncTestBase() {
         Assert.assertTrue(fileHelper.dirInSource(dirName).exists())
         Assert.assertTrue(fileHelper.dirInTarget(dirName).exists())
 
-        Assert.assertTrue(sDir.dirIsEmpty)
-        Assert.assertTrue(tDir.dirIsEmpty)
+        Assert.assertTrue(sDir.isEmpty)
+        Assert.assertTrue(tDir.isEmpty)
     }
 
     @Test
@@ -105,17 +105,17 @@ class FlatDirsSyncTestWithoutBackup : SyncTestBase() {
         // Исходные каталоги
         fileHelper.dirInSource(dirNameS).also {
             Assert.assertTrue(it.exists())
-            Assert.assertTrue(it.dirIsEmpty)
+            Assert.assertTrue(it.isEmpty)
         }
         fileHelper.dirInTarget(dirNameT).also {
             Assert.assertTrue(it.exists())
-            Assert.assertTrue(it.dirIsEmpty)
+            Assert.assertTrue(it.isEmpty)
         }
 
         // Созданный синхронизацией каталога
         fileHelper.dirInTarget(dirNameS).also {
             Assert.assertTrue(it.exists())
-            Assert.assertTrue(it.dirIsEmpty)
+            Assert.assertTrue(it.isEmpty)
         }
     }
 
@@ -259,7 +259,7 @@ class FlatDirsSyncTestWithoutBackup : SyncTestBase() {
         doSync()
 
         Assert.assertFalse(sFile.exists())
-        Assert.assertTrue(taskConfig.SOURCE_DIR.dirIsEmpty)
+        Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
 
         Assert.assertTrue(tFile.exists())
         Assert.assertEquals(
