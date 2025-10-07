@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomDeepDirName
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
 import java.io.File

@@ -3,11 +3,11 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
 
-class FlatDirsSyncTestWithoutBackup : SyncTestBase() {
+class FlatSyncTestWithoutBackup : SyncTestBase() {
 
     /**
      * Нет ничего - нет ничего [empty_source_and_target_sync]

@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty
 import android.os.Environment
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.randomName
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
