@@ -1,6 +1,7 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.api_number
 
 import android.os.Build
 
 val apiNumber: Int
     get() = Build.VERSION.SDK_INT
+
