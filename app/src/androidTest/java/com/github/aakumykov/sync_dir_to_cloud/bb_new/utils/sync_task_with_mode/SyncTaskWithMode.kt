@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.sync_task_with_mode
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
