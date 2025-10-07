@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToL
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.LocalFileHelperContentsTest.Companion.DEEP_DIR_MAX_DEPTH
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.LocalFileHelperContentsTest.Companion.DEEP_DIR_MIN_DEPTH
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.tests.LocalFileHelperContentsTest.Companion.DEEP_DIR_MAX_DEPTH
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.tests.LocalFileHelperContentsTest.Companion.DEEP_DIR_MIN_DEPTH
 import java.util.UUID
 import kotlin.random.Random
 

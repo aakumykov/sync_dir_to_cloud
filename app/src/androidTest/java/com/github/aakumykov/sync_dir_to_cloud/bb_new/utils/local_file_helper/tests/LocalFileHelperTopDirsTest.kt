@@ -1,6 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.tests
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test

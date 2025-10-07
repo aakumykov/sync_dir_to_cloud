@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes

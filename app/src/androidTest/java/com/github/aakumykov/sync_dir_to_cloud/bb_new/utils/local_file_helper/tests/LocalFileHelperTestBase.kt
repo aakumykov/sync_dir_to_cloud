@@ -1,8 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.tests
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalForwardSyncWithoutBackupTaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.LocalFileHelper
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
 import org.junit.Assert
 import org.junit.Before
 import java.io.File
