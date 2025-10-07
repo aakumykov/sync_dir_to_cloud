@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultLocalSourceDir
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.defaultLocalTargetDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.default_dirs.defaultLocalSourceDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.default_dirs.defaultLocalTargetDir
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.syncTaskWithMode
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
