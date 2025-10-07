@@ -10,7 +10,7 @@ val randomName: String
     get() = UUID.randomUUID().toString()
 
 
-fun randomDeepDirName(minDepth: Int = DEEP_DIR_MIN_DEPTH, maxDepth: Int = DEEP_DIR_MAX_DEPTH): String {
+fun randomDeepDirName(minDepth: Int = 2, maxDepth: Int = 10): String {
     return buildList {
         repeat(Random.nextInt(minDepth, maxDepth+1)) {
             add(randomName)

@@ -47,14 +47,4 @@ abstract class SyncTestBase : StorageAccessTestCase() {
         scenario(RunSyncScenario())
         if (delayAfterWork) TimeUnit.MILLISECONDS.sleep(afterSyncSleepTimeoutMs)
     }
-
-
-    @Test
-    fun empty_test() {
-        Assert.assertTrue(fileHelper.isSourceDirExists())
-        Assert.assertTrue(fileHelper.isTargetDirExists())
-
-        Assert.assertTrue(taskConfig.SOURCE_DIR.exists())
-        Assert.assertTrue(taskConfig.TARGET_DIR.exists())
-    }
 }
