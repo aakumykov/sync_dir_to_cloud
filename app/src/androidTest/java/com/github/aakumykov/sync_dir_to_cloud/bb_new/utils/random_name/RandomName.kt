@@ -19,4 +19,5 @@ fun randomDeepDirName(minDepth: Int = 2, maxDepth: Int = 10): String {
 }
 
 
-val randomDeepDirName: String = randomDeepDirName()
+val randomDeepDirName: String
+    get() = randomDeepDirName()
