@@ -1,12 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
 import org.junit.Assert
 import org.junit.Test
 
-class DeepSyncTestWithoutBackup : SyncTestBase() {
+class DeepDirsSyncTestWithoutBackup : SyncTestBase() {
 
     /**
      * Глубокие пустые каталоги - пусто [deep_empty_dirs_in_source]
