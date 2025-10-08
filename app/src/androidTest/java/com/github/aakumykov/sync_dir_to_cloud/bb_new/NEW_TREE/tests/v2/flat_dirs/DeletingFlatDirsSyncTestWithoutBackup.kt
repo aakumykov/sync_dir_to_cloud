@@ -12,19 +12,21 @@ class DeletingFlatDirsSyncTestWithoutBackup : SyncTestBase()  {
 
     /**
      * Исходное состояние 1: Одноимённые пустые каталоги.
+     *
      * - удаление каталога в источнике [same_dirs_deleting_dir_from_source]
      * - удаление каталога в приёмнике [same_dirs_deleting_dir_from_target]
      * - удаление в обоих местах [same_dirs_deleting_dir_from_source_and_target]
      *
      * Исходное состояние 2: Разноимённые пустые каталоги.
-     * - удаление одного в источнике [diff_dirs_deleting_dir_from_source]
-     * - удаление обоих в источнике [diff_dirs_deleting_dir_from_target]
-
-     * - удаление одного в приёмнике []
-     * - удаление обоих в приёмнике []
      *
-     * - удаление одноимённых там и там []
-     * - удаление разноимённых там и там []
+     * - удаление одного в источнике [diff_dirs_deleting_dir_from_source]
+     * - удаление одного в приёмнике [diff_dirs_deleting_dir_from_target]
+
+     * - удаление всех в источнике [diff_dirs_deleting_all_in_source]
+     * - удаление всех в приёмнике [diff_dirs_deleting_all_in_target]
+     *
+     * - удаление одноимённых там и там [diff_dirs_deleting_same_dirs_in_both_places]
+     * - удаление разноимённых там и там [diff_dirs_deleting_diff_dirs_in_both_places]
      *
      * (- удаление всех, кроме одного в источнике
      * - удаление всех, кроме одного в приёмнике)
@@ -115,9 +117,10 @@ class DeletingFlatDirsSyncTestWithoutBackup : SyncTestBase()  {
     // ===== SYNC =====>
     // [1] --- [2]
     // sync
-    //  x --- [2]
+    // [1] --- [1][2]
+    //  x --- [1][2]
     // sync
-    //  результат: x --- [2]
+    //  x --- [2]
     @Test
     fun diff_dirs_deleting_dir_from_source() {
         create_diff_name_dirs_on_both_sides()
@@ -149,7 +152,8 @@ class DeletingFlatDirsSyncTestWithoutBackup : SyncTestBase()  {
     // ===== SYNC =====>
     // [1] --- [2]
     // sync
-    //  [1] --- x
+    // [1] -- [1][2]
+    //  [1] --- [1]x
     // sync
     //  результат: [1] --- [1]
     @Test
@@ -171,5 +175,90 @@ class DeletingFlatDirsSyncTestWithoutBackup : SyncTestBase()  {
 
         Assert.assertTrue(sDir.isEmpty)
         Assert.assertTrue(sDirInTarget.isEmpty)
+    }
+
+    // ===== SYNC =====>
+    // [1] --- [2]
+    // sync
+    // [1] --- [1][2]
+    // x --- [1][2]
+    // sync
+    // x --- [2]
+    @Test
+    fun diff_dirs_deleting_all_in_source() {
+        // Идентичен: diff_dirs_deleting_dir_from_source()
+    }
+
+
+    // ===== SYNC =====>
+    // [1] --- [2]
+    // sync
+    // [1] --- [1][2]
+    // [1] --- x
+    // sync
+    // [1] --- [1]
+    @Test
+    fun diff_dirs_deleting_all_in_target() {
+        create_diff_name_dirs_on_both_sides()
+        doSync()
+
+        fileHelper.deleteDirFromTarget(T_DIR_NAME)
+        doSync()
+
+        // Каталог источника существует и появился в приёмнике.
+        Assert.assertTrue(sDir.exists())
+        Assert.assertTrue(sDirInTarget.exists())
+
+        // Каталог приёмника исчез.
+        Assert.assertFalse(tDir.exists())
+
+        // Каталог источника и его собрат в приёмнике пусты.
+        Assert.assertTrue(sDir.isEmpty)
+        Assert.assertTrue(sDirInTarget.isEmpty)
+
+        // Посторонних каталогов в источнике и приёмнике не появилось.
+        Assert.assertEquals(1, fileHelper.listSourceDir().size)
+        Assert.assertEquals(1, fileHelper.listTargetDir().size)
+    }
+
+
+    // ===== SYNC =====>
+    // [1] --- [2]
+    // sync
+    // [1] --- [1][2]
+    // x --- x[2]
+    // sync
+    // x --- x[2]
+    @Test
+    fun diff_dirs_deleting_same_dirs_in_both_places() {
+        /**
+         * То же самое, что удалить каталог "1" в источнике [diff_dirs_deleting_dir_from_source]
+         */
+    }
+
+
+    // ===== SYNC =====>
+    // [1] --- [2]
+    // sync
+    // [1] --- [1][2]
+    // x --- [1]x
+    // sync
+    // x --- x
+    @Test
+    fun diff_dirs_deleting_diff_dirs_in_both_places() {
+        create_diff_name_dirs_on_both_sides()
+        doSync()
+
+        fileHelper.deleteDirFromSource(S_DIR_NAME)
+        fileHelper.deleteDirFromTarget(T_DIR_NAME)
+
+        doSync()
+
+        // Источник и приёмник опустели.
+        Assert.assertEquals(0, fileHelper.listSourceDir().size)
+        Assert.assertEquals(0, fileHelper.listTargetDir().size)
+
+        Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
+        Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
     }
 }
