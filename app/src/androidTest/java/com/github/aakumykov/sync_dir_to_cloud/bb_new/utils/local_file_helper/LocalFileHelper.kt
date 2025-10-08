@@ -207,7 +207,6 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
     }
 
 
-    @Deprecated("убрать")
     fun deleteAllFilesInDir(dir: File) {
         if (!dir.isDirectory)
             throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
