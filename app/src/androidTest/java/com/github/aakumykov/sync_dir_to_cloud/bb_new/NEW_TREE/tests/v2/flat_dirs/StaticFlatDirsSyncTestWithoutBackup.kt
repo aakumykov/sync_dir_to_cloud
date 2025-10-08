@@ -84,6 +84,9 @@ class StaticFlatDirsSyncTestWithoutBackup : SyncTestBase() {
         val dirNameS = randomName
         val dirNameT = randomName
 
+        fileHelper.createDirInSource(dirNameS)
+        fileHelper.createDirInTarget(dirNameT)
+
         doSync()
 
         Assert.assertEquals(1, fileHelper.listSourceDir().size)
