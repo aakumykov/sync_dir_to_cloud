@@ -49,8 +49,8 @@ class SyncInstructionExecutor @AssistedInject constructor(
             SyncOperation.DELETE_IN_SOURCE -> deleteInSource(instruction)
             SyncOperation.DELETE_IN_TARGET -> deleteInTarget(instruction)
 
-            SyncOperation.BACKUP_IN_SOURCE -> { backupInstructionExecutor.backupInSource(instruction) }
-            SyncOperation.BACKUP_IN_TARGET -> { backupInstructionExecutor.backupInTarget(instruction) }
+            SyncOperation.BACKUP_IN_SOURCE -> { backupInSource(instruction) }
+            SyncOperation.BACKUP_IN_TARGET -> { backupInTarget(instruction) }
 
             SyncOperation.DO_NOTHING_IN_SOURCE -> {}
             SyncOperation.DO_NOTHING_IN_TARGET -> {}
@@ -58,6 +58,28 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
         // Спорно делать это здесь, а не в каждом конкретном методе...
         syncInstructionUpdater.markAsProcessed(instruction.id)
+    }
+
+    private suspend fun backupInTarget(instruction: SyncInstruction) {
+        syncOperationLogger.logWaiting(instruction).also { logItemId ->
+            try {
+                backupInstructionExecutor.backupInTarget(instruction)
+                syncOperationLogger.logSuccess(logItemId)
+            } catch (e: Exception) {
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+            }
+        }
+    }
+
+    private suspend fun backupInSource(instruction: SyncInstruction) {
+        syncOperationLogger.logWaiting(instruction).also { logItemId ->
+            try {
+                backupInstructionExecutor.backupInSource(instruction)
+                syncOperationLogger.logSuccess(logItemId)
+            } catch (e: Exception) {
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+            }
+        }
     }
 
 
