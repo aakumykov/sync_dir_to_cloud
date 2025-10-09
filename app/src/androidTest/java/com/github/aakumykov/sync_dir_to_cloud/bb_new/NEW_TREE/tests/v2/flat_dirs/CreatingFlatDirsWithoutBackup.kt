@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class CreatingFlatDirsWithoutBackup : SyncTestBase() {
 
@@ -21,6 +22,7 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
     private val dirInTarget get() = fileHelper.dirInTarget(tDirName)
 
     private val sDirInTarget get() = fileHelper.dirInTarget(sDirName)
+    private val tDirInSource get() = fileHelper.dirInSource(tDirName)
 
 
     // [1] --- x
@@ -103,28 +105,27 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
 
         doSync()
 
-        // Проверяю, что созданные каталоги сохранились
-        Assert.assertTrue(dirInSource.exists())
-        Assert.assertTrue(dirInTarget.exists())
-
-        Assert.assertTrue(newDirInSource.exists())
-        Assert.assertTrue(newDirInTarget.exists())
-
-        // Проверяю, что синхронизированные (не) появились
-        Assert.assertTrue(newSDirInTarget.exists())
-        Assert.assertFalse(newTDirInSource.exists())
-
-        // Что в источнике и приёмнике не появилось лишнего
+        // Проверяю, что в источнике 2 каталога.
         Assert.assertEquals(2, fileHelper.listSourceDir().size)
-        Assert.assertEquals(3, fileHelper.listTargetDir().size)
+        assertExistsAndEmpty(dirInSource)
+        assertExistsAndEmpty(newDirInSource)
 
-        // Что внутри каталогов не появилось лишнего
-        Assert.assertTrue(dirInSource.isEmpty)
-        Assert.assertTrue(dirInTarget.isEmpty)
-        Assert.assertTrue(newSDirInTarget.isEmpty)
+        // Что в приёмнике 3 каталога.
+        Assert.assertEquals(3, fileHelper.listTargetDir().size)
+        assertExistsAndEmpty(sDirInTarget)
+        assertExistsAndEmpty(newDirInTarget)
+        assertExistsAndEmpty(newSDirInTarget)
     }
 
 
+    private fun assertExistsAndEmpty(dir: File) {
+        Assert.assertTrue(dir.exists())
+        Assert.assertTrue(dir.isEmpty)
+    }
+
+    /**
+     * Создаёт каталог в источнике и синхронизирует его с приёмником.
+     */
     private fun prepare() {
         fileHelper.createDirInSource(sDirName)
         doSync()
