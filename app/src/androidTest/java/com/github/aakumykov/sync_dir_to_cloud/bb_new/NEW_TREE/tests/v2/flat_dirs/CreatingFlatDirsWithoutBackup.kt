@@ -20,16 +20,18 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
     private val dirInSource get() = fileHelper.dirInSource(sDirName)
     private val dirInTarget get() = fileHelper.dirInTarget(tDirName)
 
-    // ===== sync =====>
+    private val sDirInTarget get() = fileHelper.dirInTarget(sDirName)
+
+
     // [1] --- x
-    // sync
+    // ===== sync =====>
     // [1] --- [1]
     // [1][2] --- [1]
-    // sync
+    // ===== sync =====>
     // [1][2] --- [1][2]
     @Test
     fun create_additional_dir_in_source() {
-        create_dir_in_source_and_sync_with_target()
+        prepare()
 
         val newDirName = randomName
         val newDirInSource = fileHelper.createDirInSource(newDirName)
@@ -47,16 +49,15 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
         Assert.assertEquals(2, fileHelper.listTargetDir().size)
     }
 
-    // ===== sync =====>
     // [1] --- x
-    // sync
+    // ===== sync =====>
     // [1] --- [1]
     // [1] --- [1][2]
-    // sync
+    // ===== sync =====>
     // [1] -- [1][2]
     @Test
     fun create_additional_dir_in_target() {
-        create_dir_in_source_and_sync_with_target()
+        prepare()
 
         val newDirName = randomName
         val newDirInTarget = fileHelper.createDirInTarget(newDirName)
@@ -75,20 +76,64 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
         Assert.assertTrue(dirInTarget.isEmpty)
 
         // Новый каталог
-        Assert.assertFalse()
+        Assert.assertFalse(newDirInSource.exists())
+        Assert.assertTrue(newDirInTarget.exists())
+
+        Assert.assertTrue(newDirInTarget.isEmpty)
+    }
+
+    // [1] --- x
+    // ===== sync =====>
+    // [1] --- [1]
+    // [1][2] --- [1][3]
+    // ===== sync =====>
+    // [1][2] --- [1][2][3]
+    @Test
+    fun create_additional_dir_in_source_and_target() {
+        prepare()
+
+        val newSDirName = randomName
+        val newTDirName = randomName
+
+        val newDirInSource = fileHelper.createDirInSource(newSDirName)
+        val newDirInTarget = fileHelper.createDirInTarget(newTDirName)
+
+        val newTDirInSource = fileHelper.dirInSource(newTDirName)
+        val newSDirInTarget = fileHelper.dirInTarget(newSDirName)
+
+        doSync()
+
+        // Проверяю, что созданные каталоги сохранились
+        Assert.assertTrue(dirInSource.exists())
+        Assert.assertTrue(dirInTarget.exists())
+
+        Assert.assertTrue(newDirInSource.exists())
+        Assert.assertTrue(newDirInTarget.exists())
+
+        // Проверяю, что синхронизированные (не) появились
+        Assert.assertTrue(newSDirInTarget.exists())
+        Assert.assertFalse(newTDirInSource.exists())
+
+        // Что в источнике и приёмнике не появилось лишнего
+        Assert.assertEquals(2, fileHelper.listSourceDir().size)
+        Assert.assertEquals(3, fileHelper.listTargetDir().size)
+
+        // Что внутри каталогов не появилось лишнего
+        Assert.assertTrue(dirInSource.isEmpty)
+        Assert.assertTrue(dirInTarget.isEmpty)
+        Assert.assertTrue(newSDirInTarget.isEmpty)
     }
 
 
-
-    private fun create_dir_in_source_and_sync_with_target() {
+    private fun prepare() {
         fileHelper.createDirInSource(sDirName)
         doSync()
 
         Assert.assertTrue(dirInSource.exists())
-        Assert.assertTrue(dirInTarget.exists())
+        Assert.assertTrue(sDirInTarget.exists())
 
         Assert.assertTrue(dirInSource.isEmpty)
-        Assert.assertTrue(dirInTarget.isEmpty)
+        Assert.assertTrue(sDirInTarget.isEmpty)
 
         Assert.assertEquals(1, fileHelper.listSourceDir().size)
         Assert.assertEquals(1, fileHelper.listTargetDir().size)
