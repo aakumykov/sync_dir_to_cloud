@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomNam
 import org.junit.Assert
 import org.junit.Test
 
-class CreatingFlatDirsSyncTestWithoutBackup : SyncTestBase() {
+class CreatingFlatDirsWithoutBackup : SyncTestBase() {
 
     /**
      * Создание дополнительного каталога в источнике [create_additional_dir_in_source]
@@ -46,6 +46,39 @@ class CreatingFlatDirsSyncTestWithoutBackup : SyncTestBase() {
         Assert.assertEquals(2, fileHelper.listSourceDir().size)
         Assert.assertEquals(2, fileHelper.listTargetDir().size)
     }
+
+    // ===== sync =====>
+    // [1] --- x
+    // sync
+    // [1] --- [1]
+    // [1] --- [1][2]
+    // sync
+    // [1] -- [1][2]
+    @Test
+    fun create_additional_dir_in_target() {
+        create_dir_in_source_and_sync_with_target()
+
+        val newDirName = randomName
+        val newDirInTarget = fileHelper.createDirInTarget(newDirName)
+        val newDirInSource = fileHelper.dirInSource(newDirName)
+
+        doSync()
+
+        // "Старые" каталоги
+        Assert.assertTrue(dirInSource.exists())
+        Assert.assertTrue(dirInTarget.exists())
+
+        Assert.assertEquals(1, fileHelper.listSourceDir().size)
+        Assert.assertEquals(2, fileHelper.listTargetDir().size)
+
+        Assert.assertTrue(dirInSource.isEmpty)
+        Assert.assertTrue(dirInTarget.isEmpty)
+
+        // Новый каталог
+        Assert.assertFalse()
+    }
+
+
 
     private fun create_dir_in_source_and_sync_with_target() {
         fileHelper.createDirInSource(sDirName)
