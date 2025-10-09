@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomNam
 import org.junit.Assert
 import org.junit.Test
 
-class StaticFlatFilesSyncTestWithoutBackup : SyncTestBase()  {
+class StaticFlatFilesWithoutBackup : SyncTestBase()  {
 
     /**
      * Пустой файл - нет ничего [empty_file_in_source_and_no_files_in_target]

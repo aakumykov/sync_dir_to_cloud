@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomNam
 import org.junit.Assert
 import org.junit.Test
 
-class DeletingFlatDirsSyncTestWithoutBackup : SyncTestBase()  {
+class DeletingFlatDirsWithoutBackup : SyncTestBase()  {
 
     // TODO: доделать
 
