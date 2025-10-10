@@ -19,4 +19,5 @@ fun syncTaskWithMode(
     id = taskConfig.TASK_ID
     sourceAuthId = taskConfig.SOURCE_AUTH_ID
     targetAuthId = taskConfig.TARGET_AUTH_ID
+    withBackup = taskConfig.WITH_BACKUP
 }

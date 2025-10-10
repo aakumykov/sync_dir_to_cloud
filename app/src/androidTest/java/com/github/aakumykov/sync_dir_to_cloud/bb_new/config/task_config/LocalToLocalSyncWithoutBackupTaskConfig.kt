@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
-class LocalToLocalForwardSyncWithoutBackupTaskConfig(
+class LocalToLocalSyncWithoutBackupTaskConfig(
     sourceDir: File = defaultLocalSourceDir,
     targetDir: File = defaultLocalTargetDir
 ) : TaskConfig {
@@ -29,6 +29,8 @@ class LocalToLocalForwardSyncWithoutBackupTaskConfig(
 
     override val SOURCE_DIR: File = sourceDir
     override val TARGET_DIR: File = targetDir
+
+    override val WITH_BACKUP: Boolean = false
 
     // Геттеры у TASK_SYNC и TASK_MIRROR необходимы: без них
     // создаваемая задача не имеет ряд полей, которые инициализируются ниже.

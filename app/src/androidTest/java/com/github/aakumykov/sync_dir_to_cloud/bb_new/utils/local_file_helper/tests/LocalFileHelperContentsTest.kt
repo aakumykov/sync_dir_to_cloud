@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.tests
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalForwardSyncWithoutBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomNam
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 
 class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
@@ -26,7 +25,7 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     // TODO: негативное тестирование (НО НУЖНО ЛИ?)
 
     private val rootFileHelper = LocalFileHelper(
-        LocalToLocalForwardSyncWithoutBackupTaskConfig(File("/"),File("/"))
+        LocalToLocalSyncWithoutBackupTaskConfig(File("/"),File("/"))
     )
 
 

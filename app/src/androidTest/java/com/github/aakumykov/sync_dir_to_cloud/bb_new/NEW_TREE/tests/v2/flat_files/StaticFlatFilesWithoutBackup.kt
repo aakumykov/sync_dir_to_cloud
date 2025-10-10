@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_files
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
@@ -8,6 +9,9 @@ import org.junit.Assert
 import org.junit.Test
 
 class StaticFlatFilesWithoutBackup : SyncTestBase()  {
+
+    override val taskConfig: TaskConfig
+        get() = taskConfigWithoutBackup
 
     /**
      * Пустой файл - нет ничего [empty_file_in_source_and_no_files_in_target]

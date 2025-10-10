@@ -1,12 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.deep_dirs
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
 import org.junit.Assert
 import org.junit.Test
 
 class StaticDeepDirsWithoutBackup : SyncTestBase() {
+
+    override val taskConfig: TaskConfig
+        get() = taskConfigWithoutBackup
 
     /**
      * Просто "существование" каталогов.

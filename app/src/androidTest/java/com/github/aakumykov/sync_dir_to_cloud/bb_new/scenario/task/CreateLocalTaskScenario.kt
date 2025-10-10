@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalForwardSyncWithoutBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.LocalTaskScenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
@@ -8,7 +8,7 @@ import org.junit.Assert
 
 
 class CreateLocalTaskScenario(
-    override val taskConfig: TaskConfig = LocalToLocalForwardSyncWithoutBackupTaskConfig()
+    override val taskConfig: TaskConfig = LocalToLocalSyncWithoutBackupTaskConfig()
 ) : LocalTaskScenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {

@@ -27,6 +27,8 @@ interface TaskConfig {
     val SOURCE_DIR: File
     val TARGET_DIR: File
 
+    val WITH_BACKUP: Boolean
+
     val SOURCE_AUTH_ID: String
     val TARGET_AUTH_ID: String
 
