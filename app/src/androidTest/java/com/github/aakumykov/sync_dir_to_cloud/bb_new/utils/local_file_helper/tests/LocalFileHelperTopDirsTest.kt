@@ -79,6 +79,44 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
         }
     }
 
+    /**
+     * [LocalFileHelper.sourceDirItemsCount]
+     */
+    @Test
+    fun returns_non_zero_counting_not_empty_source_dir() = run {
+        Assert.assertTrue(fileHelper.sourceDirItemsCount() > 0)
+    }
+    @Test
+    fun returns_zero_on_counting_empty_source_dir() = run {
+        Assert.assertEquals(0, fileHelper.sourceDirItemsCount())
+    }
+    @Test
+    fun throws_exception_counting_unexisting_source_dir() = run {
+        Assert.assertThrows(Exception::class.java) {
+            fileHelper.deleteSourceDirRecursively()
+            fileHelper.sourceDirItemsCount()
+        }
+    }
+
+    /**
+     * [LocalFileHelper.targetDirItemsCount]
+     */
+    @Test
+    fun returns_non_zero_counting_not_empty_target_dir() = run {
+        Assert.assertTrue(fileHelper.targetDirItemsCount() > 0)
+    }
+    @Test
+    fun returns_zero_on_counting_empty_target_dir() = run {
+        Assert.assertEquals(0, fileHelper.targetDirItemsCount())
+    }
+    @Test
+    fun throws_exception_counting_unexisting_target_dir() = run {
+        Assert.assertThrows(Exception::class.java) {
+            fileHelper.deleteSourceDirRecursively()
+            fileHelper.targetDirItemsCount()
+        }
+    }
+
 
 
     //

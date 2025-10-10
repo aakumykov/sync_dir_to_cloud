@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomNam
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 
 class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
@@ -302,6 +303,81 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
             fileHelper.listDirInTarget(randomDeepDirName())
         }
     }
+
+
+    // Подсчёт файлов в источнике
+
+    @Test
+    fun counting_dir_with_files_in_source_returns_positive_number() = run {
+        val dirName = randomName
+        fileHelper.createDirInSource(dirName).apply {
+            File(this, randomName).createNewFile()
+            File(this, randomName).createNewFile()
+        }
+        Assert.assertEquals(2, fileHelper.dirInSourceItemsCount(dirName))
+    }
+
+    @Test
+    fun counting_empty_dir_in_source_returns_zero() = run {
+        fileHelper.createDirInSource(randomName).also {
+            Assert.assertEquals(0, fileHelper.dirInSourceItemsCount(it.name))
+        }
+    }
+
+    @Test
+    fun counting_contents_of_unexistent_dir_in_source_throws_exception() = run {
+        Assert.assertThrows(RuntimeException::class.java) {
+            fileHelper.dirInSourceItemsCount(randomName)
+        }
+    }
+
+    @Test
+    fun counting_unreadable_dir_in_source_throws_exception() = run {
+        Assert.assertThrows(RuntimeException::class.java) {
+            android.os.Environment.getDataDirectory().also {
+                // it == File("/data")
+                rootFileHelper.dirInSourceItemsCount(it.name)
+            }
+        }
+    }
+
+
+    // Подсчёт файлов в приёмнике
+
+    @Test
+    fun counting_dir_with_files_in_target_returns_positive_number() = run {
+        val dirName = randomName
+        fileHelper.createDirInTarget(dirName).apply {
+            File(this,randomName).createNewFile()
+            File(this,randomName).createNewFile()
+        }
+        Assert.assertEquals(2, fileHelper.dirInTargetItemsCount(dirName))
+    }
+
+    @Test
+    fun counting_empty_dir_in_target_returns_zero() = run {
+        fileHelper.createDirInTarget(randomName).also {
+            Assert.assertEquals(0, fileHelper.dirInTargetItemsCount(it.name))
+        }
+    }
+
+    @Test
+    fun counting_contents_of_unexistent_dir_in_target_throws_exception() = run {
+        Assert.assertThrows(RuntimeException::class.java) {
+            fileHelper.dirInTargetItemsCount(randomName)
+        }
+    }
+
+    @Test
+    fun counting_unreadable_dir_in_target_throws_exception() = run {
+        Assert.assertThrows(RuntimeException::class.java) {
+            android.os.Environment.getDataDirectory().also {
+                // it == File("/data")
+                rootFileHelper.dirInTargetItemsCount(it.name)
+            }
+        }
+    }
+
 
 
     // Обновление файлов

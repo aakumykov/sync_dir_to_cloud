@@ -55,6 +55,13 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
     }
 
 
+    fun sourceDirItemsCount(): Int = listSourceDir().size
+
+
+    fun targetDirItemsCount(): Int = listTargetDir().size
+
+
+
     //
     // Удаляют каталог источника или приёмника.
     //
@@ -161,6 +168,13 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
             it.listFiles() ?: throw RuntimeException("Cannot list '${it.absolutePath}'")
         }
     }
+
+    // TODO: тест
+    fun dirInSourceItemsCount(dirName: String): Int = listDirInSource(dirName).size
+
+    // TODO: тест
+    fun dirInTargetItemsCount(dirName: String): Int = listDirInTarget(dirName).size
+
 
 
     // Update
