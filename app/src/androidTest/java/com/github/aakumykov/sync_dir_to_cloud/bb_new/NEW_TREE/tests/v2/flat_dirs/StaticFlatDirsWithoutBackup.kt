@@ -15,7 +15,7 @@ class StaticFlatDirsWithoutBackup : SyncTestBase() {
      * Нет ничего - пустой каталог [one_empty_dir_in_target]
      *
      * Пустой каталог - одноимённый пустой каталог [same_name_empty_dirs_in_source_and_target]
-     * Пустой каталог - другого имени пустой каталог [diff_name_empty_dirs_in_source_and_target]
+     * Пустой каталог - разноимённый пустой каталог [diff_name_empty_dirs_in_source_and_target]
      */
 
 

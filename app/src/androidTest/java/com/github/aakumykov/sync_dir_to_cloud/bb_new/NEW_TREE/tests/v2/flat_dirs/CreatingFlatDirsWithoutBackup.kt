@@ -10,9 +10,15 @@ import java.io.File
 class CreatingFlatDirsWithoutBackup : SyncTestBase() {
 
     /**
+     * Эти действия выполняются после первичной синхронизации [s] --> [t].
+     * TODO: по идее, первичная синхронизация должна быть ещё и в варианте [s] <-- [t]
+     *  Но не слишком ли это? Если что не так, более сложные тесты это покажут...
+     *
      * Создание дополнительного каталога в источнике [create_additional_dir_in_source]
      * Создание дополнительного каталога в приёмнике [create_additional_dir_in_target]
-     * Создание дополнительного каталога в обоих местах [create_additional_dir_in_source_and_target]
+     *
+     * Создание разных дополнительных каталогов в обоих местах [create_diff_names_additional_dirs_in_source_and_target]
+     * Создание одинаковых дополнительных каталогов в обоих местах [create_same_name_additional_dirs_in_source_and_target]
      */
 
     private val sDirName = randomName
@@ -22,7 +28,6 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
     private val dirInTarget get() = fileHelper.dirInTarget(tDirName)
 
     private val sDirInTarget get() = fileHelper.dirInTarget(sDirName)
-    private val tDirInSource get() = fileHelper.dirInSource(tDirName)
 
 
     // [1] --- x
@@ -91,7 +96,7 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
     // ===== sync =====>
     // [1][2] --- [1][2][3]
     @Test
-    fun create_additional_dir_in_source_and_target() {
+    fun create_diff_names_additional_dirs_in_source_and_target() {
         prepare()
 
         val newSDirName = randomName
@@ -100,7 +105,6 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
         val newDirInSource = fileHelper.createDirInSource(newSDirName)
         val newDirInTarget = fileHelper.createDirInTarget(newTDirName)
 
-        val newTDirInSource = fileHelper.dirInSource(newTDirName)
         val newSDirInTarget = fileHelper.dirInTarget(newSDirName)
 
         doSync()
@@ -115,6 +119,42 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
         assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newDirInTarget)
         assertExistsAndEmpty(newSDirInTarget)
+    }
+
+
+    // [1] --- x
+    // ===== sync =====>
+    // [1] --- [1]
+    // [1][2] --- [1][2]
+    // sync
+    // [1][2] --- [1][2]
+    @Test
+    fun create_same_name_additional_dirs_in_source_and_target() {
+        prepare()
+
+        val newDirName = randomName
+        val newDirInSource = fileHelper.createDirInSource(newDirName)
+        val newDirInTarget = fileHelper.createDirInTarget(newDirName)
+
+        doSync()
+
+        // Состояние каталогов в источнике
+        Assert.assertEquals(2, fileHelper.listSourceDir().size)
+
+        Assert.assertTrue(dirInSource.exists())
+        Assert.assertTrue(dirInSource.isEmpty)
+
+        Assert.assertTrue(newDirInSource.exists())
+        Assert.assertTrue(newDirInSource.isEmpty)
+
+        // Состояние каталогов в приёмнике
+        Assert.assertEquals(2, fileHelper.listTargetDir().size)
+
+        Assert.assertTrue(sDirInTarget.exists())
+        Assert.assertTrue(sDirInTarget.isEmpty)
+
+        Assert.assertTrue(newDirInTarget.exists())
+        Assert.assertTrue(newDirInTarget.isEmpty)
     }
 
 
