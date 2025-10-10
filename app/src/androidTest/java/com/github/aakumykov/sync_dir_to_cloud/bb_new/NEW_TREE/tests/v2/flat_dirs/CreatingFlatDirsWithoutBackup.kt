@@ -1,17 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 
-class CreatingFlatDirsWithoutBackup : SyncTestBase() {
+class CreatingFlatDirsWithoutBackup : CreateAndSyncTestBase() {
 
     /**
-     * Эти действия выполняются после первичной синхронизации [s] --> [t].
-     * TODO: по идее, первичная синхронизация должна быть ещё и в варианте [s] <-- [t]
+     * Эти действия выполняются после первичной синхронизации (s) --> (t).
+     *
+     * TODO: по идее, первичная синхронизация должна быть ещё и в варианте (s) <-- (t)
      *  Но не слишком ли это? Если что не так, более сложные тесты это покажут...
      *
      * Создание дополнительного каталога в источнике [create_additional_dir_in_source]
@@ -20,14 +19,6 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
      * Создание разных дополнительных каталогов в обоих местах [create_diff_names_additional_dirs_in_source_and_target]
      * Создание одинаковых дополнительных каталогов в обоих местах [create_same_name_additional_dirs_in_source_and_target]
      */
-
-    private val sDirName = randomName
-    private val tDirName = randomName
-
-    private val dirInSource get() = fileHelper.dirInSource(sDirName)
-    private val dirInTarget get() = fileHelper.dirInTarget(tDirName)
-
-    private val sDirInTarget get() = fileHelper.dirInTarget(sDirName)
 
 
     // [1] --- x
@@ -140,43 +131,14 @@ class CreatingFlatDirsWithoutBackup : SyncTestBase() {
 
         // Состояние каталогов в источнике
         Assert.assertEquals(2, fileHelper.listSourceDir().size)
-
-        Assert.assertTrue(dirInSource.exists())
-        Assert.assertTrue(dirInSource.isEmpty)
-
-        Assert.assertTrue(newDirInSource.exists())
-        Assert.assertTrue(newDirInSource.isEmpty)
+        assertExistsAndEmpty(dirInSource)
+        assertExistsAndEmpty(newDirInSource)
 
         // Состояние каталогов в приёмнике
         Assert.assertEquals(2, fileHelper.listTargetDir().size)
-
-        Assert.assertTrue(sDirInTarget.exists())
-        Assert.assertTrue(sDirInTarget.isEmpty)
-
-        Assert.assertTrue(newDirInTarget.exists())
-        Assert.assertTrue(newDirInTarget.isEmpty)
-    }
-
-
-    private fun assertExistsAndEmpty(dir: File) {
-        Assert.assertTrue(dir.exists())
-        Assert.assertTrue(dir.isEmpty)
-    }
-
-    /**
-     * Создаёт каталог в источнике и синхронизирует его с приёмником.
-     */
-    private fun prepare() {
-        fileHelper.createDirInSource(sDirName)
-        doSync()
-
-        Assert.assertTrue(dirInSource.exists())
-        Assert.assertTrue(sDirInTarget.exists())
-
-        Assert.assertTrue(dirInSource.isEmpty)
-        Assert.assertTrue(sDirInTarget.isEmpty)
-
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
+        assertExistsAndEmpty(sDirInTarget)
+        assertExistsAndEmpty(newDirInTarget)
     }
 }
+
+
