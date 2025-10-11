@@ -8,7 +8,7 @@ import org.junit.Assert
 
 
 class CreateLocalTaskScenario(
-    override val taskConfig: TaskConfig = LocalToLocalSyncWithoutBackupTaskConfig()
+    override val taskConfig: TaskConfig
 ) : LocalTaskScenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {

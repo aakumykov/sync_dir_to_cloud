@@ -1,7 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.testComponent
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.kaspersky.kaspresso.testcases.api.scenario.Scenario
@@ -10,12 +8,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 
 class RunSyncScenario(
-    private val taskConfig: TaskConfig = LocalToLocalSyncWithoutBackupTaskConfig()
+    private val taskId: String
 ) : Scenario() {
 
     override val steps: TestContext<Unit>.() -> Unit = {
         runBlocking {
-            syncTaskExecutor(this).executeSyncTask(taskConfig.TASK_ID)
+            syncTaskExecutor(this).executeSyncTask(taskId)
         }
     }
 
