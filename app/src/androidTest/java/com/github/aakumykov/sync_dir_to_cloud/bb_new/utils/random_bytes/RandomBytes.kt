@@ -4,4 +4,4 @@ import kotlin.random.Random
 
 val randomBytes: ByteArray get() = randomBytes()
 
-fun randomBytes(count: Int = 1024): ByteArray = Random.nextBytes(count)
+fun randomBytes(count: Int = 10): ByteArray = Random.nextBytes(count)
