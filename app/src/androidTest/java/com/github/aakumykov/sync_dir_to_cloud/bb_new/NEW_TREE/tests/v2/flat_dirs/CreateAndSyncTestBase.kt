@@ -1,18 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.NoBackupSyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import java.io.File
 
-abstract class CreateAndSyncTestBase : SyncTestBase() {
+abstract class CreateAndSyncTestBase : NoBackupSyncTestBase() {
 
     protected val dirInSourceName = randomName
-    protected val dirInTargetName = randomName
-
-    override val taskConfig: TaskConfig = taskConfigWithoutBackup
+    private val dirInTargetName = randomName
 
     protected val dirInSource get() = fileHelper.dirInSource(dirInSourceName)
     protected val dirInTarget get() = fileHelper.dirInTarget(dirInTargetName)

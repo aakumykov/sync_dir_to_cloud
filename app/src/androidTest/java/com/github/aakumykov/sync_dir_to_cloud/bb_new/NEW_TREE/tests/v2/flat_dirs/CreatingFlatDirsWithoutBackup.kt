@@ -59,25 +59,16 @@ class CreatingFlatDirsWithoutBackup : CreateAndSyncTestBase() {
 
         val newDirName = randomName
         val newDirInTarget = fileHelper.createDirInTarget(newDirName)
-        val newDirInSource = fileHelper.dirInSource(newDirName)
 
         doSync()
 
-        // "Старые" каталоги
-        Assert.assertTrue(dirInSource.exists())
-        Assert.assertTrue(dirInTarget.exists())
+        Assert.assertEquals(1, fileHelper.sourceDirItemsCount())
+        assertExistsAndEmpty(dirInSource)
 
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(2, fileHelper.listTargetDir().size)
+        Assert.assertEquals(2, fileHelper.targetDirItemsCount())
+        assertExistsAndEmpty(sDirInTarget)
 
-        Assert.assertTrue(dirInSource.isEmpty)
-        Assert.assertTrue(dirInTarget.isEmpty)
-
-        // Новый каталог
-        Assert.assertFalse(newDirInSource.exists())
-        Assert.assertTrue(newDirInTarget.exists())
-
-        Assert.assertTrue(newDirInTarget.isEmpty)
+        assertExistsAndEmpty(newDirInTarget)
     }
 
     // [1] --- x

@@ -1,8 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_files
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.WithBackupSyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -10,10 +9,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-class StaticFlatFilesWithBackup : SyncTestBase() {
-
-    override val taskConfig: TaskConfig
-        get() = taskConfigWithBackup
+class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
 
     private val syncTask: SyncTask
         get() = TestComponentHolder.testSyncTaskDAO.get(taskConfig.TASK_ID)!!

@@ -1,15 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert
 import org.junit.Test
 
-class SyncTest : SyncTestBase() {
+class SyncTest : NoBackupSyncTestBase() {
 
-    override val taskConfig: TaskConfig
-        get() = taskConfigWithoutBackup
 //
     // Не выдумываю фантастических сценариев, воспроизвожу реалистичный
     //
