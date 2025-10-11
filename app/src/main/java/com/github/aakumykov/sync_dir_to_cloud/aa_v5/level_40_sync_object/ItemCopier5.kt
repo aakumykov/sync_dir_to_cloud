@@ -58,6 +58,7 @@ class ItemCopier5 @AssistedInject constructor(
     }
 
 
+    // FIXME: аргумент "overwriteIfExists" не используется
     private suspend fun copyFileFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
         fileCopier.copyFileFromSourceToTarget(
             syncObject,
@@ -66,6 +67,7 @@ class ItemCopier5 @AssistedInject constructor(
     }
 
 
+    // FIXME: аргумент "overwriteIfExists" не используется
     private suspend fun copyFileFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
         fileCopier.copyFileFromTargetToSource(
             syncObject,
