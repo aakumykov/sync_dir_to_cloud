@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirPath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirPath
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import java.io.File
 
@@ -33,13 +34,10 @@ class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
         get() = TestComponentHolder.testSyncTaskDAO.get(taskConfig.TASK_ID)!!
 
     private val sFileName = randomName
-    private val tFileName = randomName
 
     private val sFileData = randomBytes
-    private val tFileData = randomBytes
 
     private val sFile get() = fileHelper.fileInSource(sFileName)
-    private val tFile get() = fileHelper.fileInSource(tFileName)
 
     private val sFileInTarget = fileHelper.fileInTarget(sFileName)
 
@@ -80,11 +78,10 @@ class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
     }
 
 
-    private val taskBackupsDirInTarget
-        get() = fileHelper.dirInTarget(syncTask.targetTaskBackupDirName!!)
-
-    private val executionBackupDirInTarget
-        get() = fileHelper.dirInTarget(syncTask.targetExecutionBackupDirName!!)
+    @Before
+    fun create_file_in_source_and_sync_with_target() {
+        prepare()
+    }
 
 
     // 1 --- 1
@@ -93,7 +90,7 @@ class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
     // x --- x {1}
     @Test
     fun source_file_deleted() {
-        prepare()
+//        prepare()
 
         fileHelper.deleteFileFromSource(sFileName)
         Assert.assertFalse(sFile.exists())
@@ -115,7 +112,7 @@ class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
     // [1]* --- [1]* {1}
     @Test
     fun source_file_modified() {
-        prepare()
+//        prepare()
 
         // Пересоздаю файл в источнике и проверяю, что он с новым содержимым.
         val newData = randomBytes
@@ -133,5 +130,50 @@ class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
     }
 
 
+    // 1 --- 1
+    // 1 --- x
+    // sync
+    // 1 --- 1
+    @Test
+    fun target_file_deleted() {
+//        prepare()
 
+        fileHelper.deleteFileFromTarget(sFileName)
+
+        doSync()
+
+        Assert.assertEquals(1, fileHelper.sourceDirItemsCount())
+        assertExistsAndContains(sFile, sFileData)
+
+        Assert.assertEquals(1, fileHelper.targetDirItemsCount())
+        assertExistsAndContains(sFileInTarget, sFileData)
+    }
+
+
+    // 1 --- 1
+    // 1 --- 1*
+    // sync
+    // 1 --- 1 {1*}
+    @Test
+    fun target_file_modified() {
+//        prepare()
+
+        val newData = randomBytes
+        fileHelper.createFileInTarget(sFileName, newData)
+        doSync()
+
+        // Проверяю, что содержимое файлов стало разным.
+        Assert.assertNotEquals(
+            fileHelper.getFileContents(sFile),
+            fileHelper.getFileContents(sFileInTarget)
+        )
+
+        Assert.assertEquals(1, fileHelper.sourceDirItemsCount())
+        assertExistsAndContains(sFile, sFileData)
+
+        Assert.assertEquals(2, fileHelper.targetDirItemsCount())
+        assertExistsAndContains(sFileInTarget, newData)
+
+        fileWasBackedUpInTarget(sFileName, sFileData)
+    }
 }
