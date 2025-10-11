@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_fil
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.WithBackupSyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes10
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirPath
@@ -36,7 +35,7 @@ class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
 
     private val sFileName = randomName
 
-    private val sFileData = randomBytes10
+    private val sFileData = randomBytes
 
     private val sFile get() = fileHelper.fileInSource(sFileName)
 
@@ -159,7 +158,7 @@ class StaticFlatFilesWithBackup : WithBackupSyncTestBase() {
     fun target_file_modified() {
 //        prepare()
 
-        val newData = randomBytes10
+        val newData = randomBytes
         fileHelper.createFileInTarget(sFileName, newData)
 
         doSync()
