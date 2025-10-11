@@ -6,15 +6,17 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isModifiedOrDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewModifiedDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isNewOrModifiedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isUnchangedInSource
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -31,22 +33,41 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     suspend fun generate(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
 
-        // Сначала удаляю, что освобождает место в хранилище (если без бекапа).
+        // Бекаплю удалённые и изменённые файлы (если нужно).
+        nextOrderNum = processFilesNeedToBeBackupedInTarget(nextOrderNum)
+
+        // Удаляю удалённые файлы.
         nextOrderNum = processNeedToBeDeletedInTarget(nextOrderNum)
 
-        // Потом копирую новое.
+        // Копирую новое.
         nextOrderNum = processNeedToBeCopiedToTarget(nextOrderNum)
 
         return nextOrderNum
     }
 
+    private suspend fun processFilesNeedToBeBackupedInTarget(nextOrderNum: Int): Int {
+        return if (syncTask.withBackup) {
+            getAllBilateralComparisonStates()
+                .filter { it.isFile }
+                .filter { it.isModifiedOrDeletedInSource || it.isModifiedInTarget }
+                .filter { it.notDeletedInTarget }
+                .let {
+                    createInstructionsFor(it, SyncOperation.BACKUP_IN_TARGET, nextOrderNum)
+                }
+        } else nextOrderNum
+    }
+
+
     private suspend fun processNeedToBeDeletedInTarget(initialOrderNum: Int): Int {
         var nextOrderNum = initialOrderNum
+
         // Сначала удаляю все файлы
         nextOrderNum = deleteFilesInTargetDeletedInSource(nextOrderNum)
+
         // Потом каталоги (которые к этой поре должны стать пустыми).
         // Ибо удаление непустого каталога в облаке - "несинхронная" операция.
         nextOrderNum = deleteDirsInTargetDeletedInSource(nextOrderNum)
+
         return nextOrderNum
     }
 
