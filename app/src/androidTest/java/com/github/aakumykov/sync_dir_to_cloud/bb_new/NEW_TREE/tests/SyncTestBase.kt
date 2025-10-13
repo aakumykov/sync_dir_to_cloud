@@ -5,10 +5,11 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConf
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import org.junit.Assert
 import org.junit.Before
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 abstract class SyncTestBase : StorageAccessTestCase() {
@@ -48,5 +49,10 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
         if (delayAfterWork)
             TimeUnit.MILLISECONDS.sleep(afterSyncSleepTimeoutMs)
+    }
+
+    protected fun assertExistsAndEmpty(fileOrDir: File) {
+        Assert.assertTrue(fileOrDir.exists())
+        Assert.assertTrue(fileOrDir.isEmpty)
     }
 }

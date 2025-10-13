@@ -62,10 +62,10 @@ class CreatingFlatDirsWithoutBackup : CreateAndSyncTestBase() {
 
         doSync()
 
-        Assert.assertEquals(1, fileHelper.sourceDirItemsCount())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(dirInSource)
 
-        Assert.assertEquals(2, fileHelper.targetDirItemsCount())
+        Assert.assertEquals(2, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(sDirInTarget)
 
         assertExistsAndEmpty(newDirInTarget)

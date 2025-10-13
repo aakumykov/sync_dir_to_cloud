@@ -84,17 +84,17 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
      */
     @Test
     fun returns_non_zero_counting_not_empty_source_dir() = run {
-        Assert.assertTrue(fileHelper.sourceDirItemsCount() > 0)
+        Assert.assertTrue(fileHelper.countFilesInSource() > 0)
     }
     @Test
     fun returns_zero_on_counting_empty_source_dir() = run {
-        Assert.assertEquals(0, fileHelper.sourceDirItemsCount())
+        Assert.assertEquals(0, fileHelper.countFilesInSource())
     }
     @Test
     fun throws_exception_counting_unexisting_source_dir() = run {
         Assert.assertThrows(Exception::class.java) {
             fileHelper.deleteSourceDirRecursively()
-            fileHelper.sourceDirItemsCount()
+            fileHelper.countFilesInSource()
         }
     }
 
@@ -103,17 +103,17 @@ class LocalFileHelperTopDirsTest : LocalFileHelperTestBase() {
      */
     @Test
     fun returns_non_zero_counting_not_empty_target_dir() = run {
-        Assert.assertTrue(fileHelper.targetDirItemsCount() > 0)
+        Assert.assertTrue(fileHelper.countFilesInTarget() > 0)
     }
     @Test
     fun returns_zero_on_counting_empty_target_dir() = run {
-        Assert.assertEquals(0, fileHelper.targetDirItemsCount())
+        Assert.assertEquals(0, fileHelper.countFilesInTarget())
     }
     @Test
     fun throws_exception_counting_unexisting_target_dir() = run {
         Assert.assertThrows(Exception::class.java) {
             fileHelper.deleteSourceDirRecursively()
-            fileHelper.targetDirItemsCount()
+            fileHelper.countFilesInTarget()
         }
     }
 

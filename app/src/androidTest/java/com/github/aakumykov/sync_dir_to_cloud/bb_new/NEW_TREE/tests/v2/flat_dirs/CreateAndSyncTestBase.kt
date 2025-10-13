@@ -4,7 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.NoBackupSync
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
-import java.io.File
 
 abstract class CreateAndSyncTestBase : NoBackupSyncTestBase() {
 
@@ -15,11 +14,6 @@ abstract class CreateAndSyncTestBase : NoBackupSyncTestBase() {
     protected val dirInTarget get() = fileHelper.dirInTarget(dirInTargetName)
 
     protected val sDirInTarget get() = fileHelper.dirInTarget(dirInSourceName)
-
-    protected fun assertExistsAndEmpty(dir: File) {
-        Assert.assertTrue(dir.exists())
-        Assert.assertTrue(dir.isEmpty)
-    }
 
     /**
      * Создаёт каталог [dirInSourceName] в источнике и синхронизирует его с приёмником.

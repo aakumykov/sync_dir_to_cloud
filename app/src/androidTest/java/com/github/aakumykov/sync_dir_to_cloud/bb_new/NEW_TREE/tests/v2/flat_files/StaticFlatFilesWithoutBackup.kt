@@ -1,13 +1,20 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_files
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.NoBackupSyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
 
-class StaticFlatFilesWithoutBackup : NoBackupSyncTestBase()  {
+class StaticFlatFilesWithBackup2() : StaticFlatFilesWithoutBackup() {
+
+    override val taskConfig: TaskConfig
+        get() = super.taskConfig
+}
+
+open class StaticFlatFilesWithoutBackup : NoBackupSyncTestBase()  {
 
     /**
      * Пустой файл - нет ничего [empty_file_in_source_and_no_files_in_target]
@@ -24,30 +31,28 @@ class StaticFlatFilesWithoutBackup : NoBackupSyncTestBase()  {
      * Непустой файл - разноимённый непустой файл [diff_names_data_files_in_source_and_target]
      */
 
+    protected fun prepare_empty_file_in_source_and_no_files_in_target() {
+        fileHelper.createFileInSource(sFileName, emptyData)
+        doSync()
+    }
+
+    private fun check_empty_file_in_source_and_no_files_in_target() {
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        assertExistsAndEmpty(sFile)
+
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        assertExistsAndEmpty(sFileInTarget)
+    }
+
+    // 1 --- x
+    // sync
+    // 1 --- 1
     @Test
     fun empty_file_in_source_and_no_files_in_target() {
-        val fileName = randomName
-        val data = byteArrayOf()
-
-        val sourceFile = fileHelper.createFileInSource(fileName, data)
-        val targetFile = fileHelper.fileInTarget(fileName)
-
-        doSync()
-
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
-
-        Assert.assertTrue(sourceFile.exists())
-        Assert.assertTrue(targetFile.exists())
-
-        Assert.assertEquals(
-            fileHelper.getFileContents(sourceFile).joinToString(),
-            fileHelper.getFileContents(targetFile).joinToString()
-        )
-
-        Assert.assertTrue(fileHelper.getFileContents(sourceFile).isEmpty())
-        Assert.assertTrue(fileHelper.getFileContents(targetFile).isEmpty())
+        prepare_empty_file_in_source_and_no_files_in_target()
+        check_empty_file_in_source_and_no_files_in_target()
     }
+
 
     @Test
     fun no_files_in_source_and_empty_file_in_target() {
