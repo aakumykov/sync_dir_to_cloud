@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-class StaticFlatFilesWithBackup() : WithBackupSyncTestBase() {
+class StaticFlatFlatFilesWithoutBackupFilesWithBackup() : WithBackupSyncTestBase() {
 
     /**
      * Файлы в корне, с бекапом.
@@ -33,20 +33,12 @@ class StaticFlatFilesWithBackup() : WithBackupSyncTestBase() {
 
 
     private fun prepare() {
-        fileHelper.createFileInSource(sFileName, notEmptyData)
-        assertExistsAndContains(sFile, notEmptyData)
+        fileHelper.createFileInSource(sFileName, freshNotEmptyData)
+        assertExistsAndContains(sFile, freshNotEmptyData)
         doSync()
-        assertExistsAndContains(sFile, notEmptyData)
-        assertExistsAndContains(sFileInTarget, notEmptyData)
+        assertExistsAndContains(sFile, freshNotEmptyData)
+        assertExistsAndContains(sFileInTarget, freshNotEmptyData)
 
-    }
-
-    private fun assertExistsAndContains(file: File, contents: ByteArray) {
-        Assert.assertTrue(file.exists())
-        Assert.assertEquals(
-            contents.joinToString(),
-            fileHelper.getFileContents(file).joinToString()
-        )
     }
 
     private fun fileWasBackedUpInTarget(fileName: String, fileData: ByteArray) {
@@ -92,7 +84,7 @@ class StaticFlatFilesWithBackup() : WithBackupSyncTestBase() {
         Assert.assertFalse(sFile.exists())
         Assert.assertFalse(sFileInTarget.exists())
 
-        fileWasBackedUpInTarget(sFileName, notEmptyData)
+        fileWasBackedUpInTarget(sFileName, freshNotEmptyData)
     }
 
 
@@ -107,7 +99,7 @@ class StaticFlatFilesWithBackup() : WithBackupSyncTestBase() {
         // Пересоздаю файл в источнике и проверяю, что он с новым содержимым.
         val newData = randomBytes
         fileHelper.createFileInSource(sFileName, newData)
-        Assert.assertNotEquals(notEmptyData, fileHelper.getFileContents(sFile))
+        Assert.assertNotEquals(freshNotEmptyData, fileHelper.getFileContents(sFile))
 
         doSync()
 
@@ -116,7 +108,7 @@ class StaticFlatFilesWithBackup() : WithBackupSyncTestBase() {
         assertExistsAndContains(sFile, newData)
         assertExistsAndContains(sFileInTarget, newData)
 
-        fileWasBackedUpInTarget(sFileName, notEmptyData)
+        fileWasBackedUpInTarget(sFileName, freshNotEmptyData)
     }
 
 
@@ -133,10 +125,10 @@ class StaticFlatFilesWithBackup() : WithBackupSyncTestBase() {
         doSync()
 
         Assert.assertEquals(1, fileHelper.countFilesInSource())
-        assertExistsAndContains(sFile, notEmptyData)
+        assertExistsAndContains(sFile, freshNotEmptyData)
 
         Assert.assertEquals(1, fileHelper.countFilesInTarget())
-        assertExistsAndContains(sFileInTarget, notEmptyData)
+        assertExistsAndContains(sFileInTarget, freshNotEmptyData)
     }
 
 
@@ -160,10 +152,10 @@ class StaticFlatFilesWithBackup() : WithBackupSyncTestBase() {
         )
 
         Assert.assertEquals(1, fileHelper.countFilesInSource())
-        assertExistsAndContains(sFile, notEmptyData)
+        assertExistsAndContains(sFile, freshNotEmptyData)
 
         Assert.assertEquals(2, fileHelper.countFilesInTarget())
-        assertExistsAndContains(sFileInTarget, notEmptyData)
+        assertExistsAndContains(sFileInTarget, freshNotEmptyData)
 
         fileWasBackedUpInTarget(sFileName, newData)
     }

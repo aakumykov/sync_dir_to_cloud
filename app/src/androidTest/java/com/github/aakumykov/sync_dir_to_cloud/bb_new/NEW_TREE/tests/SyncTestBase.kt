@@ -7,6 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTa
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Before
 import java.io.File
@@ -21,6 +23,27 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val fileHelper get() = LocalFileHelper(taskConfig)
 
 
+    protected val commonFileName = randomName
+    protected val commonFileInSource = fileHelper.fileInSource(commonFileName)
+    protected val commonFileInTarget = fileHelper.fileInTarget(commonFileName)
+
+    protected val sFileName = randomName
+    protected val tFileName = randomName
+
+    protected val sFile = fileHelper.fileInSource(sFileName)
+    protected val tFile = fileHelper.fileInTarget(tFileName)
+
+    protected val commonFileData: ByteArray = freshNotEmptyData
+    protected val sFileData: ByteArray = freshNotEmptyData
+    protected val tFileData: ByteArray = freshNotEmptyData
+
+    protected val sFileInTarget = fileHelper.fileInTarget(sFileName)
+    protected val tFileInSource = fileHelper.fileInSource(tFileName)
+
+    protected val emptyData: ByteArray = byteArrayOf()
+    protected val freshNotEmptyData: ByteArray get() = randomBytes
+
+
     @Before
     fun reCreateLocalTask() = run {
         scenario(DeleteLocalTaskScenario())
@@ -31,11 +54,13 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     @Before
     fun prepareSourceAndTargetDirs() = run {
+        // Удаляю источник и приёмник.
         fileHelper.deleteSourceDirRecursively()
         fileHelper.deleteTargetDirRecursively()
         Assert.assertFalse(taskConfig.SOURCE_DIR.exists())
         Assert.assertFalse(taskConfig.TARGET_DIR.exists())
 
+        // Создаю источник и приёмник.
         fileHelper.createSourceDir()
         fileHelper.createTargetDir()
         Assert.assertTrue(taskConfig.SOURCE_DIR.exists())
@@ -54,5 +79,13 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected fun assertExistsAndEmpty(fileOrDir: File) {
         Assert.assertTrue(fileOrDir.exists())
         Assert.assertTrue(fileOrDir.isEmpty)
+    }
+
+    protected fun assertExistsAndContains(file: File, contents: ByteArray) {
+        Assert.assertTrue(file.exists())
+        Assert.assertEquals(
+            contents.joinToString(),
+            fileHelper.getFileContents(file).joinToString()
+        )
     }
 }
