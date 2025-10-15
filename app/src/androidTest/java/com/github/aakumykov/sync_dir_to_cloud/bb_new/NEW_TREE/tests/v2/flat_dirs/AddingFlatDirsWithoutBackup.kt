@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomNam
 import org.junit.Assert
 import org.junit.Test
 
-class CreatingFlatDirsWithoutBackup : CreateAndSyncTestBase() {
+class AddingFlatDirsWithoutBackup : CreateAndSyncTestBase() {
 
     /**
      * Эти действия выполняются после первичной синхронизации (s) --> (t).
