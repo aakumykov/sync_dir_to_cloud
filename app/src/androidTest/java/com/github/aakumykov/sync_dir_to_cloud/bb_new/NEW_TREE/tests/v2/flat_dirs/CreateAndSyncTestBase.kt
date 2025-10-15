@@ -13,7 +13,6 @@ abstract class CreateAndSyncTestBase : NoBackupSyncTestBase() {
     protected val dirInSource get() = fileHelper.dirInSource(dirInSourceName)
     protected val dirInTarget get() = fileHelper.dirInTarget(dirInTargetName)
 
-    protected val sDirInTarget get() = fileHelper.dirInTarget(dirInSourceName)
 
     /**
      * Создаёт каталог [dirInSourceName] в источнике и синхронизирует его с приёмником.
@@ -22,7 +21,14 @@ abstract class CreateAndSyncTestBase : NoBackupSyncTestBase() {
      */
     protected fun prepare() {
         fileHelper.createDirInSource(dirInSourceName)
+
+//        var sourceList = taskConfig.SOURCE_DIR.list()
+//        var targetList = taskConfig.TARGET_DIR.list()
+
         doSync()
+
+//        sourceList = taskConfig.SOURCE_DIR.list()
+//        targetList = taskConfig.TARGET_DIR.list()
 
         Assert.assertTrue(dirInSource.exists())
         Assert.assertTrue(sDirInTarget.exists())

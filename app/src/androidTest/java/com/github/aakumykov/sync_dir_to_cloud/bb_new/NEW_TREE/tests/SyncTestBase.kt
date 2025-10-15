@@ -23,6 +23,10 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val fileHelper get() = LocalFileHelper(taskConfig)
 
 
+    //
+    // Настройки файлов
+    //
+
     protected val commonFileName = randomName
     protected val commonFileInSource = fileHelper.fileInSource(commonFileName)
     protected val commonFileInTarget = fileHelper.fileInTarget(commonFileName)
@@ -42,6 +46,25 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     protected val emptyData: ByteArray = byteArrayOf()
     protected val freshNotEmptyData: ByteArray get() = randomBytes
+
+
+    //
+    // Настройки каталогов
+    //
+    protected val commonDirName = randomName
+
+    protected val sDirName = randomName
+    protected val tDirName = randomName
+
+    protected val sCommonDir = fileHelper.dirInSource(commonDirName)
+    protected val tCommonDir = fileHelper.dirInTarget(commonDirName)
+
+    protected val sDir = fileHelper.dirInSource(sDirName)
+    protected val tDir = fileHelper.dirInTarget(tDirName)
+
+    protected val sDirInTarget = fileHelper.dirInTarget(sDirName)
+    protected val tDirInSource = fileHelper.dirInSource(tDirName)
+
 
 
     @Before
@@ -68,7 +91,7 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     }
 
 
-    protected fun doSync(delayAfterWork: Boolean = true) = run {
+    protected fun doSync(delayAfterWork: Boolean = false) = run {
 
         scenario(RunSyncScenario(taskConfig.TASK_ID))
 

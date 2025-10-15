@@ -1,11 +1,12 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.creating_dirs
 
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import org.junit.Assert
 import org.junit.Test
 
-class CreatingFlatDirs : FlatDirsBase() {
+open class CreatingFlatDirsWithoutBackup : CreatingDirsBase() {
 
     /**
      * Каталога только в источнике [only_in_source_dir]
@@ -21,9 +22,8 @@ class CreatingFlatDirs : FlatDirsBase() {
 
     // ==== sync ===>
     @Test
-    fun only_in_source_dir() {
-        fileHelper.createDirInSource(sDirName)
-        doSync()
+    override fun only_in_source_dir() {
+        super.only_in_source_dir()
 
         Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
@@ -35,9 +35,8 @@ class CreatingFlatDirs : FlatDirsBase() {
 
     // ==== sync ===>
     @Test
-    fun only_in_target_dir() {
-        fileHelper.createDirInTarget(tDirName)
-        doSync()
+    override fun only_in_target_dir() {
+        super.only_in_target_dir()
 
         Assert.assertEquals(0, fileHelper.countFilesInSource())
 
@@ -48,39 +47,28 @@ class CreatingFlatDirs : FlatDirsBase() {
 
     // ==== sync ===>
     @Test
-    fun same_name_dirs_in_source_and_target() {
-        fileHelper.createDirInSource(commonDirName)
-        fileHelper.createDirInTarget(commonDirName)
-        doSync()
+    override fun same_name_dirs_in_source_and_target() {
+        super.same_name_dirs_in_source_and_target()
 
         Assert.assertEquals(1, fileHelper.countFilesInSource())
-        assertExistsAndEmpty(sDir)
+        assertExistsAndEmpty(sCommonDir)
 
         Assert.assertEquals(1, fileHelper.countFilesInTarget())
-        assertExistsAndEmpty(tDir)
+        assertExistsAndEmpty(tCommonDir)
     }
 
 
     // ==== sync ===>
     @Test
-    fun diff_name_dirs_in_source_and_target() {
-        var sourceList = taskConfig.SOURCE_DIR.list()
-        var targetList = taskConfig.TARGET_DIR.list()
-
-        fileHelper.createDirInSource(sDirName)
-        fileHelper.createDirInTarget(tDirName)
-         sourceList = taskConfig.SOURCE_DIR.list()
-         targetList = taskConfig.TARGET_DIR.list()
-
-        doSync()
+    override fun diff_name_dirs_in_source_and_target() {
+        super.diff_name_dirs_in_source_and_target()
 
         Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
-        sourceList = taskConfig.SOURCE_DIR.list()
 
         Assert.assertEquals(2, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(tDir)
-        targetList = taskConfig.TARGET_DIR.list()
-        assertExistsAndEmpty(sFileInTarget)
+        assertExistsAndEmpty(sDirInTarget)
     }
+
 }
