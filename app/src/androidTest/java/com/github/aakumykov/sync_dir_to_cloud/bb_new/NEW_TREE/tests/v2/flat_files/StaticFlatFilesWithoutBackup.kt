@@ -1,36 +1,24 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_files
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.NoBackupSyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
 
-open class StaticFlatFilesWithoutBackup : NoBackupSyncTestBase()  {
+// TODO: тесты, где бы эти методы выдавали ошибку
 
-    /**
-     * Пустой файл - нет ничего [empty_file_in_source_and_no_files_in_target]
-     * Нет ничего - пустой файл [no_files_in_source_and_empty_file_in_target]
-     *
-     * Пустой файл - одноимённый пустой файл [same_name_empty_files_in_src_and_tgt]
-     * Пустой файл - разноимённый пустой файл [diff_names_empty_files_in_source_and_target]
-     *
-     *
-     * Непустой файл - нет ничего [data_file_in_source_and_no_files_in_target]
-     * Нет ничего - непустой файл [no_files_in_source_and_data_file_in_target]
-     *
-     * Непустой файл - одноимённый непустой файл [same_name_data_files_in_source_and_target]
-     * Непустой файл - разноимённый непустой файл [diff_names_data_files_in_source_and_target]
-     */
+open class StaticFlatFilesWithoutBackup : FlatFilesBase() {
 
-    protected fun prepare_empty_file_in_source_and_no_files_in_target() {
-        fileHelper.createFileInSource(sFileName, emptyData)
-        doSync()
-    }
+    override val taskConfig: TaskConfig
+        get() = LocalToLocalSyncWithoutBackupTaskConfig()
 
-    private fun check_empty_file_in_source_and_no_files_in_target() {
+
+    // ==== sync ===>
+    @Test
+    override fun empty_file_in_source_and_no_files_in_target() {
+        super.empty_file_in_source_and_no_files_in_target()
+
         Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sFile)
 
@@ -38,203 +26,99 @@ open class StaticFlatFilesWithoutBackup : NoBackupSyncTestBase()  {
         assertExistsAndEmpty(sFileInTarget)
     }
 
-    // 1 --- x
-    // sync
-    // 1 --- 1
+
+    // ==== sync ===>
     @Test
-    fun empty_file_in_source_and_no_files_in_target() {
-        prepare_empty_file_in_source_and_no_files_in_target()
-        check_empty_file_in_source_and_no_files_in_target()
-    }
+    override fun no_files_in_source_and_empty_file_in_target() {
+        super.no_files_in_source_and_empty_file_in_target()
 
+        Assert.assertEquals(0, fileHelper.countFilesInSource())
 
-    @Test
-    fun no_files_in_source_and_empty_file_in_target() {
-        val fileName = randomName
-        val data = byteArrayOf()
-
-        val sourceFile = fileHelper.fileInSource(fileName)
-        val targetFile = fileHelper.createFileInTarget(fileName, data)
-
-        doSync()
-
-        Assert.assertEquals(0, fileHelper.listSourceDir().size)
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
-
-        Assert.assertFalse(sourceFile.exists())
-        Assert.assertTrue(targetFile.exists())
-
-        Assert.assertTrue(fileHelper.getFileContents(targetFile).isEmpty())
-    }
-
-    @Test
-    fun same_name_empty_files_in_src_and_tgt() {
-        val fileName = randomName
-        val data = byteArrayOf()
-
-        val sourceFile = fileHelper.createFileInSource(fileName, data)
-        val targetFile = fileHelper.createFileInTarget(fileName, data)
-
-        doSync()
-
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
-
-        Assert.assertTrue(sourceFile.exists())
-        Assert.assertTrue(targetFile.exists())
-
-        Assert.assertEquals(
-            fileHelper.getFileContents(sourceFile).joinToString(),
-            fileHelper.getFileContents(targetFile).joinToString(),
-        )
-    }
-
-    @Test
-    fun diff_names_empty_files_in_source_and_target() {
-        val sFileName = randomName
-        val tFileName = randomName
-
-        val data = byteArrayOf()
-
-        val sFile = fileHelper.createFileInSource(sFileName, data)
-        val sFileInTarget = fileHelper.fileInTarget(sFileName)
-
-        val tFile = fileHelper.createFileInTarget(tFileName, data)
-        val tFileInSource = fileHelper.fileInSource(tFileName)
-
-        doSync()
-
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(2, fileHelper.listTargetDir().size)
-
-        Assert.assertTrue(sFile.exists())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         Assert.assertTrue(tFile.exists())
-
-        Assert.assertTrue(sFileInTarget.exists())
-        Assert.assertFalse(tFileInSource.exists())
-
-        Assert.assertEquals(
-            data.joinToString(),
-            fileHelper.getFileContents(sFile).joinToString()
-        )
-        Assert.assertEquals(
-            data.joinToString(),
-            fileHelper.getFileContents(tFile).joinToString()
-        )
-
-        Assert.assertEquals(
-            data.joinToString(),
-            fileHelper.getFileContents(sFileInTarget).joinToString()
-        )
+        Assert.assertTrue(tFile.isEmpty)
     }
 
 
+    // ==== sync ===>
     @Test
-    fun data_file_in_source_and_no_files_in_target() {
-        val fileName = randomName
-        val data = randomBytes
+    override fun same_name_empty_files_in_src_and_tgt() {
+        super.same_name_empty_files_in_src_and_tgt()
 
-        val sFile = fileHelper.createFileInSource(fileName, data)
-        val tFile = fileHelper.fileInTarget(fileName)
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        assertExistsAndEmpty(commonFileInSource)
 
-        doSync()
-
-        Assert.assertTrue(sFile.exists())
-        Assert.assertEquals(
-            data.joinToString(),
-            fileHelper.getFileContents(sFile).joinToString()
-        )
-
-        Assert.assertTrue(tFile.exists())
-        Assert.assertEquals(
-            data.joinToString(),
-            fileHelper.getFileContents(tFile).joinToString()
-        )
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        assertExistsAndEmpty(commonFileInTarget)
     }
 
+
+    // ==== sync ===>
     @Test
-    fun no_files_in_source_and_data_file_in_target() {
-        val fileName = randomName
-        val data = randomBytes
+    override fun diff_names_empty_files_in_source_and_target() {
+        super.diff_names_empty_files_in_source_and_target()
 
-        val sFile = fileHelper.fileInSource(fileName)
-        val tFile = fileHelper.createFileInTarget(fileName, data)
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        assertExistsAndEmpty(sFile)
 
-        doSync()
-
-        Assert.assertFalse(sFile.exists())
-        Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
-
-        Assert.assertTrue(tFile.exists())
-        Assert.assertEquals(
-            data.joinToString(),
-            fileHelper.getFileContents(tFile).joinToString()
-        )
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
+        Assert.assertEquals(2, fileHelper.countFilesInTarget())
+        assertExistsAndEmpty(tFile)
+        assertExistsAndEmpty(sFileInTarget)
     }
 
+
+    // ==== sync ===>
     @Test
-    fun same_name_data_files_in_source_and_target() {
-        val fileName = randomName
-        val sData = randomBytes
-        val tData = randomBytes
+    override fun data_file_in_source_and_no_files_in_target() {
+        super.data_file_in_source_and_no_files_in_target()
 
-        val sFile = fileHelper.createFileInSource(fileName, sData)
-        val tFile = fileHelper.createFileInTarget(fileName, tData)
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        assertExistsAndContains(sFile, sFileData)
 
-        doSync()
-
-        Assert.assertTrue(sFile.exists())
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(
-            sData.joinToString(),
-            fileHelper.getFileContents(sFile).joinToString()
-        )
-
-        Assert.assertTrue(tFile.exists())
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
-        Assert.assertEquals(
-            sData.joinToString(),
-            fileHelper.getFileContents(tFile).joinToString()
-        )
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        assertExistsAndContains(sFileInTarget, sFileData)
     }
 
+
+    // ==== sync ===>
     @Test
-    fun diff_names_data_files_in_source_and_target() {
-        val sFileName = randomName
-        val tFileName = randomName
+    override fun no_files_in_source_and_data_file_in_target() {
+        super.no_files_in_source_and_data_file_in_target()
 
-        val sData = randomBytes
-        val tData = randomBytes
+        Assert.assertEquals(0, fileHelper.countFilesInSource())
 
-        val sFile = fileHelper.createFileInSource(sFileName, sData)
-        val sFileInTarget = fileHelper.fileInTarget(sFileName)
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        assertExistsAndContains(tFile, tFileData)
+    }
 
-        val tFile = fileHelper.createFileInTarget(tFileName, tData)
-        val tFileInSource = fileHelper.fileInSource(tFileName)
 
-        doSync()
+    // ==== sync ===>
+    @Test
+    override fun same_name_data_files_in_source_and_target() {
+        super.same_name_data_files_in_source_and_target()
 
-        Assert.assertTrue(sFile.exists())
-        Assert.assertTrue(sFileInTarget.exists())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
 
-        Assert.assertTrue(tFile.exists())
-        Assert.assertFalse(tFileInSource.exists())
+        assertExistsAndContains(commonFileInSource, commonFileData)
+        assertExistsAndContains(commonFileInTarget, commonFileData)
+    }
 
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(2, fileHelper.listTargetDir().size)
+
+    // ==== sync ===>
+    @Test
+    override fun diff_names_data_files_in_source_and_target() {
+        super.diff_names_data_files_in_source_and_target()
+
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        assertExistsAndContains(sFile, sFileData)
+
+        Assert.assertEquals(2, fileHelper.countFilesInTarget())
+        assertExistsAndContains(tFile, tFileData)
+        assertExistsAndContains(sFileInTarget, sFileData)
 
         Assert.assertEquals(
-            sData.joinToString(),
-            fileHelper.getFileContents(sFile).joinToString()
-        )
-        Assert.assertEquals(
-            tData.joinToString(),
-            fileHelper.getFileContents(tFile).joinToString()
-        )
-
-        Assert.assertEquals(
-            sData.joinToString(),
+            fileHelper.getFileContents(sFile).joinToString(),
             fileHelper.getFileContents(sFileInTarget).joinToString()
         )
     }
