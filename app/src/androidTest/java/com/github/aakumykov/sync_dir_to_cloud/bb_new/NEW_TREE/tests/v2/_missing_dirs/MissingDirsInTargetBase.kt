@@ -1,8 +1,9 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._missing_files
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._missing_dirs
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.NoBackupSyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 
-class MissingDirsInTarget() : NoBackupSyncTestBase() {
+abstract class MissingDirsInTargetBase() : SyncTestBase() {
+
     // TODO: тестировать в конфигурации с бекапами
 
     /**
