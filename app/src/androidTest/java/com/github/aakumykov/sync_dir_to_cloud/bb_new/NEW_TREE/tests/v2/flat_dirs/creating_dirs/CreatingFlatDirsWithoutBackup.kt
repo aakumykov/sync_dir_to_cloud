@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.creating_dirs
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import org.junit.Assert
@@ -51,10 +50,10 @@ open class CreatingFlatDirsWithoutBackup : CreatingDirsBase() {
         super.same_name_dirs_in_source_and_target()
 
         Assert.assertEquals(1, fileHelper.countFilesInSource())
-        assertExistsAndEmpty(sCommonDir)
+        assertExistsAndEmpty(commonDirInSource)
 
         Assert.assertEquals(1, fileHelper.countFilesInTarget())
-        assertExistsAndEmpty(tCommonDir)
+        assertExistsAndEmpty(commonDirInTarget)
     }
 
 

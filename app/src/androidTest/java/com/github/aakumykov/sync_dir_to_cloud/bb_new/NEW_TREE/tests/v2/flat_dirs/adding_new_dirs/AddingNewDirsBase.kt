@@ -1,10 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.adding_new_dirs
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
-import org.junit.Test
 
 abstract class AddingNewDirsBase : SyncTestBase() {
 
@@ -21,19 +19,19 @@ abstract class AddingNewDirsBase : SyncTestBase() {
      * Создание одинаковых дополнительных каталогов в обоих местах [create_same_name_additional_dirs_in_source_and_target]
      */
 
-    protected val sNewDirName = randomName
-    protected val tNewDirName = randomName
+    protected val newSDirName = randomName
+    protected val newTDirName = randomName
 
     protected val commonNewDirName = randomName
 
-    protected val newSDir = fileHelper.dirInSource(sNewDirName)
-    protected val newTDir = fileHelper.dirInTarget(tNewDirName)
+    protected val newSDir = fileHelper.dirInSource(newSDirName)
+    protected val newTDir = fileHelper.dirInTarget(newTDirName)
 
-    protected val newSDirInTarget = fileHelper.dirInTarget(sNewDirName)
-    protected val newTDirInSource = fileHelper.dirInSource(tNewDirName)
+    protected val newSDirInTarget = fileHelper.dirInTarget(newSDirName)
+    protected val newTDirInSource = fileHelper.dirInSource(newTDirName)
 
-    protected val sNewCommonDir = fileHelper.dirInSource(commonNewDirName)
-    protected val tNewCommonDir = fileHelper.dirInTarget(commonNewDirName)
+    protected val newCommonSDir = fileHelper.dirInSource(commonNewDirName)
+    protected val newCommonTDir = fileHelper.dirInTarget(commonNewDirName)
 
 
     // [1] --- x
@@ -42,10 +40,9 @@ abstract class AddingNewDirsBase : SyncTestBase() {
     // [1][2] --- [1]
     // ===== sync =====>
     // [1][2] --- [1][2]
-    @Test
     open fun create_additional_dir_in_source() {
         prepare()
-        fileHelper.createDirInSource(sNewDirName)
+        fileHelper.createDirInSource(newSDirName)
         doSync()
     }
 
@@ -55,10 +52,9 @@ abstract class AddingNewDirsBase : SyncTestBase() {
     // [1] --- [1][2]
     // ===== sync =====>
     // [1] -- [1][2]
-    @Test
     open fun create_additional_dir_in_target() {
         prepare()
-        fileHelper.createDirInTarget(tNewDirName)
+        fileHelper.createDirInTarget(newTDirName)
         doSync()
     }
 
@@ -68,11 +64,10 @@ abstract class AddingNewDirsBase : SyncTestBase() {
     // [1][2] --- [1][3]
     // ===== sync =====>
     // [1][2] --- [1][2][3]
-    @Test
     open fun create_diff_names_additional_dirs_in_source_and_target() {
         prepare()
-        fileHelper.createDirInSource(sNewDirName)
-        fileHelper.createDirInTarget(tNewDirName)
+        fileHelper.createDirInSource(newSDirName)
+        fileHelper.createDirInTarget(newTDirName)
         doSync()
     }
 
@@ -83,7 +78,6 @@ abstract class AddingNewDirsBase : SyncTestBase() {
     // [1][2] --- [1][2]
     // sync
     // [1][2] --- [1][2]
-    @Test
     open fun create_same_name_additional_dirs_in_source_and_target() {
         prepare()
         fileHelper.createDirInSource(commonNewDirName)
@@ -92,15 +86,21 @@ abstract class AddingNewDirsBase : SyncTestBase() {
     }
 
 
-
+    open fun preparation_method_test() {
+        prepare()
+    }
+    
+    // [1] --- x
+    // sync
+    // [1] --- [1]
     private fun prepare() {
         fileHelper.createDirInSource(sDirName)
-        fileHelper.createDirInTarget(tDirName)
+        doSync()
 
         Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
 
         Assert.assertEquals(1, fileHelper.countFilesInTarget())
-        assertExistsAndEmpty(tDir)
+        assertExistsAndEmpty(sDirInTarget)
     }
 }

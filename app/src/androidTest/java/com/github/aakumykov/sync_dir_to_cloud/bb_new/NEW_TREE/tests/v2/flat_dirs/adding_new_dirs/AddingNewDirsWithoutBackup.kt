@@ -11,17 +11,24 @@ class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
         get() = LocalToLocalSyncWithoutBackupTaskConfig()
 
 
+    // Пустой тест для проверки
+    @Test
+    override fun preparation_method_test() {
+        super.preparation_method_test()
+    }
+
+
     // ==== sync ===>
     @Test
     override fun create_additional_dir_in_source() {
         super.create_additional_dir_in_source()
 
-        Assert.assertEquals(2, fileHelper.createSourceDir())
+        Assert.assertEquals(2, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
         assertExistsAndEmpty(newSDir)
 
         Assert.assertEquals(2, fileHelper.countFilesInTarget())
-        assertExistsAndEmpty(tDir)
+        assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newSDirInTarget)
     }
 
@@ -35,9 +42,8 @@ class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
         assertExistsAndEmpty(sDir)
 
         Assert.assertEquals(2, fileHelper.countFilesInTarget())
-        assertExistsAndEmpty(tDir)
-        assertExistsAndEmpty(newTDir)
         assertExistsAndEmpty(sDirInTarget)
+        assertExistsAndEmpty(newTDir)
     }
 
 
@@ -51,7 +57,7 @@ class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
         assertExistsAndEmpty(newSDir)
 
         Assert.assertEquals(3, fileHelper.countFilesInTarget())
-        assertExistsAndEmpty(tDir)
+        assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newTDir)
         assertExistsAndEmpty(newSDirInTarget)
     }
@@ -64,10 +70,10 @@ class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
 
         Assert.assertEquals(2, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
-        assertExistsAndEmpty(sNewCommonDir)
+        assertExistsAndEmpty(newCommonSDir)
 
         Assert.assertEquals(2, fileHelper.countFilesInTarget())
-        assertExistsAndEmpty(tDir)
-        assertExistsAndEmpty(tNewCommonDir)
+        assertExistsAndEmpty(sDirInTarget)
+        assertExistsAndEmpty(newCommonTDir)
     }
 }

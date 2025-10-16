@@ -52,8 +52,8 @@ class DeletingFlatDirsWithoutBackup : NoBackupSyncTestBase()  {
         Assert.assertEquals(1, fileHelper.listTargetDir().size)
     }
 
-    private val commonDirInSource = fileHelper.dirInSource(COMMON_DIR_NAME)
-    private val commonDirInTarget = fileHelper.dirInTarget(COMMON_DIR_NAME)
+//    private val commonDirInSource = fileHelper.dirInSource(COMMON_DIR_NAME)
+//    private val commonDirInTarget = fileHelper.dirInTarget(COMMON_DIR_NAME)
 
 
 

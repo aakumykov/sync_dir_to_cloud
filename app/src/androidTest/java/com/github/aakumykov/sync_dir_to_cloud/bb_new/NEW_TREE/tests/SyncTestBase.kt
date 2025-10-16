@@ -56,8 +56,8 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val sDirName = randomName
     protected val tDirName = randomName
 
-    protected val sCommonDir = fileHelper.dirInSource(commonDirName)
-    protected val tCommonDir = fileHelper.dirInTarget(commonDirName)
+    protected val commonDirInSource = fileHelper.dirInSource(commonDirName)
+    protected val commonDirInTarget = fileHelper.dirInTarget(commonDirName)
 
     protected val sDir = fileHelper.dirInSource(sDirName)
     protected val tDir = fileHelper.dirInTarget(tDirName)
