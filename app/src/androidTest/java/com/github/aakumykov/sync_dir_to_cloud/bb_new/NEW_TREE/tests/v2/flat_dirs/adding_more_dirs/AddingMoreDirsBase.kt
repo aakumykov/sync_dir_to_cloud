@@ -1,10 +1,10 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.adding_new_dirs
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.adding_more_dirs
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 
-abstract class AddingNewDirsBase : SyncTestBase() {
+abstract class AddingMoreDirsBase : SyncTestBase() {
 
     /**
      * Эти действия выполняются после первичной синхронизации (s) --> (t).

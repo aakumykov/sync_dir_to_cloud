@@ -1,10 +1,10 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.adding_new_dirs
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.adding_more_dirs
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import org.junit.Test
 
-class AddingNewDirsWithBackup : AddingNewDirsWithoutBackup() {
+class AddingMoreDirsWithBackup : AddingMoreDirsWithoutBackup() {
 
     override val taskConfig: TaskConfig
         get() = LocalToLocalSyncWithBackupTaskConfig(super.taskConfig)
