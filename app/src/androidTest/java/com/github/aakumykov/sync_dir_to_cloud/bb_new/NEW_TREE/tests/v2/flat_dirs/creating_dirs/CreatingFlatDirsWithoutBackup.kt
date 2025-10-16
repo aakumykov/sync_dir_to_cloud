@@ -24,10 +24,10 @@ open class CreatingFlatDirsWithoutBackup : CreatingDirsBase() {
     override fun only_in_source_dir() {
         super.only_in_source_dir()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(sDir)
 
-        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
     }
 
@@ -37,9 +37,9 @@ open class CreatingFlatDirsWithoutBackup : CreatingDirsBase() {
     override fun only_in_target_dir() {
         super.only_in_target_dir()
 
-        Assert.assertEquals(0, fileHelper.countFilesInSource())
+        Assert.assertEquals(0, fileHelper.countSourceDirItems())
 
-        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(tDir)
     }
 
@@ -49,10 +49,10 @@ open class CreatingFlatDirsWithoutBackup : CreatingDirsBase() {
     override fun same_name_dirs_in_source_and_target() {
         super.same_name_dirs_in_source_and_target()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(commonDirInSource)
 
-        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(commonDirInTarget)
     }
 
@@ -62,10 +62,10 @@ open class CreatingFlatDirsWithoutBackup : CreatingDirsBase() {
     override fun diff_name_dirs_in_source_and_target() {
         super.diff_name_dirs_in_source_and_target()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(sDir)
 
-        Assert.assertEquals(2, fileHelper.countFilesInTarget())
+        Assert.assertEquals(2, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(tDir)
         assertExistsAndEmpty(sDirInTarget)
     }

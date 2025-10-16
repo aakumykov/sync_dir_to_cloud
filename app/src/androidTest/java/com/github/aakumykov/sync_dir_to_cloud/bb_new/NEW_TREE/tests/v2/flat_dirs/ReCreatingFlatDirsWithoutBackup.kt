@@ -38,10 +38,10 @@ class ReCreatingFlatDirsWithoutBackup : CreateAndSyncTestBase()  {
 
         doSync()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(dirInSource)
 
-        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
     }
 
@@ -63,10 +63,10 @@ class ReCreatingFlatDirsWithoutBackup : CreateAndSyncTestBase()  {
         fileHelper.createDirInSource(dirInSourceName)
         doSync()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(dirInSource)
 
-        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
     }
 
@@ -85,10 +85,10 @@ class ReCreatingFlatDirsWithoutBackup : CreateAndSyncTestBase()  {
 
         doSync()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(dirInSource)
 
-        Assert.assertEquals(1, fileHelper.countFilesInTarget())
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
     }
 
@@ -121,11 +121,11 @@ class ReCreatingFlatDirsWithoutBackup : CreateAndSyncTestBase()  {
 
         doSync()
 
-        Assert.assertEquals(2, fileHelper.countFilesInSource())
+        Assert.assertEquals(2, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(dirInSource)
         assertExistsAndEmpty(newDirInSource)
 
-        Assert.assertEquals(2, fileHelper.countFilesInTarget())
+        Assert.assertEquals(2, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newDirInTarget)
     }

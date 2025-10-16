@@ -23,11 +23,11 @@ open class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
     override fun create_additional_dir_in_source() {
         super.create_additional_dir_in_source()
 
-        Assert.assertEquals(2, fileHelper.countFilesInSource())
+        Assert.assertEquals(2, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(sDir)
         assertExistsAndEmpty(newSDir)
 
-        Assert.assertEquals(2, fileHelper.countFilesInTarget())
+        Assert.assertEquals(2, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newSDirInTarget)
     }
@@ -38,10 +38,10 @@ open class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
     override fun create_additional_dir_in_target() {
         super.create_additional_dir_in_target()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(sDir)
 
-        Assert.assertEquals(2, fileHelper.countFilesInTarget())
+        Assert.assertEquals(2, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newTDir)
     }
@@ -52,11 +52,11 @@ open class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
     override fun create_diff_names_additional_dirs_in_source_and_target() {
         super.create_diff_names_additional_dirs_in_source_and_target()
 
-        Assert.assertEquals(2, fileHelper.countFilesInSource())
+        Assert.assertEquals(2, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(sDir)
         assertExistsAndEmpty(newSDir)
 
-        Assert.assertEquals(3, fileHelper.countFilesInTarget())
+        Assert.assertEquals(3, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newTDir)
         assertExistsAndEmpty(newSDirInTarget)
@@ -68,11 +68,11 @@ open class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
     override fun create_same_name_additional_dirs_in_source_and_target() {
         super.create_same_name_additional_dirs_in_source_and_target()
 
-        Assert.assertEquals(2, fileHelper.countFilesInSource())
+        Assert.assertEquals(2, fileHelper.countSourceDirItems())
         assertExistsAndEmpty(sDir)
         assertExistsAndEmpty(newCommonSDir)
 
-        Assert.assertEquals(2, fileHelper.countFilesInTarget())
+        Assert.assertEquals(2, fileHelper.countTargetDirItems())
         assertExistsAndEmpty(sDirInTarget)
         assertExistsAndEmpty(newCommonTDir)
     }

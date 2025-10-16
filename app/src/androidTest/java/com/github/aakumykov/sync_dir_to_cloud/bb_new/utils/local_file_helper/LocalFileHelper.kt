@@ -55,10 +55,10 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
     }
 
 
-    fun countFilesInSource(): Int = listSourceDir().size
+    fun countSourceDirItems(): Int = listSourceDir().size
 
 
-    fun countFilesInTarget(): Int = listTargetDir().size
+    fun countTargetDirItems(): Int = listTargetDir().size
 
 
 
