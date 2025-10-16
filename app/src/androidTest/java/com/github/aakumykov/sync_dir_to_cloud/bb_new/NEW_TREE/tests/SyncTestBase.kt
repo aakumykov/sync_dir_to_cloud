@@ -70,9 +70,9 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     //
     // "Глубокие" каталоги
     //
-    protected val commonDeepDirName = randomName
+    protected val commonDeepDirName = randomDeepDirName
     protected val commonDeepDirInSource = fileHelper.dirInSource(commonDeepDirName)
-    protected val commonDeepDirInTarget = fileHelper.dirInSource(commonDeepDirName)
+    protected val commonDeepDirInTarget = fileHelper.dirInTarget(commonDeepDirName)
 
     protected val sDeepDirName = randomDeepDirName
     protected val tDeepDirName = randomDeepDirName
@@ -81,7 +81,7 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val tDeepDir = fileHelper.dirInTarget(tDeepDirName)
 
     protected val sDeepDirInTarget = fileHelper.dirInTarget(sDeepDirName)
-    protected val tDeepDirInSource = fileHelper.dirInTarget(tDeepDirName)
+    protected val tDeepDirInSource = fileHelper.dirInSource(tDeepDirName)
 
 
     @Before
