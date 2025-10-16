@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import org.junit.Assert
 import org.junit.Test
 
+@Deprecated("удалить")
 class SyncTest : NoBackupSyncTestBase() {
 
 //

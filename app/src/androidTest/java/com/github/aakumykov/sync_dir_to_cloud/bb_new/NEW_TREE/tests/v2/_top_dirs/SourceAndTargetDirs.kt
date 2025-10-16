@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.top_dirs
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._top_dirs
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.NoBackupSyncTestBase
 import org.junit.Assert
