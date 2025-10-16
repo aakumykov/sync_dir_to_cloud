@@ -1,8 +1,8 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_files
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_files.static_files
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 
-abstract class FlatFilesBase : SyncTestBase() {
+abstract class StaticFlatFilesBase : SyncTestBase() {
 
     /**
      * Пустой файл - нет ничего [empty_file_in_source_and_no_files_in_target]
