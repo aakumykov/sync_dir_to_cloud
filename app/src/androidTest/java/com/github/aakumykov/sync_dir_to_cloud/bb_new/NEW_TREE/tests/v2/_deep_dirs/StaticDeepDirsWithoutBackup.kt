@@ -1,69 +1,46 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._deep_dirs
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.NoBackupSyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
 import org.junit.Assert
 import org.junit.Test
 
-class StaticDeepDirsWithoutBackup : NoBackupSyncTestBase() {
+// StaticDeepDirsWithoutBackup
+abstract class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
 
-    /**
-     * Просто "существование" каталогов.
-     *
-     * Глубокие пустые каталоги - пусто [deep_empty_dirs_in_source]
-     * Пусто - глубокие пустые каталоги [deep_empty_dirs_in_target]
-     *
-     * Одноимённыя глубокия каталоги в источнике и приёмнике [same_name_deep_empty_dirs_in_source_and_target]
-     * Разноимённыя глубокия каталоги в источнике и приёмнике [diff_name_deep_dirs_in_source_and_target]
-     */
+    override val taskConfig: TaskConfig
+        get() = LocalToLocalSyncWithoutBackupTaskConfig()
 
-    // ====== sync =====>
+
     @Test
-    fun deep_empty_dirs_in_source() {
-        val deepDirName = randomDeepDirName
+    override fun deep_empty_dirs_in_source() {
+        super.deep_empty_dirs_in_source()
 
-        val sDeepDir = fileHelper.createDirInSource(deepDirName)
-        val tDeepDir = fileHelper.dirInTarget(deepDirName)
-
-        doSync()
-
-        Assert.assertTrue(sDeepDir.exists())
-        Assert.assertTrue(tDeepDir.exists())
-
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
+//        Assert.assertTrue(sDeepDir.exists())
+//        Assert.assertTrue(tDeepDir.exists())
+//
+//        Assert.assertEquals(1, fileHelper.listSourceDir().size)
+//        Assert.assertEquals(1, fileHelper.listTargetDir().size)
     }
 
 
-    // ====== sync =====>
     @Test
-    fun deep_empty_dirs_in_target() {
-        val deepDirName = randomDeepDirName
-
-        val sDeepDir = fileHelper.dirInSource(deepDirName)
-        val tDeepDir = fileHelper.createDirInTarget(deepDirName)
-
-        doSync()
+    override fun deep_empty_dirs_in_target() {
+        super.deep_empty_dirs_in_target()
 
         Assert.assertFalse(sDeepDir.exists())
         Assert.assertTrue(tDeepDir.exists())
 
         Assert.assertEquals(0, fileHelper.listSourceDir().size)
         Assert.assertEquals(1, fileHelper.listTargetDir().size)
+
     }
 
 
-
-    // ====== sync =====>
     @Test
-    fun same_name_deep_empty_dirs_in_source_and_target() {
-        val deepDirName = randomDeepDirName
-
-        val sDeepDir = fileHelper.createDirInSource(deepDirName)
-        val tDeepDir = fileHelper.createDirInTarget(deepDirName)
-
-        doSync()
+    override fun same_name_deep_empty_dirs_in_source_and_target() {
+        super.same_name_deep_empty_dirs_in_source_and_target()
 
         Assert.assertTrue(sDeepDir.exists())
         Assert.assertTrue(tDeepDir.exists())
@@ -73,22 +50,13 @@ class StaticDeepDirsWithoutBackup : NoBackupSyncTestBase() {
 
         Assert.assertEquals(1, fileHelper.listSourceDir().size)
         Assert.assertEquals(1, fileHelper.listTargetDir().size)
+
     }
 
 
-    // ====== sync =====>
     @Test
-    fun diff_name_deep_dirs_in_source_and_target() {
-        val sDeepDirName = randomDeepDirName
-        val tDeepDirName = randomDeepDirName
-
-        val sDeepDir = fileHelper.createDirInSource(sDeepDirName)
-        val tDeepDir = fileHelper.createDirInTarget(tDeepDirName)
-
-        val sDeepDirInTarget = fileHelper.dirInTarget(sDeepDirName)
-        val tDeepDirInSource = fileHelper.dirInSource(tDeepDirName)
-
-        doSync()
+    override fun diff_name_deep_dirs_in_source_and_target() {
+        super.diff_name_deep_dirs_in_source_and_target()
 
         Assert.assertTrue(sDeepDir.exists())
         Assert.assertTrue(tDeepDir.exists())
@@ -105,5 +73,6 @@ class StaticDeepDirsWithoutBackup : NoBackupSyncTestBase() {
 
         Assert.assertEquals(1, fileHelper.listSourceDir().size)
         Assert.assertEquals(2, fileHelper.listTargetDir().size)
+
     }
 }

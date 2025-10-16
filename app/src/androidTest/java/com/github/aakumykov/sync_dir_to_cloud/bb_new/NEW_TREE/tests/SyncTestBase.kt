@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTa
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Before
@@ -65,6 +66,22 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val sDirInTarget = fileHelper.dirInTarget(sDirName)
     protected val tDirInSource = fileHelper.dirInSource(tDirName)
 
+
+    //
+    // "Глубокие" каталоги
+    //
+    protected val commonDeepDirName = randomName
+    protected val commonDeepDirInSource = fileHelper.dirInSource(commonDeepDirName)
+    protected val commonDeepDirInTarget = fileHelper.dirInSource(commonDeepDirName)
+
+    protected val sDeepDirName = randomDeepDirName
+    protected val tDeepDirName = randomDeepDirName
+
+    protected val sDeepDir = fileHelper.dirInSource(sDeepDirName)
+    protected val tDeepDir = fileHelper.dirInTarget(tDeepDirName)
+
+    protected val sDeepDirInTarget = fileHelper.dirInTarget(sDeepDirName)
+    protected val tDeepDirInSource = fileHelper.dirInTarget(tDeepDirName)
 
 
     @Before
