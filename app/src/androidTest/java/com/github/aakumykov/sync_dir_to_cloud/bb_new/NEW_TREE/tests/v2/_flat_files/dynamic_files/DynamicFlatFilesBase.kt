@@ -5,6 +5,9 @@ import org.junit.Assert
 
 abstract class DynamicFlatFilesBase : SyncTestBase() {
 
+    override val afterSyncSleepTimeoutMs: Long = 2000
+
+
     /**
      * Исходная позиция: файл в источнике, синхронизированный в приёмник:
      * [1] --- [1]

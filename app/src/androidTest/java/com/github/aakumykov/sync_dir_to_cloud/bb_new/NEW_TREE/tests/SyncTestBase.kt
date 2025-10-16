@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit
 
 abstract class SyncTestBase : StorageAccessTestCase() {
 
-    abstract val taskConfig: TaskConfig
+    protected abstract val taskConfig: TaskConfig
 
-    private val afterSyncSleepTimeoutMs: Long = 1000
+    protected open val afterSyncSleepTimeoutMs: Long = 1000
 
     protected val fileHelper get() = LocalFileHelper(taskConfig)
 
