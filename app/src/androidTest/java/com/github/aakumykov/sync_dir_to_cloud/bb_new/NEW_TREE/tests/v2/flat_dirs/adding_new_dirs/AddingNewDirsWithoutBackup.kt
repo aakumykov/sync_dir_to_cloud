@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConf
 import org.junit.Assert
 import org.junit.Test
 
-class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
+open class AddingNewDirsWithoutBackup : AddingNewDirsBase() {
 
     override val taskConfig: TaskConfig
         get() = LocalToLocalSyncWithoutBackupTaskConfig()
