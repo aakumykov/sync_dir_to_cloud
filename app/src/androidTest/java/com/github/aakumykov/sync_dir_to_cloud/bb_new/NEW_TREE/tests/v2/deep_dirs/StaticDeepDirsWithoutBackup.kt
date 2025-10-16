@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._deep_dirs
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.deep_dirs
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
