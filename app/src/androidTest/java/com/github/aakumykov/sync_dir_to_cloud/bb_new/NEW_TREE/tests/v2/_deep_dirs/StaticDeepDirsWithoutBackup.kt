@@ -6,35 +6,32 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import org.junit.Assert
 import org.junit.Test
 
-// StaticDeepDirsWithoutBackup
-abstract class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
+open class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
 
     override val taskConfig: TaskConfig
         get() = LocalToLocalSyncWithoutBackupTaskConfig()
 
 
     @Test
-    override fun deep_empty_dirs_in_source() {
-        super.deep_empty_dirs_in_source()
+    override fun deep_empty_dir_in_source() {
+        super.deep_empty_dir_in_source()
 
-//        Assert.assertTrue(sDeepDir.exists())
-//        Assert.assertTrue(tDeepDir.exists())
-//
-//        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-//        Assert.assertEquals(1, fileHelper.listTargetDir().size)
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        assertExistsAndEmpty(commonDeepDirInSource)
+
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        assertExistsAndEmpty(commonDeepDirInTarget)
     }
 
 
     @Test
-    override fun deep_empty_dirs_in_target() {
-        super.deep_empty_dirs_in_target()
+    override fun deep_empty_dir_in_target() {
+        super.deep_empty_dir_in_target()
 
-        Assert.assertFalse(sDeepDir.exists())
-        Assert.assertTrue(tDeepDir.exists())
+        Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
 
-        Assert.assertEquals(0, fileHelper.listSourceDir().size)
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
-
+        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        assertExistsAndEmpty(commonDeepDirInTarget)
     }
 
 
@@ -42,15 +39,11 @@ abstract class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
     override fun same_name_deep_empty_dirs_in_source_and_target() {
         super.same_name_deep_empty_dirs_in_source_and_target()
 
-        Assert.assertTrue(sDeepDir.exists())
-        Assert.assertTrue(tDeepDir.exists())
-
-        Assert.assertTrue(sDeepDir.isEmpty)
-        Assert.assertTrue(tDeepDir.isEmpty)
-
         Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(1, fileHelper.listTargetDir().size)
+        assertExistsAndEmpty(commonDeepDirInSource)
 
+        Assert.assertEquals(1, fileHelper.listTargetDir().size)
+        assertExistsAndEmpty(commonDeepDirInTarget)
     }
 
 
@@ -58,21 +51,11 @@ abstract class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
     override fun diff_name_deep_dirs_in_source_and_target() {
         super.diff_name_deep_dirs_in_source_and_target()
 
-        Assert.assertTrue(sDeepDir.exists())
-        Assert.assertTrue(tDeepDir.exists())
+        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        assertExistsAndEmpty(sDeepDir)
 
-        Assert.assertTrue(sDeepDirInTarget.exists())
-        Assert.assertFalse(tDeepDirInSource.exists())
-
-        // Теоретически, часть пути может совпасть, и каталог окажется непустым,
-        // но с UUID-именами эта вероятность очень низкая.
-        Assert.assertTrue(sDeepDir.isEmpty)
-        Assert.assertTrue(tDeepDir.isEmpty)
-
-        Assert.assertTrue(sDeepDirInTarget.isEmpty)
-
-        Assert.assertEquals(1, fileHelper.listSourceDir().size)
-        Assert.assertEquals(2, fileHelper.listTargetDir().size)
-
+        Assert.assertEquals(2, fileHelper.countTargetDirItems())
+        assertExistsAndEmpty(tDeepDir)
+        assertExistsAndEmpty(sDeepDirInTarget)
     }
 }
