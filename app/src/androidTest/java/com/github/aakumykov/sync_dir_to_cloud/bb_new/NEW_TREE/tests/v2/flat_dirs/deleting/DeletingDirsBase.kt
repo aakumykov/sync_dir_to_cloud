@@ -94,10 +94,10 @@ abstract class DeletingDirsBase : SyncTestBase()  {
 
         doSync()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(commonDirInSource)
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(commonDirInTarget)
     }
 
@@ -108,10 +108,10 @@ abstract class DeletingDirsBase : SyncTestBase()  {
 
         doSync()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
 
-        Assert.assertEquals(2, fileHelper.countTargetDirItems())
+        Assert.assertEquals(2, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(tDir)
         assertExistsAndEmpty(sDirInTarget)
     }

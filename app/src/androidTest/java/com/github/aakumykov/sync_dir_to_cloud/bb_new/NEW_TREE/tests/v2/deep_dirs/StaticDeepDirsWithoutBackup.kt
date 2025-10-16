@@ -16,10 +16,10 @@ open class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
     override fun deep_empty_dir_in_source() {
         super.deep_empty_dir_in_source()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(commonDeepDirInSource)
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(commonDeepDirInTarget)
     }
 
@@ -30,7 +30,7 @@ open class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
 
         Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(commonDeepDirInTarget)
     }
 
@@ -51,10 +51,10 @@ open class StaticDeepDirsWithoutBackup : StaticDeepDirsBase() {
     override fun diff_name_deep_dirs_in_source_and_target() {
         super.diff_name_deep_dirs_in_source_and_target()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDeepDir)
 
-        Assert.assertEquals(2, fileHelper.countTargetDirItems())
+        Assert.assertEquals(2, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(tDeepDir)
         assertExistsAndEmpty(sDeepDirInTarget)
     }

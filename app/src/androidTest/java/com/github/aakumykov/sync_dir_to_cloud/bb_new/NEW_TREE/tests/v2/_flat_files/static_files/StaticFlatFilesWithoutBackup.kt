@@ -19,10 +19,10 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun empty_file_in_source_and_no_files_in_target() {
         super.empty_file_in_source_and_no_files_in_target()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sFile)
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(sFileInTarget)
     }
 
@@ -32,9 +32,9 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun no_files_in_source_and_empty_file_in_target() {
         super.no_files_in_source_and_empty_file_in_target()
 
-        Assert.assertEquals(0, fileHelper.countSourceDirItems())
+        Assert.assertEquals(0, fileHelper.countFilesInSource())
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         Assert.assertTrue(tFile.exists())
         Assert.assertTrue(tFile.isEmpty)
     }
@@ -45,10 +45,10 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun same_name_empty_files_in_src_and_tgt() {
         super.same_name_empty_files_in_src_and_tgt()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(commonFileInSource)
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(commonFileInTarget)
     }
 
@@ -58,10 +58,10 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun diff_names_empty_files_in_source_and_target() {
         super.diff_names_empty_files_in_source_and_target()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sFile)
 
-        Assert.assertEquals(2, fileHelper.countTargetDirItems())
+        Assert.assertEquals(2, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(tFile)
         assertExistsAndEmpty(sFileInTarget)
     }
@@ -72,10 +72,10 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun data_file_in_source_and_no_files_in_target() {
         super.data_file_in_source_and_no_files_in_target()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndContains(sFile, sFileData)
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndContains(sFileInTarget, sFileData)
     }
 
@@ -85,9 +85,9 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun no_files_in_source_and_data_file_in_target() {
         super.no_files_in_source_and_data_file_in_target()
 
-        Assert.assertEquals(0, fileHelper.countSourceDirItems())
+        Assert.assertEquals(0, fileHelper.countFilesInSource())
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndContains(tFile, tFileData)
     }
 
@@ -97,8 +97,8 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun same_name_data_files_in_source_and_target() {
         super.same_name_data_files_in_source_and_target()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
 
         assertExistsAndContains(commonFileInSource, commonFileData)
         assertExistsAndContains(commonFileInTarget, commonFileData)
@@ -110,10 +110,10 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
     override fun diff_names_data_files_in_source_and_target() {
         super.diff_names_data_files_in_source_and_target()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndContains(sFile, sFileData)
 
-        Assert.assertEquals(2, fileHelper.countTargetDirItems())
+        Assert.assertEquals(2, fileHelper.countFilesInTarget())
         assertExistsAndContains(tFile, tFileData)
         assertExistsAndContains(sFileInTarget, sFileData)
 

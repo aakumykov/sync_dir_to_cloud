@@ -97,10 +97,10 @@ abstract class AddingMoreDirsBase : SyncTestBase() {
         fileHelper.createDirInSource(sDirName)
         doSync()
 
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
 
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(sDirInTarget)
     }
 }

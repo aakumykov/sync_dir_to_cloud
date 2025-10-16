@@ -31,9 +31,9 @@ class DeletingDitsWithoutBackup : DeletingDirsBase() {
     @Test
     override fun same_dirs_deleting_dir_from_target() {
         super.same_dirs_deleting_dir_from_target()
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(commonDirInSource)
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(commonDirInTarget)
     }
 
@@ -59,7 +59,7 @@ class DeletingDitsWithoutBackup : DeletingDirsBase() {
     override fun diff_dirs_deleting_dir_from_source() {
         super.diff_dirs_deleting_dir_from_source()
         Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(tDir)
     }
 
@@ -71,9 +71,9 @@ class DeletingDitsWithoutBackup : DeletingDirsBase() {
     @Test
     override fun diff_dirs_deleting_dir_from_target() {
         super.diff_dirs_deleting_dir_from_target()
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(sDirInTarget)
     }
 
@@ -86,7 +86,7 @@ class DeletingDitsWithoutBackup : DeletingDirsBase() {
     override fun diff_dirs_deleting_all_in_source() {
         super.diff_dirs_deleting_all_in_source()
         Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(tDir)
     }
 
@@ -98,9 +98,9 @@ class DeletingDitsWithoutBackup : DeletingDirsBase() {
     @Test
     override fun diff_dirs_deleting_all_in_target() {
         super.diff_dirs_deleting_all_in_target()
-        Assert.assertEquals(1, fileHelper.countSourceDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInSource())
         assertExistsAndEmpty(sDir)
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(sDirInTarget)
     }
 
@@ -113,7 +113,7 @@ class DeletingDitsWithoutBackup : DeletingDirsBase() {
     override fun diff_dirs_deleting_same_dirs_in_both_places() {
         super.diff_dirs_deleting_same_dirs_in_both_places()
         Assert.assertTrue(taskConfig.SOURCE_DIR.isEmpty)
-        Assert.assertEquals(1, fileHelper.countTargetDirItems())
+        Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndEmpty(tDir)
     }
 
