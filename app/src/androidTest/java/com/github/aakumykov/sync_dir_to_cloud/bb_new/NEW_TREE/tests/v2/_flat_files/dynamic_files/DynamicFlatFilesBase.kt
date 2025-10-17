@@ -25,8 +25,28 @@ abstract class DynamicFlatFilesBase : SyncTestBase() {
 
     open fun source_file_changed() {
         prepare()
+
+        val oldSourceFileData = fileHelper.getFileContents(sFile).joinToString()
+
         fileHelper.createFileInSource(sFileName, newSourceFileData)
+
+        val newDataForSourceFile = newSourceFileData.joinToString()
+        val updatedSourceFileData = fileHelper.getFileContents(sFile).joinToString()
+
         doSync(/*true*/)
+
+        val updatedSourceFileInTargetData = fileHelper.getFileContents(sFileInTarget).joinToString()
+
+        println()
+        println()
+        println("~~~~~~~~~~~~~~ ${javaClass.simpleName} ~~~~~~~~~~~~~~")
+        println("oldSourceFileData: $oldSourceFileData")
+        println("newDataForSourceFile: $newDataForSourceFile")
+        println("updatedSourceFileData: $updatedSourceFileData")
+        println("updatedSourceFileInTargetData: $updatedSourceFileInTargetData")
+        println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        println()
+        println()
     }
 
 

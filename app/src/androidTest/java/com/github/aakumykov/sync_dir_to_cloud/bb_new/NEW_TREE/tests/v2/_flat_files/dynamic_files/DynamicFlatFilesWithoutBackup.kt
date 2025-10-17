@@ -30,25 +30,38 @@ class DynamicFlatFilesWithoutBackup : DynamicFlatFilesBase() {
     // [1*] --- [1*]
     @Test
     override fun source_file_changed() {
-        super.source_file_changed()
+//        for (fileChangesCommitTimeoutSec in 1..5) {
+            super.source_file_changed()
 
-        Assert.assertEquals(1, fileHelper.countFilesInSource())
-        assertExistsAndContains(sFile, newSourceFileData)
+            Assert.assertEquals(1, fileHelper.countFilesInSource())
+            assertExistsAndContains(sFile, newSourceFileData)
 
-        Assert.assertEquals(1, fileHelper.countFilesInTarget())
-        Assert.assertTrue(sFileInTarget.exists())
+            Assert.assertEquals(1, fileHelper.countFilesInTarget())
+            Assert.assertTrue(sFileInTarget.exists())
 
-        val sfc = fileHelper.getFileContents(sFile)
-        val sftc = fileHelper.getFileContents(sFileInTarget)
+            val sfc = fileHelper.getFileContents(sFile)
+            val sFileInTargetContents = fileHelper.getFileContents(sFileInTarget).joinToString()
+            val nsd = newSourceFileData.joinToString()
 
-        val sd = sFileData
-        val nsd = newSourceFileData
+            val sd = sFileData
 
-        println()
+//            TimeUnit.SECONDS.sleep(fileChangesCommitTimeoutSec.toLong())
 
-        TimeUnit.SECONDS.sleep(4)
+//            println("=========== source_file_changed($fileChangesCommitTimeoutSec) ==============")
+//            println("sFileInTargetContents: $sFileInTargetContents")
+//            println("newSourceFileData: $nsd")
+//            println()
 
-        assertExistsAndContains(sFileInTarget, newSourceFileData)
+//            assertExistsAndContains(sFileInTarget, newSourceFileData)
+
+            val updatedSourceFileData = fileHelper.getFileContents(sFile).joinToString()
+            val updatedSourceFileInTargetData = fileHelper.getFileContents(sFileInTarget).joinToString()
+            val newDataToUpdateSourceFile = newSourceFileData.joinToString()
+
+            Assert.assertEquals(updatedSourceFileInTargetData, newDataToUpdateSourceFile)
+
+            assertExistsAndContains(sFileInTarget, newSourceFileData)
+//        }
     }
 
 
