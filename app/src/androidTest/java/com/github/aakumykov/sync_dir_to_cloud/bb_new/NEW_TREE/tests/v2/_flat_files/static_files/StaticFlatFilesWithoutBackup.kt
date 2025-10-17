@@ -77,6 +77,11 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
 
         Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndContains(sFileInTarget, sFileData)
+
+        Assert.assertEquals(
+            fileHelper.getFileContents(sFile).joinToString(),
+            fileHelper.getFileContents(sFileInTarget).joinToString(),
+        )
     }
 
 
@@ -102,6 +107,11 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
 
         assertExistsAndContains(commonFileInSource, commonFileData)
         assertExistsAndContains(commonFileInTarget, commonFileData)
+
+        Assert.assertEquals(
+            fileHelper.getFileContents(commonFileInSource).joinToString(),
+            fileHelper.getFileContents(commonFileInTarget).joinToString(),
+        )
     }
 
 
