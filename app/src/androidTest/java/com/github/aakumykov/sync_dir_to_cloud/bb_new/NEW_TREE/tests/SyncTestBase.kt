@@ -19,7 +19,7 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     protected abstract val taskConfig: TaskConfig
 
-    protected open val afterSyncSleepTimeoutMs: Long = 1000
+    protected open val inDeviceChangesRelaxationTimeoutMs: Long = 1000
 
     protected val fileHelper get() = LocalFileHelper(taskConfig)
 
@@ -97,6 +97,7 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     @Before
     fun prepareSourceAndTargetDirs() = run {
+
         // Удаляю источник и приёмник.
         fileHelper.deleteSourceDirRecursively()
         fileHelper.deleteTargetDirRecursively()
@@ -116,7 +117,7 @@ abstract class SyncTestBase : StorageAccessTestCase() {
         scenario(RunSyncScenario(taskConfig.TASK_ID))
 
         if (delayAfterWork)
-            TimeUnit.MILLISECONDS.sleep(afterSyncSleepTimeoutMs)
+            TimeUnit.MILLISECONDS.sleep(inDeviceChangesRelaxationTimeoutMs)
     }
 
     protected fun assertExistsAndEmpty(fileOrDir: File) {

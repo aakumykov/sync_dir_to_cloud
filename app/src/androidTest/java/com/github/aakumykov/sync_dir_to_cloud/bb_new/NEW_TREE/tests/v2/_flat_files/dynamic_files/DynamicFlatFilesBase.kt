@@ -5,8 +5,7 @@ import org.junit.Assert
 
 abstract class DynamicFlatFilesBase : SyncTestBase() {
 
-    override val afterSyncSleepTimeoutMs: Long = 2000
-
+    override val inDeviceChangesRelaxationTimeoutMs: Long = 2000
 
     /**
      * Исходная позиция: файл в источнике, синхронизированный в приёмник:
@@ -17,17 +16,24 @@ abstract class DynamicFlatFilesBase : SyncTestBase() {
      * Файлы в источнике и приёмнике меняют содержимое []
      */
 
+
+    open fun empty_test() {}
+
+
+    open fun preparing_test() { prepare() }
+
+
     open fun source_file_changed() {
         prepare()
         fileHelper.createFileInSource(sFileName, newSourceFileData)
-        doSync(true)
+        doSync(/*true*/)
     }
 
 
     open fun target_file_changed() {
         prepare()
         fileHelper.createFileInTarget(tFileName, newTargetFileData)
-        doSync(true)
+        doSync(/*true*/)
     }
 
 
@@ -41,5 +47,14 @@ abstract class DynamicFlatFilesBase : SyncTestBase() {
 
         Assert.assertEquals(1, fileHelper.countFilesInTarget())
         assertExistsAndContains(sFileInTarget, sFileData)
+
+        // Эта проверка в каком-то смысле не нужна, так как
+        val sfc = fileHelper.getFileContents(sFile).joinToString()
+        val sftc = fileHelper.getFileContents(sFileInTarget).joinToString()
+
+        Assert.assertEquals(
+            fileHelper.getFileContents(sFile).joinToString(),
+            fileHelper.getFileContents(sFileInTarget).joinToString()
+        )
     }
 }
