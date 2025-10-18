@@ -136,4 +136,12 @@ abstract class SyncTestBase : StorageAccessTestCase() {
             fileHelper.getFileContents(file).joinToString()
         )
     }
+
+    protected fun assertTargetDirChildCount(count: Int) {
+        Assert.assertEquals(count, fileHelper.countFilesInTarget())
+    }
+
+    protected fun assertSourceDirChildCount(count: Int) {
+        Assert.assertEquals(count, fileHelper.countFilesInSource())
+    }
 }
