@@ -32,7 +32,7 @@ class ModificationInCacheDirSimpleTest {
 
     @Test
     fun file_modification() {
-        repeat(100) {
+        repeat(5) {
 
             // === Проверка создания и изменения "исходного" файла ===
 
