@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_files.modification
 
+import android.service.voice.VoiceInteractionSession
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.byte_array_joined_string.joinedString
@@ -10,6 +11,10 @@ import java.io.File
 import java.util.UUID
 import kotlin.random.Random
 
+/**
+ * Полностью ручная проба создания, изменения и копирования
+ * файловых данных после изменения.
+ */
 @RunWith(AndroidJUnit4::class)
 class ModificationInCacheDirSimpleTest {
 
@@ -26,8 +31,10 @@ class ModificationInCacheDirSimpleTest {
 
 
     @Test
-    fun source_file_modification() {
-        repeat(1000) {
+    fun file_modification() {
+        repeat(100) {
+
+            // === Проверка создания и изменения "исходного" файла ===
 
             val sourceFile = File(cacheDir, randomName)
             // Проверяю, что файла ещё нет. Зачем? Для большей надёжности.
@@ -42,19 +49,53 @@ class ModificationInCacheDirSimpleTest {
             Assert.assertNotEquals(data.joinedString, newData.joinedString)
 
             // Создаю файл и пишу в него исходные данные.
-            sourceFile.apply {
-                Assert.assertTrue(createNewFile())
-                Assert.assertTrue(sourceFile.exists())
+            Assert.assertTrue(sourceFile.createNewFile())
+            Assert.assertTrue(sourceFile.exists())
+            Assert.assertTrue(sourceFile.readBytes().isEmpty())
 
-                writeBytes(data)
-                // Проверяю, что в файл записались именно данные [data].
-                Assert.assertEquals(data.joinedString, this.readBytes().joinedString)
-            }
+            sourceFile.writeBytes(data)
+            // Проверяю, что в файл записались именно данные [data].
+            Assert.assertEquals(data.joinedString, sourceFile.readBytes().joinedString)
 
             // Пишу в файл новые данные.
             sourceFile.writeBytes(newData)
             // Проверяю, что оне корректно записались.
             Assert.assertEquals(newData.joinedString, sourceFile.readBytes().joinedString)
+
+
+
+            // === Проверка копирования "исходного" файла в другой файл ===
+
+            val targetFile = File(cacheDir, randomName)
+            // Проверяю, что файл назначения отсутствует.
+            Assert.assertFalse(targetFile.exists())
+
+            // Создаю файл и пишу в него исходные данные.
+            Assert.assertTrue(targetFile.createNewFile())
+            Assert.assertTrue(targetFile.exists())
+            Assert.assertTrue(targetFile.readBytes().isEmpty())
+
+            targetFile.writeBytes(data)
+            // Проверяю, что в файл записались именно данные [data].
+            Assert.assertEquals(data.joinedString, targetFile.readBytes().joinedString)
+
+
+            sourceFile.copyTo(targetFile, true).also {
+                Assert.assertEquals(targetFile, it)
+            }
+            // Проверяю, что в новый файл записались [newData]
+            Assert.assertEquals(newData.joinedString, targetFile.readBytes().joinedString)
+
+
+            // Повторяю изменение исходного и копирование в другой.
+            val newData2 = randomBytes1024
+
+            sourceFile.writeBytes(newData2)
+            Assert.assertEquals(newData2.joinedString, sourceFile.readBytes().joinedString)
+
+            sourceFile.copyTo(targetFile, true).also {
+                Assert.assertEquals(targetFile, it)
+            }
         }
     }
 }
