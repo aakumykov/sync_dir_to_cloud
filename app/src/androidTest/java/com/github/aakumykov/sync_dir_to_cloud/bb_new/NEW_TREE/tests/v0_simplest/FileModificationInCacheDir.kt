@@ -1,6 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_files.modification
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v0_simplest
 
-import android.service.voice.VoiceInteractionSession
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.byte_array_joined_string.joinedString
@@ -16,7 +15,7 @@ import kotlin.random.Random
  * файловых данных после изменения.
  */
 @RunWith(AndroidJUnit4::class)
-class ModificationInCacheDirSimpleTest {
+class FileModificationInCacheDir {
 
     private val cacheDir: File
         get() = InstrumentationRegistry.getInstrumentation().targetContext.cacheDir
@@ -25,9 +24,9 @@ class ModificationInCacheDirSimpleTest {
         get() = UUID.randomUUID().toString()
 
     val randomBytes1024: ByteArray
-        get() = Random.nextBytes(1024)
+        get() = Random.Default.nextBytes(1024)
 
-    fun randomBytes(amount: Int): ByteArray = Random.nextBytes(amount)
+    fun randomBytes(amount: Int): ByteArray = Random.Default.nextBytes(amount)
 
 
     @Test
