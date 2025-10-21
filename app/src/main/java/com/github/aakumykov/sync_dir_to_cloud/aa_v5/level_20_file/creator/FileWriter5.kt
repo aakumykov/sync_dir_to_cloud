@@ -21,7 +21,7 @@ class FileWriter5 @AssistedInject constructor(
                                 filePath: String,
                                 overwriteIfExists: Boolean
     ) {
-        Log.d(TAG, "putFileToTarget('$filePath')")
+        Log.d(TAG, "putFileToTarget('$filePath', $overwriteIfExists)")
         putStreamReal(
             cloudWriterGetter.getTargetCloudWriter(syncTask),
             inputStream,
