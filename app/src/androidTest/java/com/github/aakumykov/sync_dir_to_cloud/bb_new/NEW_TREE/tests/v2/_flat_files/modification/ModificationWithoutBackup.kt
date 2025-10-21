@@ -9,16 +9,34 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBy
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import org.junit.Assert
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import java.io.File
 
-class ModificationWithoutBackup : SyncTestBase() {
+@RunWith(Parameterized::class)
+class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     /**
      * Файл в источнике изменился перед синхронизацией [source_file_was_changed_before_sync]
      * Файл в источнике изменился после синхронизации [source_file_was_changed_after_sync]
      */
 
+    companion object {
+        private const val RUN_TEST_N_TIMES = 2
+
+        @JvmStatic
+        @Parameterized.Parameters
+        fun data() : Collection<Int> {
+            return List(RUN_TEST_N_TIMES) { it }
+        }
+    }
+
     override val taskConfig: TaskConfig get() = localToLocalNoBackupTaskConfig
+
+    @Test
+    fun empty_test_() {
+        Assert.assertTrue(true)
+    }
 
     @Test
     fun source_file_was_changed_before_sync() {
@@ -36,26 +54,29 @@ class ModificationWithoutBackup : SyncTestBase() {
 
     @Test
     fun source_file_was_changed_after_sync() {
-        repeat(2) {
-            fileHelper.createFileInSource(sFileName, sFileData)
-            assertSourceDirChildCount(1)
-            assertTargetDirChildCount(0)
-            assertExistsAndContains(sFile, sFileData)
+        fileHelper.createFileInSource(sFileName, sFileData)
+        assertSourceDirChildCount(1)
+        assertTargetDirChildCount(0)
+        assertExistsAndContains(sFile, sFileData)
 
-            doSync()
+        doSync()
 
-            assertTargetDirChildCount(1)
-            assertExistsAndContains(sFileInTarget, sFileData)
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, sFileData)
 
-            val newData = randomBytes
 
-            fileHelper.createFileInSource(sFileName, newData)
-            assertSourceDirChildCount(1)
-            assertExistsAndContains(sFile, newData)
-//            doSync()
-//            Assert.assertTrue(sFileInTarget.exists())
-//            assertExistsAndContains(sFileInTarget, newData)
-        }
+        val newData = randomBytes
+
+
+        fileHelper.createFileInSource(sFileName, newData)
+        assertSourceDirChildCount(1)
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFile, newData)
+
+        doSync()
+
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, sFileData)
     }
 
 
@@ -125,5 +146,50 @@ class ModificationWithoutBackup : SyncTestBase() {
         sFile.copyTo(tFile, overwrite = true)
         Assert.assertEquals(newData.joinedString, tFile.readBytes().joinedString)
         Assert.assertEquals(sFile.readBytes().joinedString, tFile.readBytes().joinedString)
+    }
+
+
+    @Test
+    fun sync_of_manual_created_files() {
+        val sFileName = "s_file.bin"
+
+        val sFile = File(taskConfig.SOURCE_DIR, sFileName)
+        val sFileInTarget = File(taskConfig.TARGET_DIR, sFileName)
+
+        val initialData = randomBytes
+        val updatedData = randomBytes
+
+        Assert.assertEquals(0, taskConfig.SOURCE_DIR.listFiles()!!.size)
+        Assert.assertEquals(0, taskConfig.TARGET_DIR.listFiles()!!.size)
+
+        sFile.createNewFile()
+        sFile.writeBytes(initialData)
+
+        Assert.assertEquals(1, taskConfig.SOURCE_DIR.listFiles()!!.size)
+        Assert.assertEquals(0, taskConfig.TARGET_DIR.listFiles()!!.size)
+
+        Assert.assertTrue(sFile.exists())
+        Assert.assertEquals(initialData.joinedString, sFile.readBytes().joinedString)
+
+        doSync()
+
+        Assert.assertEquals(1, taskConfig.SOURCE_DIR.listFiles()!!.size)
+        Assert.assertEquals(1, taskConfig.TARGET_DIR.listFiles()!!.size)
+
+        Assert.assertTrue(sFileInTarget.exists())
+        Assert.assertEquals(initialData.joinedString, sFileInTarget.readBytes().joinedString)
+        Assert.assertEquals(sFile.readBytes().joinedString, sFileInTarget.readBytes().joinedString)
+
+        sFile.writeBytes(updatedData)
+        Assert.assertEquals(updatedData.joinedString, sFile.readBytes().joinedString)
+
+        doSync()
+
+        Assert.assertEquals(1, taskConfig.SOURCE_DIR.listFiles()!!.size)
+        Assert.assertEquals(1, taskConfig.TARGET_DIR.listFiles()!!.size)
+
+        Assert.assertTrue(sFileInTarget.exists())
+        Assert.assertEquals(initialData.joinedString, sFileInTarget.readBytes().joinedString)
+        Assert.assertEquals(sFile.readBytes().joinedString, sFileInTarget.readBytes().joinedString)
     }
 }
