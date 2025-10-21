@@ -73,6 +73,8 @@ class FileWriter5 @AssistedInject constructor(
             } catch (t: Throwable) {
                 Log.d(TAG, t.errorMsg)
                 throw t
+            } finally {
+                inputStream.close()
             }
         }
     }
