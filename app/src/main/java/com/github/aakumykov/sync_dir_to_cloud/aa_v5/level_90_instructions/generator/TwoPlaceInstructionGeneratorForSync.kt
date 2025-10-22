@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
@@ -114,6 +115,8 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
 
 
     private suspend fun processNeedToBeCopiedToTarget(initialOrderNum: Int): Int {
+//        Log.d(TAG, "processNeedToBeCopiedToTarget()")
+
         var nextOrderNum = initialOrderNum
 
         nextOrderNum = reCreateInTargetDirsDeletedInTarget(nextOrderNum)
@@ -135,6 +138,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     }
 
     private suspend fun copyToTargetFilesNewAndModifiedInSource(nextOrderNum: Int): Int {
+//        Log.d(TAG, "copyToTargetFilesNewAndModifiedInSource() called with: nextOrderNum = $nextOrderNum")
         return getAllBilateralComparisonStates()
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInSource }
@@ -159,6 +163,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     ): Int {
         var n = nextOrderNum
         list.forEach { comparisonState ->
+            Log.d(TAG, comparisonState.toString())
             syncInstructionRepository.apply {
                 syncOperationList.forEach { syncOperation ->
                     add(
@@ -191,6 +196,10 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
         return comparisonStateRepository
             .getAllFor(syncTask.id, executionId)
             .filter { it.isBilateral }
+    }
+
+    companion object {
+        val TAG: String = TwoPlaceInstructionGeneratorForSync::class.java.simpleName
     }
 }
 

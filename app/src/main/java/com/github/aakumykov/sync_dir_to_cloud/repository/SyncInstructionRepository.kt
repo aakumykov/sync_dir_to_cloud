@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
@@ -15,7 +16,12 @@ class SyncInstructionRepository @Inject constructor(
     SyncInstructionReader,
     SyncInstructionDeleter
 {
+    companion object {
+        val TAG: String = SyncInstructionRepository::class.java.simpleName
+    }
+
     suspend fun add(syncInstruction: SyncInstruction) {
+        Log.d(TAG, "add($syncInstruction)")
         syncInstructionDAO.add(syncInstruction)
     }
 

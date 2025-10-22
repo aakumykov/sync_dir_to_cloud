@@ -19,7 +19,8 @@ import java.io.File
 class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     companion object {
-        const val RUN_TEST_N_TIMES = 2
+        const val RUN_TEST_N_TIMES = 1
+        const val logTag = "TEST_DEBUG"
 
         @JvmStatic
         @Parameterized.Parameters
@@ -28,30 +29,14 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     override val taskConfig: TaskConfig get() = localToLocalNoBackupTaskConfig
 
+
     /**
      * Файл в источнике изменился перед синхронизацией [source_file_was_changed_before_sync]
      * Файл в источнике изменился после синхронизации [source_file_was_changed_after_sync]
      */
 
-    @Test
-    fun empty_test_() {
-        Assert.assertTrue(true)
-    }
 
-    @Test
-    fun source_file_was_changed_before_sync() {
-        repeat(1000) {
-            fileHelper.createFileInSource(sFileName, sFileData)
-            assertExistsAndContains(sFile, sFileData)
-
-            val newData = randomBytes
-
-            fileHelper.createFileInSource(sFileName, newData)
-            assertExistsAndContains(sFile, newData)
-        }
-    }
-
-
+    // Тестирую это
     @Test
     fun source_file_was_changed_after_sync() {
 
@@ -61,6 +46,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertExistsAndContains(sFile, sFileData)
         assertTargetDirChildCount(0)
 
+        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 0")
         doSync()
         printSyncInstructions(numberOfRun, 1)
 
@@ -78,6 +64,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
 
+        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 1")
         doSync()
         printSyncInstructions(numberOfRun, 2)
 
@@ -87,15 +74,27 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertExistsAndContains(sFileInTarget, newData)
     }
 
-    private fun printSyncInstructions(runNum: Int, syncNum: Int) {
-        TestComponentHolder.testSyncInstructionDAO.list(taskConfig.TASK_ID).also {
-            println("----------- Sync instructions on: run:$runNum, sync:$syncNum ------------")
-            it.forEach { si ->
-                println(Gson().toJson(si))
-            }
-            println("-------------------------------------------------------------")
+
+
+    @Test
+    fun empty_test_() {
+        Assert.assertTrue(true)
+    }
+
+
+    @Test
+    fun source_file_was_changed_before_sync() {
+        repeat(1000) {
+            fileHelper.createFileInSource(sFileName, sFileData)
+            assertExistsAndContains(sFile, sFileData)
+
+            val newData = randomBytes
+
+            fileHelper.createFileInSource(sFileName, newData)
+            assertExistsAndContains(sFile, newData)
         }
     }
+
 
 
     @Test
@@ -237,4 +236,16 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         Assert.assertEquals(updatedData.joinedString, sFileInTarget.readBytes().joinedString)
         Assert.assertEquals(sFile.readBytes().joinedString, sFileInTarget.readBytes().joinedString)
     }
+
+
+    private fun printSyncInstructions(runNum: Int, syncNum: Int) {
+        TestComponentHolder.testSyncInstructionDAO.list(taskConfig.TASK_ID).also {
+            println("----------- Sync instructions on: run:$runNum, sync:$syncNum ------------")
+            it.forEach { si ->
+                println(Gson().toJson(si))
+            }
+            println("-------------------------------------------------------------")
+        }
+    }
+
 }

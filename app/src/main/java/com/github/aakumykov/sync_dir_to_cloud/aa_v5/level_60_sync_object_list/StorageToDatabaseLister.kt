@@ -25,6 +25,7 @@ import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.io.File
 
 class StorageToDatabaseLister @AssistedInject constructor(
 
@@ -75,6 +76,18 @@ class StorageToDatabaseLister @AssistedInject constructor(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
+                .let { list ->
+                    val logTag = "TEST_DEBUG"
+                    list?.forEach { fileListItem ->
+                        val path = fileListItem.absolutePath
+                        val file = File(path)
+                        val data = file.readBytes().joinToString()
+                        Log.d(logTag, "FILE: $path [$data]")
+                    } ?: {
+                        Log.d(logTag, "list from path: $pathReadingFrom is empty")
+                    }
+                    list
+                }
                 ?.filterNot { fileListItem ->
                     backupDirsFilter.isBackupDir(syncSide, fileListItem)
                 }
@@ -85,10 +98,10 @@ class StorageToDatabaseLister @AssistedInject constructor(
                     syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
                 }
                 ?.also { list ->
-                    Log.d(TAG, "list.size: ${list.size}")
+//                    Log.d(TAG, "list.size: ${list.size}")
                 }
                 ?.forEach { fileListItem ->
-                    Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
+//                    Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
                     addOrUpdateFileListItem(
                         executionId = executionId,
                         syncSide = syncSide,
