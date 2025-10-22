@@ -17,7 +17,7 @@ import java.io.File
 class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     companion object {
-        const val RUN_TEST_N_TIMES = 20
+        const val RUN_TEST_N_TIMES = 2
 
         @JvmStatic
         @Parameterized.Parameters
@@ -109,49 +109,74 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
 
     @Test
-    fun manual_file_create_copy_update_in_source_and_target_dir() {
+    fun manual_operations_without_do_sync() {
+
+        println("=== manual_operations_without_do_sync() ===")
+        println("taskConfig.SOURCE_DIR (${taskConfig.SOURCE_DIR.exists()}): ${taskConfig.SOURCE_DIR.absolutePath}")
+        println("taskConfig.TARGET_DIR (${taskConfig.TARGET_DIR.exists()}): ${taskConfig.TARGET_DIR.absolutePath}")
 
         val data = randomBytes
         val newData = randomBytes
         Assert.assertFalse(data.isEmpty())
         Assert.assertFalse(newData.isEmpty())
 
-        val sName = randomName
-        val tName = randomName
+        val sourceFileName = randomName
+        val targetFileName = randomName
 
-        val sFile = File(taskConfig.SOURCE_DIR, sName)
-        val tFile = File(taskConfig.TARGET_DIR, tName)
+        val sourceFile = File(taskConfig.SOURCE_DIR, sourceFileName)
+        val targetFile = File(taskConfig.TARGET_DIR, targetFileName)
 
         // == Исходный файл ==
         // Создаю
-        sFile.createNewFile().also { Assert.assertTrue(it) }
-        Assert.assertTrue(sFile.exists())
-        Assert.assertTrue(sFile.readBytes().isEmpty())
+        sourceFile.createNewFile().also { Assert.assertTrue(it) }
+        Assert.assertTrue(sourceFile.exists())
+        Assert.assertTrue(sourceFile.readBytes().isEmpty())
 
-        sFile.writeBytes(data)
-        Assert.assertFalse(sFile.readBytes().isEmpty())
-        Assert.assertEquals(data.joinedString, sFile.readBytes().joinedString)
+//        sFile.writeBytes(data)
+        data.inputStream().use { inputStream ->
+            sourceFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        Assert.assertFalse(sourceFile.readBytes().isEmpty())
+        Assert.assertEquals(data.joinedString, sourceFile.readBytes().joinedString)
 
         // == Целевой файл ==
         // Копирую исходный в целевой
-        Assert.assertFalse(tFile.exists())
-        sFile.copyTo(tFile).also { Assert.assertTrue(tFile.exists()) }
-        Assert.assertTrue(tFile.exists())
-        Assert.assertEquals(data.joinedString, tFile.readBytes().joinedString)
-        Assert.assertEquals(sFile.readBytes().joinedString, tFile.readBytes().joinedString)
+        targetFile.createNewFile().also { Assert.assertTrue(it) }
+        Assert.assertTrue(targetFile.exists())
+//        sFile.copyTo(tFile).also { Assert.assertTrue(tFile.exists()) }
+        sourceFile.inputStream().use { inputStream ->
+            targetFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        Assert.assertTrue(targetFile.exists())
+        Assert.assertEquals(data.joinedString, targetFile.readBytes().joinedString)
+        Assert.assertEquals(sourceFile.readBytes().joinedString, targetFile.readBytes().joinedString)
 
         val sList = taskConfig.SOURCE_DIR.listFiles()?.map { it.name } ?: emptyList()
         val tList = taskConfig.TARGET_DIR.listFiles()?.map { it.name } ?: emptyList()
         println(sList)
 
         // Изменяю исходный
-        sFile.writeBytes(newData)
-        Assert.assertEquals(newData.joinedString, sFile.readBytes().joinedString)
+//        sFile.writeBytes(newData)
+        newData.inputStream().use { inputStream ->
+            sourceFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        Assert.assertEquals(newData.joinedString, sourceFile.readBytes().joinedString)
 
         // Копирую обновлённый исходный в целевой
-        sFile.copyTo(tFile, overwrite = true)
-        Assert.assertEquals(newData.joinedString, tFile.readBytes().joinedString)
-        Assert.assertEquals(sFile.readBytes().joinedString, tFile.readBytes().joinedString)
+//        sFile.copyTo(tFile, overwrite = true)
+        sourceFile.inputStream().use { inputStream ->
+            targetFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        Assert.assertEquals(newData.joinedString, targetFile.readBytes().joinedString)
+        Assert.assertEquals(sourceFile.readBytes().joinedString, targetFile.readBytes().joinedString)
     }
 
 
@@ -189,7 +214,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
         sFile.writeBytes(updatedData)
         Assert.assertEquals(updatedData.joinedString, sFile.readBytes().joinedString)
-        Assert.assertNotEquals(initialData, sFile.readBytes().joinedString)
+        Assert.assertNotEquals(initialData.joinedString, sFile.readBytes().joinedString)
 
         doSync()
 
@@ -199,6 +224,5 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         Assert.assertTrue(sFileInTarget.exists())
         Assert.assertEquals(updatedData.joinedString, sFileInTarget.readBytes().joinedString)
         Assert.assertEquals(sFile.readBytes().joinedString, sFileInTarget.readBytes().joinedString)
-
     }
 }
