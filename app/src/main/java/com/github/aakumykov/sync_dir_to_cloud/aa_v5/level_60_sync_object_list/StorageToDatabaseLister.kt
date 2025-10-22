@@ -77,7 +77,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
                     foldersFirst = true
                 )
                 .let { list ->
-                    val logTag = "TEST_DEBUG"
+                    val logTag = "STORAGE_STATE"
                     list?.forEach { fileListItem ->
                         val path = fileListItem.absolutePath
                         val file = File(path)

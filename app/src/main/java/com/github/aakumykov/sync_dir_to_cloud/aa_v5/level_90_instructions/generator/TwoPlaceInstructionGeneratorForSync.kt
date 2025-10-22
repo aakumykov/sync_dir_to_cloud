@@ -115,7 +115,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
 
 
     private suspend fun processNeedToBeCopiedToTarget(initialOrderNum: Int): Int {
-//        Log.d(TAG, "processNeedToBeCopiedToTarget()")
+//        Log.d(TAG, "STORAGE_STATE, processNeedToBeCopiedToTarget()")
 
         var nextOrderNum = initialOrderNum
 
@@ -138,7 +138,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     }
 
     private suspend fun copyToTargetFilesNewAndModifiedInSource(nextOrderNum: Int): Int {
-//        Log.d(TAG, "copyToTargetFilesNewAndModifiedInSource() called with: nextOrderNum = $nextOrderNum")
+//        Log.d(TAG, "STORAGE_STATE, copyToTargetFilesNewAndModifiedInSource() called with: nextOrderNum = $nextOrderNum")
         return getAllBilateralComparisonStates()
             .filter { it.isFile }
             .filter { it.isNewOrModifiedInSource }
@@ -161,9 +161,12 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
         syncOperationList: List<SyncOperation>,
         nextOrderNum: Int
     ): Int {
+        Log.d(TAG, "----- STORAGE_STATE createInstructionsFor(${syncOperationList.joinToString(",")}) -----")
+
         var n = nextOrderNum
         list.forEach { comparisonState ->
-            Log.d(TAG, comparisonState.toString())
+//            Log.d(TAG, comparisonState.toString())
+            Log.d("STORAGE_STATE", comparisonState.toString())
             syncInstructionRepository.apply {
                 syncOperationList.forEach { syncOperation ->
                     add(
@@ -177,6 +180,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
                 }
             }
         }
+        Log.d("TAG", "STORAGE_STATE -----------------------------------------------------------------")
         return n
     }
 

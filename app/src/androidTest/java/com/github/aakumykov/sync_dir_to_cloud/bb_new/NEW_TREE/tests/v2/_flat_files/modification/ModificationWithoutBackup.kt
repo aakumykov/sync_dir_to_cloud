@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.byte_array_joined_str
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.google.gson.Gson
 import org.junit.Assert
 import org.junit.Test
@@ -54,10 +55,12 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertTargetDirChildCount(0)
 
 //        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 1")
+        println("${storageStateLogTag} ПЕРВАЯ СИНХРОНИЗАЦИЯ")
         doSync()
 
         listBothStorages("после первой синхронизации")
 
+//        printSyncObjects("после первой синхронизации")
         printSyncInstructions("после первой синхронизации")
 
         assertSourceDirChildCount(1)
@@ -77,7 +80,9 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertExistsAndContains(sFileInTarget, sFileData)
 
 //        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 2")
+        println("${storageStateLogTag} ВТОРАЯ СИНХРОНИЗАЦИЯ")
         doSync()
+//        printSyncObjects("после второй синхронизации")
         printSyncInstructions("после второй синхронизации")
 
         listBothStorages("после второй синхронизации")
@@ -277,5 +282,14 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         println("${storageStateLogTag}: $comment")
         println("${storageStateLogTag}: ${listStorage(taskConfig.SOURCE_DIR)}")
         println("${storageStateLogTag}: ${listStorage(taskConfig.TARGET_DIR)}")
+    }
+
+    private fun printSyncObjects(comment: String) {
+        for (syncSide in listOf(SyncSide.SOURCE, SyncSide.TARGET)) {
+            println("${storageStateLogTag}: \"$comment\" $syncSide:")
+            TestComponentHolder.testSyncObjectDAO.list(taskConfig.TASK_ID, syncSide)
+                .map { it.toString() }
+                .also { println(it) }
+        }
     }
 }

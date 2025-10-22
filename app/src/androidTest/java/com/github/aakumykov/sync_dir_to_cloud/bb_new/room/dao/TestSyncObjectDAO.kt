@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao
 import androidx.room.Dao
 import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 
 @Dao
@@ -24,4 +25,6 @@ interface TestSyncObjectDAO {
     fun getStateInStorage(fileName: String, syncSide: SyncSide): StateInStorage
 
 
+    @Query("SELECT * FROM sync_objects WHERE task_id = :taskId AND sync_side = :syncSide")
+    fun list(taskId: String, syncSide: SyncSide): List<SyncObject>
 }

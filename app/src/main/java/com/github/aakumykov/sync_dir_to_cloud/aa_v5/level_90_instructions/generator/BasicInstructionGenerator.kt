@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
@@ -28,9 +29,11 @@ open class BasicInstructionGenerator(
         partsLabel: PartsLabel,
         nextOrderNum: Int
     ): Int {
+        Log.d(TAG, "STORAGE_STATE, ------------- generateSyncInstructionsFrom() ------------")
         var n = nextOrderNum
         syncInstructionRepository.apply {
             comparisonStateList.forEach { comparisonState ->
+                Log.d(TAG, "STORAGE_STATE, ${comparisonState}")
                 add(
                     SyncInstruction.from(
                         partsLabel = partsLabel,
@@ -41,6 +44,11 @@ open class BasicInstructionGenerator(
                 )
             }
         }
+        Log.d(TAG, "STORAGE_STATE, ---------------------------------------------------------")
         return n
+    }
+
+    companion object {
+        private val TAG = BasicInstructionGenerator::class.java.simpleName
     }
 }

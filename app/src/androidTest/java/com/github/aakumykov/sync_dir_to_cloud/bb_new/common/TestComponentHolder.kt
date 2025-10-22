@@ -12,11 +12,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructio
 object TestComponentHolder {
 
     val testSyncTaskDAO: TestSyncTaskDAO
+    val testSyncObjectDAO: TestSyncObjectDAO
     val testCloudAuthDAO: TestCloudAuthDAO
     val testSyncInstructionDAO: TestSyncInstructionDAO
-
-    @Deprecated("Не используется")
-    private val testSyncObjectDAO: TestSyncObjectDAO
 
     internal val testComponent: TestComponent
 
