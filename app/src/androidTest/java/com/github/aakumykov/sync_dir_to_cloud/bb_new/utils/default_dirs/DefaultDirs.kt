@@ -6,7 +6,7 @@ import java.io.File
 
 val defaultLocalSourceDir: File
     get() = File(
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+        Environment.getExternalStorageDirectory(),
         "s$apiNumber"
     )
 val defaultLocalTargetDir: File
