@@ -19,8 +19,9 @@ import java.io.File
 class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     companion object {
-        const val RUN_TEST_N_TIMES = 1
+        const val RUN_TEST_N_TIMES = 2
         const val logTag = "TEST_DEBUG"
+        const val storageStateLogTag = "STORAGE_STATE"
 
         @JvmStatic
         @Parameterized.Parameters
@@ -40,6 +41,8 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
     @Test
     fun source_file_was_changed_after_sync() {
 
+        println("~~~~~~~~~~~~~ ПРОГОН ${numberOfRun} ~~~~~~~~~~~~~~~~~~~~~~")
+
         listBothStorages("перед созданием файла в источнике")
 
         fileHelper.createFileInSource(sFileName, sFileData)
@@ -55,7 +58,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
         listBothStorages("после первой синхронизации")
 
-//        printSyncInstructions(numberOfRun, 1)
+        printSyncInstructions("после первой синхронизации")
 
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, sFileData)
@@ -75,7 +78,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
 //        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 2")
         doSync()
-//        printSyncInstructions(numberOfRun, 2)
+        printSyncInstructions("после второй синхронизации")
 
         listBothStorages("после второй синхронизации")
 
@@ -208,7 +211,6 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         val sFileName = "s_file.bin"
 
         val sFile = File(taskConfig.SOURCE_DIR, sFileName)
-        val sFileInTarget = File(taskConfig.TARGET_DIR, sFileName)
 
         val initialData = randomBytes
         val updatedData = randomBytes
@@ -230,6 +232,8 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         Assert.assertEquals(1, taskConfig.SOURCE_DIR.listFiles()!!.size)
         Assert.assertEquals(1, taskConfig.TARGET_DIR.listFiles()!!.size)
 
+        var sFileInTarget = File(taskConfig.TARGET_DIR, sFileName)
+
         Assert.assertTrue(sFileInTarget.exists())
         Assert.assertEquals(initialData.joinedString, sFileInTarget.readBytes().joinedString)
         Assert.assertEquals(sFile.readBytes().joinedString, sFileInTarget.readBytes().joinedString)
@@ -243,20 +247,22 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         Assert.assertEquals(1, taskConfig.SOURCE_DIR.listFiles()!!.size)
         Assert.assertEquals(1, taskConfig.TARGET_DIR.listFiles()!!.size)
 
+        sFileInTarget = File(taskConfig.TARGET_DIR, sFileName)
+
         Assert.assertTrue(sFileInTarget.exists())
         Assert.assertEquals(updatedData.joinedString, sFileInTarget.readBytes().joinedString)
         Assert.assertEquals(sFile.readBytes().joinedString, sFileInTarget.readBytes().joinedString)
     }
 
 
-    private fun printSyncInstructions(runNum: Int, syncNum: Int) {
+    private fun printSyncInstructions(comment: String) {
+        println("${storageStateLogTag}: ----------- Инструкции: $comment ------------")
         TestComponentHolder.testSyncInstructionDAO.list(taskConfig.TASK_ID).also {
-            println("----------- Sync instructions on: run:$runNum, sync:$syncNum ------------")
             it.forEach { si ->
-                println(Gson().toJson(si))
+                println("${storageStateLogTag}: ${Gson().toJson(si)}")
             }
-            println("-------------------------------------------------------------")
         }
+        println("${storageStateLogTag}: -------------------------------------------------------------")
     }
 
     private fun listStorage(dir: File): String {
@@ -268,9 +274,8 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
     }
 
     private fun listBothStorages(comment: String) {
-        val logTag2 = "STORAGE_STATE"
-        println("${logTag2}: $comment")
-        println("${logTag2}: ${listStorage(taskConfig.SOURCE_DIR)}")
-        println("${logTag2}: ${listStorage(taskConfig.TARGET_DIR)}")
+        println("${storageStateLogTag}: $comment")
+        println("${storageStateLogTag}: ${listStorage(taskConfig.SOURCE_DIR)}")
+        println("${storageStateLogTag}: ${listStorage(taskConfig.TARGET_DIR)}")
     }
 }
