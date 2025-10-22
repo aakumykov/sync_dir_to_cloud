@@ -52,8 +52,6 @@ class StorageToDatabaseLister @AssistedInject constructor(
         executionId: String,
     ): Result<Boolean> {
 
-        Log.d(TAG, "readFromPath('$pathReadingFrom')")
-
         return try {
 
             logExecutionStarted(
@@ -71,20 +69,21 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
             syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
 
+            Log.d(TAG, "----------- readFromPath('$pathReadingFrom') -----------")
+
             recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
                 ?.listDirRecursively(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
                 .let { list ->
-                    val logTag = "STORAGE_STATE"
                     list?.forEach { fileListItem ->
                         val path = fileListItem.absolutePath
                         val file = File(path)
                         val data = file.readBytes().joinToString()
-                        Log.d(logTag, "FILE: $path [$data]")
+                        Log.d(TAG, "STORAGE_STAT, FILE: $path [$data]")
                     } ?: {
-                        Log.d(logTag, "list from path: $pathReadingFrom is empty")
+                        Log.d(TAG, "STORAGE_STAT, list from path: $pathReadingFrom is empty")
                     }
                     list
                 }
@@ -111,6 +110,8 @@ class StorageToDatabaseLister @AssistedInject constructor(
                         changesDetectionStrategy = changesDetectionStrategy
                     )
                 }
+
+            Log.d(TAG, "--------------------------------------------------------------")
 
             logExecutionFinished(taskId,executionId)
 

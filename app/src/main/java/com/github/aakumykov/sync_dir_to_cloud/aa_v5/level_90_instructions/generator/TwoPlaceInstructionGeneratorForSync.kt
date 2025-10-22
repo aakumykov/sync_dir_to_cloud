@@ -138,11 +138,31 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     }
 
     private suspend fun copyToTargetFilesNewAndModifiedInSource(nextOrderNum: Int): Int {
-//        Log.d(TAG, "STORAGE_STATE, copyToTargetFilesNewAndModifiedInSource() called with: nextOrderNum = $nextOrderNum")
+        Log.d(TAG, "STORAGE_STATE, copyToTargetFilesNewAndModifiedInSource() called with: nextOrderNum = $nextOrderNum")
         return getAllBilateralComparisonStates()
+            .let { list ->
+                list.apply {
+                    Log.d(TAG, "STORAGE_STATE, getAllBilateralComparisonStates: ${this.joinToString(",") { it.toString() }}")
+                }
+            }
             .filter { it.isFile }
+            .let { list ->
+                list.apply {
+                    Log.d(TAG, "STORAGE_STATE, isFile: ${this.joinToString(",") { it.toString() }}")
+                }
+            }
             .filter { it.isNewOrModifiedInSource }
+            .let { list ->
+                list.apply {
+                    Log.d(TAG, "STORAGE_STATE, isNewOrModifiedInSource: ${this.joinToString(",") { it.toString() }}")
+                }
+            }
             .filter { it.notDeletedInSource }
+            .let { list ->
+                list.apply {
+                    Log.d(TAG, "STORAGE_STATE, notDeletedInSource: ${this.joinToString(",") { it.toString() }}")
+                }
+            }
             .let { createInstructionsFor(it,SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
 
     }
@@ -166,7 +186,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
         var n = nextOrderNum
         list.forEach { comparisonState ->
 //            Log.d(TAG, comparisonState.toString())
-            Log.d("STORAGE_STATE", comparisonState.toString())
+            Log.d(TAG, "STORAGE_STATE, ${comparisonState.toString()}")
             syncInstructionRepository.apply {
                 syncOperationList.forEach { syncOperation ->
                     add(
