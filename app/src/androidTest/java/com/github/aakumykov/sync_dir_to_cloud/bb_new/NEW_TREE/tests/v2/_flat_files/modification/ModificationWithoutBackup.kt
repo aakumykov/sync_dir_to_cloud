@@ -2,11 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_fi
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.byte_array_joined_string.joinedString
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
+import com.google.gson.Gson
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,6 +62,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertTargetDirChildCount(0)
 
         doSync()
+        printSyncInstructions(numberOfRun, 1)
 
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, sFileData)
@@ -76,13 +79,22 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertExistsAndContains(sFileInTarget, sFileData)
 
         doSync()
+        printSyncInstructions(numberOfRun, 2)
 
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newData)
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newData)
+    }
 
-//        assertExistsAndContains(sFileInTarget, sFileData)
+    private fun printSyncInstructions(runNum: Int, syncNum: Int) {
+        TestComponentHolder.testSyncInstructionDAO.list(taskConfig.TASK_ID).also {
+            println("----------- Sync instructions on: run:$runNum, sync:$syncNum ------------")
+            it.forEach { si ->
+                println(Gson().toJson(si))
+            }
+            println("-------------------------------------------------------------")
+        }
     }
 
 

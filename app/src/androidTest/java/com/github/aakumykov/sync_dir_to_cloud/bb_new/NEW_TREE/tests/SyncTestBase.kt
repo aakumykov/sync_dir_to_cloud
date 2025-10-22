@@ -126,10 +126,10 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     }
 
     protected fun assertExistsAndContains(file: File, contents: ByteArray) {
-        println("@@@@@@@@@@@@@@@@@@@ assertExistsAndContains() @@@@@@@@@@@@@@@@@@@@@@@@")
-        println("expected: ${contents.joinToString()}")
-        println("actual: ${fileHelper.getFileContents(file).joinToString()}")
-        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+//        println("@@@@@@@@@@@@@@@@@@@ assertExistsAndContains() @@@@@@@@@@@@@@@@@@@@@@@@")
+//        println("expected: ${contents.joinToString()}")
+//        println("actual: ${fileHelper.getFileContents(file).joinToString()}")
+//        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         Assert.assertTrue(file.exists())
         Assert.assertEquals(
             contents.joinToString(),

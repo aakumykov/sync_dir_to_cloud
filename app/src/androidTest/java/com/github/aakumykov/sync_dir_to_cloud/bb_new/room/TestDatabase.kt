@@ -4,6 +4,7 @@ import androidx.room.Database
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
@@ -33,4 +34,5 @@ abstract class TestDatabase : AppDatabase() {
     abstract fun getTestSyncTaskDAO(): TestSyncTaskDAO
     abstract fun getTestCloudAuthDAO(): TestCloudAuthDAO
     abstract fun getTestSyncObjectDAO(): TestSyncObjectDAO
+    abstract fun getTestSyncInstructionDAO(): TestSyncInstructionDAO
 }

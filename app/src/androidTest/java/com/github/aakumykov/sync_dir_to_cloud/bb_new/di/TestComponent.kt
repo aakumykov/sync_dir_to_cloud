@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.di
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules.TestDaoModule
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules.TestDatabaseModule
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
@@ -78,4 +79,5 @@ interface TestComponent : AppComponent {
     fun testSyncTaskDAO(): TestSyncTaskDAO
     fun testCloudAuthDAO(): TestCloudAuthDAO
     fun testSyncObjectDAO(): TestSyncObjectDAO
+    fun testSyncInstructionDAO(): TestSyncInstructionDAO
 }

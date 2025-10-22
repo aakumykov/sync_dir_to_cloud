@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.di.modules
 
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.testComponent
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.TestDatabase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
@@ -27,5 +29,11 @@ class TestDaoModule() {
     @Provides
     fun provideTestSyncObjectDAO(@AppScope testDatabase: TestDatabase): TestSyncObjectDAO {
         return testDatabase.getTestSyncObjectDAO()
+    }
+
+    @AppScope
+    @Provides
+    fun provideTestSyncInstructionDAO(@AppScope testDatabase: TestDatabase): TestSyncInstructionDAO {
+        return testDatabase.getTestSyncInstructionDAO()
     }
 }
