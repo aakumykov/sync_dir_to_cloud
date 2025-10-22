@@ -40,15 +40,22 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
     @Test
     fun source_file_was_changed_after_sync() {
 
+        listBothStorages("перед созданием файла в источнике")
+
         fileHelper.createFileInSource(sFileName, sFileData)
+
+        listBothStorages("после создания файла в источнике")
 
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, sFileData)
         assertTargetDirChildCount(0)
 
-        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 0")
+//        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 1")
         doSync()
-        printSyncInstructions(numberOfRun, 1)
+
+        listBothStorages("после первой синхронизации")
+
+//        printSyncInstructions(numberOfRun, 1)
 
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, sFileData)
@@ -59,14 +66,18 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
         fileHelper.createFileInSource(sFileName, newData)
 
+        listBothStorages("после изменения файла в источнике")
+
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newData)
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
 
-        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 1")
+//        println("$logTag: source_file_was_changed_after_sync(), прогон $numberOfRun, синхронизация 2")
         doSync()
-        printSyncInstructions(numberOfRun, 2)
+//        printSyncInstructions(numberOfRun, 2)
+
+        listBothStorages("после второй синхронизации")
 
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newData)
@@ -248,4 +259,18 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         }
     }
 
+    private fun listStorage(dir: File): String {
+        return (dir.listFiles()?.joinToString(", ") { file ->
+            val data = file.readBytes().joinedString
+            val name = file.name
+            "$name [$data]"
+        } ?: "DIR_IS_EMPTY").let { "${dir.absolutePath}: $it" }
+    }
+
+    private fun listBothStorages(comment: String) {
+        val logTag2 = "STORAGE_STATE"
+        println("${logTag2}: $comment")
+        println("${logTag2}: ${listStorage(taskConfig.SOURCE_DIR)}")
+        println("${logTag2}: ${listStorage(taskConfig.TARGET_DIR)}")
+    }
 }
