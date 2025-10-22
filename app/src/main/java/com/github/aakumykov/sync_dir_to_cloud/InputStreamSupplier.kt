@@ -10,6 +10,7 @@ import dagger.assisted.AssistedInject
 import java.io.InputStream
 import javax.inject.Inject
 
+@Deprecated("Не используется")
 class InputStreamSupplier @AssistedInject constructor(
     @Assisted private val authToken: String,
     @Assisted private val storageType: StorageType,

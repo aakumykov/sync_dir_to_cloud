@@ -25,8 +25,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.PreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierAssistedFactoriesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.SourceFileStreamSupplierFactoryModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
@@ -55,7 +53,6 @@ import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.source_file_stream_supplier.factory_and_creator.SourceFileStreamSupplierCreator
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
@@ -85,8 +82,6 @@ import dagger.Component
         ViewModelsModule::class,
         OkhttpModule::class,
         GsonModule::class,
-        SourceFileStreamSupplierFactoryModule::class,
-        SourceFileStreamSupplierAssistedFactoriesModule::class,
         FileListerCreatorsModule::class,
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
@@ -131,8 +126,6 @@ interface AppComponent {
     fun getGson(): Gson
 
     fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
-
-    fun getSourceFileStreamSupplierCreator(): SourceFileStreamSupplierCreator
 
     fun getProgressInfoHolder(): ProgressInfoHolder
 
