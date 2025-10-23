@@ -15,12 +15,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+import java.nio.file.Files
+import java.util.concurrent.TimeUnit
 
 @RunWith(Parameterized::class)
 class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     companion object {
-        const val RUN_TEST_N_TIMES = 2
+        const val RUN_TEST_N_TIMES = 10
         const val logTag = "TEST_DEBUG"
         const val storageStateLogTag = "STORAGE_STATE"
 
@@ -42,7 +44,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
     @Test
     fun source_file_was_changed_after_sync() {
 
-        println("~~~~~~~~~~~~~ ПРОГОН ${numberOfRun} ~~~~~~~~~~~~~~~~~~~~~~")
+        println("${storageStateLogTag}, ~~~~~~~~~~~~~ ПРОГОН ${numberOfRun} ~~~~~~~~~~~~~~~~~~~~~~")
 
         listBothStorages("перед созданием файла в источнике")
 
@@ -70,6 +72,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
         val newData = randomBytes
 
+        TimeUnit.SECONDS.sleep(1)
         fileHelper.createFileInSource(sFileName, newData)
 
         listBothStorages("после изменения файла в источнике")
@@ -243,7 +246,11 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         Assert.assertEquals(initialData.joinedString, sFileInTarget.readBytes().joinedString)
         Assert.assertEquals(sFile.readBytes().joinedString, sFileInTarget.readBytes().joinedString)
 
-        sFile.writeBytes(updatedData)
+        sFile.apply {
+            delete()
+            createNewFile()
+            writeBytes(updatedData)
+        }
         Assert.assertEquals(updatedData.joinedString, sFile.readBytes().joinedString)
         Assert.assertNotEquals(initialData.joinedString, sFile.readBytes().joinedString)
 
@@ -274,7 +281,8 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         return (dir.listFiles()?.joinToString(", ") { file ->
             val data = file.readBytes().joinedString
             val name = file.name
-            "$name [$data]"
+            val lastModified = file.lastModified()
+            "$name ($lastModified) [$data]"
         } ?: "DIR_IS_EMPTY").let { "${dir.absolutePath}: $it" }
     }
 

@@ -81,9 +81,9 @@ class StorageToDatabaseLister @AssistedInject constructor(
                         val path = fileListItem.absolutePath
                         val file = File(path)
                         val data = file.readBytes().joinToString()
-                        Log.d(TAG, "STORAGE_STAT, FILE: $path [$data]")
+                        Log.d(TAG, "STORAGE_STATE, FILE: $path (${file.lastModified()}) [$data]")
                     } ?: {
-                        Log.d(TAG, "STORAGE_STAT, list from path: $pathReadingFrom is empty")
+                        Log.d(TAG, "STORAGE_STATE, list from path: $pathReadingFrom is empty")
                     }
                     list
                 }

@@ -103,7 +103,11 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
     }
 
     private fun createFileWithContents(file: File, fileContents: ByteArray): File {
+
+        if (file.exists()) file.delete()
+
         return file.apply {
+            createNewFile()
             writeBytes(fileContents)
         }
     }
