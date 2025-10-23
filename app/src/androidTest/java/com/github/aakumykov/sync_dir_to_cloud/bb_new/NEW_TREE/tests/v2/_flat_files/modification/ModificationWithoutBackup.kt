@@ -70,9 +70,8 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
 
-        val newData = randomBytes
+        val newData = randomBytes//(20)
 
-        TimeUnit.SECONDS.sleep(1)
         fileHelper.createFileInSource(sFileName, newData)
 
         listBothStorages("после изменения файла в источнике")
