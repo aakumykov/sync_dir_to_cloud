@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_files.modification.ModificationWithoutBackup.Companion.LOG_TAG
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
@@ -114,7 +113,6 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
 
     protected fun doSync(delayAfterWork: Boolean = false) = run {
-        println("$LOG_TAG: doSync()")
 
         scenario(RunSyncScenario(taskConfig.TASK_ID))
 
