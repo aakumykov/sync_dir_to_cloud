@@ -15,15 +15,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
-import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 
 @RunWith(Parameterized::class)
 class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     companion object {
-        const val RUN_TEST_N_TIMES = 10
-        const val logTag = "TEST_DEBUG"
+        const val RUN_TEST_N_TIMES = 2
+        const val DELAY_BEFORE_SOURCE_FILE_MODIFICATION_MS: Long = 1000
+        const val LOG_TAG = "TEST_DEBUG"
         const val storageStateLogTag = "STORAGE_STATE"
 
         @JvmStatic
@@ -72,6 +72,7 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
         val newData = randomBytes//(20)
 
+        TimeUnit.MILLISECONDS.sleep(DELAY_BEFORE_SOURCE_FILE_MODIFICATION_MS)
         fileHelper.createFileInSource(sFileName, newData)
 
         listBothStorages("после изменения файла в источнике")

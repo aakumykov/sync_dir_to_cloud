@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
+import com.kaspersky.kaspresso.device.logcat.LogcatBufferSize
 import java.io.File
 import java.io.IOException
 
@@ -104,7 +106,10 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
 
     private fun createFileWithContents(file: File, fileContents: ByteArray): File {
 
-        if (file.exists()) file.delete()
+        if (file.exists()) {
+            Log.d(TAG,"STORAGE_STATE, Удаляется файл перед созданием: ${file.absolutePath}")
+            if (file.delete()) throw RuntimeException("Cannot delete file '${file.absolutePath}'")
+        }
 
         return file.apply {
             createNewFile()
@@ -229,5 +234,9 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
         if (!dir.isDirectory)
             throw IllegalArgumentException("Argument is not a directory: '${dir.absolutePath}'")
         dir.listFiles()?.forEach { it.deleteRecursively() }
+    }
+
+    companion object {
+        val TAG = LocalFileHelper::class.java.simpleName
     }
 }
