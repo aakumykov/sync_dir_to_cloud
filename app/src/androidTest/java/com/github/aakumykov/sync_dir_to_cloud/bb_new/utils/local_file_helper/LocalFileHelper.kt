@@ -108,7 +108,8 @@ open class LocalFileHelper(private val taskConfig: TaskConfig) {
 
         if (file.exists()) {
             Log.d(TAG,"STORAGE_STATE, Удаляется файл перед созданием: ${file.absolutePath}")
-            if (file.delete()) throw RuntimeException("Cannot delete file '${file.absolutePath}'")
+            if (!file.delete())
+                throw RuntimeException("Cannot delete file '${file.absolutePath}'")
         }
 
         return file.apply {
