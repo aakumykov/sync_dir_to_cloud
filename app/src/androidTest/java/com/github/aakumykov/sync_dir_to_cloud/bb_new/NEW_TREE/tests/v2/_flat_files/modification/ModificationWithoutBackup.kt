@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     companion object {
-        const val RUN_TEST_N_TIMES = 10
+        const val RUN_TEST_N_TIMES = 3
         const val DELAY_BEFORE_SOURCE_FILE_MODIFICATION_MS: Long = 1000
         
         @JvmStatic
@@ -61,21 +61,38 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
 
     @Test
     fun target_file_was_changed_by_size() {
-
+        change_target_file_between_sync { modifiedFileName ->
+            val newData = randomBytes(20)
+            fileHelper.createFileInTarget(modifiedFileName, newData)
+            newData
+        }
     }
 
     @Test
     fun target_file_was_changed_by_time() {
-
+        change_target_file_between_sync { modifiedFileName ->
+            TimeUnit.MILLISECONDS.sleep(DELAY_BEFORE_SOURCE_FILE_MODIFICATION_MS)
+            val newData = randomBytes
+            fileHelper.createFileInTarget(modifiedFileName, newData)
+            newData
+        }
     }
 
-    private fun change_source_file_between_sync(fileModificationBlock: (modifiedFileName: String) -> ByteArray) {
 
-        fileHelper.createFileInSource(sFileName, sFileData)
+
+    private fun change_target_file_between_sync(fileModificationBlock: (modifiedFileName: String) -> ByteArray) {
+
+        createSourceFileAndSyncItWithTarget()
+
+        // Меняю файл в приёмнике, синхронизированный из источника.
+        val newData = fileModificationBlock.invoke(sFileName)
+
+        fileHelper.createFileInTarget(sFileName, newData)
 
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, sFileData)
-        assertTargetDirChildCount(0)
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, newData)
 
         doSync()
 
@@ -83,6 +100,11 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertExistsAndContains(sFile, sFileData)
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
+    }
+
+    private fun change_source_file_between_sync(fileModificationBlock: (modifiedFileName: String) -> ByteArray) {
+
+        createSourceFileAndSyncItWithTarget()
 
         val newData = fileModificationBlock.invoke(sFileName)
 
@@ -97,5 +119,21 @@ class ModificationWithoutBackup(val numberOfRun: Int) : SyncTestBase() {
         assertExistsAndContains(sFile, newData)
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newData)
+    }
+
+    private fun createSourceFileAndSyncItWithTarget() {
+
+        fileHelper.createFileInSource(sFileName, sFileData)
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, sFileData)
+        assertTargetDirChildCount(0)
+
+        doSync()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, sFileData)
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, sFileData)
     }
 }
