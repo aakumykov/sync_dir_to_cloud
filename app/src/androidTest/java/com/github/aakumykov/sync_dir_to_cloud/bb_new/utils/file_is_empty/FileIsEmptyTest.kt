@@ -4,6 +4,7 @@ import android.os.Environment
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.storage_dirs.downloadsDir
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,10 +94,6 @@ class FileIsEmptyTest {
             randomObjectInDownloads.isEmpty
         }
     }
-
-
-    private val downloadsDir: File
-        get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
     private val randomObjectInDownloads: File
         get() = File(downloadsDir, randomName)

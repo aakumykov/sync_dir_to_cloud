@@ -6,9 +6,6 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConf
 import org.junit.Test
 import java.io.File
 
-// FIXME: тестировать
-val File.childrenCount: Int get() = list()!!.size
-
 /**
  * Проверяется бекап файла в корне каталога Источника.
  */

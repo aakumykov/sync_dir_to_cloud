@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.backup
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_children_count.childrenCount
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirPath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirPath
