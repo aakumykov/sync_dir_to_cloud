@@ -11,16 +11,15 @@ import java.io.File
 
 abstract class BackupTestBase : SyncTestBase() {
 
-    protected fun assertExecutionBackupDirExistsAndContains(fileName: String, fileContents: ByteArray) {
-        val syncTask = TestComponentHolder.testSyncTaskDAO.get(taskConfig.TASK_ID)!!
+    protected fun assertTargetExecutionBackupDirExistsAndContains(fileName: String, fileContents: ByteArray) {
 
-        val executionBackupsDir = File(
+        val targetExecutionBackupsDir = File(
             syncTask.targetTaskBackupsDirPath!!,
             syncTask.targetExecutionBackupDirName!!
         )
-        val backedUpFile = File(executionBackupsDir, fileName)
+        Assert.assertTrue(targetExecutionBackupsDir.exists())
 
-        Assert.assertTrue(executionBackupsDir.exists())
+        val backedUpFile = File(targetExecutionBackupsDir, fileName)
         assertExistsAndContains(backedUpFile, fileContents)
     }
 
@@ -28,6 +27,7 @@ abstract class BackupTestBase : SyncTestBase() {
         Assert.assertTrue(backupDir.exists())
         Assert.assertEquals(count, backupDir.childrenCount)
     }
+
 
     protected fun assertTaskBackupsDirInTargetChildCount(count: Int) {
         Assert.assertEquals(count, taskBackupsDirInTarget.childrenCount)
@@ -37,6 +37,7 @@ abstract class BackupTestBase : SyncTestBase() {
         Assert.assertEquals(count, taskBackupsDirInSource.childrenCount)
     }
 
+
     protected fun assertExecutionBackupDirInTargetChildCount(count: Int) {
         Assert.assertEquals(count, executionBackupDirInTarget.childrenCount)
     }
@@ -45,8 +46,10 @@ abstract class BackupTestBase : SyncTestBase() {
         Assert.assertEquals(count, executionBackupDirInSource.childrenCount)
     }
 
+
     protected val taskBackupsDirInTarget: File
         get() = File(syncTask.targetTaskBackupsDirPath!!)
+
 
     protected val taskBackupsDirInSource: File
         get() = File(syncTask.sourceTaskBackupsDirPath!!)
