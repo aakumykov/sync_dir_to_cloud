@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.backup
 
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalWithBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
@@ -12,7 +13,7 @@ import java.util.function.Supplier
  *
  * ==== sync ====>
  */
-class BackupFlatFile : BackupTestBase() {
+class BackupFlatFile : SyncTestBase() {
 
     /**
      * Бекап файла, удалённого в источнике [deleted_file_in_source_will_backuped_in_target]
@@ -38,8 +39,8 @@ class BackupFlatFile : BackupTestBase() {
         assertSourceDirChildCount(0)
         assertTargetDirChildCount(1)
 
-        assertTaskBackupsDirInTargetChildCount(1)
-        assertExecutionBackupDirInTargetChildCount(1)
+        assertTargetTaskBackupsDirChildCount(1)
+        assertTargetExecutionBackupDirChildCount(1)
 
         assertTargetExecutionBackupDirExistsAndContains(sFileName, sFileData)
     }
@@ -142,8 +143,8 @@ class BackupFlatFile : BackupTestBase() {
         assertExistsAndContains(sFileInTarget, data)
 
         // ...в приёмнике бекапнут старый файл и нет лишнего.
-        assertTaskBackupsDirInTargetChildCount(1)
-        assertExecutionBackupDirInTargetChildCount(1)
+        assertTargetTaskBackupsDirChildCount(1)
+        assertTargetExecutionBackupDirChildCount(1)
         assertTargetExecutionBackupDirExistsAndContains(sFileName, sFileData)
     }
 
@@ -168,8 +169,8 @@ class BackupFlatFile : BackupTestBase() {
         assertTargetDirChildCount(2)
         assertExistsAndContains(sFileInTarget, sFileData)
 
-        assertTaskBackupsDirInTargetChildCount(1)
-        assertExecutionBackupDirInTargetChildCount(1)
+        assertTargetTaskBackupsDirChildCount(1)
+        assertTargetExecutionBackupDirChildCount(1)
         assertTargetExecutionBackupDirExistsAndContains(sFileName, newData)
     }
 
