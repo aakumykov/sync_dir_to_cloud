@@ -45,6 +45,9 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val newSourceFileData: ByteArray = freshNotEmptyData
     protected val newTargetFileData: ByteArray = freshNotEmptyData
 
+    protected val newBigSourceFileData: ByteArray = randomBytes(20)
+    protected val newBigTargetFileData: ByteArray = randomBytes(20)
+
     protected val sFileInTarget = fileHelper.fileInTarget(sFileName)
     protected val tFileInSource = fileHelper.fileInSource(tFileName)
 
