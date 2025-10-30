@@ -97,6 +97,18 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val tDeepDirInSource = fileHelper.dirInSource(tDeepDirName)
 
 
+    //
+    // "Глубокие" файлы // TODO: разная глубина
+    //
+    protected val sDeepFile = fileHelper.deepFileInSource(sDeepDirName, sFileName)
+    protected val tDeepFile = fileHelper.deepFileInTarget(tDeepDirName, tFileName)
+
+    protected val sDeepFileInTarget = fileHelper.deepFileInTarget(sDeepDirName, sFileName)
+    protected val tDeepFileInSource = fileHelper.deepFileInSource(tDeepDirName, tFileName)
+
+
+
+
     @Before
     fun reCreateLocalTask() = run {
         scenario(DeleteLocalTaskScenario())
@@ -139,10 +151,6 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     }
 
     protected fun assertExistsAndContains(file: File, contents: ByteArray) {
-//        println("@@@@@@@@@@@@@@@@@@@ assertExistsAndContains() @@@@@@@@@@@@@@@@@@@@@@@@")
-//        println("expected: ${contents.joinToString()}")
-//        println("actual: ${fileHelper.getFileContents(file).joinToString()}")
-//        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         Assert.assertTrue(file.exists())
         Assert.assertEquals(
             contents.joinToString(),
