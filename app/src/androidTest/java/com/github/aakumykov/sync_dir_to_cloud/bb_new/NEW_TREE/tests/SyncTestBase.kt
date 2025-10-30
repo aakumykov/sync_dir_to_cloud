@@ -119,6 +119,9 @@ abstract class SyncTestBase : StorageAccessTestCase() {
         fileHelper.createTargetDir()
         Assert.assertTrue(taskConfig.SOURCE_DIR.exists())
         Assert.assertTrue(taskConfig.TARGET_DIR.exists())
+
+        assertSourceDirChildCount(0)
+        assertTargetDirChildCount(0)
     }
 
 
