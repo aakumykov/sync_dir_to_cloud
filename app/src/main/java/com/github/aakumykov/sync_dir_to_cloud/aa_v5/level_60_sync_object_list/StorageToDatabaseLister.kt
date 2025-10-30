@@ -69,36 +69,36 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
             syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
 
-            Log.d(TAG, "----------- readFromPath('$pathReadingFrom') -----------")
+//            Log.d(TAG, "----------- readFromPath('$pathReadingFrom') -----------")
 
             recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
                 ?.listDirRecursively(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
-                .let { list ->
+                /*.let { list ->
                     list?.forEach { fileListItem ->
                         val path = fileListItem.absolutePath
                         val file = File(path)
-                        val data = file.readBytes().joinToString()
+                        val data = if (file.isFile) file.readBytes().joinToString() else "0 (is dir)"
                         Log.d(TAG, "STORAGE_STATE, FILE: $path (${file.lastModified()}) [$data]")
                     } ?: {
                         Log.d(TAG, "STORAGE_STATE, list from path: $pathReadingFrom is empty")
                     }
                     list
-                }
+                }*/
                 ?.filterNot { fileListItem ->
                     backupDirsFilter.isBackupDir(syncSide, fileListItem)
                 }
-                ?.let {
+                /*?.let {
                     it
-                }
+                }*/
                 ?.apply {
                     syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
                 }
-                ?.also { list ->
+                /*?.also { list ->
 //                    Log.d(TAG, "list.size: ${list.size}")
-                }
+                }*/
                 ?.forEach { fileListItem ->
 //                    Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
                     addOrUpdateFileListItem(
@@ -111,7 +111,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
                     )
                 }
 
-            Log.d(TAG, "--------------------------------------------------------------")
+//            Log.d(TAG, "--------------------------------------------------------------")
 
             logExecutionFinished(taskId,executionId)
 

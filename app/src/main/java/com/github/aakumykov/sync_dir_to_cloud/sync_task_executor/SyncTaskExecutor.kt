@@ -161,10 +161,10 @@ class SyncTaskExecutor @AssistedInject constructor(
             markAllObjectsAsNotChecked(currentTaskId)
 
             // Прочитать источник
-            readSource()
+            readSource().getOrThrow()
 
             // Прочитать приёмник
-            readTarget()
+            readTarget().getOrThrow()
 
             // Отметить все не найденные объекты как удалённые
             markAllNotCheckedObjectsAsDeleted(currentTaskId)
@@ -327,8 +327,8 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun readTarget() {
-        storageToDatabaseLister
+    private suspend fun readTarget(): Result<Boolean> {
+        return storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.TARGET,
                 executionId = executionId,
