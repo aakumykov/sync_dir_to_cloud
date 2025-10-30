@@ -18,7 +18,7 @@ abstract class CreationDeepFilesBase : SyncTestBase() {
 
     open fun deep_file_created_in_source() {
         fileHelper.createDeepFileInSource(sDeepDirName, sFileName, sFileData)
-        assertExistsAndContains(sDeepFile, sFileData)
+        assertOnlyDeepFileExistsAndContainsInSource(sDeepDirName, sFileName, sFileData)
         doSync()
     }
 

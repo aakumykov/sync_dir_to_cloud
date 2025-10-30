@@ -13,12 +13,8 @@ class CreationDeepFilesWithoutBackup : CreationDeepFilesBase() {
     @Test
     override fun deep_file_created_in_source() {
         super.deep_file_created_in_source()
-
-        assertSourceDirChildCount(1)
-        assertExistsAndContains(sDeepFile, sFileData)
-
-        assertTargetDirChildCount(1)
-        assertExistsAndContains(sDeepFileInTarget, sFileData)
+        assertOnlyDeepFileExistsAndContainsInSource(sDeepDirName, sFileName, sFileData)
+        assertOnlyDeepFileExistsAndContainsInTarget(sDeepDirName, sFileName, sFileData)
     }
 
 

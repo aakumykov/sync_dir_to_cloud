@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
+import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
@@ -250,5 +251,28 @@ abstract class SyncTestBase : StorageAccessTestCase() {
         assertExistsAndContains(sFile, sFileData)
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
+    }
+
+
+    // FIXME: эту функцию тестировать
+    protected fun assertOnlyDeepFileExistsAndContainsInSource(deepDirName: String, fileName: String, fileData: ByteArray) {
+        assertDeepDirTreeHasNoOtherFiles(sDir, deepDirName)
+        assertExistsAndContains(fileHelper.deepFileInSource(deepDirName, fileName), fileData)
+    }
+
+    // FIXME: эту функцию тестировать
+    protected fun assertOnlyDeepFileExistsAndContainsInTarget(deepDirName: String, fileName: String, fileData: ByteArray) {
+        assertDeepDirTreeHasNoOtherFiles(tDir, deepDirName)
+        assertExistsAndContains(fileHelper.deepFileInTarget(deepDirName, fileName), fileData)
+    }
+
+    private fun assertDeepDirTreeHasNoOtherFiles(baseDir: File, deepDirName: String) {
+        deepDirName.split(CloudWriter.DS).reduce { a,b ->
+            println(a+b)
+            val dirIntoDeepName = a + CloudWriter.DS + b
+            val dirIntoDeep = File(baseDir, dirIntoDeepName)
+            Assert.assertEquals(1, dirIntoDeep.childrenCount)
+            dirIntoDeepName
+        }
     }
 }
