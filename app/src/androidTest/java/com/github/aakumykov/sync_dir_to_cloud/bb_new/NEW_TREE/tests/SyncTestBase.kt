@@ -223,4 +223,21 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     protected val executionBackupDirInSource: File
         get() = File(taskBackupsDirInSource, syncTask.sourceExecutionBackupDirName!!)
+
+
+    protected fun createSourceFileAndSyncItWithTarget() {
+
+        fileHelper.createFileInSource(sFileName, sFileData)
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, sFileData)
+        assertTargetDirChildCount(0)
+
+        doSync()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, sFileData)
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, sFileData)
+    }
 }

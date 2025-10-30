@@ -170,21 +170,4 @@ abstract class ModificationFlatFilesBase(val numberOfRun: Int)  : SyncTestBase()
     private fun delayBeforeModification() {
         TimeUnit.MILLISECONDS.sleep(DELAY_BEFORE_FILE_MODIFICATION_MS)
     }
-
-
-    private fun createSourceFileAndSyncItWithTarget() {
-
-        fileHelper.createFileInSource(sFileName, sFileData)
-
-        assertSourceDirChildCount(1)
-        assertExistsAndContains(sFile, sFileData)
-        assertTargetDirChildCount(0)
-
-        doSync()
-
-        assertSourceDirChildCount(1)
-        assertExistsAndContains(sFile, sFileData)
-        assertTargetDirChildCount(1)
-        assertExistsAndContains(sFileInTarget, sFileData)
-    }
 }
