@@ -5,6 +5,8 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
 abstract class StaticFlatFilesBase : SyncTestBase() {
 
     /**
+     * Нет ничего - нет ничего [no_files_in_source_and_no_files_in_target]
+     *
      * Пустой файл - нет ничего [empty_file_in_source_and_no_files_in_target]
      * Нет ничего - пустой файл [no_files_in_source_and_empty_file_in_target]
      *
@@ -18,6 +20,13 @@ abstract class StaticFlatFilesBase : SyncTestBase() {
      * Непустой файл - одноимённый непустой файл [same_name_data_files_in_source_and_target]
      * Непустой файл - разноимённый непустой файл [diff_names_data_files_in_source_and_target]
      */
+
+
+    open fun no_files_in_source_and_no_files_in_target() {
+        assertSourceDirChildCount(0)
+        assertTargetDirChildCount(0)
+        doSync()
+    }
 
 
     open fun empty_file_in_source_and_no_files_in_target() {

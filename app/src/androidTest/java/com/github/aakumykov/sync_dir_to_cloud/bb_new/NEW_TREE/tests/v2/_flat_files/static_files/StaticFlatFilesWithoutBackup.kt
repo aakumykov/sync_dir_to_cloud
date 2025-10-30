@@ -14,6 +14,13 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
         get() = LocalToLocalSyncWithoutBackupTaskConfig()
 
 
+    @Test
+    override fun no_files_in_source_and_no_files_in_target() {
+        super.no_files_in_source_and_no_files_in_target()
+        assertSourceDirChildCount(0)
+        assertTargetDirChildCount(0)
+    }
+
     // ==== sync ===>
     @Test
     override fun empty_file_in_source_and_no_files_in_target() {
