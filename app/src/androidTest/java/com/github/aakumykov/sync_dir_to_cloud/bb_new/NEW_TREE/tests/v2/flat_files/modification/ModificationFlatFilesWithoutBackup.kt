@@ -1,13 +1,13 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_files.modification
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_files.modification
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalWithBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalNoBackupTaskConfig
 import org.junit.Test
 
-class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesBase(numberOfRun) {
+class ModificationFlatFilesWithoutBackup(numberOfRun: Int) : ModificationFlatFilesBase(numberOfRun) {
 
     override val taskConfig: TaskConfig
-        get() = localToLocalWithBackupTaskConfig
+        get() = localToLocalNoBackupTaskConfig
 
 
     @Test
@@ -23,10 +23,8 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newBigSourceFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newBigSourceFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, sFileData)
     }
 
 
@@ -37,10 +35,8 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newSourceFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newSourceFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, sFileData)
     }
 
 
@@ -51,10 +47,8 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, sFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, newBigTargetFileData)
     }
 
 
@@ -65,10 +59,8 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, sFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, newTargetFileData)
     }
 
 
@@ -79,10 +71,8 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newSourceFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newSourceFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, newTargetFileData)
     }
 
 
@@ -93,10 +83,8 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newBigSourceFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newBigSourceFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, newBigTargetFileData)
     }
 
 
@@ -107,10 +95,8 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newSourceFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newSourceFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, newBigTargetFileData)
     }
 
 
@@ -121,9 +107,7 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
         assertSourceDirChildCount(1)
         assertExistsAndContains(sFile, newBigSourceFileData)
 
-        assertTargetDirChildCount(2)
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, newBigSourceFileData)
-
-        assertOnlyFileWasBackupedInTarget(sFileName, newTargetFileData)
     }
 }
