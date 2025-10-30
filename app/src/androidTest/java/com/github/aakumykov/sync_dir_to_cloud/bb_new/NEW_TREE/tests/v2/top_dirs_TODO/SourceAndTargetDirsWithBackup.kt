@@ -1,17 +1,16 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.flat_dirs.empty_endpoints
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.top_dirs_TODO
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import org.junit.Test
 
-class EmptyWithBackup : EmptyWithoutBackups() {
+open class SourceAndTargetDirsWithBackup : SourceAndTargetDirsWithoutBackup() {
 
     override val taskConfig: TaskConfig
         get() = LocalToLocalSyncWithBackupTaskConfig(super.taskConfig)
 
-
     @Test
-    override fun empty_source_and_target_sync() {
-        super.empty_source_and_target_sync()
+    override fun empty_source_and_target_dirs_exists() {
+        super.empty_source_and_target_dirs_exists()
     }
 }
