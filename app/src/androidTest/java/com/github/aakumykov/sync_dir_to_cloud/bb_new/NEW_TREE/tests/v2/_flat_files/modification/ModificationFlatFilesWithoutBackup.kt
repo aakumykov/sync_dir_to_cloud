@@ -62,4 +62,52 @@ class ModificationFlatFilesWithoutBackup(numberOfRun: Int) : ModificationFlatFil
         assertTargetDirChildCount(1)
         assertExistsAndContains(sFileInTarget, sFileData)
     }
+
+
+    @Test
+    override fun source_and_target_files_was_changed_by_time() {
+        super.source_and_target_files_was_changed_by_time()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newSourceFileData)
+
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, newSourceFileData)
+    }
+
+
+    @Test
+    override fun source_and_target_files_was_changed_by_size() {
+        super.source_and_target_files_was_changed_by_size()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newBigSourceFileData)
+
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, newBigSourceFileData)
+    }
+
+
+    @Test
+    override fun source_file_was_changed_by_time_and_target_by_size() {
+        super.source_file_was_changed_by_time_and_target_by_size()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newSourceFileData)
+
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, newSourceFileData)
+    }
+
+
+    @Test
+    override fun source_file_was_changed_by_size_and_target_by_time() {
+        super.source_file_was_changed_by_size_and_target_by_time()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newBigSourceFileData)
+
+        assertTargetDirChildCount(1)
+        assertExistsAndContains(sFileInTarget, newBigSourceFileData)
+    }
 }

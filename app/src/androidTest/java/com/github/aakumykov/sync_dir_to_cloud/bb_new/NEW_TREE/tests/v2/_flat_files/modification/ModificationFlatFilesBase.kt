@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2._flat_files.modification
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.byte_array_joined_string.joinedString
 import org.junit.Assert
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -12,7 +12,7 @@ abstract class ModificationFlatFilesBase(val numberOfRun: Int)  : SyncTestBase()
 
     companion object {
         const val RUN_TEST_N_TIMES = 1
-        const val DELAY_BEFORE_SOURCE_FILE_MODIFICATION_MS: Long = 1000
+        const val DELAY_BEFORE_FILE_MODIFICATION_MS: Long = 1000
 
         @JvmStatic
         @Parameterized.Parameters
@@ -25,6 +25,11 @@ abstract class ModificationFlatFilesBase(val numberOfRun: Int)  : SyncTestBase()
      *
      * Файл в приёмнике изменился в размере [target_file_was_changed_by_size]
      * Файл в приёмнике изменился по времени (с тем же размером) [target_file_was_changed_by_time]
+     *
+     * Файлы в источнике и приёмнике изменились по времени [source_and_target_files_was_changed_by_time]
+     * Файлы в источнике и приёмнике изменились в размере [source_and_target_files_was_changed_by_size]
+     * Файл в источнике изм. по времени, а в приёмнике в размере [source_file_was_changed_by_time_and_target_by_size]
+     * Файл в источнике изм. в размере, а в приёмнике по времени [source_file_was_changed_by_size_and_target_by_time]
      */
 
 
@@ -44,7 +49,7 @@ abstract class ModificationFlatFilesBase(val numberOfRun: Int)  : SyncTestBase()
     open fun source_file_was_changed_by_time() {
         createSourceFileAndSyncItWithTarget()
 
-        TimeUnit.MILLISECONDS.sleep(DELAY_BEFORE_SOURCE_FILE_MODIFICATION_MS)
+        delayBeforeModification()
         fileHelper.createFileInSource(sFileName, newSourceFileData)
 
         assertSourceDirChildCount(1)
@@ -75,7 +80,7 @@ abstract class ModificationFlatFilesBase(val numberOfRun: Int)  : SyncTestBase()
     open fun target_file_was_changed_by_time() {
         createSourceFileAndSyncItWithTarget()
 
-        TimeUnit.MILLISECONDS.sleep(DELAY_BEFORE_SOURCE_FILE_MODIFICATION_MS)
+        delayBeforeModification()
         fileHelper.createFileInTarget(sFileName, newTargetFileData)
 
         assertSourceDirChildCount(1)
@@ -88,50 +93,86 @@ abstract class ModificationFlatFilesBase(val numberOfRun: Int)  : SyncTestBase()
     }
 
 
-
-    protected fun change_target_file_between_sync(fileModificationBlock: (modifiedFileName: String) -> ByteArray) {
-
+    open fun source_and_target_files_was_changed_by_time() {
         createSourceFileAndSyncItWithTarget()
 
-        // Меняю файл в приёмнике, синхронизированный из источника.
-        val newData = fileModificationBlock.invoke(sFileName)
+        delayBeforeModification()
 
-        fileHelper.createFileInTarget(sFileName, newData)
+        fileHelper.createFileInSource(sFileName, newSourceFileData)
+        fileHelper.createFileInTarget(sFileName, newTargetFileData)
 
-        assertSourceDirChildCount(1)
-        assertExistsAndContains(sFile, sFileData)
-        assertTargetDirChildCount(1)
-        assertExistsAndContains(sFileInTarget, newData)
+        assertFilesInSourceAndTargetFilesContainAndDiffer(newSourceFileData, newTargetFileData)
 
         doSync()
-
-        assertSourceDirChildCount(1)
-        assertExistsAndContains(sFile, sFileData)
-        assertTargetDirChildCount(1)
-        assertExistsAndContains(sFileInTarget, sFileData)
     }
 
-    protected fun change_source_file_between_sync(
-        fileModificationBlock: (modifiedFileName: String) -> ByteArray,
-        resultCheckingBlock: () -> Unit
+
+    open fun source_and_target_files_was_changed_by_size() {
+        createSourceFileAndSyncItWithTarget()
+
+        fileHelper.createFileInSource(sFileName, newBigSourceFileData)
+        fileHelper.createFileInTarget(sFileName, newBigTargetFileData)
+
+        assertFilesInSourceAndTargetFilesContainAndDiffer(newBigSourceFileData, newBigTargetFileData)
+
+        doSync()
+    }
+
+    open fun source_file_was_changed_by_time_and_target_by_size() {
+        createSourceFileAndSyncItWithTarget()
+
+        delayBeforeModification()
+        fileHelper.createFileInSource(sFileName, newSourceFileData)
+
+        fileHelper.createFileInTarget(sFileName, newBigTargetFileData)
+
+        assertFilesInSourceAndTargetFilesContainAndDiffer(newSourceFileData, newBigTargetFileData)
+
+        doSync()
+    }
+
+
+    open fun source_file_was_changed_by_size_and_target_by_time() {
+        createSourceFileAndSyncItWithTarget()
+
+        fileHelper.createFileInSource(sFileName, newBigSourceFileData)
+
+        delayBeforeModification()
+        fileHelper.createFileInTarget(sFileName, newTargetFileData)
+
+        assertFilesInSourceAndTargetFilesContainAndDiffer(newBigSourceFileData, newTargetFileData)
+
+        doSync()
+    }
+
+
+    /**
+     * Эти проверки не нужны, так как методы fileHelper-а (от)тестированы!
+     * Делая их, я сам себе не доверяю. С другой стороны, лишняя проверка не помешает...
+     */
+    private fun assertFilesInSourceAndTargetFilesContainAndDiffer(
+        sourceFileData: ByteArray,
+        targetFileData: ByteArray
     ) {
-
-        val newData = fileModificationBlock.invoke(sFileName)
-
-        assertSourceDirChildCount(1)
-        assertExistsAndContains(sFile, newData)
-        assertTargetDirChildCount(1)
-        assertExistsAndContains(sFileInTarget, sFileData)
-
-        doSync()
+        Assert.assertNotEquals(
+            fileHelper.getFileContents(sFile).joinedString,
+            fileHelper.getFileContents(sFileInTarget).joinedString
+        )
 
         assertSourceDirChildCount(1)
-        assertExistsAndContains(sFile, newData)
+        assertExistsAndContains(sFile, sourceFileData)
+
         assertTargetDirChildCount(1)
-        assertExistsAndContains(sFileInTarget, newData)
+        assertExistsAndContains(sFileInTarget, targetFileData)
     }
 
-    protected fun createSourceFileAndSyncItWithTarget() {
+
+    private fun delayBeforeModification() {
+        TimeUnit.MILLISECONDS.sleep(DELAY_BEFORE_FILE_MODIFICATION_MS)
+    }
+
+
+    private fun createSourceFileAndSyncItWithTarget() {
 
         fileHelper.createFileInSource(sFileName, sFileData)
 

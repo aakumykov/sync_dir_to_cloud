@@ -70,4 +70,60 @@ class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesB
 
         assertOnlyFileWasBackupedInTarget(sFileName, newTargetFileData)
     }
+
+
+    @Test
+    override fun source_and_target_files_was_changed_by_time() {
+        super.source_and_target_files_was_changed_by_time()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newSourceFileData)
+
+        assertTargetDirChildCount(2)
+        assertExistsAndContains(sFileInTarget, newSourceFileData)
+
+        assertOnlyFileWasBackupedInTarget(sFileName, newTargetFileData)
+    }
+
+
+    @Test
+    override fun source_and_target_files_was_changed_by_size() {
+        super.source_and_target_files_was_changed_by_size()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newBigSourceFileData)
+
+        assertTargetDirChildCount(2)
+        assertExistsAndContains(sFileInTarget, newBigSourceFileData)
+
+        assertOnlyFileWasBackupedInTarget(sFileName, newBigTargetFileData)
+    }
+
+
+    @Test
+    override fun source_file_was_changed_by_time_and_target_by_size() {
+        super.source_file_was_changed_by_time_and_target_by_size()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newSourceFileData)
+
+        assertTargetDirChildCount(2)
+        assertExistsAndContains(sFileInTarget, newSourceFileData)
+
+        assertOnlyFileWasBackupedInTarget(sFileName, newBigTargetFileData)
+    }
+
+
+    @Test
+    override fun source_file_was_changed_by_size_and_target_by_time() {
+        super.source_file_was_changed_by_size_and_target_by_time()
+
+        assertSourceDirChildCount(1)
+        assertExistsAndContains(sFile, newBigSourceFileData)
+
+        assertTargetDirChildCount(2)
+        assertExistsAndContains(sFileInTarget, newBigSourceFileData)
+
+        assertOnlyFileWasBackupedInTarget(sFileName, newTargetFileData)
+    }
 }
