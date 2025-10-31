@@ -1,13 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
-import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_no_extra_files.assertDeepDirTreeHasNoExtraFiles
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_no_extra_files.assertDeepDirHasOnlyOneChildAtAllLevels
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_children_count.childrenCount
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
@@ -257,13 +256,13 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     // FIXME: эту функцию тестировать
     protected fun assertOnlyDeepFileExistsAndContainsInSource(deepDirName: String, fileName: String, fileData: ByteArray) {
-        assertDeepDirTreeHasNoExtraFiles(sDir, deepDirName)
+        assertDeepDirHasOnlyOneChildAtAllLevels(sDir, deepDirName)
         assertExistsAndContains(fileHelper.deepFileInSource(deepDirName, fileName), fileData)
     }
 
     // FIXME: эту функцию тестировать
     protected fun assertOnlyDeepFileExistsAndContainsInTarget(deepDirName: String, fileName: String, fileData: ByteArray) {
-        assertDeepDirTreeHasNoExtraFiles(tDir, deepDirName)
+        assertDeepDirHasOnlyOneChildAtAllLevels(tDir, deepDirName)
         assertExistsAndContains(fileHelper.deepFileInTarget(deepDirName, fileName), fileData)
     }
 }
