@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_no_extra_files
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.cache_dir.cacheDir
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
@@ -8,11 +7,20 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomNam
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import java.io.File
 import kotlin.random.Random
 
-@RunWith(AndroidJUnit4::class)
-class AssertDeepDirHasOnlyOneChildAtAllLevelsTest {
+@RunWith(Parameterized::class)
+class AssertDeepDirHasOnlyOneChildAtAllLevelsTest(val numberOfCurrentRunDoNotDelete: Int) {
+
+    companion object {
+        const val RUN_TEST_N_TIMES = 5
+
+        @JvmStatic
+        @Parameterized.Parameters
+        fun data() : Collection<Int> = List(RUN_TEST_N_TIMES) { it }
+    }
 
     @Test
     fun dir_with_one_level_depth() {
@@ -45,19 +53,19 @@ class AssertDeepDirHasOnlyOneChildAtAllLevelsTest {
 
     @Test
     fun dir_tree_with_many_tail_files_throws_exception() {
-//        Assert.assertThrows(Exception::class.java) {
+        Assert.assertThrows(java.lang.AssertionError::class.java) {
             val deepDirName = randomDeepDirName
             val deepDir = prepareDeepDir(cacheDir, deepDirName)
             repeat(Random.nextInt(2,11)) {
                 createFileInDir(deepDir, randomName)
             }
             assertDeepDirHasOnlyOneChildAtAllLevels(cacheDir, deepDirName)
-//        }
+        }
     }
 
     @Test
     fun dir_tree_with_branch_throws_exception() {
-//        Assert.assertThrows(Exception::class.java) {
+        Assert.assertThrows(java.lang.AssertionError::class.java) {
 
             fun randomInt_2_5(): Int = Random.nextInt(2,6)
 
@@ -75,6 +83,6 @@ class AssertDeepDirHasOnlyOneChildAtAllLevelsTest {
             val fullDeepDirName = deepDirName1 + CloudWriter.DS + deepDirName2
 
             assertDeepDirHasOnlyOneChildAtAllLevels(cacheDir, fullDeepDirName)
-//        }
+        }
     }
 }

@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized
 import java.util.concurrent.TimeUnit
 
 @RunWith(Parameterized::class)
-abstract class ModificationFlatFilesBase(val numberOfRun: Int)  : SyncTestBase() {
+abstract class ModificationFlatFilesBase(val numberOfCurrentRunDoNotDelete: Int)  : SyncTestBase() {
 
     companion object {
         const val RUN_TEST_N_TIMES = 1
