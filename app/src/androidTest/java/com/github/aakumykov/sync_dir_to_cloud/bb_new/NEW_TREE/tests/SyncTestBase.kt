@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
+import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
@@ -14,8 +15,9 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBy
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirPath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirPath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirAbsolutePath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirAbsolutePath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirAbsolutePath
 import org.junit.Assert
 import org.junit.Before
 import java.io.File
@@ -40,8 +42,10 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val commonFileInSource = fileHelper.fileInSource(commonFileName)
     protected val commonFileInTarget = fileHelper.fileInTarget(commonFileName)
 
-    protected val sFileName = randomName
-    protected val tFileName = randomName
+    private val binFileName: String get() = "${randomName}.bin"
+
+    protected val sFileName = binFileName
+    protected val tFileName = binFileName
 
     protected val sFile = fileHelper.fileInSource(sFileName)
     protected val tFile = fileHelper.fileInTarget(tFileName)
@@ -74,6 +78,8 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val commonDirInSource = fileHelper.dirInSource(commonDirName)
     protected val commonDirInTarget = fileHelper.dirInTarget(commonDirName)
 
+    // FIXME: неудачное название. Я воспринял её как "источник", а не "каталог в источнике",
+    //  которым она является на самом деле.
     protected val sDir = fileHelper.dirInSource(sDirName)
     protected val tDir = fileHelper.dirInTarget(tDirName)
 
@@ -172,7 +178,7 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected fun assertTargetExecutionBackupDirExistsAndContains(fileName: String, fileContents: ByteArray) {
 
         val targetExecutionBackupsDir = File(
-            syncTask.targetTaskBackupsDirPath!!,
+            syncTask.targetTaskBackupsDirAbsolutePath!!,
             syncTask.targetExecutionBackupDirName!!
         )
         Assert.assertTrue(targetExecutionBackupsDir.exists())
@@ -184,7 +190,7 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected fun assertSourceExecutionBackupDirExistsAndContains(fileName: String, fileContents: ByteArray) {
 
         val sourceExecutionBackupsDir = File(
-            syncTask.sourceTaskBackupsDirPath!!,
+            syncTask.sourceTaskBackupsDirAbsolutePath!!,
             syncTask.sourceExecutionBackupDirName!!
         )
         Assert.assertTrue(sourceExecutionBackupsDir.exists())
@@ -223,11 +229,11 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
 
     protected val taskBackupsDirInTarget: File
-        get() = File(syncTask.targetTaskBackupsDirPath!!)
+        get() = File(syncTask.targetTaskBackupsDirAbsolutePath!!)
 
 
     protected val taskBackupsDirInSource: File
-        get() = File(syncTask.sourceTaskBackupsDirPath!!)
+        get() = File(syncTask.sourceTaskBackupsDirAbsolutePath!!)
 
 
     protected val executionBackupDirInTarget: File
@@ -254,15 +260,35 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     }
 
 
-    // FIXME: эту функцию тестировать
+    // TODO: тестировать эту сборную функцию
     protected fun assertOnlyDeepFileExistsAndContainsInSource(deepDirName: String, fileName: String, fileData: ByteArray) {
-        assertDeepDirHasOnlyOneChildAtAllLevels(sDir, deepDirName)
+        assertDeepDirHasOnlyOneChildAtAllLevels(taskConfig.SOURCE_DIR, deepDirName)
         assertExistsAndContains(fileHelper.deepFileInSource(deepDirName, fileName), fileData)
     }
 
-    // FIXME: эту функцию тестировать
+    // TODO: тестировать эту сборную функцию
     protected fun assertOnlyDeepFileExistsAndContainsInTarget(deepDirName: String, fileName: String, fileData: ByteArray) {
-        assertDeepDirHasOnlyOneChildAtAllLevels(tDir, deepDirName)
+        assertDeepDirHasOnlyOneChildAtAllLevels(taskConfig.TARGET_DIR, deepDirName)
         assertExistsAndContains(fileHelper.deepFileInTarget(deepDirName, fileName), fileData)
+    }
+
+
+    // TODO: тестировать эту сборную функцию
+    protected fun assertTargetExecutionBackupDirContainsOnlyDeepFileAtTheEnd(
+        deepDirName: String,
+        fileName: String,
+        fileData: ByteArray
+    ) {
+        val backupedDeepDirName = listOf<String>(
+            syncTask.targetTaskBackupDirName!!,
+            syncTask.targetExecutionBackupDirName!!,
+            deepDirName
+        ).joinToString(CloudWriter.DS)
+
+        assertOnlyDeepFileExistsAndContainsInTarget(
+            backupedDeepDirName,
+            fileName,
+            fileData
+        )
     }
 }
