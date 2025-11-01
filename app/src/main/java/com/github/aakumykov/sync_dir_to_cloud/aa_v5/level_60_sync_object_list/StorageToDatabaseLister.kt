@@ -76,6 +76,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
+                .let { it }
                 /*.let { list ->
                     list?.forEach { fileListItem ->
                         val path = fileListItem.absolutePath

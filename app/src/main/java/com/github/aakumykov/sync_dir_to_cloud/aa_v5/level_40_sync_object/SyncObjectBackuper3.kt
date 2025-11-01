@@ -12,8 +12,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceExecutionBackupDirPath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirPath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceExecutionBackupDirAbsolutePath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirAbsolutePath
 import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import dagger.assisted.Assisted
@@ -82,7 +82,7 @@ class SyncObjectBackuper3 @AssistedInject constructor(
         sourceInBackupsFileHelper.createDir(syncObject.relativeParentDirPath)
         sourceTargetFileHelper.moveFileInSource(
             syncObject.absolutePathIn(syncTask),
-            combineFSPaths(syncTask.sourceExecutionBackupDirPath!!, syncObject.relativePath)
+            combineFSPaths(syncTask.sourceExecutionBackupDirAbsolutePath!!, syncObject.relativePath)
         )
         syncObjectDBDeleter.deleteObjectWithId(syncObject.id)
     }
@@ -92,7 +92,7 @@ class SyncObjectBackuper3 @AssistedInject constructor(
         targetInBackupsFileHelper.createDir(syncObject.relativeParentDirPath)
         sourceTargetFileHelper.moveFileInTarget(
             syncObject.absolutePathIn(syncTask),
-            combineFSPaths(syncTask.targetExecutionBackupDirPath!!, syncObject.relativePath)
+            combineFSPaths(syncTask.targetExecutionBackupDirAbsolutePath!!, syncObject.relativePath)
         )
         syncObjectDBDeleter.deleteObjectWithId(syncObject.id)
     }
@@ -100,7 +100,7 @@ class SyncObjectBackuper3 @AssistedInject constructor(
 
     private val sourceInBackupsFileHelper: CustomRootFileHelper by lazy {
         customRootFileHelperAssistedFactory.create(
-            syncTask.sourceExecutionBackupDirPath!!,
+            syncTask.sourceExecutionBackupDirAbsolutePath!!,
             cloudWriterGetter.getSourceCloudWriter(syncTask)
         )
     }
@@ -108,7 +108,7 @@ class SyncObjectBackuper3 @AssistedInject constructor(
 
     private val targetInBackupsFileHelper: CustomRootFileHelper by lazy {
         customRootFileHelperAssistedFactory.create(
-            syncTask.targetExecutionBackupDirPath!!,
+            syncTask.targetExecutionBackupDirAbsolutePath!!,
             cloudWriterGetter.getTargetCloudWriter(syncTask)
         )
     }

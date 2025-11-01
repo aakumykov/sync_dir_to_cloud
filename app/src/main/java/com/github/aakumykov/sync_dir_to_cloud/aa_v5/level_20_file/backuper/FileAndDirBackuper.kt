@@ -4,9 +4,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.executionBackupDirRelativePathInTarget
-import com.github.aakumykov.sync_dir_to_cloud.extensions.executionBackupDirRelativePathInSource
-import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceExecutionBackupDirPath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirPath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceExecutionBackupDirAbsolutePath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirAbsolutePath
 import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
 import com.github.aakumykov.sync_dir_to_cloud.functions.fileNameFromPath
 import com.github.aakumykov.sync_dir_to_cloud.functions.relativeParentDirPath
@@ -59,8 +58,8 @@ class FileAndDirBackuper @AssistedInject constructor(
     fun backupFileByMove(backupingFileAbsolutePath: String, syncSide: SyncSide) {
 
         val backupDirAbsolutePath = when(syncSide) {
-            SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirPath!!
-            SyncSide.TARGET -> syncTask.targetExecutionBackupDirPath!!
+            SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirAbsolutePath!!
+            SyncSide.TARGET -> syncTask.targetExecutionBackupDirAbsolutePath!!
         }
 
         val destinationPath = combineFSPaths(
@@ -82,8 +81,8 @@ class FileAndDirBackuper @AssistedInject constructor(
     @Throws(IllegalStateException::class)
     private fun backupsDirPathFor(syncSide: SyncSide): String {
         return when(syncSide) {
-            SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirPath
-            SyncSide.TARGET -> syncTask.targetExecutionBackupDirPath
+            SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirAbsolutePath
+            SyncSide.TARGET -> syncTask.targetExecutionBackupDirAbsolutePath
         }.let { path ->
             path ?: throw IllegalStateException("SyncTask does not contains full info about backup dirs: $syncTask")
         }

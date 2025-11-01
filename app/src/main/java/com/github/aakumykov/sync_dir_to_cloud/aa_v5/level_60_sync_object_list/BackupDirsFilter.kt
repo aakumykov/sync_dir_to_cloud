@@ -3,8 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirPath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirPath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirAbsolutePath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirAbsolutePath
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -28,11 +28,11 @@ class BackupDirsFilter @AssistedInject constructor(
     }
 
     private val sourceBackupsDirPath: String? by lazy {
-        syncTask.sourceTaskBackupsDirPath
+        syncTask.sourceTaskBackupsDirAbsolutePath
     }
 
     private val targetBackupsDirPath: String? by lazy {
-        syncTask.targetTaskBackupsDirPath
+        syncTask.targetTaskBackupsDirAbsolutePath
     }
 }
 

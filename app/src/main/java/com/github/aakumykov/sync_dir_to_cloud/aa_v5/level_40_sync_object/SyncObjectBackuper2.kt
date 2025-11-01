@@ -1,24 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.file_lister_navigator_selector.fs_item.utils.parentPathFor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.absolutePathOfSide
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceExecutionBackupDirPath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirPath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceExecutionBackupDirAbsolutePath
+import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirAbsolutePath
 import com.github.aakumykov.sync_dir_to_cloud.functions.combineFSPaths
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -73,8 +65,8 @@ class SyncObjectBackuper2 @AssistedInject constructor(
     }
 
     private fun backupDirPath(syncObject: SyncObject): String = when(syncObject.syncSide) {
-        SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirPath!!
-        SyncSide.TARGET -> syncTask.targetExecutionBackupDirPath!!
+        SyncSide.SOURCE -> syncTask.sourceExecutionBackupDirAbsolutePath!!
+        SyncSide.TARGET -> syncTask.targetExecutionBackupDirAbsolutePath!!
     }
 
 
