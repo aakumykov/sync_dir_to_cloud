@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.deep_files.creation
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
+import java.util.concurrent.TimeUnit
 
 abstract class CreationDeepFilesBase : SyncTestBase() {
 
@@ -24,23 +25,33 @@ abstract class CreationDeepFilesBase : SyncTestBase() {
 
     open fun deep_file_created_in_target() {
         fileHelper.createDeepFileInTarget(tDeepDirName, tFileName, tFileData)
-        assertExistsAndContains(tDeepFile, tFileData)
+        assertOnlyDeepFileExistsAndContainsInTarget(tDeepDirName,tFileName, tFileData)
         doSync()
     }
 
     open fun same_name_same_content_deep_files_created_in_source_and_target() {
+
         fileHelper.createDeepFileInSource(sDeepDirName, sFileName, sFileData)
+
+//        TimeUnit.SECONDS.sleep(1)
         fileHelper.createDeepFileInTarget(sDeepDirName, sFileName, sFileData)
+
         assertExistsAndContains(sDeepFile, sFileData)
         assertExistsAndContains(sDeepFileInTarget, sFileData)
+
         doSync()
     }
 
     open fun same_name_diff_content_deep_files_created_in_source_and_target() {
         fileHelper.createDeepFileInSource(sDeepDirName, sFileName, sFileData)
         fileHelper.createDeepFileInTarget(sDeepDirName, sFileName, tFileData)
+
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sDeepFile, sFileData)
+
+        assertTargetDirChildCount(1)
         assertExistsAndContains(sDeepFileInTarget, tFileData)
+
         doSync()
     }
 
