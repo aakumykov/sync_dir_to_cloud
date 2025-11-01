@@ -22,6 +22,13 @@ class AssertDeepDirHasOnlyOneChildAtAllLevelsTest(val numberOfCurrentRunDoNotDel
         fun data() : Collection<Int> = List(RUN_TEST_N_TIMES) { it }
     }
 
+
+    @Test
+    fun empty_dir_name_is_accepted() {
+        assertDeepDirHasOnlyOneChildAtAllLevels(cacheDir, "")
+    }
+
+
     @Test
     fun dir_with_one_level_depth() {
         val oneLevelDirName = randomName
@@ -32,6 +39,7 @@ class AssertDeepDirHasOnlyOneChildAtAllLevelsTest(val numberOfCurrentRunDoNotDel
         assertDeepDirHasOnlyOneChildAtAllLevels(cacheDir, oneLevelDirName)
     }
 
+
     @Test
     fun dir_tree_with_tail_file() {
         val deepDirName = randomDeepDirName
@@ -40,16 +48,6 @@ class AssertDeepDirHasOnlyOneChildAtAllLevelsTest(val numberOfCurrentRunDoNotDel
         assertDeepDirHasOnlyOneChildAtAllLevels(cacheDir, deepDirName)
     }
 
-    private fun createFileInDir(parentDir: File, fileName: String) {
-        Assert.assertTrue(File(parentDir, fileName).createNewFile() )
-    }
-
-    private fun prepareDeepDir(parentDir: File, deepDirName: String): File {
-        return File(parentDir, deepDirName).apply {
-            Assert.assertTrue(this.mkdirs())
-            Assert.assertTrue(this.exists())
-        }
-    }
 
     @Test
     fun dir_tree_with_many_tail_files_throws_exception() {
@@ -62,6 +60,7 @@ class AssertDeepDirHasOnlyOneChildAtAllLevelsTest(val numberOfCurrentRunDoNotDel
             assertDeepDirHasOnlyOneChildAtAllLevels(cacheDir, deepDirName)
         }
     }
+
 
     @Test
     fun dir_tree_with_branch_throws_exception() {
@@ -83,6 +82,18 @@ class AssertDeepDirHasOnlyOneChildAtAllLevelsTest(val numberOfCurrentRunDoNotDel
             val fullDeepDirName = deepDirName1 + CloudWriter.DS + deepDirName2
 
             assertDeepDirHasOnlyOneChildAtAllLevels(cacheDir, fullDeepDirName)
+        }
+    }
+
+
+    private fun createFileInDir(parentDir: File, fileName: String) {
+        Assert.assertTrue(File(parentDir, fileName).createNewFile() )
+    }
+
+    private fun prepareDeepDir(parentDir: File, deepDirName: String): File {
+        return File(parentDir, deepDirName).apply {
+            Assert.assertTrue(this.mkdirs())
+            Assert.assertTrue(this.exists())
         }
     }
 }
