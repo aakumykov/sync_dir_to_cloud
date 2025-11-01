@@ -50,7 +50,7 @@ class ComparisonState (
 
     @Ignore
     override fun toString(): String {
-        return "ComparisonState('$relativePath', s:$sourceObjectState, t:$targetObjectState)"
+        return "ComparisonState(relativePath: '$relativePath', s:$sourceObjectState, t:$targetObjectState)"
     }
 }
 
