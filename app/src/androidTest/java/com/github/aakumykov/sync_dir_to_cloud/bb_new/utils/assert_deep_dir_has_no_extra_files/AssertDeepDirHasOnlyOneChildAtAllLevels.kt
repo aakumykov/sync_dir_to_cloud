@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_children_count.childrenCount
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import org.junit.Assert
 import java.io.File
 

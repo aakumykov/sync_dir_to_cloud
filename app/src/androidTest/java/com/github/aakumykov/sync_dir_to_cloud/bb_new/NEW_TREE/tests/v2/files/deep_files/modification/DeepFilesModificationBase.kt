@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.deep_files.modification
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.deep_files.DeepFilesBase
 import java.util.concurrent.TimeUnit
 
-abstract class DeepFilesModificationBase : SyncTestBase() {
+abstract class DeepFilesModificationBase : DeepFilesBase() {
 
     /**
      * Файл в источнике изменился по времени [source_deep_file_changed_by_time]
@@ -106,19 +106,6 @@ abstract class DeepFilesModificationBase : SyncTestBase() {
         fileHelper.createDeepFileInTarget(sDeepDirName, sFileName, newTargetFileData)
 
         doSync()
-    }
-
-
-    private fun prepareSourceDeepFileAndSyncItWithTarget() {
-        fileHelper.createDeepFileInSource(sDeepDirName, sFileName, sFileData)
-
-        doSync()
-
-        assertSourceDirChildCount(1)
-        assertOnlyDeepFileExistsAndContainsInSource(sDeepDirName, sFileName, sFileData)
-
-        assertTargetDirChildCount(1)
-        assertOnlyDeepFileExistsAndContainsInTarget(sDeepDirName, sFileName, sFileData)
     }
 
     private fun sleep() {

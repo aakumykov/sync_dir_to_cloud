@@ -13,9 +13,6 @@ import java.io.IOException
 class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
 
     companion object {
-        const val DEEP_DIR_MIN_DEPTH = 2
-        const val DEEP_DIR_MAX_DEPTH = 10
-
         const val READ_ONLY_FILE = "/proc/cpuinfo"
 
         const val READ_ONLY_DEEP_DIR = "proc"
