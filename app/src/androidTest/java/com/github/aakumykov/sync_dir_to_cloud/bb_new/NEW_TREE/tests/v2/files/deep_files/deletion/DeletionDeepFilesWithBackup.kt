@@ -2,14 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.de
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_is_empty_as_all_levels.assertDeepDirIsEmptyAtAllLevels
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalNoBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalWithBackupTaskConfig
 import org.junit.Test
 
-open class DeletionDeepFilesWithoutBackup : DeletionDeepFilesBase() {
+class DeletionDeepFilesWithBackup : DeletionDeepFilesBase() {
 
     override val taskConfig: TaskConfig
-        get() = localToLocalNoBackupTaskConfig
-
+        get() = localToLocalWithBackupTaskConfig
 
     @Test
     override fun deep_file_deletion_in_source() {
@@ -18,10 +17,11 @@ open class DeletionDeepFilesWithoutBackup : DeletionDeepFilesBase() {
         assertSourceDirChildCount(1)
         assertDeepDirIsEmptyAtAllLevels(taskConfig.SOURCE_DIR, sDeepDirName)
 
-        assertTargetDirChildCount(1)
+        assertTargetDirChildCount(2)
         assertDeepDirIsEmptyAtAllLevels(taskConfig.TARGET_DIR, sDeepDirName)
-    }
+        assertTargetExecutionBackupDirContainsOnlyDeepFileAtTheEnd(sDeepDirName, sFileName, sFileData)
 
+    }
 
     @Test
     override fun deep_file_deletion_in_target() {
@@ -32,8 +32,8 @@ open class DeletionDeepFilesWithoutBackup : DeletionDeepFilesBase() {
 
         assertTargetDirChildCount(1)
         assertOnlyDeepFileExistsAndContainsInTarget(sDeepDirName, sFileName, sFileData)
-    }
 
+    }
 
     @Test
     override fun deep_files_deletion_in_source_and_target() {
@@ -44,5 +44,6 @@ open class DeletionDeepFilesWithoutBackup : DeletionDeepFilesBase() {
 
         assertTargetDirChildCount(1)
         assertDeepDirIsEmptyAtAllLevels(taskConfig.TARGET_DIR, sDeepDirName)
+
     }
 }

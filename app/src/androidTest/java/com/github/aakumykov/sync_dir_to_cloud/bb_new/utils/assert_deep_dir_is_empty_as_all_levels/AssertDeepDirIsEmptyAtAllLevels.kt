@@ -11,7 +11,8 @@ fun assertDeepDirIsEmptyAtAllLevels(baseDir: File, deepDirName: String) {
         .split(CloudWriter.DS)
         .reduce { acc, string ->
             val subPath = acc + CloudWriter.DS + string
-            Assert.assertEquals(1, File(baseDir, subPath).childrenCount)
+            val dir = File(baseDir, acc)
+            Assert.assertEquals(1, dir.childrenCount)
             subPath
         }
     Assert.assertTrue(File(baseDir, deepDirName).isEmpty)

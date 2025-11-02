@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_no_extra_files
+package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_only_one_child_at_all_levels
 
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.cache_dir.cacheDir

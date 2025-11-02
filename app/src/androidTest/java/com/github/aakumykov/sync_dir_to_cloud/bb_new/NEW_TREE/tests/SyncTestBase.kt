@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConf
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_no_extra_files.assertDeepDirHasOnlyOneChildAtAllLevels
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_has_only_one_child_at_all_levels.assertDeepDirHasOnlyOneChildAtAllLevels
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_children_count.childrenCount
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
@@ -16,7 +16,6 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDee
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirAbsolutePath
-import com.github.aakumykov.sync_dir_to_cloud.extensions.targetExecutionBackupDirAbsolutePath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirAbsolutePath
 import org.junit.Assert
 import org.junit.Before
