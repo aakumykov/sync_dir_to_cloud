@@ -9,11 +9,14 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
-class LocalToLocalSyncWithoutBackupTaskConfig(
-    sourceDir: File = defaultLocalSourceDir,
-    targetDir: File = defaultLocalTargetDir
-) : TaskConfig {
-
+open class LocalToLocalSyncNoBackupTaskConfig(
+    override val SOURCE_DIR: File = defaultLocalSourceDir,
+    override val TARGET_DIR: File = defaultLocalTargetDir,
+    override val SKIP_CREATING_SOURCE_DIR: Boolean = false,
+    override val SKIP_CREATING_TARGET_DIR: Boolean = false,
+)
+    : TaskConfig
+{
     override val TASK_ID = "taskId1"
 
     override val SOURCE_STORAGE_TYPE = StorageType.LOCAL
@@ -24,11 +27,8 @@ class LocalToLocalSyncWithoutBackupTaskConfig(
     override val INTERVAL_HOURS = 0
     override val INTERVAL_MINUTES = 0
 
-    override val SOURCE_PATH = sourceDir.absolutePath
-    override val TARGET_PATH: String = targetDir.absolutePath
-
-    override val SOURCE_DIR: File = sourceDir
-    override val TARGET_DIR: File = targetDir
+    override val SOURCE_PATH = SOURCE_DIR.absolutePath
+    override val TARGET_PATH: String = TARGET_DIR.absolutePath
 
     override val WITH_BACKUP: Boolean = false
 

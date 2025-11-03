@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.dirs.flat_dirs.deletion
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import org.junit.Assert
@@ -9,7 +9,7 @@ import org.junit.Test
 class DeletingDitsWithoutBackup : DeletingDirsBase() {
 
     override val taskConfig: TaskConfig
-        get() = LocalToLocalSyncWithoutBackupTaskConfig()
+        get() = LocalToLocalSyncNoBackupTaskConfig()
 
 
     // [1] --- [1]

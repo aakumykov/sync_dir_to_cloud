@@ -9,6 +9,7 @@ val defaultLocalSourceDir: File
         Environment.getExternalStorageDirectory(),
         "s$apiNumber"
     )
+
 val defaultLocalTargetDir: File
     get() = File(
         Environment.getExternalStorageDirectory(),

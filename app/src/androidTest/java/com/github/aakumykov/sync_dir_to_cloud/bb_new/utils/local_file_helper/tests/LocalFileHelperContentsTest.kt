@@ -1,6 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.tests
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithoutBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.systemRootDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.fs_path.FilePathSamples.ROOT_PATH
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
@@ -22,7 +24,10 @@ class LocalFileHelperContentsTest : LocalFileHelperTestBase() {
     // TODO: негативное тестирование (НО НУЖНО ЛИ?)
 
     private val rootFileHelper = LocalFileHelper(
-        LocalToLocalSyncWithoutBackupTaskConfig(File("/"),File("/"))
+        LocalToLocalSyncNoBackupTaskConfig(
+            SOURCE_DIR = systemRootDir,
+            TARGET_DIR = systemRootDir
+        )
     )
 
 

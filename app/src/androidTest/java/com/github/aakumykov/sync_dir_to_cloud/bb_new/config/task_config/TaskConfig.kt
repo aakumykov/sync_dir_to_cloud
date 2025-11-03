@@ -43,4 +43,7 @@ interface TaskConfig {
 
     val SOURCE_AUTH: CloudAuth
     val TARGET_AUTH: CloudAuth
+
+    val SKIP_CREATING_SOURCE_DIR: Boolean
+    val SKIP_CREATING_TARGET_DIR: Boolean
 }

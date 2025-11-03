@@ -126,22 +126,32 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     @Before
     fun prepareSourceAndTargetDirs() = run {
 
-        // Удаляю источник и приёмник.
-        fileHelper.deleteSourceDirRecursively()
-        fileHelper.deleteTargetDirRecursively()
-        Assert.assertFalse(taskConfig.SOURCE_DIR.exists())
-        Assert.assertFalse(taskConfig.TARGET_DIR.exists())
+        if (!taskConfig.SKIP_CREATING_SOURCE_DIR)
+            reCreateSourceDir()
 
-        // Создаю источник и приёмник.
-        fileHelper.createSourceDir()
-        fileHelper.createTargetDir()
-        Assert.assertTrue(taskConfig.SOURCE_DIR.exists())
-        Assert.assertTrue(taskConfig.TARGET_DIR.exists())
-
-        assertSourceDirChildCount(0)
-        assertTargetDirChildCount(0)
+        if (!taskConfig.SKIP_CREATING_TARGET_DIR)
+            reCreateTargetDir()
     }
 
+    private fun reCreateSourceDir() {
+        fileHelper.deleteSourceDirRecursively()
+        Assert.assertFalse(taskConfig.SOURCE_DIR.exists())
+
+        fileHelper.createSourceDir()
+        Assert.assertTrue(taskConfig.SOURCE_DIR.exists())
+
+        assertSourceDirChildCount(0)
+    }
+
+    private fun reCreateTargetDir() {
+        fileHelper.deleteTargetDirRecursively()
+        Assert.assertFalse(taskConfig.TARGET_DIR.exists())
+
+        fileHelper.createTargetDir()
+        Assert.assertTrue(taskConfig.TARGET_DIR.exists())
+
+        assertTargetDirChildCount(0)
+    }
 
     protected fun doSync(delayAfterWork: Boolean = false) = run {
 
