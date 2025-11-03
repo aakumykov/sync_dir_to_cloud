@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.fl
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncWithBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalWithBackupTaskConfig
 import org.junit.Test
 
 class StaticFlatFilesWithBackup : StaticFlatFilesWithoutBackup() {
@@ -12,8 +12,8 @@ class StaticFlatFilesWithBackup : StaticFlatFilesWithoutBackup() {
      * но [taskConfig] предоставляю с бекапом.
      */
 
-    override val taskConfig: TaskConfig
-        get() = LocalToLocalSyncWithBackupTaskConfig(LocalToLocalSyncNoBackupTaskConfig())
+    override val taskConfig: LocalToLocalSyncNoBackupTaskConfig
+        get() = localToLocalWithBackupTaskConfig
 
 
     @Test

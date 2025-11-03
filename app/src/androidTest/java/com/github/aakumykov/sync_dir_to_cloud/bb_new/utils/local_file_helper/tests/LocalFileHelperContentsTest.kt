@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.te
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.systemRootDir
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.fs_path.FilePathSamples.ROOT_PATH
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.LocalFileHelper
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName

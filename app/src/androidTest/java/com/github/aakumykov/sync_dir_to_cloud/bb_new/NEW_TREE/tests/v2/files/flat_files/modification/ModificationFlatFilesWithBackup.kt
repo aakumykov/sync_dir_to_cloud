@@ -1,12 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.flat_files.modification
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalWithBackupTaskConfig
 import org.junit.Test
 
 class ModificationFlatFilesWithBackup(numberOfRun: Int) : ModificationFlatFilesBase(numberOfRun) {
 
-    override val taskConfig: TaskConfig
+    override val taskConfig: LocalToLocalSyncNoBackupTaskConfig
         get() = localToLocalWithBackupTaskConfig
 
 

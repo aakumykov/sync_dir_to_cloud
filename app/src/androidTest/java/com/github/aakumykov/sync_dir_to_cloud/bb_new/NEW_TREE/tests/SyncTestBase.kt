@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync.RunSyncScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.CreateLocalTaskScenario
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.task.DeleteLocalTaskScenario
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 
 abstract class SyncTestBase : StorageAccessTestCase() {
 
-    protected abstract val taskConfig: TaskConfig
+    protected abstract val taskConfig: LocalToLocalSyncNoBackupTaskConfig
 
     protected open val inDeviceChangesRelaxationTimeoutMs: Long = 1000
 

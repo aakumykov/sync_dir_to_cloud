@@ -1,13 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.deep_files.deletion
 
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.assert_deep_dir_is_empty_as_all_levels.assertDeepDirIsEmptyAtAllLevels
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.localToLocalNoBackupTaskConfig
 import org.junit.Test
 
 open class DeletionDeepFilesWithoutBackup : DeletionDeepFilesBase() {
 
-    override val taskConfig: TaskConfig
+    override val taskConfig: LocalToLocalSyncNoBackupTaskConfig
         get() = localToLocalNoBackupTaskConfig
 
 

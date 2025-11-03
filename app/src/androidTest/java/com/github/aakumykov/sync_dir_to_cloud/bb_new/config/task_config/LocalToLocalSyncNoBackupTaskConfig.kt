@@ -12,47 +12,41 @@ import java.io.File
 open class LocalToLocalSyncNoBackupTaskConfig(
     override val SOURCE_DIR: File = defaultLocalSourceDir,
     override val TARGET_DIR: File = defaultLocalTargetDir,
+
     override val SKIP_CREATING_SOURCE_DIR: Boolean = false,
     override val SKIP_CREATING_TARGET_DIR: Boolean = false,
-)
-    : TaskConfig
-{
-    override val TASK_ID = "taskId1"
 
-    override val SOURCE_STORAGE_TYPE = StorageType.LOCAL
-    override val TARGET_STORAGE_TYPE = StorageType.LOCAL
+    override val SYNC_MODE: SyncMode = SyncMode.SYNC,
 
-    override val SYNC_MODE: SyncMode = SyncMode.SYNC
+    override val TASK_ID: String = "taskId1",
 
-    override val INTERVAL_HOURS = 0
-    override val INTERVAL_MINUTES = 0
+    override val SOURCE_STORAGE_TYPE: StorageType = StorageType.LOCAL,
+    override val TARGET_STORAGE_TYPE: StorageType = StorageType.LOCAL,
 
-    override val SOURCE_PATH = SOURCE_DIR.absolutePath
-    override val TARGET_PATH: String = TARGET_DIR.absolutePath
+    override val INTERVAL_HOURS: Int = 0,
+    override val INTERVAL_MINUTES: Int = 0,
 
-    override val WITH_BACKUP: Boolean = false
+    override val SOURCE_PATH: String = SOURCE_DIR.absolutePath,
+    override val TARGET_PATH: String = TARGET_DIR.absolutePath,
 
-    // Геттеры у TASK_SYNC и TASK_MIRROR необходимы: без них
-    // создаваемая задача не имеет ряд полей, которые инициализируются ниже.
-    override val TASK_SYNC: SyncTask get() = syncTaskWithMode(SyncMode.SYNC, this)
-    override val TASK_MIRROR: SyncTask get() = syncTaskWithMode(SyncMode.MIRROR, this)
+    override val WITH_BACKUP: Boolean = false,
 
-    override val SOURCE_AUTH_ID: String = "authId1"
-    override val TARGET_AUTH_ID: String = "authId1"
+    override val SOURCE_AUTH_ID: String = "authId1",
+    override val TARGET_AUTH_ID: String = "authId1",
 
-    override val TARGET_AUTH_NAME: String = "test_auth_local"
-    override val SOURCE_AUTH_NAME = "test_auth_local"
+    override val TARGET_AUTH_NAME: String = "test_auth_local",
+    override val SOURCE_AUTH_NAME: String = "test_auth_local",
 
-    override val SOURCE_AUTH_TOKEN = "test_auth_token"
-    override val TARGET_AUTH_TOKEN = "test_auth_token"
+    override val SOURCE_AUTH_TOKEN: String = "test_auth_token",
+    override val TARGET_AUTH_TOKEN: String = "test_auth_token",
 
     override val SOURCE_AUTH: CloudAuth = CloudAuth(
         id = SOURCE_AUTH_ID,
         name = SOURCE_AUTH_NAME,
         authToken = SOURCE_AUTH_TOKEN,
         storageType = SOURCE_STORAGE_TYPE
-    )
+    ),
 
-    override val TARGET_AUTH: CloudAuth
-        get() = SOURCE_AUTH
-}
+    override val TARGET_AUTH: CloudAuth = SOURCE_AUTH,
+)
+    : TaskConfig()

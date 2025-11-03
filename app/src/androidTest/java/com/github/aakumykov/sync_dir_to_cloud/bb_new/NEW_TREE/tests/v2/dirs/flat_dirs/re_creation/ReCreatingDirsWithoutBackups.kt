@@ -1,13 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.dirs.flat_dirs.re_creation
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import org.junit.Assert
 import org.junit.Test
 
 open class ReCreatingDirsWithoutBackups : ReCreatingDirsBase() {
 
-    override val taskConfig: TaskConfig
+    override val taskConfig: LocalToLocalSyncNoBackupTaskConfig
         get() = LocalToLocalSyncNoBackupTaskConfig()
 
 

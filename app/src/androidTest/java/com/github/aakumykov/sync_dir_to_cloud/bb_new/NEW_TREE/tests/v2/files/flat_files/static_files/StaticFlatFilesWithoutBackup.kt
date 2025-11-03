@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.flat_files.static_files
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
 import org.junit.Assert
 import org.junit.Test
@@ -10,7 +9,7 @@ import org.junit.Test
 
 open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
 
-    override val taskConfig: TaskConfig
+    override val taskConfig: LocalToLocalSyncNoBackupTaskConfig
         get() = LocalToLocalSyncNoBackupTaskConfig()
 
 

@@ -1,13 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.TaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
-import com.kaspersky.kaspresso.device.logcat.LogcatBufferSize
 import java.io.File
 import java.io.IOException
 
-open class LocalFileHelper(private val taskConfig: TaskConfig) {
+open class LocalFileHelper(private val taskConfig: LocalToLocalSyncNoBackupTaskConfig) {
 
     // ===============================================================
     //       0. Вспомогательные методы

@@ -1,49 +1,57 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config
 
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.default_dirs.defaultLocalSourceDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.default_dirs.defaultLocalTargetDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.sync_task_with_mode.syncTaskWithMode
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import java.io.File
 
-/**
- * Интерфейс, представляющий параметры для создания тестового SyncTask.
- */
-interface TaskConfig {
+abstract class TaskConfig(
+    open val SOURCE_DIR: File = defaultLocalSourceDir,
+    open val TARGET_DIR: File = defaultLocalTargetDir,
 
-    val TASK_ID: String
+    open val SKIP_CREATING_SOURCE_DIR: Boolean = false,
+    open val SKIP_CREATING_TARGET_DIR: Boolean = false,
 
-    val SOURCE_STORAGE_TYPE: StorageType
-    val TARGET_STORAGE_TYPE: StorageType
+    open val SYNC_MODE: SyncMode = SyncMode.SYNC,
 
-    val SYNC_MODE: SyncMode
+    open val TASK_ID: String = "taskId1",
 
-    val INTERVAL_HOURS: Int
-    val INTERVAL_MINUTES: Int
+    open val SOURCE_STORAGE_TYPE: StorageType = StorageType.LOCAL,
+    open val TARGET_STORAGE_TYPE: StorageType = StorageType.LOCAL,
 
-    val SOURCE_PATH: String
-    val TARGET_PATH: String
+    open val INTERVAL_HOURS: Int = 0,
+    open val INTERVAL_MINUTES: Int = 0,
 
-    val SOURCE_DIR: File
-    val TARGET_DIR: File
+    open val SOURCE_PATH: String = SOURCE_DIR.absolutePath,
+    open val TARGET_PATH: String = TARGET_DIR.absolutePath,
 
-    val WITH_BACKUP: Boolean
+    open val WITH_BACKUP: Boolean = false,
 
-    val SOURCE_AUTH_ID: String
-    val TARGET_AUTH_ID: String
+    open val SOURCE_AUTH_ID: String = "authId1",
+    open val TARGET_AUTH_ID: String = "authId1",
 
-    val SOURCE_AUTH_NAME: String
-    val TARGET_AUTH_NAME: String
+    open val TARGET_AUTH_NAME: String = "test_auth_local",
+    open val SOURCE_AUTH_NAME: String = "test_auth_local",
 
-    val SOURCE_AUTH_TOKEN: String
-    val TARGET_AUTH_TOKEN: String
+    open val SOURCE_AUTH_TOKEN: String = "test_auth_token",
+    open val TARGET_AUTH_TOKEN: String = "test_auth_token",
 
+    open val SOURCE_AUTH: CloudAuth = CloudAuth(
+        id = SOURCE_AUTH_ID,
+        name = SOURCE_AUTH_NAME,
+        authToken = SOURCE_AUTH_TOKEN,
+        storageType = SOURCE_STORAGE_TYPE
+    ),
+
+    open val TARGET_AUTH: CloudAuth = SOURCE_AUTH,
+) {
     val TASK_SYNC: SyncTask
+        get() = syncTaskWithMode(SyncMode.SYNC, this)
+
     val TASK_MIRROR: SyncTask
-
-    val SOURCE_AUTH: CloudAuth
-    val TARGET_AUTH: CloudAuth
-
-    val SKIP_CREATING_SOURCE_DIR: Boolean
-    val SKIP_CREATING_TARGET_DIR: Boolean
+        get() = syncTaskWithMode(SyncMode.MIRROR, this)
 }
