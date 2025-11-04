@@ -183,7 +183,7 @@ dependencies {
 
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
-    implementation 'com.github.aakumykov:file_lister_navigator_selector_2:14.1.0-alpha'
+    implementation 'com.github.aakumykov:file_lister_navigator_selector_2:15.0.0-alpha'
 
     implementation "com.github.aakumykov:android_storage_lister:0.0.1-alpha"
 
