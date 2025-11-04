@@ -16,6 +16,11 @@ class SyncFromUnreadableSource : SyncTestBase() {
     override val taskConfig: LocalToLocalSyncNoBackupTaskConfig
         get() = unreadableSourceNoBackupTaskConfig
 
+    /**
+     * [com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader]
+     * при чтении нечитаемого каталога первым делом добавляет в список его самого
+     * и не бросает исключение...
+     */
     @Test
     fun sync_from_unreadable_source_throws_exception() {
         Assert.assertThrows(Exception::class.java) {
