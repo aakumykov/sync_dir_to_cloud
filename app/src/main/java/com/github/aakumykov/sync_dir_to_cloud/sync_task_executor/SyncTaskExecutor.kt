@@ -138,53 +138,63 @@ class SyncTaskExecutor @AssistedInject constructor(
         logExecutionStart(currentTaskId, executionId)
 
 
-            syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
-            // Вынужденная мера, так как обновляется объект в БД...
+        syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
+        // Вынужденная мера, так как обновляется объект в БД...
 //            currentTask = syncTaskReader.getSyncTask(taskId)
 
-            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.RUNNING)
+        syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.RUNNING)
 
-            // Удалить выполненные инструкции
-            deleteProcessedSyncInstructions()
+        // Проверить каталоги задачи
+        checkTaskDirs()
 
-            // Выполнить недоделанные инструкции
-            removeDuplicatedUnprocessedSyncInstructions()
+        // Удалить выполненные инструкции
+        deleteProcessedSyncInstructions()
 
-            prepareBackupDirs()
+        // Выполнить недоделанные инструкции
+        removeDuplicatedUnprocessedSyncInstructions()
 
-            processUnprocessedSyncInstructions()
+        prepareBackupDirs()
 
-            // Выполнить подготовку
-            resetTaskBadStates(currentTaskId)
-            resetObjectsBadState(currentTaskId)
+        processUnprocessedSyncInstructions()
 
-            markAllObjectsAsNotChecked(currentTaskId)
+        // Выполнить подготовку
+        resetTaskBadStates(currentTaskId)
+        resetObjectsBadState(currentTaskId)
 
-            // Прочитать источник
-            readSource().getOrThrow()
+        markAllObjectsAsNotChecked(currentTaskId)
 
-            // Прочитать приёмник
-            readTarget().getOrThrow()
+        // Прочитать источник
+        readSource().getOrThrow()
 
-            // Отметить все не найденные объекты как удалённые
-            markAllNotCheckedObjectsAsDeleted(currentTaskId)
+        // Прочитать приёмник
+        readTarget().getOrThrow()
 
-            deleteOldComparisonStates()
+        // Отметить все не найденные объекты как удалённые
+        markAllNotCheckedObjectsAsDeleted(currentTaskId)
 
-            compareSourceWithTarget()
+        deleteOldComparisonStates()
 
-            generateSyncInstructions()
+        compareSourceWithTarget()
 
-            prepareBackupDirs()
+        generateSyncInstructions()
 
-            processSyncInstructions()
+        prepareBackupDirs()
+
+        processSyncInstructions()
 
 
-            clearProcessedSyncObjectsWithDeletedState()
+        clearProcessedSyncObjectsWithDeletedState()
 
-            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
+        syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
 
-            logExecutionFinish()
+        logExecutionFinish()
+    }
+
+    private suspend fun checkTaskDirs() {
+        appComponent
+            .getTaskDirsCheckerAssistedFactory()
+            .create(currentTask, executionId)
+            .checkTaskDirs()
     }
 
     private suspend fun prepareBackupDirs() {
