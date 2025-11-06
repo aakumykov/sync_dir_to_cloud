@@ -52,6 +52,12 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
             title = R.string.MENU_ITEM_manage_external_storage,
             icon = R.drawable.ic_storage,
             action = { activity?.also { StorageAccessHelper.openStorageAccessSettings(this) } }
+        ),
+        CustomMenuItem(
+            id = R.id.actionAppSettings,
+            title = R.string.MENU_ITEM_manage_external_storage,
+            icon = R.drawable.ic_storage,
+            action = { activity?.also { onAppSettingsClicked() } }
         )
     )
 
@@ -183,6 +189,12 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
             else -> false
         }
     }
+
+
+    private fun onAppSettingsClicked() {
+        navigationViewModel.navigateTo(NavTarget.AppSettings)
+    }
+
 
     private fun resetTask(taskId: String) {
         taskListViewModel.resetTask(taskId)

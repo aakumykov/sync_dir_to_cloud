@@ -170,4 +170,5 @@
     <string name="description_task_list_item_with_backup">With backup</string>
     <string name="re_creating_source_dir">Re-creating missing Source dir</string>
     <string name="re_creating_target_dir">Re-creating missing Target dir</string>
+    <string name="MENU_ITEM_app_settings">Settings</string>
 </resources>

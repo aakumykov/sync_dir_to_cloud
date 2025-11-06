@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:title="@string/MENU_ITEM_app_properties"
         android:icon="@drawable/ic_app_properties"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/actionManageExternalStorage"
@@ -16,5 +16,13 @@
         android:layout_height="wrap_content"
         android:icon="@drawable/ic_storage"
         android:title="@string/MENU_ITEM_manage_external_storage"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/actionAppSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_app_settings"
+        android:title="@string/MENU_ITEM_app_settings"
+        app:showAsAction="ifRoom" />
 </menu>
