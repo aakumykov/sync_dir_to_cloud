@@ -36,40 +36,38 @@ class TaskDirsFixer @AssistedInject constructor(
     }
 
     private suspend fun checkAndFixSourceDir(syncTask: SyncTask) {
-        executeWithLogging(R.string.checking_source_dir) {
+        val sourcePath = syncTask.sourcePath!!
+        val sourceDirName = File(sourcePath).name.let { if ("" == it) sourcePath else it }
+        val sourceBaseDirPath = File(sourcePath).parent ?: sourcePath
 
-            val sourcePath = syncTask.sourcePath!!
-            val sourceDirName = File(sourcePath).name.let { if ("" == it) sourcePath else it }
-            val sourceBaseDirPath = File(sourcePath).parent ?: sourcePath
-
-            if (!sourceReader.dirExists(sourcePath).getOrThrow()) {
+        if (!sourceReader.dirExists(sourcePath).getOrThrow()) {
+            try {
+                logExecutionStarted(R.string.re_creating_source_dir)
                 sourceWriter.createDir(sourceBaseDirPath, sourceDirName)
+                logExecutionFinished()
+            } catch (e: Exception) {
+                logExecutionError(e.errorMsg)
             }
         }
     }
 
     private suspend fun checkAndFixTargetDir(syncTask: SyncTask) {
-        executeWithLogging(R.string.checking_target_dir) {
 
-            val targetPath = syncTask.targetPath!!
-            val targetDirName = File(targetPath).name.let { if ("" == it) targetPath else it }
-            val targetBaseDirPath = File(targetPath).parent ?: targetPath
+        val targetPath = syncTask.targetPath!!
+        val targetDirName = File(targetPath).name.let { if ("" == it) targetPath else it }
+        val targetBaseDirPath = File(targetPath).parent ?: targetPath
 
-            if (!targetReader.dirExists(targetPath).getOrThrow()) {
+        if (!targetReader.dirExists(targetPath).getOrThrow()) {
+            try {
+                logExecutionStarted(R.string.re_creating_target_dir)
                 targetWriter.createDir(targetBaseDirPath, targetDirName)
+                logExecutionFinished()
+            } catch (e: Exception) {
+                logExecutionError(e.errorMsg)
             }
         }
     }
 
-    private suspend fun executeWithLogging(@StringRes logMessageId: Int, executionBlock: suspend () -> Unit) {
-        try {
-            logExecutionStarted(logMessageId)
-            executionBlock.invoke()
-            logExecutionFinished()
-        } catch (e: Exception) {
-            logExecutionError(e.errorMsg)
-        }
-    }
 
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
 

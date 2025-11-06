@@ -168,6 +168,6 @@
     <string name="LOG_ITEM_DETAILS_DIALOG_execution_id">Execution id: %1$s</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_date_time">Time: %1$s</string>
     <string name="description_task_list_item_with_backup">With backup</string>
-    <string name="checking_source_dir">Checking Source dir</string>
-    <string name="checking_target_dir">Checking Target dir</string>
+    <string name="re_creating_source_dir">Re-creating missing Source dir</string>
+    <string name="re_creating_target_dir">Re-creating missing Target dir</string>
 </resources>
