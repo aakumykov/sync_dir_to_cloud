@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.di
+package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import android.content.Context
 import android.content.res.Resources
