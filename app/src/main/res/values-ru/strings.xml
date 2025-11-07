@@ -171,4 +171,5 @@
     <string name="re_creating_source_dir">Воссоздание утраченного каталога Источника</string>
     <string name="re_creating_target_dir">Воссоздание утраченного каталога Приёмника</string>
     <string name="MENU_ITEM_app_settings">Настройки</string>
+    <string name="FRAGMENT_SETTINGS_title">Настройки</string>
 </resources>

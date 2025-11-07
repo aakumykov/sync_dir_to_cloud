@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
+import com.github.aakumykov.sync_dir_to_cloud.view.app_settings.SettingsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -156,6 +157,7 @@ class MainActivity : AppCompatActivity() {
             is NavTarget.Back -> returnToPrevFragment()
             is NavTarget.TaskInfo -> loadFragment(TaskStateFragment.create(navTarget.id))
             is NavTarget.SyncLog -> loadFragment(SyncLogFragment.create(navTarget.taskId, navTarget.executionId))
+            is NavTarget.AppSettings -> loadFragment(SettingsFragment.create())
             else -> loadInitialFragment(intent)
         }
     }
