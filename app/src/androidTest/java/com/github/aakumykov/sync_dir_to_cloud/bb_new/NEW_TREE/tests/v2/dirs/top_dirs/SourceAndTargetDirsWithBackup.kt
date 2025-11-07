@@ -13,4 +13,15 @@ open class SourceAndTargetDirsWithBackup : SourceAndTargetDirsWithoutBackup() {
     override fun empty_source_and_target_dirs_exists() {
         super.empty_source_and_target_dirs_exists()
     }
+
+
+    @Test
+    override fun re_creating_missing_source_dir() {
+        super.re_creating_missing_source_dir()
+    }
+
+    @Test
+    override fun re_creating_missing_target_dir() {
+        super.re_creating_missing_target_dir()
+    }
 }
