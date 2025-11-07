@@ -1,5 +1,12 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="re_create_missing_source_and_target_dirs"
+        android:title="@string/SETTINGS_re_create_missing_source_and_target_dirs"
+        android:summary="@string/SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs"
+        />
 
 </PreferenceScreen>

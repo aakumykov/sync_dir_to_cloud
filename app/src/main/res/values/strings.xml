@@ -171,4 +171,6 @@
     <string name="re_creating_source_dir">Re-creating missing Source dir</string>
     <string name="re_creating_target_dir">Re-creating missing Target dir</string>
     <string name="MENU_ITEM_app_settings">Settings</string>
+    <string name="SETTINGS_re_create_missing_source_and_target_dirs">Re-create lost Source and Target dirs</string>
+    <string name="SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs">Dangerous. Leads to data loss in tasks with backup disabled!</string>
 </resources>
