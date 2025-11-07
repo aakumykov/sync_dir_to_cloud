@@ -20,7 +20,7 @@
     <string name="description_sync_task_state">Task state</string>
     <string name="description_sync_task_more_actions">More actions</string>
     <string name="not_implemented_yet">Not implemented yet</string>
-    <string name="sync_task_regulatiry_picker_title">Execute every …</string>
+    <string name="sync_task_regularity_picker_title">Execute every …</string>
     <string name="sync_task_period_label">Execute every</string>
     <string name="description_sync_task_period_change_button">Change execution interval</string>
     <string name="description_sync_task_select_source_path">Select source path</string>
@@ -102,7 +102,7 @@
     <string name="task_is_enabled">Scheduled</string>
     <string name="task_is_disabled">Disabled</string>
     <string name="MENU_ITEM_action_reset">Reset</string>
-    <string name="SYNC_OBJECT_LOG_lost_dir_creation_success">Missindir was created</string>
+    <string name="SYNC_OBJECT_LOG_lost_dir_creation_success">Missing dir was created</string>
     <string name="SYNC_OBJECT_LOG_lost_dir_creation_error">Error creating missing dir: %1$s</string>
     <string name="SYNC_OBJECT_LOGGER_create_new_dir">Creating new dir</string>
     <string name="SYNC_OBJECT_LOGGER_create_never_processed_dir">Creating never processed dir</string>
@@ -157,8 +157,8 @@
     <string name="SYNC_OPERATION_copying_from_target_to_source">Copying from target to source</string>
     <string name="SYNC_OPERATION_deleting_from_source">Deleting from source</string>
     <string name="SYNC_OPERATION_deleting_from_target">Deleting from target</string>
-    <string name="SYNC_OPERATION_backing_up_in_source">Backuing up in source</string>
-    <string name="SYNC_OPERATION_backing_up_in_target">Backuing up in target</string>
+    <string name="SYNC_OPERATION_backing_up_in_source">Backuping up in source</string>
+    <string name="SYNC_OPERATION_backing_up_in_target">Backuping up in target</string>
     <string name="SYNC_OPERATION_do_nothing_in_source">Doing nothing in source</string>
     <string name="SYNC_OPERATION_do_nothing_in_target">Doing nothing in target</string>
     <string name="description_task_list_item_sync_mode_icon">Work mode</string>
@@ -171,20 +171,4 @@
     <string name="re_creating_source_dir">Re-creating missing Source dir</string>
     <string name="re_creating_target_dir">Re-creating missing Target dir</string>
     <string name="MENU_ITEM_app_settings">Settings</string>
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-
-    <string name="FRAGMENT_SETTINGS_title">Settings</string>
 </resources>

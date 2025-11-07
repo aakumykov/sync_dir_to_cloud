@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">LD:sync_dir_to_cloud</string>
+
     <string name="FRAGMENT_TASK_LIST_title">LD: Sync tasks</string>
+    <string name="FRAGMENT_SETTINGS_title">LD: Settings</string>
+    <string name="FRAGMENT_TASK_INFO_title">LD: Task properties</string>
+    <string name="FRAGMENT_SYNC_LOG_page_title">LD: Synchronization log</string>
+    <string name="FRAGMENT_TASK_EDIT_creation_title">ЛД: New task</string>
+    <string name="FRAGMENT_TASK_EDIT_edition_title">ЛД: Edit task</string>
 </resources>

@@ -377,7 +377,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             .setTimeFormat(clockFormat)
             .setHour(currentTask?.intervalHours ?: 0)
             .setMinute(currentTask?.intervalMinutes ?: 0)
-            .setTitleText(R.string.sync_task_regulatiry_picker_title)
+            .setTitleText(R.string.sync_task_regularity_picker_title)
             .build()
 
         timePicker.addOnPositiveButtonClickListener {
