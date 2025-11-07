@@ -6,4 +6,8 @@
     <item name="storageTypeGoogle" type="id" />
     <item name="storageTypeYandex" type="id" />
     <item name="actionEditTask" type="id" />
+
+    <item name="actionAppProperties" type="id" />
+    <item name="actionManageExternalStorage" type="id" />
+    <item name="actionAppSettings" type="id" />
 </resources>
