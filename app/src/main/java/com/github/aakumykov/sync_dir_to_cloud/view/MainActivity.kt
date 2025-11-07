@@ -13,9 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
-import com.github.aakumykov.sync_dir_to_cloud.view.app_settings.SettingsFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.settings.SettingsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -48,6 +49,10 @@ class MainActivity : AppCompatActivity() {
         subscribeToPageTitle()
         subscribeToPageNavigation()
         // Подписка на меню производится в onCreateOptionsMenu()
+
+        val prefs = appComponent.getSharedPreferences()
+        val a = prefs.getBoolean(getString(R.string.SETTINGS_re_create_missing_source_and_target_dirs), false)
+        println(a)
     }
 
 

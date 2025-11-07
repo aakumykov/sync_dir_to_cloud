@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
+import android.content.SharedPreferences
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
@@ -26,6 +27,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.PreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ResourcesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SharedPreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
@@ -89,6 +91,7 @@ import dagger.Component
         CloudWriterFactoriesModule::class,
         TaskLoggerModule::class,
         PreferencesModule::class,
+        SharedPreferencesModule::class,
     ]
 )
 @AppScope
@@ -159,4 +162,6 @@ interface AppComponent {
     fun getBackupDirsPreparerAssistedFactory(): BackupDirsPreparerAssistedFactory
 
     fun getTaskDirsCheckerAssistedFactory(): TaskDirsFixerAssistedFactory
+
+    fun getSharedPreferences(): SharedPreferences
 }
