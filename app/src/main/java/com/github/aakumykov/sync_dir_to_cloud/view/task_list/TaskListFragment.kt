@@ -56,7 +56,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         CustomMenuItem(
             id = R.id.actionAppSettings,
             title = R.string.MENU_ITEM_manage_external_storage,
-            icon = R.drawable.ic_storage,
+            icon = R.drawable.ic_app_settings,
             action = { activity?.also { onAppSettingsClicked() } }
         )
     )
