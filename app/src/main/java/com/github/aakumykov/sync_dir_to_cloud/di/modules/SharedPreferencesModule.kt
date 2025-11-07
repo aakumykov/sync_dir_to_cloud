@@ -15,7 +15,6 @@ class SharedPreferencesModule {
     @AppScope
     @Provides
     fun provideSharedPreferences(@AppContext appContext: Context): SharedPreferences {
-//        return PreferenceManager.getDefaultSharedPreferences(appContext)
-        return appContext.getSharedPreferences("com.github.aakumykov.sync_dir_to_cloud.local_preferences", Context.MODE_PRIVATE)
+        return PreferenceManager.getDefaultSharedPreferences(appContext)
     }
 }
