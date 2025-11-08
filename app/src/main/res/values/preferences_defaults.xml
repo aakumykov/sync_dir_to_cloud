@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="DEFAULT_re_create_missing_source_and_target_dirs" type="bool">false</item>
+</resources>

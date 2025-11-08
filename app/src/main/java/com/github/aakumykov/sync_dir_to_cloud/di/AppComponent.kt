@@ -10,9 +10,11 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
+import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettingsReader
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppSettingsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
@@ -92,6 +94,7 @@ import dagger.Component
         TaskLoggerModule::class,
         PreferencesModule::class,
         SharedPreferencesModule::class,
+        AppSettingsModule::class,
     ]
 )
 @AppScope
@@ -163,5 +166,5 @@ interface AppComponent {
 
     fun getTaskDirsCheckerAssistedFactory(): TaskDirsFixerAssistedFactory
 
-    fun getSharedPreferences(): SharedPreferences
+    fun getAppSettings(): AppSettingsReader
 }

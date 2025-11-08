@@ -3,7 +3,7 @@
 
 
     <CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="@bool/DEFAULT_re_create_missing_source_and_target_dirs"
         android:key="@string/KEY_re_create_missing_source_and_target_dirs"
         android:title="@string/SETTINGS_re_create_missing_source_and_target_dirs"
         android:summary="@string/SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs"

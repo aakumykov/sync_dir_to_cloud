@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import dagger.Module

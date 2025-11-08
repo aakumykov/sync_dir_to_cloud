@@ -50,10 +50,6 @@ class MainActivity : AppCompatActivity() {
         subscribeToPageTitle()
         subscribeToPageNavigation()
         // Подписка на меню производится в onCreateOptionsMenu()
-
-        val dsp = PreferenceManager.getDefaultSharedPreferences(this)
-        val b = dsp.getBoolean("re_create_missing_source_and_target_dirs", false)
-        println(b)
     }
 
 
