@@ -6,11 +6,10 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
-import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.ResourcesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppSettingsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudAuthRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesModule
@@ -23,7 +22,9 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.PreferencesModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.ResourcesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.SharedPreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
@@ -66,7 +67,9 @@ import dagger.Component
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
         TaskLoggerModule::class,
-        PreferencesModule::class
+        PreferencesModule::class,
+        SharedPreferencesModule::class,
+        AppSettingsModule::class,
     ]
 )
 @AppScope

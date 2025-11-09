@@ -9,19 +9,33 @@ open class SourceAndTargetDirsWithBackup : SourceAndTargetDirsWithoutBackup() {
     override val taskConfig: LocalToLocalSyncNoBackupTaskConfig
         get() = localToLocalWithBackupTaskConfig
 
+
     @Test
-    override fun empty_source_and_target_dirs_exists() {
-        super.empty_source_and_target_dirs_exists()
+    override fun empty_source_and_target_dirs_exists_at_start() {
+        super.empty_source_and_target_dirs_exists_at_start()
     }
 
 
     @Test
-    override fun re_creating_missing_source_dir() {
-        super.re_creating_missing_source_dir()
+    override fun re_creating_missing_source_dir_if_configured_yes() {
+        super.re_creating_missing_source_dir_if_configured_yes()
     }
 
+
     @Test
-    override fun re_creating_missing_target_dir() {
-        super.re_creating_missing_target_dir()
+    override fun re_creating_missing_target_dir_if_configured_yes() {
+        super.re_creating_missing_target_dir_if_configured_yes()
+    }
+
+
+    @Test
+    override fun re_creating_missing_source_dir_if_configured_no() {
+        super.re_creating_missing_source_dir_if_configured_no()
+    }
+
+
+    @Test
+    override fun re_creating_missing_target_dir_if_configured_no() {
+        super.re_creating_missing_target_dir_if_configured_no()
     }
 }
