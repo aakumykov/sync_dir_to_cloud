@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
-import android.content.SharedPreferences
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
@@ -10,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory6
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettingsReader
+import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
@@ -166,5 +165,5 @@ interface AppComponent {
 
     fun getTaskDirsCheckerAssistedFactory(): TaskDirsFixerAssistedFactory
 
-    fun getAppSettings(): AppSettingsReader
+    fun getAppSettings(): AppSettings
 }
