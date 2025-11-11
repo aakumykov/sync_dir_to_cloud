@@ -1,7 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.SyncObjectDirCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamWriterCancelledException
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -17,7 +18,7 @@ import dagger.assisted.AssistedInject
  * "Item" - совокупный объект: SyncObject + физические данные в хранилище.
  * Копировать его - значит произвести операцию с физическими данными, SyncObject-ами.
  */
-class ItemCopier5 @AssistedInject constructor(
+class SyncObjectCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val fileCopier5AssistedFactory: FileCopier5AssistedFactory,
@@ -27,8 +28,8 @@ class ItemCopier5 @AssistedInject constructor(
 ){
     // TODO: разобраться, как overwriteIfExists сочетается с бекапом
 
-    @Throws(Exception::class)
-    suspend fun copyItemFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
+    @Throws(StreamWriterCancelledException::class)
+    suspend fun copySyncObjectFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
 
         if (syncObject.isDir) createDirInTarget(syncObject)
         else copyFileFromSourceToTarget(syncObject, overwriteIfExists)
@@ -43,8 +44,8 @@ class ItemCopier5 @AssistedInject constructor(
     }
 
 
-    @Throws(Exception::class)
-    suspend fun copyItemFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
+    @Throws(StreamWriterCancelledException::class)
+    suspend fun copySyncObjectFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
         if (syncObject.isDir) createDirInSource(syncObject)
         else copyFileFromTargetToSource(syncObject, overwriteIfExists)
 
@@ -95,10 +96,10 @@ class ItemCopier5 @AssistedInject constructor(
 
 
 
-    private val fileCopier: FileCopier5 by lazy {
+    private val fileCopier: SyncObjectFileCopier by lazy {
         fileCopier5AssistedFactory.create(syncTask, executionId) }
 
-    private val dirCreator: DirCreator5 by lazy {
+    private val dirCreator: SyncObjectDirCreator by lazy {
         dirCreator5AssistedFactory.create(syncTask) }
 
     private val syncObjectActualizer: SyncObjectActualizer by lazy {
@@ -108,5 +109,5 @@ class ItemCopier5 @AssistedInject constructor(
 
 @AssistedFactory
 interface ItemCopierAssistedFactory5 {
-    fun create(syncTask: SyncTask, executionId: String): ItemCopier5
+    fun create(syncTask: SyncTask, executionId: String): SyncObjectCopier
 }

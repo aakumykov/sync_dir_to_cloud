@@ -16,7 +16,7 @@ class StreamToFileWriter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
-    @Throws(StreamWritingWasCancelledException::class)
+    @Throws(StreamWriterCancelledException::class)
     suspend fun putStreamToTarget(inputStream: InputStream,
                                   filePath: String,
                                   overwriteIfExists: Boolean
@@ -31,7 +31,7 @@ class StreamToFileWriter @AssistedInject constructor(
     }
 
 
-    @Throws(StreamWritingWasCancelledException::class)
+    @Throws(StreamWriterCancelledException::class)
     suspend fun putStreamToSource(inputStream: InputStream,
                                   filePath: String,
                                   overwriteIfExists: Boolean
@@ -46,7 +46,7 @@ class StreamToFileWriter @AssistedInject constructor(
     }
 
 
-    @Throws(StreamWritingWasCancelledException::class)
+    @Throws(StreamWriterCancelledException::class)
     private suspend fun putStreamReal(
         cloudWriter: CloudWriter,
         inputStream: InputStream,
@@ -57,7 +57,7 @@ class StreamToFileWriter @AssistedInject constructor(
 
             cont.invokeOnCancellation {
                 inputStream.close()
-                throw StreamWritingWasCancelledException("Cancelled writing stream to file '$filePath'")
+                throw StreamWriterCancelledException("Cancelled writing stream to file '$filePath'")
             }
 
             try {
@@ -91,6 +91,6 @@ class StreamToFileWriter @AssistedInject constructor(
 }
 
 @AssistedFactory
-interface FileWriter5AssistedFactory {
+interface StreamToFileWriterAssistedFactory {
     fun create(syncTask: SyncTask): StreamToFileWriter
 }

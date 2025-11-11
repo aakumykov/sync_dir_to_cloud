@@ -10,7 +10,7 @@ import dagger.assisted.AssistedInject
 // TODO: сделать suspend-функции отменяемыми, если возможно.
 
 @Deprecated("Как бы и не очень нужен?")
-class DirCreator5 @AssistedInject constructor(
+class SyncObjectDirCreator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter
 ) {
@@ -39,11 +39,11 @@ class DirCreator5 @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = DirCreator5::class.java.simpleName
+        val TAG: String = SyncObjectDirCreator::class.java.simpleName
     }
 }
 
 @AssistedFactory
 interface DirCreator5AssistedFactory {
-    fun create(syncTask: SyncTask): DirCreator5
+    fun create(syncTask: SyncTask): SyncObjectDirCreator
 }

@@ -4,7 +4,8 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopier5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamWriterCancelledException
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FSItemDeleter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleterAssistedFactory5
@@ -137,12 +138,16 @@ class SyncInstructionExecutor @AssistedInject constructor(
             try {
                 val sourceObjectId = syncInstruction.objectIdInSource!!
                 syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
-                    itemCopier.copyItemFromSourceToTarget(it, syncOptions.overwriteIfExists)
+                    itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
                 } ?: {
                     throw NoSourceObjectInDatabase(sourceObjectId)
                 }
                 syncOperationLogger.logSuccess(logItemId)
-            } catch (e: Exception) {
+            }
+            catch (e: StreamWriterCancelledException) {
+                // TODO: обработка
+            }
+            catch (e: Exception) {
                 // FIXME: эта ошибка должна отображаться в интерфейсе!
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
@@ -155,12 +160,16 @@ class SyncInstructionExecutor @AssistedInject constructor(
             try {
                 val targetObjectId = syncInstruction.objectIdInTarget!!
                 syncObjectDBReader.getSyncObject(targetObjectId)?.also {
-                    itemCopier.copyItemFromTargetToSource(it, syncOptions.overwriteIfExists)
+                    itemCopier.copySyncObjectFromTargetToSource(it, syncOptions.overwriteIfExists)
                 } ?: run {
                     throw NoTargetObjectInDatabase(targetObjectId)
                 }
                 syncOperationLogger.logSuccess(logItemId)
-            } catch (e: Exception) {
+            }
+            catch (e: StreamWriterCancelledException) {
+                // TODO: обработка
+            }
+            catch (e: Exception) {
                 // FIXME: эта ошибка должна отображаться в интерфейсе!
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
@@ -217,7 +226,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
     }
 
 
-    private val itemCopier: ItemCopier5 by lazy {
+    private val itemCopier: SyncObjectCopier by lazy {
         itemCopierAssistedFactory.create(syncTask, executionId)
     }
 

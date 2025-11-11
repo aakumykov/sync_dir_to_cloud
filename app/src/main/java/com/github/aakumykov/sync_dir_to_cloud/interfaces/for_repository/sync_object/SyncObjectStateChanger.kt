@@ -12,21 +12,23 @@ interface SyncObjectStateChanger {
 
     // TODO: переименовать в setSyncTime()
     // TODO: перенести в SyncObjectUpdater
+    @Deprecated("Не используется")
     suspend fun setSyncDate(objectId: String, date: Long)
 
+    @Deprecated("Не используется")
     suspend fun changeModificationState(
         syncObject: SyncObject,
         stateInStorage: StateInStorage
     )
 
     suspend fun markAsSuccessfullySynced(objectId: String)
-    suspend fun markAsBusy(objectId: String)
-    suspend fun markAsError(objectId: String, errorMsg: String)
-    suspend fun markAsError(objectId: String, t: Throwable)
+    @Deprecated("Не используется") suspend fun markAsBusy(objectId: String)
+    @Deprecated("Не используется") suspend fun markAsError(objectId: String, errorMsg: String)
+    @Deprecated("Не используется") suspend fun markAsError(objectId: String, t: Throwable)
 
-    suspend fun setTargetReadingState(objectId: String, state: ExecutionState, errorMsg: String = "")
-    suspend fun setBackupState(objectId: String, state: ExecutionState, errorMsg: String = "")
-    suspend fun setDeletionState(objectId: String, state: ExecutionState, errorMsg: String = "")
-    suspend fun setRestorationState(objectId: String, state: ExecutionState, errorMsg: String = "")
-    suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    @Deprecated("Не используется") suspend fun setTargetReadingState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    @Deprecated("Не используется") suspend fun setBackupState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    @Deprecated("Не используется") suspend fun setDeletionState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    @Deprecated("Не используется") suspend fun setRestorationState(objectId: String, state: ExecutionState, errorMsg: String = "")
+    @Deprecated("Не используется") suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String = "")
 }

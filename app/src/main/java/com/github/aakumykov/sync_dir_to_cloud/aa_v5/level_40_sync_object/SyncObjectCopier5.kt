@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.SyncObjectDirCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.FileWriter5AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetterAssistedFactory5
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
@@ -28,7 +28,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
-    private val fileWriter5AssistedFactory: FileWriter5AssistedFactory,
+    private val streamToFileWriterAssistedFactory: StreamToFileWriterAssistedFactory,
     private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
     private val syncObjectRegistratorAssistedFactory: SyncObjectRegistratorAssistedFactory,
 ){
@@ -96,7 +96,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
         if (!syncObject.isFile)
             throw IllegalArgumentException("SyncObject it not a file: $syncObject")
 
-        fileWriter.putFileToSource(
+        fileWriter.putStreamToSource(
             inputStream = inputStreamGetter.getInputStreamInTarget(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.sourcePath!!),
             overwriteIfExists = overwriteIfExists,
@@ -107,11 +107,11 @@ class SyncObjectCopier5 @AssistedInject constructor(
     private val inputStreamGetter: InputStreamGetter5
         get() = inputStreamGetterAssistedFactory.create(syncTask)
 
-    private val dirCreator: DirCreator5
+    private val dirCreator: SyncObjectDirCreator
         get() = dirCreator5AssistedFactory.create(syncTask)
 
     private val fileWriter: StreamToFileWriter
-        get() = fileWriter5AssistedFactory.create(syncTask)
+        get() = streamToFileWriterAssistedFactory.create(syncTask)
 
     private val registrator: SyncObjectRegistrator
         get() = syncObjectRegistratorAssistedFactory.create(syncTask, executionId)

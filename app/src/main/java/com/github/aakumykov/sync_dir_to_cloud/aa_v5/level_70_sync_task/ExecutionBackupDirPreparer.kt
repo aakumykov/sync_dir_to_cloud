@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.checker.FileExistenceCheckerAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.SyncObjectDirCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -58,7 +58,7 @@ class ExecutionBackupDirPreparer @AssistedInject constructor(
         fileExistenceCheckerAssistedFactory.create(syncTask)
     }
 
-    private val dirCreator: DirCreator5 by lazy {
+    private val dirCreator: SyncObjectDirCreator by lazy {
         dirCreator5AssistedFactory.create(syncTask)
     }
 
