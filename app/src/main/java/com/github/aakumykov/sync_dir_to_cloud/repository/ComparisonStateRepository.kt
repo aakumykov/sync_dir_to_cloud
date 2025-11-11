@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import javax.inject.Inject
 

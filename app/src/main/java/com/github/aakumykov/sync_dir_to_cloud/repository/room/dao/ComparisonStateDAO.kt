@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 
 @Dao
 interface ComparisonStateDAO {

@@ -1,0 +1,11 @@
+Выполнение задачи:
+- SyncTaskExecutor читает хранилище и наполняет БД объектами SyncObject, попутно определяя,
+  изменились ли объекты в том месте, где они лежат;
+- SourceWithTargetComparator сравнивает объекты в Источнике и Приёмнике и наполняет хранилище
+  сравнений объектами ComparisonState;
+- InstructionsGenerator на основе ComparisonState создаёт инструкции обработки (SyncInstruction)
+  и сохраняет их в хранилище инструкций.
+-
+
+
+SyncObject --SyncObject.id--> ComparisonState -->

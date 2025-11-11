@@ -9,6 +9,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.randomUUID
@@ -42,7 +43,9 @@ class SyncInstruction (
     @Deprecated("избавиться от ?")
     @ColumnInfo(name = "object_id_in_target") val objectIdInTarget: String?,
 
+    @Deprecated("не используется")
     @ColumnInfo(name = "order_num", defaultValue = "0") val orderNum: Int,
+
     @ColumnInfo(name = "operation") val operation: SyncOperation,
 
     @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,

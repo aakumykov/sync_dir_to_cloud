@@ -1,12 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isFile
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isFile
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notMutuallyUnchanged
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository

@@ -8,7 +8,7 @@ import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.RoomDatabase
 import androidx.room.migration.AutoMigrationSpec
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth

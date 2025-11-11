@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.room
 
 import androidx.room.Database
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructionDAO

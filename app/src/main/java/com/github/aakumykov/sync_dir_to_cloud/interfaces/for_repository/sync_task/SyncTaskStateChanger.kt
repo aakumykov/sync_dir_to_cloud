@@ -10,8 +10,10 @@ interface SyncTaskStateChanger {
 
     suspend fun changeSyncTaskEnabled(taskId: String, isEnabled: Boolean)
 
+    @Deprecated("не нужно")
     suspend fun setSourceReadingState(taskId: String, state: ExecutionState, errorMsg: String? = null)
 
+    @Deprecated("не нужно")
     suspend fun resetSourceReadingBadState(taskId: String)
 
     suspend fun setRunningState(taskId: String)

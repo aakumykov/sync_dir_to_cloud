@@ -1,15 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isDeletedInSource
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceNewAndTargetUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.isSourceUnchangedTargetNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notMutuallyUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInSource
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.notUnchangedOrDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceNewAndTargetUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceUnchangedTargetDeleted
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceUnchangedTargetModified
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceUnchangedTargetNew
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notMutuallyUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notUnchangedOrDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notUnchangedOrDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

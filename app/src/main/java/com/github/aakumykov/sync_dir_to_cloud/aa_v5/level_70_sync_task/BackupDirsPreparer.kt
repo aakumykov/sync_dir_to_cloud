@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.checker.FileExistenceCheckerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
@@ -22,19 +21,19 @@ class BackupDirsPreparer @AssistedInject constructor(
     // Если есть, что бэкапить в приёмнике, создаю каталоги бекапа в приёмнике.
     //
     suspend fun prepareBackupDirs() {
-        if (hasBackupsInSource()) createBackupDirsInSource()
-        if (hasBackupsInTarget()) createBackupDirsInTarget()
+        if (willDoBackupsInSource()) createBackupDirsInSource()
+        if (willDoBackupsInTarget()) createBackupDirsInTarget()
     }
 
 
-    private fun hasBackupsInSource(): Boolean {
+    private fun willDoBackupsInSource(): Boolean {
         return null != syncInstructionList
             .let { it }
             .firstOrNull { it.isBackupInSource }
     }
 
 
-    private fun hasBackupsInTarget(): Boolean {
+    private fun willDoBackupsInTarget(): Boolean {
         return null != syncInstructionList
             .let { it }
             .firstOrNull { it.isBackupInTarget }

@@ -83,6 +83,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
     // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
+    // UPD: Не дело Worker-а обрабатывать ошибки. Он вообще не должен их получать...
     suspend fun executeSyncTask(taskId: String) {
 
         try {
@@ -152,36 +153,30 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         // Выполнить недоделанные инструкции
         removeDuplicatedUnprocessedSyncInstructions()
-
-        prepareBackupDirs()
-
+        prepareBackupDirs() // Для доделки прошлых недоделанных задач.
         processUnprocessedSyncInstructions()
 
-        // Выполнить подготовку
+        // Сброс старого состояния задачи и её объектов.
         resetTaskBadStates(currentTaskId)
         resetObjectsBadState(currentTaskId)
 
+        // Чтение хранилищ.
         markAllObjectsAsNotChecked(currentTaskId)
-
-        // Прочитать источник
-        readSource().getOrThrow()
-
-        // Прочитать приёмник
-        readTarget().getOrThrow()
-
-        // Отметить все не найденные объекты как удалённые
+         readSource().getOrThrow()
+         readTarget().getOrThrow()
         markAllNotCheckedObjectsAsDeleted(currentTaskId)
 
+        // Сравнение старого состояния объектов с новым.
         deleteOldComparisonStates()
-
         compareSourceWithTarget()
 
+        // Создание инструкций обработки.
         generateSyncInstructions()
 
+        // Подготавливаю каталоги бекапов нынешних задач.
         prepareBackupDirs()
 
         processSyncInstructions()
-
 
         clearProcessedSyncObjectsWithDeletedState()
 

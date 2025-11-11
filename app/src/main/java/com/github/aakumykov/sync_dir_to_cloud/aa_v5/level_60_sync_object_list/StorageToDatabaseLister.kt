@@ -1,14 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list
 
 import android.content.res.Resources
-import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
@@ -18,14 +16,12 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.executio
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import java.io.File
 
 class StorageToDatabaseLister @AssistedInject constructor(
 
@@ -39,7 +35,6 @@ class StorageToDatabaseLister @AssistedInject constructor(
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
 
-    private val syncTaskStateChanger: SyncTaskStateChanger,
     private val executionLogger: ExecutionLogger,
 
     private val resources: Resources,
@@ -55,7 +50,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
         return try {
 
             logExecutionStarted(
-                taskId,
+                syncTask.id,
                 executionId,
                 if (SyncSide.SOURCE == syncSide) getString(R.string.EXECUTION_LOG_reading_source)
                 else getString(R.string.EXECUTION_LOG_reading_target)
@@ -67,62 +62,32 @@ class StorageToDatabaseLister @AssistedInject constructor(
             if (null == cloudAuth)
                 throw IllegalArgumentException("cloudAuth argument is null")
 
-            syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.RUNNING)
-
-//            Log.d(TAG, "----------- readFromPath('$pathReadingFrom') -----------")
-
             recursiveDirReaderFactory.create(cloudAuth.storageType, cloudAuth.authToken)
                 ?.listDirRecursively(
                     path = pathReadingFrom,
                     foldersFirst = true
                 )
-                .let { it }
-                /*.let { list ->
-                    list?.forEach { fileListItem ->
-                        val path = fileListItem.absolutePath
-                        val file = File(path)
-                        val data = if (file.isFile) file.readBytes().joinToString() else "0 (is dir)"
-                        Log.d(TAG, "STORAGE_STATE, FILE: $path (${file.lastModified()}) [$data]")
-                    } ?: {
-                        Log.d(TAG, "STORAGE_STATE, list from path: $pathReadingFrom is empty")
-                    }
-                    list
-                }*/
                 ?.filterNot { fileListItem ->
                     backupDirsFilter.isBackupDir(syncSide, fileListItem)
                 }
-                /*?.let {
-                    it
-                }*/
-                ?.apply {
-                    syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.SUCCESS)
-                }
-                /*?.also { list ->
-//                    Log.d(TAG, "list.size: ${list.size}")
-                }*/
                 ?.forEach { fileListItem ->
-//                    Log.d(TAG, "fileListItem: ${fileListItem.name} (${fileListItem.size} байт)")
                     addOrUpdateFileListItem(
                         executionId = executionId,
                         syncSide = syncSide,
                         fileListItem = fileListItem,
                         pathReadingFrom = pathReadingFrom,
-                        taskId = taskId,
+                        taskId = syncTask.id,
                         changesDetectionStrategy = changesDetectionStrategy
                     )
                 }
 
-//            Log.d(TAG, "--------------------------------------------------------------")
-
-            logExecutionFinished(taskId,executionId)
+            logExecutionFinished(syncTask.id,executionId)
 
             Result.success(true)
 
         } catch (e: Exception) {
             ExceptionUtils.getErrorMessage(e).also { errorMsg ->
-                syncTaskStateChanger.setSourceReadingState(taskId, ExecutionState.ERROR, errorMsg)
-                Log.e(TAG, errorMsg, e)
-                logExecutionError(taskId,executionId,errorMsg)
+                logExecutionError(syncTask.id, executionId, errorMsg)
             }
             Result.failure(e)
         }
@@ -251,9 +216,6 @@ class StorageToDatabaseLister @AssistedInject constructor(
     private val backupDirsFilter by lazy {
         backupDirsFilterAssistedFactory.create(syncTask)
     }
-
-    private val taskId: String
-        get() = syncTask.id
 
     companion object {
         val TAG: String = StorageToDatabaseLister::class.java.simpleName

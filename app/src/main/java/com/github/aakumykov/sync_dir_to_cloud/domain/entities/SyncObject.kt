@@ -6,7 +6,6 @@ import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.SimpleFSItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notYetSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTwoVersionParameters
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -27,9 +26,9 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
  *
  * Вопрос: должен ли этот объект иметь признак "ошибка чтения"?
  * С одной стороны, нет, так как чтение хранилища это уже другие уровни программы.
- * С другой - где его ещё хранить? Следующий "уровень" - это [com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState],
+ * С другой - где его ещё хранить? Следующий "уровень" - это [com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState],
  * а чтобы сравнить, нужно прочитать.
- * Получается, ошибку чтения нуэно регистрировать здесь...
+ * Получается, ошибку чтения нужно регистрировать здесь...
  */
 
 @Entity(

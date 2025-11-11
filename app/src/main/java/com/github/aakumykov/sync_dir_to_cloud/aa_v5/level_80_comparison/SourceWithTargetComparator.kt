@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -19,6 +19,7 @@ class SourceWithTargetComparator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val syncObjectDBReader: SyncObjectDBReader,
+    // TODO: можно ComparisonStateReader вместо полного репозитория...
     private val comparisonStateRepository: ComparisonStateRepository,
 ) {
     suspend fun compareSourceWithTarget() {
@@ -36,8 +37,10 @@ class SourceWithTargetComparator @AssistedInject constructor(
         val onlyInTarget = targetObjectsList.subtractBy(sourceObjectsList, ::areObjectsTheSame)
 
         both.forEach { commonSyncObject ->
+
             val sourceObject = sourceObjectsList.first { commonSyncObject.isSameWith(it) }
             val targetObject = targetObjectsList.first { commonSyncObject.isSameWith(it) }
+
             comparisonStateRepository.add(ComparisonState(
                 id = randomUUID,
                 taskId = syncTask.id,
