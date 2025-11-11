@@ -12,14 +12,14 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.InputStream
 import kotlin.coroutines.resume
 
-class FileWriter5 @AssistedInject constructor(
+class StreamToFileWriter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
-    @Throws(Exception::class)
-    suspend fun putFileToTarget(inputStream: InputStream,
-                                filePath: String,
-                                overwriteIfExists: Boolean
+    @Throws(StreamWritingWasCancelledException::class)
+    suspend fun putStreamToTarget(inputStream: InputStream,
+                                  filePath: String,
+                                  overwriteIfExists: Boolean
     ) {
         Log.d(TAG, "putFileToTarget('$filePath', $overwriteIfExists)")
         putStreamReal(
@@ -30,10 +30,11 @@ class FileWriter5 @AssistedInject constructor(
         )
     }
 
-    @Throws(Exception::class)
-    suspend fun putFileToSource(inputStream: InputStream,
-                                filePath: String,
-                                overwriteIfExists: Boolean
+
+    @Throws(StreamWritingWasCancelledException::class)
+    suspend fun putStreamToSource(inputStream: InputStream,
+                                  filePath: String,
+                                  overwriteIfExists: Boolean
     ) {
         Log.d(TAG, "putFileToSource('$filePath')")
         putStreamReal(
@@ -44,7 +45,8 @@ class FileWriter5 @AssistedInject constructor(
         )
     }
 
-    @Throws(Exception::class)
+
+    @Throws(StreamWritingWasCancelledException::class)
     private suspend fun putStreamReal(
         cloudWriter: CloudWriter,
         inputStream: InputStream,
@@ -53,7 +55,10 @@ class FileWriter5 @AssistedInject constructor(
     ) {
         return suspendCancellableCoroutine { cont ->
 
-            cont.invokeOnCancellation { inputStream.close() }
+            cont.invokeOnCancellation {
+                inputStream.close()
+                throw StreamWritingWasCancelledException("Cancelled writing stream to file '$filePath'")
+            }
 
             try {
                 cloudWriter
@@ -81,11 +86,11 @@ class FileWriter5 @AssistedInject constructor(
 
 
     companion object {
-        val TAG: String = FileWriter5::class.java.simpleName
+        val TAG: String = StreamToFileWriter::class.java.simpleName
     }
 }
 
 @AssistedFactory
 interface FileWriter5AssistedFactory {
-    fun create(syncTask: SyncTask): FileWriter5
+    fun create(syncTask: SyncTask): StreamToFileWriter
 }

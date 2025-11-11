@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.FileWriter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.FileWriter5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetterAssistedFactory5
@@ -21,17 +21,18 @@ class FileCopier5 @AssistedInject constructor(
     suspend fun copyFileFromSourceToTarget(syncObject: SyncObject,
                                            absolutePathInTarget: String,
                                            overwriteIfExists: Boolean = syncOptions.overwriteIfExists) {
-        fileWriter.putFileToTarget(
+        fileWriter.putStreamToTarget(
             inputStreamGetter.getInputStreamInSource(syncObject),
             absolutePathInTarget,
             overwriteIfExists
         )
     }
 
+
     suspend fun copyFileFromTargetToSource(syncObject: SyncObject,
                                            absolutePathInSource: String,
                                            overwriteIfExists: Boolean = syncOptions.overwriteIfExists) {
-        fileWriter.putFileToSource(
+        fileWriter.putStreamToSource(
             inputStreamGetter.getInputStreamInTarget(syncObject),
             absolutePathInSource,
             overwriteIfExists
@@ -42,7 +43,7 @@ class FileCopier5 @AssistedInject constructor(
     private val inputStreamGetter: InputStreamGetter5
         get() = inputStreamGetterAssistedFactory.create(syncTask)
 
-    private val fileWriter: FileWriter5
+    private val fileWriter: StreamToFileWriter
         get() = fileWriter5AssistedFactory.create(syncTask)
 }
 

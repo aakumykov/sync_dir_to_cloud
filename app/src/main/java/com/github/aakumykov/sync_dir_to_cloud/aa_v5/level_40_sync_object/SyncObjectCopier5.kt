@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.FileWriter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.FileWriter5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetterAssistedFactory5
@@ -80,7 +80,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
         if (!syncObject.isFile)
             throw IllegalArgumentException("SyncObject it not a file: $syncObject")
 
-        fileWriter.putFileToTarget(
+        fileWriter.putStreamToTarget(
             inputStream = inputStreamGetter.getInputStreamInSource(syncObject),
             filePath = syncObject.absolutePathIn(syncTask.targetPath!!),
             overwriteIfExists = overwriteIfExists,
@@ -110,7 +110,7 @@ class SyncObjectCopier5 @AssistedInject constructor(
     private val dirCreator: DirCreator5
         get() = dirCreator5AssistedFactory.create(syncTask)
 
-    private val fileWriter: FileWriter5
+    private val fileWriter: StreamToFileWriter
         get() = fileWriter5AssistedFactory.create(syncTask)
 
     private val registrator: SyncObjectRegistrator
