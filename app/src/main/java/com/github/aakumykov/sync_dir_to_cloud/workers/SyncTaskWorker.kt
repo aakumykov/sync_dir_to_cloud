@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
-import android.app.Notification
 import android.content.Context
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -9,11 +8,10 @@ import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

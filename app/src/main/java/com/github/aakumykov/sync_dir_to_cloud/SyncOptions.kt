@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v3
+package com.github.aakumykov.sync_dir_to_cloud
 
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders
+package com.github.aakumykov.sync_dir_to_cloud.cancellation_holders
 
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope

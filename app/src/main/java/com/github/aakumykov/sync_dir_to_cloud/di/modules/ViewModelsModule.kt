@@ -2,8 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.OperationCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.cancellation_holders.TaskCancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ViewModelKey
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase

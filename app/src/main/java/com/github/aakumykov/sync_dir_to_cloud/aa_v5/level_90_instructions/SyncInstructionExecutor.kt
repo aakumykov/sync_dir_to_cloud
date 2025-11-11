@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.aa_v3.SyncOptions
+import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamWriterCancelledException
