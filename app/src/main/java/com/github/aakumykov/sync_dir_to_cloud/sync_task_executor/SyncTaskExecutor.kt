@@ -240,7 +240,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
             .create(currentTask, executionId, coroutineScope)
-            .processUnprocessedInstructions()
+            .processPrevSessionUnprocessedInstructions()
     }
 
 
@@ -248,7 +248,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         appComponent
             .getSyncInstructionsProcessorAssistedFactory6()
             .create(currentTask, executionId, coroutineScope)
-            .processCurrentInstructions()
+            .processThisSessionInstructions()
     }
 
 

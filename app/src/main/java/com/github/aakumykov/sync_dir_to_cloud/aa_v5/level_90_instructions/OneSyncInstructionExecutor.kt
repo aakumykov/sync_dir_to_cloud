@@ -6,9 +6,9 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamWriterCancelledException
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCopier
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FSItemDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCollisionResolverAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
@@ -20,15 +20,18 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class SyncInstructionExecutor @AssistedInject constructor(
+
+class OneSyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
 
     private val syncOptions: SyncOptions,
+
     private val syncObjectDBReader: SyncObjectDBReader,
 
-    private val itemCopierAssistedFactory: ItemCopierAssistedFactory5,
-    private val itemDeleterAssistedFactory5: ItemDeleterAssistedFactory5,
+    private val itemCopierAssistedFactory: ItemCopierAssistedFactory,
+    private val itemDeleterAssistedFactory: ItemDeleterAssistedFactory,
+
     private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
 
     private val syncInstructionUpdater: SyncInstructionUpdater,
@@ -233,7 +236,7 @@ class SyncInstructionExecutor @AssistedInject constructor(
 
 
     private val itemDeleter: FSItemDeleter5 by lazy {
-        itemDeleterAssistedFactory5.create(syncTask)
+        itemDeleterAssistedFactory.create(syncTask)
     }
 
     private val collisionResolver by lazy {
@@ -258,14 +261,14 @@ class SyncInstructionExecutor @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = SyncInstructionExecutor::class.java.simpleName
+        val TAG: String = OneSyncInstructionExecutor::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface SyncInstructionExecutorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): SyncInstructionExecutor
+interface OneSyncInstructionExecutorAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): OneSyncInstructionExecutor
 }
 
 

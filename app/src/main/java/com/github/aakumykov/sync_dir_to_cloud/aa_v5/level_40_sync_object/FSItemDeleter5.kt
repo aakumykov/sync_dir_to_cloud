@@ -70,6 +70,6 @@ class FSItemDeleter5 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface ItemDeleterAssistedFactory5 {
+interface ItemDeleterAssistedFactory {
     fun create(syncTask: SyncTask): FSItemDeleter5
 }

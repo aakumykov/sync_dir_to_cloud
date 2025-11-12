@@ -11,28 +11,23 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
 //
-// Задача ПроцессораИнструкций отправить разные их виды
-// на исполненеи в определённом порядке.
+// Исполняет инструкции в определённом порядке.
 //
 class SyncInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
     private val syncInstructionRepository: SyncInstructionRepository,
-    private val syncInstructionExecutorAssistedFactory: SyncInstructionExecutorAssistedFactory,
+    private val oneSyncInstructionExecutorAssistedFactory: OneSyncInstructionExecutorAssistedFactory,
 ) {
-    suspend fun processUnprocessedInstructions() {
+    suspend fun processPrevSessionUnprocessedInstructions() {
         processInstructions(true)
     }
 
-    suspend fun processCurrentInstructions() {
+    suspend fun processThisSessionInstructions() {
         processInstructions(false)
     }
 
-    private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
-        return if (selectUnprocessed) getNonProcessedInstructionsForTask()
-        else getNonProcessedSyncInstructionsForTaskAndExecution()
-    }
 
     private suspend fun processInstructions(selectUnprocessed: Boolean) {
 
@@ -48,6 +43,12 @@ class SyncInstructionsProcessor @AssistedInject constructor(
 
         processDirsCreation(list(selectUnprocessed))
         processFilesCopying(list(selectUnprocessed))
+    }
+
+
+    private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
+        return if (selectUnprocessed) getNonProcessedInstructionsForTask()
+        else getNonProcessedSyncInstructionsForTaskAndExecution()
     }
 
 
@@ -140,7 +141,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
     private val syncInstructionExecutor by lazy {
-        syncInstructionExecutorAssistedFactory.create(syncTask, executionId)
+        oneSyncInstructionExecutorAssistedFactory.create(syncTask, executionId)
     }
 
     companion object {

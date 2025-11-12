@@ -108,6 +108,6 @@ class SyncObjectCopier @AssistedInject constructor(
 
 
 @AssistedFactory
-interface ItemCopierAssistedFactory5 {
+interface ItemCopierAssistedFactory {
     fun create(syncTask: SyncTask, executionId: String): SyncObjectCopier
 }
