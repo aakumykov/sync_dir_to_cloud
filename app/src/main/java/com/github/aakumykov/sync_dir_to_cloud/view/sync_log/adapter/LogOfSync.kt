@@ -28,6 +28,7 @@ data class LogOfSync(
             )
         }
 
+        @Deprecated("Не используется")
         fun fromSyncObjectLogItem(item: SyncObjectLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
