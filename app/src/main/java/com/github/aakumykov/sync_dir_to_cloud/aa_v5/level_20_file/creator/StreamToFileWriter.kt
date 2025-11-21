@@ -10,6 +10,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.InputStream
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
 class StreamToFileWriter @AssistedInject constructor(
@@ -19,29 +20,34 @@ class StreamToFileWriter @AssistedInject constructor(
     @Throws(StreamWriterCancelledException::class)
     suspend fun putStreamToTarget(inputStream: InputStream,
                                   filePath: String,
-                                  overwriteIfExists: Boolean
+                                  overwriteIfExists: Boolean,
+                                  progressCallback: ((transferredBytes: Long) -> Unit)? = null,
     ) {
         Log.d(TAG, "putFileToTarget('$filePath', $overwriteIfExists)")
         putStreamReal(
             cloudWriterGetter.getTargetCloudWriter(syncTask),
             inputStream,
             filePath,
-            overwriteIfExists
+            overwriteIfExists,
+            progressCallback
         )
     }
 
 
     @Throws(StreamWriterCancelledException::class)
-    suspend fun putStreamToSource(inputStream: InputStream,
-                                  filePath: String,
-                                  overwriteIfExists: Boolean
+    suspend fun putStreamToSource(
+        inputStream: InputStream,
+        filePath: String,
+        overwriteIfExists: Boolean,
+        progressCallback: ((transferredBytes: Long) -> Unit)? = null,
     ) {
         Log.d(TAG, "putFileToSource('$filePath')")
         putStreamReal(
             cloudWriterGetter.getSourceCloudWriter(syncTask),
             inputStream,
             filePath,
-            overwriteIfExists
+            overwriteIfExists,
+            progressCallback
         )
     }
 
@@ -51,7 +57,8 @@ class StreamToFileWriter @AssistedInject constructor(
         cloudWriter: CloudWriter,
         inputStream: InputStream,
         filePath: String,
-        overwriteIfExists: Boolean
+        overwriteIfExists: Boolean,
+        progressCallback: ((transferredBytes: Long) -> Unit)? = null,
     ) {
         return suspendCancellableCoroutine { cont ->
 
@@ -67,9 +74,12 @@ class StreamToFileWriter @AssistedInject constructor(
                         targetPath = filePath,
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
+                            TimeUnit.MILLISECONDS.sleep(100)
                             if (!cont.isActive)
                                 return@putStream
                             Log.d(TAG, "progress: $progress")
+                            progressCallback?.invoke(progress)
+
                         },
                         finishCallback = { _,_ ->
                             cont.resume(Unit)
