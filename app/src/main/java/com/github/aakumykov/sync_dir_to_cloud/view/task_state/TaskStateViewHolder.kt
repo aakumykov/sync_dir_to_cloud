@@ -17,6 +17,7 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
     private lateinit var primaryStateIcon: ImageView
     private lateinit var secondaryStateIcon: ImageView
 
+
     override fun fill(
         taskLogEntry: TaskLogEntry,
         isSelected: Boolean
@@ -36,6 +37,7 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
         )
     }
 
+
     private fun finishText(taskLogEntry: TaskLogEntry): String {
 
         val startTime = CurrentDateTime.format(taskLogEntry.startTime)
@@ -47,6 +49,7 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
             timeDiff
         )
     }
+
 
     private fun errorText(taskLogEntry: TaskLogEntry): String {
 
@@ -67,6 +70,7 @@ class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
         primaryStateIcon = itemView.findViewById(R.id.syncLogPrimaryStateIcon)
         secondaryStateIcon = itemView.findViewById(R.id.syncLogSecondaryStateIcon)
     }
+
 
     fun getString(@StringRes stringRes: Int, vararg args: Any): String {
         val res = titleView.getString(stringRes, args)

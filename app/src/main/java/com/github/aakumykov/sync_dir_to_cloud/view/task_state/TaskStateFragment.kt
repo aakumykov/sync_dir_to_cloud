@@ -90,6 +90,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         menuStateViewModel = DaggerViewModelHelper.get(requireActivity(), MenuStateViewModel::class.java)
     }
 
+
     private fun processArguments() {
 
         arguments?.getString(KEY_TASK_ID)?.also { taskId ->
@@ -107,13 +108,16 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         }
     }
 
+
     private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
         taskLogEntries?.also { taskLogAdapter.setList(it) }
     }
 
+
     private fun prepareView(view: View) {
         _binding = FragmentTaskStateBinding.bind(view)
     }
+
 
     private fun prepareListAdapter() {
         taskLogAdapter = TaskStateAdapter()
@@ -128,6 +132,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             navigationViewModel.navigateTo(NavTarget.SyncLog(taskLogEntry.taskId, taskLogEntry.executionId))
         }
     }
+
 
     private fun showItemInfo(syncObject: SyncObject) {
         AlertDialog.Builder(requireContext()).apply {
@@ -164,6 +169,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             .create().show()
     }
 
+
     private fun onTaskChanged(syncTask: SyncTask?) {
 
         if (null == syncTask)
@@ -179,6 +185,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         displayLastRunState(syncTask)
     }
 
+
     private fun changeToolbarButtons(syncTask: SyncTask) {
         menuState.updateIcon(R.id.actionStartStopTask, when(syncTask.executionState){
             ExecutionState.RUNNING -> R.drawable.ic_task_stop_toolbar
@@ -187,6 +194,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             menuStateViewModel.sendMenuState(it)
         }
     }
+
 
     private fun displayLastRunState(syncTask: SyncTask) {
         val lastStartDateString = syncTask.lastStart?.let { CurrentDateTime.format(it) } ?: getString(R.string.never)
@@ -199,6 +207,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         binding.lastStartInfo.text = getString(R.string.last_start_info, lastStartDateString)
         binding.lastFinishInfo.text = getString(R.string.last_finish_info, lastFinishDateString)
     }
+
 
     private fun displaySchedulingState(syncTask: SyncTask) {
         binding.schedulingStateView.text =
@@ -214,6 +223,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 getString(R.string.SCHEDULING_STATE_disabled)
             }
     }
+
 
     private fun detailedSchedulingState(syncTask: SyncTask): String {
         return when (syncTask.intervalHours) {
@@ -231,6 +241,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         }
     }
 
+
     private fun displayExecutionState(syncTask: SyncTask) {
         binding.syncStateView.text = when (syncTask.executionState) {
             ExecutionState.NEVER -> getString(R.string.EXECUTION_STATE_idle)
@@ -243,16 +254,20 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
         }
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 
     private fun dateStringOrNever(timestamp: Long): String {
         return if (0L == timestamp) getString(R.string.never)
         else CurrentDateTime.format(timestamp)
     }
 
+
+    // TODO: как насчёт делать это через самописную навигацию?
     private fun onTaskEditClicked() {
         TaskEditFragment.create(currentTaskId).also {
             parentFragmentManager.beginTransaction()
@@ -261,6 +276,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
                 .commit()
         }
     }
+
 
     companion object {
 

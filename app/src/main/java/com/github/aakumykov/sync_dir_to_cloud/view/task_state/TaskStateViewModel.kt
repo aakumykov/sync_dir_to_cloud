@@ -34,7 +34,9 @@ class TaskStateViewModel(
         viewModelScope.launch { startStopSyncTaskUseCase.startStopSyncTask(taskId) }
     }
 
-    fun getTaskLogsLiveData(taskId: String) = taskLogRepository.getLogsForTask(taskId)
+    fun getTaskLogsLiveData(taskId: String): LiveData<List<TaskLogEntry>> {
+        return taskLogRepository.getLogsForTask(taskId)
+    }
 
 //    fun getTaskLogsFlow(taskId: String) = taskLogProvider.taskLogsFlow
 }

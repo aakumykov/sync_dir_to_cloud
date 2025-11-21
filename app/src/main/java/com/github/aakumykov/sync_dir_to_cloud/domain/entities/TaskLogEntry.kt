@@ -26,6 +26,7 @@ import java.util.UUID
         Index(value = ["task_id"])
     ]
 )
+// FIXME: это не "домен" (бизнес-логика), а прдставление.
 class TaskLogEntry(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "task_id") val taskId: String,
