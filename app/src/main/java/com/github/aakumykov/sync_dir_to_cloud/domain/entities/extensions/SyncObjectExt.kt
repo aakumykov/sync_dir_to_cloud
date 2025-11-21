@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import kotlin.math.roundToInt
 
 // TODO: дать имя, точно отражающее функцию.
 fun SyncObject.shiftTwoVersionParameters(modifiedFSItem: FSItem) {
@@ -49,3 +50,5 @@ val SyncObject.isDeleted: Boolean get() = StateInStorage.DELETED == stateInStora
  * Возвращает значение newSize, если оно есть, иначе значение поля size.
  */
 val SyncObject.actualSize: Long get() = this.newSize ?: this.size
+
+fun SyncObject.progressAsPartOf100(transferredBytes: Long): Int = (100F * transferredBytes / size).roundToInt()
