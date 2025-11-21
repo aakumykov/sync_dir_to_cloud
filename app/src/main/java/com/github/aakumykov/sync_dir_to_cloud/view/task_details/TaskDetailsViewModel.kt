@@ -1,10 +1,11 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_state
+package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
@@ -12,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import kotlinx.coroutines.launch
 
-class TaskStateViewModel(
+class TaskDetailsViewModel(
     private var syncTaskReader: SyncTaskReader,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val startStopSyncTaskUseCase: StartStopSyncTaskUseCase,

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_state
+package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
-import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskStateBinding
+import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskDetailsBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -29,14 +29,14 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import kotlinx.coroutines.launch
 
-class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
+class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     private val menuItems = arrayOf(
         CustomMenuItem(
             id = R.id.actionStartStopTask,
             title = R.string.MENU_ITEM_action_start_stop_task,
             icon = R.drawable.ic_task_start_toolbar,
-            action = { taskStateViewModel.startStopTask(currentTaskId) }),
+            action = { taskDetailsViewModel.startStopTask(currentTaskId) }),
         CustomMenuItem(
             id = R.id.actionEditTask,
             title = R.string.MENU_ITEM_action_edit_task,
@@ -47,15 +47,15 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private val menuState = MenuState(*menuItems)
 
-    private var _binding: FragmentTaskStateBinding? = null
+    private var _binding: FragmentTaskDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var taskStateViewModel: TaskStateViewModel
+    private lateinit var taskDetailsViewModel: TaskDetailsViewModel
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
 
-    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskStateViewHolder>
+    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskDetailsViewHolder>
 
     private lateinit var currentTaskId: String
 
@@ -82,7 +82,7 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
     private fun prepareViewModels() {
         // Местная ViewModel
-        taskStateViewModel = DaggerViewModelHelper.get(this, TaskStateViewModel::class.java)
+        taskDetailsViewModel = DaggerViewModelHelper.get(this, TaskDetailsViewModel::class.java)
 
         // ViewModel-и уровня приложения
         pageTitleViewModel = DaggerViewModelHelper.get(requireActivity(), PageTitleViewModel::class.java)
@@ -98,8 +98,8 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
             currentTaskId = taskId
 
             lifecycleScope.launch {
-                taskStateViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::onTaskChanged)
-                taskStateViewModel.getTaskLogsLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogListChanged)
+                taskDetailsViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::onTaskChanged)
+                taskDetailsViewModel.getTaskLogsLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogListChanged)
             }
 
         } ?: {
@@ -115,12 +115,12 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
 
     private fun prepareView(view: View) {
-        _binding = FragmentTaskStateBinding.bind(view)
+        _binding = FragmentTaskDetailsBinding.bind(view)
     }
 
 
     private fun prepareListAdapter() {
-        taskLogAdapter = TaskStateAdapter()
+        taskLogAdapter = TaskDetailsAdapter()
         binding.listView.adapter = taskLogAdapter
         binding.listView.setOnItemClickListener(::onTaskLogItemClicked)
     }
@@ -282,13 +282,13 @@ class TaskStateFragment : Fragment(R.layout.fragment_task_state) {
 
         const val KEY_TASK_ID = "TASK_ID"
 
-        fun create(taskId: String?): TaskStateFragment {
-            return TaskStateFragment().apply {
+        fun create(taskId: String?): TaskDetailsFragment {
+            return TaskDetailsFragment().apply {
                 arguments = Bundle().apply { putString(KEY_TASK_ID, taskId) }
             }
         }
 
-        fun create(intent: Intent): TaskStateFragment {
+        fun create(intent: Intent): TaskDetailsFragment {
             return create(intent.getStringExtra(KEY_TASK_ID))
         }
     }

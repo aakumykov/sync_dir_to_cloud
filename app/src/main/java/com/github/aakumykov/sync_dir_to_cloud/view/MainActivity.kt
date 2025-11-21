@@ -12,9 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
-import androidx.preference.PreferenceManager
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.settings.SettingsFragment
@@ -26,7 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
-import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadInitialFragment(intent: Intent?) {
         setFragment(
             when(intent?.action) {
-                ACTION_SHOW_TASK_STATE -> TaskStateFragment.create(intent)
+                ACTION_SHOW_TASK_STATE -> TaskDetailsFragment.create(intent)
                 else -> TaskListFragment.create()
             }
         )
@@ -157,7 +155,7 @@ class MainActivity : AppCompatActivity() {
             is NavTarget.Add -> loadFragment(TaskEditFragment.create())
             is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
-            is NavTarget.TaskInfo -> loadFragment(TaskStateFragment.create(navTarget.id))
+            is NavTarget.TaskInfo -> loadFragment(TaskDetailsFragment.create(navTarget.id))
             is NavTarget.SyncLog -> loadFragment(SyncLogFragment.create(navTarget.taskId, navTarget.executionId))
             is NavTarget.AppSettings -> loadFragment(SettingsFragment.create())
             else -> loadInitialFragment(intent)

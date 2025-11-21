@@ -26,7 +26,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.task_state.TaskStateViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -65,7 +65,7 @@ class ViewModelsModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(TaskStateViewModel::class)
+    @ViewModelKey(TaskDetailsViewModel::class)
     fun provideTaskInfoViewModel(syncTaskReader: SyncTaskReader,
                                  syncObjectDBReader: SyncObjectDBReader,
                                  startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
@@ -73,7 +73,7 @@ class ViewModelsModule {
                                  taskStateLogger: TaskStateLogger,
     ): ViewModel
     {
-        return TaskStateViewModel(
+        return TaskDetailsViewModel(
             syncTaskReader = syncTaskReader,
             syncObjectDBReader = syncObjectDBReader,
             startStopSyncTaskUseCase = startStopSyncTaskUseCase,

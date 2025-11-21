@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_state
+package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import android.view.View
 import android.widget.ImageView
@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.getString
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 
-class TaskStateViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
+class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
 
     private lateinit var titleView: TextView
     private lateinit var primaryStateIcon: ImageView

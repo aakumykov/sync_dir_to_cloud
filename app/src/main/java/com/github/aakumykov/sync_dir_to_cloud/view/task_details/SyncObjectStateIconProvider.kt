@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_state
+package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import androidx.annotation.DrawableRes
 import com.github.aakumykov.sync_dir_to_cloud.R
