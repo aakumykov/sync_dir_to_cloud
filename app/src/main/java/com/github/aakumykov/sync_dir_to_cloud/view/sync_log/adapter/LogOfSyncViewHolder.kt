@@ -7,10 +7,15 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
+import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.syncLogFormattedDateTime
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
+class LogOfSyncViewHolder(private val lifecycleScope: CoroutineScope) : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
     private lateinit var operationNameView: TextView
     private lateinit var timeView: TextView
@@ -18,6 +23,8 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
     private lateinit var sizeView: TextView
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
+
+    private val progressInfoHolder: ProgressInfoHolder by lazy { appComponent.getProgressInfoHolder() }
 
     private val context: Context get() = detailsView.context
 
@@ -51,6 +58,16 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
             OperationState.ERROR -> R.drawable.ic_sync_log_error
             else -> R.drawable.ic_sync_log_waiting
         })
+
+        lifecycleScope.launch {
+            while (OperationState.RUNNING == item.operationState) {
+                item.objectId?.also {
+                    progressInfoHolder.getProgress(it)
+                    progressBar.visibility = View.VISIBLE
+                }
+                delay(100)
+            }
+        }
 
         item.progress?.also { progressValue: Int ->
             progressBar.apply {
