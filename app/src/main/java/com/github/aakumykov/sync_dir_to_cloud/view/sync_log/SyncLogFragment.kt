@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
@@ -57,7 +56,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
             onItemClicked(listAdapter.getItem(position))
         }*/
 
-        listAdapter = LogOfSyncAdapter(lifecycleScope)
+        listAdapter = LogOfSyncAdapter()
         binding.listView.adapter = listAdapter
         binding.listView.setOnItemClickListener { parent, view, position, id ->
             onItemClicked(listAdapter.getItem(position))

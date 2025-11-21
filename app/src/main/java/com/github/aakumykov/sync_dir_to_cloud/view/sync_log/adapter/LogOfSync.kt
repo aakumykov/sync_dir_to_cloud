@@ -9,7 +9,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 data class LogOfSync(
     val taskId: String,
     val executionId: String,
-    val objectId: String?,
     val text: String,
     val subText: String,
     val timestamp: Long,
@@ -22,7 +21,6 @@ data class LogOfSync(
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
-                objectId = null,
                 text = item.message,
                 subText = item.details ?: "",
                 timestamp = item.timestamp,
@@ -35,7 +33,6 @@ data class LogOfSync(
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
-                objectId = item.objectId,
                 text = item.operationName,
                 subText = item.errorMessage ?: item.itemName,
                 timestamp = item.timestamp,
@@ -48,7 +45,6 @@ data class LogOfSync(
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
-                objectId = item.sourceObjectId,
                 text = item.operationName,
                 subText = item.errorMsg ?: item.objectName,
                 timestamp = item.timestamp,
