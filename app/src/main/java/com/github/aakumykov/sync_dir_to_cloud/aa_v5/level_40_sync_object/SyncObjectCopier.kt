@@ -10,24 +10,29 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 /**
- * "Item" - совокупный объект: SyncObject + физические данные в хранилище.
- * Копировать его - значит произвести операцию с физическими данными, SyncObject-ами.
+ * Распределяет работу между FileCopier-ом и DirCreator-ом.
  */
 class SyncObjectCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val fileCopier5AssistedFactory: FileCopier5AssistedFactory,
-    private val dirCreator5AssistedFactory: DirCreator5AssistedFactory,
+    private val fileCopierAssistedFactory: FileCopier5AssistedFactory,
+    private val dirCreatorAssistedFactory: DirCreator5AssistedFactory,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory,
 ){
     // TODO: разобраться, как overwriteIfExists сочетается с бекапом
+
+    private val fileCopier: SyncObjectFileCopier by lazy { fileCopierAssistedFactory.create(syncTask, executionId) }
+
+    private val dirCreator: SyncObjectDirCreator by lazy { dirCreatorAssistedFactory.create(syncTask) }
+
+    private val syncObjectActualizer: SyncObjectActualizer by lazy { syncObjectActualizerAssistedFactory.create(syncTask, executionId) }
+
 
     @Throws(StreamWriterCancelledException::class)
     suspend fun copySyncObjectFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
@@ -94,17 +99,6 @@ class SyncObjectCopier @AssistedInject constructor(
             dirName = syncObject.name
         )
     }
-
-
-
-    private val fileCopier: SyncObjectFileCopier by lazy {
-        fileCopier5AssistedFactory.create(syncTask, executionId) }
-
-    private val dirCreator: SyncObjectDirCreator by lazy {
-        dirCreator5AssistedFactory.create(syncTask) }
-
-    private val syncObjectActualizer: SyncObjectActualizer by lazy {
-        syncObjectActualizerAssistedFactory.create(syncTask, executionId) }
 }
 
 

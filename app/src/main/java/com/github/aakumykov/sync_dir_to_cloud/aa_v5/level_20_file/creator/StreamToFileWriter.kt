@@ -74,9 +74,12 @@ class StreamToFileWriter @AssistedInject constructor(
                         targetPath = filePath,
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
+
                             TimeUnit.MILLISECONDS.sleep(100)
+
                             if (!cont.isActive)
                                 return@putStream
+
                             Log.d(TAG, "progress: $progress")
                             progressCallback?.invoke(progress)
 

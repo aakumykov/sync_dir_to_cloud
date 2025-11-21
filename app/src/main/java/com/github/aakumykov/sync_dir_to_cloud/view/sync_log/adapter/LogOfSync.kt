@@ -29,7 +29,7 @@ data class LogOfSync(
         }
 
         @Deprecated("Не используется")
-        fun fromSyncObjectLogItem(item: SyncObjectLogItem): LogOfSync {
+        /*fun fromSyncObjectLogItem(item: SyncObjectLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
@@ -39,7 +39,7 @@ data class LogOfSync(
                 operationState = item.operationState,
                 progress = item.progress,
             )
-        }
+        }*/
 
         fun fromSyncOperationLogItem(item: SyncOperationLogItem): LogOfSync {
             return LogOfSync(

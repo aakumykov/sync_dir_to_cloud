@@ -22,7 +22,7 @@ class SyncOperationLogger @AssistedInject constructor(
     private val resources: Resources,
 ) {
     suspend fun logWaiting(syncInstruction: SyncInstruction): String {
-        return syncInstructionWithState(syncInstruction, OperationState.WAITING).let {
+        return syncOperationWithState(syncInstruction, OperationState.WAITING).let {
             repository.add(it)
             it.id
         }
@@ -37,7 +37,7 @@ class SyncOperationLogger @AssistedInject constructor(
     }
 
 
-    private fun syncInstructionWithState(syncInstruction: SyncInstruction, operationState: OperationState): SyncOperationLogItem {
+    private fun syncOperationWithState(syncInstruction: SyncInstruction, operationState: OperationState): SyncOperationLogItem {
         return SyncOperationLogItem(
             id = randomUUID,
             taskId = taskId,

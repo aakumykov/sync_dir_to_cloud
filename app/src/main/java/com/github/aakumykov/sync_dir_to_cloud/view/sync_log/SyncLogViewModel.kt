@@ -26,7 +26,7 @@ class SyncLogViewModel(
     private val mediatorLiveData: MediatorLiveData<List<LogOfSync>> = MediatorLiveData()
     private val currentExecutionLogItemList: MutableList<ExecutionLogItem> = mutableListOf()
     private val currentSyncOperationLogItemList: MutableList<SyncOperationLogItem> = mutableListOf()
-    private val logOfSyncList: MutableList<LogOfSync> = mutableListOf()
+    private val resultingList: MutableList<LogOfSync> = mutableListOf()
     private var isFirstRun = true
 
 
@@ -40,6 +40,12 @@ class SyncLogViewModel(
 
     private fun prepareMediatorLiveData(taskId: String, executionId: String) {
 
+        mediatorLiveData.addSource(executionLogReader.getExecutionLog(taskId,executionId)) { list ->
+            currentExecutionLogItemList.clear()
+            currentExecutionLogItemList.addAll(list)
+            processAndPublishCompoundLog()
+        }
+
         mediatorLiveData.addSource(syncOperationLogReader.listAsLiveData(taskId, executionId)) { list ->
             currentSyncOperationLogItemList.apply {
                 clear()
@@ -47,16 +53,10 @@ class SyncLogViewModel(
             }
             processAndPublishCompoundLog()
         }
-
-        mediatorLiveData.addSource(executionLogReader.getExecutionLog(taskId,executionId)) { list ->
-            currentExecutionLogItemList.clear()
-            currentExecutionLogItemList.addAll(list)
-            processAndPublishCompoundLog()
-        }
     }
 
     private fun processAndPublishCompoundLog() {
-        logOfSyncList.apply {
+        resultingList.apply {
             clear()
 
             val syncLog = currentSyncOperationLogItemList.map { LogOfSync.fromSyncOperationLogItem(it) }
