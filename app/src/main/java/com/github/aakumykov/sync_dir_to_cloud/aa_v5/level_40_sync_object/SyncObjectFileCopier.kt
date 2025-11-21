@@ -38,6 +38,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
             absolutePathInTarget,
             overwriteIfExists
         ) { transferredBytes ->
+            // FIXME: внедрять!
             CoroutineScope(Dispatchers.IO).launch {
                 syncObjectLogProgressUpdater.updateProgress(
                     objectId = syncObject.id,
@@ -58,6 +59,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
             absolutePathInSource,
             overwriteIfExists
         ) { transferredBytes ->
+            // FIXME: внедрять!
             CoroutineScope(Dispatchers.IO).launch {
                 syncObjectLogProgressUpdater.updateProgress(
                     objectId = syncObject.id,
