@@ -306,13 +306,13 @@ class ComparisonStateValueGettersUnitTest {
 
 
     private fun cs(sourceState: StateInStorage, targetState: StateInStorage): ComparisonState = ComparisonState(
-        id = randomUUID,
-        taskId = randomUUID,
-        executionId = randomUUID,
+        id = newRandomId,
+        taskId = newRandomId,
+        executionId = newRandomId,
         isDir = false,
         relativePath = "/fake-file.txt",
-        sourceObjectId = randomUUID,
-        targetObjectId = randomUUID,
+        sourceObjectId = newRandomId,
+        targetObjectId = newRandomId,
         sourceObjectState = sourceState,
         targetObjectState = targetState,
     )

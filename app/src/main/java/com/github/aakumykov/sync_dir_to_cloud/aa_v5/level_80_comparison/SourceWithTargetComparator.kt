@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.isSameWith
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.subtractBy
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -42,7 +42,7 @@ class SourceWithTargetComparator @AssistedInject constructor(
             val targetObject = targetObjectsList.first { commonSyncObject.isSameWith(it) }
 
             comparisonStateRepository.add(ComparisonState(
-                id = randomUUID,
+                id = newRandomId,
                 taskId = syncTask.id,
                 executionId = executionId,
                 isDir = commonSyncObject.isDir,
@@ -56,7 +56,7 @@ class SourceWithTargetComparator @AssistedInject constructor(
 
         onlyInSource.forEach { sourceObject ->
             comparisonStateRepository.add(ComparisonState(
-                id = randomUUID,
+                id = newRandomId,
                 taskId = syncTask.id,
                 executionId = executionId,
                 isDir = sourceObject.isDir,
@@ -70,7 +70,7 @@ class SourceWithTargetComparator @AssistedInject constructor(
 
         onlyInTarget.forEach { targetObject ->
             comparisonStateRepository.add(ComparisonState(
-                id = randomUUID,
+                id = newRandomId,
                 taskId = syncTask.id,
                 executionId = executionId,
                 isDir = targetObject.isDir,

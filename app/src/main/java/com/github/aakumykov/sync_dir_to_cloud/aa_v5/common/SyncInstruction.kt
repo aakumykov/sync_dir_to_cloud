@@ -12,7 +12,7 @@ import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 
 @Entity(
     tableName = "sync_instructions",
@@ -98,7 +98,7 @@ class SyncInstruction (
             orderNum: Int,
         ): SyncInstruction = SyncInstruction(
             partsLabel = partsLabel,
-            id = randomUUID,
+            id = newRandomId,
             taskId = comparisonState.taskId,
             executionId = comparisonState.executionId,
             objectIdInSource = comparisonState.sourceObjectId,

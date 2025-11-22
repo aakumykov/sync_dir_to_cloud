@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.shiftTw
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.sha256
 
@@ -137,7 +137,7 @@ class SyncObject (
         ): SyncObject {
 
             return SyncObject(
-                id = randomUUID,
+                id = newRandomId,
                 taskId = taskId,
                 executionId = executionId,
                 syncSide = syncSide,
@@ -166,7 +166,7 @@ class SyncObject (
             newExecutionId: String,
         ): SyncObject {
             return syncObject.apply {
-                id = randomUUID
+                id = newRandomId
                 syncObject.shiftTwoVersionParameters(modifiedFSItem)
                 executionId = newExecutionId
                 stateInStorage = StateInStorage.MODIFIED
@@ -181,7 +181,7 @@ class SyncObject (
                                newSyncSide: SyncSide,
                                newStateInStorage: StateInStorage): SyncObject {
             return syncObject.apply {
-                id = randomUUID
+                id = newRandomId
                 executionId = newExecutionId
                 syncSide = newSyncSide
                 stateInStorage = newStateInStorage

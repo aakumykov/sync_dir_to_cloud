@@ -14,7 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -129,7 +129,7 @@ class SyncObjectActualizer @AssistedInject constructor(
         syncSide: SyncSide,
         relativeParentDirPath: String,
     ): SyncObject = SyncObject(
-        id = randomUUID,
+        id = newRandomId,
         taskId = taskId,
         executionId = executionId,
 

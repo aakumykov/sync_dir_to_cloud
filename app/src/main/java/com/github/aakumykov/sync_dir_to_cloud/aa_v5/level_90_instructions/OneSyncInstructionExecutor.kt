@@ -4,7 +4,6 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamWriterCancelledException
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FSItemDeleter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleterAssistedFactory
@@ -17,17 +16,14 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import kotlin.coroutines.suspendCoroutine
 
 
 class OneSyncInstructionExecutor @AssistedInject constructor(
@@ -169,8 +165,8 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             }
         }*/
 
-        val logItemId = randomUUID
-        val jobCancellationId = randomUUID
+        val logItemId = newRandomId
+        val jobCancellationId = newRandomId
 
         /*val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
 

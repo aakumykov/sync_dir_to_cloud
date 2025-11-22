@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.SyncOb
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.config.AppPreferences
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -70,7 +70,7 @@ class TaskBackupDirPreparer @AssistedInject constructor(
         taskUniqueDirNameMakerAssistedFactory.create(
             syncTask,
             dirNamePrefixSupplier = { appPreferences.BACKUPS_TOP_DIR_PREFIX },
-            dirNameSuffixSupplier = { randomUUID },
+            dirNameSuffixSupplier = { newRandomId },
             appPreferences.BACKUP_DIR_CREATION_MAX_ATTEMPTS_COUNT
         )
     }
