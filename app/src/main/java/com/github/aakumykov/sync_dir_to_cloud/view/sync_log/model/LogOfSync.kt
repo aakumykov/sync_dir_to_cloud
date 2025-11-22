@@ -57,4 +57,6 @@ data class LogOfSync(
 }
 
 
-val LogOfSync.isRunning: Boolean get() = OperationState.RUNNING == operationState
+val LogOfSync.isRunning: Boolean get() {
+    return operationState in listOf(OperationState.RUNNING, OperationState.WAITING)
+}

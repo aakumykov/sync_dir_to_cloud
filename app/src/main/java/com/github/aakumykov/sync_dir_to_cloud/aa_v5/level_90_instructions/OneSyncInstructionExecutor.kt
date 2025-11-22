@@ -172,12 +172,17 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
             logE(throwable.errorMsgExtended)
+            scope.launch {
+                syncOperationLogger.logFail(logItemId, throwable.errorMsg)
+            }
         }
 
         val job = scope.launch (context = exceptionHandler, start = CoroutineStart.LAZY) {
             try {
 
                 val sourceObjectId = syncInstruction.objectIdInSource!!
+
+                syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
 
                 syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
                     itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
@@ -186,15 +191,12 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 }
 
                 syncOperationLogger.logSuccess(logItemId)
-
             }
             catch (e: CancellationException) {
                 // TODO: logCancelled()
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
             }
-            catch (throwable: Throwable) {
-                syncOperationLogger.logFail(logItemId, throwable.errorMsg)
-            } finally {
+            finally {
                 operationCancellationHolder.removeJob(jobCancellationId)
             }
 
@@ -202,10 +204,9 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             operationCancellationHolder.addJob(jobCancellationId, this)
         }
 
-        syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
         job.join()
-        syncOperationLogger.logSuccess(logItemId)
     }
+
 
     private suspend fun copyFromTargetToSource(syncInstruction: SyncInstruction) {
         /*syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
