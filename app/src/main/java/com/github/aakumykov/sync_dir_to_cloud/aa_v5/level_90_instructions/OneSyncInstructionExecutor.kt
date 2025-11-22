@@ -5,25 +5,35 @@ import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamWriterCancelledException
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCopier
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FSItemDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCollisionResolverAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.suspendCoroutine
 
 
 class OneSyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
+    @Assisted private val scope: CoroutineScope,
 
     private val syncOptions: SyncOptions,
 
@@ -39,6 +49,8 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val syncOperationLoggerAssistedFactory: SyncOperationLoggerAssistedFactory,
 
     private val backupInstructionExecutorAssistedFactory: BackupInstructionExecutor2AssistedFactory,
+
+    private val operationCancellationHolder: OperationCancellationHolder,
 ){
     suspend fun execute(instruction: SyncInstruction) {
 
@@ -65,25 +77,25 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     }
 
     private suspend fun backupInTarget(instruction: SyncInstruction) {
-        syncOperationLogger.logWaiting(instruction).also { logItemId ->
+        /*syncOperationLogger.logWaiting(instruction, null).also { logItemId ->
             try {
                 backupInstructionExecutor.backupInTarget(instruction)
                 syncOperationLogger.logSuccess(logItemId)
             } catch (e: Exception) {
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
             }
-        }
+        }*/
     }
 
     private suspend fun backupInSource(instruction: SyncInstruction) {
-        syncOperationLogger.logWaiting(instruction).also { logItemId ->
+        /*syncOperationLogger.logWaiting(instruction, null).also { logItemId ->
             try {
                 backupInstructionExecutor.backupInSource(instruction)
                 syncOperationLogger.logSuccess(logItemId)
             } catch (e: Exception) {
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
             }
-        }
+        }*/
     }
 
 
@@ -125,7 +137,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
 
     private suspend fun resolveCollisionFor(syncInstruction: SyncInstruction) {
-        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+        /*syncOperationLogger.logWaiting(syncInstruction, null).also { logItemId ->
             try {
                 collisionResolver.resolveCollision(syncInstruction.objectIdInSource!!, syncInstruction.objectIdInTarget!!)
                 syncOperationLogger.logSuccess(logItemId)
@@ -133,11 +145,11 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
             }
-        }
+        }*/
     }
 
     private suspend fun copyFromSourceToTarget(syncInstruction: SyncInstruction) {
-        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+        /*syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             try {
                 val sourceObjectId = syncInstruction.objectIdInSource!!
                 syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
@@ -155,11 +167,50 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
             }
+        }*/
+
+        val logItemId = randomUUID
+        val jobCancellationId = randomUUID
+
+        /*val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+
+        }*/
+
+        val job = scope.launch (/*context = exceptionHandler, */start = CoroutineStart.LAZY) {
+            try {
+
+                val sourceObjectId = syncInstruction.objectIdInSource!!
+
+                syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
+                    itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
+                } ?: {
+                    throw NoSourceObjectInDatabase(sourceObjectId)
+                }
+
+                syncOperationLogger.logSuccess(logItemId)
+
+            }
+            catch (e: CancellationException) {
+                // TODO: logCancelled()
+                syncOperationLogger.logFail(logItemId, e.errorMsg)
+            }
+            catch (throwable: Throwable) {
+                syncOperationLogger.logFail(logItemId, throwable.errorMsg)
+            } finally {
+                operationCancellationHolder.removeJob(jobCancellationId)
+            }
+
+        }.apply {
+            operationCancellationHolder.addJob(jobCancellationId, this)
         }
+
+        syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
+        job.join()
+        syncOperationLogger.logSuccess(logItemId)
     }
 
     private suspend fun copyFromTargetToSource(syncInstruction: SyncInstruction) {
-        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+        /*syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             try {
                 val targetObjectId = syncInstruction.objectIdInTarget!!
                 syncObjectDBReader.getSyncObject(targetObjectId)?.also {
@@ -177,7 +228,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
             }
-        }
+        }*/
     }
 
 
@@ -186,7 +237,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
      * // Это делается в [SyncInstructionsProcessor.processInstructions]
      */
     private suspend fun deleteInSource(syncInstruction: SyncInstruction) {
-        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+        /*syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             val sourceItemId = syncInstruction.objectIdInSource!!
             try {
                 syncObjectDBReader.getSyncObject(sourceItemId)?.also {
@@ -199,11 +250,11 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
             }
-        }
+        }*/
     }
 
     private suspend fun deleteInTarget(syncInstruction: SyncInstruction) {
-        syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
+        /*syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
             val targetItemId = syncInstruction.objectIdInTarget!!
             try {
                 syncObjectDBReader.getSyncObject(targetItemId)?.also {
@@ -216,7 +267,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 syncOperationLogger.logFail(logItemId, e.errorMsg)
                 logE(e)
             }
-        }
+        }*/
     }
 
 
@@ -268,7 +319,11 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
 @AssistedFactory
 interface OneSyncInstructionExecutorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): OneSyncInstructionExecutor
+    fun create(
+        syncTask: SyncTask,
+        executionId: String,
+        scope: CoroutineScope,
+    ): OneSyncInstructionExecutor
 }
 
 

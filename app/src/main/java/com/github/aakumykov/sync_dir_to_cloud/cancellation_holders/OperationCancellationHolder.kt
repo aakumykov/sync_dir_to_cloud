@@ -11,7 +11,7 @@ class OperationCancellationHolder @Inject constructor() {
 
     private val jobMap: ConcurrentMap<String, Job> = ConcurrentHashMap()
 
-    fun addJob(operationId: String, job: Job) { jobMap[operationId] = job }
-    fun getJob(operationId: String): Job? = jobMap[operationId]
-    fun removeJob(operationId: String) = jobMap.remove(operationId)
+    fun addJob(id: String, job: Job) { jobMap[id] = job }
+    fun getJob(id: String): Job? = jobMap[id]
+    fun removeJob(id: String) = jobMap.remove(id)
 }

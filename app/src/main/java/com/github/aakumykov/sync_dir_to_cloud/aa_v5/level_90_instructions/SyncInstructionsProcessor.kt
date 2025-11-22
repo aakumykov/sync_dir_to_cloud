@@ -67,12 +67,12 @@ class SyncInstructionsProcessor @AssistedInject constructor(
 
                 filter { it.isDir }
                     .forEach { syncInstruction ->
-                        syncInstructionExecutor.execute(syncInstruction)
+                        oneSyncInstructionExecutor.execute(syncInstruction)
                     }
 
                 filter { it.isFile }
                     .forEach { syncInstruction ->
-                        syncInstructionExecutor.execute(syncInstruction)
+                        oneSyncInstructionExecutor.execute(syncInstruction)
                     }
             }
 
@@ -84,7 +84,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { if (isDir) it.isDir else it.isFile }
             .filter { it.isCollisionResolution }
             .forEach { syncInstruction ->
-                syncInstructionExecutor.execute(syncInstruction)
+                oneSyncInstructionExecutor.execute(syncInstruction)
             }
     }
 
@@ -94,7 +94,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isDeletion }
             .forEach { syncInstruction ->
-                syncInstructionExecutor.execute(syncInstruction)
+                oneSyncInstructionExecutor.execute(syncInstruction)
             }
     }
 
@@ -105,7 +105,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .sortedBy { it.relativePath.length }
             .reversed()
             .forEach { syncInstruction ->
-                syncInstructionExecutor.execute(syncInstruction)
+                oneSyncInstructionExecutor.execute(syncInstruction)
             }
     }
 
@@ -114,7 +114,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.notDeletion }
             .forEach { instruction ->
-                syncInstructionExecutor.execute(instruction)
+                oneSyncInstructionExecutor.execute(instruction)
             }
     }
 
@@ -123,7 +123,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isCopying }
             .forEach { instruction ->
-                syncInstructionExecutor.execute(instruction)
+                oneSyncInstructionExecutor.execute(instruction)
             }
     }
 
@@ -140,8 +140,8 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { it.notProcessed }
     }
 
-    private val syncInstructionExecutor by lazy {
-        oneSyncInstructionExecutorAssistedFactory.create(syncTask, executionId)
+    private val oneSyncInstructionExecutor by lazy {
+        oneSyncInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
     }
 
     companion object {

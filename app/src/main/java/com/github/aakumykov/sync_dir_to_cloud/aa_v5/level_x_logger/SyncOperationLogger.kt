@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
-import com.github.aakumykov.sync_dir_to_cloud.randomUUID
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import dagger.assisted.Assisted
@@ -21,11 +20,8 @@ class SyncOperationLogger @AssistedInject constructor(
     private val repository: SyncOperationLogRepository,
     private val resources: Resources,
 ) {
-    suspend fun logWaiting(syncInstruction: SyncInstruction): String {
-        return syncOperationWithState(syncInstruction, OperationState.WAITING).let {
-            repository.add(it)
-            it.id
-        }
+    suspend fun logWaiting(id: String, syncInstruction: SyncInstruction, jobId: String?) {
+        repository.add(syncOperationWithState(id, syncInstruction, OperationState.WAITING, jobId))
     }
 
     suspend fun logSuccess(logItemId: String) {
@@ -37,11 +33,17 @@ class SyncOperationLogger @AssistedInject constructor(
     }
 
 
-    private fun syncOperationWithState(syncInstruction: SyncInstruction, operationState: OperationState): SyncOperationLogItem {
+    private fun syncOperationWithState(
+        id: String,
+        syncInstruction: SyncInstruction,
+        operationState: OperationState,
+        jobId: String?,
+    ): SyncOperationLogItem {
         return SyncOperationLogItem(
-            id = randomUUID,
+            id = id,
             taskId = taskId,
             executionId = executionId,
+            jobId = jobId,
             timestamp = currentTime,
             sourceObjectId = syncInstruction.objectIdInSource,
             targetObjectId = syncInstruction.objectIdInTarget,
