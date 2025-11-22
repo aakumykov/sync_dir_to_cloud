@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
+@Deprecated("Не используется")
 @Entity(
     tableName = SyncObjectLogItem.TABLE_NAME,
     /*primaryKeys = [
