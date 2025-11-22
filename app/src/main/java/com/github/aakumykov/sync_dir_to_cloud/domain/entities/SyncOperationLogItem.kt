@@ -34,6 +34,9 @@ class SyncOperationLogItem(
     @ColumnInfo(name = "execution_id")
     val executionId: String,
 
+    @ColumnInfo(name = "job_id", defaultValue = "null")
+    val jobId: String? = null,
+
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,
 
