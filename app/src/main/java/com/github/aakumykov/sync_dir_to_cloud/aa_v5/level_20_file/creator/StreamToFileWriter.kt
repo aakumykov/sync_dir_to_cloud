@@ -80,7 +80,7 @@ class StreamToFileWriter @AssistedInject constructor(
                             if (!cont.isActive)
                                 return@putStream
 
-                            Log.d(TAG, "progress: $progress")
+//                            Log.d(TAG, "progress: $progress")
                             progressCallback?.invoke(progress)
 
                         },

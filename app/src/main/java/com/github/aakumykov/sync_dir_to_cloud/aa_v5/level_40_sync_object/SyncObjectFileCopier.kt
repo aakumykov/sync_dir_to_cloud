@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriterAssistedFactory
@@ -38,6 +39,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
             absolutePathInTarget,
             overwriteIfExists
         ) { transferredBytes ->
+            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
             // FIXME: внедрять!
             CoroutineScope(Dispatchers.IO).launch {
                 syncObjectLogProgressUpdater.updateProgress(
@@ -50,6 +52,10 @@ class SyncObjectFileCopier @AssistedInject constructor(
         }
     }
 
+    private fun logProgress(fileSize: Long, transferredBytes: Long, percent: Int) {
+        Log.d(TAG, ("${transferredBytes}/${fileSize} (${percent}%)"))
+    }
+
     @Throws(StreamWriterCancelledException::class)
     suspend fun copyFileFromTargetToSource(syncObject: SyncObject,
                                            absolutePathInSource: String,
@@ -59,6 +65,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
             absolutePathInSource,
             overwriteIfExists
         ) { transferredBytes ->
+            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
             // FIXME: внедрять!
             CoroutineScope(Dispatchers.IO).launch {
                 syncObjectLogProgressUpdater.updateProgress(
@@ -77,6 +84,11 @@ class SyncObjectFileCopier @AssistedInject constructor(
 
     private val fileWriter: StreamToFileWriter
         get() = streamToFileWriterAssistedFactory.create(syncTask)
+
+
+    companion object {
+        val TAG: String = SyncObjectFileCopier::class.java.simpleName
+    }
 }
 
 
