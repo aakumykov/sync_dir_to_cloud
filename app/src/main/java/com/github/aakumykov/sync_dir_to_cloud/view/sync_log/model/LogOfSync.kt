@@ -55,3 +55,6 @@ data class LogOfSync(
         return "LogOfSync(text='$text', subText='$subText', timestamp=$timestamp)"
     }
 }
+
+
+val LogOfSync.isRunning: Boolean get() = OperationState.RUNNING == operationState

@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.github.aakumykov.file_lister_navigator_selector.extensions.hide
+import com.github.aakumykov.file_lister_navigator_selector.extensions.visible
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -12,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.syncLogFormattedDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isRunning
 import kotlinx.coroutines.CancellationException
 
 class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
@@ -52,14 +55,20 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
         timeView.text = syncLogFormattedDateTime(logOfSync.timestamp)
 
-        cancelIcon.setOnClickListener { v ->
-            logOfSync.jobId?.also {
-                appComponent.getOperationCancellationHolder().getJob(it)
-                    ?.cancel(CancellationException("Отменено пользователем"))
-                    ?: context.showToast("Не найден JobId!")
+        if (logOfSync.isRunning) {
+            logOfSync.jobId?.also { theJobId ->
+                cancelIcon.setOnClickListener { v ->
+                    appComponent.getOperationCancellationHolder().getJob(theJobId)
+                        ?.cancel(CancellationException("Отменено пользователем"))
+                        ?: context.showToast("Не найден JobId!")
+                }
+                cancelIcon.visible()
+
             } ?: run {
-                context.showToast("Неотменяемая операция")
+                cancelIcon.hide()
             }
+        } else {
+            cancelIcon.hide()
         }
 
         stateIconView.setImageResource(when(logOfSync.operationState){
