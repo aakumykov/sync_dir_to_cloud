@@ -14,7 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.adapter.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.parcelize.Parcelize
 
 class LogItemDetailsDialog : DialogFragment() {

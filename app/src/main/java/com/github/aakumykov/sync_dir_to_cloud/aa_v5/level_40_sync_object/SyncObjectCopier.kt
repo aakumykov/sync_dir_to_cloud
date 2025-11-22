@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.SyncObjectDirCreator
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamWriterCancelledException
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Распределяет работу между FileCopier-ом и DirCreator-ом.
@@ -20,21 +21,22 @@ import dagger.assisted.AssistedInject
 class SyncObjectCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val fileCopierAssistedFactory: FileCopier5AssistedFactory,
-    private val dirCreatorAssistedFactory: DirCreator5AssistedFactory,
+    @Assisted private val databaseInteractingScope: CoroutineScope,
+    private val syncObjectFileCopierAssistedFactory: SyncObjectFileCopierAssistedFactory,
+    private val syncObjectDirCreatorAssistedFactory: DirCreator5AssistedFactory,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory,
 ){
     // TODO: разобраться, как overwriteIfExists сочетается с бекапом
 
-    private val fileCopier: SyncObjectFileCopier by lazy { fileCopierAssistedFactory.create(syncTask, executionId) }
+    private val fileCopier: SyncObjectFileCopier by lazy { syncObjectFileCopierAssistedFactory.create(syncTask, executionId, databaseInteractingScope) }
 
-    private val dirCreator: SyncObjectDirCreator by lazy { dirCreatorAssistedFactory.create(syncTask) }
+    private val dirCreator: SyncObjectDirCreator by lazy { syncObjectDirCreatorAssistedFactory.create(syncTask) }
 
     private val syncObjectActualizer: SyncObjectActualizer by lazy { syncObjectActualizerAssistedFactory.create(syncTask, executionId) }
 
 
-    @Throws(StreamWriterCancelledException::class)
+    @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
     suspend fun copySyncObjectFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
 
         if (syncObject.isDir) createDirInTarget(syncObject)
@@ -50,7 +52,7 @@ class SyncObjectCopier @AssistedInject constructor(
     }
 
 
-    @Throws(StreamWriterCancelledException::class)
+    @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
     suspend fun copySyncObjectFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
         if (syncObject.isDir) createDirInSource(syncObject)
         else copyFileFromTargetToSource(syncObject, overwriteIfExists)
@@ -66,6 +68,7 @@ class SyncObjectCopier @AssistedInject constructor(
 
 
     // FIXME: аргумент "overwriteIfExists" не используется
+    @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
     private suspend fun copyFileFromSourceToTarget(syncObject: SyncObject, overwriteIfExists: Boolean) {
         fileCopier.copyFileFromSourceToTarget(
             syncObject,
@@ -75,6 +78,7 @@ class SyncObjectCopier @AssistedInject constructor(
 
 
     // FIXME: аргумент "overwriteIfExists" не используется
+    @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
     private suspend fun copyFileFromTargetToSource(syncObject: SyncObject, overwriteIfExists: Boolean) {
         fileCopier.copyFileFromTargetToSource(
             syncObject,
@@ -104,5 +108,5 @@ class SyncObjectCopier @AssistedInject constructor(
 
 @AssistedFactory
 interface ItemCopierAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): SyncObjectCopier
+    fun create(syncTask: SyncTask, executionId: String, databaseInteractingScope: CoroutineScope): SyncObjectCopier
 }

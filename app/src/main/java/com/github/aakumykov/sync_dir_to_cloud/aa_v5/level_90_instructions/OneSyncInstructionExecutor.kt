@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
@@ -21,6 +22,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -155,7 +157,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 }
                 syncOperationLogger.logSuccess(logItemId)
             }
-            catch (e: StreamWriterCancelledException) {
+            catch (e: StreamToFileCopyingCancellationException) {
                 // TODO: обработка
             }
             catch (e: Exception) {
@@ -168,11 +170,11 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         val logItemId = newRandomId
         val jobCancellationId = newRandomId
 
-        /*val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            logE(throwable.errorMsgExtended)
+        }
 
-        }*/
-
-        val job = scope.launch (/*context = exceptionHandler, */start = CoroutineStart.LAZY) {
+        val job = scope.launch (context = exceptionHandler, start = CoroutineStart.LAZY) {
             try {
 
                 val sourceObjectId = syncInstruction.objectIdInSource!!
@@ -216,7 +218,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 }
                 syncOperationLogger.logSuccess(logItemId)
             }
-            catch (e: StreamWriterCancelledException) {
+            catch (e: StreamToFileCopyingCancellationException) {
                 // TODO: обработка
             }
             catch (e: Exception) {
@@ -277,7 +279,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
 
     private val itemCopier: SyncObjectCopier by lazy {
-        itemCopierAssistedFactory.create(syncTask, executionId)
+        itemCopierAssistedFactory.create(syncTask, executionId, scope)
     }
 
 

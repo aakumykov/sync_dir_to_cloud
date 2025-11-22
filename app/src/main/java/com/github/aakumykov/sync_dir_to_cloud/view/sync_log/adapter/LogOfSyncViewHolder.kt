@@ -7,8 +7,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.utils.syncLogFormattedDateTime
+import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import kotlinx.coroutines.CancellationException
 
 class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
@@ -18,6 +22,7 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
     private lateinit var sizeView: TextView
     private lateinit var stateIconView: ImageView
     private lateinit var progressBar: ProgressBar
+    private lateinit var cancelIcon: ImageView
 
     private val context: Context get() = detailsView.context
 
@@ -33,26 +38,37 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
             max = 100
             visibility = View.INVISIBLE
         }
+
+        cancelIcon = itemView.findViewById(R.id.syncLogOperationCancelIcon)
     }
 
-    override fun fill(item: LogOfSync, isSelected: Boolean) {
+    override fun fill(logOfSync: LogOfSync, isSelected: Boolean) {
 
-        operationNameView.text = item.text
+        operationNameView.text = logOfSync.text
 
-        detailsView.text = item.subText
+        detailsView.text = logOfSync.subText
 
 //        sizeView.text = FileSizeHelper.bytes2size(context, item.size)
 
-        timeView.text = syncLogFormattedDateTime(item.timestamp)
+        timeView.text = syncLogFormattedDateTime(logOfSync.timestamp)
 
+        cancelIcon.setOnClickListener { v ->
+            logOfSync.jobId?.also {
+                appComponent.getOperationCancellationHolder().getJob(it)
+                    ?.cancel(CancellationException("Отменено пользователем"))
+                    ?: context.showToast("Не найден JobId!")
+            } ?: run {
+                context.showToast("Неотменяемая операция")
+            }
+        }
 
-        stateIconView.setImageResource(when(item.operationState){
+        stateIconView.setImageResource(when(logOfSync.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success
             OperationState.ERROR -> R.drawable.ic_sync_log_error
             else -> R.drawable.ic_sync_log_waiting
         })
 
-        item.progress?.also { progressValue: Int ->
+        logOfSync.progress?.also { progressValue: Int ->
             progressBar.apply {
                 progress = progressValue
                 visibility = View.VISIBLE

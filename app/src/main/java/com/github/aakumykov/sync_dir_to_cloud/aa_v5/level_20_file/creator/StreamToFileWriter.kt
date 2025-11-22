@@ -9,10 +9,21 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
+/**
+ * Методы этого класса обязаны быть "suspend",
+ * чтобы реагировать на отмену закрытием потока.
+ *
+ * А вот коллбеки у них не-suspend. Причина - они используются в не-suspend коллбеках
+ * внешних библиотек, которые не хочется переписывать.
+ *
+ * Для решения проблемы вызова suspend-функций в коллбеках этого класса,
+ * нуужно применять scope в вышележащих методах.
+ */
 class StreamToFileWriter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
@@ -80,7 +91,6 @@ class StreamToFileWriter @AssistedInject constructor(
                             if (!cont.isActive)
                                 return@putStream
 
-//                            Log.d(TAG, "progress: $progress")
                             progressCallback?.invoke(progress)
 
                         },
@@ -101,6 +111,8 @@ class StreamToFileWriter @AssistedInject constructor(
     companion object {
         val TAG: String = StreamToFileWriter::class.java.simpleName
     }
+
+    class StreamWriterCancelledException(message: String) : IOException(message)
 }
 
 @AssistedFactory

@@ -128,8 +128,8 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         runBlocking {
             syncTaskExecutor.stopExecutingTask(taskId!!)
         }
-//        scope?.cancel(CancellationException("ОСТАНОВЛЕНО ВРУЧНУЮ [${hashCode}], executorHashCode: ${syncTaskExecutor.hashCode()}"))
-        scope?.cancel(CancellationException("ОСТАНОВЛЕНО ВРУЧНУЮ"))
+//        scope?.cancel(StreamToFileCopyingCancellationException("ОСТАНОВЛЕНО ВРУЧНУЮ [${hashCode}], executorHashCode: ${syncTaskExecutor.hashCode()}"))
+        scope?.cancel(StreamToFileCopyingCancellationException("ОСТАНОВЛЕНО ВРУЧНУЮ"))
         val taskId: String? = inputData.getString(TASK_ID)
         MyLogger.d(TAG, "onStopped() [${hashCode}], taskId: $taskId")
     }*/

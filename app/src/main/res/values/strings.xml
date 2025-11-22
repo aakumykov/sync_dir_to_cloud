@@ -174,4 +174,5 @@
     <string name="SETTINGS_re_create_missing_source_and_target_dirs">Re-create lost Source and Target dirs</string>
     <string name="SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs">Dangerous. Leads to data loss in tasks with backup disabled!</string>
     <string name="KEY_re_create_missing_source_and_target_dirs" translatable="false">re_create_missing_source_and_target_dirs</string>
+    <string name="description_operation_cancel_icon">Cancel operation</string>
 </resources>

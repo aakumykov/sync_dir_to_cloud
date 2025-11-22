@@ -1,7 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.adapter
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
@@ -9,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 data class LogOfSync(
     val taskId: String,
     val executionId: String,
+    val jobId: String? = null,
     val text: String,
     val subText: String,
     val timestamp: Long,
@@ -28,23 +28,12 @@ data class LogOfSync(
             )
         }
 
-        @Deprecated("Не используется")
-        /*fun fromSyncObjectLogItem(item: SyncObjectLogItem): LogOfSync {
-            return LogOfSync(
-                taskId = item.taskId,
-                executionId = item.executionId,
-                text = item.operationName,
-                subText = item.errorMessage ?: item.itemName,
-                timestamp = item.timestamp,
-                operationState = item.operationState,
-                progress = item.progress,
-            )
-        }*/
 
         fun fromSyncOperationLogItem(item: SyncOperationLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
+                jobId = item.jobId,
                 text = item.operationName,
                 subText = item.errorMsg ?: item.objectName,
                 timestamp = item.timestamp,
