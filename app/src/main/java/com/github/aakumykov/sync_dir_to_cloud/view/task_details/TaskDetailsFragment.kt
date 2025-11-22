@@ -26,6 +26,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
+import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsAdapter
+import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsViewHolder
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import kotlinx.coroutines.launch
 

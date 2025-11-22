@@ -4,7 +4,8 @@ import androidx.annotation.DrawableRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 
-class SyncObjectStateIconProvider {
+@Deprecated("Не используется")
+class SyncObjectStateIconHelper {
     companion object {
         @DrawableRes
         fun getIconFor(syncState: ExecutionState): Int {
@@ -16,5 +17,4 @@ class SyncObjectStateIconProvider {
             }
         }
     }
-
 }
