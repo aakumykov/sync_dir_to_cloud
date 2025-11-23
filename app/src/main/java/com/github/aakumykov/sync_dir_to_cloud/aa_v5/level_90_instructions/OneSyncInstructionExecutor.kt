@@ -222,7 +222,8 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                     throw NoSourceObjectInDatabase(sourceObjectId)
                 }
 
-                syncOperationLogger.logSuccess(logItemId)
+                syncOperationLogger.logFail(logItemId, "t.errorMsg")
+//                syncOperationLogger.logSuccess(logItemId)
 
             }
             catch (e: CancellationException) {

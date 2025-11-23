@@ -33,8 +33,8 @@ class SyncOperationLogger @AssistedInject constructor(
     }
 
     suspend fun logFail(logItemId: String, errorMsg: String) {
-//        repository.updateLogItemState(logItemId, OperationState.ERROR, errorMsg)
-        repository.updateLogItemState(logItemId, OperationState.ERROR)
+        repository.updateLogItemState(logItemId, OperationState.ERROR, errorMsg)
+//        repository.updateLogItemState(logItemId, OperationState.ERROR)
     }
 
 
