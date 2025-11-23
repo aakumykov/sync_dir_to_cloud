@@ -167,7 +167,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             }
         }*/
 
-        val logItemId = newRandomId
+        /*val logItemId = newRandomId
         val jobCancellationId = newRandomId
 
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -204,7 +204,41 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             operationCancellationHolder.addJob(jobCancellationId, this)
         }
 
-        job.join()
+        job.join()*/
+
+
+        val logItemId = newRandomId
+        val jobCancellationId = newRandomId
+
+        scope.launch {
+            try {
+                val sourceObjectId = syncInstruction.objectIdInSource!!
+
+                syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
+
+                    itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
+
+                } ?: {
+                    throw NoSourceObjectInDatabase(sourceObjectId)
+                }
+
+                syncOperationLogger.logSuccess(logItemId)
+
+            }
+            catch (e: CancellationException) {
+                syncOperationLogger.logCancelled(logItemId, e.errorMsg)
+            }
+            catch (t: Throwable) {
+                syncOperationLogger.logFail(logItemId, t.errorMsg)
+            }
+            finally {
+                operationCancellationHolder.removeJob(jobCancellationId)
+            }
+        }.also { job ->
+            operationCancellationHolder.addJob(jobCancellationId, job)
+            syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
+            job.join()
+        }
     }
 
 

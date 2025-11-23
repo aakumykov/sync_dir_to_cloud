@@ -20,16 +20,21 @@ class SyncOperationLogger @AssistedInject constructor(
     private val repository: SyncOperationLogRepository,
     private val resources: Resources,
 ) {
-    suspend fun logWaiting(id: String, syncInstruction: SyncInstruction, jobId: String?) {
-        repository.add(syncOperationWithState(id, syncInstruction, OperationState.WAITING, jobId))
+    suspend fun logWaiting(logItemId: String, syncInstruction: SyncInstruction, jobId: String?) {
+        repository.add(syncOperationWithState(logItemId, syncInstruction, OperationState.WAITING, jobId))
     }
 
     suspend fun logSuccess(logItemId: String) {
         repository.updateLogItemState(logItemId, OperationState.SUCCESS)
     }
 
+    suspend fun logCancelled(logItemId: String, cancellationMessage: String) {
+        repository.updateLogItemState(logItemId, OperationState.CANCELLED, cancellationMessage)
+    }
+
     suspend fun logFail(logItemId: String, errorMsg: String) {
-        repository.updateLogItemState(logItemId, OperationState.ERROR, errorMsg)
+//        repository.updateLogItemState(logItemId, OperationState.ERROR, errorMsg)
+        repository.updateLogItemState(logItemId, OperationState.ERROR)
     }
 
 

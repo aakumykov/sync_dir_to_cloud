@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isRunning
 import kotlinx.coroutines.CancellationException
 
-class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
+class SyncLogViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
 
     private lateinit var operationNameView: TextView
     private lateinit var timeView: TextView
@@ -74,7 +74,10 @@ class LogOfSyncViewHolder : ListHoldingListAdapter.ViewHolder<LogOfSync>() {
         stateIconView.setImageResource(when(logOfSync.operationState){
             OperationState.SUCCESS -> R.drawable.ic_sync_log_success
             OperationState.ERROR -> R.drawable.ic_sync_log_error
-            else -> R.drawable.ic_sync_log_waiting
+            OperationState.CANCELLED -> R.drawable.ic_sync_log_cancelled
+            else -> {
+                R.drawable.ic_sync_log_waiting
+            }
         })
 
         logOfSync.progress?.also { progressValue: Int ->

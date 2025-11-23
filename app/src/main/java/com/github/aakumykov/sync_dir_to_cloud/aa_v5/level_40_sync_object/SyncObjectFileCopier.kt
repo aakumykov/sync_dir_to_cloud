@@ -76,7 +76,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
     }
 
     private fun logProgress(fileSize: Long, transferredBytes: Long, percent: Int) {
-        Log.d(TAG, ("${transferredBytes}/${fileSize} (${percent}%)"))
+//        Log.d(TAG, ("${transferredBytes}/${fileSize} (${percent}%)"))
     }
 
 

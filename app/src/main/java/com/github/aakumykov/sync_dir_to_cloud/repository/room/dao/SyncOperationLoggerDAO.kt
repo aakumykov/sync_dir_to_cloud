@@ -21,10 +21,15 @@ interface SyncOperationLoggerDAO {
     fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>>
 
 
-    @Query("UPDATE sync_operation_logs SET operation_state = :operationState WHERE id = :logItemId")
+    @Query("UPDATE sync_operation_logs SET " +
+            "operation_state = :operationState " +
+            "WHERE id = :logItemId")
     suspend fun updateState(logItemId: String, operationState: OperationState)
 
 
-    @Query("UPDATE sync_operation_logs SET operation_state = :operationState, error_msg = :errorMsg WHERE id = :logItemId")
+    @Query("UPDATE sync_operation_logs SET " +
+            "operation_state = :operationState, " +
+            "error_msg = :errorMsg " +
+            "WHERE id = :logItemId")
     suspend fun updateStateAndError(logItemId: String, operationState: OperationState, errorMsg: String)
 }

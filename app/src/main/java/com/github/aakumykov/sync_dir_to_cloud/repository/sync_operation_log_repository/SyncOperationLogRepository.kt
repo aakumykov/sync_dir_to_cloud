@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
@@ -24,6 +25,14 @@ class SyncOperationLogRepository @Inject constructor(
     }
 
     suspend fun updateLogItemState(logItemId: String, operationState: OperationState, errorMsg: String) {
+        /*Log.d(
+            TAG,
+            "updateLogItemState(): logItemId = $logItemId, operationState = $operationState, errorMsg = $errorMsg"
+        )*/
         return syncOperationLoggerDAO.updateStateAndError(logItemId, operationState, errorMsg)
+    }
+
+    companion object {
+        val TAG: String = SyncOperationLogRepository::class.java.simpleName
     }
 }
