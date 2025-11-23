@@ -218,6 +218,8 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         try {
             val sourceObjectId = syncInstruction.objectIdInSource!!
 
+            syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
+
             syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
 
                 itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
