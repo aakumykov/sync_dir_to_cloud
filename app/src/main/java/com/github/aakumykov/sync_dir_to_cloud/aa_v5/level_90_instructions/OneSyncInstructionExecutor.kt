@@ -25,6 +25,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
@@ -215,39 +216,42 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             scope.launch { syncOperationLogger.logFail(logItemId, t.errorMsg) }
         }*/
 
-        try {
-            val sourceObjectId = syncInstruction.objectIdInSource!!
+        scope.launch (/*eh*/) {
 
-            syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
+            try {
+                val sourceObjectId = syncInstruction.objectIdInSource!!
 
-            syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
+                syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
 
-                itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
+                syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
 
-            } ?: {
-                throw NoSourceObjectInDatabase(sourceObjectId)
+                    itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
+
+                } ?: {
+                    throw NoSourceObjectInDatabase(sourceObjectId)
+                }
+
+                syncOperationLogger.logSuccess(logItemId)
+
             }
-
-            syncOperationLogger.logSuccess(logItemId)
-
-        }
-        catch (e: CancellationException) {
-            syncOperationLogger.logCancelled(logItemId, e.errorMsg)
-        }
-        catch (t: Throwable) {
-            syncOperationLogger.logFail(logItemId, t.errorMsg)
-        }
-        finally {
-            operationCancellationHolder.removeJob(jobCancellationId)
-        }
-
-        /*scope.launch (eh) {
+            catch (e: CancellationException) {
+                scope.launch /*(Dispatchers.IO)*/ {
+                    syncOperationLogger.logCancelled(logItemId, e.errorMsg)
+                }.join()
+            }
+            catch (t: Throwable) {
+                scope.launch /*(Dispatchers.IO)*/ {
+                    syncOperationLogger.logFail(logItemId, t.errorMsg)
+                }.join()
+            }
+            finally {
+                operationCancellationHolder.removeJob(jobCancellationId)
+            }
 
         }.apply {
             operationCancellationHolder.addJob(jobCancellationId, job)
-            syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
             join()
-        }*/
+        }
     }
 
 

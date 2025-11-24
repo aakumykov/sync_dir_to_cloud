@@ -5,14 +5,17 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SyncOperationLogRepository @Inject constructor(
-    private val syncOperationLoggerDAO: SyncOperationLoggerDAO
+    private val syncOperationLoggerDAO: SyncOperationLoggerDAO,
 )
     : SyncOperationLogReader
 {
     suspend fun add(syncOperationLogItem: SyncOperationLogItem) {
+        Log.d(TAG, "add(): syncOperationLogItem = $syncOperationLogItem")
         syncOperationLoggerDAO.add(syncOperationLogItem)
     }
 
@@ -21,15 +24,23 @@ class SyncOperationLogRepository @Inject constructor(
     }
 
     suspend fun updateLogItemState(logItemId: String, operationState: OperationState) {
-        return syncOperationLoggerDAO.updateState(logItemId, operationState)
+        Log.d(
+            TAG,
+            "updateLogItemState(): logItemId = $logItemId, operationState = $operationState"
+        )
+        withContext(Dispatchers.IO) {
+            syncOperationLoggerDAO.updateState(logItemId, operationState)
+        }
     }
 
     suspend fun updateLogItemState(logItemId: String, operationState: OperationState, errorMsg: String) {
-        /*Log.d(
-            TAG,
-            "updateLogItemState(): logItemId = $logItemId, operationState = $operationState, errorMsg = $errorMsg"
-        )*/
-        return syncOperationLoggerDAO.updateStateAndError(logItemId, operationState, errorMsg)
+        withContext(Dispatchers.IO) {
+            Log.d(
+                TAG,
+                "updateLogItemState(): logItemId = $logItemId, operationState = $operationState, errorMsg = $errorMsg"
+            )
+            syncOperationLoggerDAO.updateStateAndError(logItemId, operationState, errorMsg)
+        }
     }
 
     companion object {

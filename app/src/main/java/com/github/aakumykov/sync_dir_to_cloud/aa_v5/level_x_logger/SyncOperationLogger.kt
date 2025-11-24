@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger
 
 import android.content.res.Resources
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -21,18 +22,28 @@ class SyncOperationLogger @AssistedInject constructor(
     private val resources: Resources,
 ) {
     suspend fun logWaiting(logItemId: String, syncInstruction: SyncInstruction, jobId: String?) {
+        Log.d(
+            TAG,
+            "logWaiting() called with: logItemId = $logItemId, syncInstruction = $syncInstruction, jobId = $jobId"
+        )
         repository.add(syncOperationWithState(logItemId, syncInstruction, OperationState.WAITING, jobId))
     }
 
     suspend fun logSuccess(logItemId: String) {
+        Log.d(TAG, "logSuccess() called with: logItemId = $logItemId")
         repository.updateLogItemState(logItemId, OperationState.SUCCESS)
     }
 
     suspend fun logCancelled(logItemId: String, cancellationMessage: String) {
+        Log.d(
+            TAG,
+            "logCancelled() called with: logItemId = $logItemId, cancellationMessage = $cancellationMessage"
+        )
         repository.updateLogItemState(logItemId, OperationState.CANCELLED, cancellationMessage)
     }
 
     suspend fun logFail(logItemId: String, errorMsg: String) {
+        Log.d(TAG, "logFail() called with: logItemId = $logItemId, errorMsg = $errorMsg")
         repository.updateLogItemState(logItemId, OperationState.ERROR, errorMsg)
 //        repository.updateLogItemState(logItemId, OperationState.ERROR)
     }
@@ -70,6 +81,10 @@ class SyncOperationLogger @AssistedInject constructor(
             SyncOperation.DO_NOTHING_IN_SOURCE -> R.string.SYNC_OPERATION_do_nothing_in_source
             SyncOperation.DO_NOTHING_IN_TARGET -> R.string.SYNC_OPERATION_do_nothing_in_target
         })
+    }
+
+    companion object {
+        val TAG: String = SyncOperationLogger::class.java.simpleName
     }
 }
 
