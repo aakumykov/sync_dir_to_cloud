@@ -17,9 +17,7 @@ class StartStopSyncTaskUseCase @Inject constructor(
 
         when (syncTask.executionState) {
             ExecutionState.RUNNING -> stopSyncTask(syncTask)
-            ExecutionState.NEVER -> startSyncTask(syncTask)
-            ExecutionState.SUCCESS -> startSyncTask(syncTask)
-            ExecutionState.ERROR -> startSyncTask(syncTask)
+            else -> startSyncTask(syncTask)
         }
     }
 

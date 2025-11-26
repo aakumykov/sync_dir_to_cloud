@@ -75,6 +75,8 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             catch (e: Exception) {
                 Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
                 return@withContext Result.failure()
+            } finally {
+                taskCancellationHolder.removeScope(taskId)
             }
         }
     }

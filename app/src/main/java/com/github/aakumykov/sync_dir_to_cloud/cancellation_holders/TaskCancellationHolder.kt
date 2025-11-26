@@ -12,7 +12,15 @@ class TaskCancellationHolder @Inject constructor() {
 
     private val scopeMap: ConcurrentMap<String, CoroutineScope> = ConcurrentHashMap()
 
-    fun addScope(taskId: String, coroutineScope: CoroutineScope) { scopeMap[taskId] = coroutineScope }
-    fun getScope(taskId: String): CoroutineScope? = scopeMap[taskId]
-    fun removeScope(taskId: String) = scopeMap.remove(taskId)
+    fun addScope(taskId: String, coroutineScope: CoroutineScope) {
+        scopeMap[taskId] = coroutineScope
+    }
+
+    fun getScope(taskId: String): CoroutineScope? {
+        return scopeMap[taskId]
+    }
+
+    fun removeScope(taskId: String) {
+        scopeMap.remove(taskId)
+    }
 }

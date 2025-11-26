@@ -71,9 +71,9 @@ class StreamToFileWriter @AssistedInject constructor(
         overwriteIfExists: Boolean,
         progressCallback: ((transferredBytes: Long) -> Unit)? = null,
     ) {
-        return suspendCancellableCoroutine { cont ->
+        return suspendCancellableCoroutine { cancellableContinuation ->
 
-            cont.invokeOnCancellation {
+            cancellableContinuation.invokeOnCancellation {
                 inputStream.close()
             }
 
@@ -85,16 +85,16 @@ class StreamToFileWriter @AssistedInject constructor(
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
 
-                            TimeUnit.MILLISECONDS.sleep(10)
+                            TimeUnit.MILLISECONDS.sleep(100)
 
-                            if (!cont.isActive)
-                                return@putStream
+                            /*if (!cancellableContinuation.isActive)
+                                return@putStream*/
 
                             progressCallback?.invoke(progress)
 
                         },
                         finishCallback = { _,_ ->
-                            cont.resume(Unit)
+                            cancellableContinuation.resume(Unit)
                         }
                     )
             } catch (t: Throwable) {
