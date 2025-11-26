@@ -149,65 +149,6 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     }
 
     private suspend fun copyFromSourceToTarget(syncInstruction: SyncInstruction) {
-        /*syncOperationLogger.logWaiting(syncInstruction).also { logItemId ->
-            try {
-                val sourceObjectId = syncInstruction.objectIdInSource!!
-                syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
-                    itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
-                } ?: {
-                    throw NoSourceObjectInDatabase(sourceObjectId)
-                }
-                syncOperationLogger.logSuccess(logItemId)
-            }
-            catch (e: StreamToFileCopyingCancellationException) {
-                // TODO: обработка
-            }
-            catch (e: Exception) {
-                // FIXME: эта ошибка должна отображаться в интерфейсе!
-                syncOperationLogger.logFail(logItemId, e.errorMsg)
-                logE(e)
-            }
-        }*/
-
-        /*val logItemId = newRandomId
-        val jobCancellationId = newRandomId
-
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            logE(throwable.errorMsgExtended)
-            scope.launch {
-                syncOperationLogger.logFail(logItemId, throwable.errorMsg)
-            }
-        }
-
-        val job = scope.launch (context = exceptionHandler, start = CoroutineStart.LAZY) {
-            try {
-
-                val sourceObjectId = syncInstruction.objectIdInSource!!
-
-                syncOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
-
-                syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
-                    itemCopier.copySyncObjectFromSourceToTarget(it, syncOptions.overwriteIfExists)
-                } ?: {
-                    throw NoSourceObjectInDatabase(sourceObjectId)
-                }
-
-                syncOperationLogger.logSuccess(logItemId)
-            }
-            catch (e: CancellationException) {
-                // TODO: logCancelled()
-                syncOperationLogger.logFail(logItemId, e.errorMsg)
-            }
-            finally {
-                operationCancellationHolder.removeJob(jobCancellationId)
-            }
-
-        }.apply {
-            operationCancellationHolder.addJob(jobCancellationId, this)
-        }
-
-        job.join()*/
-
 
         val logItemId = newRandomId
         val jobCancellationId = newRandomId
@@ -235,12 +176,14 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
             }
             catch (e: CancellationException) {
-                scope.launch /*(Dispatchers.IO)*/ {
+                // Здесь корутина переходит в неактивное состояние,
+                // поэтому запускать действие приходится в новой области видимости.
+                scope.launch {
                     syncOperationLogger.logCancelled(logItemId, e.errorMsg)
                 }.join()
             }
             catch (t: Throwable) {
-                scope.launch /*(Dispatchers.IO)*/ {
+                scope.launch {
                     syncOperationLogger.logFail(logItemId, t.errorMsg)
                 }.join()
             }

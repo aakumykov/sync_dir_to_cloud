@@ -75,7 +75,6 @@ class StreamToFileWriter @AssistedInject constructor(
 
             cont.invokeOnCancellation {
                 inputStream.close()
-//                throw StreamWriterCancelledException("Cancelled writing stream to file '$filePath'")
             }
 
             try {
