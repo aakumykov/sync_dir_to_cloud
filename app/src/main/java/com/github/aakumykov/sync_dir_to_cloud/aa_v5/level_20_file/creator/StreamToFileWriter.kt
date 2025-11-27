@@ -85,7 +85,7 @@ class StreamToFileWriter @AssistedInject constructor(
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
 
-                            TimeUnit.MILLISECONDS.sleep(100)
+                            TimeUnit.MILLISECONDS.sleep(10)
 
                             /*if (!cancellableContinuation.isActive)
                                 return@putStream*/

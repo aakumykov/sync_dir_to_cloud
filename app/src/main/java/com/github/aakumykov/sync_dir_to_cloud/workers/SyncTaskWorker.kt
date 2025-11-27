@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellat
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -62,9 +63,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             try {
                 appComponent.getSyncTaskExecutorAssistedFactory().create(this).also { syncTaskExecutor ->
                     taskCancellationHolder.addScope(taskId, this)
-                    Log.d(TAG, "[$hashCode] Задача '$taskId' начала выполнение")
+                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' начала выполнение, appComponent: ${appComponent.hashCode()}")
                     syncTaskExecutor.executeSyncTask(taskId)
-                    Log.d(TAG, "[$hashCode] Задача '$taskId' завершила выполнение")
+                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' завершила выполнение, appComponent: ${appComponent.hashCode()}")
                 }
                 Result.success()
             }

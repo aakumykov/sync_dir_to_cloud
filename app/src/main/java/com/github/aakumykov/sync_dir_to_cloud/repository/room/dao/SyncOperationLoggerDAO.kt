@@ -14,6 +14,10 @@ interface SyncOperationLoggerDAO {
     suspend fun add(syncOperationLogItem: SyncOperationLogItem)
 
 
+    @Query("SELECT * FROM sync_operation_logs WHERE id = :id")
+    suspend fun get(id: String): SyncOperationLogItem?
+
+
     @Query("SELECT * FROM sync_operation_logs WHERE " +
             "task_id = :taskId " +
             "AND execution_id = :executionId " +

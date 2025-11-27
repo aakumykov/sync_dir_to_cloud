@@ -19,6 +19,10 @@ class SyncOperationLogRepository @Inject constructor(
         syncOperationLoggerDAO.add(syncOperationLogItem)
     }
 
+    override suspend fun get(operationId: String): SyncOperationLogItem? {
+        return syncOperationLoggerDAO.get(operationId)
+    }
+
     override fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>> {
         return syncOperationLoggerDAO.listAsLiveData(taskId, executionId)
     }

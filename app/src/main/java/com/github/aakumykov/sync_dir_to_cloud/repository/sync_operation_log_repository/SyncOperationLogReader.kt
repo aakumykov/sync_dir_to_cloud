@@ -5,5 +5,5 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogIt
 
 interface SyncOperationLogReader {
     fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>>
-    fun get(operationId: String): SyncOperationLogItem
+    suspend fun get(operationId: String): SyncOperationLogItem?
 }
