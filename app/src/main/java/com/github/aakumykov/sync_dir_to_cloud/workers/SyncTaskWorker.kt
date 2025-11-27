@@ -12,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellat
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -36,7 +35,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     // FIXME: как быть с null? По идее, нужно регистрировать это как ошибку и завершать
     // задачу как "успешную", чтобы бессмысленно не пытаться выполнить её много раз.
     // Т.е. нужен доп статус спец. для этой ситуации...
-    private val taskId: String get() = inputData.getString(TASK_ID)!!
+    private val taskId: String get() = inputData.getString(KEY_TASK_ID)!!
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
 
@@ -59,13 +58,16 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
     override suspend fun doWork(): Result {
+        taskJobsHolder.work()
+        operationJobsHolder.work()
+
         return withContext(coroutineDispatcher) {
             try {
                 appComponent.getSyncTaskExecutorAssistedFactory().create(this).also { syncTaskExecutor ->
                     taskCancellationHolder.addScope(taskId, this)
-                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' начала выполнение, appComponent: ${appComponent.hashCode()}")
+                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' начала выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}")
                     syncTaskExecutor.executeSyncTask(taskId)
-                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' завершила выполнение, appComponent: ${appComponent.hashCode()}")
+                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}")
                 }
                 Result.success()
             }
@@ -144,21 +146,40 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
     private fun successData(value: String): Data {
-        return Data.Builder().apply { putString(SUMMARY, value) }.build()
+        return Data.Builder().apply { putString(KEY_SUMMARY, value) }.build()
     }
 
     private fun errorData(value: String): Data {
-        return Data.Builder().apply { putString(ERROR_MSG, value) }.build()
+        return Data.Builder().apply { putString(KEY_ERROR_MSG, value) }.build()
     }
 
     companion object {
-        fun dataWithTaskId(taskId: String): Data
-                = Data.Builder().putString(TASK_ID, taskId).build()
-
         val TAG: String = SyncTaskWorker::class.java.simpleName
 
-        const val TASK_ID: String = "TASK_ID"
-        const val ERROR_MSG: String = "ERROR_MSG"
-        const val SUMMARY: String = "SUMMARY"
+        const val KEY_TASK_ID: String = "TASK_ID"
+        const val KEY_ERROR_MSG: String = "ERROR_MSG"
+        const val KEY_SUMMARY: String = "SUMMARY"
+
+        fun dataWithTaskId(taskId: String): Data = Data.Builder().putString(KEY_TASK_ID, taskId).build()
+
+        val taskJobsHolder: TaskJobsHolder = TaskJobsHolder
+        val operationJobsHolder: OperationJobsHolder = OperationJobsHolder
+    }
+}
+
+object TaskJobsHolder {
+    init {
+        Log.d("OBJECT_INIT", "TaskJobsHolder.init{}")
+    }
+    fun work(){
+        Log.d("TaskJobsHolder", "work() called")
+    }
+}
+object OperationJobsHolder {
+    init {
+        Log.d("OBJECT_INIT", "OperationJobsHolder.init{}")
+    }
+    fun work(){
+        Log.d("OperationJobsHolder", "work() called")
     }
 }
