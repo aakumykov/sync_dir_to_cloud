@@ -13,10 +13,11 @@ import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.StorageAuth
 import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogCloudAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.utils.WebViewChecker
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.StorageTypeIconProvider
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+
 
 class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     StorageAuthenticator.Callbacks
@@ -61,9 +62,9 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
         binding.authRequestButton.visibility = if (null != cloudAuthToken) View.GONE else View.VISIBLE
     }
 
-    override fun onCloudAuthFailed(throwable: Throwable) {
+    override fun onCloudAuthFailed(t: Throwable) {
         showToast(R.string.auth_error)
-        Log.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
+        Log.e(TAG, t.errorMsg, t)
     }
 
     private fun prepareLayout() {
@@ -94,7 +95,7 @@ class CloudAuthEditDialog : DialogFragment(R.layout.dialog_cloud_auth_edit),
     private fun showError(throwable: Throwable?) {
         binding.errorView.apply {
             text = throwable?.let {
-                ExceptionUtils.getErrorMessage(throwable)
+                throwable.errorMsg
             } ?: getString(R.string.unknown_error)
             visibility = View.VISIBLE
         }

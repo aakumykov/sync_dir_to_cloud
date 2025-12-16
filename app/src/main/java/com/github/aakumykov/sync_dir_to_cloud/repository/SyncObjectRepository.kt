@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTarge
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -25,7 +26,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+
 import javax.inject.Inject
 
 @AppScope
@@ -175,7 +176,7 @@ class SyncObjectRepository @Inject constructor(
     }
 
     override suspend fun markAsError(objectId: String, t: Throwable) {
-        markAsError(objectId, ExceptionUtils.getErrorMessage(t))
+        markAsError(objectId, t.errorMsg)
     }
 
 
