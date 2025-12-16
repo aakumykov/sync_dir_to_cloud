@@ -1,13 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.cancellation_holders
 
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import kotlinx.coroutines.CoroutineScope
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import javax.inject.Inject
 
 @AppScope
+@Deprecated("к удалению")
 class TaskCancellationHolder @Inject constructor() {
 
     private val scopeMap: ConcurrentMap<String, CoroutineScope> = ConcurrentHashMap()

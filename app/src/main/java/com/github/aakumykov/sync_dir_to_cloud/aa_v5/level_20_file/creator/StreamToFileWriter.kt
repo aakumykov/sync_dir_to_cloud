@@ -74,6 +74,7 @@ class StreamToFileWriter @AssistedInject constructor(
         return suspendCancellableCoroutine { cancellableContinuation ->
 
             cancellableContinuation.invokeOnCancellation {
+                Log.d(TAG, "cancellableContinuation.invokeOnCancellation{${it?.errorMsg}}")
                 inputStream.close()
             }
 

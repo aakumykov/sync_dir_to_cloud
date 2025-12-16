@@ -3,12 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.executionIntervalNotZero
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskScheduler
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+
 import javax.inject.Inject
 
 class SchedulingSyncTaskUseCase @Inject constructor(
@@ -67,7 +68,7 @@ class SchedulingSyncTaskUseCase @Inject constructor(
     }
 
     private suspend fun markTaskAsSchedulingError(taskId: String, t: Throwable) {
-        syncTaskStateChanger.changeSchedulingState(taskId, ExecutionState.ERROR, ExceptionUtils.getErrorMessage(t))
+        syncTaskStateChanger.changeSchedulingState(taskId, ExecutionState.ERROR, t.errorMsg)
     }
 
 
@@ -87,9 +88,9 @@ class SchedulingSyncTaskUseCase @Inject constructor(
         syncTaskUpdater.updateSyncTask(syncTask)
     }
 
-    private fun setSyncTaskErrorState(syncTask: SyncTask, error: Throwable) {
-        MyLogger.e(TAG, ExceptionUtils.getErrorMessage(error), error)
-        syncTask.schedulingError = ExceptionUtils.getErrorMessage(error)
+    private fun setSyncTaskErrorState(syncTask: SyncTask, t: Throwable) {
+        MyLogger.e(TAG, t.errorMsg, t)
+        syncTask.schedulingError = t.errorMsg
         syncTaskUpdater.updateSyncTask(syncTask)
     }
 

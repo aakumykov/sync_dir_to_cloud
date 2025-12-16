@@ -20,9 +20,10 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthListRelati
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.toJSON
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEditDialog
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.ListViewAdapter
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.leinardi.android.speeddial.SpeedDialActionItem
@@ -210,7 +211,7 @@ class AuthListDialog : DialogFragment(R.layout.fragment_auth_list_relative) {
                 try {
                     Gson().fromJson(json, CloudAuth::class.java)
                 } catch (e: JsonSyntaxException) {
-                    Log.e(TAG, ExceptionUtils.getErrorMessage(e))
+                    Log.e(TAG, e.errorMsg)
                     null
                 }
             }

@@ -8,17 +8,27 @@ import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import java.util.concurrent.CancellationException
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
+//
+// FIXME: пишут, что на работу этому "воркеру" даётся 10 минут:
+//  https://developer.android.com/reference/kotlin/androidx/work/CoroutineWorker
+//
 class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
     // TODO: OutputData: краткая сводка о выполненной работе
+
+    init { Log.d(TAG, "init{}") }
 
     private val workerContext = context
 
@@ -30,7 +40,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     private val syncTaskStateChanger by lazy { appComponent.getSyncTaskStateChanger() }
     private val syncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
     private var taskSummary: String? = null
-    private val hashCode: String = hashCode().toString()
+    private val thisObjectHashCode: String = hashCode().toString()
 
     // FIXME: как быть с null? По идее, нужно регистрировать это как ошибку и завершать
     // задачу как "успешную", чтобы бессмысленно не пытаться выполнить её много раз.
@@ -58,29 +68,40 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
     override suspend fun doWork(): Result {
-        taskJobsHolder.work()
-        operationJobsHolder.work()
+        Log.d(TAG, "[worker: $thisObjectHashCode]: doWork()")
 
-        return withContext(coroutineDispatcher) {
-            try {
-                appComponent.getSyncTaskExecutorAssistedFactory().create(this).also { syncTaskExecutor ->
-                    taskCancellationHolder.addScope(taskId, this)
-                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' начала выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}")
-                    syncTaskExecutor.executeSyncTask(taskId)
-                    Log.d(TAG, "worker: [$hashCode] Задача '$taskId' завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}")
-                }
-                Result.success()
+        return CoroutineScope(coroutineDispatcher).async (coroutineDispatcher) {
+            doWorkReal(this)
+        }.also {
+            taskJobsHolder.addJob(taskId, it)
+        }.await()
+    }
+
+    private suspend fun doWorkReal(coroutineScope: CoroutineScope): androidx.work.ListenableWorker.Result {
+        return try {
+            appComponent.getSyncTaskExecutorAssistedFactory().create(coroutineScope).also { syncTaskExecutor ->
+//                taskCancellationHolder.addScope(taskId, this)
+
+                Log.d(TAG, "[worker: $thisObjectHashCode] Задача '$taskId' начала выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+
+                syncTaskExecutor.executeSyncTask(taskId)
+
+                Log.d(TAG, "[worker: $thisObjectHashCode]: Задача '$taskId' завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
             }
-            catch (e: CancellationException) {
-                Log.d(TAG, "[$hashCode] Задача '$taskId' прервана пользователем")
-                return@withContext Result.success()
-            }
-            catch (e: Exception) {
-                Log.e(TAG, ExceptionUtils.getErrorMessage(e), e)
-                return@withContext Result.failure()
-            } finally {
-                taskCancellationHolder.removeScope(taskId)
-            }
+            Result.success()
+        }
+        catch (e: CancellationException) {
+            Log.w(TAG, "[worker: $thisObjectHashCode]: Задача '$taskId' прервана пользователем (${e.errorMsgExtended}) [worker:$thisObjectHashCode]")
+            return Result.success()
+        }
+        catch (e: Exception) {
+            // FIXME: не возвращать неудачный результат, а просто сихранять ошибку в SyncTask
+            Log.e(TAG, "[worker: $thisObjectHashCode] ${e.errorMsgExtended} [worker:$thisObjectHashCode]")
+            return Result.failure()
+        }
+        finally {
+//            taskCancellationHolder.removeScope(taskId)
+            taskJobsHolder.removeJob(taskId)
         }
     }
 
@@ -111,7 +132,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         }
         catch (t: Throwable) {
             runBlocking {
-                ExceptionUtils.getErrorMessage(t).let { errorMsg ->
+                e.errorMsg.let { errorMsg ->
                     syncTaskStateChanger.changeExecutionState(taskId!!, ExecutionState.ERROR, errorMsg)
                     MyLogger.e(TAG, errorMsg, t)
                     Result.failure(errorData(errorMsg))
@@ -162,24 +183,56 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         fun dataWithTaskId(taskId: String): Data = Data.Builder().putString(KEY_TASK_ID, taskId).build()
 
-        val taskJobsHolder: TaskJobsHolder = TaskJobsHolder
-        val operationJobsHolder: OperationJobsHolder = OperationJobsHolder
+        val taskJobsHolder = TaskJobsHolder
+        val operationJobsHolder = OperationJobsHolder
     }
 }
 
+// TODO: всё-таки, хранить Job или Scope?
 object TaskJobsHolder {
-    init {
-        Log.d("OBJECT_INIT", "TaskJobsHolder.init{}")
+
+    val TAG = TaskJobsHolder.javaClass.simpleName
+
+    init { Log.d(TAG, "init{}") }
+
+    private val jobsMap: ConcurrentMap<String, Job> = ConcurrentHashMap()
+
+    fun addJob(taskId: String, coroutineScope: Job) {
+        Log.d(TAG, "addJob() called with: taskId = $taskId, coroutineScope = $coroutineScope")
+        jobsMap[taskId] = coroutineScope
     }
-    fun work(){
-        Log.d("TaskJobsHolder", "work() called")
+
+    fun getJob(taskId: String): Job? {
+        Log.d(TAG, "getJob() called with: taskId = $taskId")
+        return jobsMap[taskId]
+    }
+
+    fun removeJob(taskId: String) {
+        Log.d(TAG, "removeJob() called with: taskId = $taskId")
+        jobsMap.remove(taskId)
     }
 }
+
 object OperationJobsHolder {
-    init {
-        Log.d("OBJECT_INIT", "OperationJobsHolder.init{}")
+
+    val TAG = OperationJobsHolder.javaClass.simpleName
+
+    init { Log.d(TAG, "init{}") }
+
+    private val map: ConcurrentMap<String, Job> = ConcurrentHashMap()
+
+    fun addJob(taskId: String, job: Job) {
+        map[taskId] = job
     }
-    fun work(){
-        Log.d("OperationJobsHolder", "work() called")
+
+    fun getJob(taskId: String): Job? {
+        return map[taskId]
+    }
+
+    fun removeJob(taskId: String) {
+        map.remove(taskId)
     }
 }
+
+val taskJobsHolder: TaskJobsHolder get() = SyncTaskWorker.taskJobsHolder
+val operationJobsHolder: OperationJobsHolder get() = SyncTaskWorker.operationJobsHolder

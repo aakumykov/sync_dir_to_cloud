@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentMap
 import javax.inject.Inject
 
 @ExecutionScope
+@Deprecated("к удалению")
 class OperationCancellationHolder @Inject constructor() {
 
     private val jobMap: ConcurrentMap<String, Job> = ConcurrentHashMap()

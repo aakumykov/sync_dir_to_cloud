@@ -12,11 +12,12 @@ import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.StorageAuth
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.YandexAuthenticator
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentAuthEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setError
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.setText
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
-import com.gitlab.aakumykov.exception_utils_module.ExceptionUtils
+
 
 
 // FIXME: переименовать в CreateAuthFragment
@@ -203,12 +204,12 @@ class AuthEditFragment : DialogFragment(R.layout.fragment_auth_edit),
         hideTokenError()
     }
 
-    override fun onCloudAuthFailed(throwable: Throwable) {
+    override fun onCloudAuthFailed(t: Throwable) {
         binding.tokenView.setText("")
-        binding.tokenErrorView.text = ExceptionUtils.getErrorMessage(throwable)
+        binding.tokenErrorView.text = t.errorMsg
 
         showToast(com.github.aakumykov.sync_dir_to_cloud.R.string.auth_error)
-        MyLogger.e(TAG, ExceptionUtils.getErrorMessage(throwable), throwable)
+        MyLogger.e(TAG, t.errorMsg, t)
     }
 
     private fun showTokenError(errorMsg: String) {
