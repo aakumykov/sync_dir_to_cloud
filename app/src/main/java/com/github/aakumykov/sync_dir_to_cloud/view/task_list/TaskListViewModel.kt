@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
+import com.github.aakumykov.sync_dir_to_cloud.workers.taskJobsHolder
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -38,9 +39,10 @@ class TaskListViewModel(
 
             if (syncTaskStartStopUseCase.isRunning(taskId)) {
 
-                taskCancellationHolder.getScope(taskId)?.also { scope ->
-                    scope.cancel(CancellationException("Прервано пользователем"))
-                } ?: {
+//                taskCancellationHolder.getScope(taskId)?
+                taskJobsHolder.getJob(taskId)?.also {
+                    it.cancel(CancellationException("Прервано пользователем"))
+                } ?: run {
                     Log.e(TAG, "CoroutineScope не найден для задачи '$taskId'")
                 }
 
