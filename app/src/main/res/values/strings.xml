@@ -174,5 +174,8 @@
     <string name="SETTINGS_re_create_missing_source_and_target_dirs">Re-create lost Source and Target dirs</string>
     <string name="SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs">Dangerous. Leads to data loss in tasks with backup disabled!</string>
     <string name="KEY_re_create_missing_source_and_target_dirs" translatable="false">re_create_missing_source_and_target_dirs</string>
+    <string name="KEY_file_transfer_retardation_ms" translatable="false">file_transfer_retardation_ms</string>
     <string name="description_operation_cancel_icon">Cancel operation</string>
+    <string name="SETTINGS_file_transfer_retardation_ms">File copying retardation, ms</string>
+    <string name="SETTINGS_SUMMARY_file_transfer_retardation_ms">Waiting after transferring each piece of data when copying files</string>
 </resources>

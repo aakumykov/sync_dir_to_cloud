@@ -175,4 +175,6 @@
     <string name="SETTINGS_re_create_missing_source_and_target_dirs">Восстанавливать отсутствующие каталоги Источника и Приёмника</string>
     <string name="SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs">Опасно. Приводит к потерям данных в задачах с отключенным резервным копированием!</string>
     <string name="description_operation_cancel_icon">Отменить операцию</string>
+    <string name="SETTINGS_file_transfer_retardation_ms">Замедление копирования файлов, мс</string>
+    <string name="SETTINGS_SUMMARY_file_transfer_retardation_ms">Ожидание после передачи каждой порции данных при копировании файлов</string>
 </resources>

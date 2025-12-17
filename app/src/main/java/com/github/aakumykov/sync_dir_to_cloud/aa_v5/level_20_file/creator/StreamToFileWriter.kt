@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator
 import android.util.Log
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
+import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import dagger.assisted.Assisted
@@ -27,6 +28,7 @@ import kotlin.coroutines.resume
 class StreamToFileWriter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
+    private val appSettings: AppSettings,
 ) {
     @Throws(StreamWriterCancelledException::class)
     suspend fun putStreamToTarget(inputStream: InputStream,
@@ -86,7 +88,12 @@ class StreamToFileWriter @AssistedInject constructor(
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
 
-                            TimeUnit.MILLISECONDS.sleep(10)
+                            appSettings.fileTransferRetardationMs.also { delayMs ->
+                                if (delayMs > 0) {
+                                    Log.d(TAG, "задержка копирования $delayMs мс")
+                                    TimeUnit.MILLISECONDS.sleep(delayMs.toLong())
+                                }
+                            }
 
                             /*if (!cancellableContinuation.isActive)
                                 return@putStream*/
@@ -99,7 +106,8 @@ class StreamToFileWriter @AssistedInject constructor(
                         }
                     )
             } catch (t: Throwable) {
-                Log.d(TAG, t.errorMsg)
+                Log.e(TAG, t.errorMsg)
+                t.printStackTrace()
                 throw t
             } finally {
                 inputStream.close()
