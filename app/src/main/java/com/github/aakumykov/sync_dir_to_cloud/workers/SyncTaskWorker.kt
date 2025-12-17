@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellat
 import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,26 +48,6 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     // Т.е. нужен доп статус спец. для этой ситуации...
     private val taskId: String get() = inputData.getString(KEY_TASK_ID)!!
 
-    override suspend fun getForegroundInfo(): ForegroundInfo {
-
-        appComponent.getNotificationChannelHelper()
-            .createNotificationChannel(
-                ProgressNotificationsConfig.CHANNEL_ID,
-                ProgressNotificationsConfig.CHANNEL_IMPORTANCE,
-                workerContext.getString(ProgressNotificationsConfig.CHANNEL_NAME_RES),
-                workerContext.getString(ProgressNotificationsConfig.CHANNEL_DESCRIPTION_RES)
-            )
-
-        return ForegroundInfo(
-            syncTaskReader.getSyncTask(taskId).notificationId,
-            NotificationCompat
-                .Builder(workerContext, ProgressNotificationsConfig.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(workerContext.getString(R.string.NOTIFICATION_title))
-                .build()
-        )
-    }
-
     override suspend fun doWork(): Result {
         Log.d(TAG, "[worker: $thisObjectHashCode]: doWork()")
 
@@ -79,6 +60,8 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
     private suspend fun doWorkReal(coroutineScope: CoroutineScope): androidx.work.ListenableWorker.Result {
         return try {
+            SampleService.start(applicationContext)
+
             appComponent.getSyncTaskExecutorAssistedFactory().create(coroutineScope).also { syncTaskExecutor ->
 //                taskCancellationHolder.addScope(taskId, this)
 
@@ -102,6 +85,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         finally {
 //            taskCancellationHolder.removeScope(taskId)
             taskJobsHolder.removeJob(taskId)
+            SampleService.stop(applicationContext)
         }
     }
 
