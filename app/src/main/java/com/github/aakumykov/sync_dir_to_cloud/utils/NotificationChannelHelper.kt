@@ -1,12 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.utils
 
-
 import android.content.Context
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
+import javax.inject.Inject
 
-class NotificationChannelHelper (private val notificationManagerCompat: NotificationManagerCompat) {
-
+class NotificationChannelHelper @Inject constructor(
+    private val notificationManagerCompat: NotificationManagerCompat
+) {
     constructor(context: Context) : this(NotificationManagerCompat.from(context))
 
 
