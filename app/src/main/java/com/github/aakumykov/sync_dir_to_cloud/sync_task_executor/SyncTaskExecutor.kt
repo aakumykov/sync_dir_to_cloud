@@ -29,6 +29,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 
@@ -66,7 +67,6 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private val resources: Resources,
 
-    private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectStateResetter: SyncObjectStateResetter,
 
     private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
@@ -86,43 +86,41 @@ class SyncTaskExecutor @AssistedInject constructor(
     // UPD: Не дело Worker-а обрабатывать ошибки. Он вообще не должен их получать...
     suspend fun executeSyncTask(taskId: String) {
 
+        Log.d(TAG, "")
+        Log.d(TAG, "")
+        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
+
+        _currentTaskId = taskId
+
         try {
-            Log.d(TAG, "")
-            Log.d(TAG, "")
-            Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
-
-            //
-            // TODO: Эта подписка мешает SyncTaskWorker завершиться.
-            //  А как сделать её автоматически отменяемой?
-            //  По идее, надо отменять coroutineScope, в котором она выполняется...
-            //
-            /*coroutineScope.launch(Dispatchers.IO) {
-                syncTaskReader.getSyncTaskAsFlow(taskId).collectLatest { syncTask ->
-                    Log.d(TAG, "$syncTask")
-                }
-            }*/
-
-            _currentTaskId = taskId
+            logExecutionStart(currentTaskId, executionId)
+            syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.RUNNING)
 
             doWork()
+
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
+            logExecutionFinish()
+        }
+        catch (e: CancellationException) {
+            // TODO: ExecutionState.CANCELLED
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
+            Log.i(TAG, "Задача $currentTaskId отменена пользователем")
         }
         catch (t: Throwable) {
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
             Log.e(TAG, t.errorMsg, t)
-            logExecutionError(currentTask, t)
         }
         finally {
-//            syncTaskNotificator.hideNotification(taskId, notificationId)
-
-            if (null != _currentTaskId)
+            if (null != _currentTaskId) {
                 syncTaskRunningTimeUpdater.updateFinishTime(_currentTaskId!!)
+                _currentTaskId = null
+            }
             else {
                 Log.e(TAG, "================================================================")
                 Log.e(TAG, "CANNOT UPDATE TASK FINISH TIME, BECAUSE CURRENT TASK ID IS NULL.")
                 Log.e(TAG, "================================================================")
             }
-            // Зачем это?
-//            currentTask = syncTaskReader.getSyncTask(currentTaskId)
         }
 
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
@@ -133,18 +131,6 @@ class SyncTaskExecutor @AssistedInject constructor(
      * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
      */
     private suspend fun doWork() {
-
-//        showReadingSourceNotification(syncTask.notificationId)
-
-        logExecutionStart(currentTaskId, executionId)
-
-
-        syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
-        // Вынужденная мера, так как обновляется объект в БД...
-//            currentTask = syncTaskReader.getSyncTask(taskId)
-
-        syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.RUNNING)
-
         // Проверить каталоги задачи
         checkTaskDirs()
 
@@ -162,8 +148,8 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         // Чтение хранилищ.
         markAllObjectsAsNotChecked(currentTaskId)
-         readSource().getOrThrow()
-         readTarget().getOrThrow()
+        readSource().getOrThrow()
+        readTarget().getOrThrow()
         markAllNotCheckedObjectsAsDeleted(currentTaskId)
 
         // Сравнение старого состояния объектов с новым.
@@ -179,10 +165,6 @@ class SyncTaskExecutor @AssistedInject constructor(
         processSyncInstructions()
 
         clearProcessedSyncObjectsWithDeletedState()
-
-        syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
-
-        logExecutionFinish()
     }
 
     private suspend fun checkTaskDirs() {
