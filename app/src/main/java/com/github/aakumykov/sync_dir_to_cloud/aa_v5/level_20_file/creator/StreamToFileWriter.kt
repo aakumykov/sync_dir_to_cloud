@@ -88,12 +88,12 @@ class StreamToFileWriter @AssistedInject constructor(
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
 
-                            appSettings.fileTransferRetardationMs.also { delayMs ->
+                            /*appSettings.fileTransferRetardationMs.also { delayMs ->
                                 if (delayMs > 0) {
                                     Log.d(TAG, "задержка копирования $delayMs мс")
                                     TimeUnit.MILLISECONDS.sleep(delayMs.toLong())
                                 }
-                            }
+                            }*/
 
                             /*if (!cancellableContinuation.isActive)
                                 return@putStream*/

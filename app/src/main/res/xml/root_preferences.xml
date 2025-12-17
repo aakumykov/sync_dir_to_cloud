@@ -18,7 +18,7 @@
         app:singleLineTitle="true"
         android:title="@string/SETTINGS_file_transfer_retardation_ms"
         android:summary="@string/SETTINGS_SUMMARY_file_transfer_retardation_ms"
-        android:inputType="number"
+        app:useSimpleSummaryProvider="true"
         />
 
 </PreferenceScreen>

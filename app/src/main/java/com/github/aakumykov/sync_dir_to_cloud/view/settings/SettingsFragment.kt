@@ -1,7 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.settings
 
 import android.os.Bundle
+import android.text.InputType
 import androidx.fragment.app.activityViewModels
+import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -17,6 +19,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_SETTINGS_title))
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+        findPreference<EditTextPreference>(getString(R.string.KEY_file_transfer_retardation_ms))
+            ?.setOnBindEditTextListener { editText ->
+                editText.inputType = InputType.TYPE_CLASS_NUMBER
+            }
     }
 
 

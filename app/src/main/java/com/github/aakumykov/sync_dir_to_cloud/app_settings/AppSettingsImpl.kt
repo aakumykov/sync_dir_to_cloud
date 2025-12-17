@@ -8,6 +8,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import javax.inject.Inject
 import androidx.core.content.edit
+import com.github.aakumykov.sync_dir_to_cloud.config.DebugConfig
 
 class AppSettingsImpl @Inject constructor(
     private val resources: Resources,
@@ -32,11 +33,15 @@ class AppSettingsImpl @Inject constructor(
         } }
 
 
+    private val DEFAULT_FILE_TRANSFER_RETARDATION_MS by lazy { getInteger(R.integer.DEFAULT_file_transfer_retardation_ms) }
+
     override var fileTransferRetardationMs: Int
-        get() = sharedPreferences.getInt(
-            keyFromResources(R.string.KEY_file_transfer_retardation_ms),
-            getInteger(R.integer.DEFAULT_file_transfer_retardation_ms)
-        )
+        get() {
+            return sharedPreferences.getString(
+                keyFromResources(R.string.KEY_file_transfer_retardation_ms),
+                DEFAULT_FILE_TRANSFER_RETARDATION_MS.toString()
+            )?.toInt() ?: DEFAULT_FILE_TRANSFER_RETARDATION_MS
+        }
         set(value) { sharedPreferences.edit {
             putInt(
                 keyFromResources(R.string.KEY_file_transfer_retardation_ms),
