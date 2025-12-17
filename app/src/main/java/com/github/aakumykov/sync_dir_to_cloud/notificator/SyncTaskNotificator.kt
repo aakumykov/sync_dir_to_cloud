@@ -85,11 +85,11 @@ class SyncTaskNotificator @Inject constructor(
         deleteNotificationsChannel()
 
         if (!notificationChannelHelper.channelExists(ProgressNotificationsConfig.CHANNEL_ID)) {
-            notificationChannelHelper.createNotificationChannel(
-                ProgressNotificationsConfig.CHANNEL_ID,
-                ProgressNotificationsConfig.CHANNEL_IMPORTANCE,
-                string(ProgressNotificationsConfig.CHANNEL_NAME_RES),
-                string(ProgressNotificationsConfig.CHANNEL_DESCRIPTION_RES)
+            notificationChannelHelper.createChannel(
+                channelId = ProgressNotificationsConfig.CHANNEL_ID,
+                channelImportance = ProgressNotificationsConfig.CHANNEL_IMPORTANCE,
+                channelName = string(ProgressNotificationsConfig.CHANNEL_NAME_RES),
+                channelDescription = string(ProgressNotificationsConfig.CHANNEL_DESCRIPTION_RES)
             )
         }
     }
