@@ -158,8 +158,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
     }
 
     override fun onTaskRunClicked(taskId: String) {
-        appComponent.getAppSettings()
-            .fileTransferRetardationMs.let { it }
         taskListViewModel.startStopTask(taskId)
     }
 
