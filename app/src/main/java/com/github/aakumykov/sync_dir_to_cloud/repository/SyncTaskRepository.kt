@@ -137,7 +137,9 @@ class SyncTaskRepository @Inject constructor(
             TAG,
             "changeExecutionState(), taskId: $taskId, newState: $newState, errorMsg: $errorMsg"
         )
-        changeExecutionState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
+        coroutineScope.launch(coroutineDispatcher) {
+            changeExecutionState(syncTaskExecutionStateDAO, taskId, newState, errorMsg)
+        }
     }
 
 
