@@ -73,6 +73,12 @@ class StreamToFileWriter @AssistedInject constructor(
         overwriteIfExists: Boolean,
         progressCallback: ((transferredBytes: Long) -> Unit)? = null,
     ) {
+        val dataTransferDelay = appSettings.fileTransferRetardationMs
+
+        if (dataTransferDelay > 0)
+            Log.d(TAG, "putStreamReal(), используется замедление копирования $dataTransferDelay мс")
+
+
         return suspendCancellableCoroutine { cancellableContinuation ->
 
             cancellableContinuation.invokeOnCancellation {
@@ -88,13 +94,12 @@ class StreamToFileWriter @AssistedInject constructor(
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
 
-                            appSettings.fileTransferRetardationMs.also { delayMs ->
-                                if (delayMs > 0) {
-                                    Log.d(TAG, "задержка копирования $delayMs мс")
+                            dataTransferDelay.also { delayMs ->
+                                if (delayMs > 0)
                                     TimeUnit.MILLISECONDS.sleep(delayMs.toLong())
-                                }
                             }
 
+                            // TODO: вернуть это?
                             /*if (!cancellableContinuation.isActive)
                                 return@putStream*/
 
