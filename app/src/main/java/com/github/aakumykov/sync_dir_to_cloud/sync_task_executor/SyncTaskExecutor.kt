@@ -50,6 +50,9 @@ FIXME: что, если удалённо файл пропал, а локаль�
 FIXME: удалённо пропал и локально пропал...
  */
 
+/**
+ * Задача класса - запускать выполнение задачи и менять соответствующие статусы.
+ */
 class SyncTaskExecutor @AssistedInject constructor(
 
     @Assisted private val coroutineScope: CoroutineScope,
@@ -75,18 +78,14 @@ class SyncTaskExecutor @AssistedInject constructor(
     private var _currentTaskId: String? = null
     private val currentTaskId get(): String = _currentTaskId!!
 
-    private val currentTask: SyncTask get() = runBlocking {
-        syncTaskReader.getSyncTask(currentTaskId)
-    }
+    private val currentTask: SyncTask get() = runBlocking { syncTaskReader.getSyncTask(currentTaskId) }
 
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
-    // FIXME: Не ловлю здесь исключения, чтобы их увидел SyncTaskWorker. Как устойчивость к ошибкам?
-    // UPD: Не дело Worker-а обрабатывать ошибки. Он вообще не должен их получать...
+
     suspend fun executeSyncTask(taskId: String) {
 
-        Log.d(TAG, "")
-        Log.d(TAG, "")
+        Log.d(TAG, ""); Log.d(TAG, "")
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
 
         _currentTaskId = taskId
