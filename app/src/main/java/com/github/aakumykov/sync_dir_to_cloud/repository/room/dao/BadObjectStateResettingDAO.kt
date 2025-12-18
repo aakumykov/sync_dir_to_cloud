@@ -6,6 +6,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 
+@Deprecated("не используется")
 @Dao
 abstract class BadObjectStateResettingDAO {
 

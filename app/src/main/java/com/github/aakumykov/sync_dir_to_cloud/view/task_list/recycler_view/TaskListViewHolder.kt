@@ -122,10 +122,8 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
 
         runButton.setImageResource(
             when(currentTask.executionState){
-                ExecutionState.NEVER -> R.drawable.ic_task_start
-                ExecutionState.SUCCESS -> R.drawable.ic_task_start
                 ExecutionState.RUNNING -> R.drawable.ic_task_stop
-                ExecutionState.ERROR -> R.drawable.ic_task_start
+                else -> R.drawable.ic_task_start
             }
         )
 
@@ -165,6 +163,7 @@ class TaskListViewHolder(itemView: View, private val itemClickCallback: ItemClic
                 ExecutionState.SUCCESS -> idleIcon()
                 ExecutionState.RUNNING -> R.drawable.ic_task_state_running
                 ExecutionState.ERROR -> R.drawable.ic_task_state_error
+                ExecutionState.CANCELLED -> R.drawable.ic_task_state_cancelled
             }
         )
     }

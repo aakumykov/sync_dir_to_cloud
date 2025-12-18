@@ -71,6 +71,7 @@
     <string name="SCHEDULING_STATE_scheduled_long_form">Scheduling for every %1$d %3$s %2$d %4$s</string>
     <string name="EXECUTION_STATE_error">Execution error: %1$s</string>
     <string name="EXECUTION_STATE_running">Executing now</string>
+    <string name="EXECUTION_STATE_cancelled">Cancelled</string>
     <string name="EXECUTION_STATE_idle">Inactive</string>
     <string name="never">never</string>
     <string name="last_run_unknown_yet">unknown yet</string>

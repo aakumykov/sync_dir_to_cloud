@@ -14,6 +14,7 @@ class SyncObjectStateIconHelper {
                 ExecutionState.RUNNING -> R.drawable.ic_task_state_running
                 ExecutionState.SUCCESS -> R.drawable.ic_task_state_success
                 ExecutionState.ERROR -> R.drawable.ic_task_state_error
+                ExecutionState.CANCELLED -> R.drawable.ic_task_state_cancelled
             }
         }
     }

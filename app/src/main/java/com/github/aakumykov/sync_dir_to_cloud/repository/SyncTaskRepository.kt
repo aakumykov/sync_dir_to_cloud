@@ -152,6 +152,7 @@ class SyncTaskRepository @Inject constructor(
             ExecutionState.RUNNING -> syncStateChanger.setBusyState(taskId)
             ExecutionState.SUCCESS -> syncStateChanger.setSuccessState(taskId)
             ExecutionState.ERROR -> syncStateChanger.setErrorState(taskId, errorMsg)
+            ExecutionState.CANCELLED -> syncStateChanger.setCancelledState(taskId, errorMsg)
         }
     }
 

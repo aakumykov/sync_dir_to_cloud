@@ -219,6 +219,8 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
                     ExecutionState.SUCCESS -> detailedSchedulingState(syncTask)
                     ExecutionState.RUNNING -> getString(R.string.SCHEDULING_STATE_scheduling_now)
                     ExecutionState.ERROR -> getString(R.string.SCHEDULING_STATE_scheduling_error, syncTask.schedulingError)
+                    // FIXME: разделить состояние выполнения и планирования!
+                    ExecutionState.CANCELLED -> "CANCELLED"
                 }
             }
             else {
@@ -253,6 +255,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
                 R.string.EXECUTION_STATE_error,
                 syncTask.executionError
             )
+            ExecutionState.CANCELLED -> getString(R.string.EXECUTION_STATE_cancelled)
         }
     }
 

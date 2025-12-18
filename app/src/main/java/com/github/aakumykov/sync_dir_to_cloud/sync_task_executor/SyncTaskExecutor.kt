@@ -101,9 +101,8 @@ class SyncTaskExecutor @AssistedInject constructor(
             logExecutionFinish()
         }
         catch (e: CancellationException) {
-            // TODO: ExecutionState.CANCELLED
-            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
-            Log.i(TAG, "Задача $currentTaskId отменена пользователем")
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.CANCELLED)
+            Log.i(TAG, "Задача $currentTaskId отменена: ${e.errorMsg}")
         }
         catch (t: Throwable) {
             syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
