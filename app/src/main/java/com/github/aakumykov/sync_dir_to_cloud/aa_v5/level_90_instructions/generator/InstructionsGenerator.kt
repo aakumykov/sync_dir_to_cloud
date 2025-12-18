@@ -53,6 +53,6 @@ class InstructionsGenerator @AssistedInject constructor(
 
 
 @AssistedFactory
-interface InstructionsGeneratorAssistedFactory6 {
+interface InstructionsGeneratorAssistedFactory {
     fun create(syncTask: SyncTask, executionId: String): InstructionsGenerator
 }

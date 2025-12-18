@@ -4,11 +4,11 @@ import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory6
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory6
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
@@ -145,13 +145,13 @@ interface AppComponent {
 
     fun getSourceWithTargetComparatorAssistedFactory(): SourceWithTargetComparatorAssistedFactory
 
-    fun getSyncInstructionsProcessorAssistedFactory6(): SyncInstructionsProcessorAssistedFactory6
+    fun getSyncInstructionsProcessorAssistedFactory(): SyncInstructionsProcessorAssistedFactory
 
-    fun getInstructionsGeneratorAssistedFactory6(): InstructionsGeneratorAssistedFactory6
+    fun getInstructionsGeneratorAssistedFactory(): InstructionsGeneratorAssistedFactory
 
     fun getInstructionsDeleter(): SyncInstructionDeleter
 
-    fun getComparisonsDeleter6(): ComparisonsDeleter6
+    fun getComparisonsDeleter(): ComparisonsDeleter
 
     fun getBackuperRestorer(): BackuperRestorer
 
@@ -159,7 +159,7 @@ interface AppComponent {
 
     fun getSyncObjectDeleter(): SyncObjectDBDeleter
 
-    fun getSyncInstructionRepository6(): SyncInstructionRepository
+    fun getSyncInstructionRepository(): SyncInstructionRepository
 
     fun getBackupDirsPreparerAssistedFactory(): BackupDirsPreparerAssistedFactory
 

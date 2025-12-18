@@ -151,7 +151,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface SyncInstructionsProcessorAssistedFactory6 {
+interface SyncInstructionsProcessorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,

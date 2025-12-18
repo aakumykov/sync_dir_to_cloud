@@ -17,7 +17,6 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
@@ -184,7 +183,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
         appComponent
-            .getSyncInstructionRepository6()
+            .getSyncInstructionRepository()
             .deleteUnprocessedDuplicatedInstructions(currentTaskId)
     }
 
@@ -200,7 +199,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun deleteOldComparisonStates() {
         appComponent
-            .getComparisonsDeleter6()
+            .getComparisonsDeleter()
             .deleteAllFor(currentTaskId)
     }
 
@@ -212,7 +211,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun generateSyncInstructions() {
         appComponent
-            .getInstructionsGeneratorAssistedFactory6()
+            .getInstructionsGeneratorAssistedFactory()
             .create(currentTask, executionId)
             .generate()
     }
@@ -220,7 +219,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun processUnprocessedSyncInstructions() {
         appComponent
-            .getSyncInstructionsProcessorAssistedFactory6()
+            .getSyncInstructionsProcessorAssistedFactory()
             .create(currentTask, executionId, coroutineScope)
             .processPrevSessionUnprocessedInstructions()
     }
@@ -228,7 +227,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun processSyncInstructions() {
         appComponent
-            .getSyncInstructionsProcessorAssistedFactory6()
+            .getSyncInstructionsProcessorAssistedFactory()
             .create(currentTask, executionId, coroutineScope)
             .processThisSessionInstructions()
     }
