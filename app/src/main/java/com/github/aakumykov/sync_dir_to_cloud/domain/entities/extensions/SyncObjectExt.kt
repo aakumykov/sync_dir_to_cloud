@@ -30,12 +30,6 @@ val SyncObject.isSuccessSynced: Boolean get() = ExecutionState.SUCCESS == syncSt
 
 val SyncObject.isNeverSynced: Boolean get() = ExecutionState.NEVER == syncState
 
-val SyncObject.notYetSynced: Boolean get() {
-    return ExecutionState.SUCCESS == syncState ||
-            ExecutionState.ERROR == syncState ||
-            ExecutionState.RUNNING == syncState
-}
-
 val SyncObject.isUnchanged: Boolean get() = StateInStorage.UNCHANGED == stateInStorage
 
 val SyncObject.isNew: Boolean get() = StateInStorage.NEW == stateInStorage
