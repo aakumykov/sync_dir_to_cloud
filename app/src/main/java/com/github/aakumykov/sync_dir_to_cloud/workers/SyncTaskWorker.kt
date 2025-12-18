@@ -55,7 +55,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         return try {
             SampleService.start(applicationContext)
 
-            appComponent.getSyncTaskExecutorAssistedFactory().create(coroutineScope).also { syncTaskExecutor ->
+            appComponent.getSyncTaskProcessorAssistedFactory().create(coroutineScope).also { syncTaskExecutor ->
                 Log.d(TAG, "[worker: $thisObjectHashCode] Задача '$taskId' начала выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
 
                 syncTaskExecutor.executeSyncTask(taskId)
