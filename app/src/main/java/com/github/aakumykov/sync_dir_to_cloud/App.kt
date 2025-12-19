@@ -1,10 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
 import android.app.Application
+import android.content.Context
+import androidx.room.Room
+import com.github.aakumykov.sync_dir_to_cloud.config.DbConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.AppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.DaggerAppComponent
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ApplicationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 
 open class App : Application() {
 

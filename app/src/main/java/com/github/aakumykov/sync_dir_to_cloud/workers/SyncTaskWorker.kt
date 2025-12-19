@@ -27,7 +27,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
     // TODO: внедрять диспетчер
     private val coroutineDispatcher = Dispatchers.IO
-    // TODO: а scope?
+
+    private val rawTaskId: String? get() = inputData.getString(KEY_TASK_ID)
+    private val taskId: String get() = rawTaskId!!
 
     private val thisObjectHashCode: String = hashCode().toString()
 
@@ -35,36 +37,28 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     override suspend fun doWork(): Result {
         Log.d(TAG, "[worker: $thisObjectHashCode]: doWork()")
 
-        val taskId = inputData.getString(KEY_TASK_ID)
-
-        if (null == taskId) {
+        if (null == rawTaskId) {
             // TODO: показывать уведомление об ошибке
             Log.e(TAG, "!!! There is no TASK_ID argument passed to $TAG. Cannot work. !!!")
             return Result.success()
         }
 
-        val scope = CoroutineScope(coroutineDispatcher)
-
-        scope.let {
-            doWorkReal(taskId = taskId, it)
-        }
-
-        return scope.async (coroutineDispatcher) {
-            doWorkReal(taskId = taskId, scope)
+        return CoroutineScope(coroutineDispatcher).async (coroutineDispatcher) {
+            doWorkReal(this)
         }.also {
             taskJobsHolder.addJob(taskId, it)
         }.await()
     }
 
 
-    private suspend fun doWorkReal(taskId: String, coroutineScope: CoroutineScope): Result {
+    private suspend fun doWorkReal(coroutineScope: CoroutineScope): Result {
         return try {
             SampleService.start(applicationContext)
 
-            appComponent.getSyncTaskExecutor().also { syncTaskExecutor ->
+            appComponent.getSyncTaskProcessorAssistedFactory().create(coroutineScope).also { syncTaskExecutor ->
                 Log.d(TAG, "[worker: $thisObjectHashCode] Задача '$taskId' начала выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
 
-                syncTaskExecutor.executeSyncTask(coroutineScope, taskId = taskId)
+                syncTaskExecutor.executeSyncTask(taskId)
 
                 Log.d(TAG, "[worker: $thisObjectHashCode]: Задача '$taskId' завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
             }
