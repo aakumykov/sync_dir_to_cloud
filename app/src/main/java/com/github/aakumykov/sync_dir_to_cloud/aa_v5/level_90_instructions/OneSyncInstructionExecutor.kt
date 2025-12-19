@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_x_logger.SyncOperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ErrorLoggingScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
@@ -26,14 +27,19 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class OneSyncInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    @Assisted private val scope: CoroutineScope,
+    @Assisted private val parentJob: Job,
+
+    @ErrorLoggingScope private val errorLoggingScope: CoroutineScope,
 
     private val syncOptions: SyncOptions,
 
@@ -157,7 +163,9 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             scope.launch { syncOperationLogger.logFail(logItemId, t.errorMsg) }
         }*/
 
-        scope.launch (/*eh*/) {
+        val job = Job(parentJob)
+
+        withContext(job) {
 
             try {
                 val sourceObjectId = syncInstruction.objectIdInSource!!
@@ -178,12 +186,12 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
             catch (e: CancellationException) {
                 // Здесь корутина переходит в неактивное состояние,
                 // поэтому запускать действие приходится в новой области видимости.
-                scope.launch {
+                errorLoggingScope.launch {
                     syncOperationLogger.logCancelled(logItemId, e.errorMsg)
                 }.join()
             }
             catch (t: Throwable) {
-                scope.launch {
+                errorLoggingScope.launch {
                     syncOperationLogger.logFail(logItemId, t.errorMsg)
                 }.join()
             }
@@ -193,7 +201,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
         }.apply {
             operationCancellationHolder.addJob(jobCancellationId, job)
-            join()
+            job.join()
         }
     }
 
@@ -311,7 +319,7 @@ interface OneSyncInstructionExecutorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
-        scope: CoroutineScope,
+        parentJob: Job,
     ): OneSyncInstructionExecutor
 }
 

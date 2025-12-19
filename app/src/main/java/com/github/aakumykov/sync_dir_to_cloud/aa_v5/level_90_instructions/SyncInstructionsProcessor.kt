@@ -17,7 +17,7 @@ import kotlinx.coroutines.Job
 class SyncInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    @Assisted private val scope: CoroutineScope,
+    @Assisted private val parentJob: Job,
     private val syncInstructionRepository: SyncInstructionRepository,
     private val oneSyncInstructionExecutorAssistedFactory: OneSyncInstructionExecutorAssistedFactory,
 ) {
@@ -142,7 +142,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
     private val oneSyncInstructionExecutor by lazy {
-        oneSyncInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
+        oneSyncInstructionExecutorAssistedFactory.create(syncTask, executionId, parentJob)
     }
 
     companion object {
