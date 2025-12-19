@@ -59,7 +59,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionReposito
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker.TaskDirsFixerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
@@ -118,7 +118,7 @@ interface AppComponent {
 
     fun getCloudAuthReader(): CloudAuthReader
 
-    fun getSyncTaskProcessorAssistedFactory(): SyncTaskProcessorAssistedFactory
+    fun getSyncTaskExecutorAssistedFactory(): SyncTaskExecutorAssistedFactory
 
     fun getSyncTaskNotificator(): SyncTaskNotificator
 

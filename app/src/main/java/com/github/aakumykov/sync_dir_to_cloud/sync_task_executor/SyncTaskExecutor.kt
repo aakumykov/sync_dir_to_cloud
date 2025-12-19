@@ -1,21 +1,36 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import android.content.res.Resources
+import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseListerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -36,40 +51,83 @@ FIXME: удалённо пропал и локально пропал...
  */
 
 /**
- * Задача класса - выполнять сложную логику шагов выполнения задачи.
+ * Задача класса - запускать выполнение задачи и менять соответствующие статусы.
  */
-class SyncTaskProcessor @AssistedInject constructor(
+class SyncTaskExecutor @AssistedInject constructor(
 
     @Assisted private val coroutineScope: CoroutineScope,
 
     private val cloudAuthReader: CloudAuthReader,
 
+    private val syncTaskReader: SyncTaskReader,
+    private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncTaskNotificator: SyncTaskNotificator,
 
-    private val syncTaskStateChanger: SyncTaskStateChanger,
+    private val syncTaskLogger: SyncTaskLogger,
+    private val taskStateLogger: TaskStateLogger,
+    private val executionLogger: ExecutionLogger,
+
+    private val resources: Resources,
 
     private val syncObjectStateResetter: SyncObjectStateResetter,
 
     private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
 ) {
-    private var _currentTask: SyncTask? = null
-    private val currentTask: SyncTask get() = _currentTask!!
+    private val executionId: String get() = hashCode().toString()
 
-    private val currentTaskId get(): String = currentTask.id
+    private var _currentTaskId: String? = null
+    private val currentTaskId get(): String = _currentTaskId!!
 
-    private var _currentExecutionId: String? = null
-    private val currentExecutionId get(): String = _currentExecutionId!!
+    private val currentTask: SyncTask get() = runBlocking { syncTaskReader.getSyncTask(currentTaskId) }
+
+    private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
 
+    suspend fun executeSyncTask(taskId: String) {
+
+        Log.d(TAG, ""); Log.d(TAG, "")
+        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
+
+        _currentTaskId = taskId
+
+        try {
+            logExecutionStart(currentTaskId, executionId)
+            syncTaskRunningTimeUpdater.updateStartTime(currentTaskId)
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.RUNNING)
+
+            doWork()
+
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.SUCCESS)
+            logExecutionFinish()
+        }
+        catch (e: CancellationException) {
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.CANCELLED)
+            Log.i(TAG, "Задача $currentTaskId отменена: ${e.errorMsg}")
+        }
+        catch (t: Throwable) {
+            syncTaskStateChanger.changeExecutionState(currentTaskId, ExecutionState.ERROR, t.errorMsg)
+            Log.e(TAG, t.errorMsg, t)
+        }
+        finally {
+            if (null != _currentTaskId) {
+                syncTaskRunningTimeUpdater.updateFinishTime(_currentTaskId!!)
+                _currentTaskId = null
+            }
+            else {
+                Log.e(TAG, "================================================================")
+                Log.e(TAG, "CANNOT UPDATE TASK FINISH TIME, BECAUSE CURRENT TASK ID IS NULL.")
+                Log.e(TAG, "================================================================")
+            }
+        }
+
+        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
+    }
 
     /**
      * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
      * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
      */
-    suspend fun processSyncTask(syncTask: SyncTask, executionId: String) {
-        _currentTask = syncTask
-        _currentExecutionId = executionId
-
+    private suspend fun doWork() {
         // Проверить каталоги задачи
         checkTaskDirs()
 
@@ -109,7 +167,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun checkTaskDirs() {
         appComponent
             .getTaskDirsCheckerAssistedFactory()
-            .create(currentTask, currentExecutionId)
+            .create(currentTask, executionId)
             .checkTaskDirs()
     }
 
@@ -152,7 +210,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun generateSyncInstructions() {
         appComponent
             .getInstructionsGeneratorAssistedFactory()
-            .create(currentTask, currentExecutionId)
+            .create(currentTask, executionId)
             .generate()
     }
 
@@ -160,7 +218,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun processUnprocessedSyncInstructions() {
         appComponent
             .getSyncInstructionsProcessorAssistedFactory()
-            .create(currentTask, currentExecutionId, coroutineScope)
+            .create(currentTask, executionId, coroutineScope)
             .processPrevSessionUnprocessedInstructions()
     }
 
@@ -168,11 +226,57 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun processSyncInstructions() {
         appComponent
             .getSyncInstructionsProcessorAssistedFactory()
-            .create(currentTask, currentExecutionId, coroutineScope)
+            .create(currentTask, executionId, coroutineScope)
             .processThisSessionInstructions()
     }
 
 
+    private suspend fun logExecutionStart(taskId: String, executionId: String) {
+
+        executionLogger.log(ExecutionLogItem.createFinishingItem(
+            taskId = taskId,
+            executionId = executionId,
+            message = resources.getString(R.string.EXECUTION_LOG_work_begins)
+        ))
+
+        taskStateLogger.logRunning(TaskLogEntry(
+            executionId = hashCode().toString(),
+            taskId = taskId,
+            entryType = ExecutionLogItemType.START
+        ))
+    }
+
+    private suspend fun logExecutionFinish() {
+
+        executionLogger.log(ExecutionLogItem.createFinishingItem(
+            taskId = currentTaskId,
+            executionId = executionId,
+            message = resources.getString(R.string.EXECUTION_LOG_work_ends)
+        ))
+
+        taskStateLogger.logSuccess(TaskLogEntry(
+            executionId = hashCode().toString(),
+            taskId = currentTaskId,
+            entryType = ExecutionLogItemType.FINISH
+        ))
+    }
+
+    private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
+
+        executionLogger.log(ExecutionLogItem.createErrorItem(
+            taskId = syncTask.id,
+            executionId = executionId,
+            message = resources.getString(R.string.EXECUTION_LOG_work_error),
+            details = t.errorMsg
+        ))
+
+        taskStateLogger.logError(TaskLogEntry(
+            executionId = hashCode().toString(),
+            taskId = syncTask.id,
+            entryType = ExecutionLogItemType.ERROR,
+            errorMsg = null
+        ))
+    }
 
     private suspend fun resetTaskBadStates(taskId: String) {
         syncTaskStateChanger.resetSourceReadingBadState(taskId)
@@ -199,7 +303,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         return storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.SOURCE,
-                executionId = currentExecutionId,
+                executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(currentTask.sourceAuthId!!),
                 pathReadingFrom = currentTask.sourcePath!!,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
@@ -211,7 +315,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         return storageToDatabaseLister
             .listFromPathToDatabase(
                 syncSide = SyncSide.TARGET,
-                executionId = currentExecutionId,
+                executionId = executionId,
                 cloudAuth = cloudAuthReader.getCloudAuth(currentTask.targetAuthId!!),
                 pathReadingFrom = currentTask.targetPath!!,
                 changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
@@ -228,7 +332,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun compareSourceWithTarget() {
         appComponent
             .getSourceWithTargetComparatorAssistedFactory()
-            .create(currentTask, currentExecutionId)
+            .create(currentTask, executionId = executionId)
             .compareSourceWithTarget()
     }
 
@@ -251,6 +355,6 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     companion object {
-        val TAG: String = SyncTaskProcessor::class.java.simpleName
+        val TAG: String = SyncTaskExecutor::class.java.simpleName
     }
 }
