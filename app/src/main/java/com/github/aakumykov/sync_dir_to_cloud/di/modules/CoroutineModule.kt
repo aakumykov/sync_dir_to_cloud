@@ -26,6 +26,11 @@ class CoroutineModule {
         return Job()
     }
 
+    /*@Provides
+    fun provideSupervisorJob(): Job {
+        return SupervisorJob()
+    }*/
+
     @Deprecated("Передавать Dispatchers.IO")
     @Provides
     fun provideCoroutineScope(job: Job): CoroutineScope {

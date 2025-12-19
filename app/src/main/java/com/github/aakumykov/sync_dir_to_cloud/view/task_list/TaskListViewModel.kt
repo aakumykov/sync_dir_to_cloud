@@ -9,10 +9,11 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
+import com.github.aakumykov.sync_dir_to_cloud.job_holders.taskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
-import com.github.aakumykov.sync_dir_to_cloud.workers.taskJobsHolder
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -41,9 +42,16 @@ class TaskListViewModel(
 
 //                taskCancellationHolder.getScope(taskId)?
                 taskJobsHolder.getJob(taskId)?.also {
-                    it.cancel(CancellationException("Прервано пользователем"))
+                    try {
+                        it.cancel(CancellationException("Прервано пользователем"))
+                    } catch (e: CancellationException) {
+                        Log.w(TAG, e.errorMsgExtended)
+                    } catch (t: Throwable) {
+                        Log.w(TAG, t.errorMsgExtended)
+                    }
+
                 } ?: run {
-                    Log.e(TAG, "CoroutineScope не найден для задачи '$taskId'")
+                    Log.e(TAG, "Ниточка для отмены задачи не найдена, '$taskId'")
                 }
 
             } else {
