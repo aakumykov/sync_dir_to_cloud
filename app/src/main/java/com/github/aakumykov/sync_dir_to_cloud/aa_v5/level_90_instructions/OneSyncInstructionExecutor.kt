@@ -46,6 +46,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val syncObjectDBReader: SyncObjectDBReader,
 
     private val itemCopierAssistedFactory: ItemCopierAssistedFactory,
+
     private val itemDeleterAssistedFactory: ItemDeleterAssistedFactory,
 
     private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
