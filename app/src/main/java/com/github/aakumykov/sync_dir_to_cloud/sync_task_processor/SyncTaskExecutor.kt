@@ -44,7 +44,7 @@ class SyncTaskExecutor @Inject constructor(
     suspend fun executeSyncTask(scope: CoroutineScope, taskId: String) {
 
         Log.d(TAG, ""); Log.d(TAG, "")
-        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] СТАРТ ========")
+        Log.d(tag, "========= executeSyncTask(taskId: $taskId, executionId: $executionId) [hashCode:${hashCode()}] СТАРТ ========")
 
         try {
             val syncTask = syncTaskReader.getSyncTask(taskId)

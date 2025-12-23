@@ -11,7 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
@@ -31,6 +30,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
     private val thisObjectHashCode: String = hashCode().toString()
 
+    init {
+        Log.d(TAG, "init{} [hashCode:${hashCode()}]")
+    }
 
     override suspend fun doWork(): Result {
         Log.d(TAG, "[worker: $thisObjectHashCode]: doWork()")
@@ -45,39 +47,30 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         val scope = CoroutineScope(coroutineDispatcher)
 
-        scope.let {
-            doWorkReal(taskId = taskId, it)
-        }
+        doWorkReal(taskId = taskId, scope)
 
-        return scope.async (coroutineDispatcher) {
-            doWorkReal(taskId = taskId, scope)
-        }.also {
-            taskJobsHolder.addJob(taskId, it)
-        }.await()
+        return Result.success()
     }
 
 
-    private suspend fun doWorkReal(taskId: String, coroutineScope: CoroutineScope): Result {
-        return try {
+    private suspend fun doWorkReal(taskId: String, scope: CoroutineScope) {
+        try {
             SampleService.start(applicationContext)
 
             appComponent.getSyncTaskExecutor().also { syncTaskExecutor ->
-                Log.d(TAG, "[worker: $thisObjectHashCode] Задача '$taskId' начала выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+                Log.d(TAG, "[worker: $thisObjectHashCode]: Задача taskId: $taskId начала    выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
 
-                syncTaskExecutor.executeSyncTask(coroutineScope, taskId = taskId)
+                syncTaskExecutor.executeSyncTask(scope, taskId = taskId)
 
-                Log.d(TAG, "[worker: $thisObjectHashCode]: Задача '$taskId' завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+                Log.d(TAG, "[worker: $thisObjectHashCode]: Задача taskId: $taskId завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
             }
-            Result.success()
         }
         catch (t: Throwable) {
             Log.e(TAG, "[worker: $thisObjectHashCode] ${t.errorMsgExtended} [worker:$thisObjectHashCode]")
             Log.e(TAG, t.errorMsgExtended)
-            return Result.success()
         }
         finally {
             taskJobsHolder.removeJob(taskId)
-
             SampleService.stop(applicationContext)
         }
     }
