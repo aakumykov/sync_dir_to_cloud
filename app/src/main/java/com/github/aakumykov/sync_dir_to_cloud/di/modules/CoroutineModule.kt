@@ -5,7 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileOperat
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineFileCopyingScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.CoroutineMainScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
-import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ErrorLoggingScope
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CompletableJob
@@ -43,12 +42,6 @@ class CoroutineModule {
     @Provides
     fun provideDispatchersIO(): CoroutineDispatcher {
         return Dispatchers.IO
-    }
-
-    @Provides
-    @ErrorLoggingScope
-    fun provideErrorLoggingScope(@DispatcherIO ioDispatcher: CoroutineDispatcher): CoroutineScope {
-        return CoroutineScope(ioDispatcher)
     }
 
     @Provides
