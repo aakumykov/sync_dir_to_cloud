@@ -29,20 +29,20 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun processInstructions(selectUnprocessed: Boolean) {
+    private suspend fun processInstructions(unprocessed: Boolean) {
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
 //        prepareBackupDirs(list)
-        backupFilesAndDirs(list(selectUnprocessed))
+        backupFilesAndDirs(list(unprocessed))
 
-        deleteFiles(list(selectUnprocessed))
-        deleteDirs(list(selectUnprocessed))
+        deleteFiles(list(unprocessed))
+        deleteDirs(list(unprocessed))
 
-        processCollisionResolution(true, list(selectUnprocessed))
-        processCollisionResolution(false, list(selectUnprocessed))
+        processCollisionResolution(true, list(unprocessed))
+        processCollisionResolution(false, list(unprocessed))
 
-        processDirsCreation(list(selectUnprocessed))
-        processFilesCopying(list(selectUnprocessed))
+        processDirsCreation(list(unprocessed))
+        processFilesCopying(list(unprocessed))
     }
 
 
@@ -63,8 +63,10 @@ class SyncInstructionsProcessor @AssistedInject constructor(
         list
             .filter { it.isBackup }
             .apply {
-                // Cначала бекапятся (создаются) каталоги, потом файлы.
-
+                // Сначала бекапятся (создаются) каталоги, потом файлы.
+                CoroutineSyncInstructionsProcessor.process(
+                    ifCritical:
+                )
                 filter { it.isDir }
                     .forEach { syncInstruction ->
                         oneSyncInstructionExecutor.execute(syncInstruction)
