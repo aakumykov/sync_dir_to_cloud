@@ -24,7 +24,7 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
     private val operationLogger: OperationLogger,
     private val resources: Resources,
 ) {
-     fun process(
+     suspend fun process(
          isCritical: Boolean,
          logMessage: TextMessage,
          executionBlock: suspend () -> Unit,
@@ -51,7 +51,7 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
                      taskId, executionId, text4log,throwable.errorMsg
                  ))
              }
-         }
+         }.join()
     }
 
     private fun jobForTask(scope: CoroutineScope, isCritical: Boolean): Job {

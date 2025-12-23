@@ -128,7 +128,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         clearProcessedSyncObjectsWithDeletedState()
     }
 
-    private fun checkTaskDirs() {
+    private suspend fun checkTaskDirs() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.checking_task_dirs),
@@ -141,7 +141,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
-    private fun prepareBackupDirs(@StringRes logMessageId: Int) {
+    private suspend fun prepareBackupDirs(@StringRes logMessageId: Int) {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(logMessageId),
@@ -155,7 +155,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private fun removeDuplicatedUnprocessedSyncInstructions() {
+    private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.removing_duplicate_sync_instructions),
@@ -167,7 +167,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
-    private fun clearProcessedSyncObjectsWithDeletedState() {
+    private suspend fun clearProcessedSyncObjectsWithDeletedState() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.clearing_processed_sync_objects_with_deleted_state),
@@ -179,7 +179,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
-    private fun markAllNotCheckedObjectsAsDeleted() {
+    private suspend fun markAllNotCheckedObjectsAsDeleted() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_not_checked_objects_as_deleted),
@@ -189,7 +189,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
-    private fun deleteOldComparisonStates() {
+    private suspend fun deleteOldComparisonStates() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.deleting_old_comparison_results),
@@ -201,7 +201,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
-    private fun deleteProcessedSyncInstructions() {
+    private suspend fun deleteProcessedSyncInstructions() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.removing_processed_sync_instructions),
@@ -213,7 +213,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
-    private fun generateSyncInstructions() {
+    private suspend fun generateSyncInstructions() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.generating_sync_instructions),
@@ -227,7 +227,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private fun processUnprocessedSyncInstructions() {
+    private suspend fun processUnprocessedSyncInstructions() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.processing_unprocessed_sync_instructions),
@@ -241,7 +241,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private fun processSyncInstructions() {
+    private suspend fun processSyncInstructions() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.processing_sync_instructions),
@@ -256,7 +256,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
 
-    private fun resetTaskBadStates() {
+    private suspend fun resetTaskBadStates() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_task_bad_states),
@@ -266,7 +266,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
-    private fun resetObjectsBadState() {
+    private suspend fun resetObjectsBadState() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_objects_bad_states),
@@ -281,7 +281,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private fun markAllObjectsAsNotChecked() {
+    private suspend fun markAllObjectsAsNotChecked() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_objects_as_not_checked),
@@ -295,7 +295,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     /**
      * @return Флаг успешности чтения источника.
      */
-    private fun readSource() {
+    private suspend fun readSource() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_source),
@@ -313,7 +313,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private fun readTarget() {
+    private suspend fun readTarget() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_target),
@@ -337,7 +337,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private fun compareSourceWithTarget() {
+    private suspend fun compareSourceWithTarget() {
         coroutineSyncInstructionsProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.comparing_source_with_target),
@@ -351,11 +351,11 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private fun showWritingTargetNotification(syncTask: SyncTask) {
+    private suspend fun showWritingTargetNotification(syncTask: SyncTask) {
         syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
     }
 
-    private fun showReadingSourceNotification(syncTask: SyncTask) {
+    private suspend fun showReadingSourceNotification(syncTask: SyncTask) {
         syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
     }
 
