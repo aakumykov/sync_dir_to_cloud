@@ -6,15 +6,12 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
@@ -46,12 +43,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             return Result.success()
         }
 
-        val eh = CoroutineExceptionHandler { context, throwable ->
-            Log.e(TAG, throwable.errorMsg)
-            throwable.printStackTrace()
-        }
-
-        return CoroutineScope(coroutineDispatcher + eh).async (coroutineDispatcher) {
+        return CoroutineScope(coroutineDispatcher).async (coroutineDispatcher) {
             doWorkReal(this)
         }.also {
             taskJobsHolder.addJob(taskId, it)
@@ -71,15 +63,6 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
                 Log.d(TAG, "[worker: $thisObjectHashCode]: Задача '$taskId' завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
             }
             Result.success()
-        }
-        catch (e: CancellationException) {
-            return Result.success()
-        }
-        catch (e: kotlinx.coroutines.CancellationException) {
-            return Result.success()
-        }
-        catch (e: kotlin.coroutines.cancellation.CancellationException) {
-            return Result.success()
         }
         catch (t: Throwable) {
             Log.e(TAG, "[worker: $thisObjectHashCode] ${t.errorMsgExtended} [worker:$thisObjectHashCode]")
