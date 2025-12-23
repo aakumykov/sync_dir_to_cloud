@@ -14,7 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.executio
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogReader
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
@@ -70,7 +70,7 @@ class ViewModelsModule {
                                  syncObjectDBReader: SyncObjectDBReader,
                                  startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
                                  taskLogRepository: TaskLogRepository,
-                                 taskStateLogger: TaskStateLogger,
+                                 taskLogger: TaskLogger,
     ): ViewModel
     {
         return TaskDetailsViewModel(
@@ -78,7 +78,7 @@ class ViewModelsModule {
             syncObjectDBReader = syncObjectDBReader,
             startStopSyncTaskUseCase = startStopSyncTaskUseCase,
             taskLogRepository = taskLogRepository,
-            taskStateLogger = taskStateLogger,
+            taskLogger = taskLogger,
         )
     }
 

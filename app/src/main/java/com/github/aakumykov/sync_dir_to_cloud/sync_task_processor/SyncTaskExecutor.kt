@@ -12,11 +12,11 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessor.Companion.TAG
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
 import kotlinx.coroutines.CancellationException
@@ -30,8 +30,8 @@ import javax.inject.Inject
 class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
-    private val taskStateLogger: TaskStateLogger,
-    private val executionLogger: ExecutionLogger,
+    private val taskLogger: TaskLogger,
+    private val operationLogger: OperationLogger,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val resources: Resources,
 ){
@@ -55,7 +55,8 @@ class SyncTaskExecutor @Inject constructor(
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            syncTaskProcessorFactory.create(scope).processSyncTask(syncTask, executionId)
+            syncTaskProcessorFactory.create(syncTask, executionId, scope)
+                .processSyncTask(syncTask, executionId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
@@ -79,13 +80,13 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionStart(taskId: String) {
 
-        executionLogger.log(ExecutionLogItem.createFinishingItem(
+        operationLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_begins)
         ))
 
-        taskStateLogger.logRunning(TaskLogEntry(
+        taskLogger.logRunning(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = taskId,
             entryType = ExecutionLogItemType.START
@@ -95,13 +96,13 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionFinish(taskId: String) {
 
-        executionLogger.log(ExecutionLogItem.createFinishingItem(
+        operationLogger.log(ExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
         ))
 
-        taskStateLogger.logSuccess(TaskLogEntry(
+        taskLogger.logSuccess(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = taskId,
             entryType = ExecutionLogItemType.FINISH
@@ -111,14 +112,14 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
 
-        executionLogger.log(ExecutionLogItem.createErrorItem(
+        operationLogger.log(ExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_error),
             details = t.errorMsg
         ))
 
-        taskStateLogger.logError(TaskLogEntry(
+        taskLogger.logError(TaskLogEntry(
             executionId = hashCode().toString(),
             taskId = syncTask.id,
             entryType = ExecutionLogItemType.ERROR,

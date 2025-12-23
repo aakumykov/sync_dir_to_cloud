@@ -64,9 +64,6 @@ class SyncInstructionsProcessor @AssistedInject constructor(
             .filter { it.isBackup }
             .apply {
                 // Сначала бекапятся (создаются) каталоги, потом файлы.
-                CoroutineSyncInstructionsProcessor.process(
-                    ifCritical:
-                )
                 filter { it.isDir }
                     .forEach { syncInstruction ->
                         oneSyncInstructionExecutor.execute(syncInstruction)

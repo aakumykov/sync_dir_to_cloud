@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_ta
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 
-interface TaskStateLogger {
+interface TaskLogger {
     suspend fun logRunning(taskLogEntry: TaskLogEntry)
     suspend fun logSuccess(taskLogEntry: TaskLogEntry)
     suspend fun logError(taskLogEntry: TaskLogEntry)

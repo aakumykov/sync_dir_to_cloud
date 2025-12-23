@@ -1,7 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
+import androidx.annotation.StringRes
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseListerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionsProcessor
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -13,7 +17,9 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
+import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
@@ -40,7 +46,11 @@ FIXME: удалённо пропал и локально пропал...
  */
 class SyncTaskProcessor @AssistedInject constructor(
 
-    @Assisted private val coroutineScope: CoroutineScope,
+    @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
+    @Assisted private val scope: CoroutineScope,
+
+    private val coroutineSyncInstructionsProcessorAssistedFactory: CoroutineSyncInstructionsProcessorAssistedFactory,
 
     private val cloudAuthReader: CloudAuthReader,
 
@@ -52,21 +62,33 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
 ) {
+    @Deprecated("убрать")
     private var _currentTask: SyncTask? = null
+
+    @Deprecated("убрать")
     private val currentTask: SyncTask get() = _currentTask!!
 
+    @Deprecated("убрать")
     private val currentTaskId get(): String = currentTask.id
 
+    @Deprecated("убрать")
     private var _currentExecutionId: String? = null
+
+    @Deprecated("убрать")
     private val currentExecutionId get(): String = _currentExecutionId!!
 
+    private val taskId: String get() = syncTask.id
 
+    private val coroutineSyncInstructionsProcessor: CoroutineSyncInstructionsProcessor by lazy {
+        coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
+    }
 
     /**
      * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
      * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
      */
     suspend fun processSyncTask(syncTask: SyncTask, executionId: String) {
+
         _currentTask = syncTask
         _currentExecutionId = executionId
 
@@ -78,18 +100,18 @@ class SyncTaskProcessor @AssistedInject constructor(
 
         // Выполнить недоделанные инструкции
         removeDuplicatedUnprocessedSyncInstructions()
-        prepareBackupDirs() // Для доделки прошлых недоделанных задач.
+        prepareBackupDirs(R.string.preparing_backup_dirs_for_previous_unfinished_tasks) // Для доделки прошлых недоделанных задач.
         processUnprocessedSyncInstructions()
 
         // Сброс старого состояния задачи и её объектов.
-        resetTaskBadStates(currentTaskId)
-        resetObjectsBadState(currentTaskId)
+        resetTaskBadStates()
+        resetObjectsBadState()
 
         // Чтение хранилищ.
-        markAllObjectsAsNotChecked(currentTaskId)
-        readSource().getOrThrow()
-        readTarget().getOrThrow()
-        markAllNotCheckedObjectsAsDeleted(currentTaskId)
+        markAllObjectsAsNotChecked()
+        readSource()
+        readTarget()
+        markAllNotCheckedObjectsAsDeleted()
 
         // Сравнение старого состояния объектов с новым.
         deleteOldComparisonStates()
@@ -99,137 +121,233 @@ class SyncTaskProcessor @AssistedInject constructor(
         generateSyncInstructions()
 
         // Подготавливаю каталоги бекапов нынешних задач.
-        prepareBackupDirs()
+        prepareBackupDirs(R.string.preparing_backup_dirs_for_current_task)
 
         processSyncInstructions()
 
         clearProcessedSyncObjectsWithDeletedState()
     }
 
-    private suspend fun checkTaskDirs() {
-        appComponent
-            .getTaskDirsCheckerAssistedFactory()
-            .create(currentTask, currentExecutionId)
-            .checkTaskDirs()
+    private fun checkTaskDirs() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.checking_task_dirs),
+            executionBlock = {
+                appComponent
+                    .getTaskDirsCheckerAssistedFactory()
+                    .create(syncTask, executionId)
+                    .checkTaskDirs()
+            }
+        )
     }
 
-    private suspend fun prepareBackupDirs() {
-        appComponent
-            .getBackupDirsPreparerAssistedFactory()
-            .create(currentTask)
-            .prepareBackupDirs()
-    }
-
-
-    private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
-        appComponent
-            .getSyncInstructionRepository()
-            .deleteUnprocessedDuplicatedInstructions(currentTaskId)
-    }
-
-    private suspend fun clearProcessedSyncObjectsWithDeletedState() {
-        appComponent
-            .getSyncObjectDeleter()
-            .deleteProcessedObjectsWithDeletedState(currentTaskId)
-    }
-
-    private suspend fun markAllNotCheckedObjectsAsDeleted(taskId: String) {
-        syncObjectStateResetter.markAllNotCheckedObjectsAsDeleted(taskId)
-    }
-
-    private suspend fun deleteOldComparisonStates() {
-        appComponent
-            .getComparisonsDeleter()
-            .deleteAllFor(currentTaskId)
-    }
-
-    private suspend fun deleteProcessedSyncInstructions() {
-        appComponent
-            .getInstructionsDeleter()
-            .deleteFinishedInstructionsFor(currentTaskId)
-    }
-
-    private suspend fun generateSyncInstructions() {
-        appComponent
-            .getInstructionsGeneratorAssistedFactory()
-            .create(currentTask, currentExecutionId)
-            .generate()
+    private fun prepareBackupDirs(@StringRes logMessageId: Int) {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(logMessageId),
+            executionBlock = {
+                appComponent
+                    .getBackupDirsPreparerAssistedFactory()
+                    .create(syncTask)
+                    .prepareBackupDirs()
+            }
+        )
     }
 
 
-    private suspend fun processUnprocessedSyncInstructions() {
-        appComponent
-            .getSyncInstructionsProcessorAssistedFactory()
-            .create(currentTask, currentExecutionId, coroutineScope)
-            .processPrevSessionUnprocessedInstructions()
+    private fun removeDuplicatedUnprocessedSyncInstructions() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.removing_duplicate_sync_instructions),
+            executionBlock = {
+                appComponent
+                    .getSyncInstructionRepository()
+                    .deleteUnprocessedDuplicatedInstructions(taskId)
+            }
+        )
+    }
+
+    private fun clearProcessedSyncObjectsWithDeletedState() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = false,
+            logMessage = TextMessage(R.string.clearing_processed_sync_objects_with_deleted_state),
+            executionBlock = {
+                appComponent
+                    .getSyncObjectDeleter()
+                    .deleteProcessedObjectsWithDeletedState(taskId)
+            }
+        )
+    }
+
+    private fun markAllNotCheckedObjectsAsDeleted() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.marking_all_not_checked_objects_as_deleted),
+            executionBlock = {
+                syncObjectStateResetter.markAllNotCheckedObjectsAsDeleted(taskId)
+            }
+        )
+    }
+
+    private fun deleteOldComparisonStates() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = false,
+            logMessage = TextMessage(R.string.deleting_old_comparison_results),
+            executionBlock = {
+                appComponent
+                    .getComparisonsDeleter()
+                    .deleteAllFor(taskId)
+            }
+        )
+    }
+
+    private fun deleteProcessedSyncInstructions() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = false,
+            logMessage = TextMessage(R.string.removing_processed_sync_instructions),
+            executionBlock = {
+                appComponent
+                    .getInstructionsDeleter()
+                    .deleteFinishedInstructionsFor(taskId)
+            }
+        )
+    }
+
+    private fun generateSyncInstructions() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.generating_sync_instructions),
+            executionBlock = {
+                appComponent
+                    .getInstructionsGeneratorAssistedFactory()
+                    .create(syncTask, executionId)
+                    .generate()
+            }
+        )
     }
 
 
-    private suspend fun processSyncInstructions() {
-        appComponent
-            .getSyncInstructionsProcessorAssistedFactory()
-            .create(currentTask, currentExecutionId, coroutineScope)
-            .processThisSessionInstructions()
+    private fun processUnprocessedSyncInstructions() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = false,
+            logMessage = TextMessage(R.string.processing_unprocessed_sync_instructions),
+            executionBlock = {
+                appComponent
+                    .getSyncInstructionsProcessorAssistedFactory()
+                    .create(syncTask, executionId, scope)
+                    .processPrevSessionUnprocessedInstructions()
+            }
+        )
+    }
+
+
+    private fun processSyncInstructions() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.processing_sync_instructions),
+            executionBlock = {
+                appComponent
+                    .getSyncInstructionsProcessorAssistedFactory()
+                    .create(syncTask, executionId, scope)
+                    .processThisSessionInstructions()
+            }
+        )
     }
 
 
 
-    private suspend fun resetTaskBadStates(taskId: String) {
-        syncTaskStateChanger.resetSourceReadingBadState(taskId)
+    private fun resetTaskBadStates() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.resetting_task_bad_states),
+            executionBlock = {
+                syncTaskStateChanger.resetSourceReadingBadState(taskId)
+            }
+        )
     }
 
-    private suspend fun resetObjectsBadState(taskId: String) {
-        syncObjectStateResetter.resetTargetReadingBadState(taskId)
-        syncObjectStateResetter.resetBackupBadState(taskId)
-        syncObjectStateResetter.resetBackupBadState(taskId)
-        syncObjectStateResetter.resetDeletionBadState(taskId)
-        syncObjectStateResetter.resetSyncBadState(taskId)
+    private fun resetObjectsBadState() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.resetting_objects_bad_states),
+            executionBlock = {
+                syncObjectStateResetter.resetTargetReadingBadState(taskId)
+                syncObjectStateResetter.resetBackupBadState(taskId)
+                syncObjectStateResetter.resetBackupBadState(taskId)
+                syncObjectStateResetter.resetDeletionBadState(taskId)
+                syncObjectStateResetter.resetSyncBadState(taskId)
+            }
+        )
     }
 
 
-    private suspend fun markAllObjectsAsNotChecked(taskId: String) {
-        syncObjectStateResetter.markAllObjectsAsNotChecked(taskId)
+    private fun markAllObjectsAsNotChecked() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.marking_all_objects_as_not_checked),
+            executionBlock = {
+                syncObjectStateResetter.markAllObjectsAsNotChecked(taskId)
+            }
+        )
     }
 
 
     /**
      * @return Флаг успешности чтения источника.
      */
-    private suspend fun readSource(): Result<Boolean> {
-        return storageToDatabaseLister
-            .listFromPathToDatabase(
-                syncSide = SyncSide.SOURCE,
-                executionId = currentExecutionId,
-                cloudAuth = cloudAuthReader.getCloudAuth(currentTask.sourceAuthId!!),
-                pathReadingFrom = currentTask.sourcePath!!,
-                changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
-            )
+    private fun readSource() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.reading_source),
+            executionBlock = {
+                storageToDatabaseLister
+                    .listFromPathToDatabase(
+                        syncSide = SyncSide.SOURCE,
+                        executionId = executionId,
+                        cloudAuth = cloudAuthReader.getCloudAuth(syncTask.sourceAuthId!!),
+                        pathReadingFrom = syncTask.sourcePath!!,
+                        changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+                    )
+            }
+        )
     }
 
 
-    private suspend fun readTarget(): Result<Boolean> {
-        return storageToDatabaseLister
-            .listFromPathToDatabase(
-                syncSide = SyncSide.TARGET,
-                executionId = currentExecutionId,
-                cloudAuth = cloudAuthReader.getCloudAuth(currentTask.targetAuthId!!),
-                pathReadingFrom = currentTask.targetPath!!,
-                changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
-            )
+    private fun readTarget() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.reading_target),
+            executionBlock = {
+                storageToDatabaseLister
+                    .listFromPathToDatabase(
+                        syncSide = SyncSide.TARGET,
+                        executionId = executionId,
+                        cloudAuth = cloudAuthReader.getCloudAuth(syncTask.targetAuthId!!),
+                        pathReadingFrom = syncTask.targetPath!!,
+                        changesDetectionStrategy = ChangesDetectionStrategy.SIZE_AND_MODIFICATION_TIME
+                    )
+            }
+        )
     }
 
 
     // FIXME: логика
     private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
-        storageToDatabaseListerAssistedFactory.create(currentTask)
+        storageToDatabaseListerAssistedFactory.create(syncTask)
     }
 
 
-    private suspend fun compareSourceWithTarget() {
-        appComponent
-            .getSourceWithTargetComparatorAssistedFactory()
-            .create(currentTask, currentExecutionId)
-            .compareSourceWithTarget()
+    private fun compareSourceWithTarget() {
+        coroutineSyncInstructionsProcessor.process(
+            isCritical = true,
+            logMessage = TextMessage(R.string.comparing_source_with_target),
+            executionBlock = {
+                appComponent
+                    .getSourceWithTargetComparatorAssistedFactory()
+                    .create(syncTask, executionId)
+                    .compareSourceWithTarget()
+            }
+        )
     }
 
 
@@ -253,4 +371,14 @@ class SyncTaskProcessor @AssistedInject constructor(
     companion object {
         val TAG: String = SyncTaskProcessor::class.java.simpleName
     }
+}
+
+
+@AssistedFactory
+interface SyncTaskProcessorAssistedFactory {
+    fun create(
+        syncTask: SyncTask,
+        executionId: String,
+        coroutineScope: CoroutineScope
+    ): SyncTaskProcessor
 }

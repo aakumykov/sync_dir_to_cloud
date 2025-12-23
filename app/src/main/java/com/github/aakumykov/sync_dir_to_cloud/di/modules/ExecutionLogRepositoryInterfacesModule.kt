@@ -2,8 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.repository.ExecutionLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
+import com.github.aakumykov.sync_dir_to_cloud.repository.OperationLogRepository
 import dagger.Binds
 import dagger.Module
 
@@ -11,12 +11,12 @@ import dagger.Module
 interface ExecutionLogRepositoryInterfacesModule {
 
     @Binds
-    fun bindExecutionLogger(executionLogRepository: ExecutionLogRepository): ExecutionLogger
+    fun bindExecutionLogger(executionLogRepository: OperationLogRepository): OperationLogger
 
     @Binds
-    fun bindExecutionLogReader(executionLogRepository: ExecutionLogRepository): ExecutionLogReader
+    fun bindExecutionLogReader(executionLogRepository: OperationLogRepository): ExecutionLogReader
 
     @Binds
     @Deprecated("удалить")
-    fun bindExecutionLogCleaner(executionLogRepository: ExecutionLogRepository): ExecutionLogCleaner
+    fun bindExecutionLogCleaner(executionLogRepository: OperationLogRepository): ExecutionLogCleaner
 }

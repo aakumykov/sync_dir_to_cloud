@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.SyncTaskLogDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskStateLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import kotlinx.coroutines.CoroutineDispatcher
@@ -15,7 +15,7 @@ class TaskLogRepository @Inject constructor(
     @DispatcherIO private val coroutineDispatcher: CoroutineDispatcher,
     private val syncTaskLogDAO: SyncTaskLogDAO
 )
-    : SyncTaskLogDeleter, TaskStateLogger
+    : SyncTaskLogDeleter, TaskLogger
 {
     fun getLogsForTask(taskId: String): LiveData<List<TaskLogEntry>> {
         return syncTaskLogDAO.getLogsForTask(taskId)

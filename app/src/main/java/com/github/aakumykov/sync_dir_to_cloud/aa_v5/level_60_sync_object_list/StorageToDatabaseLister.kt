@@ -13,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNever
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
@@ -36,7 +36,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
 
-    private val executionLogger: ExecutionLogger,
+    private val operationLogger: OperationLogger,
 
     private val resources: Resources,
 ) {
@@ -96,7 +96,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
 
     private suspend fun logExecutionStarted(taskId: String, executionId: String, message: String) {
-        executionLogger.log(ExecutionLogItem.createStartingItem(
+        operationLogger.log(ExecutionLogItem.createStartingItem(
             taskId = taskId,
             executionId = executionId,
             message = message
@@ -105,7 +105,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
 
     private suspend fun logExecutionError(taskId: String, executionId: String, errorMsg: String) {
-        executionLogger.updateLog(ExecutionLogItem.createErrorItem(
+        operationLogger.updateLog(ExecutionLogItem.createErrorItem(
             taskId = taskId,
             executionId = executionId,
             message = errorMsg,
@@ -115,7 +115,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
 
     private suspend fun logExecutionFinished(taskId: String, executionId: String) {
-        executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
+        operationLogger.updateLog(ExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = getString(R.string.EXECUTION_LOG_reading_source)

@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -23,7 +23,7 @@ class TaskDirsFixer @AssistedInject constructor(
     private val resources: Resources,
     private val cloudReaderGetter: CloudReaderGetter,
     private val cloudWriterGetter: CloudWriterGetter,
-    private val executionLogger: ExecutionLogger,
+    private val operationLogger: OperationLogger,
     private val appSettings: AppSettings,
 ) {
     private val sourceReader: CloudReader by lazy { cloudReaderGetter.getSourceCloudReaderFor(syncTask) }
@@ -96,7 +96,7 @@ class TaskDirsFixer @AssistedInject constructor(
 
 
     private suspend fun logExecutionStarted(@StringRes messageId: Int) {
-        executionLogger.log(ExecutionLogItem.createStartingItem(
+        operationLogger.log(ExecutionLogItem.createStartingItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = getString(messageId)
@@ -104,7 +104,7 @@ class TaskDirsFixer @AssistedInject constructor(
     }
 
     private suspend fun logExecutionError(errorMsg: String) {
-        executionLogger.updateLog(ExecutionLogItem.createErrorItem(
+        operationLogger.updateLog(ExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = errorMsg,
@@ -113,7 +113,7 @@ class TaskDirsFixer @AssistedInject constructor(
     }
 
     private suspend fun logExecutionFinished() {
-        executionLogger.updateLog(ExecutionLogItem.createFinishingItem(
+        operationLogger.updateLog(ExecutionLogItem.createFinishingItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = getString(R.string.EXECUTION_LOG_reading_source)
