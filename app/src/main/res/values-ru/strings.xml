@@ -192,7 +192,7 @@
     <string name="marking_all_not_checked_objects_as_deleted">Помечаю все оставшиеся объекты как удалённые</string>
     <string name="deleting_old_comparison_results">Удаляю старые результаты сравнения</string>
     <string name="comparing_source_with_target">Сравниваю источник с приёмником</string>
-    <string name="generating_sync_instructions">Generating sync instructions</string>
+    <string name="generating_sync_instructions">Генерирую инструкции синхронизации</string>
     <string name="processing_sync_instructions">Выполняю инструкции синхронизации</string>
     <string name="clearing_processed_sync_objects_with_deleted_state">Забываю об обработанных удалённых объектах</string>
 </resources>

@@ -193,7 +193,7 @@
     <string name="marking_all_not_checked_objects_as_deleted">Marking all remaining objects as deleted</string>
     <string name="deleting_old_comparison_results">Deleting old comparison results</string>
     <string name="comparing_source_with_target">Comparing source with target</string>
-    <string name="generating_sync_instructions">Генерирую инструкции синхронизации</string>
-    <string name="processing_sync_instructions">Выполняю инструкции синхронизации</string>
-    <string name="clearing_processed_sync_objects_with_deleted_state">Forgotting about processed deleted objects</string>
+    <string name="generating_sync_instructions">Generating sync instructions</string>
+    <string name="processing_sync_instructions">Executing sync instructions</string>
+    <string name="clearing_processed_sync_objects_with_deleted_state">Forgetting about processed deleted objects</string>
 </resources>
