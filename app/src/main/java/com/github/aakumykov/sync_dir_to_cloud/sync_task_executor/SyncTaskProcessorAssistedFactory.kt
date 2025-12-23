@@ -4,6 +4,6 @@ import dagger.assisted.AssistedFactory
 import kotlinx.coroutines.CoroutineScope
 
 @AssistedFactory
-interface SyncTaskExecutorAssistedFactory {
-    fun create(coroutineScope: CoroutineScope): SyncTaskExecutor
+interface SyncTaskProcessorAssistedFactory {
+    fun create(coroutineScope: CoroutineScope): SyncTaskProcessor
 }
