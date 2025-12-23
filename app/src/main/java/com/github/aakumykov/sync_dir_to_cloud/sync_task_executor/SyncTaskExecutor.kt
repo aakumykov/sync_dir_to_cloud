@@ -27,7 +27,6 @@ import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_logger.SyncTaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -358,10 +357,4 @@ class SyncTaskExecutor @AssistedInject constructor(
     companion object {
         val TAG: String = SyncTaskExecutor::class.java.simpleName
     }
-}
-
-
-@AssistedFactory
-interface SyncTaskExecutorAssistedFactory {
-    fun create(coroutineScope: CoroutineScope): SyncTaskExecutor
 }

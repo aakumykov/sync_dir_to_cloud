@@ -9,7 +9,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 
 //
 // Исполняет инструкции в определённом порядке.
@@ -156,6 +155,6 @@ interface SyncInstructionsProcessorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
-        parentJob: Job,
+        scope: CoroutineScope,
     ): SyncInstructionsProcessor
 }

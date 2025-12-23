@@ -11,7 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncIn
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppSettingsModule
@@ -65,10 +64,6 @@ import com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker.TaskDirsFixerAss
 import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 
 @Component(
     modules = [
@@ -171,10 +166,4 @@ interface AppComponent {
     fun getTaskDirsCheckerAssistedFactory(): TaskDirsFixerAssistedFactory
 
     fun getAppSettings(): AppSettings
-
-    fun getTaskJob(): Job
-
-    @AppScope
-    @DispatcherIO
-    fun getTaskDispatcher(): CoroutineDispatcher
 }
