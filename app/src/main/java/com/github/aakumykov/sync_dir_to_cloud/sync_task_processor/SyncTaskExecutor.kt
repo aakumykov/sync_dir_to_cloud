@@ -27,12 +27,12 @@ import javax.inject.Inject
  * Задача класса - запускать выполнение задачи и журналировать это выполнение.
  */
 // TODO: поменять именами Executor и Processor ...
-class SyncTaskProcessor2 @Inject constructor(
+class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskStateLogger: TaskStateLogger,
     private val executionLogger: ExecutionLogger,
-    private val syncTaskExecutorFactory: SyncTaskProcessorAssistedFactory,
+    private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val resources: Resources,
 ){
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
@@ -52,12 +52,13 @@ class SyncTaskProcessor2 @Inject constructor(
 
             logExecutionStart(taskId)
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
+
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
-            syncTaskExecutorFactory.create(scope).executeSyncTask(syncTask, executionId)
+            syncTaskProcessorFactory.create(scope).processSyncTask(syncTask, executionId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
-            logExecutionFinish(taskId)
+
         }
         catch (e: CancellationException) {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
@@ -69,6 +70,7 @@ class SyncTaskProcessor2 @Inject constructor(
         }
         finally {
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
+            logExecutionFinish(taskId)
         }
 
         Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
