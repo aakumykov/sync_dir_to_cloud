@@ -13,7 +13,7 @@ import java.util.Date
 import java.util.UUID
 
 @Entity(
-    tableName = ExecutionLogItem.TABLE_NAME,
+    tableName = TaskExecutionLogItem.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -36,7 +36,7 @@ import java.util.UUID
         )
     ]*/
 )
-class ExecutionLogItem (
+class TaskExecutionLogItem (
     @PrimaryKey val id: String,
     @ColumnInfo(name = TASK_ID_FIELD_NAME) val taskId: String,
     @ColumnInfo(name = EXECUTION_ID_FIELD_NAME) val executionId: String,
@@ -50,7 +50,7 @@ class ExecutionLogItem (
         fun createStartingItem(taskId: String,
                             executionId: String,
                             message: String,
-        ): ExecutionLogItem = create(
+        ): TaskExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
             itemType = ExecutionLogItemType.START,
@@ -62,7 +62,7 @@ class ExecutionLogItem (
         fun createFinishingItem(taskId: String,
                                 executionId: String,
                                 message: String,
-        ): ExecutionLogItem = create(
+        ): TaskExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
             itemType = ExecutionLogItemType.FINISH,
@@ -75,7 +75,7 @@ class ExecutionLogItem (
                             executionId: String,
                             message: String,
                             details: String?,
-        ): ExecutionLogItem = create(
+        ): TaskExecutionLogItem = create(
             taskId = taskId,
             executionId = executionId,
             itemType = ExecutionLogItemType.ERROR,
@@ -89,7 +89,7 @@ class ExecutionLogItem (
                            itemType: ExecutionLogItemType,
                            message: String,
                            details: String?,
-        ): ExecutionLogItem = ExecutionLogItem(
+        ): TaskExecutionLogItem = TaskExecutionLogItem(
             id = UUID.randomUUID().toString(),
             taskId = taskId,
             executionId = executionId,
@@ -99,7 +99,7 @@ class ExecutionLogItem (
             details = details,
         )
 
-        const val TABLE_NAME = "execution_log"
+        const val TABLE_NAME = "task_execution_log"
         const val TASK_ID_FIELD_NAME = "task_id"
         const val EXECUTION_ID_FIELD_NAME = "execution_id"
         const val TIMESTAMP_FIELD_NAME = "timestamp"
@@ -115,11 +115,11 @@ class ExecutionLogItem (
 
 
 
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "executionId", toColumnName = EXECUTION_ID_FIELD_NAME)
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "taskId", toColumnName = TASK_ID_FIELD_NAME)
+    @RenameColumn(tableName = "execution_log", fromColumnName = "executionId", toColumnName = EXECUTION_ID_FIELD_NAME)
+    @RenameColumn(tableName = "execution_log", fromColumnName = "taskId", toColumnName = TASK_ID_FIELD_NAME)
     class RenameColumnsAutoMigrationSpec1 : AutoMigrationSpec
 
-    @DeleteColumn(tableName = TABLE_NAME, columnName = OPERATION_STATE_FIELD_NAME)
+    @DeleteColumn(tableName = "execution_log", columnName = OPERATION_STATE_FIELD_NAME)
     class RemoveOperationStateFieldSpec : AutoMigrationSpec
 
     override fun toString(): String {

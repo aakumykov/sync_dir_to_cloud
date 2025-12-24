@@ -12,7 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.Comp
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
@@ -43,7 +43,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackup
         CloudAuth::class,
         TaskLogEntry::class,
         SyncObjectLogItem::class,
-        ExecutionLogItem::class,
+        TaskExecutionLogItem::class,
         ComparisonState::class,
         SyncInstruction::class,
         SyncOperationLogItem::class,
@@ -69,9 +69,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackup
         AutoMigration(from = 73, to = 74), // Добавление поля TaskLogEntry.finishTime
         AutoMigration(from = 74, to = 75), // Добавление поля TaskLogEntry.size
         AutoMigration(from = 75, to = 76), // добавилось ExecutionLogItem
-        AutoMigration(from = 76, to = 77, spec = ExecutionLogItem.RenameColumnsAutoMigrationSpec1::class), // добавилось ExecutionLogItem
+        AutoMigration(from = 76, to = 77, spec = TaskExecutionLogItem.RenameColumnsAutoMigrationSpec1::class), // добавилось ExecutionLogItem
         AutoMigration(from = 77, to = 78), // Новое поле "operationState" в ExecutionLogItem
-        AutoMigration(from = 78, to = 79, spec = ExecutionLogItem.RemoveOperationStateFieldSpec::class), // Удаление поля ExecutionLogItem.operationState
+        AutoMigration(from = 78, to = 79, spec = TaskExecutionLogItem.RemoveOperationStateFieldSpec::class), // Удаление поля ExecutionLogItem.operationState
         AutoMigration(from = 79, to = 80), // Новое поле SyncObject.side
         AutoMigration(from = 80, to = 81), // Новое поле SyncObject.executionId
         AutoMigration(from = 81, to = 82, spec = AppDatabase.FirstAddThisObjectSpec::class), // Новый объект "SyncInstruction"
@@ -120,8 +120,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackup
         AutoMigration(from = 124, to = 125, spec = RenameSyncTaskBackupDirNameToTaskBackupDirName::class),
         AutoMigration(from = 125, to = 126), // Новое поле ExecutionLogItem.details: String?
         AutoMigration(from = 126, to = 127), // Новое поле SyncOperationLogItem.jobId: String?
+        AutoMigration(from = 127, to = 128, spec = RenameTableFromExecutionLogToTaskExecutionLog::class), // Переименование таблицы "execution_log" в "task_execution_log".
     ],
-    version = 127,
+    version = 128,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -190,3 +191,5 @@ class RenameSyncTaskBackupDirToDirName : AutoMigrationSpec
 class RenameSyncTaskBackupDirNameToTaskBackupDirName : AutoMigrationSpec
 
 
+@RenameTable(fromTableName = "execution_log", toTableName = "task_execution_log")
+class RenameTableFromExecutionLogToTaskExecutionLog : AutoMigrationSpec

@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
@@ -96,7 +96,7 @@ class TaskDirsFixer @AssistedInject constructor(
 
 
     private suspend fun logExecutionStarted(@StringRes messageId: Int) {
-        operationLogger.log(ExecutionLogItem.createStartingItem(
+        operationLogger.log(TaskExecutionLogItem.createStartingItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = getString(messageId)
@@ -104,7 +104,7 @@ class TaskDirsFixer @AssistedInject constructor(
     }
 
     private suspend fun logExecutionError(errorMsg: String) {
-        operationLogger.updateLog(ExecutionLogItem.createErrorItem(
+        operationLogger.updateLog(TaskExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = errorMsg,
@@ -113,7 +113,7 @@ class TaskDirsFixer @AssistedInject constructor(
     }
 
     private suspend fun logExecutionFinished() {
-        operationLogger.updateLog(ExecutionLogItem.createFinishingItem(
+        operationLogger.updateLog(TaskExecutionLogItem.createFinishingItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = getString(R.string.EXECUTION_LOG_reading_source)

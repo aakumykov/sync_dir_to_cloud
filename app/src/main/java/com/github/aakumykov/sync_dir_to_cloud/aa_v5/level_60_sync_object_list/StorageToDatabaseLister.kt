@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -96,7 +96,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
 
     private suspend fun logExecutionStarted(taskId: String, executionId: String, message: String) {
-        operationLogger.log(ExecutionLogItem.createStartingItem(
+        operationLogger.log(TaskExecutionLogItem.createStartingItem(
             taskId = taskId,
             executionId = executionId,
             message = message
@@ -105,7 +105,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
 
     private suspend fun logExecutionError(taskId: String, executionId: String, errorMsg: String) {
-        operationLogger.updateLog(ExecutionLogItem.createErrorItem(
+        operationLogger.updateLog(TaskExecutionLogItem.createErrorItem(
             taskId = taskId,
             executionId = executionId,
             message = errorMsg,
@@ -115,7 +115,7 @@ class StorageToDatabaseLister @AssistedInject constructor(
 
 
     private suspend fun logExecutionFinished(taskId: String, executionId: String) {
-        operationLogger.updateLog(ExecutionLogItem.createFinishingItem(
+        operationLogger.updateLog(TaskExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = getString(R.string.EXECUTION_LOG_reading_source)

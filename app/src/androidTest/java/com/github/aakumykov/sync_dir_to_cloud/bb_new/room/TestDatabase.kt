@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructio
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
@@ -23,7 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
         CloudAuth::class,
         TaskLogEntry::class,
         SyncObjectLogItem::class,
-        ExecutionLogItem::class,
+        TaskExecutionLogItem::class,
         ComparisonState::class,
         SyncInstruction::class,
         SyncOperationLogItem::class,

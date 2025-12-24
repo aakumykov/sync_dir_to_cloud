@@ -5,7 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogReader
@@ -24,7 +24,7 @@ class SyncLogViewModel(
     val logOfSync: LiveData<List<LogOfSync>> get() = mediatorLiveData
 
     private val mediatorLiveData: MediatorLiveData<List<LogOfSync>> = MediatorLiveData()
-    private val currentExecutionLogItemList: MutableList<ExecutionLogItem> = mutableListOf()
+    private val currentTaskExecutionLogItemList: MutableList<TaskExecutionLogItem> = mutableListOf()
     private val currentSyncOperationLogItemList: MutableList<SyncOperationLogItem> = mutableListOf()
     private val resultingList: MutableList<LogOfSync> = mutableListOf()
     private var isFirstRun = true
@@ -41,8 +41,8 @@ class SyncLogViewModel(
     private fun prepareMediatorLiveData(taskId: String, executionId: String) {
 
         mediatorLiveData.addSource(executionLogReader.getExecutionLog(taskId,executionId)) { list ->
-            currentExecutionLogItemList.clear()
-            currentExecutionLogItemList.addAll(list)
+            currentTaskExecutionLogItemList.clear()
+            currentTaskExecutionLogItemList.addAll(list)
             processAndPublishCompoundLog()
         }
 
@@ -62,7 +62,7 @@ class SyncLogViewModel(
             val syncLog = currentSyncOperationLogItemList.map { LogOfSync.fromSyncOperationLogItem(it) }
             addAll(syncLog)
 
-            val executionLog = currentExecutionLogItemList.map { LogOfSync.fromExecutionLogItem(it) }
+            val executionLog = currentTaskExecutionLogItemList.map { LogOfSync.fromExecutionLogItem(it) }
             addAll(executionLog)
 
             sortBy { it.timestamp }

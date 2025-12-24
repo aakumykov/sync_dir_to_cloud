@@ -4,7 +4,7 @@ import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
@@ -80,7 +80,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionStart(taskId: String) {
 
-        operationLogger.log(ExecutionLogItem.createFinishingItem(
+        operationLogger.log(TaskExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_begins)
@@ -96,7 +96,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionFinish(taskId: String) {
 
-        operationLogger.log(ExecutionLogItem.createFinishingItem(
+        operationLogger.log(TaskExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
@@ -112,7 +112,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
 
-        operationLogger.log(ExecutionLogItem.createErrorItem(
+        operationLogger.log(TaskExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_error),
