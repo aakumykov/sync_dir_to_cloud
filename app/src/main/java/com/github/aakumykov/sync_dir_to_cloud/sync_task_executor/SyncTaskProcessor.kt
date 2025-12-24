@@ -43,6 +43,9 @@ FIXME: удалённо пропал и локально пропал...
 
 /**
  * Задача класса - выполнять сложную логику шагов выполнения задачи.
+ *
+ * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
+ * Иначе будут сбрасываться статусы уже выполняющихся задач (!)
  */
 class SyncTaskProcessor @AssistedInject constructor(
 
@@ -62,35 +65,14 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
 ) {
-    @Deprecated("убрать")
-    private var _currentTask: SyncTask? = null
-
-    @Deprecated("убрать")
-    private val currentTask: SyncTask get() = _currentTask!!
-
-    @Deprecated("убрать")
-    private val currentTaskId get(): String = currentTask.id
-
-    @Deprecated("убрать")
-    private var _currentExecutionId: String? = null
-
-    @Deprecated("убрать")
-    private val currentExecutionId get(): String = _currentExecutionId!!
-
     private val taskId: String get() = syncTask.id
 
     private val coroutineSyncInstructionsProcessor: CoroutineSyncInstructionsProcessor by lazy {
         coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
     }
 
-    /**
-     * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
-     * Иначе будут сбрабываться статусы уже выполняющихся задач (!)
-     */
-    suspend fun processSyncTask(syncTask: SyncTask, executionId: String) {
 
-        _currentTask = syncTask
-        _currentExecutionId = executionId
+    suspend fun processSyncTask() {
 
         // Проверить каталоги задачи
         checkTaskDirs()
