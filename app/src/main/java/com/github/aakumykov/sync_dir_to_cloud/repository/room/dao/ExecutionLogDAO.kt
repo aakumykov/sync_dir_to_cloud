@@ -14,7 +14,8 @@ abstract class ExecutionLogDAO {
     abstract suspend fun addItem(taskExecutionLogItem: TaskExecutionLogItem)
 
     suspend fun updateItem(item: TaskExecutionLogItem) {
-        updateItemReal(taskId = item.taskId,
+        updateItemReal(
+            taskId = item.taskId,
             executionId = item.executionId,
             timestamp = item.timestamp,
             type = item.type,
