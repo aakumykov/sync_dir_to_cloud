@@ -17,6 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessor.Companion.TAG
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
 import kotlinx.coroutines.CancellationException
@@ -31,6 +32,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLogger: TaskLogger,
+    private val taskLogger2: TaskLogger2,
     private val executionLogger: ExecutionLogger,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val resources: Resources,
@@ -46,11 +48,12 @@ class SyncTaskExecutor @Inject constructor(
         Log.d(TAG, ""); Log.d(TAG, "")
         Log.d(tag, "========= executeSyncTask(taskId: $taskId, executionId: $executionId) [hashCode:${hashCode()}] СТАРТ ========")
 
-        try {
-            val syncTask = syncTaskReader.getSyncTask(taskId)
-            val taskId = syncTask.id
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+        val taskId = syncTask.id
 
+        try {
             logExecutionStart(taskId)
+            taskLogger2.logTaskStarted(syncTask)
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
@@ -60,7 +63,7 @@ class SyncTaskExecutor @Inject constructor(
                 .processSyncTask()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
-
+            taskLogger2.logTaskFinished(syncTask)
         }
         catch (e: CancellationException) {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
@@ -68,9 +71,11 @@ class SyncTaskExecutor @Inject constructor(
         }
         catch (t: Throwable) {
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, t.errorMsg)
+            taskLogger2.logTaskError(syncTask, t)
             Log.e(TAG, t.errorMsg, t)
         }
         finally {
+            // TODO: ошибочное расположение
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
             logExecutionFinish(taskId)
         }
