@@ -57,7 +57,7 @@ class SyncTaskExecutor @Inject constructor(
 
             syncTaskProcessorFactory
                 .create(syncTask, executionId, scope)
-                .processSyncTask(syncTask, executionId)
+                .processSyncTask()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
 
