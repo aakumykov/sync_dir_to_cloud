@@ -80,16 +80,6 @@ class SyncInstruction (
         return SyncInstruction::class.java.simpleName + "{ $operation, $relativePath }"
     }
 
-    @RenameColumn(
-        tableName = "sync_instructions_6",
-        fromColumnName = "from_id",
-        toColumnName = "object_id_in_source")
-    @RenameColumn(
-        tableName = "sync_instructions_6",
-        fromColumnName = "to_id",
-        toColumnName = "object_id_in_target")
-    class RenameObjectIdColumnsMigration1: AutoMigrationSpec
-
     companion object {
         fun from(
             comparisonState: ComparisonState,

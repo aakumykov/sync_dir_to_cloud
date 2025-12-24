@@ -115,12 +115,8 @@ class TaskExecutionLogItem (
 
 
 
-    @RenameColumn(tableName = "execution_log", fromColumnName = "executionId", toColumnName = EXECUTION_ID_FIELD_NAME)
-    @RenameColumn(tableName = "execution_log", fromColumnName = "taskId", toColumnName = TASK_ID_FIELD_NAME)
-    class RenameColumnsAutoMigrationSpec1 : AutoMigrationSpec
 
-    @DeleteColumn(tableName = "execution_log", columnName = OPERATION_STATE_FIELD_NAME)
-    class RemoveOperationStateFieldSpec : AutoMigrationSpec
+
 
     override fun toString(): String {
         return "ExecutionLogItem(id='$id', taskId='$taskId', executionId='$executionId', timestamp=$timestamp, type=$type, message='$message')"

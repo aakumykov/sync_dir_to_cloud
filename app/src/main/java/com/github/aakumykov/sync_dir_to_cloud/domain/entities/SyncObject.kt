@@ -201,11 +201,4 @@ class SyncObject (
             }
         }
     }*/
-
-    @RenameColumn(tableName = "sync_objects", fromColumnName = "side", toColumnName = "sync_side")
-    class RenameSideToSyncSideMigration : AutoMigrationSpec
-
-
-    @RenameColumn(tableName = "sync_objects", fromColumnName = "state_in_source", toColumnName = "state_in_source")
-    class RenameStateInSourceToStateInStorageMigration : AutoMigrationSpec
 }

@@ -124,29 +124,6 @@ data class SyncObjectLogItem (
         }
     }
 
-
-
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "message", toColumnName = OPERATION_NAME_FILED)
-    class RenameColumnMessageToOperationName : AutoMigrationSpec
-
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "name", toColumnName = ITEM_NAME_FILED)
-    class RenameColumnNameToItemName : AutoMigrationSpec
-
-    @DeleteColumn(tableName = TABLE_NAME, columnName = "is_successful")
-    class DeleteColumnIsSuccessful : AutoMigrationSpec
-
-    @DeleteColumn(tableName = TABLE_NAME, columnName = "progress")
-    class DeleteColumnProgress : AutoMigrationSpec
-
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "qwerty", toColumnName = "abc")
-    class RenameColumnFromQwertyToAbc : AutoMigrationSpec
-
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "progress_as_part_of_100", toColumnName = PROGRESS_FIELD)
-    class RenameColumnProgressAsPartOf100ToProgress : AutoMigrationSpec
-
-    @DeleteColumn(tableName = TABLE_NAME, columnName = "abc")
-    class DeleteColumnAbc : AutoMigrationSpec
-
     override fun toString(): String {
         return "SyncObjectLogItem(itemName='$itemName', operationName='$operationName')"
     }

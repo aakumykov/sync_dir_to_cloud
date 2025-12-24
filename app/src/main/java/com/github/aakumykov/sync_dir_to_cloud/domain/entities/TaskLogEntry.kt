@@ -61,10 +61,4 @@ class TaskLogEntry(
         const val TABLE_NAME = "sync_task_logs"
         const val OLD_TABLE_NAME = "task_logs"
     }
-
-    @RenameTable(fromTableName = OLD_TABLE_NAME, toTableName = TABLE_NAME)
-    class RenameTableFromTaskLogsToSyncTaskLogs : AutoMigrationSpec
-
-    @RenameColumn(tableName = TABLE_NAME, fromColumnName = "timestamp", toColumnName = "start_time")
-    class RenameColumnFromTimestampToStartTime : AutoMigrationSpec
 }
