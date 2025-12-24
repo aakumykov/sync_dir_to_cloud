@@ -6,13 +6,13 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 data class LogOfSync(
+    val timestamp: Long,
+    val operationState: OperationState,
     val taskId: String,
     val executionId: String,
     val jobId: String? = null,
     val text: String,
     val subText: String,
-    val timestamp: Long,
-    val operationState: OperationState,
     val progress: Int? = null,
 ) {
     companion object {
@@ -52,8 +52,18 @@ data class LogOfSync(
     }
 
     override fun toString(): String {
-        return "LogOfSync(text='$text', subText='$subText', timestamp=$timestamp)"
+        return "LogOfSync(" +
+                "timestamp=$timestamp, " +
+                "operationState=$operationState, " +
+                "text='$text', " +
+                "taskId='$taskId', " +
+                "executionId='$executionId', " +
+                "jobId=$jobId, " +
+                "subText='$subText', " +
+                "progress=$progress" +
+                ")"
     }
+
 }
 
 

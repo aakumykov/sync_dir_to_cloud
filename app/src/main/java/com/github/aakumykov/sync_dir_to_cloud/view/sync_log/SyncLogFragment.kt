@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -78,7 +79,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private fun startWork(savedInstanceState: Bundle?) {
         if (null == savedInstanceState) {
             syncLogViewModel.startWorking(taskId,executionId)
-            syncLogViewModel.logOfSync.observe(viewLifecycleOwner, ::onLogOfSyncChanged)
+            syncLogViewModel.logOfSync.observe(viewLifecycleOwner, ::listChanged)
 //            syncLogViewModel.getListLiveData(taskId!!, executionId!!)
 //                .observe(viewLifecycleOwner, ::onListChanged)
         }
@@ -101,7 +102,9 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 //        list?.also { listAdapter.setList(list) }
 //    }
 
-    private fun onLogOfSyncChanged(list: List<LogOfSync>?) {
+    private fun listChanged(list: List<LogOfSync>?) {
+        Log.d(TAG, "listChanged()")
+        list?.map { Log.d(TAG, it.toString()) } ?: Log.d(TAG, "null list")
         list?.also { listAdapter.setList(list) }
     }
 
