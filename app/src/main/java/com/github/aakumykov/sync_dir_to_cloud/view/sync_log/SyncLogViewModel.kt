@@ -62,7 +62,7 @@ class SyncLogViewModel(
             val syncLog = currentSyncOperationLogItemList.map { LogOfSync.fromSyncOperationLogItem(it) }
             addAll(syncLog)
 
-            val executionLog = currentTaskExecutionLogItemList.map { LogOfSync.fromExecutionLogItem(it) }
+            val executionLog = currentTaskExecutionLogItemList.map { LogOfSync.fromTaskExecutionLogItem(it) }
             addAll(executionLog)
 
             sortBy { it.timestamp }

@@ -17,7 +17,7 @@ data class LogOfSync(
 ) {
     companion object {
 
-        fun fromExecutionLogItem(item: TaskExecutionLogItem): LogOfSync {
+        fun fromTaskExecutionLogItem(item: TaskExecutionLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,
