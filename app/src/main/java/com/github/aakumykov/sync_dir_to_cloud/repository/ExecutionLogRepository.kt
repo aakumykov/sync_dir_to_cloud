@@ -4,14 +4,14 @@ import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import javax.inject.Inject
 
-class OperationLogRepository @Inject constructor(
+class ExecutionLogRepository @Inject constructor(
     private val executionLogDAO: ExecutionLogDAO,
 )
-    : OperationLogger, ExecutionLogReader, ExecutionLogCleaner
+    : ExecutionLogger, ExecutionLogReader, ExecutionLogCleaner
 {
     override suspend fun log(taskExecutionLogItem: TaskExecutionLogItem) {
         executionLogDAO.addItem(taskExecutionLogItem)

@@ -5,7 +5,7 @@ import com.github.aakumykov.file_lister_navigator_selector.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -21,7 +21,7 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
-    private val operationLogger: OperationLogger,
+    private val executionLogger: ExecutionLogger,
     private val resources: Resources,
 ) {
      suspend fun process(
@@ -33,21 +33,21 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
              val text4log = logMessage.get(resources)
 
              try {
-                 operationLogger.log(TaskExecutionLogItem.createStartingItem(taskId, executionId, text4log))
+                 executionLogger.log(TaskExecutionLogItem.createStartingItem(taskId, executionId, text4log))
 
                  scope.launch (jobForTask(scope, isCritical)) {
                      executionBlock.invoke()
                  }.join()
 
-                 operationLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
+                 executionLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
 
              } catch (e: CancellationException) {
-                 operationLogger.updateLog(TaskExecutionLogItem.createErrorItem(
+                 executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,"ОТМЕНЕНО"
                  ))
              }
              catch (throwable: Throwable) {
-                 operationLogger.updateLog(TaskExecutionLogItem.createErrorItem(
+                 executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,throwable.errorMsg
                  ))
              }

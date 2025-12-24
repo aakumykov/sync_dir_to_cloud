@@ -3,23 +3,18 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list
 import android.content.res.Resources
 import androidx.annotation.StringRes
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
-import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.factories.recursive_dir_reader.RecursiveDirReaderFactory
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.utils.calculateRelativeParentDirPath
-
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -36,8 +31,6 @@ class StorageToDatabaseLister @AssistedInject constructor(
     private val syncObjectAdder: SyncObjectAdder,
     private val syncObjectUpdater: SyncObjectUpdater,
 
-    private val operationLogger: OperationLogger,
-
     private val resources: Resources,
 ) {
     suspend fun listFromPathToDatabase(
@@ -49,13 +42,6 @@ class StorageToDatabaseLister @AssistedInject constructor(
     ): Result<Boolean> {
 
         return try {
-
-            logExecutionStarted(
-                syncTask.id,
-                executionId,
-                if (SyncSide.SOURCE == syncSide) getString(R.string.EXECUTION_LOG_reading_source)
-                else getString(R.string.EXECUTION_LOG_reading_target)
-            )
 
             if (null == pathReadingFrom)
                 throw IllegalArgumentException("path argument is null")
@@ -82,45 +68,14 @@ class StorageToDatabaseLister @AssistedInject constructor(
                     )
                 }
 
-            logExecutionFinished(syncTask.id,executionId)
-
             Result.success(true)
 
         } catch (e: Exception) {
-            e.errorMsg.also { errorMsg ->
-                logExecutionError(syncTask.id, executionId, errorMsg)
-            }
             Result.failure(e)
         }
     }
 
 
-    private suspend fun logExecutionStarted(taskId: String, executionId: String, message: String) {
-        operationLogger.log(TaskExecutionLogItem.createStartingItem(
-            taskId = taskId,
-            executionId = executionId,
-            message = message
-        ))
-    }
-
-
-    private suspend fun logExecutionError(taskId: String, executionId: String, errorMsg: String) {
-        operationLogger.updateLog(TaskExecutionLogItem.createErrorItem(
-            taskId = taskId,
-            executionId = executionId,
-            message = errorMsg,
-            details = null,
-        ))
-    }
-
-
-    private suspend fun logExecutionFinished(taskId: String, executionId: String) {
-        operationLogger.updateLog(TaskExecutionLogItem.createFinishingItem(
-            taskId = taskId,
-            executionId = executionId,
-            message = getString(R.string.EXECUTION_LOG_reading_source)
-        ))
-    }
 
 
     private suspend fun addOrUpdateFileListItem(

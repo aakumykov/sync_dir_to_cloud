@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.executi
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 
-interface OperationLogger {
+interface ExecutionLogger {
     suspend fun log(taskExecutionLogItem: TaskExecutionLogItem)
     suspend fun updateLog(taskExecutionLogItem: TaskExecutionLogItem)
 }

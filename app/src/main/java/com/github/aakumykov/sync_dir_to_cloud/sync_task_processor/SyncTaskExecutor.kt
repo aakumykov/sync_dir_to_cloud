@@ -12,7 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -31,7 +31,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLogger: TaskLogger,
-    private val operationLogger: OperationLogger,
+    private val executionLogger: ExecutionLogger,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val resources: Resources,
 ){
@@ -81,7 +81,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionStart(taskId: String) {
 
-        operationLogger.log(TaskExecutionLogItem.createFinishingItem(
+        executionLogger.log(TaskExecutionLogItem.createStartingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_begins)
@@ -97,7 +97,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionFinish(taskId: String) {
 
-        operationLogger.log(TaskExecutionLogItem.createFinishingItem(
+        executionLogger.log(TaskExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
@@ -113,7 +113,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
 
-        operationLogger.log(TaskExecutionLogItem.createErrorItem(
+        executionLogger.log(TaskExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_error),

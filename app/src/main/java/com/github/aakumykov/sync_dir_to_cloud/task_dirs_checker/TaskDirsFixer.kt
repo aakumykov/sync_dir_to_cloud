@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
@@ -11,7 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.OperationLogger
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -23,7 +24,6 @@ class TaskDirsFixer @AssistedInject constructor(
     private val resources: Resources,
     private val cloudReaderGetter: CloudReaderGetter,
     private val cloudWriterGetter: CloudWriterGetter,
-    private val operationLogger: OperationLogger,
     private val appSettings: AppSettings,
 ) {
     private val sourceReader: CloudReader by lazy { cloudReaderGetter.getSourceCloudReaderFor(syncTask) }
@@ -56,11 +56,9 @@ class TaskDirsFixer @AssistedInject constructor(
 
         if (!sourceDirExists) {
             try {
-                logExecutionStarted(R.string.re_creating_source_dir)
                 sourceWriter.createDir(sourceBaseDirPath, sourceDirName)
-                logExecutionFinished()
             } catch (e: Exception) {
-                logExecutionError(e.errorMsg)
+                Log.e(TAG, e.errorMsg, e)
             }
         }
     }
@@ -82,11 +80,9 @@ class TaskDirsFixer @AssistedInject constructor(
 
         if (!targetDirExists) {
             try {
-                logExecutionStarted(R.string.re_creating_target_dir)
                 targetWriter.createDir(targetBaseDirPath, targetDirName)
-                logExecutionFinished()
             } catch (e: Exception) {
-                logExecutionError(e.errorMsg)
+                Log.e(TAG, e.errorMsg, e)
             }
         }
     }
@@ -95,34 +91,13 @@ class TaskDirsFixer @AssistedInject constructor(
     private fun getString(@StringRes stringRes: Int): String = resources.getString(stringRes)
 
 
-    private suspend fun logExecutionStarted(@StringRes messageId: Int) {
-        operationLogger.log(TaskExecutionLogItem.createStartingItem(
-            taskId = syncTask.id,
-            executionId = executionId,
-            message = getString(messageId)
-        ))
-    }
-
-    private suspend fun logExecutionError(errorMsg: String) {
-        operationLogger.updateLog(TaskExecutionLogItem.createErrorItem(
-            taskId = syncTask.id,
-            executionId = executionId,
-            message = errorMsg,
-            details = null,
-        ))
-    }
-
-    private suspend fun logExecutionFinished() {
-        operationLogger.updateLog(TaskExecutionLogItem.createFinishingItem(
-            taskId = syncTask.id,
-            executionId = executionId,
-            message = getString(R.string.EXECUTION_LOG_reading_source)
-        ))
-    }
-
     open class TopDirIsMissingException(message: String) : Exception(message)
     class SourceDirIsMissingException(absoluteDirPath: String) : TopDirIsMissingException(absoluteDirPath)
     class TargetDirIsMissingException(absoluteDirPath: String) : TopDirIsMissingException(absoluteDirPath)
+
+    companion object {
+        val TAG: String = TaskDirsFixer::class.java.simpleName
+    }
 }
 
 

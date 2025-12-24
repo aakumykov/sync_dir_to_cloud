@@ -15,6 +15,7 @@ abstract class ExecutionLogDAO {
 
     suspend fun updateItem(item: TaskExecutionLogItem) {
         updateItemReal(
+            itemId = item.id,
             taskId = item.taskId,
             executionId = item.executionId,
             timestamp = item.timestamp,
@@ -22,8 +23,20 @@ abstract class ExecutionLogDAO {
         )
     }
 
-    @Query("UPDATE ${TaskExecutionLogItem.TABLE_NAME} SET timestamp = :timestamp, type = :type WHERE task_id = :taskId AND execution_id = :executionId")
-    protected abstract suspend fun updateItemReal(taskId: String, executionId: String, timestamp: Long, type: ExecutionLogItemType)
+    @Query("UPDATE ${TaskExecutionLogItem.TABLE_NAME} SET " +
+            "timestamp = :timestamp, " +
+            "type = :type " +
+            "WHERE " +
+            "id = :itemId AND " +
+            "task_id = :taskId AND " +
+            "execution_id = :executionId")
+    protected abstract suspend fun updateItemReal(
+        itemId: String,
+        taskId: String,
+        executionId: String,
+        timestamp: Long,
+        type: ExecutionLogItemType
+    )
 
     @Query("SELECT * FROM ${TaskExecutionLogItem.TABLE_NAME} WHERE task_id = :taskId AND execution_id = :executionId")
     abstract fun getLogsAsLiveData(taskId: String, executionId: String): LiveData<List<TaskExecutionLogItem>>
