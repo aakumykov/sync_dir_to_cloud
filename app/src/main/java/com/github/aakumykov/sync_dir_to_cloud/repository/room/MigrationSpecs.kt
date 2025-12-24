@@ -120,3 +120,9 @@ class RenameStateInSourceToStateInStorageMigration : AutoMigrationSpec
     fromColumnName = "to_id",
     toColumnName = "object_id_in_target")
 class RenameObjectIdColumnsMigration1: AutoMigrationSpec
+
+
+
+@RenameTable(fromTableName = "sync_operation_logs", toTableName = "file_operation_logs")
+class RenameTableFromSyncOperationLogItemToFileOperationLogItem : AutoMigrationSpec
+

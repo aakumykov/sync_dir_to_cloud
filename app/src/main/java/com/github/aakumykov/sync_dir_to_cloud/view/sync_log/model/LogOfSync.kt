@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
@@ -29,7 +29,7 @@ data class LogOfSync(
         }
 
 
-        fun fromSyncOperationLogItem(item: SyncOperationLogItem): LogOfSync {
+        fun fromFileOperationLogItem(item: FileOperationLogItem): LogOfSync {
             return LogOfSync(
                 taskId = item.taskId,
                 executionId = item.executionId,

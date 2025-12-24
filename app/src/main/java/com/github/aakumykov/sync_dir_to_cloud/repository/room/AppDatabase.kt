@@ -2,12 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
 import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.DeleteColumn
-import androidx.room.DeleteTable
-import androidx.room.RenameColumn
-import androidx.room.RenameTable
 import androidx.room.RoomDatabase
-import androidx.room.migration.AutoMigrationSpec
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
@@ -15,14 +10,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem.Companion.ITEM_NAME_FILED
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem.Companion.OPERATION_NAME_FILED
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem.Companion.PROGRESS_FIELD
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.EXECUTION_ID_FIELD_NAME
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.OPERATION_STATE_FIELD_NAME
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.TASK_ID_FIELD_NAME
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
@@ -36,8 +25,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.OLD_TABLE_NAME
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.TABLE_NAME
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
@@ -54,7 +41,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackup
         TaskExecutionLogItem::class,
         ComparisonState::class,
         SyncInstruction::class,
-        SyncOperationLogItem::class,
+        FileOperationLogItem::class,
    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -113,24 +100,25 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackup
         AutoMigration(from = 109, to = 110), // Новое поле SyncObject.justChecked
         AutoMigration(from = 110, to = 111), // Новое поле SyncInstruction6.isProcessed
         AutoMigration(from = 111, to = 112, spec = DeleteTableSyncInstructions5::class),
-        AutoMigration(from = 112, to = 113), // Новый объект SyncOperationLogItem
-        AutoMigration(from = 113, to = 114), // Новое поле SyncOperationLogItem.errorMsg
-        AutoMigration(from = 114, to = 115), // Внешний ключ в SyncOperationLogItem
+        AutoMigration(from = 112, to = 113), // Новый объект FileOperationLogItem
+        AutoMigration(from = 113, to = 114), // Новое поле FileOperationLogItem.errorMsg
+        AutoMigration(from = 114, to = 115), // Внешний ключ в FileOperationLogItem
         AutoMigration(from = 115, to = 116), // Внешний ключ в ExecutionLogItem
         AutoMigration(from = 116, to = 117), // Внешний ключ в TaskLogEntry
         AutoMigration(from = 117, to = 118, spec = DeleteTableSyncInstructions::class), // Удалил SyncInstruction
         AutoMigration(from = 118, to = 119, spec = RenameTableFromSyncInstructions6ToSyncInstructions::class), // Удалил SyncInstruction
         AutoMigration(from = 119, to = 120), // Новые поля SyncTask.sourceBackupDir, targetBackupDir
-        AutoMigration(from = 120, to = 121), // Индексы поля task_id в ComparisonState, SyncInstruction, ExecutionLogItem, SyncOperationLogItem, TaskLogEntry.
+        AutoMigration(from = 120, to = 121), // Индексы поля task_id в ComparisonState, SyncInstruction, ExecutionLogItem, FileOperationLogItem, TaskLogEntry.
         AutoMigration(from = 121, to = 122), // Новые поля SyncTask.sourceExecutionBackupDir, targetExecutionBackupDir
         AutoMigration(from = 122, to = 123), // Новое поле SyncInstruction.partsLabel
         AutoMigration(from = 123, to = 124, spec = RenameSyncTaskBackupDirToDirName::class),
         AutoMigration(from = 124, to = 125, spec = RenameSyncTaskBackupDirNameToTaskBackupDirName::class),
         AutoMigration(from = 125, to = 126), // Новое поле ExecutionLogItem.details: String?
-        AutoMigration(from = 126, to = 127), // Новое поле SyncOperationLogItem.jobId: String?
+        AutoMigration(from = 126, to = 127), // Новое поле FileOperationLogItem.jobId: String?
         AutoMigration(from = 127, to = 128, spec = RenameTableFromExecutionLogToTaskExecutionLog::class), // Переименование таблицы "execution_log" в "task_execution_log".
+        AutoMigration(from = 128, to = 129, spec = RenameTableFromSyncOperationLogItemToFileOperationLogItem::class), // Переименование таблицы "sync_operation_logs" в "file_operation_logs".
     ],
-    version = 128,
+    version = 129,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

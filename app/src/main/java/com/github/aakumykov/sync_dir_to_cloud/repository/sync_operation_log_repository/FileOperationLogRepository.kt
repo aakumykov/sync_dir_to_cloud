@@ -2,28 +2,28 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_rep
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SyncOperationLogRepository @Inject constructor(
+class FileOperationLogRepository @Inject constructor(
     private val syncOperationLoggerDAO: SyncOperationLoggerDAO,
 )
     : SyncOperationLogReader
 {
-    suspend fun add(syncOperationLogItem: SyncOperationLogItem) {
-        Log.d(TAG, "add(): syncOperationLogItem = $syncOperationLogItem")
-        syncOperationLoggerDAO.add(syncOperationLogItem)
+    suspend fun add(fileOperationLogItem: FileOperationLogItem) {
+        Log.d(TAG, "add(): fileOperationLogItem = $fileOperationLogItem")
+        syncOperationLoggerDAO.add(fileOperationLogItem)
     }
 
-    override suspend fun get(operationId: String): SyncOperationLogItem? {
+    override suspend fun get(operationId: String): FileOperationLogItem? {
         return syncOperationLoggerDAO.get(operationId)
     }
 
-    override fun listAsLiveData(taskId: String, executionId: String): LiveData<List<SyncOperationLogItem>> {
+    override fun listAsLiveData(taskId: String, executionId: String): LiveData<List<FileOperationLogItem>> {
         return syncOperationLoggerDAO.listAsLiveData(taskId, executionId)
     }
 
@@ -48,6 +48,6 @@ class SyncOperationLogRepository @Inject constructor(
     }
 
     companion object {
-        val TAG: String = SyncOperationLogRepository::class.java.simpleName
+        val TAG: String = FileOperationLogRepository::class.java.simpleName
     }
 }

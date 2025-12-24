@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
@@ -26,7 +26,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
         TaskExecutionLogItem::class,
         ComparisonState::class,
         SyncInstruction::class,
-        SyncOperationLogItem::class,
+        FileOperationLogItem::class,
     ],
     version = 1
 )

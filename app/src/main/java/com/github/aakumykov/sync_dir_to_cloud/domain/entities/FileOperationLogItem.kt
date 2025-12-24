@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
 @Entity(
-    tableName = SyncOperationLogItem.TABLE_NAME,
+    tableName = FileOperationLogItem.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -23,7 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
         Index(value = ["task_id"])
     ]
 )
-class SyncOperationLogItem(
+class FileOperationLogItem(
 
     @PrimaryKey
     val id: String,
@@ -59,6 +59,6 @@ class SyncOperationLogItem(
     val errorMsg: String? = null,
 ) {
     companion object {
-        const val TABLE_NAME = "sync_operation_logs"
+        const val TABLE_NAME = "file_operation_logs"
     }
 }

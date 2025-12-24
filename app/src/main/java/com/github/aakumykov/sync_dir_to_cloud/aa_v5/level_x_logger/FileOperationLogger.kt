@@ -7,18 +7,18 @@ import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
-import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.FileOperationLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class SyncOperationLogger @AssistedInject constructor(
+class FileOperationLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val repository: SyncOperationLogRepository,
+    private val repository: FileOperationLogRepository,
     private val resources: Resources,
 ) {
     suspend fun logWaiting(logItemId: String, syncInstruction: SyncInstruction, jobId: String?) {
@@ -26,7 +26,7 @@ class SyncOperationLogger @AssistedInject constructor(
             TAG,
             "logWaiting() called with: logItemId = $logItemId, syncInstruction = $syncInstruction, jobId = $jobId"
         )
-        repository.add(syncOperationWithState(logItemId, syncInstruction, OperationState.WAITING, jobId))
+        repository.add(fileOperationWithState(logItemId, syncInstruction, OperationState.WAITING, jobId))
     }
 
     suspend fun logSuccess(logItemId: String) {
@@ -49,13 +49,13 @@ class SyncOperationLogger @AssistedInject constructor(
     }
 
 
-    private fun syncOperationWithState(
+    private fun fileOperationWithState(
         id: String,
         syncInstruction: SyncInstruction,
         operationState: OperationState,
         jobId: String?,
-    ): SyncOperationLogItem {
-        return SyncOperationLogItem(
+    ): FileOperationLogItem {
+        return FileOperationLogItem(
             id = id,
             taskId = taskId,
             executionId = executionId,
@@ -84,15 +84,15 @@ class SyncOperationLogger @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = SyncOperationLogger::class.java.simpleName
+        val TAG: String = FileOperationLogger::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface SyncOperationLoggerAssistedFactory {
+interface FileOperationLoggerAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
-    ): SyncOperationLogger
+    ): FileOperationLogger
 }

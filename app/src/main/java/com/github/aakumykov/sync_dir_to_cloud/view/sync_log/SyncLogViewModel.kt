@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogReader
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
@@ -25,7 +25,7 @@ class SyncLogViewModel(
 
     private val mediatorLiveData: MediatorLiveData<List<LogOfSync>> = MediatorLiveData()
     private val currentTaskExecutionLogItemList: MutableList<TaskExecutionLogItem> = mutableListOf()
-    private val currentSyncOperationLogItemList: MutableList<SyncOperationLogItem> = mutableListOf()
+    private val currentFileOperationLogItemList: MutableList<FileOperationLogItem> = mutableListOf()
     private val resultingList: MutableList<LogOfSync> = mutableListOf()
     private var isFirstRun = true
 
@@ -47,7 +47,7 @@ class SyncLogViewModel(
         }
 
         mediatorLiveData.addSource(syncOperationLogReader.listAsLiveData(taskId, executionId)) { list ->
-            currentSyncOperationLogItemList.apply {
+            currentFileOperationLogItemList.apply {
                 clear()
                 addAll(list)
             }
@@ -59,7 +59,7 @@ class SyncLogViewModel(
         resultingList.apply {
             clear()
 
-            val syncLog = currentSyncOperationLogItemList.map { LogOfSync.fromSyncOperationLogItem(it) }
+            val syncLog = currentFileOperationLogItemList.map { LogOfSync.fromFileOperationLogItem(it) }
             addAll(syncLog)
 
             val executionLog = currentTaskExecutionLogItemList.map { LogOfSync.fromTaskExecutionLogItem(it) }
