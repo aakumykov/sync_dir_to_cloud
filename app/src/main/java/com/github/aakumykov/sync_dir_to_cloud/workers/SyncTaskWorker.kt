@@ -36,7 +36,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
     override suspend fun doWork(): Result {
-        Log.d(TAG, "[worker: $thisObjectHashCode]: doWork()")
+        Log.d(TAG, "doWork() [worker: $thisObjectHashCode]")
 
         val taskId = inputData.getString(KEY_TASK_ID)
 
@@ -48,32 +48,35 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         val scope = CoroutineScope(coroutineDispatcher)
 
+        Log.d(TAG, "перед doWorkReal()")
         doWorkReal(taskId = taskId, scope)
+        Log.d(TAG, "после doWorkReal()")
 
         return Result.success()
     }
 
 
     private suspend fun doWorkReal(taskId: String, scope: CoroutineScope) {
+        Log.d(TAG, "doWorkReal() called with: taskId = $taskId, scope = $scope")
         try {
             SampleService.start(applicationContext)
 
             appComponent.getSyncTaskExecutor().also { syncTaskExecutor ->
-                Log.d(TAG, "[worker: $thisObjectHashCode]: Задача taskId: $taskId начала    выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
-
+                Log.d(TAG, "doWorkReal() [worker: $thisObjectHashCode]: Задача taskId: $taskId начала    выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
                 syncTaskExecutor.executeSyncTask(scope, taskId = taskId)
-
-                Log.d(TAG, "[worker: $thisObjectHashCode]: Задача taskId: $taskId завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+                Log.d(TAG, "doWorkReal() [worker: $thisObjectHashCode]: Задача taskId: $taskId завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
             }
         }
         catch (e: CancellationException) {
-            Log.w(TAG, "Корутина отменена: ${e.errorMsgExtended}")
+            // TODO: если система сама отменяет Worker, нужно в этом месте останавливать задачу.
+            Log.w(TAG, "doWorkReal() Корутина отменена: ${e.errorMsgExtended}")
         }
         catch (t: Throwable) {
-            Log.e(TAG, "[worker: $thisObjectHashCode] ${t.errorMsgExtended} [worker:$thisObjectHashCode]")
+            Log.e(TAG, "doWorkReal() [worker: $thisObjectHashCode] ${t.errorMsgExtended} [worker:$thisObjectHashCode]")
             Log.e(TAG, t.errorMsgExtended)
         }
         finally {
+            Log.d(TAG, "doWorkReal() finally{}")
             taskJobsHolder.removeJob(taskId)
             SampleService.stop(applicationContext)
         }

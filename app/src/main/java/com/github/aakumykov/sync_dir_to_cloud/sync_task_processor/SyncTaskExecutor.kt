@@ -24,6 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcess
 import com.github.aakumykov.sync_dir_to_cloud.workers.TaskJobsHolder
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,18 +49,18 @@ class SyncTaskExecutor @Inject constructor(
 
 
     suspend fun executeSyncTask(scope: CoroutineScope, taskId: String) {
-        scope.launch {
+        Log.d(TAG, "executeSyncTask() called with: scope = $scope, taskId = $taskId")
+        scope.launch (Dispatchers.IO) {
+            Log.d(TAG, "А")
             executeSyncTaskReal(this, taskId)
-        }.apply {
-            TaskJobsHolder.addJob(taskId, this)
+            Log.d(TAG, "Б")
         }.join()
     }
 
 
     private suspend fun executeSyncTaskReal(scope: CoroutineScope, taskId: String) {
 
-        Log.d(TAG, ""); Log.d(TAG, "")
-        Log.d(tag, "========= executeSyncTask(taskId: $taskId, executionId: $executionId) [hashCode:${hashCode()}] СТАРТ ========")
+        Log.d(tag, "========= executeSyncTaskReal(taskId: $taskId, executionId: $executionId) [hashCode:${hashCode()}] СТАРТ ========")
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
         val taskId = syncTask.id
@@ -93,7 +94,7 @@ class SyncTaskExecutor @Inject constructor(
             logExecutionFinish(taskId)
         }
 
-        Log.d(tag, "========= executeSyncTask() [${classNameWithHash()}] ФИНИШ ========")
+        Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] ФИНИШ ========")
     }
 
 
@@ -146,4 +147,7 @@ class SyncTaskExecutor @Inject constructor(
         ))
     }
 
+    companion object {
+        val TAG: String = SyncTaskExecutor::class.java.simpleName
+    }
 }
