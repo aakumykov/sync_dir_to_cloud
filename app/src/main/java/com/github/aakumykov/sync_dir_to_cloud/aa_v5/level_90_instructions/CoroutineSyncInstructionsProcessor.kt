@@ -52,7 +52,7 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
                      )
                  )
 
-                 scope.launch (jobForTask(scope, isCritical)) {
+                 launch (jobForTask(this, isCritical)) {
                      executionBlock.invoke()
                  }.join()
 

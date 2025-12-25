@@ -57,14 +57,14 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
 
     private suspend fun doWorkReal(taskId: String, scope: CoroutineScope) {
-        Log.d(TAG, "doWorkReal() called with: taskId = $taskId, scope = $scope")
+        Log.d(TAG, "doWorkReal(), scope = $scope")
         try {
             SampleService.start(applicationContext)
 
             appComponent.getSyncTaskExecutor().also { syncTaskExecutor ->
-                Log.d(TAG, "doWorkReal() [worker: $thisObjectHashCode]: Задача taskId: $taskId начала    выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+                Log.d(TAG, "doWorkReal() Задача taskId: $taskId начала    выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
                 syncTaskExecutor.executeSyncTask(scope, taskId = taskId)
-                Log.d(TAG, "doWorkReal() [worker: $thisObjectHashCode]: Задача taskId: $taskId завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+                Log.d(TAG, "doWorkReal() Задача taskId: $taskId завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
             }
         }
         catch (e: CancellationException) {
@@ -72,7 +72,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             Log.w(TAG, "doWorkReal() Корутина отменена: ${e.errorMsgExtended}")
         }
         catch (t: Throwable) {
-            Log.e(TAG, "doWorkReal() [worker: $thisObjectHashCode] ${t.errorMsgExtended} [worker:$thisObjectHashCode]")
+            Log.e(TAG, "doWorkReal() Ошибка")
             Log.e(TAG, t.errorMsgExtended)
         }
         finally {

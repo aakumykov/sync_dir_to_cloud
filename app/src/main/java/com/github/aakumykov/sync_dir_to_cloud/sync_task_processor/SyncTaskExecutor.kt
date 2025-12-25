@@ -60,7 +60,7 @@ class SyncTaskExecutor @Inject constructor(
 
     private suspend fun executeSyncTaskReal(scope: CoroutineScope, taskId: String) {
 
-        Log.d(tag, "========= executeSyncTaskReal(taskId: $taskId, executionId: $executionId) [hashCode:${hashCode()}] СТАРТ ========")
+        Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] СТАРТ ========")
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
         val taskId = syncTask.id
