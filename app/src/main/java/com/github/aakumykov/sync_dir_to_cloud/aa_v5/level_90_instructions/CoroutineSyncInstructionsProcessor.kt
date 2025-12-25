@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogIt
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.LogItem2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.ExecutionLogger2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.ExecutionLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
@@ -25,9 +26,11 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
     private val executionLogger: ExecutionLogger,
-    private val executionLogger2: ExecutionLogger2,
+    private val executionLogger2AssistedFactory: ExecutionLogger2AssistedFactory,
     private val resources: Resources,
 ) {
+    private val executionLogger2: ExecutionLogger2 by lazy { executionLogger2AssistedFactory.create(taskId, executionId) }
+
      suspend fun process(
          isCritical: Boolean,
          logMessage: TextMessage,
@@ -39,21 +42,38 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
 
              try {
                  executionLogger.log(TaskExecutionLogItem.createStartingItem(taskId, executionId, text4log))
-                 executionLogger2.logExecutionStarted(LogItem2.create(logItemId, logMessage.get(resources)))
+
+                 executionLogger2.logExecutionStarted(
+                     LogItem2.create(
+                         id = logItemId,
+                         taskId = taskId,
+                         executionId = executionId,
+                         logMessage.get(resources)
+                     )
+                 )
 
                  scope.launch (jobForTask(scope, isCritical)) {
                      executionBlock.invoke()
                  }.join()
 
                  executionLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
-                 executionLogger2.logExecutionFinished(LogItem2.create(logItemId, logMessage.get(resources)))
+                 executionLogger2.logExecutionFinished(LogItem2.create(
+                     logItemId,
+                     taskId,
+                     executionId,
+                     logMessage.get(resources)
+                 ))
 
              } catch (e: CancellationException) {
                  executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,"ОТМЕНЕНО"
                  ))
                  executionLogger2.logExecutionCancelled(
-                     LogItem2.create(logItemId, e.errorMsg),
+                     LogItem2.create(logItemId,
+                         taskId,
+                         executionId,
+                         e.errorMsg
+                     ),
                      e
                  )
              }
@@ -62,7 +82,12 @@ class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
                      taskId, executionId, text4log,throwable.errorMsg
                  ))
                  executionLogger2.logExecutionError(
-                     LogItem2.create(logItemId,throwable.errorMsg),
+                     LogItem2.create(
+                         logItemId,
+                         taskId,
+                         executionId,
+                         throwable.errorMsg
+                     ),
                      throwable
                  )
              }

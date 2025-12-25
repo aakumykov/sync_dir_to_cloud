@@ -8,6 +8,7 @@ import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -65,6 +66,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
                 Log.d(TAG, "[worker: $thisObjectHashCode]: Задача taskId: $taskId завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
             }
         }
+        catch (e: CancellationException) {
+            Log.w(TAG, "Корутина отменена: ${e.errorMsgExtended}")
+        }
         catch (t: Throwable) {
             Log.e(TAG, "[worker: $thisObjectHashCode] ${t.errorMsgExtended} [worker:$thisObjectHashCode]")
             Log.e(TAG, t.errorMsgExtended)
@@ -95,26 +99,26 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 // TODO: всё-таки, хранить Job или Scope?
 object TaskJobsHolder {
 
-    val TAG = TaskJobsHolder.javaClass.simpleName
+    val TAG: String = TaskJobsHolder.javaClass.simpleName
 
     init { Log.d(TAG, "init{}") }
 
     private val jobsMap: ConcurrentMap<String, Job> = ConcurrentHashMap()
 
     fun addJob(taskId: String, job: Job) {
-        Log.d(TAG, "[${hashCode()}] addJob(): taskId:$taskId, job.${job.hashCode()}")
+        Log.d(TAG, "[${hashCode()}] addJob(): taskId:$taskId, $job")
         jobsMap[taskId] = job
     }
 
     fun getJob(taskId: String): Job? {
         return jobsMap[taskId].also {
-            Log.d(TAG, "[${hashCode()}] getJob(): taskId:$taskId, job.${it.hashCode()}")
+            Log.d(TAG, "[${hashCode()}] getJob(): taskId:$taskId, $it")
         }
     }
 
     fun removeJob(taskId: String) {
         jobsMap.remove(taskId).also {
-            Log.d(TAG, "[${hashCode()}] removeJob(): taskId:$taskId, job.${it.hashCode()}")
+            Log.d(TAG, "[${hashCode()}] removeJob(): taskId:$taskId, $it")
         }
     }
 }

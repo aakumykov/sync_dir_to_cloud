@@ -4,8 +4,8 @@ import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -18,10 +18,13 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessor.Companion.TAG
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.workers.TaskJobsHolder
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -32,7 +35,7 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLogger: TaskLogger,
-    private val taskLogger2: TaskLogger2,
+    private val taskLogger2AssistedFactory: TaskLogger2AssistedFactory,
     private val executionLogger: ExecutionLogger,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val resources: Resources,
@@ -41,9 +44,19 @@ class SyncTaskExecutor @Inject constructor(
 
     private val executionId: String get() = hashCode().toString()
 
+    private val taskLogger2: TaskLogger2 by lazy { taskLogger2AssistedFactory.create(executionId) }
 
-    // TODO: получать SyncTask - задача этого класса
+
     suspend fun executeSyncTask(scope: CoroutineScope, taskId: String) {
+        scope.launch {
+            executeSyncTaskReal(this, taskId)
+        }.apply {
+            TaskJobsHolder.addJob(taskId, this)
+        }.join()
+    }
+
+
+    private suspend fun executeSyncTaskReal(scope: CoroutineScope, taskId: String) {
 
         Log.d(TAG, ""); Log.d(TAG, "")
         Log.d(tag, "========= executeSyncTask(taskId: $taskId, executionId: $executionId) [hashCode:${hashCode()}] СТАРТ ========")
