@@ -2,17 +2,18 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
-import com.github.aakumykov.sync_dir_to_cloud.enums.extensions.isNew
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.enums.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
@@ -26,7 +27,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectState
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
-
 import javax.inject.Inject
 
 @AppScope
