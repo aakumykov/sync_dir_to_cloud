@@ -5,8 +5,8 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.FileOperationLogRepository

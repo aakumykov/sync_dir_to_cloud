@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask

@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.strategy
 
 import android.util.Log
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import javax.inject.Inject
 

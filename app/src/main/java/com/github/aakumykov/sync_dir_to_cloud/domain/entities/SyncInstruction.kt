@@ -1,16 +1,13 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.common
+package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import androidx.room.RenameColumn
-import androidx.room.migration.AutoMigrationSpec
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 
@@ -21,8 +18,8 @@ import com.github.aakumykov.sync_dir_to_cloud.newRandomId
             entity = SyncTask::class,
             parentColumns = ["id"],
             childColumns = ["task_id"],
-            onDelete = CASCADE,
-            onUpdate = CASCADE
+            onDelete = ForeignKey.Companion.CASCADE,
+            onUpdate = ForeignKey.Companion.CASCADE
         )
     ],
     indices = [
@@ -55,24 +52,30 @@ class SyncInstruction (
 ) {
     // TODO: вынести в расширения...
 
-    @Ignore val isDeletion: Boolean = SyncOperation.DELETE_IN_TARGET == operation ||
+    @Ignore
+    val isDeletion: Boolean = SyncOperation.DELETE_IN_TARGET == operation ||
             SyncOperation.DELETE_IN_SOURCE == operation
 
-    @Ignore val isCollisionResolution: Boolean = SyncOperation.RESOLVE_COLLISION == operation
+    @Ignore
+    val isCollisionResolution: Boolean = SyncOperation.RESOLVE_COLLISION == operation
 
     val isBackup: Boolean get() = isBackupInSource || isBackupInTarget
 
-    @Ignore val isBackupInSource: Boolean =
+    @Ignore
+    val isBackupInSource: Boolean =
         SyncOperation.BACKUP_IN_SOURCE == operation
 
-    @Ignore val isBackupInTarget: Boolean =
+    @Ignore
+    val isBackupInTarget: Boolean =
         SyncOperation.BACKUP_IN_TARGET == operation
 
-    @Ignore val notDeletion: Boolean =
+    @Ignore
+    val notDeletion: Boolean =
         SyncOperation.DELETE_IN_TARGET != operation &&
                 SyncOperation.DELETE_IN_SOURCE != operation
 
-    @Ignore val isCopying: Boolean =
+    @Ignore
+    val isCopying: Boolean =
         SyncOperation.COPY_FROM_TARGET_TO_SOURCE == operation ||
                 SyncOperation.COPY_FROM_SOURCE_TO_TARGET == operation
 

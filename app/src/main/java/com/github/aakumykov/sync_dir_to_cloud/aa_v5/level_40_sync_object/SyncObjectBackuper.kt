@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.backuper.FileAndDirBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide

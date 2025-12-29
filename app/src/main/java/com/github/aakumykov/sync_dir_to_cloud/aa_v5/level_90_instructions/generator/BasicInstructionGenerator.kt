@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository

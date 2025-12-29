@@ -3,8 +3,8 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem

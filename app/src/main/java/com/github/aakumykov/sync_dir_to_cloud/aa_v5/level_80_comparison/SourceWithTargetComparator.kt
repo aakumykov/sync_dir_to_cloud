@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide

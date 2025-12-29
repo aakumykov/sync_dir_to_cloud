@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 
 @Dao
 interface TestSyncInstructionDAO {

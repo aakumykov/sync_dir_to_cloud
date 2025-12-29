@@ -2,12 +2,12 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isModified
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNew
+import com.github.aakumykov.sync_dir_to_cloud.enums.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSuccessSynced
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isTargetReadingOk
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExistsInTarget

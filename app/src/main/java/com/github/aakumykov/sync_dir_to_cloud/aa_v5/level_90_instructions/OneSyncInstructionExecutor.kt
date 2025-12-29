@@ -2,8 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FSItemDeleter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.ItemDeleterAssistedFactory

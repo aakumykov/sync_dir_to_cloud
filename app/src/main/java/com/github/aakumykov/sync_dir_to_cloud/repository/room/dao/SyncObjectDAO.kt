@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.common
+package com.github.aakumykov.sync_dir_to_cloud.enums
 
 enum class SyncOperation {
 

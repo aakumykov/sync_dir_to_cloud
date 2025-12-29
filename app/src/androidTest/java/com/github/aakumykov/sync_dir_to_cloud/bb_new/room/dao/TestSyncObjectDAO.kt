@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 

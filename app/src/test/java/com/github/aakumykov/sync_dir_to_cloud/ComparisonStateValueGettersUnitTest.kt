@@ -1,16 +1,16 @@
 package com.github.aakumykov.sync_dir_to_cloud
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isDeletedInSource
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceNewAndTargetUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceUnchangedTargetDeleted
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceUnchangedTargetModified
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.isSourceUnchangedTargetNew
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notMutuallyUnchanged
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notUnchangedOrDeletedInSource
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.notUnchangedOrDeletedInTarget
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSourceNewAndTargetUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSourceUnchangedTargetDeleted
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSourceUnchangedTargetModified
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isSourceUnchangedTargetNew
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notMutuallyUnchanged
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notUnchangedOrDeletedInSource
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notUnchangedOrDeletedInTarget
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

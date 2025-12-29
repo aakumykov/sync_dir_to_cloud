@@ -4,7 +4,7 @@ import android.content.res.Resources
 import androidx.annotation.StringRes
 import com.github.aakumykov.file_lister_navigator_selector.recursive_dir_reader.RecursiveDirReader
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isNeverSynced

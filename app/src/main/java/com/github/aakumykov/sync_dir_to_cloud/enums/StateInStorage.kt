@@ -1,6 +1,6 @@
-package com.github.aakumykov.sync_dir_to_cloud.domain.entities
+package com.github.aakumykov.sync_dir_to_cloud.enums
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 
 enum class StateInStorage {
     UNCHANGED,
@@ -19,11 +19,4 @@ enum class StateInStorage {
         val UNCHANGED_MODIFIED: String = "${UNCHANGED}_${MODIFIED}"
         val UNCHANGED_DELETED: String = "${UNCHANGED}_${DELETED}"
     }
-}
-
-val StateInStorage.isNew: Boolean get() = this == StateInStorage.NEW
-
-val StateInStorage.isNewOrIsModified: Boolean get() {
-    return StateInStorage.MODIFIED == this ||
-            StateInStorage.NEW == this
 }

@@ -1,14 +1,12 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.comparison_state
+package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.StateInStorage
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 
 @Entity(
     tableName = "comparison_states",
@@ -17,8 +15,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
             entity = SyncTask::class,
             parentColumns = ["id"],
             childColumns = ["task_id"],
-            onDelete = CASCADE,
-            onUpdate = CASCADE
+            onDelete = ForeignKey.Companion.CASCADE,
+            onUpdate = ForeignKey.Companion.CASCADE
         )
     ],
     indices = [
@@ -40,9 +38,12 @@ class ComparisonState (
 
     @ColumnInfo(name = "relative_path") val relativePath: String, // Для удобства отладки, чтобы знать, что за файл.
 ) {
-    @Ignore val isBilateral: Boolean = sourceObjectId != null && targetObjectId != null
-    @Ignore val onlySource: Boolean = sourceObjectId != null && targetObjectId == null
-    @Ignore val onlyTarget: Boolean = sourceObjectId == null && targetObjectId != null
+    @Ignore
+    val isBilateral: Boolean = sourceObjectId != null && targetObjectId != null
+    @Ignore
+    val onlySource: Boolean = sourceObjectId != null && targetObjectId == null
+    @Ignore
+    val onlyTarget: Boolean = sourceObjectId == null && targetObjectId != null
 
     /*override fun toString(): String {
         return "ComparisonState(id='$id', taskId='$taskId', executionId='$executionId', sourceObjectId=$sourceObjectId, targetObjectId=$targetObjectId, sourceObjectState=$sourceObjectState, targetObjectState=$targetObjectState, relativePath='$relativePath', isBilateral=$isBilateral, onlySource=$onlySource, onlyTarget=$onlyTarget)"

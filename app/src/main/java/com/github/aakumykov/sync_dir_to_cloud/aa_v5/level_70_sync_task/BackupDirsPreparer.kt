@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.common.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
