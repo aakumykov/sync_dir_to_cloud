@@ -21,6 +21,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
+// TODO: убрать Resources отсюда, перенести их в Logger.
 class CoroutineSyncInstructionProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
@@ -42,54 +43,26 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
 
              try {
                  executionLogger.log(TaskExecutionLogItem.createStartingItem(taskId, executionId, text4log))
-
-                 executionLogger2.logExecutionStarted(
-                     LogItem2.create(
-                         id = logItemId,
-                         taskId = taskId,
-                         executionId = executionId,
-                         logMessage.get(resources)
-                     )
-                 )
+                 executionLogger2.logExecutionStarted(logItemId, logMessage)
 
                  launch (jobForTask(this, isCritical)) {
                      executionBlock.invoke()
                  }.join()
 
                  executionLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
-                 executionLogger2.logExecutionFinished(LogItem2.create(
-                     logItemId,
-                     taskId,
-                     executionId,
-                     logMessage.get(resources)
-                 ))
+                 executionLogger2.logExecutionFinished(logItemId,logMessage)
 
              } catch (e: CancellationException) {
                  executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,"ОТМЕНЕНО"
                  ))
-                 executionLogger2.logExecutionCancelled(
-                     LogItem2.create(logItemId,
-                         taskId,
-                         executionId,
-                         e.errorMsg
-                     ),
-                     e
-                 )
+                 executionLogger2.logExecutionCancelled(logItemId,logMessage)
              }
              catch (throwable: Throwable) {
                  executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,throwable.errorMsg
                  ))
-                 executionLogger2.logExecutionError(
-                     LogItem2.create(
-                         logItemId,
-                         taskId,
-                         executionId,
-                         throwable.errorMsg
-                     ),
-                     throwable
-                 )
+                 executionLogger2.logExecutionError(logItemId,logMessage, throwable)
              }
          }.join()
     }

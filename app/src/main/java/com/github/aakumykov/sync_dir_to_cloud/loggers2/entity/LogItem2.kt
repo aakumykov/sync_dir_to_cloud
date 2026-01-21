@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.loggers2.entity
 
-import android.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 
@@ -24,6 +23,10 @@ data class LogItem2(
                 message = logMessage
             )
         }
+    }
+
+    override fun toString(): String {
+        return "LogItem2(id='$id', taskId='$taskId', executionId='$executionId', message='$message')"
     }
 }
 
