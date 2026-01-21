@@ -21,7 +21,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
-class CoroutineSyncInstructionsProcessor @AssistedInject constructor(
+class CoroutineSyncInstructionProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
@@ -107,5 +107,5 @@ interface CoroutineSyncInstructionsProcessorAssistedFactory {
         @Assisted(QUALIFIER_TASK_ID)  taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
         scope: CoroutineScope
-    ): CoroutineSyncInstructionsProcessor
+    ): CoroutineSyncInstructionProcessor
 }
