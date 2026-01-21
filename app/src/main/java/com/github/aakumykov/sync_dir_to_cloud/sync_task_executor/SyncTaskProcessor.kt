@@ -45,7 +45,7 @@ FIXME: удалённо пропал и локально пропал...
  * Задача класса - выполнять сложную логику шагов выполнения задачи.
  *
  * Важно запускать этот класс в режиме один экземпляр - одна задача (SyncTask).
- * Иначе будут сбрасываться статусы уже выполняющихся задач (!)
+ * Иначе будут сбрасываться статусы уже выполняющихся задач (!) FIXME: это что за прикол?
  */
 class SyncTaskProcessor @AssistedInject constructor(
 
@@ -54,24 +54,12 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
 
     private val coroutineSyncInstructionsProcessorAssistedFactory: CoroutineSyncInstructionsProcessorAssistedFactory,
-
     private val cloudAuthReader: CloudAuthReader,
-
     private val syncTaskNotificator: SyncTaskNotificator,
-
     private val syncTaskStateChanger: SyncTaskStateChanger,
-
     private val syncObjectStateResetter: SyncObjectStateResetter,
-
     private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
 ) {
-    private val taskId: String get() = syncTask.id
-
-    private val coroutineSyncInstructionProcessor: CoroutineSyncInstructionProcessor by lazy {
-        coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
-    }
-
-
     suspend fun processSyncTask() {
 
         // Проверить каталоги задачи
@@ -342,13 +330,19 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-
     suspend fun stopExecutingTask(taskId: String) {
         // TODO: по-настоящему прерывать работу CloudWriterGetter-а
         MyLogger.d(tag, "stopExecutingTask(), [${hashCode()}]")
         syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
 
+
+    private val taskId: String get() = syncTask.id
+
+
+    private val coroutineSyncInstructionProcessor: CoroutineSyncInstructionProcessor by lazy {
+        coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
+    }
 
     companion object {
         val TAG: String = SyncTaskProcessor::class.java.simpleName

@@ -28,6 +28,7 @@ class ExecutionLogger2 @AssistedInject constructor(
         }
     }
 
+
     fun logExecutionFinished(logItemId: String, logMessage: TextMessage) {
         LogItem2.create(
             id = logItemId,
@@ -38,6 +39,7 @@ class ExecutionLogger2 @AssistedInject constructor(
             Log.d(TAG, "Выполнение инструкции завершено $it")
         }
     }
+
 
     fun logExecutionCancelled(logItemId: String, logMessage: TextMessage) {
         LogItem2.create(
@@ -50,6 +52,7 @@ class ExecutionLogger2 @AssistedInject constructor(
         }
     }
 
+
     fun logExecutionError(logItemId: String, logMessage: TextMessage, throwable: Throwable) {
         LogItem2.create(
             id = logItemId,
@@ -60,6 +63,7 @@ class ExecutionLogger2 @AssistedInject constructor(
             Log.e(TAG, "Ошибка выполнения инструкции $it --> ${throwable.errorMsgExtended}")
         }
     }
+
 
     companion object {
         val TAG: String = ExecutionLogger2::class.java.simpleName

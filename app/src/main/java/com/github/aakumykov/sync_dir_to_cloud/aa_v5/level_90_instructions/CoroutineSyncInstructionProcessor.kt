@@ -1,12 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
 import android.content.res.Resources
+import android.util.Log
 import com.github.aakumykov.file_lister_navigator_selector.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.LogItem2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.ExecutionLogger2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.ExecutionLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
@@ -15,11 +16,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 
 // TODO: убрать Resources отсюда, перенести их в Logger.
 class CoroutineSyncInstructionProcessor @AssistedInject constructor(
@@ -45,9 +45,21 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
                  executionLogger.log(TaskExecutionLogItem.createStartingItem(taskId, executionId, text4log))
                  executionLogger2.logExecutionStarted(logItemId, logMessage)
 
-                 launch (jobForTask(this, isCritical)) {
+                 val nonCriticalExceptionHandler = CoroutineExceptionHandler { context, throwable ->
+                     Log.w(TAG, "Некритичная ошибка: ${throwable.errorMsgExtended}")
+                 }
+
+                 if (isCritical) scope.launch {
                      executionBlock.invoke()
-                 }.join()
+                 } else {
+                     scope.launch {
+                         supervisorScope {
+                             launch (nonCriticalExceptionHandler) {
+                                 executionBlock.invoke()
+                             }
+                         }
+                     }
+                 }
 
                  executionLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
                  executionLogger2.logExecutionFinished(logItemId,logMessage)
@@ -57,19 +69,21 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
                      taskId, executionId, text4log,"ОТМЕНЕНО"
                  ))
                  executionLogger2.logExecutionCancelled(logItemId,logMessage)
+                 throw e
              }
              catch (throwable: Throwable) {
                  executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,throwable.errorMsg
                  ))
                  executionLogger2.logExecutionError(logItemId,logMessage, throwable)
+                 if (isCritical)
+                     throw throwable
              }
          }.join()
     }
 
-    private fun jobForTask(scope: CoroutineScope, isCritical: Boolean): Job {
-        val parentJob = scope.coroutineContext.job
-        return if (isCritical) Job(parentJob) else SupervisorJob(parentJob)
+    companion object {
+        val TAG: String = CoroutineSyncInstructionProcessor::class.java.simpleName
     }
 }
 
@@ -79,6 +93,6 @@ interface CoroutineSyncInstructionsProcessorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID)  taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
-        scope: CoroutineScope
+        scope: CoroutineScope,
     ): CoroutineSyncInstructionProcessor
 }
