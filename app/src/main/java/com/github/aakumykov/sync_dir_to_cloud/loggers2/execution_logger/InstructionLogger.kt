@@ -5,20 +5,19 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.LogItem2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CancellationException
 
-class ExecutionLogger2 @AssistedInject constructor(
+class InstructionLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     private val resources: Resources,
 ) {
-    fun logExecutionStarted(logItemId: String, logMessage: TextMessage) {
-        LogItem2.create(
+    fun logInstructionExecutionStarted(logItemId: String, logMessage: TextMessage) {
+        InstructionLogItem.create(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
@@ -29,8 +28,8 @@ class ExecutionLogger2 @AssistedInject constructor(
     }
 
 
-    fun logExecutionFinished(logItemId: String, logMessage: TextMessage) {
-        LogItem2.create(
+    fun logInstructionExecutionFinished(logItemId: String, logMessage: TextMessage) {
+        InstructionLogItem.create(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
@@ -41,8 +40,8 @@ class ExecutionLogger2 @AssistedInject constructor(
     }
 
 
-    fun logExecutionCancelled(logItemId: String, logMessage: TextMessage) {
-        LogItem2.create(
+    fun logInstructionExecutionCancelled(logItemId: String, logMessage: TextMessage) {
+        InstructionLogItem.create(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
@@ -53,8 +52,8 @@ class ExecutionLogger2 @AssistedInject constructor(
     }
 
 
-    fun logExecutionError(logItemId: String, logMessage: TextMessage, throwable: Throwable) {
-        LogItem2.create(
+    fun logInstructionExecutionError(logItemId: String, logMessage: TextMessage, throwable: Throwable) {
+        InstructionLogItem.create(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
@@ -66,15 +65,15 @@ class ExecutionLogger2 @AssistedInject constructor(
 
 
     companion object {
-        val TAG: String = ExecutionLogger2::class.java.simpleName
+        val TAG: String = InstructionLogger::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface ExecutionLogger2AssistedFactory {
+interface InstructionLoggerAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
-    ): ExecutionLogger2
+    ): InstructionLogger
 }

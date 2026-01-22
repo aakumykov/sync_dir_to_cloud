@@ -2,14 +2,12 @@ package com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger
 
 import android.content.res.Resources
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.toLogItem2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.toInstructionLogItem
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
-import javax.inject.Inject
 
 class TaskLogger2 @AssistedInject constructor(
     @Assisted private val executionId: String,
@@ -21,7 +19,7 @@ class TaskLogger2 @AssistedInject constructor(
 
     suspend fun logTaskFinished(syncTask: SyncTask) {
         Log.d(TAG, "logTaskFinished() called with: syncTask = $syncTask")
-        syncTask.toLogItem2(executionId, "TASK_FINISHED")
+        syncTask.toInstructionLogItem(executionId, "TASK_FINISHED")
     }
 
     suspend fun logTaskCancelled(

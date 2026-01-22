@@ -8,8 +8,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogIt
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.ExecutionLogger2
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.ExecutionLogger2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.InstructionLogger
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.InstructionLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
@@ -27,10 +27,10 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
     private val executionLogger: ExecutionLogger,
-    private val executionLogger2AssistedFactory: ExecutionLogger2AssistedFactory,
+    private val instructionLoggerAssistedFactory: InstructionLoggerAssistedFactory,
     private val resources: Resources,
 ) {
-    private val executionLogger2: ExecutionLogger2 by lazy { executionLogger2AssistedFactory.create(taskId, executionId) }
+    private val instructionLogger: InstructionLogger by lazy { instructionLoggerAssistedFactory.create(taskId, executionId) }
 
      suspend fun process(
          isCritical: Boolean,
@@ -43,7 +43,7 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
 
              try {
                  executionLogger.log(TaskExecutionLogItem.createStartingItem(taskId, executionId, text4log))
-                 executionLogger2.logExecutionStarted(logItemId, logMessage)
+                 instructionLogger.logInstructionExecutionStarted(logItemId, logMessage)
 
                  val nonCriticalExceptionHandler = CoroutineExceptionHandler { context, throwable ->
                      Log.w(TAG, "Некритичная ошибка: ${throwable.errorMsgExtended}")
@@ -62,13 +62,13 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
                  }
 
                  executionLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
-                 executionLogger2.logExecutionFinished(logItemId,logMessage)
+                 instructionLogger.logInstructionExecutionFinished(logItemId,logMessage)
 
              } catch (e: CancellationException) {
                  executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,"ОТМЕНЕНО"
                  ))
-                 executionLogger2.logExecutionCancelled(logItemId,logMessage)
+                 instructionLogger.logInstructionExecutionCancelled(logItemId,logMessage)
                  // FIXME: Нужно ли перевыбрасывать это исключение? Кому оно нужно?
                  throw e
              }
@@ -76,7 +76,7 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
                  executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
                      taskId, executionId, text4log,throwable.errorMsg
                  ))
-                 executionLogger2.logExecutionError(logItemId,logMessage, throwable)
+                 instructionLogger.logInstructionExecutionError(logItemId,logMessage, throwable)
                  if (isCritical)
                      throw throwable
              }

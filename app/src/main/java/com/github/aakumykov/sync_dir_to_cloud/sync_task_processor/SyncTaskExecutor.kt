@@ -30,6 +30,11 @@ import javax.inject.Inject
 
 /**
  * Задача класса - запускать выполнение задачи и журналировать это выполнение.
+ * Он ловит все ошибки выполнения Задачи и регистрирует их как "ошибки задачи".
+ *
+ * Вообще, в соответствие объектам программы классы журналов должны быть:
+ * TaskLogItem
+ * InstructionLogItem
  */
 // TODO: поменять именами Executor и Processor ...
 class SyncTaskExecutor @Inject constructor(
