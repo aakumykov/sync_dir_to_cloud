@@ -341,7 +341,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private val coroutineSyncInstructionProcessor: CoroutineSyncInstructionProcessor by lazy {
-        coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
+        coroutineSyncInstructionsProcessorAssistedFactory
+            .create(taskId, executionId, scope)
     }
 
     companion object {

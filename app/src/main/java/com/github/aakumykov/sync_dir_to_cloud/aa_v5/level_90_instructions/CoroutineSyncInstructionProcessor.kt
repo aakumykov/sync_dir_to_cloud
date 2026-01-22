@@ -51,14 +51,15 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
 
                  if (isCritical) scope.launch {
                      instructionBlock.invoke()
-                 } else {
+                 }.join()
+                 else {
                      scope.launch {
                          supervisorScope {
                              launch (nonCriticalExceptionHandler) {
                                  instructionBlock.invoke()
-                             }
+                             }.join()
                          }
-                     }
+                     }.join()
                  }
 
                  executionLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
