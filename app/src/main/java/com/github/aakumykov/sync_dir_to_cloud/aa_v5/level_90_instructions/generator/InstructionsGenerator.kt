@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
 import dagger.assisted.Assisted
@@ -15,6 +16,7 @@ class InstructionsGenerator @AssistedInject constructor(
     private val twoPlaceInstructionGeneratorForSyncAssistedFactory: TwoPlaceInstructionGeneratorForSyncAssistedFactory,
 ) {
     suspend fun generate() {
+        Log.d(TAG, "generate()")
 
         var nextOrderNum = 1;
 
@@ -48,6 +50,10 @@ class InstructionsGenerator @AssistedInject constructor(
 
     private val twoPlaceItemsSyncInstructionGenerator by lazy {
         twoPlaceInstructionGeneratorForSyncAssistedFactory.create(syncTask, executionId)
+    }
+
+    companion object {
+        val TAG: String = InstructionsGenerator::class.java.simpleName
     }
 }
 

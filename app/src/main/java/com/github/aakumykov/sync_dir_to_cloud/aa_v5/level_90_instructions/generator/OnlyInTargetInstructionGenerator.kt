@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
@@ -24,8 +25,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository: SyncInstructionRepository,
-)
-    : BasicInstructionGenerator(
+) : BasicInstructionGenerator(
         taskId = syncTask.id,
         executionId = executionId,
         comparisonStateRepository = comparisonStateRepository,
@@ -36,7 +36,8 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
      * @return Порядковый номер для следующего генератора инструкций.
      */
     suspend fun generateForSync(initialOrderNum: Int): Int {
-        var nextOrderNum = initialOrderNum
+        Log.d(TAG, "generateForSync() called with: initialOrderNum = $initialOrderNum")
+        val nextOrderNum = initialOrderNum
         return nextOrderNum
     }
 
@@ -44,6 +45,8 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
      * @return Порядковый номер для следующего генератора инструкций.
      */
     suspend fun generateForMirror(initialOrderNum: Int): Int {
+        Log.d(TAG, "generateForMirror() called with: initialOrderNum = $initialOrderNum")
+
         var nextOrderNum = initialOrderNum
 
         nextOrderNum = processFilesNeedToBeDeletedInSource(nextOrderNum)
@@ -141,6 +144,10 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
                 generateSyncInstructionsFrom(it, SyncOperation6.DELETE_IN_SOURCE, nextOrderNum)
             }
     }*/
+
+    companion object {
+        val TAG: String = OnlyInTargetInstructionGenerator::class.java.simpleName
+    }
 }
 
 

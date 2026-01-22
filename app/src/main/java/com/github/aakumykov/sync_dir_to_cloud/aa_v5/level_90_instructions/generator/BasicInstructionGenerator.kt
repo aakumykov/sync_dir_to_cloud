@@ -29,11 +29,10 @@ open class BasicInstructionGenerator(
         partsLabel: PartsLabel,
         nextOrderNum: Int
     ): Int {
-        Log.d(TAG, "STORAGE_STATE, ------------- generateSyncInstructionsFrom() ------------")
         var n = nextOrderNum
         syncInstructionRepository.apply {
             comparisonStateList.forEach { comparisonState ->
-                Log.d(TAG, "STORAGE_STATE, ${comparisonState}")
+//                Log.d(TAG, "$comparisonState")
                 add(
                     SyncInstruction.from(
                         partsLabel = partsLabel,
@@ -44,7 +43,6 @@ open class BasicInstructionGenerator(
                 )
             }
         }
-        Log.d(TAG, "STORAGE_STATE, ---------------------------------------------------------")
         return n
     }
 

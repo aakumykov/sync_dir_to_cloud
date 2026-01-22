@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
@@ -29,6 +30,8 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
     private val syncInstructionRepository: SyncInstructionRepository,
 ) {
     suspend fun generate(initialOrderNum: Int): Int {
+        Log.d(TAG, "generate() called with: initialOrderNum = $initialOrderNum")
+
         var nextOrderNum = initialOrderNum
 
         // Удалённые в одном месте и неизменные в другом.

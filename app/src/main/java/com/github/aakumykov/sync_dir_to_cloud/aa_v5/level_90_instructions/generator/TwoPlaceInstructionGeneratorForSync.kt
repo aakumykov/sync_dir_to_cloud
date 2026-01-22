@@ -32,6 +32,8 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
      * @return Увеличенный порядковый номер
      */
     suspend fun generate(initialOrderNum: Int): Int {
+        Log.d(TAG, "generate() called with: initialOrderNum = $initialOrderNum")
+
         var nextOrderNum = initialOrderNum
 
         // Бекаплю удалённые и изменённые файлы (если нужно).
@@ -138,29 +140,29 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     }
 
     private suspend fun copyToTargetFilesNewAndModifiedInSource(nextOrderNum: Int): Int {
-        Log.d(TAG, "STORAGE_STATE, copyToTargetFilesNewAndModifiedInSource() called with: nextOrderNum = $nextOrderNum")
+//        Log.d(TAG, "STORAGE_STATE, copyToTargetFilesNewAndModifiedInSource() called with: nextOrderNum = $nextOrderNum")
         return getAllBilateralComparisonStates()
             .let { list ->
                 list.apply {
-                    Log.d(TAG, "STORAGE_STATE, getAllBilateralComparisonStates: ${this.joinToString(",") { it.toString() }}")
+//                    Log.d(TAG, "STORAGE_STATE, getAllBilateralComparisonStates: ${this.joinToString(",") { it.toString() }}")
                 }
             }
             .filter { it.isFile }
             .let { list ->
                 list.apply {
-                    Log.d(TAG, "STORAGE_STATE, isFile: ${this.joinToString(",") { it.toString() }}")
+//                    Log.d(TAG, "STORAGE_STATE, isFile: ${this.joinToString(",") { it.toString() }}")
                 }
             }
             .filter { it.isNewOrModifiedInSource }
             .let { list ->
                 list.apply {
-                    Log.d(TAG, "STORAGE_STATE, isNewOrModifiedInSource: ${this.joinToString(",") { it.toString() }}")
+//                    Log.d(TAG, "STORAGE_STATE, isNewOrModifiedInSource: ${this.joinToString(",") { it.toString() }}")
                 }
             }
             .filter { it.notDeletedInSource }
             .let { list ->
                 list.apply {
-                    Log.d(TAG, "STORAGE_STATE, notDeletedInSource: ${this.joinToString(",") { it.toString() }}")
+//                    Log.d(TAG, "STORAGE_STATE, notDeletedInSource: ${this.joinToString(",") { it.toString() }}")
                 }
             }
             .let { createInstructionsFor(it,SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
@@ -181,12 +183,12 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
         syncOperationList: List<SyncOperation>,
         nextOrderNum: Int
     ): Int {
-        Log.d(TAG, "----- STORAGE_STATE createInstructionsFor(${syncOperationList.joinToString(",")}) -----")
+//        Log.d(TAG, "----- STORAGE_STATE createInstructionsFor(${syncOperationList.joinToString(",")}) -----")
 
         var n = nextOrderNum
         list.forEach { comparisonState ->
 //            Log.d(TAG, comparisonState.toString())
-            Log.d(TAG, "STORAGE_STATE, ${comparisonState.toString()}")
+////            Log.d(TAG, "STORAGE_STATE, ${comparisonState.toString()}")
             syncInstructionRepository.apply {
                 syncOperationList.forEach { syncOperation ->
                     add(
@@ -200,7 +202,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
                 }
             }
         }
-        Log.d("TAG", "STORAGE_STATE -----------------------------------------------------------------")
+//        Log.d("TAG", "STORAGE_STATE -----------------------------------------------------------------")
         return n
     }
 

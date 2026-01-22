@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
@@ -22,8 +23,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     @Assisted private val executionId: String,
     comparisonStateRepository: ComparisonStateRepository,
     syncInstructionRepository: SyncInstructionRepository,
-)
-    : BasicInstructionGenerator(
+) : BasicInstructionGenerator (
         taskId = syncTask.id,
         executionId = executionId,
         comparisonStateRepository = comparisonStateRepository,
@@ -31,6 +31,8 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     )
 {
     suspend fun generateForSync(initialOrderNum: Int): Int {
+        Log.d(TAG, "generateForSync() called with: initialOrderNum = $initialOrderNum")
+
         var nextOrderNum = initialOrderNum
 
         nextOrderNum = createDirsFromSourceInTarget(nextOrderNum)
@@ -41,6 +43,8 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
 
 
     suspend fun generateForMirror(initialOrderNum: Int): Int {
+        Log.d(TAG, "generateForMirror() called with: initialOrderNum = $initialOrderNum")
+
         var nextOrderNum = initialOrderNum
 
         nextOrderNum = deleteFilesInSourceDeletedInTarget(nextOrderNum)
@@ -117,6 +121,10 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     private suspend fun getOnlyInSourceComparisonStates(): Iterable<ComparisonState> {
         return getStatesForThisTaskAndExecution()
             .filter { it.onlySource }
+    }
+
+    companion object {
+        val TAG: String = OnlyInSourceInstructionGenerator::class.java.simpleName
     }
 }
 
