@@ -17,15 +17,17 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
+import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2AssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessor.Companion.TAG
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.workers.TaskJobsHolder
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -37,6 +39,7 @@ import javax.inject.Inject
  * InstructionLogItem
  */
 // TODO: поменять именами Executor и Processor ...
+// TODO: передавать в @AssistedInject taskId, чтобы получать SyncTask как свойство...
 class SyncTaskExecutor @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
@@ -53,56 +56,66 @@ class SyncTaskExecutor @Inject constructor(
     private val taskLogger2: TaskLogger2 by lazy { taskLogger2AssistedFactory.create(executionId) }
 
 
-    suspend fun executeSyncTask(scope: CoroutineScope, taskId: String) {
-        Log.d(TAG, "executeSyncTask() called with: scope = $scope, taskId = $taskId")
-        scope.launch (Dispatchers.IO) {
-            Log.d(TAG, "А")
-            executeSyncTaskReal(this, taskId)
-            Log.d(TAG, "Б")
-        }.join()
+    suspend fun executeSyncTask(parentScope: CoroutineScope, taskId: String) {
+        Log.d(TAG, "executeSyncTask() called with: scope = $parentScope, taskId = $taskId")
+
+        val syncTask = syncTaskReader.getSyncTask(taskId)
+
+        // FIXME: TODO внедрять?
+        // TODO: вместо того, чтобы мудрить здесь с запуском в Scope,
+        //  можно (нужно) внедрить его в класс-журналёр.
+        val taskEH = CoroutineExceptionHandler { context, throwable ->
+            parentScope.launch (NonCancellable) {
+                logExecutionError(syncTask, throwable)
+                taskLogger2.logTaskError(syncTask, throwable)
+                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
+            }
+        }
+
+        parentScope.launch (Dispatchers.IO + taskEH) {
+            try {
+                executeSyncTaskReal(this, syncTask)
+            } catch (e: CancellationException) {
+                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
+                taskLogger2.logTaskCancelled(syncTask, e)
+            }
+        }.also { job ->
+            TaskJobsHolder.addJob(taskId, job)
+        }.join() // Этот join() нужен для синхронного выполнения метода в scope.
     }
 
 
-    private suspend fun executeSyncTaskReal(scope: CoroutineScope, taskId: String) {
-
+    private suspend fun executeSyncTaskReal(parentScope: CoroutineScope, syncTask: SyncTask) {
         Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] СТАРТ ========")
 
-        val syncTask = syncTaskReader.getSyncTask(taskId)
         val taskId = syncTask.id
 
         try {
             logExecutionStart(taskId)
             taskLogger2.logTaskStarted(syncTask)
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
-
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
             syncTaskProcessorFactory
-                .create(syncTask, executionId, scope)
+                .create(syncTask, executionId, parentScope)
                 .processSyncTask()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
             taskLogger2.logTaskFinished(syncTask)
         }
-        catch (e: CancellationException) {
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
-            Log.i(TAG, "Задача $taskId отменена: ${e.errorMsg}")
-        }
-        catch (t: Throwable) {
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, t.errorMsg)
-            taskLogger2.logTaskError(syncTask, t)
-            Log.e(TAG, t.errorMsg, t)
-        }
         finally {
             // TODO: ошибочное расположение
             syncTaskRunningTimeUpdater.updateFinishTime(taskId)
-            logExecutionFinish(taskId)
+            withContext(NonCancellable) {
+                logExecutionFinish(taskId)
+            }
         }
 
         Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] ФИНИШ ========")
     }
 
 
+    @Deprecated("Избавиться от него")
     private suspend fun logExecutionStart(taskId: String) {
 
         executionLogger.log(TaskExecutionLogItem.createStartingItem(
@@ -118,7 +131,7 @@ class SyncTaskExecutor @Inject constructor(
         ))
     }
 
-
+    @Deprecated("Избавиться от него")
     private suspend fun logExecutionFinish(taskId: String) {
 
         executionLogger.log(TaskExecutionLogItem.createFinishingItem(

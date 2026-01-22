@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -21,7 +22,8 @@ class InstructionLogger @AssistedInject constructor(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
-            logMessage.get(resources)
+            logMessage = logMessage.get(resources),
+            timestamp = currentTime
         ).also {
             Log.d(TAG, "Выполнение инструкции начато $it")
         }
@@ -33,7 +35,8 @@ class InstructionLogger @AssistedInject constructor(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
-            logMessage.get(resources)
+            logMessage.get(resources),
+            timestamp = currentTime
         ).also {
             Log.d(TAG, "Выполнение инструкции завершено $it")
         }
@@ -45,7 +48,8 @@ class InstructionLogger @AssistedInject constructor(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
-            logMessage.get(resources)
+            logMessage = logMessage.get(resources),
+            timestamp = currentTime
         ).also {
             Log.i(TAG, "Выполнение инструкции отменено $it")
         }
@@ -57,7 +61,8 @@ class InstructionLogger @AssistedInject constructor(
             id = logItemId,
             taskId = taskId,
             executionId = executionId,
-            logMessage.get(resources)
+            logMessage = logMessage.get(resources),
+            timestamp = currentTime
         ).also {
             Log.e(TAG, "Ошибка выполнения инструкции $it --> ${throwable.errorMsgExtended}")
         }

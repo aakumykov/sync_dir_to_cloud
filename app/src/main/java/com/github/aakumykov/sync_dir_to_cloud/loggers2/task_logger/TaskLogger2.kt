@@ -10,6 +10,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 
 class TaskLogger2 @AssistedInject constructor(
+    // TODO:вкорячить сюда taskId?
     @Assisted private val executionId: String,
     private val resources: Resources,
 ) {

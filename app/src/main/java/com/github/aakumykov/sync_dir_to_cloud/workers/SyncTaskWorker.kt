@@ -11,9 +11,8 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 
 
 // FIXME: пишут, что на работу этому "воркеру" даётся 10 минут:
@@ -62,9 +61,9 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             SampleService.start(applicationContext)
 
             appComponent.getSyncTaskExecutor().also { syncTaskExecutor ->
-                Log.d(TAG, "doWorkReal() Задача taskId: $taskId начала    выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+                Log.d(TAG, "doWorkReal() Задача taskId: $taskId начала    выполнение")
                 syncTaskExecutor.executeSyncTask(scope, taskId = taskId)
-                Log.d(TAG, "doWorkReal() Задача taskId: $taskId завершила выполнение, taskJobsHolder: ${taskJobsHolder.hashCode()}, operationJobsHolder: ${operationJobsHolder.hashCode()}")
+                Log.d(TAG, "doWorkReal() Задача taskId: $taskId завершила выполнение")
             }
         }
         catch (e: CancellationException) {
@@ -76,79 +75,17 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
             Log.e(TAG, t.errorMsgExtended)
         }
         finally {
-            Log.d(TAG, "doWorkReal() finally{}")
-            taskJobsHolder.removeJob(taskId)
-            SampleService.stop(applicationContext)
+            withContext(NonCancellable) {
+                Log.d(TAG, "doWorkReal() finally{}")
+                SampleService.stop(applicationContext)
+            }
         }
     }
 
 
     companion object {
         val TAG: String = SyncTaskWorker::class.java.simpleName
-
         const val KEY_TASK_ID: String = "TASK_ID"
-
         fun dataWithTaskId(taskId: String): Data = Data.Builder().putString(KEY_TASK_ID, taskId).build()
-
-        @Deprecated("разобраться, где это держать")
-        val taskJobsHolder = TaskJobsHolder
-
-        @Deprecated("разобраться, где это держать")
-        val operationJobsHolder = OperationJobsHolder
     }
 }
-
-
-// TODO: всё-таки, хранить Job или Scope?
-object TaskJobsHolder {
-
-    val TAG: String = TaskJobsHolder.javaClass.simpleName
-
-    init { Log.d(TAG, "init{}") }
-
-    private val jobsMap: ConcurrentMap<String, Job> = ConcurrentHashMap()
-
-    fun addJob(taskId: String, job: Job) {
-        Log.d(TAG, "[${hashCode()}] addJob(): taskId:$taskId, $job")
-        jobsMap[taskId] = job
-    }
-
-    fun getJob(taskId: String): Job? {
-        return jobsMap[taskId].also {
-            Log.d(TAG, "[${hashCode()}] getJob(): taskId:$taskId, $it")
-        }
-    }
-
-    fun removeJob(taskId: String) {
-        jobsMap.remove(taskId).also {
-            Log.d(TAG, "[${hashCode()}] removeJob(): taskId:$taskId, $it")
-        }
-    }
-}
-
-object OperationJobsHolder {
-
-    val TAG = OperationJobsHolder.javaClass.simpleName
-
-    init { Log.d(TAG, "init{}") }
-
-    private val map: ConcurrentMap<String, Job> = ConcurrentHashMap()
-
-    fun addJob(taskId: String, job: Job) {
-        map[taskId] = job
-    }
-
-    fun getJob(taskId: String): Job? {
-        return map[taskId]
-    }
-
-    fun removeJob(taskId: String) {
-        map.remove(taskId)
-    }
-}
-
-@Deprecated("разобраться, где это держать")
-val taskJobsHolder: TaskJobsHolder get() = SyncTaskWorker.taskJobsHolder
-
-@Deprecated("разобраться, где это держать")
-val operationJobsHolder: OperationJobsHolder get() = SyncTaskWorker.operationJobsHolder
