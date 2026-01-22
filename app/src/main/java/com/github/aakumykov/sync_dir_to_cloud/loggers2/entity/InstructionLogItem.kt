@@ -30,7 +30,7 @@ data class InstructionLogItem(
     }
 
     override fun toString(): String {
-        return "InstructionLogItem(id='$id', taskId='$taskId', executionId='$executionId', message='$message')"
+        return "InstructionLogItem('$message', taskId='$taskId', executionId='$executionId')"
     }
 }
 

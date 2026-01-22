@@ -25,7 +25,7 @@ class InstructionLogger @AssistedInject constructor(
             logMessage = logMessage.get(resources),
             timestamp = currentTime
         ).also {
-            Log.d(TAG, "Выполнение инструкции начато $it")
+            Log.d(TAG, "Выполнение инструкции $it")
         }
     }
 
@@ -38,7 +38,7 @@ class InstructionLogger @AssistedInject constructor(
             logMessage.get(resources),
             timestamp = currentTime
         ).also {
-            Log.d(TAG, "Выполнение инструкции завершено $it")
+//            Log.d(TAG, "Выполнение инструкции завершено $it")
         }
     }
 
