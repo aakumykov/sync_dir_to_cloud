@@ -193,6 +193,8 @@ dependencies {
 
     implementation 'com.github.aakumykov:list_holding_list_adapter:0.0.5-alpha'
 
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.10.0"
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
