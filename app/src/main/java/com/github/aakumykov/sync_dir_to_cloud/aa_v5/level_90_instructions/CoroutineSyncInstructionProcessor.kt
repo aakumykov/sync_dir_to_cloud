@@ -2,10 +2,10 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
 import android.content.res.Resources
 import android.util.Log
-import com.github.aakumykov.file_lister_navigator_selector.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger.ExecutionLogger2
@@ -35,7 +35,7 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
      suspend fun process(
          isCritical: Boolean,
          logMessage: TextMessage,
-         executionBlock: suspend () -> Unit,
+         instructionBlock: suspend () -> Unit,
      ) {
          scope.launch {
              val text4log = logMessage.get(resources)
@@ -50,12 +50,12 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
                  }
 
                  if (isCritical) scope.launch {
-                     executionBlock.invoke()
+                     instructionBlock.invoke()
                  } else {
                      scope.launch {
                          supervisorScope {
                              launch (nonCriticalExceptionHandler) {
-                                 executionBlock.invoke()
+                                 instructionBlock.invoke()
                              }
                          }
                      }
@@ -69,6 +69,7 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
                      taskId, executionId, text4log,"ОТМЕНЕНО"
                  ))
                  executionLogger2.logExecutionCancelled(logItemId,logMessage)
+                 // FIXME: Нужно ли перевыбрасывать это исключение? Кому оно нужно?
                  throw e
              }
              catch (throwable: Throwable) {

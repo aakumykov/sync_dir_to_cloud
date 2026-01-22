@@ -102,7 +102,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.checking_task_dirs),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getTaskDirsCheckerAssistedFactory()
                     .create(syncTask, executionId)
@@ -115,7 +115,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(logMessageId),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getBackupDirsPreparerAssistedFactory()
                     .create(syncTask)
@@ -129,7 +129,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.removing_duplicate_sync_instructions),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getSyncInstructionRepository()
                     .deleteUnprocessedDuplicatedInstructions(taskId)
@@ -141,7 +141,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.clearing_processed_sync_objects_with_deleted_state),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getSyncObjectDeleter()
                     .deleteProcessedObjectsWithDeletedState(taskId)
@@ -153,7 +153,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_not_checked_objects_as_deleted),
-            executionBlock = {
+            instructionBlock = {
                 syncObjectStateResetter.markAllNotCheckedObjectsAsDeleted(taskId)
             }
         )
@@ -163,7 +163,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.deleting_old_comparison_results),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getComparisonsDeleter()
                     .deleteAllFor(taskId)
@@ -175,7 +175,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.removing_processed_sync_instructions),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getInstructionsDeleter()
                     .deleteFinishedInstructionsFor(taskId)
@@ -187,7 +187,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.generating_sync_instructions),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getInstructionsGeneratorAssistedFactory()
                     .create(syncTask, executionId)
@@ -201,7 +201,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.processing_unprocessed_sync_instructions),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getSyncInstructionsProcessorAssistedFactory()
                     .create(syncTask, executionId, scope)
@@ -215,7 +215,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.processing_sync_instructions),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getSyncInstructionsProcessorAssistedFactory()
                     .create(syncTask, executionId, scope)
@@ -230,7 +230,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_task_bad_states),
-            executionBlock = {
+            instructionBlock = {
                 syncTaskStateChanger.resetSourceReadingBadState(taskId)
             }
         )
@@ -240,7 +240,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_objects_bad_states),
-            executionBlock = {
+            instructionBlock = {
                 syncObjectStateResetter.resetTargetReadingBadState(taskId)
                 syncObjectStateResetter.resetBackupBadState(taskId)
                 syncObjectStateResetter.resetBackupBadState(taskId)
@@ -255,7 +255,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_objects_as_not_checked),
-            executionBlock = {
+            instructionBlock = {
                 syncObjectStateResetter.markAllObjectsAsNotChecked(taskId)
             }
         )
@@ -269,7 +269,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_source),
-            executionBlock = {
+            instructionBlock = {
                 storageToDatabaseLister
                     .listFromPathToDatabase(
                         syncSide = SyncSide.SOURCE,
@@ -287,7 +287,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_target),
-            executionBlock = {
+            instructionBlock = {
                 storageToDatabaseLister
                     .listFromPathToDatabase(
                         syncSide = SyncSide.TARGET,
@@ -311,7 +311,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.comparing_source_with_target),
-            executionBlock = {
+            instructionBlock = {
                 appComponent
                     .getSourceWithTargetComparatorAssistedFactory()
                     .create(syncTask, executionId)
