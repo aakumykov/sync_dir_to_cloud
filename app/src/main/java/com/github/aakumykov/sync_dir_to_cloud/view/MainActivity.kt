@@ -24,6 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.SyncLogFragmentCompose
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
@@ -158,7 +159,7 @@ class MainActivity : AppCompatActivity() {
             is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
             is NavTarget.TaskInfo -> loadFragment(TaskDetailsFragment.create(navTarget.id))
-            is NavTarget.SyncLog -> loadFragment(SyncLogFragment.create(navTarget.taskId, navTarget.executionId))
+            is NavTarget.SyncLog -> loadFragment(SyncLogFragmentCompose.create(navTarget.taskId, navTarget.executionId))
             is NavTarget.AppSettings -> loadFragment(SettingsFragment.create())
             else -> loadInitialFragment(intent)
         }
