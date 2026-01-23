@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
 // TODO: убрать Resources отсюда, перенести их в Logger.
+// TODO: переименовать. CoroutineSyncInstructionProcessor - должно быть именем реализации.
 class CoroutineSyncInstructionProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
