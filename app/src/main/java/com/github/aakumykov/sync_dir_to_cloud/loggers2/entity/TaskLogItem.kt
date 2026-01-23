@@ -29,12 +29,13 @@ data class TaskLogItem(
     @ColumnInfo(name = FIELD_EXECUTION_ID) val executionId: String,
     @ColumnInfo(name = FIELD_LOG_ENTRY_TYPE) val entryType: LogEntryType,
     val message: String?,
-    val timestamp: Long,
+    @ColumnInfo(name = FIELD_TIMESTAMP) val timestamp: Long,
 ) {
     companion object {
         const val TABLE_NAME = "task_logs"
         const val FIELD_TASK_ID = "task_id"
         const val FIELD_EXECUTION_ID = "execution_id"
+        const val FIELD_TIMESTAMP = "timestamp"
         const val FIELD_LOG_ENTRY_TYPE = "entry_type"
 
         fun create(

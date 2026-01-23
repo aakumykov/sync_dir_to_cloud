@@ -25,9 +25,11 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.InstructionLoggingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
@@ -45,6 +47,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         SyncInstruction::class,
         FileOperationLogItem::class,
         TaskLogItem::class,
+        InstructionLogItem::class,
    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -122,8 +125,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         AutoMigration(from = 128, to = 129, spec = RenameTableFromSyncOperationLogItemToFileOperationLogItem::class), // Переименование таблицы "sync_operation_logs" в "file_operation_logs".
         AutoMigration(from = 129, to = 130), // Новый объект [TaskLogItem]
         AutoMigration(from = 130, to = 131), // fix: внешний ключ в TaskLogItem
+        AutoMigration(from = 131, to = 132), // Новый объект [InstructionLogItem]
     ],
-    version = 131,
+    version = 132,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -146,4 +150,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncOperationLoggerDAO(): SyncOperationLoggerDAO
     abstract fun getSyncTaskBackupDirDAO(): SyncTaskBackupDirDAO
     abstract fun getTaskLogger2DAO(): TaskLogger2DAO
+    abstract fun getInstructionLoggingDAO(): InstructionLoggingDAO
 }

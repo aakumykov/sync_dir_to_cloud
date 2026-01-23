@@ -14,7 +14,8 @@ interface TaskLogger2DAO {
 
     @Query("SELECT * FROM ${TaskLogItem.TABLE_NAME} " +
             "WHERE ${TaskLogItem.FIELD_TASK_ID} = :taskId " +
-            "AND ${TaskLogItem.FIELD_EXECUTION_ID} = :executionId")
+            "AND ${TaskLogItem.FIELD_EXECUTION_ID} = :executionId " +
+            "ORDER BY ${TaskLogItem.FIELD_TIMESTAMP}")
     suspend fun list(taskId: String, executionId: String): List<TaskLogItem>
 
 

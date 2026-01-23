@@ -1,11 +1,13 @@
-package com.github.aakumykov.sync_dir_to_cloud.loggers2.execution_logger
+package com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger
 
 import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogEntryType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.repository.InstructionLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
@@ -16,55 +18,63 @@ class InstructionLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     private val resources: Resources,
+    private val repository: InstructionLogRepository,
 ) {
-    fun logInstructionExecutionStarted(logItemId: String, logMessage: TextMessage) {
+    suspend fun logInstructionExecutionStarted(logMessage: TextMessage) {
         InstructionLogItem.create(
-            id = logItemId,
             taskId = taskId,
             executionId = executionId,
+            logEntryType = LogEntryType.BUSY,
             logMessage = logMessage.get(resources),
             timestamp = currentTime
         ).also {
-            Log.d(TAG, "Выполнение инструкции $it")
+            repository.add(it)
+            Log.d(TAG, it.message)
+//            Log.d(TAG, "Выполняется инструкция '$it'")
         }
     }
 
 
-    fun logInstructionExecutionFinished(logItemId: String, logMessage: TextMessage) {
+    suspend fun logInstructionExecutionFinished(logMessage: TextMessage) {
         InstructionLogItem.create(
-            id = logItemId,
             taskId = taskId,
             executionId = executionId,
-            logMessage.get(resources),
+            logEntryType = LogEntryType.SUCCESS,
+            logMessage = logMessage.get(resources),
             timestamp = currentTime
         ).also {
-//            Log.d(TAG, "Выполнение инструкции завершено $it")
+            repository.add(it)
+            Log.d(TAG, it.message)
         }
     }
 
 
-    fun logInstructionExecutionCancelled(logItemId: String, logMessage: TextMessage) {
+    suspend fun logInstructionExecutionCancelled(logMessage: TextMessage) {
         InstructionLogItem.create(
-            id = logItemId,
             taskId = taskId,
             executionId = executionId,
+            logEntryType = LogEntryType.CANCELLED,
             logMessage = logMessage.get(resources),
             timestamp = currentTime
         ).also {
-            Log.i(TAG, "Выполнение инструкции отменено $it")
+            repository.add(it)
+            Log.e(TAG, it.message)
+//            Log.i(TAG, "Отменено выполнение инструкции '$it'")
         }
     }
 
 
-    fun logInstructionExecutionError(logItemId: String, logMessage: TextMessage, throwable: Throwable) {
+    suspend fun logInstructionExecutionError(logMessage: TextMessage, throwable: Throwable) {
         InstructionLogItem.create(
-            id = logItemId,
             taskId = taskId,
             executionId = executionId,
+            logEntryType = LogEntryType.ERROR,
             logMessage = logMessage.get(resources),
             timestamp = currentTime
         ).also {
-            Log.e(TAG, "Ошибка выполнения инструкции $it --> ${throwable.errorMsgExtended}")
+            repository.add(it)
+            Log.e(TAG, it.message, throwable)
+//            Log.e(TAG, "Ошибка выполнения инструкции $it --> ${throwable.errorMsgExtended}", throwable)
         }
     }
 
