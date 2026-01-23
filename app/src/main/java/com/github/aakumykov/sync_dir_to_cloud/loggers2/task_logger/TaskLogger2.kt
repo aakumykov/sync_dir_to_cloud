@@ -26,7 +26,7 @@ class TaskLogger2 @AssistedInject constructor(
 ) {
     suspend fun logTaskStarted() {
         runNonCancellable {
-            taskLogWithMessage(LogEntryType.BUSY, R.string.TASK_LOG_task_started)
+            taskLogWithMessage(LogEntryType.BUSY)
                 .also {
                     repository.add(it)
                     Log.d(TAG, "${it.message}, ${it.timestamp}")
@@ -35,7 +35,7 @@ class TaskLogger2 @AssistedInject constructor(
     }
 
     suspend fun logTaskFinished() {
-        taskLogWithMessage(LogEntryType.SUCCESS, R.string.TASK_LOG_task_finished)
+        taskLogWithMessage(LogEntryType.SUCCESS)
             .also {
                 repository.add(it)
                 Log.d(TAG, "${it.message}, ${it.timestamp}")
@@ -43,7 +43,7 @@ class TaskLogger2 @AssistedInject constructor(
     }
 
     suspend fun logTaskCancelled(e: CancellationException) {
-        taskLogWithMessage(LogEntryType.CANCELLED, R.string.TASK_LOG_task_cancelled)
+        taskLogWithMessage(LogEntryType.CANCELLED)
             .also {
                 repository.add(it)
                 Log.i(TAG, "${it.message}, ${it.timestamp} (${e.errorMsgExtended})")
@@ -69,7 +69,7 @@ class TaskLogger2 @AssistedInject constructor(
     private fun taskLogWithMessage(logEntryType: LogEntryType, @StringRes messageRes: Int): TaskLogItem
         = taskLogWithMessage(logEntryType, string(messageRes))
 
-    private fun taskLogWithMessage(logEntryType: LogEntryType, message: String): TaskLogItem = TaskLogItem.create(
+    private fun taskLogWithMessage(logEntryType: LogEntryType, message: String? = null): TaskLogItem = TaskLogItem.create(
         entryType = logEntryType,
         taskId = taskId,
         executionId = executionId,
