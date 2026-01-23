@@ -15,7 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
     tableName = TaskLogItem.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
-            entity = TaskLogItem::class,
+            entity = SyncTask::class,
             parentColumns = ["id"],
             childColumns = [TaskLogItem.FIELD_TASK_ID],
             onDelete = CASCADE,

@@ -121,8 +121,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         AutoMigration(from = 127, to = 128, spec = RenameTableFromExecutionLogToTaskExecutionLog::class), // Переименование таблицы "execution_log" в "task_execution_log".
         AutoMigration(from = 128, to = 129, spec = RenameTableFromSyncOperationLogItemToFileOperationLogItem::class), // Переименование таблицы "sync_operation_logs" в "file_operation_logs".
         AutoMigration(from = 129, to = 130), // Новый объект [TaskLogItem]
+        AutoMigration(from = 130, to = 131), // fix: внешний ключ в TaskLogItem
     ],
-    version = 130,
+    version = 131,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
