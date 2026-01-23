@@ -200,4 +200,5 @@
     <string name="TASK_LOG_task_finished">Task finished</string>
     <string name="TASK_LOG_task_cancelled">Task cancelled</string>
     <string name="TASK_LOG_task_error">Task error: %1$s</string>
+    <string name="title_activity_sync_log_compose">SyncLogComposeActivity</string>
 </resources>

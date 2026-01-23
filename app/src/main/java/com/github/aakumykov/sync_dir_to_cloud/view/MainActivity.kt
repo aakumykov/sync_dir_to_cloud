@@ -54,9 +54,7 @@ class MainActivity : AppCompatActivity() {
         // Подписка на меню производится в onCreateOptionsMenu()
     }
 
-
-    @SuppressLint("MissingSuperCall")
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         loadInitialFragment(intent)
     }

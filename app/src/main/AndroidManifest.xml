@@ -4,7 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
@@ -19,7 +21,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sync_dir_to_cloud"
         tools:targetApi="31">
-
+        <!--TODO: SyncLogComposeActivity exported="false"-->
+        <activity
+            android:name=".view.sync_log_compose.SyncLogComposeActivity"
+            android:exported="true"
+            android:label="@string/title_activity_sync_log_compose"
+            android:theme="@style/Theme.Sync_dir_to_cloud" />
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
@@ -36,10 +43,8 @@
         </activity>
 
         <service
-            android:name="com.github.aakumykov.sync_dir_to_cloud.utils.SampleService"
-            android:foregroundServiceType="dataSync"
-            />
-
+            android:name=".utils.SampleService"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>
