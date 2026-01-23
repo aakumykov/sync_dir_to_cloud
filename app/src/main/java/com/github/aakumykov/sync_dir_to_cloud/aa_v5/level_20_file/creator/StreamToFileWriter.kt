@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
+import com.github.aakumykov.sync_dir_to_cloud.utils.BytesToHumanSizeFormatter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -93,6 +94,8 @@ class StreamToFileWriter @AssistedInject constructor(
                         targetPath = filePath,
                         overwriteIfExists = overwriteIfExists,
                         writingCallback = { progress ->
+
+                            Log.d(TAG, "прогресс записи файла: ${BytesToHumanSizeFormatter.format(progress)}")
 
                             dataTransferDelay.also { delayMs ->
                                 if (delayMs > 0)
