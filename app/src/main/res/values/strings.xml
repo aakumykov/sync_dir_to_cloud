@@ -196,4 +196,8 @@
     <string name="generating_sync_instructions">Generating sync instructions</string>
     <string name="processing_sync_instructions">Executing sync instructions</string>
     <string name="clearing_processed_sync_objects_with_deleted_state">Forgetting about processed deleted objects</string>
+    <string name="TASK_LOG_task_started">Task started</string>
+    <string name="TASK_LOG_task_finished">Task finished</string>
+    <string name="TASK_LOG_task_cancelled">Task cancelled</string>
+    <string name="TASK_LOG_task_error">Task error: %1$s</string>
 </resources>

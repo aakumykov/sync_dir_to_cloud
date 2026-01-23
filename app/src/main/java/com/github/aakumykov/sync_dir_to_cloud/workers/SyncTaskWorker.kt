@@ -60,11 +60,13 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         try {
             SampleService.start(applicationContext)
 
-            appComponent.getSyncTaskExecutor().also { syncTaskExecutor ->
-                Log.d(TAG, "doWorkReal() Задача taskId: $taskId начала    выполнение")
-                syncTaskExecutor.executeSyncTask(scope, taskId = taskId)
-                Log.d(TAG, "doWorkReal() Задача taskId: $taskId завершила выполнение")
-            }
+            appComponent.getSyncTaskExecutorFactory()
+                .create(taskId)
+                .also { syncTaskExecutor ->
+                    Log.d(TAG, "doWorkReal() Задача taskId: $taskId начала    выполнение")
+                    syncTaskExecutor.executeSyncTask(scope, taskId = taskId)
+                    Log.d(TAG, "doWorkReal() Задача taskId: $taskId завершила выполнение")
+                }
         }
         catch (e: CancellationException) {
             // TODO: если система сама отменяет Worker, нужно в этом месте останавливать задачу.

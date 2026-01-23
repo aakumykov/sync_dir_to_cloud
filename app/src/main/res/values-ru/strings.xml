@@ -195,4 +195,8 @@
     <string name="generating_sync_instructions">Генерирую инструкции синхронизации</string>
     <string name="processing_sync_instructions">Выполняю инструкции синхронизации</string>
     <string name="clearing_processed_sync_objects_with_deleted_state">Забываю об обработанных удалённых объектах</string>
+    <string name="TASK_LOG_task_started">Задача запущена</string>
+    <string name="TASK_LOG_task_finished">Задача завершена</string>
+    <string name="TASK_LOG_task_cancelled">Задача отменена</string>
+    <string name="TASK_LOG_task_error">Ошибка задачи: %1$s</string>
 </resources>

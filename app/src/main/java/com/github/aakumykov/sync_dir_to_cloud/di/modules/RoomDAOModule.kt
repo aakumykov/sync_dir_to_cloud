@@ -19,6 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogD
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
 import dagger.Module
 import dagger.Provides
 
@@ -103,5 +104,10 @@ class RoomDAOModule {
     @Provides
     fun provideSyncOperationLoggerDAO(appDatabase: AppDatabase): SyncOperationLoggerDAO {
         return appDatabase.getSyncOperationLoggerDAO()
+    }
+
+    @Provides
+    fun provideTaskLoggerDAO2(appDatabase: AppDatabase): TaskLogger2DAO {
+        return appDatabase.getTaskLogger2DAO()
     }
 }

@@ -21,6 +21,9 @@ import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +31,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 /**
  * Задача класса - запускать выполнение задачи и журналировать это выполнение.
@@ -40,7 +42,8 @@ import javax.inject.Inject
  */
 // TODO: поменять именами Executor и Processor ...
 // TODO: передавать в @AssistedInject taskId, чтобы получать SyncTask как свойство...
-class SyncTaskExecutor @Inject constructor(
+class SyncTaskExecutor @AssistedInject constructor(
+    @Assisted private val taskId: String,
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLogger: TaskLogger,
@@ -49,11 +52,13 @@ class SyncTaskExecutor @Inject constructor(
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val resources: Resources,
 ){
-    private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
+    private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy {
+        appComponent.getSyncTaskRunningTimeUpdater() }
 
     private val executionId: String get() = hashCode().toString()
 
-    private val taskLogger2: TaskLogger2 by lazy { taskLogger2AssistedFactory.create(executionId) }
+    private val taskLogger2: TaskLogger2 by lazy {
+        taskLogger2AssistedFactory.create(taskId = taskId, executionId = executionId) }
 
 
     suspend fun executeSyncTask(parentScope: CoroutineScope, taskId: String) {
@@ -67,7 +72,7 @@ class SyncTaskExecutor @Inject constructor(
         val taskEH = CoroutineExceptionHandler { context, throwable ->
             parentScope.launch (NonCancellable) {
                 logExecutionError(syncTask, throwable)
-                taskLogger2.logTaskError(syncTask, throwable)
+                taskLogger2.logTaskError(throwable)
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
             }
         }
@@ -77,7 +82,7 @@ class SyncTaskExecutor @Inject constructor(
                 executeSyncTaskReal(this, syncTask)
             } catch (e: CancellationException) {
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
-                taskLogger2.logTaskCancelled(syncTask, e)
+                taskLogger2.logTaskCancelled(e)
             }
         }.also { job ->
             TaskJobsHolder.addJob(taskId, job)
@@ -92,7 +97,7 @@ class SyncTaskExecutor @Inject constructor(
 
         try {
             logExecutionStart(taskId)
-            taskLogger2.logTaskStarted(syncTask)
+            taskLogger2.logTaskStarted()
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
@@ -101,7 +106,7 @@ class SyncTaskExecutor @Inject constructor(
                 .processSyncTask()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
-            taskLogger2.logTaskFinished(syncTask)
+            taskLogger2.logTaskFinished()
         }
         finally {
             // TODO: ошибочное расположение
@@ -168,4 +173,10 @@ class SyncTaskExecutor @Inject constructor(
     companion object {
         val TAG: String = SyncTaskExecutor::class.java.simpleName
     }
+}
+
+
+@AssistedFactory
+interface SyncTaskExecutorAssistedFactory {
+    fun create(taskId: String): SyncTaskExecutor
 }

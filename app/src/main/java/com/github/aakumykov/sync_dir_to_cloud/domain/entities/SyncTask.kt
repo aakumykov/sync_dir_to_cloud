@@ -3,11 +3,15 @@ package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 import android.view.View
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -20,8 +24,8 @@ import java.util.concurrent.TimeUnit
             childColumns = ["source_auth_id"],
             onDelete = NO_ACTION,
             onUpdate = NO_ACTION)
-    ],
-    indices = [ Index("source_auth_id"), Index("target_auth_id") ]*/
+    ],*/
+    /*indices = [ Index("source_auth_id"), Index("target_auth_id") ]*/
 )
 // TODO: сделать класс read-only?
 class SyncTask {
