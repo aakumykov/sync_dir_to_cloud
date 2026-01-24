@@ -233,7 +233,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = true,
             logMessage = TextMessage(R.string.generating_sync_instructions),
             instructionBlock = {
-                instructionsGenerator.generate()
+                instructionsGenerator.generateFileInstructions()
             }
         )
     }

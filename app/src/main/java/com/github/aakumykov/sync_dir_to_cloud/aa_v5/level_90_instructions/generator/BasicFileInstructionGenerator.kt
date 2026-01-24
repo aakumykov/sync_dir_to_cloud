@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
@@ -9,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionReposito
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
 
 
-open class BasicInstructionGenerator(
+open class BasicFileInstructionGenerator(
     private val taskId: String,
     private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -47,6 +46,6 @@ open class BasicInstructionGenerator(
     }
 
     companion object {
-        private val TAG = BasicInstructionGenerator::class.java.simpleName
+        private val TAG = BasicFileInstructionGenerator::class.java.simpleName
     }
 }

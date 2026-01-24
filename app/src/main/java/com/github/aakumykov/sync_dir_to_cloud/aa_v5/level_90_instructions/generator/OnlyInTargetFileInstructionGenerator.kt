@@ -20,12 +20,12 @@ import dagger.assisted.AssistedInject
  * 1) в режиме SYNC они игнорируются;
  * 2) в режиме MIRROR копируются в источник или удаляются из источника.
  */
-class OnlyInTargetInstructionGenerator @AssistedInject constructor(
+class OnlyInTargetFileInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository: SyncInstructionRepository,
-) : BasicInstructionGenerator(
+) : BasicFileInstructionGenerator(
         taskId = syncTask.id,
         executionId = executionId,
         comparisonStateRepository = comparisonStateRepository,
@@ -35,7 +35,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     /**
      * @return Порядковый номер для следующего генератора инструкций.
      */
-    suspend fun generateForSync(initialOrderNum: Int): Int {
+    suspend fun generateFileInstructionsForSync(initialOrderNum: Int): Int {
         Log.d(TAG, "generateForSync() called with: initialOrderNum = $initialOrderNum")
         val nextOrderNum = initialOrderNum
         return nextOrderNum
@@ -44,7 +44,7 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     /**
      * @return Порядковый номер для следующего генератора инструкций.
      */
-    suspend fun generateForMirror(initialOrderNum: Int): Int {
+    suspend fun generateFileInstructionsForMirror(initialOrderNum: Int): Int {
         Log.d(TAG, "generateForMirror() called with: initialOrderNum = $initialOrderNum")
 
         var nextOrderNum = initialOrderNum
@@ -146,12 +146,12 @@ class OnlyInTargetInstructionGenerator @AssistedInject constructor(
     }*/
 
     companion object {
-        val TAG: String = OnlyInTargetInstructionGenerator::class.java.simpleName
+        val TAG: String = OnlyInTargetFileInstructionGenerator::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
 interface OnlyInTargetInstructionGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetInstructionGenerator
+    fun create(syncTask: SyncTask, executionId: String): OnlyInTargetFileInstructionGenerator
 }

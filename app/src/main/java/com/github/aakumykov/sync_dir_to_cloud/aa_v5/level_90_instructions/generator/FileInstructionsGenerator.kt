@@ -7,7 +7,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class InstructionsGenerator @AssistedInject constructor(
+class FileInstructionsGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val onlyInSourceInstructionGeneratorAssistedFactory: OnlyInSourceInstructionGeneratorAssistedFactory,
@@ -15,23 +15,21 @@ class InstructionsGenerator @AssistedInject constructor(
     private val twoPlaceInstructionGeneratorForMirrorAssistedFactory: TwoPlaceInstructionGeneratorForMirrorAssistedFactory,
     private val twoPlaceInstructionGeneratorForSyncAssistedFactory: TwoPlaceInstructionGeneratorForSyncAssistedFactory,
 ) {
-    suspend fun generate() {
+    suspend fun generateFileInstructions() {
         Log.d(TAG, "generate()")
 
         var nextOrderNum = 1;
 
         when(syncTask.syncMode!!) {
             SyncMode.SYNC -> {
-//                nextOrderNum = onlyInTargetInstructionGenerator.generateBackupForSync(nextOrderNum)
-
-                nextOrderNum = onlyInSourceInstructionGenerator.generateForSync(nextOrderNum)
-                nextOrderNum = onlyInTargetInstructionGenerator.generateForSync(nextOrderNum)
-                nextOrderNum = twoPlaceItemsSyncInstructionGenerator.generate(nextOrderNum)
+                nextOrderNum = onlyInSourceInstructionGenerator.generateFileInstructionsForSync(nextOrderNum)
+                nextOrderNum = onlyInTargetInstructionGenerator.generateFileInstructionsForSync(nextOrderNum)
+                nextOrderNum = twoPlaceItemsSyncInstructionGenerator.generateFileInstructions(nextOrderNum)
             }
             SyncMode.MIRROR -> {
-                nextOrderNum = onlyInSourceInstructionGenerator.generateForMirror(nextOrderNum)
-                nextOrderNum = onlyInTargetInstructionGenerator.generateForMirror(nextOrderNum)
-                nextOrderNum = twoPlaceItemsMirrorInstructionGenerator.generate(nextOrderNum)
+                nextOrderNum = onlyInSourceInstructionGenerator.generateFileInstructionsForMirror(nextOrderNum)
+                nextOrderNum = onlyInTargetInstructionGenerator.generateFileInstructionsForMirror(nextOrderNum)
+                nextOrderNum = twoPlaceItemsMirrorInstructionGenerator.generateFileInstructions(nextOrderNum)
             }
         }
     }
@@ -53,12 +51,12 @@ class InstructionsGenerator @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = InstructionsGenerator::class.java.simpleName
+        val TAG: String = FileInstructionsGenerator::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
 interface InstructionsGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): InstructionsGenerator
+    fun create(syncTask: SyncTask, executionId: String): FileInstructionsGenerator
 }

@@ -23,13 +23,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
+class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
     private val syncInstructionRepository: SyncInstructionRepository,
 ) {
-    suspend fun generate(initialOrderNum: Int): Int {
+    suspend fun generateFileInstructions(initialOrderNum: Int): Int {
         Log.d(TAG, "generate() called with: initialOrderNum = $initialOrderNum")
 
         var nextOrderNum = initialOrderNum
@@ -294,12 +294,12 @@ class TwoPlaceInstructionGeneratorForMirror @AssistedInject constructor(
 
 
     companion object {
-        val TAG: String = TwoPlaceInstructionGeneratorForMirror::class.java.simpleName
+        val TAG: String = TwoPlaceFileInstructionGeneratorForMirror::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
 interface TwoPlaceInstructionGeneratorForMirrorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): TwoPlaceInstructionGeneratorForMirror
+    fun create(syncTask: SyncTask, executionId: String): TwoPlaceFileInstructionGeneratorForMirror
 }

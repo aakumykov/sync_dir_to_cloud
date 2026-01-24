@@ -18,19 +18,19 @@ import dagger.assisted.AssistedInject
  * У файлов, находящихся только в источнике, один путь:
  * копируются в приёмник (да?)
  */
-class OnlyInSourceInstructionGenerator @AssistedInject constructor(
+class OnlyInSourceFileInstructionGenerator @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     comparisonStateRepository: ComparisonStateRepository,
     syncInstructionRepository: SyncInstructionRepository,
-) : BasicInstructionGenerator (
+) : BasicFileInstructionGenerator (
         taskId = syncTask.id,
         executionId = executionId,
         comparisonStateRepository = comparisonStateRepository,
         syncInstructionRepository = syncInstructionRepository
     )
 {
-    suspend fun generateForSync(initialOrderNum: Int): Int {
+    suspend fun generateFileInstructionsForSync(initialOrderNum: Int): Int {
         Log.d(TAG, "generateForSync() called with: initialOrderNum = $initialOrderNum")
 
         var nextOrderNum = initialOrderNum
@@ -42,7 +42,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     }
 
 
-    suspend fun generateForMirror(initialOrderNum: Int): Int {
+    suspend fun generateFileInstructionsForMirror(initialOrderNum: Int): Int {
         Log.d(TAG, "generateForMirror() called with: initialOrderNum = $initialOrderNum")
 
         var nextOrderNum = initialOrderNum
@@ -50,7 +50,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
         nextOrderNum = deleteFilesInSourceDeletedInTarget(nextOrderNum)
         nextOrderNum = deleteDirsInSourceDeletedInTarget(nextOrderNum)
 
-        nextOrderNum = generateForSync(nextOrderNum)
+        nextOrderNum = generateFileInstructionsForSync(nextOrderNum)
 
         return nextOrderNum
     }
@@ -124,7 +124,7 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = OnlyInSourceInstructionGenerator::class.java.simpleName
+        val TAG: String = OnlyInSourceFileInstructionGenerator::class.java.simpleName
     }
 }
 
@@ -132,5 +132,5 @@ class OnlyInSourceInstructionGenerator @AssistedInject constructor(
 
 @AssistedFactory
 interface OnlyInSourceInstructionGeneratorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): OnlyInSourceInstructionGenerator
+    fun create(syncTask: SyncTask, executionId: String): OnlyInSourceFileInstructionGenerator
 }

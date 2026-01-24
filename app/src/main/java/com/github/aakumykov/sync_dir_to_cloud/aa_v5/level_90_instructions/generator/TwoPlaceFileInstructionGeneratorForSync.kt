@@ -22,7 +22,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
+class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val comparisonStateRepository: ComparisonStateRepository,
@@ -31,7 +31,7 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     /**
      * @return Увеличенный порядковый номер
      */
-    suspend fun generate(initialOrderNum: Int): Int {
+    suspend fun generateFileInstructions(initialOrderNum: Int): Int {
         Log.d(TAG, "generate() called with: initialOrderNum = $initialOrderNum")
 
         var nextOrderNum = initialOrderNum
@@ -225,12 +225,12 @@ class TwoPlaceInstructionGeneratorForSync @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = TwoPlaceInstructionGeneratorForSync::class.java.simpleName
+        val TAG: String = TwoPlaceFileInstructionGeneratorForSync::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
 interface TwoPlaceInstructionGeneratorForSyncAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): TwoPlaceInstructionGeneratorForSync
+    fun create(syncTask: SyncTask, executionId: String): TwoPlaceFileInstructionGeneratorForSync
 }
