@@ -1,15 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
+import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
@@ -40,29 +33,14 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.cloud_auth.CloudAuthManagingUseCase
-import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
-import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
-import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.factories.storage_auth.CloudAuthenticatorFactoryAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthChecker
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogCleaner
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
-import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.sync_object_logger.SyncObjectLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskExecutorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker.TaskDirsFixerAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import com.google.gson.Gson
 import dagger.Component
 
@@ -103,29 +81,11 @@ interface AppComponent {
 
     fun getViewModelFactory(): ViewModelFactory
 
-    // TODO: убрать это
-    fun getSyncTaskManagingUseCase(): SyncTaskManagingUseCase
-    fun getStartStopSyncTaskUseCase(): StartStopSyncTaskUseCase
-    fun getTaskSchedulingUseCase(): SchedulingSyncTaskUseCase
-
     fun getCloudAuthManagingUseCase(): CloudAuthManagingUseCase
-
-    // FIXME: временное
-    fun getCloudAuthAdder(): CloudAuthAdder
-
-    fun getCloudAuthChecker(): CloudAuthChecker
-
-    fun getSyncTaskReader(): SyncTaskReader
 
     fun getCloudAuthReader(): CloudAuthReader
 
     fun getSyncTaskProcessorAssistedFactory(): SyncTaskProcessorAssistedFactory
-
-    fun getSyncTaskNotificator(): SyncTaskNotificator
-
-    fun getSyncObjectReader(): SyncObjectDBReader
-
-    fun getSyncTaskStateChanger(): SyncTaskStateChanger
 
     fun getSyncTaskRunningTimeUpdater(): SyncTaskRunningTimeUpdater
 
@@ -137,34 +97,9 @@ interface AppComponent {
 
     fun getProgressInfoHolder(): ProgressInfoHolder
 
-    fun getSyncObjectLogger(): SyncObjectLogger
-
     fun getOperationCancellationHolder(): OperationCancellationHolder
-    fun getTaskCancellationHolder(): TaskCancellationHolder
-
-    fun getExecutionLogCleaner(): ExecutionLogCleaner
-
-    fun getSourceWithTargetComparatorAssistedFactory(): SourceWithTargetComparatorAssistedFactory
-
-    fun getSyncInstructionsProcessorAssistedFactory(): SyncInstructionsProcessorAssistedFactory
-
-    fun getInstructionsGeneratorAssistedFactory(): InstructionsGeneratorAssistedFactory
-
-    fun getInstructionsDeleter(): SyncInstructionDeleter
-
-    fun getComparisonsDeleter(): ComparisonsDeleter
 
     fun getBackuperRestorer(): BackuperRestorer
-
-    fun getNotificationChannelHelper(): NotificationChannelHelper
-
-    fun getSyncObjectDeleter(): SyncObjectDBDeleter
-
-    fun getSyncInstructionRepository(): SyncInstructionRepository
-
-    fun getBackupDirsPreparerAssistedFactory(): BackupDirsPreparerAssistedFactory
-
-    fun getTaskDirsCheckerAssistedFactory(): TaskDirsFixerAssistedFactory
 
     fun getAppSettings(): AppSettings
 
