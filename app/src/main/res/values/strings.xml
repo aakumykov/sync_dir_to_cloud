@@ -181,11 +181,11 @@
     <string name="SETTINGS_SUMMARY_file_transfer_retardation_ms">Waiting after transferring each piece of data when copying files</string>
     <string name="resetting_objects_bad_states">Resetting old states</string>
     <string name="checking_task_dirs">Checking dirs</string>
-    <string name="removing_processed_sync_instructions">Removing old instructions</string>
-    <string name="removing_duplicate_sync_instructions">Removing duplicate instructions</string>
+    <string name="removing_processed_file_instructions">Removing old instructions</string>
+    <string name="removing_duplicate_file_instructions">Removing duplicate instructions</string>
     <string name="preparing_backup_dirs_for_previous_unfinished_tasks">Preparing backup dirs for old unfinished task</string>
     <string name="preparing_backup_dirs_for_current_task">Preparing backup dirs for current task</string>
-    <string name="processing_unprocessed_sync_instructions">Executing unprocessed instructions</string>
+    <string name="processing_unprocessed_file_instructions">Executing unprocessed instructions</string>
     <string name="resetting_task_bad_states">Resetting task bad state</string>
     <string name="marking_all_objects_as_not_checked">Marking all objects as unchecked</string>
     <string name="reading_source">Reading source</string>
@@ -193,8 +193,8 @@
     <string name="marking_all_not_checked_objects_as_deleted">Marking all remaining objects as deleted</string>
     <string name="deleting_old_comparison_results">Deleting old comparison results</string>
     <string name="comparing_source_with_target">Comparing source with target</string>
-    <string name="generating_sync_instructions">Generating sync instructions</string>
-    <string name="processing_sync_instructions">Executing sync instructions</string>
+    <string name="generating_file_instructions">Generating file instructions</string>
+    <string name="processing_file_instructions">Executing file instructions</string>
     <string name="clearing_processed_sync_objects_with_deleted_state">Forgetting about processed deleted objects</string>
     <string name="TASK_LOG_task_started">Task started</string>
     <string name="TASK_LOG_task_finished">Task finished</string>

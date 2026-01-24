@@ -180,11 +180,11 @@
     <string name="SETTINGS_SUMMARY_file_transfer_retardation_ms">Ожидание после передачи каждой порции данных при копировании файлов</string>
     <string name="resetting_objects_bad_states">Сбрасываю некорректные состояния объектов синхронизации</string>
     <string name="checking_task_dirs">Проверяю каталоги</string>
-    <string name="removing_processed_sync_instructions">Удаляю старые инструкции</string>
-    <string name="removing_duplicate_sync_instructions">Удаляю дубликаты инструкций</string>
+    <string name="removing_processed_file_instructions">Удаляю старые инструкции</string>
+    <string name="removing_duplicate_file_instructions">Удаляю дубликаты инструкций</string>
     <string name="preparing_backup_dirs_for_previous_unfinished_tasks">Готовлю каталоги бекапа для старых незавершённых задач</string>
     <string name="preparing_backup_dirs_for_current_task">Готовлю каталоги бекапа для текущей задачи</string>
-    <string name="processing_unprocessed_sync_instructions">Выполняю незавершённые инструкции</string>
+    <string name="processing_unprocessed_file_instructions">Выполняю незавершённые инструкции</string>
     <string name="resetting_task_bad_states">Сбрасываю некорректное состояние задачи</string>
     <string name="marking_all_objects_as_not_checked">Помечаю все объекты как непроверенные</string>
     <string name="reading_source">Читаю источник</string>
@@ -192,8 +192,8 @@
     <string name="marking_all_not_checked_objects_as_deleted">Помечаю все оставшиеся объекты как удалённые</string>
     <string name="deleting_old_comparison_results">Удаляю старые результаты сравнения</string>
     <string name="comparing_source_with_target">Сравниваю источник с приёмником</string>
-    <string name="generating_sync_instructions">Генерирую инструкции синхронизации</string>
-    <string name="processing_sync_instructions">Выполняю инструкции синхронизации</string>
+    <string name="generating_file_instructions">Генерирую файловые инструкции</string>
+    <string name="processing_file_instructions">Выполняю файловые инструкции</string>
     <string name="clearing_processed_sync_objects_with_deleted_state">Забываю об обработанных удалённых объектах</string>
     <string name="TASK_LOG_task_started">Задача запущена</string>
     <string name="TASK_LOG_task_finished">Задача завершена</string>

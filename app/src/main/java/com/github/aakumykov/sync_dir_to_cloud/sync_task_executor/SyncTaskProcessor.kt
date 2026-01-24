@@ -123,7 +123,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         // Выполнить недоделанные инструкции
         removeDuplicatedUnprocessedSyncInstructions()
         prepareBackupDirs(R.string.preparing_backup_dirs_for_previous_unfinished_tasks) // Для доделки прошлых недоделанных задач.
-        processUnprocessedSyncInstructions()
+        processUnprocessedFileInstructions()
 
         // Сброс старого состояния задачи и её объектов.
         resetTaskBadStates()
@@ -140,12 +140,12 @@ class SyncTaskProcessor @AssistedInject constructor(
         compareSourceWithTarget()
 
         // Создание инструкций обработки.
-        generateSyncInstructions()
+        generateFileInstructions()
 
         // Подготавливаю каталоги бекапов нынешних задач.
         prepareBackupDirs(R.string.preparing_backup_dirs_for_current_task)
 
-        processNewSyncInstructions()
+        processNewFileInstructions()
 
         clearProcessedSyncObjectsWithDeletedState()
     }
@@ -176,7 +176,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
-            logMessage = TextMessage(R.string.removing_duplicate_sync_instructions),
+            logMessage = TextMessage(R.string.removing_duplicate_file_instructions),
             instructionBlock = {
                 syncInstructionRepository.deleteUnprocessedDuplicatedInstructions(taskId)
             }
@@ -220,7 +220,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun deleteProcessedSyncInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
-            logMessage = TextMessage(R.string.removing_processed_sync_instructions),
+            logMessage = TextMessage(R.string.removing_processed_file_instructions),
             instructionBlock = {
                 syncInstructionDeleter.deleteFinishedInstructionsFor(taskId)
             }
@@ -228,10 +228,10 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun generateSyncInstructions() {
+    private suspend fun generateFileInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
-            logMessage = TextMessage(R.string.generating_sync_instructions),
+            logMessage = TextMessage(R.string.generating_file_instructions),
             instructionBlock = {
                 instructionsGenerator.generateFileInstructions()
             }
@@ -239,10 +239,10 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun processUnprocessedSyncInstructions() {
+    private suspend fun processUnprocessedFileInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
-            logMessage = TextMessage(R.string.processing_unprocessed_sync_instructions),
+            logMessage = TextMessage(R.string.processing_unprocessed_file_instructions),
             instructionBlock = {
                 syncInstructionsProcessor.processPrevSessionUnprocessedInstructions()
             }
@@ -250,10 +250,10 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun processNewSyncInstructions() {
+    private suspend fun processNewFileInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
-            logMessage = TextMessage(R.string.processing_sync_instructions),
+            logMessage = TextMessage(R.string.processing_file_instructions),
             instructionBlock = {
                 syncInstructionsProcessor.processThisSessionInstructions()
             }
