@@ -5,14 +5,11 @@ import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.cloud_reader.CloudReader
 import com.github.aakumykov.cloud_writer.CloudWriter
-import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudReaderGetter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -34,7 +31,7 @@ class TaskDirsFixer @AssistedInject constructor(
 
 
     @Throws(SourceDirIsMissingException::class, TopDirIsMissingException::class)
-    suspend fun checkTaskDirs() {
+    suspend fun fixTaskDirs() {
         checkAndFixSourceDir(syncTask)
         checkAndFixTargetDir(syncTask)
     }

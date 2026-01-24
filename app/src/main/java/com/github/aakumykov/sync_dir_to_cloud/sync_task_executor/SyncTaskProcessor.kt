@@ -4,18 +4,26 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseListerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionProcessor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionsProcessorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
+import com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker.TaskDirsFixerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
@@ -53,13 +61,56 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
 
+    private val syncInstructionsProcessorAssistedFactory: SyncInstructionsProcessorAssistedFactory,
     private val coroutineSyncInstructionsProcessorAssistedFactory: CoroutineSyncInstructionsProcessorAssistedFactory,
+    private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
+    private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
+    private val backupDirsPreparerAssistedFactory: BackupDirsPreparerAssistedFactory,
+    private val taskDirsFixerAssistedFactory: TaskDirsFixerAssistedFactory,
+    private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
+
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskNotificator: SyncTaskNotificator,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncObjectStateResetter: SyncObjectStateResetter,
-    private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
+    private val syncInstructionDeleter: SyncInstructionDeleter,
+    private val comparisonsDeleter: ComparisonsDeleter,
+    private val syncObjectDeleter:SyncObjectDBDeleter,
+    private val syncInstructionRepository:SyncInstructionRepository,
 ) {
+    private val taskId: String get() = syncTask.id
+
+    private val coroutineSyncInstructionProcessor: CoroutineSyncInstructionProcessor by lazy {
+        coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
+    }
+
+    private val syncInstructionsProcessor by lazy {
+        syncInstructionsProcessorAssistedFactory.create(syncTask, executionId, scope)
+    }
+
+    // FIXME: логика
+    private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
+        storageToDatabaseListerAssistedFactory.create(syncTask)
+    }
+
+    private val sourceWithTargetComparator by lazy {
+        sourceWithTargetComparatorAssistedFactory.create(syncTask, executionId)
+    }
+
+    private val instructionsGenerator by lazy {
+        instructionsGeneratorAssistedFactory.create(syncTask, executionId)
+    }
+
+    private val backupsDirPreparer by lazy {
+        backupDirsPreparerAssistedFactory.create(syncTask)
+    }
+
+    private val taskDirsFixer by lazy {
+        taskDirsFixerAssistedFactory.create(syncTask, executionId)
+    }
+
+
+
     suspend fun processSyncTask() {
 
         // Проверить каталоги задачи
@@ -98,28 +149,24 @@ class SyncTaskProcessor @AssistedInject constructor(
         clearProcessedSyncObjectsWithDeletedState()
     }
 
+
     private suspend fun checkTaskDirs() {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.checking_task_dirs),
             instructionBlock = {
-                appComponent
-                    .getTaskDirsCheckerAssistedFactory()
-                    .create(syncTask, executionId)
-                    .checkTaskDirs()
+                taskDirsFixer.fixTaskDirs()
             }
         )
     }
+
 
     private suspend fun prepareBackupDirs(@StringRes logMessageId: Int) {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(logMessageId),
             instructionBlock = {
-                appComponent
-                    .getBackupDirsPreparerAssistedFactory()
-                    .create(syncTask)
-                    .prepareBackupDirs()
+                backupsDirPreparer.prepareBackupDirs()
             }
         )
     }
@@ -130,24 +177,22 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = true,
             logMessage = TextMessage(R.string.removing_duplicate_sync_instructions),
             instructionBlock = {
-                appComponent
-                    .getSyncInstructionRepository()
-                    .deleteUnprocessedDuplicatedInstructions(taskId)
+                syncInstructionRepository.deleteUnprocessedDuplicatedInstructions(taskId)
             }
         )
     }
+
 
     private suspend fun clearProcessedSyncObjectsWithDeletedState() {
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.clearing_processed_sync_objects_with_deleted_state),
             instructionBlock = {
-                appComponent
-                    .getSyncObjectDeleter()
-                    .deleteProcessedObjectsWithDeletedState(taskId)
+                syncObjectDeleter.deleteProcessedObjectsWithDeletedState(taskId)
             }
         )
     }
+
 
     private suspend fun markAllNotCheckedObjectsAsDeleted() {
         coroutineSyncInstructionProcessor.process(
@@ -159,39 +204,35 @@ class SyncTaskProcessor @AssistedInject constructor(
         )
     }
 
+
     private suspend fun deleteOldComparisonStates() {
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.deleting_old_comparison_results),
             instructionBlock = {
-                appComponent
-                    .getComparisonsDeleter()
-                    .deleteAllFor(taskId)
+                comparisonsDeleter.deleteAllFor(taskId)
             }
         )
     }
+
 
     private suspend fun deleteProcessedSyncInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.removing_processed_sync_instructions),
             instructionBlock = {
-                appComponent
-                    .getInstructionsDeleter()
-                    .deleteFinishedInstructionsFor(taskId)
+                syncInstructionDeleter.deleteFinishedInstructionsFor(taskId)
             }
         )
     }
+
 
     private suspend fun generateSyncInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.generating_sync_instructions),
             instructionBlock = {
-                appComponent
-                    .getInstructionsGeneratorAssistedFactory()
-                    .create(syncTask, executionId)
-                    .generate()
+                instructionsGenerator.generate()
             }
         )
     }
@@ -202,9 +243,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = false,
             logMessage = TextMessage(R.string.processing_unprocessed_sync_instructions),
             instructionBlock = {
-                appComponent
-                    .getSyncInstructionsProcessorAssistedFactory()
-                    .create(syncTask, executionId, scope)
+                syncInstructionsProcessor
                     .processPrevSessionUnprocessedInstructions()
             }
         )
@@ -216,9 +255,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = true,
             logMessage = TextMessage(R.string.processing_sync_instructions),
             instructionBlock = {
-                appComponent
-                    .getSyncInstructionsProcessorAssistedFactory()
-                    .create(syncTask, executionId, scope)
+                syncInstructionsProcessor
                     .processThisSessionInstructions()
             }
         )
@@ -301,21 +338,12 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
 
-    // FIXME: логика
-    private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
-        storageToDatabaseListerAssistedFactory.create(syncTask)
-    }
-
-
     private suspend fun compareSourceWithTarget() {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.comparing_source_with_target),
             instructionBlock = {
-                appComponent
-                    .getSourceWithTargetComparatorAssistedFactory()
-                    .create(syncTask, executionId)
-                    .compareSourceWithTarget()
+                sourceWithTargetComparator.compareSourceWithTarget()
             }
         )
     }
@@ -336,14 +364,6 @@ class SyncTaskProcessor @AssistedInject constructor(
         syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
     }
 
-
-    private val taskId: String get() = syncTask.id
-
-
-    private val coroutineSyncInstructionProcessor: CoroutineSyncInstructionProcessor by lazy {
-        coroutineSyncInstructionsProcessorAssistedFactory
-            .create(taskId, executionId, scope)
-    }
 
     companion object {
         val TAG: String = SyncTaskProcessor::class.java.simpleName
