@@ -7,12 +7,14 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 
 // FIXME: пишут, что на работу этому "воркеру" даётся 10 минут:
@@ -30,12 +32,17 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
     private val thisObjectHashCode: String = hashCode().toString()
 
+    @Inject
+    lateinit var syncTaskExecutorFactory: SyncTaskExecutorAssistedFactory
+
     init {
         Log.d(TAG, "init{} [hashCode:${hashCode()}]")
     }
 
     override suspend fun doWork(): Result {
         Log.d(TAG, "doWork() [worker: $thisObjectHashCode]")
+
+        appComponent.injectToSyncTaskWorker(this)
 
         val taskId = inputData.getString(KEY_TASK_ID)
 
@@ -54,13 +61,12 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         return Result.success()
     }
 
-
     private suspend fun doWorkReal(taskId: String, scope: CoroutineScope) {
         Log.d(TAG, "doWorkReal(), scope = $scope")
         try {
             SampleService.start(applicationContext)
 
-            appComponent.getSyncTaskExecutorFactory()
+            syncTaskExecutorFactory
                 .create(taskId)
                 .also { syncTaskExecutor ->
                     Log.d(TAG, "doWorkReal() Задача taskId: $taskId начала    выполнение")

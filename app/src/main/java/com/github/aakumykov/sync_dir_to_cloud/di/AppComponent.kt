@@ -41,6 +41,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskExecutorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import com.google.gson.Gson
 import dagger.Component
 
@@ -79,6 +80,8 @@ import dagger.Component
 @ExecutionScope
 interface AppComponent {
 
+    fun injectToSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
+
     fun getViewModelFactory(): ViewModelFactory
 
     fun getCloudAuthManagingUseCase(): CloudAuthManagingUseCase
@@ -102,6 +105,4 @@ interface AppComponent {
     fun getBackuperRestorer(): BackuperRestorer
 
     fun getAppSettings(): AppSettings
-
-    fun getSyncTaskExecutorFactory(): SyncTaskExecutorAssistedFactory
 }
