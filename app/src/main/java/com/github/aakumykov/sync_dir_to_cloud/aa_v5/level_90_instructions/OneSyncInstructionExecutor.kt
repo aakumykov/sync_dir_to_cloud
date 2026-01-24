@@ -219,7 +219,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
 
     /**
      * // FIXME: удалять сначала файлы, потом каталоги...
-     * // Это делается в [SyncInstructionsProcessor.processInstructions]
+     * // Это делается в [FileInstructionsProcessor.processInstructions]
      */
     private suspend fun deleteInSource(syncInstruction: SyncInstruction) {
         /*fileOperationLogger.logWaiting(syncInstruction).also { logItemId ->

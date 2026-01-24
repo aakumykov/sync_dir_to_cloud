@@ -13,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 //
 // Исполняет инструкции в определённом порядке.
 //
-class SyncInstructionsProcessor @AssistedInject constructor(
+class FileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
@@ -144,7 +144,7 @@ class SyncInstructionsProcessor @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = SyncInstructionsProcessor::class.java.simpleName
+        val TAG: String = FileInstructionsProcessor::class.java.simpleName
     }
 }
 
@@ -155,5 +155,5 @@ interface SyncInstructionsProcessorAssistedFactory {
         syncTask: SyncTask,
         executionId: String,
         scope: CoroutineScope,
-    ): SyncInstructionsProcessor
+    ): FileInstructionsProcessor
 }

@@ -85,7 +85,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
     }
 
-    private val syncInstructionsProcessor by lazy {
+    private val fileInstructionsProcessor by lazy {
         syncInstructionsProcessorAssistedFactory.create(syncTask, executionId, scope)
     }
 
@@ -244,7 +244,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = false,
             logMessage = TextMessage(R.string.processing_unprocessed_file_instructions),
             instructionBlock = {
-                syncInstructionsProcessor.processPrevSessionUnprocessedInstructions()
+                fileInstructionsProcessor.processPrevSessionUnprocessedInstructions()
             }
         )
     }
@@ -255,7 +255,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = true,
             logMessage = TextMessage(R.string.processing_file_instructions),
             instructionBlock = {
-                syncInstructionsProcessor.processThisSessionInstructions()
+                fileInstructionsProcessor.processThisSessionInstructions()
             }
         )
     }
