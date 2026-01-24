@@ -63,6 +63,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private val syncInstructionsProcessorAssistedFactory: SyncInstructionsProcessorAssistedFactory,
     private val coroutineSyncInstructionsProcessorAssistedFactory: CoroutineSyncInstructionsProcessorAssistedFactory,
+
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
     private val backupDirsPreparerAssistedFactory: BackupDirsPreparerAssistedFactory,
@@ -144,7 +145,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         // Подготавливаю каталоги бекапов нынешних задач.
         prepareBackupDirs(R.string.preparing_backup_dirs_for_current_task)
 
-        processSyncInstructions()
+        processNewSyncInstructions()
 
         clearProcessedSyncObjectsWithDeletedState()
     }
@@ -243,20 +244,18 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = false,
             logMessage = TextMessage(R.string.processing_unprocessed_sync_instructions),
             instructionBlock = {
-                syncInstructionsProcessor
-                    .processPrevSessionUnprocessedInstructions()
+                syncInstructionsProcessor.processPrevSessionUnprocessedInstructions()
             }
         )
     }
 
 
-    private suspend fun processSyncInstructions() {
+    private suspend fun processNewSyncInstructions() {
         coroutineSyncInstructionProcessor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.processing_sync_instructions),
             instructionBlock = {
-                syncInstructionsProcessor
-                    .processThisSessionInstructions()
+                syncInstructionsProcessor.processThisSessionInstructions()
             }
         )
     }
