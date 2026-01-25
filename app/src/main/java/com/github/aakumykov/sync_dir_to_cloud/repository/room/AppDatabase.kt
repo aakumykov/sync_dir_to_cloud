@@ -3,36 +3,38 @@ package com.github.aakumykov.sync_dir_to_cloud.repository.room
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.InstructionLoggingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.InstructionLoggingDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
 
 @Database(
@@ -48,6 +50,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         FileOperationLogItem::class,
         TaskLogItem::class,
         InstructionLogItem::class,
+        FileOperationLogItem2::class,
    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -126,8 +129,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         AutoMigration(from = 129, to = 130), // Новый объект [TaskLogItem]
         AutoMigration(from = 130, to = 131), // fix: внешний ключ в TaskLogItem
         AutoMigration(from = 131, to = 132), // Новый объект [InstructionLogItem]
+        AutoMigration(from = 132, to = 133), // Новый объект [FileOperationLogItem2]
     ],
-    version = 132,
+    version = 133,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -151,4 +155,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskBackupDirDAO(): SyncTaskBackupDirDAO
     abstract fun getTaskLogger2DAO(): TaskLogger2DAO
     abstract fun getInstructionLoggingDAO(): InstructionLoggingDAO
+    abstract fun getFileOperationLogDAO(): FileOperationLogDAO
 }
