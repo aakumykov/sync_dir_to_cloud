@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.St
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionProcessor
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionExecutor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory
@@ -81,7 +81,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 ) {
     private val taskId: String get() = syncTask.id
 
-    private val coroutineSyncInstructionProcessor: CoroutineSyncInstructionProcessor by lazy {
+    private val mCoroutineSyncInstructionExecutor: CoroutineSyncInstructionExecutor by lazy {
         coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
     }
 
@@ -152,7 +152,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun checkTaskDirs() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.checking_task_dirs),
             instructionBlock = {
@@ -163,7 +163,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun prepareBackupDirs(@StringRes logMessageId: Int) {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(logMessageId),
             instructionBlock = {
@@ -174,7 +174,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.removing_duplicate_file_instructions),
             instructionBlock = {
@@ -185,7 +185,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun clearProcessedSyncObjectsWithDeletedState() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.clearing_processed_sync_objects_with_deleted_state),
             instructionBlock = {
@@ -196,7 +196,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun markAllNotCheckedObjectsAsDeleted() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_not_checked_objects_as_deleted),
             instructionBlock = {
@@ -207,7 +207,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun deleteOldComparisonStates() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.deleting_old_comparison_results),
             instructionBlock = {
@@ -218,7 +218,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun deleteProcessedSyncInstructions() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.removing_processed_file_instructions),
             instructionBlock = {
@@ -229,7 +229,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun generateFileInstructions() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.generating_file_instructions),
             instructionBlock = {
@@ -240,7 +240,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun processUnprocessedFileInstructions() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.processing_unprocessed_file_instructions),
             instructionBlock = {
@@ -251,7 +251,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun processNewFileInstructions() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.processing_file_instructions),
             instructionBlock = {
@@ -263,7 +263,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun resetTaskBadStates() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_task_bad_states),
             instructionBlock = {
@@ -273,7 +273,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
     private suspend fun resetObjectsBadState() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_objects_bad_states),
             instructionBlock = {
@@ -288,7 +288,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun markAllObjectsAsNotChecked() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_objects_as_not_checked),
             instructionBlock = {
@@ -302,7 +302,7 @@ class SyncTaskProcessor @AssistedInject constructor(
      * @return Флаг успешности чтения источника.
      */
     private suspend fun readSource() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_source),
             instructionBlock = {
@@ -320,7 +320,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun readTarget() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_target),
             instructionBlock = {
@@ -338,7 +338,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun compareSourceWithTarget() {
-        coroutineSyncInstructionProcessor.process(
+        mCoroutineSyncInstructionExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.comparing_source_with_target),
             instructionBlock = {

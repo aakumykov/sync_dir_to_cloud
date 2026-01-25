@@ -21,8 +21,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
 // TODO: убрать Resources отсюда, перенести их в Logger.
-// TODO: переименовать. CoroutineSyncInstructionProcessor - должно быть именем реализации.
-class CoroutineSyncInstructionProcessor @AssistedInject constructor(
+// TODO: переименовать. CoroutineSyncInstructionExecutor - должно быть именем реализации.
+//  вроде: интерфейс SyncInstructionExecutor, реализация CoroutineSyncInstructionExecutor.
+class CoroutineSyncInstructionExecutor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
@@ -84,7 +85,7 @@ class CoroutineSyncInstructionProcessor @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = CoroutineSyncInstructionProcessor::class.java.simpleName
+        val TAG: String = CoroutineSyncInstructionExecutor::class.java.simpleName
     }
 }
 
@@ -95,5 +96,5 @@ interface CoroutineSyncInstructionsProcessorAssistedFactory {
         @Assisted(QUALIFIER_TASK_ID)  taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
         scope: CoroutineScope,
-    ): CoroutineSyncInstructionProcessor
+    ): CoroutineSyncInstructionExecutor
 }
