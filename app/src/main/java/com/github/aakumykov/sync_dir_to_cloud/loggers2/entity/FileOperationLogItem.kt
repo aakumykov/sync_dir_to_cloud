@@ -8,12 +8,12 @@ import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogEntryType
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 
 @Entity(
-    tableName = FileOperationLogItem2.TABLE_NAME,
+    tableName = FileOperationLogItem.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -24,11 +24,11 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
         )
     ]
 )
-data class FileOperationLogItem2(
+data class FileOperationLogItem(
     @PrimaryKey val id: String,
 
     @ColumnInfo(name = GlobalConstants.FIELD_LOG_ITEM_TYPE)
-    val logItemType: LogItemType,
+    val logItemType: LogEntryType,
 
     @ColumnInfo(name = GlobalConstants.FIELD_TASK_ID)
     val taskId: String,
@@ -38,7 +38,7 @@ data class FileOperationLogItem2(
 
     val message: String,
 
-    @ColumnInfo(name = FIELD_FILE_PATH)
+    @ColumnInfo(name = FILE_PATH_FIELD_NAME)
     val filePath: String,
 
     val timestamp: Long,
@@ -48,13 +48,13 @@ data class FileOperationLogItem2(
 ) {
     companion object {
         fun create(
-            logItemType: LogItemType,
+            logItemType: LogEntryType,
             taskId: String,
             executionId: String,
             message: String,
             filePath: String,
             jobId: String?
-        ) = FileOperationLogItem2(
+        ) = FileOperationLogItem(
             id = newRandomId,
             logItemType = logItemType,
             taskId = taskId,
@@ -65,7 +65,7 @@ data class FileOperationLogItem2(
             jobId = jobId
         )
 
-        const val TABLE_NAME = "file_operation_logs_2"
-        const val FIELD_FILE_PATH = "file_path"
+        const val TABLE_NAME = "file_operation_logs"
+        const val FILE_PATH_FIELD_NAME = "file_path"
     }
 }
