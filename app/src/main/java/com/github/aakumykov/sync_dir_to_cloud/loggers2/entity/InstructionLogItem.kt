@@ -6,9 +6,9 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.PrimaryKey
+import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogEntryType
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem.Companion.FIELD_TIMESTAMP
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 
 @Entity(
@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.newRandomId
         ForeignKey(
             entity = SyncTask::class,
             parentColumns = ["id"],
-            childColumns = [InstructionLogItem.FIELD_TASK_ID],
+            childColumns = [GlobalConstants.FIELD_TASK_ID],
             onDelete = CASCADE,
             onUpdate = NO_ACTION
         )
@@ -25,21 +25,17 @@ import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 )
 data class InstructionLogItem(
     @PrimaryKey val id: String,
-    @ColumnInfo(name = FIELD_LOG_ENTRY_TYPE) val entryType: LogEntryType,
-    @ColumnInfo(name = FIELD_TASK_ID) val taskId: String,
-    @ColumnInfo(name = FIELD_EXECUTION_ID) val executionId: String,
+    @ColumnInfo(name = GlobalConstants.FIELD_LOG_ITEM_TYPE) val entryType: LogItemType,
+    @ColumnInfo(name = GlobalConstants.FIELD_TASK_ID) val taskId: String,
+    @ColumnInfo(name = GlobalConstants.FIELD_EXECUTION_ID) val executionId: String,
     val message: String,
-    @ColumnInfo(name = FIELD_TIMESTAMP) val timestamp: Long,
+    @ColumnInfo(name = GlobalConstants.FIELD_TIMESTAMP) val timestamp: Long,
 ) {
     companion object {
         const val TABLE_NAME = "instruction_logs"
-        const val FIELD_TASK_ID = "task_id"
-        const val FIELD_EXECUTION_ID = "execution_id"
-        const val FIELD_TIMESTAMP = "timestamp"
-        const val FIELD_LOG_ENTRY_TYPE = "entry_type"
 
         fun create(
-            logEntryType: LogEntryType,
+            logItemType: LogItemType,
             taskId: String,
             executionId: String,
             logMessage: String,
@@ -47,7 +43,7 @@ data class InstructionLogItem(
         ): InstructionLogItem {
             return InstructionLogItem(
                 id = newRandomId,
-                entryType = logEntryType,
+                entryType = logItemType,
                 taskId = taskId,
                 executionId = executionId,
                 message = logMessage,

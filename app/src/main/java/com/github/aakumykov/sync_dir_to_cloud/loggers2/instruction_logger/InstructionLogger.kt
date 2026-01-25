@@ -4,7 +4,7 @@ import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogEntryType
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.InstructionLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
@@ -25,7 +25,7 @@ class InstructionLogger @AssistedInject constructor(
             InstructionLogItem.create(
                 taskId = taskId,
                 executionId = executionId,
-                logEntryType = LogEntryType.BUSY,
+                logItemType = LogItemType.BUSY,
                 logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {
@@ -42,7 +42,7 @@ class InstructionLogger @AssistedInject constructor(
             InstructionLogItem.create(
                 taskId = taskId,
                 executionId = executionId,
-                logEntryType = LogEntryType.SUCCESS,
+                logItemType = LogItemType.SUCCESS,
                 logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {
@@ -58,7 +58,7 @@ class InstructionLogger @AssistedInject constructor(
             InstructionLogItem.create(
                 taskId = taskId,
                 executionId = executionId,
-                logEntryType = LogEntryType.CANCELLED,
+                logItemType = LogItemType.CANCELLED,
                 logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {
@@ -75,7 +75,7 @@ class InstructionLogger @AssistedInject constructor(
             InstructionLogItem.create(
                 taskId = taskId,
                 executionId = executionId,
-                logEntryType = LogEntryType.ERROR,
+                logItemType = LogItemType.ERROR,
                 logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {

@@ -126,3 +126,17 @@ class RenameObjectIdColumnsMigration1: AutoMigrationSpec
 @RenameTable(fromTableName = "sync_operation_logs", toTableName = "file_operation_logs")
 class RenameTableFromSyncOperationLogItemToFileOperationLogItem : AutoMigrationSpec
 
+
+@RenameColumn(
+    tableName = "task_logs",
+    fromColumnName = "entry_type",
+    toColumnName = "log_item_type"
+)
+@RenameColumn(
+    tableName = "instruction_logs",
+    fromColumnName = "entry_type",
+    toColumnName = "log_item_type"
+)
+class RenameLogEntryTypeToLogItemType : AutoMigrationSpec
+
+
