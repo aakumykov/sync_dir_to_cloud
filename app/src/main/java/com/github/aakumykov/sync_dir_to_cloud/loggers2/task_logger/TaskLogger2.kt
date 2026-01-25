@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogEntryType
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
@@ -24,7 +24,7 @@ class TaskLogger2 @AssistedInject constructor(
 ) {
     suspend fun logTaskStarted() {
         runNonCancellable {
-            taskLogWithMessage(LogEntryType.BUSY)
+            taskLogWithMessage(LogItemType.BUSY)
                 .also {
                     repository.add(it)
                     Log.d(TAG, "${it.message}, ${it.timestamp}")
@@ -34,7 +34,7 @@ class TaskLogger2 @AssistedInject constructor(
 
     suspend fun logTaskFinished() {
         runNonCancellable {
-            taskLogWithMessage(LogEntryType.SUCCESS)
+            taskLogWithMessage(LogItemType.SUCCESS)
                 .also {
                     repository.add(it)
                     Log.d(TAG, "${it.message}, ${it.timestamp}")
@@ -44,7 +44,7 @@ class TaskLogger2 @AssistedInject constructor(
 
     suspend fun logTaskCancelled(e: CancellationException) {
         runNonCancellable {
-            taskLogWithMessage(LogEntryType.CANCELLED)
+            taskLogWithMessage(LogItemType.CANCELLED)
                 .also {
                     repository.add(it)
                     Log.i(TAG, "${it.message}, ${it.timestamp} (${e.errorMsgExtended})")
@@ -54,7 +54,7 @@ class TaskLogger2 @AssistedInject constructor(
 
     suspend fun logTaskError(t: Throwable) {
         runNonCancellable {
-            taskLogWithMessage(LogEntryType.ERROR, t.errorMsg).also {
+            taskLogWithMessage(LogItemType.ERROR, t.errorMsg).also {
                 repository.add(it)
                 Log.e(TAG, "${it.message}, ${it.timestamp}", t)
             }
@@ -64,11 +64,11 @@ class TaskLogger2 @AssistedInject constructor(
 
     private fun string(@StringRes stringRes: Int): String = resources.getString(stringRes)
 
-    private fun taskLogWithMessage(logEntryType: LogEntryType, @StringRes messageRes: Int): TaskLogItem
-        = taskLogWithMessage(logEntryType, string(messageRes))
+    private fun taskLogWithMessage(logItemType: LogItemType, @StringRes messageRes: Int): TaskLogItem
+        = taskLogWithMessage(logItemType, string(messageRes))
 
-    private fun taskLogWithMessage(logEntryType: LogEntryType, message: String? = null): TaskLogItem = TaskLogItem.create(
-        entryType = logEntryType,
+    private fun taskLogWithMessage(logItemType: LogItemType, message: String? = null): TaskLogItem = TaskLogItem.create(
+        entryType = logItemType,
         taskId = taskId,
         executionId = executionId,
         message = message

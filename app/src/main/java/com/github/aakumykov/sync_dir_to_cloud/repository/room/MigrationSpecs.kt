@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogIt
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.TASK_ID_FIELD_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.OLD_TABLE_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.TABLE_NAME
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 
 class FirstAddThisObjectSpec : AutoMigrationSpec
 
@@ -126,3 +127,15 @@ class RenameObjectIdColumnsMigration1: AutoMigrationSpec
 @RenameTable(fromTableName = "sync_operation_logs", toTableName = "file_operation_logs")
 class RenameTableFromSyncOperationLogItemToFileOperationLogItem : AutoMigrationSpec
 
+
+@RenameColumn(
+    tableName = "instruction_logs",
+    fromColumnName = "entry_type",
+    toColumnName = "log_item_type"
+)
+@RenameColumn(
+    tableName = "task_logs",
+    fromColumnName = "entry_type",
+    toColumnName = "log_item_type"
+)
+class RenameLogEntryTypeToLogItemType : AutoMigrationSpec

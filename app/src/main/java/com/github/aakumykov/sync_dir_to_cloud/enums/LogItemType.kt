@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.enums
 
-@Deprecated("Переименовать в LogItemType")
-enum class LogEntryType {
+enum class LogItemType {
     BUSY,
     SUCCESS,
     CANCELLED,
