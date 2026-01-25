@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger
 
 import android.content.res.Resources
 import android.util.Log
-import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
@@ -22,50 +21,36 @@ class TaskLogger2 @AssistedInject constructor(
     private val repository: TaskLogRepository2,
     private val resources: Resources,
 ) {
-    suspend fun logTaskStarted() {
-        runNonCancellable {
-            taskLogWithMessage(LogItemType.BUSY)
-                .also {
-                    repository.add(it)
-                    Log.d(TAG, "${it.message}, ${it.timestamp}")
-                }
-        }
-    }
-
-    suspend fun logTaskFinished() {
-        runNonCancellable {
-            taskLogWithMessage(LogItemType.SUCCESS)
-                .also {
-                    repository.add(it)
-                    Log.d(TAG, "${it.message}, ${it.timestamp}")
-                }
-        }
-    }
-
-    suspend fun logTaskCancelled(e: CancellationException) {
-        runNonCancellable {
-            taskLogWithMessage(LogItemType.CANCELLED)
-                .also {
-                    repository.add(it)
-                    Log.i(TAG, "${it.message}, ${it.timestamp} (${e.errorMsgExtended})")
-                }
-        }
-    }
-
-    suspend fun logTaskError(t: Throwable) {
-        runNonCancellable {
-            taskLogWithMessage(LogItemType.ERROR, t.errorMsg).also {
+    suspend fun logTaskStarted() = runNonCancellable {
+        taskLogWithMessage(LogItemType.BUSY)
+            .also {
                 repository.add(it)
-                Log.e(TAG, "${it.message}, ${it.timestamp}", t)
+                Log.d(TAG, "${it.message}, ${it.timestamp}")
             }
-        }
     }
 
+    suspend fun logTaskFinished() = runNonCancellable {
+        taskLogWithMessage(LogItemType.SUCCESS)
+            .also {
+                repository.add(it)
+                Log.d(TAG, "${it.message}, ${it.timestamp}")
+            }
+    }
 
-    private fun string(@StringRes stringRes: Int): String = resources.getString(stringRes)
+    suspend fun logTaskCancelled(e: CancellationException) = runNonCancellable {
+        taskLogWithMessage(LogItemType.CANCELLED)
+            .also {
+                repository.add(it)
+                Log.i(TAG, "${it.message}, ${it.timestamp} (${e.errorMsgExtended})")
+            }
+    }
 
-    private fun taskLogWithMessage(logItemType: LogItemType, @StringRes messageRes: Int): TaskLogItem
-        = taskLogWithMessage(logItemType, string(messageRes))
+    suspend fun logTaskError(t: Throwable) = runNonCancellable {
+        taskLogWithMessage(LogItemType.ERROR, t.errorMsg).also {
+            repository.add(it)
+            Log.e(TAG, "${it.message}, ${it.timestamp}", t)
+        }
+    }
 
     private fun taskLogWithMessage(logItemType: LogItemType, message: String? = null): TaskLogItem = TaskLogItem.create(
         entryType = logItemType,

@@ -7,8 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.St
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionExecutor
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.CoroutineSyncInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.TaskOneStageExecutor
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.TaskOneStageExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory
@@ -61,8 +61,8 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
 
-    private val syncInstructionsProcessorAssistedFactory: SyncInstructionsProcessorAssistedFactory,
-    private val coroutineSyncInstructionsProcessorAssistedFactory: CoroutineSyncInstructionsProcessorAssistedFactory,
+    private val fileInstructionsProcessorAssistedFactory: SyncInstructionsProcessorAssistedFactory,
+    private val taskOneStageExecutorAssistedFactory: TaskOneStageExecutorAssistedFactory,
 
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
@@ -79,39 +79,6 @@ class SyncTaskProcessor @AssistedInject constructor(
     private val syncObjectDeleter:SyncObjectDBDeleter,
     private val syncInstructionRepository:SyncInstructionRepository,
 ) {
-    private val taskId: String get() = syncTask.id
-
-    private val mCoroutineSyncInstructionExecutor: CoroutineSyncInstructionExecutor by lazy {
-        coroutineSyncInstructionsProcessorAssistedFactory.create(taskId, executionId, scope)
-    }
-
-    private val fileInstructionsProcessor by lazy {
-        syncInstructionsProcessorAssistedFactory.create(syncTask, executionId, scope)
-    }
-
-    // FIXME: логика
-    private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
-        storageToDatabaseListerAssistedFactory.create(syncTask)
-    }
-
-    private val sourceWithTargetComparator by lazy {
-        sourceWithTargetComparatorAssistedFactory.create(syncTask, executionId)
-    }
-
-    private val instructionsGenerator by lazy {
-        instructionsGeneratorAssistedFactory.create(syncTask, executionId)
-    }
-
-    private val backupsDirPreparer by lazy {
-        backupDirsPreparerAssistedFactory.create(syncTask)
-    }
-
-    private val taskDirsFixer by lazy {
-        taskDirsFixerAssistedFactory.create(syncTask, executionId)
-    }
-
-
-
     suspend fun processSyncTask() {
 
         // Проверить каталоги задачи
@@ -123,7 +90,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         // Выполнить недоделанные инструкции
         removeDuplicatedUnprocessedSyncInstructions()
         prepareBackupDirs(R.string.preparing_backup_dirs_for_previous_unfinished_tasks) // Для доделки прошлых недоделанных задач.
-        processUnprocessedFileInstructions()
+        processFileInstructions(true)
 
         // Сброс старого состояния задачи и её объектов.
         resetTaskBadStates()
@@ -145,17 +112,17 @@ class SyncTaskProcessor @AssistedInject constructor(
         // Подготавливаю каталоги бекапов нынешних задач.
         prepareBackupDirs(R.string.preparing_backup_dirs_for_current_task)
 
-        processNewFileInstructions()
+        processFileInstructions(false)
 
         clearProcessedSyncObjectsWithDeletedState()
     }
 
 
     private suspend fun checkTaskDirs() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.checking_task_dirs),
-            instructionBlock = {
+            codeBlock = {
                 taskDirsFixer.fixTaskDirs()
             }
         )
@@ -163,10 +130,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun prepareBackupDirs(@StringRes logMessageId: Int) {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(logMessageId),
-            instructionBlock = {
+            codeBlock = {
                 backupsDirPreparer.prepareBackupDirs()
             }
         )
@@ -174,10 +141,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.removing_duplicate_file_instructions),
-            instructionBlock = {
+            codeBlock = {
                 syncInstructionRepository.deleteUnprocessedDuplicatedInstructions(taskId)
             }
         )
@@ -185,10 +152,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun clearProcessedSyncObjectsWithDeletedState() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.clearing_processed_sync_objects_with_deleted_state),
-            instructionBlock = {
+            codeBlock = {
                 syncObjectDeleter.deleteProcessedObjectsWithDeletedState(taskId)
             }
         )
@@ -196,10 +163,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun markAllNotCheckedObjectsAsDeleted() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_not_checked_objects_as_deleted),
-            instructionBlock = {
+            codeBlock = {
                 syncObjectStateResetter.markAllNotCheckedObjectsAsDeleted(taskId)
             }
         )
@@ -207,10 +174,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun deleteOldComparisonStates() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.deleting_old_comparison_results),
-            instructionBlock = {
+            codeBlock = {
                 comparisonsDeleter.deleteAllFor(taskId)
             }
         )
@@ -218,10 +185,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun deleteProcessedSyncInstructions() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.removing_processed_file_instructions),
-            instructionBlock = {
+            codeBlock = {
                 syncInstructionDeleter.deleteFinishedInstructionsFor(taskId)
             }
         )
@@ -229,33 +196,25 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun generateFileInstructions() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.generating_file_instructions),
-            instructionBlock = {
+            codeBlock = {
                 instructionsGenerator.generateFileInstructions()
             }
         )
     }
 
 
-    private suspend fun processUnprocessedFileInstructions() {
-        mCoroutineSyncInstructionExecutor.process(
-            isCritical = false,
-            logMessage = TextMessage(R.string.processing_unprocessed_file_instructions),
-            instructionBlock = {
-                fileInstructionsProcessor.processPrevSessionUnprocessedInstructions()
-            }
-        )
-    }
+    private suspend fun processFileInstructions(unprocessed: Boolean) {
+        val logMessage = if (unprocessed) TextMessage(R.string.processing_unprocessed_file_instructions)
+                         else TextMessage(R.string.processing_file_instructions)
 
-
-    private suspend fun processNewFileInstructions() {
-        mCoroutineSyncInstructionExecutor.process(
-            isCritical = true,
-            logMessage = TextMessage(R.string.processing_file_instructions),
-            instructionBlock = {
-                fileInstructionsProcessor.processThisSessionInstructions()
+        mTaskOneStageExecutor.process(
+            isCritical = !unprocessed,
+            logMessage = logMessage,
+            codeBlock = {
+                fileInstructionsProcessor.processFileInstructions(unprocessed)
             }
         )
     }
@@ -263,20 +222,20 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun resetTaskBadStates() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_task_bad_states),
-            instructionBlock = {
+            codeBlock = {
                 syncTaskStateChanger.resetSourceReadingBadState(taskId)
             }
         )
     }
 
     private suspend fun resetObjectsBadState() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_objects_bad_states),
-            instructionBlock = {
+            codeBlock = {
                 syncObjectStateResetter.resetTargetReadingBadState(taskId)
                 syncObjectStateResetter.resetBackupBadState(taskId)
                 syncObjectStateResetter.resetBackupBadState(taskId)
@@ -288,10 +247,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun markAllObjectsAsNotChecked() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_objects_as_not_checked),
-            instructionBlock = {
+            codeBlock = {
                 syncObjectStateResetter.markAllObjectsAsNotChecked(taskId)
             }
         )
@@ -302,10 +261,10 @@ class SyncTaskProcessor @AssistedInject constructor(
      * @return Флаг успешности чтения источника.
      */
     private suspend fun readSource() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_source),
-            instructionBlock = {
+            codeBlock = {
                 storageToDatabaseLister
                     .listFromPathToDatabase(
                         syncSide = SyncSide.SOURCE,
@@ -320,10 +279,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun readTarget() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_target),
-            instructionBlock = {
+            codeBlock = {
                 storageToDatabaseLister
                     .listFromPathToDatabase(
                         syncSide = SyncSide.TARGET,
@@ -338,10 +297,10 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun compareSourceWithTarget() {
-        mCoroutineSyncInstructionExecutor.process(
+        mTaskOneStageExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.comparing_source_with_target),
-            instructionBlock = {
+            codeBlock = {
                 sourceWithTargetComparator.compareSourceWithTarget()
             }
         )
@@ -361,6 +320,38 @@ class SyncTaskProcessor @AssistedInject constructor(
         // TODO: по-настоящему прерывать работу CloudWriterGetter-а
         MyLogger.d(tag, "stopExecutingTask(), [${hashCode()}]")
         syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.NEVER)
+    }
+
+
+    private val taskId: String get() = syncTask.id
+
+    private val mTaskOneStageExecutor: TaskOneStageExecutor by lazy {
+        taskOneStageExecutorAssistedFactory.create(taskId, executionId, scope)
+    }
+
+    private val fileInstructionsProcessor by lazy {
+        fileInstructionsProcessorAssistedFactory.create(syncTask, executionId, scope)
+    }
+
+    // FIXME: логика
+    private val storageToDatabaseLister: StorageToDatabaseLister by lazy {
+        storageToDatabaseListerAssistedFactory.create(syncTask)
+    }
+
+    private val sourceWithTargetComparator by lazy {
+        sourceWithTargetComparatorAssistedFactory.create(syncTask, executionId)
+    }
+
+    private val instructionsGenerator by lazy {
+        instructionsGeneratorAssistedFactory.create(syncTask, executionId)
+    }
+
+    private val backupsDirPreparer by lazy {
+        backupDirsPreparerAssistedFactory.create(syncTask)
+    }
+
+    private val taskDirsFixer by lazy {
+        taskDirsFixerAssistedFactory.create(syncTask, executionId)
     }
 
 

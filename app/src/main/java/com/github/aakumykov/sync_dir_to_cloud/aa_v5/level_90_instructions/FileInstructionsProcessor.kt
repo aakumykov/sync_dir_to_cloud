@@ -18,18 +18,9 @@ class FileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
     private val syncInstructionRepository: SyncInstructionRepository,
-    private val oneSyncInstructionExecutorAssistedFactory: OneSyncInstructionExecutorAssistedFactory,
+    private val oneFileInstructionExecutorAssistedFactory: OneSyncInstructionExecutorAssistedFactory,
 ) {
-    suspend fun processPrevSessionUnprocessedInstructions() {
-        processInstructions(true)
-    }
-
-    suspend fun processThisSessionInstructions() {
-        processInstructions(false)
-    }
-
-
-    private suspend fun processInstructions(unprocessed: Boolean) {
+    suspend fun processFileInstructions(unprocessed: Boolean) {
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
 //        prepareBackupDirs(list)
@@ -140,7 +131,7 @@ class FileInstructionsProcessor @AssistedInject constructor(
     }
 
     private val oneSyncInstructionExecutor by lazy {
-        oneSyncInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
+        oneFileInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
     }
 
     companion object {

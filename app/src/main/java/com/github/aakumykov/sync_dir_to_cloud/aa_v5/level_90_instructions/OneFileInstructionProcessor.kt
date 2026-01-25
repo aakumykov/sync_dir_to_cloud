@@ -16,6 +16,8 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -26,7 +28,7 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 
-class OneSyncInstructionExecutor @AssistedInject constructor(
+class OneFileInstructionProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
@@ -36,6 +38,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val syncObjectDBReader: SyncObjectDBReader,
 
     private val itemCopierAssistedFactory: ItemCopierAssistedFactory,
+
     private val itemDeleterAssistedFactory: ItemDeleterAssistedFactory,
 
     private val collisionResolverAssistedFactory: SyncObjectCollisionResolverAssistedFactory,
@@ -43,6 +46,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     private val syncInstructionUpdater: SyncInstructionUpdater,
 
     private val fileOperationLoggerAssistedFactory: FileOperationLoggerAssistedFactory,
+    private val fileOperationLogger2AssistedFactory: FileOperationLogger2AssistedFactory,
 
     private val backupInstructionExecutorAssistedFactory: BackupInstructionExecutor2AssistedFactory,
 
@@ -144,6 +148,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         }*/
     }
 
+
     private suspend fun copyFromSourceToTarget(syncInstruction: SyncInstruction) {
 
         val logItemId = newRandomId
@@ -159,6 +164,10 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
                 val sourceObjectId = syncInstruction.objectIdInSource!!
 
                 fileOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
+                fileOperationLogger2.logStarted(
+                    jobId = jobCancellationId,
+
+                )
 
                 syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
 
@@ -283,6 +292,10 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
         fileOperationLoggerAssistedFactory.create(syncTask.id, executionId)
     }
 
+    private val fileOperationLogger2: FileOperationLogger2 by lazy {
+        fileOperationLogger2AssistedFactory.create(syncTask.id, executionId)
+    }
+
 
     private fun logE(e: Exception) {
         Log.e(TAG, e.errorMsg, e)
@@ -297,7 +310,7 @@ class OneSyncInstructionExecutor @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = OneSyncInstructionExecutor::class.java.simpleName
+        val TAG: String = OneFileInstructionProcessor::class.java.simpleName
     }
 }
 
@@ -308,7 +321,7 @@ interface OneSyncInstructionExecutorAssistedFactory {
         syncTask: SyncTask,
         executionId: String,
         scope: CoroutineScope,
-    ): OneSyncInstructionExecutor
+    ): OneFileInstructionProcessor
 }
 
 

@@ -1,13 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
-import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
@@ -20,29 +16,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
-// TODO: убрать Resources отсюда, перенести их в Logger.
-// TODO: переименовать. CoroutineSyncInstructionExecutor - должно быть именем реализации.
-//  вроде: интерфейс SyncInstructionExecutor, реализация CoroutineSyncInstructionExecutor.
-class CoroutineSyncInstructionExecutor @AssistedInject constructor(
+class TaskOneStageExecutor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
-    private val executionLogger: ExecutionLogger,
     private val instructionLoggerAssistedFactory: InstructionLoggerAssistedFactory,
-    private val resources: Resources,
 ) {
-    private val instructionLogger: InstructionLogger by lazy { instructionLoggerAssistedFactory.create(taskId, executionId) }
-
-     suspend fun process(
+    suspend fun process(
          isCritical: Boolean,
          logMessage: TextMessage,
-         instructionBlock: suspend () -> Unit,
+         codeBlock: suspend () -> Unit,
      ) {
          scope.launch {
-             val text4log = logMessage.get(resources)
-
              try {
-                 executionLogger.log(TaskExecutionLogItem.createStartingItem(taskId, executionId, text4log))
                  instructionLogger.logInstructionExecutionStarted(logMessage)
 
                  val nonCriticalExceptionHandler = CoroutineExceptionHandler { context, throwable ->
@@ -50,33 +36,26 @@ class CoroutineSyncInstructionExecutor @AssistedInject constructor(
                  }
 
                  if (isCritical) scope.launch {
-                     instructionBlock.invoke()
+                     codeBlock.invoke()
                  }.join()
                  else {
                      scope.launch {
                          supervisorScope {
                              launch (nonCriticalExceptionHandler) {
-                                 instructionBlock.invoke()
+                                 codeBlock.invoke()
                              }.join()
                          }
                      }.join()
                  }
 
-                 executionLogger.updateLog(TaskExecutionLogItem.createFinishingItem(taskId, executionId, text4log))
                  instructionLogger.logInstructionExecutionFinished(logMessage)
 
              } catch (e: CancellationException) {
-                 executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
-                     taskId, executionId, text4log,"ОТМЕНЕНО"
-                 ))
                  instructionLogger.logInstructionExecutionCancelled(logMessage)
                  // FIXME: Нужно ли перевыбрасывать это исключение? Кому оно нужно?
                  throw e
              }
              catch (throwable: Throwable) {
-                 executionLogger.updateLog(TaskExecutionLogItem.createErrorItem(
-                     taskId, executionId, text4log,throwable.errorMsg
-                 ))
                  instructionLogger.logInstructionExecutionError(logMessage, throwable)
                  if (isCritical)
                      throw throwable
@@ -84,17 +63,20 @@ class CoroutineSyncInstructionExecutor @AssistedInject constructor(
          }.join()
     }
 
+    private val instructionLogger: InstructionLogger by lazy {
+        instructionLoggerAssistedFactory.create(taskId, executionId) }
+
     companion object {
-        val TAG: String = CoroutineSyncInstructionExecutor::class.java.simpleName
+        val TAG: String = TaskOneStageExecutor::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface CoroutineSyncInstructionsProcessorAssistedFactory {
+interface TaskOneStageExecutorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID)  taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
         scope: CoroutineScope,
-    ): CoroutineSyncInstructionExecutor
+    ): TaskOneStageExecutor
 }
