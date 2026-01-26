@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.TaskOneStageExecutor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.TaskOneStageExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.FileInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -61,7 +61,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
 
-    private val fileInstructionsProcessorAssistedFactory: SyncInstructionsProcessorAssistedFactory,
+    private val fileInstructionsProcessorAssistedFactory: FileInstructionsProcessorAssistedFactory,
     private val taskOneStageExecutorAssistedFactory: TaskOneStageExecutorAssistedFactory,
 
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
