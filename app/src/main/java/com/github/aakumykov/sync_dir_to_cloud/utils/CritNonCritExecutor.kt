@@ -15,15 +15,19 @@ class CritNonCritExecutor(
 
     suspend fun execute(
         scope: CoroutineScope,
-        isCriticalSupplier: Supplier<Boolean>,
+        onStart: () -> Unit,
+        onFinish: () -> Unit,
+        onCancelled: (e: CancellationException) -> Unit = {},
         onCriticalError: (t: Throwable) -> Unit,
         onNonCriticalError: (t: Throwable) -> Unit,
-        onCancelled: (e: CancellationException) -> Unit = {},
+        isCriticalSupplier: Supplier<Boolean>,
         codeBlock:  suspend () -> Unit
     ) {
         val workWithCancellationCatching = suspend {
             try {
+                onStart.invoke()
                 codeBlock.invoke()
+                onFinish.invoke()
             } catch (e: CancellationException) {
                 onCancelled.invoke(e)
             }
