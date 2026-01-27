@@ -22,13 +22,13 @@ class BackupInstructionExecutor2 @AssistedInject constructor(
     private val syncObjectBackuper3AssistedFactory: SyncObjectBackuper3AssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
 ) {
-    suspend fun execute(syncInstruction: SyncInstruction) {
+    /*suspend fun execute(syncInstruction: SyncInstruction) {
         when(syncInstruction.operation) {
             SyncOperation.BACKUP_IN_SOURCE -> backupInSource(syncInstruction)
             SyncOperation.BACKUP_IN_TARGET -> backupInTarget(syncInstruction)
             else -> throw IllegalArgumentException("Unsupported operation: '$syncInstruction'")
         }
-    }
+    }*/
 
     suspend fun backupInSource(syncInstruction: SyncInstruction) {
         val objectId = syncInstruction.objectIdInSource

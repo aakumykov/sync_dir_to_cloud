@@ -164,6 +164,10 @@ class OneFileInstructionProcessor @AssistedInject constructor(
                 val sourceObjectId = syncInstruction.objectIdInSource!!
 
                 fileOperationLogger.logWaiting(logItemId, syncInstruction, jobCancellationId)
+                fileOperationLogger2.logStarted(
+                    jobId = jobCancellationId,
+
+                )
 
                 syncObjectDBReader.getSyncObject(sourceObjectId)?.also {
 
