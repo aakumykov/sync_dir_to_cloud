@@ -34,6 +34,7 @@ class AppSettingsImpl @Inject constructor(
 
 
     private val DEFAULT_FILE_TRANSFER_RETARDATION_MS by lazy { getInteger(R.integer.DEFAULT_file_transfer_retardation_ms) }
+    private val DEFAULT_BACKUP_IS_CRITICAL_OPERATION by lazy { getBoolean(R.bool.DEFAULT_backup_is_critical_operation) }
 
     override var fileTransferRetardationMs: Int
         get() {
@@ -45,6 +46,20 @@ class AppSettingsImpl @Inject constructor(
         set(value) { sharedPreferences.edit {
             putInt(
                 keyFromResources(R.string.KEY_file_transfer_retardation_ms),
+                value
+            )
+        } }
+
+    override var backupIsCriticalOperation: Boolean
+        get() {
+            return sharedPreferences.getBoolean(
+                keyFromResources(R.string.KEY_file_transfer_retardation_ms),
+                DEFAULT_BACKUP_IS_CRITICAL_OPERATION
+            )
+        }
+        set(value) { sharedPreferences.edit {
+            putBoolean(
+                keyFromResources(R.string.KEY_backup_is_critical_operation),
                 value
             )
         } }
