@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriterGetter
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.yandex_disk_cloud_writer.YandexDiskCloudWriter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -24,7 +23,6 @@ class DirDeleter5 @AssistedInject constructor(
      */
     @Throws(Exception::class)
     suspend fun deleteEmptyDirInTarget(basePath: String, dirName: String) {
-        val path =
         deleteDirWith(
             basePath = basePath,
             dirName = dirName,
@@ -57,13 +55,12 @@ class DirDeleter5 @AssistedInject constructor(
         }
     }
 
-    private val sourceCloudWriter: CloudWriter by lazy {
-        cloudWriterGetter.getSourceCloudWriter(syncTask)
-    }
 
-    private val targetCloudWriter: CloudWriter by lazy {
-        cloudWriterGetter.getTargetCloudWriter(syncTask)
-    }
+    private val sourceCloudWriter: CloudWriter
+        get() = cloudWriterGetter.getSourceCloudWriter(syncTask)
+
+    private val targetCloudWriter: CloudWriter
+        get() = cloudWriterGetter.getTargetCloudWriter(syncTask)
 }
 
 

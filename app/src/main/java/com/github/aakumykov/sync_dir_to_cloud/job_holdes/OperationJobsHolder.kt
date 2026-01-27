@@ -13,15 +13,15 @@ object OperationJobsHolder {
 
     private val map: ConcurrentMap<String, Job> = ConcurrentHashMap()
 
-    fun addJob(jobId: String, job: Job) {
-        map[jobId] = job
+    fun addJob(taskId: String, job: Job) {
+        map[taskId] = job
     }
 
-    fun getJob(jobId: String): Job? {
-        return map[jobId]
+    fun getJob(taskId: String): Job? {
+        return map[taskId]
     }
 
-    fun removeJob(jobId: String) {
-        map.remove(jobId)
+    fun removeJob(taskId: String) {
+        map.remove(taskId)
     }
 }

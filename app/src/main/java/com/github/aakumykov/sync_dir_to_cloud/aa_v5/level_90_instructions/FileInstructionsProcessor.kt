@@ -18,9 +18,7 @@ class FileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
     private val syncInstructionRepository: SyncInstructionRepository,
-    private val oneFileInstructionExecutorAssistedFactory: OneFileInstructionExecutorAssistedFactory,
-    private val deleteInstructionExecutorAssistedFactory: DeleteInstructionExecutorAssistedFactory,
-    private val fileCopyInstructionExecutorAssistedFactory: FileCopyInstructionExecutorAssistedFactory,
+    private val oneFileInstructionExecutorAssistedFactory: OneSyncInstructionExecutorAssistedFactory,
 ) {
     suspend fun processFileInstructions(unprocessed: Boolean) {
 
@@ -57,7 +55,6 @@ class FileInstructionsProcessor @AssistedInject constructor(
             .filter { it.isBackup }
             .apply {
                 // Сначала бекапятся (создаются) каталоги, потом файлы.
-
                 filter { it.isDir }
                     .forEach { syncInstruction ->
                         oneSyncInstructionExecutor.execute(syncInstruction)
@@ -87,8 +84,7 @@ class FileInstructionsProcessor @AssistedInject constructor(
             .filter { it.isFile }
             .filter { it.isDeletion }
             .forEach { syncInstruction ->
-//                oneSyncInstructionExecutor.execute(syncInstruction)
-                deleteInstructionExecutor.execute(syncInstruction)
+                oneSyncInstructionExecutor.execute(syncInstruction)
             }
     }
 
@@ -99,8 +95,7 @@ class FileInstructionsProcessor @AssistedInject constructor(
             .sortedBy { it.relativePath.length }
             .reversed()
             .forEach { syncInstruction ->
-//                oneSyncInstructionExecutor.execute(syncInstruction)
-                deleteInstructionExecutor.execute(syncInstruction)
+                oneSyncInstructionExecutor.execute(syncInstruction)
             }
     }
 
@@ -137,10 +132,6 @@ class FileInstructionsProcessor @AssistedInject constructor(
 
     private val oneSyncInstructionExecutor by lazy {
         oneFileInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
-    }
-
-    private val deleteInstructionExecutor by lazy {
-        deleteInstructionExecutorAssistedFactory.create(syncTask, executionId, scope)
     }
 
     companion object {

@@ -312,7 +312,7 @@ class OneFileInstructionProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface OneFileInstructionExecutorAssistedFactory {
+interface OneSyncInstructionExecutorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
