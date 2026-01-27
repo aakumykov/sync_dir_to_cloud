@@ -5,12 +5,15 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
 import com.github.aakumykov.sync_dir_to_cloud.repository.FileOperationLogRepository2
 import com.github.aakumykov.sync_dir_to_cloud.utils.runNonCancellable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 
 class FileOperationLogger2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -32,6 +35,53 @@ class FileOperationLogger2 @AssistedInject constructor(
                     message = resources.getString(messageId),
                     filePath = filePath,
                     jobId = jobId
+                )
+            )
+        }
+    }
+
+    suspend fun logFinished(@StringRes messageId: Int, filePath: String) {
+        runNonCancellable {
+            repository.add(
+                FileOperationLogItem2.create(
+                    logItemType = LogItemType.SUCCESS,
+                    taskId = taskId,
+                    executionId = executionId,
+                    message = resources.getString(messageId),
+                    filePath = filePath,
+                    jobId = null
+                )
+            )
+        }
+    }
+
+    suspend fun logCancelled(@StringRes messageId: Int, filePath: String, e: CancellationException) {
+        val message = resources.getString(messageId) + " (${e.errorMsg})"
+        runNonCancellable {
+            repository.add(
+                FileOperationLogItem2.create(
+                    logItemType = LogItemType.CANCELLED,
+                    taskId = taskId,
+                    executionId = executionId,
+                    message = message,
+                    filePath = filePath,
+                    jobId = null
+                )
+            )
+        }
+    }
+
+    suspend fun logError(@StringRes messageId: Int, filePath: String, t: Throwable) {
+        val message = resources.getString(messageId) + " (${t.errorMsgExtended})"
+        runNonCancellable {
+            repository.add(
+                FileOperationLogItem2.create(
+                    logItemType = LogItemType.ERROR,
+                    taskId = taskId,
+                    executionId = executionId,
+                    message = message,
+                    filePath = filePath,
+                    jobId = null
                 )
             )
         }
