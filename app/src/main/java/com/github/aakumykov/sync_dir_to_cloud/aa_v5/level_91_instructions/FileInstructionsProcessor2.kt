@@ -2,30 +2,46 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_91_instructions
 
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.BackupInstructionExecutor2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.FileInstructionsProcessor
+import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2
 import com.github.aakumykov.sync_dir_to_cloud.repository.FileOperationLogRepository2
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
+import com.github.aakumykov.sync_dir_to_cloud.utils.CritNonCritExecutor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlin.collections.filter
+import kotlin.math.log
+
+class Backuper2() {
+
+}
 
 class FileInstructionsProcessor2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
+    @Assisted private val syncTask: SyncTask,
     @Assisted private val scope: CoroutineScope,
+    private val appSettings: AppSettings,
     private val syncInstructionRepository: SyncInstructionRepository,
-    private val fileOperationLogRepository2: FileOperationLogRepository2,
+    private val logger: FileOperationLogger2,
+    private val backupInstructionExecutor2AssistedFactory: BackupInstructionExecutor2AssistedFactory,
 ) {
+    private val critNonCritExecutor by lazy { CritNonCritExecutor() }
+
     suspend fun processFileInstructions(unprocessed: Boolean) {
 
         // Как бекапить файлы в каталоге, который тоже предстоить бекапить?
 //        prepareBackupDirs(list)
-        backupFilesAndDirs(list(unprocessed))
+//        backupFilesAndDirs(list(unprocessed))
+        backupFilesAndDirs2(list(unprocessed))
 
         deleteFiles(list(unprocessed))
         deleteDirs(list(unprocessed))
@@ -35,6 +51,34 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
 
         processDirsCreation(list(unprocessed))
         processFilesCopying(list(unprocessed))
+    }
+
+    private suspend fun backupFilesAndDirs2(list: Iterable<SyncInstruction>) {
+        list
+            .filter { it.isBackup }
+            .forEach { syncInstruction ->
+                critNonCritExecutor.execute(
+                    scope = scope,
+                    isCriticalSupplier = { appSettings.backupIsCriticalOperation },
+                    onStart = {
+                        logger.logStarted()
+                    },
+                    onFinish = {
+                        logger.logFinished()
+                    },
+                    onNonCriticalError = { t ->
+                        logger.logError()
+                    },
+                    onCriticalError = { t ->
+                        logger.logError()
+                    },
+                    onCancelled = { e ->
+                        logger.logCancelled()
+                    }
+                ) {
+                    backuper2.processBackup(syncInstruction)
+                }
+            }
     }
 
 
@@ -131,6 +175,11 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
         else getNonProcessedSyncInstructionsForTaskAndExecution()
     }
 
+
+    private val backupInstructionExecutor by lazy {
+        backupInstructionExecutor2AssistedFactory.create(syncTask)
+    }
+
     companion object {
         val TAG: String = FileInstructionsProcessor2::class.java.simpleName
     }
@@ -139,8 +188,9 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
 @AssistedFactory
 interface FileInstructionsProcessor2AssistedFactory {
     fun create(
-        syncTask: SyncTask,
+        taskId: String,
         executionId: String,
+        syncTask: SyncTask,
         scope: CoroutineScope,
     ): FileInstructionsProcessor2
 }
