@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.TaskOn
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.TaskOneStageExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.FileInstructionsProcessorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator.InstructionsGeneratorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide

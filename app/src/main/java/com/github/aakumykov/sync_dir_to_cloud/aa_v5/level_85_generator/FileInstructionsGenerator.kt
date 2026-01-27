@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.generator
+package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
