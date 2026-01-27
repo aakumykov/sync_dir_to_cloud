@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.TaskOneStageExecutor.Companion.TAG
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLoggerAssistedFactory
@@ -17,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
-class TaskOneStageExecutor @AssistedInject constructor(
+class OneStageOfTaskExecutor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
@@ -68,71 +67,16 @@ class TaskOneStageExecutor @AssistedInject constructor(
         instructionLoggerAssistedFactory.create(taskId, executionId) }
 
     companion object {
-        val TAG: String = TaskOneStageExecutor::class.java.simpleName
+        val TAG: String = OneStageOfTaskExecutor::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface TaskOneStageExecutorAssistedFactory {
+interface OneStageOfTaskExecutorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID)  taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
         scope: CoroutineScope,
-    ): TaskOneStageExecutor
-}
-
-
-abstract class CodeBlockExecutor(
-    private val scope: CoroutineScope,
-    private val onStart: () -> Unit,
-    private val onFinish: () -> Unit,
-    private val onCancelled: (e: CancellationException) -> Unit,
-    private val onCriticalError: (t: Throwable) -> Unit,
-    private val onNonCriticalError: (t: Throwable) -> Unit,
-) {
-    suspend fun process(
-        isCritical: Boolean,
-        logMessage: TextMessage,
-        codeBlock: suspend () -> Unit,
-    ) {
-        scope.launch {
-            try {
-                onStart.invoke()
-
-                val nonCriticalExceptionHandler = CoroutineExceptionHandler { context, throwable ->
-                    onNonCriticalError.invoke(throwable)
-                }
-
-                if (isCritical) scope.launch {
-                    codeBlock.invoke()
-                }.join()
-                else {
-                    scope.launch {
-                        supervisorScope {
-                            launch (nonCriticalExceptionHandler) {
-                                codeBlock.invoke()
-                            }.join()
-                        }
-                    }.join()
-                }
-
-                onFinish.invoke()
-
-            } catch (e: CancellationException) {
-                onCancelled.invoke(e)
-                throw e
-            }
-            catch (throwable: Throwable) {
-                onCriticalError.invoke(throwable)
-            }
-        }.join()
-    }
-}
-
-
-class TaskOneStageCodeBlockExecutor(
-
-) {
-
+    ): OneStageOfTaskExecutor
 }
