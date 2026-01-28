@@ -139,3 +139,11 @@ class RenameTableFromSyncOperationLogItemToFileOperationLogItem : AutoMigrationS
     toColumnName = "log_item_type"
 )
 class RenameLogEntryTypeToLogItemType : AutoMigrationSpec
+
+
+@DeleteColumn(
+    tableName = "file_operation_logs_2",
+    columnName = "file_path"
+)
+class DeleteFilePathFromFileOperationLogItem2 : AutoMigrationSpec
+

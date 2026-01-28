@@ -38,7 +38,7 @@ data class FileOperationLogItem2(
 
     val message: String,
 
-    val description: String,
+    @ColumnInfo(defaultValue = "") val description: String,
 
     val timestamp: Long,
 

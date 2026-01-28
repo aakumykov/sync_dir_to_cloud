@@ -54,5 +54,8 @@ class FileInstructionsProcessor @AssistedInject constructor(
 
 @AssistedFactory
 interface FileInstructionsProcessorAssistedFactory {
-    fun create(): FileInstructionsProcessor
+    fun create(
+        syncTask: SyncTask,
+        executionId: String
+    ): FileInstructionsProcessor
 }

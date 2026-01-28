@@ -1,12 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import kotlinx.coroutines.CoroutineScope
 
 abstract class AbstractInstructionsProcessor(
-    private val fileOperationLogger2: FileOperationLogger2,
+    private val taskId: String,
+    private val executionId: String,
+    private val fileOperationLogger2Factory: FileOperationLogger2AssistedFactory,
     private val operationJobsHolder: OperationJobsHolder,
 ) {
     fun process(scope: CoroutineScope, block: () -> Unit) {
@@ -35,4 +37,8 @@ abstract class AbstractInstructionsProcessor(
     abstract val operationStartsMessageId: Int
     abstract val operationFinishesMessageId: Int
     abstract val operationDescription: String
+
+    private val fileOperationLogger2 by lazy {
+        fileOperationLogger2Factory.create(taskId, executionId)
+    }
 }
