@@ -38,6 +38,8 @@ data class FileOperationLogItem2(
 
     val message: String,
 
+    val description: String,
+
     @ColumnInfo(name = FILE_PATH_FIELD_NAME)
     val filePath: String,
 
@@ -54,6 +56,7 @@ data class FileOperationLogItem2(
             taskId: String,
             executionId: String,
             message: String,
+            description: String,
             filePath: String,
             jobId: String?
         ) = FileOperationLogItem2(
@@ -62,6 +65,7 @@ data class FileOperationLogItem2(
             taskId = taskId,
             executionId = executionId,
             message = message,
+            description = description,
             filePath = filePath,
             timestamp = currentTime,
             jobId = jobId
