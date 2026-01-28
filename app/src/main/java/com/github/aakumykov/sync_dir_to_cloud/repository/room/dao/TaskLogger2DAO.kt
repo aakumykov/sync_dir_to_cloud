@@ -13,14 +13,14 @@ interface TaskLogger2DAO {
     suspend fun add(taskLogItem: TaskLogItem)
 
 
-    @Query("SELECT * FROM ${TaskLogItem.TABLE_NAME} " +
+    /*@Query("SELECT * FROM ${TaskLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
             "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
             "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
-    suspend fun list(taskId: String, executionId: String): List<TaskLogItem>
+    suspend fun list(taskId: String, executionId: String): List<TaskLogItem>*/
 
 
-    @Query("DELETE FROM ${TaskLogItem.TABLE_NAME} " +
+    /*@Query("DELETE FROM ${TaskLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId")
-    suspend fun deleteAllForTask(taskId: String)
+    suspend fun deleteAllForTask(taskId: String)*/
 }

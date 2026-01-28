@@ -24,7 +24,6 @@ class DirDeleter5 @AssistedInject constructor(
      */
     @Throws(Exception::class)
     suspend fun deleteEmptyDirInTarget(basePath: String, dirName: String) {
-        val path =
         deleteDirWith(
             basePath = basePath,
             dirName = dirName,

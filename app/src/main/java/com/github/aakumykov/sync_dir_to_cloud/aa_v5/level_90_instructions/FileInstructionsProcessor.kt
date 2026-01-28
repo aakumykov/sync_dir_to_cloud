@@ -20,7 +20,6 @@ class FileInstructionsProcessor @AssistedInject constructor(
     private val syncInstructionRepository: SyncInstructionRepository,
     private val oneFileInstructionExecutorAssistedFactory: OneFileInstructionExecutorAssistedFactory,
     private val deleteInstructionExecutorAssistedFactory: DeleteInstructionExecutorAssistedFactory,
-    private val fileCopyInstructionExecutorAssistedFactory: FileCopyInstructionExecutorAssistedFactory,
 ) {
     suspend fun processFileInstructions(unprocessed: Boolean) {
 

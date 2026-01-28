@@ -13,14 +13,14 @@ interface FileOperationLogDAO {
     suspend fun add(taskLogItem: FileOperationLogItem2)
 
 
-    @Query("SELECT * FROM ${FileOperationLogItem2.TABLE_NAME} " +
+    /*@Query("SELECT * FROM ${FileOperationLogItem2.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
             "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
             "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
-    suspend fun list(taskId: String, executionId: String): List<FileOperationLogItem2>
+    suspend fun list(taskId: String, executionId: String): List<FileOperationLogItem2>*/
 
 
-    @Query("DELETE FROM ${FileOperationLogItem2.TABLE_NAME} " +
+    /*@Query("DELETE FROM ${FileOperationLogItem2.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId")
-    suspend fun deleteAllForTask(taskId: String)
+    suspend fun deleteAllForTask(taskId: String)*/
 }

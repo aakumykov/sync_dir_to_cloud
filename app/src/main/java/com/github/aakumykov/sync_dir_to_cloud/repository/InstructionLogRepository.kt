@@ -15,11 +15,11 @@ class InstructionLogRepository @Inject constructor(
         dao.add(item)
     }
 
-    suspend fun list(taskId: String, executionId: String): List<InstructionLogItem> = withContext(dispatcher) {
+    /*suspend fun list(taskId: String, executionId: String): List<InstructionLogItem> = withContext(dispatcher) {
         dao.list(taskId, executionId)
-    }
+    }*/
 
-    suspend fun deleteAllFor(taskId: String) = withContext(dispatcher) {
+    /*suspend fun deleteAllFor(taskId: String) = withContext(dispatcher) {
         dao.deleteAllForTask(taskId)
-    }
+    }*/
 }

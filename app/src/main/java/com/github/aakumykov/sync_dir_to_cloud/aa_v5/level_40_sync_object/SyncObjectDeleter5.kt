@@ -90,5 +90,5 @@ class SyncObjectDeleter5 @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncObjectDeleterAssistedFactory5 {
-    fun create(syncTask: SyncTask): SyncObjectDeleter5
+    fun create(syncTask: SyncTask, executionId: String): SyncObjectDeleter5
 }

@@ -24,7 +24,7 @@ class TaskLogger2 @AssistedInject constructor(
     suspend fun logTaskStarted() = runNonCancellable {
         taskLogWithMessage(LogItemType.BUSY)
             .also {
-                repository.add(it)
+//                repository.add(it)
                 Log.d(TAG, "${it.message}, ${it.timestamp}")
             }
     }
@@ -32,7 +32,7 @@ class TaskLogger2 @AssistedInject constructor(
     suspend fun logTaskFinished() = runNonCancellable {
         taskLogWithMessage(LogItemType.SUCCESS)
             .also {
-                repository.add(it)
+//                repository.add(it)
                 Log.d(TAG, "${it.message}, ${it.timestamp}")
             }
     }
@@ -40,14 +40,14 @@ class TaskLogger2 @AssistedInject constructor(
     suspend fun logTaskCancelled(e: CancellationException) = runNonCancellable {
         taskLogWithMessage(LogItemType.CANCELLED)
             .also {
-                repository.add(it)
+//                repository.add(it)
                 Log.i(TAG, "${it.message}, ${it.timestamp} (${e.errorMsgExtended})")
             }
     }
 
     suspend fun logTaskError(t: Throwable) = runNonCancellable {
         taskLogWithMessage(LogItemType.ERROR, t.errorMsg).also {
-            repository.add(it)
+//            repository.add(it)
             Log.e(TAG, "${it.message}, ${it.timestamp}", t)
         }
     }

@@ -23,13 +23,11 @@ class DeleteInstructionExecutor @AssistedInject constructor(
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectDeleterAssistedFactory: SyncObjectDeleterAssistedFactory5,
     private val syncInstructionUpdater: SyncInstructionUpdater,
-    private val operationJobHolder: OperationJobsHolder,
 ) {
     suspend fun execute(syncInstruction: SyncInstruction) {
         val jobId = newRandomId
         parentScope.launchWithStartCallback(onStart = { job ->
-            operationJobHolder.addJob(jobId, job)
-            logger.logStarted(jobId,, )
+            OperationJobsHolder.addJob(jobId, job)
         }) {
             when(syncInstruction.operation) {
                 SyncOperation.DELETE_IN_SOURCE -> deleteInSource(syncInstruction)

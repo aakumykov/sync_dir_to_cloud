@@ -13,14 +13,14 @@ interface InstructionLoggingDAO {
     fun add(instructionLogItem: InstructionLogItem)
 
 
-    @Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
+    /*@Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
             "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
             "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
-    suspend fun list(taskId: String, executionId: String): List<InstructionLogItem>
+    suspend fun list(taskId: String, executionId: String): List<InstructionLogItem>*/
 
 
-    @Query("DELETE FROM ${InstructionLogItem.TABLE_NAME} " +
+    /*@Query("DELETE FROM ${InstructionLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId")
-    suspend fun deleteAllForTask(taskId: String)
+    suspend fun deleteAllForTask(taskId: String)*/
 }

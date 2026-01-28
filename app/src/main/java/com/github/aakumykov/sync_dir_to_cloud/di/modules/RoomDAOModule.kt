@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.InstructionLoggingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
@@ -115,5 +116,10 @@ class RoomDAOModule {
     @Provides
     fun provideInstructionLoggingDAO(appDatabase: AppDatabase): InstructionLoggingDAO {
         return appDatabase.getInstructionLoggingDAO()
+    }
+
+    @Provides
+    fun provideFileOperationLogDAO(appDatabase: AppDatabase): FileOperationLogDAO {
+        return appDatabase.getFileOperationLogDAO()
     }
 }
