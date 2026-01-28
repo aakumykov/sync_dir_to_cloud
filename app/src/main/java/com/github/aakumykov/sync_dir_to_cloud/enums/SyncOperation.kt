@@ -14,5 +14,9 @@ enum class SyncOperation {
     DELETE_IN_TARGET,
 
     BACKUP_IN_SOURCE,
-    BACKUP_IN_TARGET,
+    BACKUP_IN_TARGET;
+
+    companion object {
+        val TAG: String = SyncOperation::class.java.simpleName
+    }
 }
