@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessor
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessor
 import kotlinx.coroutines.CoroutineScope
 
 object TestComponentHolder {

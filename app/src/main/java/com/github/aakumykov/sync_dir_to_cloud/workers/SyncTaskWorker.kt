@@ -7,7 +7,7 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskExecutorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope

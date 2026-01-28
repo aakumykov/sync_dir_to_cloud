@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.scenario.sync
 
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.testComponent
-import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskProcessor
+import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessor
 import com.kaspersky.kaspresso.testcases.api.scenario.Scenario
 import com.kaspersky.kaspresso.testcases.core.testcontext.TestContext
 import kotlinx.coroutines.CoroutineScope

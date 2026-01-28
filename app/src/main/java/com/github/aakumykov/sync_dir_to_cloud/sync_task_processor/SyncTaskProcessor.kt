@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
+package com.github.aakumykov.sync_dir_to_cloud.sync_task_processor
 
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
