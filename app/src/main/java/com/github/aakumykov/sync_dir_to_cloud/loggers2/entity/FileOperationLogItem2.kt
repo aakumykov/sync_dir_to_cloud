@@ -40,9 +40,6 @@ data class FileOperationLogItem2(
 
     val description: String,
 
-    @ColumnInfo(name = FILE_PATH_FIELD_NAME)
-    val filePath: String,
-
     val timestamp: Long,
 
     @ColumnInfo(
@@ -57,7 +54,6 @@ data class FileOperationLogItem2(
             executionId: String,
             message: String,
             description: String,
-            filePath: String,
             jobId: String?
         ) = FileOperationLogItem2(
             id = newRandomId,
@@ -66,12 +62,10 @@ data class FileOperationLogItem2(
             executionId = executionId,
             message = message,
             description = description,
-            filePath = filePath,
             timestamp = currentTime,
             jobId = jobId
         )
 
         const val TABLE_NAME = "file_operation_logs_2"
-        const val FILE_PATH_FIELD_NAME = "file_path"
     }
 }
