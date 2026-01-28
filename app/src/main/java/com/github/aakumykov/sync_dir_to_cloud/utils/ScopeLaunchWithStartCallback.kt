@@ -10,7 +10,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 fun CoroutineScope.launchWithStartCallback(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
-    onStart: (job: Job) -> Unit,
+    onStart: suspend (job: Job) -> Unit,
     block: suspend () -> Unit,
 ): Job = launch(
     context = context,
