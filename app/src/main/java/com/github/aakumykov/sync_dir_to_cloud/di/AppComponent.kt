@@ -29,6 +29,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncOperationLogReposit
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TaskLoggerModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.TempModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerModule
@@ -73,6 +74,7 @@ import dagger.Component
         PreferencesModule::class,
         SharedPreferencesModule::class,
         AppSettingsModule::class,
+        TempModule::class
     ]
 )
 @AppScope
