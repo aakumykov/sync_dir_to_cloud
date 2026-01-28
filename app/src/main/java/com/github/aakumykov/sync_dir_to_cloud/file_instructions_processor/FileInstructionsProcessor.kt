@@ -18,6 +18,9 @@ class FileInstructionsProcessor @AssistedInject constructor(
     suspend fun process(list: List<SyncInstruction>) {
         list.forEach { instruction ->
             when(instruction.operation) {
+                SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyInstructionsProcessor.process(instruction)
+                SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> copyInstructionsProcessor.process(instruction)
+
                 SyncOperation.RESOLVE_COLLISION -> collisionResolverInstructionsProcessor.process(instruction)
 
                 SyncOperation.BACKUP_IN_SOURCE -> backupInstructionsProcessor.process(instruction)
@@ -25,9 +28,6 @@ class FileInstructionsProcessor @AssistedInject constructor(
 
                 SyncOperation.DELETE_IN_SOURCE -> deleteInstructionsProcessor.process(instruction)
                 SyncOperation.DELETE_IN_TARGET -> deleteInstructionsProcessor.process(instruction)
-
-                SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyInstructionsProcessor.process(instruction)
-                SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> copyInstructionsProcessor.process(instruction)
 
                 SyncOperation.DO_NOTHING_IN_SOURCE -> {}
                 SyncOperation.DO_NOTHING_IN_TARGET -> {}
