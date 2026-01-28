@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.job_holdes
 
 import android.util.Log
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import kotlinx.coroutines.Job
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
@@ -12,6 +13,12 @@ object OperationJobsHolder {
     init { Log.d(TAG, "init{}") }
 
     private val map: ConcurrentMap<String, Job> = ConcurrentHashMap()
+
+    fun addJob(job: Job): String {
+        val id = newRandomId
+        addJob(id, job)
+        return id
+    }
 
     fun addJob(jobId: String, job: Job) {
         map[jobId] = job
