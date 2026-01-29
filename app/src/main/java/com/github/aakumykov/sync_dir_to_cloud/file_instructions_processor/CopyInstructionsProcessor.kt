@@ -1,79 +1,52 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
-import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectCopier
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
+import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 
-// TODO: переименовать в FileCopyInstructionsProcessor
 class CopyInstructionsProcessor @AssistedInject constructor(
-    private val syncTask: SyncTask,
-    private val executionId: String,
+    @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
+    @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
-    private val basicInstructionsProcessor: BasicInstructionsProcessor,
+    private val fileOperationLogger2Factory: FileOperationLogger2AssistedFactory,
+    private val operationJobsHolder: OperationJobsHolder,
 )
-    : FileOperationLogMessageSupplier
+    : AbstractInstructionsProcessor(
+        taskId,
+        executionId,
+        fileOperationLogger2Factory,
+        operationJobsHolder
+    )
 {
-    suspend fun work(scope: CoroutineScope, instruction: SyncInstruction) {
+    suspend fun process(instruction: SyncInstruction) {
 
-        val sourceObject = syncObjectDBReader.getSyncObject(instruction.objectIdInSource!!)
-        val targetObject = syncObjectDBReader.getSyncObject(instruction.objectIdInTarget!!)
-
-        val pathInTarget = targetObject!!.absolutePathIn(syncTask)
-
-        basicInstructionsProcessor.process(scope, this) {
-
-            syncObjectCopier.copyFileFromSourceToTarget(
-                sourceObject!!,
-                pathInTarget,
-                true // FIXME: убрать!
-            )
-        }
     }
 
-    private val syncObjectCopier by lazy {
-        syncObjectCopierFactory.create(
-            syncTask = syncTask,
-            executionId = executionId,
-            databaseInteractingScope = CoroutineScope(Dispatchers.IO)
-        )
-    }
+    override val operationStartsMessageId: Int
+        get() = TODO("Not yet implemented")
 
-    override val operationMessageIdStarted: Int
-        get() = R.string.LOG_ITEM_copying_file_started
-    
-    override val operationMessageIdFinished: Int
-        get() = R.string.LOG_ITEM_copying_file_finished
-    
-    override val operationMessageIdCancelled: Int
-        get() = R.string.LOG_ITEM_copying_file_cancelled
-    
-    override val operationMessageIdError: Int
-        get() = R.string.LOG_ITEM_copying_file_error
-    
-    override val operationDescriptionStarted: String
+    override val operationFinishesMessageId: Int
         get() = TODO("Not yet implemented")
-    
-    override val operationDescriptionFinished: String
-        get() = TODO("Not yet implemented")
-    
-    override val operationDescriptionCancel: String?
-        get() = TODO("Not yet implemented")
-    
-    override val operationDescriptionError: String?
+
+    override val operationDescription: String
         get() = TODO("Not yet implemented")
 }
 
-
 @AssistedFactory
 interface CopyInstructionsProcessorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): CopyInstructionsProcessor
+    fun create(
+        @Assisted(QUALIFIER_TASK_ID) taskId: String,
+        @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
+    ): CopyInstructionsProcessor
 }
