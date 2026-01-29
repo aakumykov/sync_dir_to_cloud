@@ -18,5 +18,8 @@ fun CoroutineScope.launchWithStartCallback(
 ) {
     block.invoke()
 }.apply {
-    onStart.invoke(this)
+    // Спорное решение, так как вызов onStart получается асинхронным.
+    launch {
+        onStart.invoke(this@apply)
+    }
 }
