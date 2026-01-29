@@ -38,8 +38,8 @@ data class FileOperationLogItem2(
 
     val message: String,
 
-    @ColumnInfo(defaultValue = "null")
-    val description: String?,
+    @ColumnInfo(defaultValue = "@")
+    val description: String,
 
     val timestamp: Long,
 
@@ -54,7 +54,7 @@ data class FileOperationLogItem2(
             taskId: String,
             executionId: String,
             message: String,
-            description: String?,
+            description: String,
             jobId: String?
         )
             : FileOperationLogItem2
