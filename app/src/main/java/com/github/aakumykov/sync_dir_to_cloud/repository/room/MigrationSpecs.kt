@@ -147,3 +147,9 @@ class RenameLogEntryTypeToLogItemType : AutoMigrationSpec
 )
 class DeleteFilePathFromFileOperationLogItem2 : AutoMigrationSpec
 
+
+@DeleteColumn(
+    tableName = "file_operation_logs_2",
+    columnName = "description"
+)
+class FileOperationLogItem2SourceItemTargetItem : AutoMigrationSpec

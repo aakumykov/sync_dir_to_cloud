@@ -5,9 +5,10 @@ import kotlinx.coroutines.CoroutineScope
 
 interface InstructionsProcessor {
     suspend fun process(
-        scope: CoroutineScope,
-        @StringRes operationNameId: Int,
-        processedObjectRelativePath: String,
+        parentScope: CoroutineScope,
+        @StringRes operationName: Int,
+        firstItem: String,
+        secondItem: String?,
         codeBlock: suspend () -> Unit
     )
 }

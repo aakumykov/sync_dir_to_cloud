@@ -14,38 +14,43 @@ class BasicInstructionsProcessor(
 ): InstructionsProcessor {
 
     override suspend fun process(
-        scope: CoroutineScope,
-        @StringRes operationNameId: Int,
-        relativeFilePath: String,
+        parentScope: CoroutineScope,
+        @StringRes operationName: Int,
+        firstItem: String,
+        secondItem: String?,
         codeBlock: suspend () -> Unit
     ) {
         val jobId = newRandomId
 
         runInCoroutineExtended(
-            scope = scope,
+            scope = parentScope,
             onStart = { job ->
                 operationJobsHolder.addJob(jobId, job)
                 fileOperationLogger2.logStarted(
                     jobId,
-                    logMessageSupplier.operationMessageIdStarted,
-                    logMessageSupplier.operationDescriptionStarted)
+                    operationName,
+                    firstItem,
+                    secondItem)
             },
             onFinish = {
                 fileOperationLogger2.logFinished(
-                    logMessageSupplier.operationMessageIdFinished,
-                    logMessageSupplier.operationDescriptionFinished)
+                    operationName,
+                    firstItem,
+                    secondItem)
             },
             onCancel = { e ->
                 operationJobsHolder.removeJob(jobId)
                 fileOperationLogger2.logCancelled(
-                    logMessageSupplier.operationMessageIdCancelled,
-                    logMessageSupplier.operationDescriptionCancel,
+                    operationName,
+                    firstItem,
+                    secondItem,
                     e)
             },
             onError = { t ->
                 fileOperationLogger2.logError(
-                    logMessageSupplier.operationMessageIdError,
-                    logMessageSupplier.operationDescriptionError,
+                    operationName,
+                    firstItem,
+                    secondItem,
                     t)
             },
         ) {

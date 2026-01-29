@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 
 class FileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -15,11 +16,11 @@ class FileInstructionsProcessor @AssistedInject constructor(
     private val copyInstructionsProcessorAssistedFactory: CopyInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
-    suspend fun process(list: List<SyncInstruction>) {
+    suspend fun process(parentScope: CoroutineScope, list: List<SyncInstruction>) {
         list.forEach { instruction ->
             when(instruction.operation) {
-                SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyInstructionsProcessor.process(instruction)
-                SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> copyInstructionsProcessor.process(instruction)
+                SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyInstructionsProcessor.process(parentScope, instruction)
+                SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> copyInstructionsProcessor.process(parentScope, instruction)
 
                 SyncOperation.RESOLVE_COLLISION -> collisionResolverInstructionsProcessor.process(instruction)
 
@@ -48,7 +49,7 @@ class FileInstructionsProcessor @AssistedInject constructor(
     }
 
     private val copyInstructionsProcessor by lazy {
-        copyInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
+        copyInstructionsProcessorAssistedFactory.create(syncTask, executionId)
     }
 }
 

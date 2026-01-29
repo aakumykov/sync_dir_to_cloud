@@ -38,8 +38,11 @@ data class FileOperationLogItem2(
 
     val message: String,
 
-    @ColumnInfo(defaultValue = "@")
-    val description: String,
+    @ColumnInfo(defaultValue = "")
+    val firstItem: String,
+
+    @ColumnInfo(defaultValue = "null")
+    val secondItem: String?,
 
     val timestamp: Long,
 
@@ -54,7 +57,8 @@ data class FileOperationLogItem2(
             taskId: String,
             executionId: String,
             message: String,
-            description: String,
+            firstItem: String,
+            secondItem: String?,
             jobId: String?
         )
             : FileOperationLogItem2
@@ -65,7 +69,8 @@ data class FileOperationLogItem2(
                 taskId = taskId,
                 executionId = executionId,
                 message = message,
-                description = description,
+                firstItem = firstItem,
+                secondItem = secondItem,
                 timestamp = currentTime,
                 jobId = jobId
             )

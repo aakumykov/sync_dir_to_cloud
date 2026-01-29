@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
@@ -15,31 +16,33 @@ import kotlinx.coroutines.Dispatchers
 
 // TODO: переименовать в FileCopyInstructionsProcessor
 class CopyInstructionsProcessor @AssistedInject constructor(
-    private val syncTask: SyncTask,
-    private val executionId: String,
+    @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
     private val basicInstructionsProcessor: BasicInstructionsProcessor,
 ) {
-    suspend fun work(scope: CoroutineScope, instruction: SyncInstruction) {
+    suspend fun process(scope: CoroutineScope, instruction: SyncInstruction) {
 
         val sourceObject = syncObjectDBReader.getSyncObject(instruction.objectIdInSource!!)
         val targetObject = syncObjectDBReader.getSyncObject(instruction.objectIdInTarget!!)
 
-        val pathInTarget = targetObject!!.absolutePathIn(syncTask)
+        val sourceItem = sourceObject!!.relativePath
+        val targetItem = targetObject!!.relativePath
 
-        val operationNameId = when(instruction.operation) {
+        val pathInTarget = targetObject.absolutePathIn(syncTask)
+
+        val operationName = when(instruction.operation) {
             SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> R.string.LOG_ITEM_copying_from_source_to_target
             SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> R.string.LOG_ITEM_copying_from_source_to_target
             else -> throw IllegalArgumentException("Unsupported operation '${instruction.operation}'")
         }
 
-        val relativeFilePath = sourceObject!!.relativePath
-
         basicInstructionsProcessor.process(
-            scope = scope,
-            operationNameId = operationNameId,
-            relativeFilePath = relativeFilePath,
+            parentScope = scope,
+            operationName = operationName,
+            firstItem = sourceItem,
+            secondItem = targetItem,
         ){
             syncObjectCopier.copyFileFromSourceToTarget(
                 sourceObject,
