@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
+import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
@@ -14,7 +15,8 @@ class BasicInstructionsProcessor(
 
     override suspend fun process(
         scope: CoroutineScope,
-        logMessageSupplier: FileOperationLogMessageSupplier,
+        @StringRes operationNameId: Int,
+        relativeFilePath: String,
         codeBlock: suspend () -> Unit
     ) {
         val jobId = newRandomId
