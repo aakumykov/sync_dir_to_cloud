@@ -38,7 +38,8 @@ data class FileOperationLogItem2(
 
     val message: String,
 
-    @ColumnInfo(defaultValue = "") val description: String,
+    @ColumnInfo(defaultValue = "null")
+    val description: String?,
 
     val timestamp: Long,
 
@@ -53,18 +54,22 @@ data class FileOperationLogItem2(
             taskId: String,
             executionId: String,
             message: String,
-            description: String,
+            description: String?,
             jobId: String?
-        ) = FileOperationLogItem2(
-            id = newRandomId,
-            logItemType = logItemType,
-            taskId = taskId,
-            executionId = executionId,
-            message = message,
-            description = description,
-            timestamp = currentTime,
-            jobId = jobId
         )
+            : FileOperationLogItem2
+        {
+            return FileOperationLogItem2(
+                id = newRandomId,
+                logItemType = logItemType,
+                taskId = taskId,
+                executionId = executionId,
+                message = message,
+                description = description,
+                timestamp = currentTime,
+                jobId = jobId
+            )
+        }
 
         const val TABLE_NAME = "file_operation_logs_2"
     }

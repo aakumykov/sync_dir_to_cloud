@@ -132,8 +132,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         AutoMigration(from = 132, to = 133), // Новый объект [FileOperationLogItem2]
         AutoMigration(from = 133, to = 134, spec = RenameLogEntryTypeToLogItemType::class),
         AutoMigration(from = 134, to = 135, spec = DeleteFilePathFromFileOperationLogItem2::class), // FileOperationLogItem2: +description -filePath
+        AutoMigration(from = 135, to = 136), // FileOperationLogItem2().description стало nullable
     ],
-    version = 135,
+    version = 136,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
