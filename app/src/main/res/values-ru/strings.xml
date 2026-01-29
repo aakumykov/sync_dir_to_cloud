@@ -200,5 +200,5 @@
     <string name="TASK_LOG_task_cancelled">Задача отменена</string>
     <string name="TASK_LOG_task_error">Ошибка задачи: %1$s</string>
     <string name="title_activity_sync_log_compose">Журнал синхронизации</string>
-    <string name="LOG_ITEM_copying_from_source_to_target">Копируется файл</string>
+    <string name="LOG_ITEM_copying_file_started">Копируется файл</string>
 </resources>

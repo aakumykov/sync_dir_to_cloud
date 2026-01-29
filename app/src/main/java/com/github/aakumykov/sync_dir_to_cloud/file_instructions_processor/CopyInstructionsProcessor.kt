@@ -4,7 +4,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
@@ -20,7 +19,9 @@ class CopyInstructionsProcessor @AssistedInject constructor(
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
     private val basicInstructionsProcessor: BasicInstructionsProcessor,
-) {
+)
+    : FileOperationLogMessageSupplier
+{
     suspend fun work(scope: CoroutineScope, instruction: SyncInstruction) {
 
         val sourceObject = syncObjectDBReader.getSyncObject(instruction.objectIdInSource!!)
@@ -28,21 +29,10 @@ class CopyInstructionsProcessor @AssistedInject constructor(
 
         val pathInTarget = targetObject!!.absolutePathIn(syncTask)
 
-        val operationNameId = when(instruction.operation) {
-            SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> R.string.LOG_ITEM_copying_from_source_to_target
-            SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> R.string.LOG_ITEM_copying_from_source_to_target
-            else -> throw IllegalArgumentException("Unsupported operation '${instruction.operation}'")
-        }
+        basicInstructionsProcessor.process(scope, this) {
 
-        val relativeFilePath = sourceObject!!.relativePath
-
-        basicInstructionsProcessor.process(
-            scope = scope,
-            operationNameId = operationNameId,
-            relativeFilePath = relativeFilePath,
-        ){
             syncObjectCopier.copyFileFromSourceToTarget(
-                sourceObject,
+                sourceObject!!,
                 pathInTarget,
                 true // FIXME: убрать!
             )
@@ -56,6 +46,30 @@ class CopyInstructionsProcessor @AssistedInject constructor(
             databaseInteractingScope = CoroutineScope(Dispatchers.IO)
         )
     }
+
+    override val operationMessageIdStarted: Int
+        get() = R.string.LOG_ITEM_copying_file_started
+    
+    override val operationMessageIdFinished: Int
+        get() = R.string.LOG_ITEM_copying_file_finished
+    
+    override val operationMessageIdCancelled: Int
+        get() = R.string.LOG_ITEM_copying_file_cancelled
+    
+    override val operationMessageIdError: Int
+        get() = R.string.LOG_ITEM_copying_file_error
+    
+    override val operationDescriptionStarted: String
+        get() = TODO("Not yet implemented")
+    
+    override val operationDescriptionFinished: String
+        get() = TODO("Not yet implemented")
+    
+    override val operationDescriptionCancel: String?
+        get() = TODO("Not yet implemented")
+    
+    override val operationDescriptionError: String?
+        get() = TODO("Not yet implemented")
 }
 
 
