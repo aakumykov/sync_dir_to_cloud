@@ -5,38 +5,51 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.F
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import kotlinx.coroutines.CoroutineScope
 
-abstract class AbstractInstructionsProcessor(
+class BasicInstructionsProcessor(
     private val taskId: String,
     private val executionId: String,
     private val fileOperationLogger2Factory: FileOperationLogger2AssistedFactory,
     private val operationJobsHolder: OperationJobsHolder,
-) {
-    fun process(scope: CoroutineScope, block: () -> Unit) {
+): InstructionsProcessor {
+
+    override suspend fun process(
+        scope: CoroutineScope,
+        logMessageSupplier: FileOperationLogMessageSupplier,
+        codeBlock: suspend () -> Unit
+    ) {
         val jobId = newRandomId
 
         runInCoroutineExtended(
             scope = scope,
             onStart = { job ->
                 operationJobsHolder.addJob(jobId, job)
-                fileOperationLogger2.logStarted(jobId, operationStartsMessageId, operationDescription)
+                fileOperationLogger2.logStarted(
+                    jobId,
+                    logMessageSupplier.operationMessageIdStarted,
+                    logMessageSupplier.operationDescriptionStarted)
             },
             onFinish = {
-                fileOperationLogger2.logFinished(operationStartsMessageId, operationDescription)
+                fileOperationLogger2.logFinished(
+                    logMessageSupplier.operationMessageIdFinished,
+                    logMessageSupplier.operationDescriptionFinished)
             },
             onCancel = { e ->
                 operationJobsHolder.removeJob(jobId)
+                fileOperationLogger2.logCancelled(
+                    logMessageSupplier.operationMessageIdCancelled,
+                    logMessageSupplier.operationDescriptionCancel,
+                    e)
             },
             onError = { t ->
-                fileOperationLogger2.logError(operationStartsMessageId, operationDescription, t)
+                fileOperationLogger2.logError(
+                    logMessageSupplier.operationMessageIdError,
+                    logMessageSupplier.operationDescriptionError,
+                    t)
             },
         ) {
-            block.invoke()
+            codeBlock.invoke()
         }
     }
-
-    abstract val operationStartsMessageId: Int
-    abstract val operationFinishesMessageId: Int
-    abstract val operationDescription: String
 
     private val fileOperationLogger2 by lazy {
         fileOperationLogger2Factory.create(taskId, executionId)
