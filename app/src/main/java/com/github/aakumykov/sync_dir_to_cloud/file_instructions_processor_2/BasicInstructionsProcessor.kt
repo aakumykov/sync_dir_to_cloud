@@ -44,7 +44,6 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                     secondItem)
             },
             onCancel = { e ->
-                operationJobsHolder.removeJob(jobId)
                 fileOperationLogger2.logCancelled(
                     operationName,
                     firstItem,
@@ -58,6 +57,9 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                     secondItem,
                     t)
             },
+            finally = {
+                operationJobsHolder.removeJob(jobId)
+            }
         ) {
             codeBlock.invoke()
         }

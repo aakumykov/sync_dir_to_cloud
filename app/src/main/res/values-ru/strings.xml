@@ -204,4 +204,6 @@
     <string name="LOG_ITEM_backing_up_dir">Резервное копирование каталога</string>
     <string name="LOG_ITEM_backing_up_file">Резервное копирование файла</string>
     <string name="LOG_ITEM_copying_from_target_to_source">Копируется файл из приёмника в источник</string>
+    <string name="LOG_ITEM_deleting_file">Удаление файла</string>
+    <string name="LOG_ITEM_deleting_dir">Удаление каталога</string>
 </resources>

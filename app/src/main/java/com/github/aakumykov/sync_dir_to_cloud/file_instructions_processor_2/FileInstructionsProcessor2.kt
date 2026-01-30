@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
@@ -20,7 +19,7 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     private val copyInstructionsProcessorAssistedFactory: CopyInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
-    suspend fun processFileInstructions(selectUnprocessed: Boolean) {
+    suspend fun processFileInstructions(isUnprocessed: Boolean) {
         /*list.forEach { instruction ->
             when(instruction.operation) {
                 SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyInstructionsProcessor.process(parentScope, instruction)
@@ -39,8 +38,9 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
             }
         }*/
 
-        backupInstructionsProcessor.process(list(selectUnprocessed))
-        copyInstructionsProcessor.process(list(selectUnprocessed))
+        backupInstructionsProcessor.process(list(isUnprocessed))
+        deleteInstructionsProcessor.process(list(isUnprocessed))
+        copyInstructionsProcessor.process(list(isUnprocessed))
     }
 
     private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
@@ -69,7 +69,7 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     }
 
     private val deleteInstructionsProcessor by lazy {
-        deleteInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
+        deleteInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
     }
 
     private val copyInstructionsProcessor by lazy {
