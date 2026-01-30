@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
+package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
@@ -7,7 +7,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class DeleteInstructionsProcessor @AssistedInject constructor(
+class BackupInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
 ) {
@@ -17,9 +17,9 @@ class DeleteInstructionsProcessor @AssistedInject constructor(
 }
 
 @AssistedFactory
-interface DeleteInstructionsProcessorAssistedFactory {
+interface BackupInstructionsProcessorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
-    ): DeleteInstructionsProcessor
+    ): BackupInstructionsProcessor
 }

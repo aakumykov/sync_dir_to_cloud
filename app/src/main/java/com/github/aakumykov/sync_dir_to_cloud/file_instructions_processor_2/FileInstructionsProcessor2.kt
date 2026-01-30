@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
+package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -8,7 +8,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
-class FileInstructionsProcessor @AssistedInject constructor(
+class FileInstructionsProcessor2 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val collisionResolverInstructionsProcessorAssistedFactory: CollisionResolverInstructionsProcessorAssistedFactory,
@@ -54,9 +54,9 @@ class FileInstructionsProcessor @AssistedInject constructor(
 }
 
 @AssistedFactory
-interface FileInstructionsProcessorAssistedFactory {
+interface FileInstructionsProcessor2AssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String
-    ): FileInstructionsProcessor
+    ): FileInstructionsProcessor2
 }

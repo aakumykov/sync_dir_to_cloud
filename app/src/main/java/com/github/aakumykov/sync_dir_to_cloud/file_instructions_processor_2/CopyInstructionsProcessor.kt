@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
+package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
