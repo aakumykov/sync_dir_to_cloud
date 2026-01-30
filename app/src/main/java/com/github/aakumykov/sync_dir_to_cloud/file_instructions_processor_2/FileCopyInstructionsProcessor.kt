@@ -16,8 +16,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-// TODO: переименовать в FileCopyInstructionsProcessor
-class CopyInstructionsProcessor @AssistedInject constructor(
+class FileCopyInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
@@ -101,5 +100,5 @@ interface CopyInstructionsProcessorAssistedFactory {
         syncTask: SyncTask,
         executionId: String,
         parentScope: CoroutineScope,
-    ): CopyInstructionsProcessor
+    ): FileCopyInstructionsProcessor
 }
