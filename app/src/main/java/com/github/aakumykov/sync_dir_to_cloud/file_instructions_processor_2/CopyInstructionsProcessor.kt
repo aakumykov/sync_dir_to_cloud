@@ -20,7 +20,7 @@ class CopyInstructionsProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
-    private val basicInstructionsProcessor: BasicInstructionsProcessor,
+    private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
 ) {
     suspend fun process(scope: CoroutineScope, instruction: SyncInstruction) {
 
@@ -50,6 +50,10 @@ class CopyInstructionsProcessor @AssistedInject constructor(
                 true // FIXME: убрать!
             )
         }
+    }
+
+    private val basicInstructionsProcessor by lazy {
+        basicInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
     }
 
     private val syncObjectCopier by lazy {

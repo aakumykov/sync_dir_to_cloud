@@ -79,8 +79,12 @@ class SyncInstruction (
         SyncOperation.COPY_FROM_TARGET_TO_SOURCE == operation ||
                 SyncOperation.COPY_FROM_SOURCE_TO_TARGET == operation
 
-    override fun toString(): String {
+    /*override fun toString(): String {
         return SyncInstruction::class.java.simpleName + "{ $operation, $relativePath }"
+    }*/
+
+    override fun toString(): String {
+        return "SyncInstruction(partsLabel=$partsLabel, id='$id', taskId='$taskId', executionId='$executionId', objectIdInSource=$objectIdInSource, objectIdInTarget=$objectIdInTarget, orderNum=$orderNum, operation=$operation, isDir=$isDir, relativePath='$relativePath', isProcessed=$isProcessed, isDeletion=$isDeletion, isCollisionResolution=$isCollisionResolution, isBackup=$isBackup, isBackupInSource=$isBackupInSource, isBackupInTarget=$isBackupInTarget, notDeletion=$notDeletion, isCopying=$isCopying)"
     }
 
     companion object {

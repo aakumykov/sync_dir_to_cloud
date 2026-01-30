@@ -16,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.FileInstructionsProcessor2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -63,6 +64,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,
     private val fileInstructionsProcessorAssistedFactory: FileInstructionsProcessorAssistedFactory,
+    private val fileInstructionsProcessor2AssistedFactory: FileInstructionsProcessor2AssistedFactory,
 
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
@@ -214,7 +216,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = !unprocessed,
             logMessage = logMessage,
             codeBlock = {
-                fileInstructionsProcessor.processFileInstructions(unprocessed)
+                fileInstructionsProcessor2.processFileInstructions(unprocessed)
             }
         )
     }
@@ -329,8 +331,12 @@ class SyncTaskProcessor @AssistedInject constructor(
         oneStageOfTaskExecutorAssistedFactory.create(taskId, executionId, scope)
     }
 
-    private val fileInstructionsProcessor by lazy {
+    /*private val fileInstructionsProcessor by lazy {
         fileInstructionsProcessorAssistedFactory.create(syncTask, executionId, scope)
+    }*/
+
+    private val fileInstructionsProcessor2 by lazy {
+        fileInstructionsProcessor2AssistedFactory.create(scope, syncTask, executionId)
     }
 
     // FIXME: логика
