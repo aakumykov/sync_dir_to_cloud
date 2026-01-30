@@ -15,8 +15,8 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val syncInstructionRepository: SyncInstructionRepository,
-    private val collisionResolverInstructionsProcessorAssistedFactory: CollisionResolverInstructionsProcessorAssistedFactory,
     private val backupInstructionsProcessorAssistedFactory: BackupInstructionsProcessorAssistedFactory,
+    private val collisionResolverInstructionsProcessorAssistedFactory: CollisionResolverInstructionsProcessorAssistedFactory,
     private val copyInstructionsProcessorAssistedFactory: CopyInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
@@ -40,6 +40,7 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
         }*/
 
         backupInstructionsProcessor.process(list(selectUnprocessed))
+        copyInstructionsProcessor.process(list(selectUnprocessed))
     }
 
     private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
@@ -72,7 +73,7 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     }
 
     private val copyInstructionsProcessor by lazy {
-        copyInstructionsProcessorAssistedFactory.create(syncTask, executionId)
+        copyInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
     }
 }
 
