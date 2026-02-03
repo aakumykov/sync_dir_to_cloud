@@ -63,7 +63,6 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
 
     private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,
-    private val fileInstructionsProcessorAssistedFactory: FileInstructionsProcessorAssistedFactory,
     private val fileInstructionsProcessor2AssistedFactory: FileInstructionsProcessor2AssistedFactory,
 
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,

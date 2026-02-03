@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 //
 // Исполняет инструкции в определённом порядке.
 //
+@Deprecated("Устарел")
 class FileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,

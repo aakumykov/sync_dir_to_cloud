@@ -12,8 +12,8 @@ class CollisionResolverInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
 
     ) {
-    fun process(instruction: SyncInstruction) {
-        TODO("Not yet implemented")
+    fun process(instruction: Iterable<SyncInstruction>) {
+
     }
 }
 

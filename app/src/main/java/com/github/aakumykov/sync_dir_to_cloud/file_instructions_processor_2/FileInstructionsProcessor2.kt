@@ -9,6 +9,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * Исполняет инструкции в определённом порядке.
+ */
 class FileInstructionsProcessor2 @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
     @Assisted private val syncTask: SyncTask,
@@ -18,34 +21,23 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
 
     private val backupInstructionsProcessorAssistedFactory: BackupInstructionsProcessorAssistedFactory,
     private val collisionResolverInstructionsProcessorAssistedFactory: CollisionResolverInstructionsProcessorAssistedFactory,
-
     private val dirCreationInstructionsProcessorAssistedFactory: DirCreationInstructionsProcessorAssistedFactory,
     private val fileCopyInstructionsProcessorAssistedFactory: FileCopyInstructionsProcessorAssistedFactory,
-
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
+    // FIXME: верен ли порядок?
     suspend fun processFileInstructions(isUnprocessed: Boolean) {
-        /*list.forEach { instruction ->
-            when(instruction.operation) {
-                SyncOperation.COPY_FROM_SOURCE_TO_TARGET -> copyInstructionsProcessor.process(parentScope, instruction)
-                SyncOperation.COPY_FROM_TARGET_TO_SOURCE -> copyInstructionsProcessor.process(parentScope, instruction)
-
-                SyncOperation.RESOLVE_COLLISION -> collisionResolverInstructionsProcessor.process(instruction)
-
-                SyncOperation.BACKUP_IN_SOURCE -> backupInstructionsProcessor.process(instruction)
-                SyncOperation.BACKUP_IN_TARGET -> backupInstructionsProcessor.process(instruction)
-
-                SyncOperation.DELETE_IN_SOURCE -> deleteInstructionsProcessor.process(instruction)
-                SyncOperation.DELETE_IN_TARGET -> deleteInstructionsProcessor.process(instruction)
-
-                SyncOperation.DO_NOTHING_IN_SOURCE -> {}
-                SyncOperation.DO_NOTHING_IN_TARGET -> {}
-            }
-        }*/
-
+        // 10 - создание
         dirCreationInstructionsProcessor.process(list(isUnprocessed))
         copyInstructionsProcessor.process(list(isUnprocessed))
+
+        // 20 - разрешение коллизий
+//        collisionResolverInstructionsProcessor.process(list(isUnprocessed))
+
+        // 30 - бекап
         backupInstructionsProcessor.process(list(isUnprocessed))
+
+        // 40 - удаление
         deleteInstructionsProcessor.process(list(isUnprocessed))
     }
 
