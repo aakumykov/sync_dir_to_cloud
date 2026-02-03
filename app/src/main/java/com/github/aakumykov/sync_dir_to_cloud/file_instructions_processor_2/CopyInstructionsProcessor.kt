@@ -19,7 +19,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-class FileCopyInstructionsProcessor @AssistedInject constructor(
+class CopyInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
@@ -120,5 +120,5 @@ interface CopyInstructionsProcessorAssistedFactory {
         syncTask: SyncTask,
         executionId: String,
         parentScope: CoroutineScope,
-    ): FileCopyInstructionsProcessor
+    ): CopyInstructionsProcessor
 }
