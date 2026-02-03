@@ -1,6 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
+package com.github.aakumykov.sync_dir_to_cloud.utils
 
-import com.github.aakumykov.sync_dir_to_cloud.utils.launchWithStartCallback
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -9,6 +8,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 // Ценой пропуска исключений в дочерних корутинах сделал коллбек "onError" suspend.
+// FIXME: тестировать!
 fun runInCoroutineExtended(
     scope: CoroutineScope,
     context: CoroutineContext = EmptyCoroutineContext,
