@@ -207,5 +207,5 @@
     <string name="LOG_ITEM_deleting_file">Удаление файла</string>
     <string name="LOG_ITEM_deleting_dir">Удаление каталога</string>
     <string name="LOG_ITEM_creating_dir_from_source_in_target">В приёмнике создаётся каталог из источника</string>
-    <string name="LOG_ITEM_creating_dir_in_target_from_source">В источнике создаётся каталог из приёмника</string>
+    <string name="LOG_ITEM_creating_dir_from_target_in_source">В источнике создаётся каталог из приёмника</string>
 </resources>
