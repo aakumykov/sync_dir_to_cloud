@@ -13,9 +13,12 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
+
     private val syncInstructionRepository: SyncInstructionRepository,
+
     private val backupInstructionsProcessorAssistedFactory: BackupInstructionsProcessorAssistedFactory,
     private val collisionResolverInstructionsProcessorAssistedFactory: CollisionResolverInstructionsProcessorAssistedFactory,
+    private val dirCreationInstructionsProcessorAssistedFactory: DirCreationInstructionsProcessorAssistedFactory,
     private val copyInstructionsProcessorAssistedFactory: CopyInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
@@ -38,9 +41,10 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
             }
         }*/
 
+        dirCreationInstructionsProcessor.process(list(isUnprocessed))
+        copyInstructionsProcessor.process(list(isUnprocessed))
         backupInstructionsProcessor.process(list(isUnprocessed))
         deleteInstructionsProcessor.process(list(isUnprocessed))
-        copyInstructionsProcessor.process(list(isUnprocessed))
     }
 
     private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
@@ -70,6 +74,10 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
 
     private val deleteInstructionsProcessor by lazy {
         deleteInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
+    }
+
+    private val dirCreationInstructionsProcessor by lazy {
+        dirCreationInstructionsProcessorAssistedFactory.create(syncTask,executionId,parentScope)
     }
 
     private val copyInstructionsProcessor by lazy {
