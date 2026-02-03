@@ -18,8 +18,10 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
 
     private val backupInstructionsProcessorAssistedFactory: BackupInstructionsProcessorAssistedFactory,
     private val collisionResolverInstructionsProcessorAssistedFactory: CollisionResolverInstructionsProcessorAssistedFactory,
+
     private val dirCreationInstructionsProcessorAssistedFactory: DirCreationInstructionsProcessorAssistedFactory,
-    private val copyInstructionsProcessorAssistedFactory: CopyInstructionsProcessorAssistedFactory,
+    private val fileCopyInstructionsProcessorAssistedFactory: FileCopyInstructionsProcessorAssistedFactory,
+
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
     suspend fun processFileInstructions(isUnprocessed: Boolean) {
@@ -81,7 +83,7 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     }
 
     private val copyInstructionsProcessor by lazy {
-        copyInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
+        fileCopyInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
     }
 }
 

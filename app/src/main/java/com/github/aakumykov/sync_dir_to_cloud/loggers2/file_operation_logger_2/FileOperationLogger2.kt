@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
@@ -28,17 +29,18 @@ class FileOperationLogger2 @AssistedInject constructor(
         secondItem: String?
     ) {
         runNonCancellable {
-            repository.add(
-                FileOperationLogItem2.create(
-                    logItemType = LogItemType.BUSY,
-                    taskId = taskId,
-                    executionId = executionId,
-                    message = resources.getString(operationName),
-                    firstItem = firstItem,
-                    secondItem = secondItem,
-                    jobId = jobId
-                )
-            )
+            FileOperationLogItem2.create(
+                logItemType = LogItemType.BUSY,
+                taskId = taskId,
+                executionId = executionId,
+                message = resources.getString(operationName),
+                firstItem = firstItem,
+                secondItem = secondItem,
+                jobId = jobId
+            ).also {
+                repository.add(it)
+                Log.d(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+            }
         }
     }
 
@@ -48,17 +50,18 @@ class FileOperationLogger2 @AssistedInject constructor(
         secondItem: String?
     ) {
         runNonCancellable {
-            repository.add(
-                FileOperationLogItem2.create(
-                    logItemType = LogItemType.SUCCESS,
-                    taskId = taskId,
-                    executionId = executionId,
-                    message = resources.getString(operationName),
-                    firstItem = firstItem,
-                    secondItem = secondItem,
-                    jobId = null
-                )
-            )
+            FileOperationLogItem2.create(
+                logItemType = LogItemType.SUCCESS,
+                taskId = taskId,
+                executionId = executionId,
+                message = resources.getString(operationName),
+                firstItem = firstItem,
+                secondItem = secondItem,
+                jobId = null
+            ).also {
+                repository.add(it)
+                Log.d(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+            }
         }
     }
 
@@ -70,17 +73,18 @@ class FileOperationLogger2 @AssistedInject constructor(
     ) {
         val message = resources.getString(operationName) + " (${e.errorMsg})"
         runNonCancellable {
-            repository.add(
-                FileOperationLogItem2.create(
-                    logItemType = LogItemType.CANCELLED,
-                    taskId = taskId,
-                    executionId = executionId,
-                    message = message,
-                    firstItem = firstItem,
-                    secondItem = secondItem,
-                    jobId = null
-                )
-            )
+            FileOperationLogItem2.create(
+                logItemType = LogItemType.CANCELLED,
+                taskId = taskId,
+                executionId = executionId,
+                message = message,
+                firstItem = firstItem,
+                secondItem = secondItem,
+                jobId = null
+            ).also {
+                repository.add(it)
+                Log.i(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+            }
         }
     }
 
@@ -92,18 +96,23 @@ class FileOperationLogger2 @AssistedInject constructor(
     ) {
         val message = resources.getString(operationName) + " (${t.errorMsgExtended})"
         runNonCancellable {
-            repository.add(
-                FileOperationLogItem2.create(
-                    logItemType = LogItemType.ERROR,
-                    taskId = taskId,
-                    executionId = executionId,
-                    message = message,
-                    firstItem = firstItem,
-                    secondItem = secondItem,
-                    jobId = null
-                )
-            )
+            FileOperationLogItem2.create(
+                logItemType = LogItemType.ERROR,
+                taskId = taskId,
+                executionId = executionId,
+                message = message,
+                firstItem = firstItem,
+                secondItem = secondItem,
+                jobId = null
+            ).also {
+                repository.add(it)
+                Log.e(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+            }
         }
+    }
+
+    companion object {
+        val TAG: String = FileOperationLogger2::class.java.simpleName
     }
 }
 

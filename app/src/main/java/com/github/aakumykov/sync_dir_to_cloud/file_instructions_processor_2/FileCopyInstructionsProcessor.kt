@@ -20,7 +20,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-class FileCopyingInstructionsProcessor @AssistedInject constructor(
+class FileCopyInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
@@ -29,7 +29,11 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
     private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
 ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
-        processReal(list.filter { it.isCopying }.filter { it.isFile })
+        processReal(
+            list
+                .filter { it.isCopying }
+                .filter { it.isFile }
+        )
     }
 
     private suspend fun processReal(list: Iterable<SyncInstruction>) {
@@ -71,6 +75,7 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
         }
     }
 
+
     private suspend fun copyFromTo(
         fromObjectId: String,
         toSide: SyncSide,
@@ -78,13 +83,13 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
     ) {
         val fromObject = getObjectOrFail(fromObjectId)
 
-        // Ну и навертел...
-        val targetPath = fromObject!!.absolutePathIn(syncTask.absolutePathOfSide(toSide))
+        val sourcePath = fromObject.absolutePathIn(syncTask)
+        val targetPath = fromObject.absolutePathIn(syncTask.absolutePathOfSide(toSide))
 
         basicInstructionsProcessor.process(
             parentScope = parentScope,
             operationName = operationName,
-            firstItem = fromObject.relativePath,
+            firstItem = sourcePath,
             secondItem = targetPath,
         ){
             syncObjectCopier.copyFileFromSourceToTarget(
@@ -124,10 +129,10 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface CopyInstructionsProcessorAssistedFactory {
+interface FileCopyInstructionsProcessorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
         parentScope: CoroutineScope,
-    ): DirCreationInstructionsProcessor
+    ): FileCopyInstructionsProcessor
 }

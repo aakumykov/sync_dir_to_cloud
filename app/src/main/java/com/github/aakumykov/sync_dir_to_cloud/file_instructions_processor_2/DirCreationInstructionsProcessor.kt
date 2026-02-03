@@ -8,7 +8,9 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
+import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
@@ -25,7 +27,11 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
 ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
-        processReal(list.filter { it.isCopying }.filter { it.isDir })
+        processReal(
+            list
+                .filter { it.isCopying }
+                .filter { it.isDir }
+        )
     }
 
 
@@ -71,28 +77,33 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
 
     private suspend fun createDir(
         fromObjectId: String,
-        inSyncSide: SyncSide,
+        toSyncSide: SyncSide,
         @StringRes operationName: Int
     ) {
-        val sourceObject = getObjectOrFail(fromObjectId)
+        val fromObject = getObjectOrFail(fromObjectId)
+
+        val basePath = when(toSyncSide) {
+            SyncSide.SOURCE -> fromObject.basePathIn(syncTask.sourcePath!!)
+            SyncSide.TARGET -> fromObject.basePathIn(syncTask.targetPath!!)
+        }
 
         basicInstructionsProcessor.process(
             parentScope = parentScope,
             operationName = operationName,
-            firstItem = null,
-            secondItem = null,
+            firstItem = fromObject.absolutePathIn(syncTask),
+            secondItem = fromObject.absolutePathIn(basePath),
         ) {
-            when(inSyncSide) {
+            when(toSyncSide) {
                 SyncSide.SOURCE -> {
                     dirCreator.createDirInSource(
-                        basePath = sourceObject.basePathIn(syncTask.targetPath!!),
-                        dirName = sourceObject.name
+                        basePath = basePath,
+                        dirName = fromObject.name
                     )
                 }
                 SyncSide.TARGET -> {
                     dirCreator.createDirInTarget(
-                        basePath = sourceObject.basePathIn(syncTask.targetPath!!),
-                        dirName = sourceObject.name
+                        basePath = basePath,
+                        dirName = fromObject.name
                     )
                 }
             }

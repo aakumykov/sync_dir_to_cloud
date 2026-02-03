@@ -30,8 +30,7 @@ class InstructionLogger @AssistedInject constructor(
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.d(TAG, it.message)
-//            Log.d(TAG, "Выполняется инструкция '$it'")
+                Log.d(TAG, "${it.logItemType}: ${it.message}")
             }
         }
     }
@@ -47,7 +46,7 @@ class InstructionLogger @AssistedInject constructor(
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.d(TAG, it.message)
+                Log.d(TAG, "${it.logItemType}: ${it.message}")
             }
         }
     }
@@ -63,8 +62,7 @@ class InstructionLogger @AssistedInject constructor(
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.e(TAG, it.message)
-//            Log.i(TAG, "Отменено выполнение инструкции '$it'")
+                Log.i(TAG, "${it.logItemType}: ${it.message}")
             }
         }
     }
@@ -80,8 +78,7 @@ class InstructionLogger @AssistedInject constructor(
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.e(TAG, it.message, throwable)
-//            Log.e(TAG, "Ошибка выполнения инструкции $it --> ${throwable.errorMsgExtended}", throwable)
+                Log.e(TAG, "${it.logItemType}: ${it.message}", throwable)
             }
         }
     }
