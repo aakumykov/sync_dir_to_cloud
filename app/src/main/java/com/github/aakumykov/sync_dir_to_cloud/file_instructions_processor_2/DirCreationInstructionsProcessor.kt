@@ -10,13 +10,15 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
-import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 class DirCreationInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -42,44 +44,51 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
 
 
     private suspend fun createDirsFromSourceInTarget(list: List<SyncInstruction>) {
-        list.forEach { instruction ->
+        parentScope.launch {
+            list.map { instruction ->
 
-            val sourceObjectId = instruction.objectIdInSource
+                val sourceObjectId = instruction.objectIdInSource
 
-            if (null == sourceObjectId)
-                throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+                if (null == sourceObjectId)
+                    throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
-            createDir(
-                sourceObjectId,
-                SyncSide.TARGET,
-                R.string.LOG_ITEM_creating_dir_from_source_in_target
-            )
-        }
+                createDir(
+                    scope = this,
+                    sourceObjectId,
+                    SyncSide.TARGET,
+                    R.string.LOG_ITEM_creating_dir_from_source_in_target
+                )
+            }.joinAll()
+        }.join()
     }
 
 
     private suspend fun createDirsFromTargetInSource(list: List<SyncInstruction>) {
-        list.forEach { instruction ->
+        parentScope.launch {
+            list.map { instruction ->
 
-            val targetObjectId = instruction.objectIdInTarget
+                val targetObjectId = instruction.objectIdInTarget
 
-            if (null == targetObjectId)
-                throw IllegalArgumentException("Target object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+                if (null == targetObjectId)
+                    throw IllegalArgumentException("Target object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
-            createDir(
-                targetObjectId,
-                SyncSide.SOURCE,
-                R.string.LOG_ITEM_creating_dir_from_target_in_source
-            )
-        }
+                createDir(
+                    scope = this,
+                    targetObjectId,
+                    SyncSide.SOURCE,
+                    R.string.LOG_ITEM_creating_dir_from_target_in_source
+                )
+            }.joinAll()
+        }.join()
     }
 
 
     private suspend fun createDir(
+        scope: CoroutineScope,
         fromObjectId: String,
         toSyncSide: SyncSide,
         @StringRes operationName: Int
-    ) {
+    ): Job {
         val fromObject = getObjectOrFail(fromObjectId)
 
         val basePath = when(toSyncSide) {
@@ -87,8 +96,8 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
             SyncSide.TARGET -> fromObject.basePathIn(syncTask.targetPath!!)
         }
 
-        basicInstructionsProcessor.process(
-            parentScope = parentScope,
+        return basicInstructionsProcessor.process(
+            scope = scope,
             operationName = operationName,
             firstItem = fromObject.absolutePathIn(syncTask),
             secondItem = fromObject.absolutePathIn(basePath),

@@ -31,7 +31,7 @@ class BackupInstructionsProcessor @AssistedInject constructor(
     private suspend fun backupDirs(list: List<SyncInstruction>) {
         list.forEach { instruction ->
             basicInstructionsProcessor.process(
-                parentScope = parentScope,
+                scope = parentScope,
                 operationName = R.string.LOG_ITEM_backing_up_dir,
                 firstItem = instruction.relativePath,
                 secondItem = null
@@ -46,7 +46,7 @@ class BackupInstructionsProcessor @AssistedInject constructor(
     private suspend fun backupFiles(list: List<SyncInstruction>) {
         list.forEach { instruction ->
             basicInstructionsProcessor.process(
-                parentScope = parentScope,
+                scope = parentScope,
                 operationName = R.string.LOG_ITEM_backing_up_file,
                 firstItem = instruction.relativePath,
                 secondItem = null

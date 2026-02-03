@@ -106,7 +106,7 @@ class FileOperationLogger2 @AssistedInject constructor(
                 jobId = null
             ).also {
                 repository.add(it)
-                Log.e(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+                Log.e(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)", t)
             }
         }
     }

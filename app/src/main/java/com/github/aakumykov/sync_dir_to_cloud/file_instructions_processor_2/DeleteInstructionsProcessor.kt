@@ -31,7 +31,7 @@ class DeleteInstructionsProcessor @AssistedInject constructor(
     private suspend fun processDeletion(list: Iterable<SyncInstruction>, @StringRes operationName: Int) {
         list.forEach { instruction ->
             basicInstructionsProcessor.process(
-                parentScope = parentScope,
+                scope = parentScope,
                 operationName = operationName,
                 firstItem = instruction.relativePath,
                 secondItem = null,

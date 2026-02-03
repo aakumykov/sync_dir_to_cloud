@@ -11,6 +11,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 
 class BasicInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -20,16 +21,16 @@ class BasicInstructionsProcessor @AssistedInject constructor(
 ): InstructionsProcessor {
 
     override suspend fun process(
-        parentScope: CoroutineScope,
+        scope: CoroutineScope,
         @StringRes operationName: Int,
         firstItem: String?,
         secondItem: String?,
         codeBlock: suspend () -> Unit
-    ) {
+    ): Job {
         val jobId = newRandomId
 
-        runInCoroutineExtended(
-            scope = parentScope,
+        return runInCoroutineExtended(
+            scope = scope,
             onStart = { job ->
                 operationJobsHolder.addJob(jobId, job)
                 fileOperationLogger2.logStarted(
