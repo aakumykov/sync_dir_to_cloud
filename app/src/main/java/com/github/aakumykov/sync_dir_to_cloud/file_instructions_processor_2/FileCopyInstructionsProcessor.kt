@@ -4,8 +4,11 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.absolutePathOfSide
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
@@ -40,9 +43,15 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     
     private suspend fun copyFromSourceToTarget(list: Iterable<SyncInstruction>) {
         list.forEach { instruction ->
+
+            val sourceObjectId = instruction.objectIdInSource
+
+            if (null == sourceObjectId)
+                throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+
             copyFromTo(
-                instruction.objectIdInSource!!,
-                instruction.objectIdInTarget!!,
+                sourceObjectId,
+                SyncSide.TARGET,
                 R.string.LOG_ITEM_copying_from_source_to_target
             )
         }
@@ -50,9 +59,15 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
 
     private suspend fun copyFromTargetToSource(list: Iterable<SyncInstruction>) {
         list.forEach { instruction ->
+
+            val targetObjectId = instruction.objectIdInTarget
+
+            if (null == targetObjectId)
+                throw IllegalArgumentException("Target object id (from that to be copying to source) cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+
             copyFromTo(
-                instruction.objectIdInTarget!!,
-                instruction.objectIdInSource!!,
+                targetObjectId,
+                SyncSide.SOURCE,
                 R.string.LOG_ITEM_copying_from_target_to_source
             )
         }
@@ -60,21 +75,26 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
 
     private suspend fun copyFromTo(
         fromObjectId: String,
-        toObjectId: String,
+        targetSide: SyncSide,
         @StringRes operationName: Int,
     ) {
         val fromObject = syncObjectDBReader.getSyncObject(fromObjectId)
-        val toObject = syncObjectDBReader.getSyncObject(toObjectId)
+
+        if (null == fromObject)
+            throw IllegalStateException("${SyncObject.TAG} used ad source of copied data is null!")
+
+        // Ну и навертел...
+        val targetPath = fromObject.absolutePathIn(syncTask.absolutePathOfSide(targetSide))
 
         basicInstructionsProcessor.process(
             parentScope = parentScope,
             operationName = operationName,
-            firstItem = fromObject!!.relativePath,
-            secondItem = toObject!!.relativePath,
+            firstItem = fromObject.relativePath,
+            secondItem = targetPath,
         ){
             syncObjectCopier.copyFileFromSourceToTarget(
                 fromObject,
-                toObject.absolutePathIn(syncTask),
+                targetPath,
                 true // FIXME: убрать!
             )
         }

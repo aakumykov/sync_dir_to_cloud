@@ -34,10 +34,7 @@ class SyncInstruction (
     @ColumnInfo(name = "task_id") val taskId: String,
     @ColumnInfo(name = "execution_id") val executionId: String,
 
-    @Deprecated("избавиться от ?")
     @ColumnInfo(name = "object_id_in_source") val objectIdInSource: String?,
-
-    @Deprecated("избавиться от ?")
     @ColumnInfo(name = "object_id_in_target") val objectIdInTarget: String?,
 
     @Deprecated("не используется")
@@ -88,6 +85,7 @@ class SyncInstruction (
     }
 
     companion object {
+        val TAG: String = SyncInstruction::class.java.simpleName
         fun from(
             comparisonState: ComparisonState,
             operation: SyncOperation,

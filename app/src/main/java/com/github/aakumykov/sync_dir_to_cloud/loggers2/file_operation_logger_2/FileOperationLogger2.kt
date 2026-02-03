@@ -24,7 +24,7 @@ class FileOperationLogger2 @AssistedInject constructor(
     suspend fun logStarted(
         jobId: String,
         @StringRes operationName: Int,
-        firstItem: String,
+        firstItem: String?,
         secondItem: String?
     ) {
         runNonCancellable {
@@ -42,7 +42,11 @@ class FileOperationLogger2 @AssistedInject constructor(
         }
     }
 
-    suspend fun logFinished(@StringRes operationName: Int, firstItem: String, secondItem: String?) {
+    suspend fun logFinished(
+        @StringRes operationName: Int,
+        firstItem: String?,
+        secondItem: String?
+    ) {
         runNonCancellable {
             repository.add(
                 FileOperationLogItem2.create(
@@ -58,7 +62,12 @@ class FileOperationLogger2 @AssistedInject constructor(
         }
     }
 
-    suspend fun logCancelled(@StringRes operationName: Int, firstItem: String, secondItem: String?, e: CancellationException) {
+    suspend fun logCancelled(
+        @StringRes operationName: Int,
+        firstItem: String?,
+        secondItem: String?,
+        e: CancellationException
+    ) {
         val message = resources.getString(operationName) + " (${e.errorMsg})"
         runNonCancellable {
             repository.add(
@@ -75,7 +84,12 @@ class FileOperationLogger2 @AssistedInject constructor(
         }
     }
 
-    suspend fun logError(@StringRes operationName: Int, firstItem: String, secondItem: String?, t: Throwable) {
+    suspend fun logError(
+        @StringRes operationName: Int,
+        firstItem: String?,
+        secondItem: String?,
+        t: Throwable
+    ) {
         val message = resources.getString(operationName) + " (${t.errorMsgExtended})"
         runNonCancellable {
             repository.add(

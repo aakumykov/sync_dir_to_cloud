@@ -7,7 +7,7 @@ interface InstructionsProcessor {
     suspend fun process(
         parentScope: CoroutineScope,
         @StringRes operationName: Int,
-        firstItem: String,
+        firstItem: String?,
         secondItem: String?,
         codeBlock: suspend () -> Unit
     )

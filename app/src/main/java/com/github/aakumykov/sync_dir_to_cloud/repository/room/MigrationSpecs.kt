@@ -14,6 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogIt
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.TASK_ID_FIELD_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.OLD_TABLE_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.TABLE_NAME
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 
 class FirstAddThisObjectSpec : AutoMigrationSpec
@@ -153,3 +154,16 @@ class DeleteFilePathFromFileOperationLogItem2 : AutoMigrationSpec
     columnName = "description"
 )
 class FileOperationLogItem2SourceItemTargetItem : AutoMigrationSpec
+
+
+@RenameColumn(
+    tableName = FileOperationLogItem2.TABLE_NAME,
+    fromColumnName = "firstItem",
+    toColumnName = "first_item"
+)
+@RenameColumn(
+    tableName = FileOperationLogItem2.TABLE_NAME,
+    fromColumnName = "secondItem",
+    toColumnName = "second_item"
+)
+class FileOperationLogItem2RenameFirstSecondItems : AutoMigrationSpec

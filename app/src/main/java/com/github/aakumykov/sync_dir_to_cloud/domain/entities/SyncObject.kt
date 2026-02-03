@@ -127,6 +127,8 @@ class SyncObject (
 
     companion object {
 
+        val TAG: String = SyncObject::class.java.simpleName
+
         fun id(fsItem: FSItem): String = sha256(fsItem.absolutePath)
 
         fun createAsNew(
