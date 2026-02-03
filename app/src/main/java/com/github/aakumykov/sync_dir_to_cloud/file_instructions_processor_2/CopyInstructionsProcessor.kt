@@ -33,16 +33,19 @@ class CopyInstructionsProcessor @AssistedInject constructor(
     }
 
     private suspend fun processReal(list: Iterable<SyncInstruction>) {
-        processList(list.filter { it.isDir })
-        processList(list.filter { it.isFile })
+        processList(list.filter { it.isDir }, true)
+        processList(list.filter { it.isFile }, false)
     }
 
-    private suspend fun processList(list: Iterable<SyncInstruction>) {
-        copyFromSourceToTarget(list.filter { SyncOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
-        copyFromTargetToSource(list.filter { SyncOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
+    private suspend fun processList(
+        list: Iterable<SyncInstruction>,
+        isDir: Boolean
+    ) {
+        copyFromSourceToTarget(list.filter { SyncOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation }, isDir)
+        copyFromTargetToSource(list.filter { SyncOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation }, isDir)
     }
     
-    private suspend fun copyFromSourceToTarget(list: Iterable<SyncInstruction>) {
+    private suspend fun copyFromSourceToTarget(list: Iterable<SyncInstruction>, isDir: Boolean) {
         list.forEach { instruction ->
 
             val sourceObjectId = instruction.objectIdInSource
@@ -50,15 +53,23 @@ class CopyInstructionsProcessor @AssistedInject constructor(
             if (null == sourceObjectId)
                 throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
+            val operationName = if (isDir) R.string.LOG_ITEM_creating_dir_from_source_in_target
+                                else R.string.LOG_ITEM_copying_from_source_to_target
+
             copyFromTo(
                 sourceObjectId,
                 SyncSide.TARGET,
-                R.string.LOG_ITEM_copying_from_source_to_target
+                operationName
             )
         }
     }
 
-    private suspend fun copyFromTargetToSource(list: Iterable<SyncInstruction>) {
+    fun <T> ifElse(condition: Boolean, onTrue: () -> T, onFalse: () -> T) {
+        if (condition) onTrue.invoke()
+        else onFalse.invoke()
+    }
+
+    private suspend fun copyFromTargetToSource(list: Iterable<SyncInstruction>, isDir: Boolean) {
         list.forEach { instruction ->
 
             val targetObjectId = instruction.objectIdInTarget
@@ -66,10 +77,13 @@ class CopyInstructionsProcessor @AssistedInject constructor(
             if (null == targetObjectId)
                 throw IllegalArgumentException("Target object id (from that to be copying to source) cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
+            val operationName = if (isDir) R.string.LOG_ITEM_creating_dir_in_target_from_source
+                                else R.string.LOG_ITEM_copying_from_target_to_source
+
             copyFromTo(
                 targetObjectId,
                 SyncSide.SOURCE,
-                R.string.LOG_ITEM_copying_from_target_to_source
+                operationName
             )
         }
     }
