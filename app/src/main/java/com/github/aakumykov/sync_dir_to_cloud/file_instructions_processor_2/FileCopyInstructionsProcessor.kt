@@ -45,40 +45,36 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
 
 
     private suspend fun copyFromSourceToTarget(list: Iterable<SyncInstruction>) {
-        parentScope.launch {
-            list.map { instruction ->
+        list.map { instruction ->
 
-                val sourceObjectId = instruction.objectIdInSource
+            val sourceObjectId = instruction.objectIdInSource
 
-                if (null == sourceObjectId)
-                    throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+            if (null == sourceObjectId)
+                throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
-                copyFromTo(
-                    sourceObjectId,
-                    SyncSide.TARGET,
-                    R.string.LOG_ITEM_copying_from_source_to_target
-                )
-            }.joinAll()
-        }.join()
+            copyFromTo(
+                sourceObjectId,
+                SyncSide.TARGET,
+                R.string.LOG_ITEM_copying_from_source_to_target
+            )
+        }.joinAll()
     }
 
 
     private suspend fun copyFromTargetToSource(list: Iterable<SyncInstruction>) {
-        parentScope.launch {
-            list.map { instruction ->
+        list.map { instruction ->
 
-                val targetObjectId = instruction.objectIdInTarget
+            val targetObjectId = instruction.objectIdInTarget
 
-                if (null == targetObjectId)
-                    throw IllegalArgumentException("Target object id (from that to be copying to source) cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+            if (null == targetObjectId)
+                throw IllegalArgumentException("Target object id (from that to be copying to source) cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
-                copyFromTo(
-                    targetObjectId,
-                    SyncSide.SOURCE,
-                    R.string.LOG_ITEM_copying_from_target_to_source
-                )
-            }.joinAll()
-        }.join()
+            copyFromTo(
+                targetObjectId,
+                SyncSide.SOURCE,
+                R.string.LOG_ITEM_copying_from_target_to_source
+            )
+        }.joinAll()
     }
 
 

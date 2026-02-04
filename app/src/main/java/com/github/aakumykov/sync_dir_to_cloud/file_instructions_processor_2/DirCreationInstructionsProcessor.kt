@@ -44,42 +44,38 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
 
 
     private suspend fun createDirsFromSourceInTarget(list: List<SyncInstruction>) {
-        parentScope.launch {
-            list.map { instruction ->
+        list.map { instruction ->
 
-                val sourceObjectId = instruction.objectIdInSource
+            val sourceObjectId = instruction.objectIdInSource
 
-                if (null == sourceObjectId)
-                    throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+            if (null == sourceObjectId)
+                throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
-                createDir(
-                    scope = this,
-                    sourceObjectId,
-                    SyncSide.TARGET,
-                    R.string.LOG_ITEM_creating_dir_from_source_in_target
-                )
-            }.joinAll()
-        }.join()
+            createDir(
+                scope = parentScope,
+                sourceObjectId,
+                SyncSide.TARGET,
+                R.string.LOG_ITEM_creating_dir_from_source_in_target
+            )
+        }.joinAll()
     }
 
 
     private suspend fun createDirsFromTargetInSource(list: List<SyncInstruction>) {
-        parentScope.launch {
-            list.map { instruction ->
+        list.map { instruction ->
 
-                val targetObjectId = instruction.objectIdInTarget
+            val targetObjectId = instruction.objectIdInTarget
 
-                if (null == targetObjectId)
-                    throw IllegalArgumentException("Target object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+            if (null == targetObjectId)
+                throw IllegalArgumentException("Target object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
 
-                createDir(
-                    scope = this,
-                    targetObjectId,
-                    SyncSide.SOURCE,
-                    R.string.LOG_ITEM_creating_dir_from_target_in_source
-                )
-            }.joinAll()
-        }.join()
+            createDir(
+                scope = parentScope,
+                targetObjectId,
+                SyncSide.SOURCE,
+                R.string.LOG_ITEM_creating_dir_from_target_in_source
+            )
+        }.joinAll()
     }
 
 
