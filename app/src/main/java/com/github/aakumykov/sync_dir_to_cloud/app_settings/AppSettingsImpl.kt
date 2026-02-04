@@ -41,10 +41,13 @@ class AppSettingsImpl @Inject constructor(
     override var fileTransferRetardationMs: Int
         get() {
             return try {
-                sharedPreferences.getInt(
+                sharedPreferences.getString(
                     keyFromResources(R.string.KEY_file_transfer_retardation_ms),
-                    DEFAULT_FILE_TRANSFER_RETARDATION_MS
-                )
+                    DEFAULT_FILE_TRANSFER_RETARDATION_MS.toString()
+                ).let {
+                    Log.d(TAG, "значение из настроек: '$it'")
+                    it
+                }?.toInt() ?: DEFAULT_FILE_TRANSFER_RETARDATION_MS
             } catch (t: Throwable) {
                 Log.w(TAG, t.errorMsg, t)
                 DEFAULT_FILE_TRANSFER_RETARDATION_MS

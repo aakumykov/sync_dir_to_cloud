@@ -77,8 +77,9 @@ class StreamToFileWriter @AssistedInject constructor(
         val dataTransferDelay = appSettings.fileTransferRetardationMs
 
         if (dataTransferDelay > 0)
-            Log.d(TAG, "putStreamReal(), используется замедление копирования $dataTransferDelay мс")
-
+            Log.d(TAG, "putStreamReal(), используется замедление копирования $dataTransferDelay мс.")
+        else
+            Log.d(TAG, "putStreamReal(), копирование без замедления.")
 
         return suspendCancellableCoroutine { cancellableContinuation ->
 
