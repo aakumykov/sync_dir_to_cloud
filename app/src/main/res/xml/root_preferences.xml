@@ -8,7 +8,7 @@
         android:summary="@string/SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs"
         />
 
-    <EditTextPreference
+    <androidx.preference.EditTextPreference
         android:icon="@drawable/ic_time"
         android:dialogIcon="@drawable/ic_time"
         android:defaultValue="@integer/DEFAULT_file_transfer_retardation_ms"
@@ -19,6 +19,7 @@
         android:title="@string/SETTINGS_file_transfer_retardation_ms"
         android:summary="@string/SETTINGS_SUMMARY_file_transfer_retardation_ms"
         app:useSimpleSummaryProvider="true"
+        android:inputType="numberDecimal"
         />
 
 </PreferenceScreen>
