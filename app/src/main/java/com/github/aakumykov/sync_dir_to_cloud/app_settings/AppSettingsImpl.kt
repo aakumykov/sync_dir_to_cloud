@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.app_settings
 
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.util.Log
 import androidx.annotation.BoolRes
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
@@ -9,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import javax.inject.Inject
 import androidx.core.content.edit
 import com.github.aakumykov.sync_dir_to_cloud.config.DebugConfig
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 
 class AppSettingsImpl @Inject constructor(
     private val resources: Resources,
@@ -38,15 +40,25 @@ class AppSettingsImpl @Inject constructor(
 
     override var fileTransferRetardationMs: Int
         get() {
-            return sharedPreferences.getString(
-                keyFromResources(R.string.KEY_file_transfer_retardation_ms),
-                DEFAULT_FILE_TRANSFER_RETARDATION_MS.toString()
-            )?.toInt() ?: DEFAULT_FILE_TRANSFER_RETARDATION_MS
+            return try {
+                sharedPreferences.getInt(
+                    keyFromResources(R.string.KEY_file_transfer_retardation_ms),
+                    DEFAULT_FILE_TRANSFER_RETARDATION_MS
+                )
+            } catch (t: Throwable) {
+                Log.w(TAG, t.errorMsg, t)
+                DEFAULT_FILE_TRANSFER_RETARDATION_MS
+            }
         }
         set(value) { sharedPreferences.edit {
             putInt(
                 keyFromResources(R.string.KEY_file_transfer_retardation_ms),
-                value
+                if (value.toString().isEmpty()) {
+                    Log.w(TAG, "Argument ($value) is not a number, using default value ($DEFAULT_FILE_TRANSFER_RETARDATION_MS)")
+                    DEFAULT_FILE_TRANSFER_RETARDATION_MS
+                }
+                else if (value < 0) DEFAULT_FILE_TRANSFER_RETARDATION_MS
+                else value
             )
         } }
 
@@ -63,4 +75,8 @@ class AppSettingsImpl @Inject constructor(
                 value
             )
         } }
+
+    companion object {
+        val TAG: String = AppSettingsImpl::class.java.simpleName
+    }
 }
