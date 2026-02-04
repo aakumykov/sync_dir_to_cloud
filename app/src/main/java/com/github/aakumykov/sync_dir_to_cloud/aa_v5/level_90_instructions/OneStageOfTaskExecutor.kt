@@ -27,6 +27,8 @@ class OneStageOfTaskExecutor @AssistedInject constructor(
          logMessage: TextMessage,
          codeBlock: suspend () -> Unit,
      ) {
+        Log.d(TAG, "process(isCritical:$isCritical)")
+
          scope.launch {
              try {
                  instructionLogger.logInstructionExecutionStarted(logMessage)

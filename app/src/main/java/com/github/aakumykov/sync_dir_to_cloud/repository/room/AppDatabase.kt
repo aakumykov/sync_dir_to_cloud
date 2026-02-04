@@ -47,7 +47,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         TaskExecutionLogItem::class,
         ComparisonState::class,
         SyncInstruction::class,
-        FileOperationLogItem::class,
         TaskLogItem::class,
         InstructionLogItem::class,
         FileOperationLogItem2::class,

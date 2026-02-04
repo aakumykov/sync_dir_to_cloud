@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_processor
 
+import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
@@ -7,11 +8,10 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.St
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_70_sync_task.BackupDirsPreparerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.ComparisonsDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_80_comparison.SourceWithTargetComparatorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.OneStageOfTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.OneStageOfTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.FileInstructionsProcessorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator.InstructionsGeneratorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -208,6 +208,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun processFileInstructions(unprocessed: Boolean) {
+        Log.d(TAG, "processFileInstructions(unprocessed:$unprocessed)")
+
         val logMessage = if (unprocessed) TextMessage(R.string.processing_unprocessed_file_instructions)
                          else TextMessage(R.string.processing_file_instructions)
 
