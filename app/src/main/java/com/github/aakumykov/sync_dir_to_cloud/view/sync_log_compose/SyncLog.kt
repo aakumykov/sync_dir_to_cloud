@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.asFlow
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
 
 @Composable
 fun SyncLog(modifier: Modifier = Modifier,
@@ -28,25 +29,32 @@ fun SyncLog(modifier: Modifier = Modifier,
         viewModel.startWorking(taskId, executionId)
     }
 
-    val listState = viewModel.logOfSync
+    val listState = viewModel.syncLogItem
         .collectAsState(emptyList())
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        items(items = listState.value, key = { it.timestamp }) { logOfSync ->
+        items(items = listState.value, key = { it.key }) { syncLogItem: SyncLogItem ->
             Column (
                 modifier = Modifier
                     .padding(4.dp)
                     .background(Color(0xffeeeeee), shape = RoundedCornerShape(8.dp))
-                    .padding(6.dp)
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                    .fillMaxWidth()
             ) {
                 Text(
-                    text = logOfSync.text,
+                    text = syncLogItem.text,
                     fontSize = 16.sp,
                 )
-                /*Text(
-                    text = logOfSync.subText,
-                    fontSize = 13.sp
-                )*/
+                if (null != syncLogItem.subText) {
+                    Text(
+                        text = syncLogItem.subText,
+                        fontSize = 13.sp,
+                        modifier = Modifier
+                            .padding(top = 5.dp)
+                            .background(Color(0xFFFCFCFC), shape = RoundedCornerShape(4.dp))
+                            .padding(horizontal = 6.dp)
+                    )
+                }
             }
         }
     }

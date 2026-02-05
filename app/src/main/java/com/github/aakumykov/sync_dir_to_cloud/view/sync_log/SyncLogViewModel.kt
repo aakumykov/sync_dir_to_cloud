@@ -7,16 +7,10 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.F
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLoggerAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
@@ -27,8 +21,8 @@ class SyncLogViewModel(
 
     private var isFirstRun = true
 
-    private val _logOfSync: MutableStateFlow<List<LogOfSync>> = MutableStateFlow(emptyList())
-    val logOfSync: Flow<List<LogOfSync>> = _logOfSync
+    private val _SyncLogItem: MutableStateFlow<List<SyncLogItem>> = MutableStateFlow(emptyList())
+    val syncLogItem: Flow<List<SyncLogItem>> = _SyncLogItem
 
 
     suspend fun startWorking(taskId: String, executionId: String) {
@@ -39,13 +33,13 @@ class SyncLogViewModel(
         val instructionLogger = instructionLogger(taskId, executionId)
         val fileOperationLogger = fileOperationLogger(taskId, executionId)
 
-        val instructionLogs: List<LogOfSync> = instructionLogger
+        val instructionLogs: List<SyncLogItem> = instructionLogger
             .list()
             .distinctBy {
                 "${it.taskId}--${it.executionId}--${it.message}"
             }
             .map {
-            LogOfSync(
+            SyncLogItem(
                 timestamp = it.timestamp,
                 logItemType = it.logItemType,
                 taskId = it.taskId,
@@ -55,13 +49,13 @@ class SyncLogViewModel(
             )
         }
 
-        val fileOperationLogs: List<LogOfSync> = fileOperationLogger
+        val fileOperationLogs: List<SyncLogItem> = fileOperationLogger
             .list()
             .distinctBy {
                 "${it.taskId}--${it.executionId}--${it.message}"
             }
             .map{
-                LogOfSync(
+                SyncLogItem(
                     timestamp = it.timestamp,
                     logItemType = it.logItemType,
                     taskId = it.taskId,
@@ -74,7 +68,7 @@ class SyncLogViewModel(
 
         val commonList = instructionLogs + fileOperationLogs
 
-        commonList.sortedBy { it.timestamp }.also { _logOfSync.emit(it) }
+        commonList.sortedBy { it.timestamp }.also { _SyncLogItem.emit(it) }
     }
 
     fun cancelJob(id: String) {

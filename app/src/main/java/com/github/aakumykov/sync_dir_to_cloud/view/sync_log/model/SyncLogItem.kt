@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 
-data class LogOfSync(
+data class SyncLogItem(
     val timestamp: Long,
     val logItemType: LogItemType,
     val taskId: String,
@@ -12,8 +12,10 @@ data class LogOfSync(
     val subText: String? = null,
     val progress: Int? = null,
 ) {
+    val key: String get() = "${taskId}${executionId}${timestamp}"
+
     override fun toString(): String {
-        return "LogOfSync(" +
+        return "SyncLogItem(" +
                 "timestamp=$timestamp, " +
                 "logItemType=$logItemType, " +
                 "text='$text', " +
