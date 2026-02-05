@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,17 +16,16 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
-import com.github.aakumykov.sync_dir_to_cloud.view.settings.SettingsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.settings.SettingsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.SyncLogFragmentCompose
+import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
-import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
 
 class MainActivity : AppCompatActivity() {
 

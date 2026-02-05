@@ -29,7 +29,6 @@ fun SyncLog(modifier: Modifier = Modifier,
     }
 
     val listState = viewModel.logOfSync
-        .asFlow()
         .collectAsState(emptyList())
 
     LazyColumn(modifier = modifier.fillMaxSize()) {

@@ -10,23 +10,21 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartSt
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
-import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
-import com.github.aakumykov.sync_dir_to_cloud.repository.sync_operation_log_repository.SyncOperationLogReader
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -129,13 +127,9 @@ class ViewModelsModule {
     @IntoMap
     @ViewModelKey(SyncLogViewModel::class)
     fun provideSyncLogViewModel(
-        syncOperationLogReader: SyncOperationLogReader,
-        executionLogReader: ExecutionLogReader,
         operationCancellationHolder: OperationCancellationHolder
     ): ViewModel {
         return SyncLogViewModel(
-            syncOperationLogReader,
-            executionLogReader,
             operationCancellationHolder
         )
     }

@@ -28,7 +28,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SharedPreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncOperationLogRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TaskLoggerModule
@@ -54,7 +53,6 @@ import dagger.Component
         SyncObjectLoggerInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
         SyncObjectRepositoryInterfacesModule::class,
-        SyncOperationLogRepositoryInterfacesModule::class,
         ExecutionLogRepositoryInterfacesModule::class,
         SyncInstructionRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,

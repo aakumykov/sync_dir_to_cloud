@@ -1,26 +1,25 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.InstructionLoggingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
 import dagger.Module
 import dagger.Provides
@@ -101,11 +100,6 @@ class RoomDAOModule {
     @Provides
     fun provideSyncInstructionDAO6(appDatabase: AppDatabase): SyncInstructionDAO {
         return appDatabase.getSyncInstructionDAO6()
-    }
-
-    @Provides
-    fun provideSyncOperationLoggerDAO(appDatabase: AppDatabase): SyncOperationLoggerDAO {
-        return appDatabase.getSyncOperationLoggerDAO()
     }
 
     @Provides

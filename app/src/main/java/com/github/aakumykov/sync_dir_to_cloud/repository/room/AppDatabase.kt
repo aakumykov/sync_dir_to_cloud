@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
@@ -26,7 +25,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadS
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncOperationLoggerDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
@@ -136,8 +134,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         AutoMigration(from = 137, to = 138, spec = FileOperationLogItem2SourceItemTargetItem::class), // FileOperationLogItem2().sourceItem,targetItem.
         AutoMigration(from = 138, to = 139), // FileOperationLogItem2().firstItem теперь nullable.
         AutoMigration(from = 139, to = 140, spec = FileOperationLogItem2RenameFirstSecondItems::class),
+        AutoMigration(from = 140, to = 141, spec = FileOperationLogItemDeletion::class),
     ],
-    version = 140,
+    version = 141,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -157,7 +156,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getExecutionLogDAO(): ExecutionLogDAO
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
     abstract fun getSyncInstructionDAO6(): SyncInstructionDAO
-    abstract fun getSyncOperationLoggerDAO(): SyncOperationLoggerDAO
     abstract fun getSyncTaskBackupDirDAO(): SyncTaskBackupDirDAO
     abstract fun getTaskLogger2DAO(): TaskLogger2DAO
     abstract fun getInstructionLoggingDAO(): InstructionLoggingDAO

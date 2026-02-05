@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
@@ -25,20 +24,6 @@ data class LogOfSync(
                 subText = item.details ?: "",
                 timestamp = item.timestamp,
                 operationState = executionLogItemTypeToOperationState(item.type),
-            )
-        }
-
-
-        fun fromFileOperationLogItem(item: FileOperationLogItem): LogOfSync {
-            return LogOfSync(
-                taskId = item.taskId,
-                executionId = item.executionId,
-                jobId = item.jobId,
-                text = item.operationName,
-                subText = item.errorMsg ?: item.objectName,
-                timestamp = item.timestamp,
-                operationState = item.operationState,
-                progress = null,
             )
         }
 
