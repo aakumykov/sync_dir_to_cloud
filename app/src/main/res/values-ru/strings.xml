@@ -124,13 +124,13 @@
     <string name="SYNC_OPERATION_backuping_deleted_dir">Бекап удалённого каталога</string>
     <string name="SYNC_OPERATION_deleting_deleted_dir">Удаление каталога</string>
     <string name="SYNC_OPERATION_creating_new_dir">Создание нового каталога</string>
-    <string name="SYNC_OPERATION_copy_new_file">Копируется новый файл</string>
+    <string name="SYNC_OPERATION_copy_new_file">Копирую новый файл</string>
     <string name="SYNC_OBJECT_LOGGER_resetting_bad_sates">Сброс ошибочных статусов</string>
-    <string name="SYNC_OBJECT_LOGGER_reading_source">Чтение источника</string>
-    <string name="SYNC_OBJECT_LOGGER_reading_target">Чтение приёника</string>
+    <string name="SYNC_OBJECT_LOGGER_reading_source">Читаю источник</string>
+    <string name="SYNC_OBJECT_LOGGER_reading_target">Читаю приёник</string>
     <string name="SYNC_OBJECT_LOGGER_backuping_modified_deleted">Бекап изменённого, удалённого</string>
-    <string name="EXECUTION_LOG_reading_source">Чтение источника</string>
-    <string name="EXECUTION_LOG_reading_target">Чтение приёмника</string>
+    <string name="EXECUTION_LOG_reading_source">Читаю источник</string>
+    <string name="EXECUTION_LOG_reading_target">Читаю приёмник</string>
     <string name="EXECUTION_LOG_backing_up_dirs_in_target">Бекап каталогов в приёмнике</string>
     <string name="EXECUTION_LOG_backing_up_deleted_files">Бекап удалённых файлов</string>
     <string name="EXECUTION_LOG_backing_up_modified_files">Бекап изменённых файлов</string>
@@ -200,12 +200,12 @@
     <string name="TASK_LOG_task_cancelled">Задача отменена</string>
     <string name="TASK_LOG_task_error">Ошибка задачи: %1$s</string>
     <string name="title_activity_sync_log_compose">Журнал синхронизации</string>
-    <string name="LOG_ITEM_copying_from_source_to_target">Копируется файл из источника в приёмник</string>
+    <string name="LOG_ITEM_copying_from_source_to_target">Копирую файл из источника в приёмник</string>
     <string name="LOG_ITEM_backing_up_dir">Резервное копирование каталога</string>
     <string name="LOG_ITEM_backing_up_file">Резервное копирование файла</string>
-    <string name="LOG_ITEM_copying_from_target_to_source">Копируется файл из приёмника в источник</string>
-    <string name="LOG_ITEM_deleting_file">Удаление файла</string>
-    <string name="LOG_ITEM_deleting_dir">Удаление каталога</string>
-    <string name="LOG_ITEM_creating_dir_from_source_in_target">В приёмнике создаётся каталог из источника</string>
-    <string name="LOG_ITEM_creating_dir_from_target_in_source">В источнике создаётся каталог из приёмника</string>
+    <string name="LOG_ITEM_copying_from_target_to_source">Копирую файл из приёмника в источник</string>
+    <string name="LOG_ITEM_deleting_file">Удаляю файл</string>
+    <string name="LOG_ITEM_deleting_dir">Удаляю каталог</string>
+    <string name="LOG_ITEM_creating_dir_from_source_in_target">Создаю в приёмнике каталог из источника</string>
+    <string name="LOG_ITEM_creating_dir_from_target_in_source">Создаю в источнике каталог из приёмника</string>
 </resources>
