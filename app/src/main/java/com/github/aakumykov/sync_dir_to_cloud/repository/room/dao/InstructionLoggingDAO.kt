@@ -13,17 +13,19 @@ interface InstructionLoggingDAO {
     @Insert
     fun add(instructionLogItem: InstructionLogItem)
 
-    @Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
-            "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
-            "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
-            "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
-    fun getAsFlow(taskId: String, executionId: String): Flow<InstructionLogItem>
 
     /*@Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
             "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
             "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
-    suspend fun list(taskId: String, executionId: String): List<InstructionLogItem>*/
+    fun getAsFlow(taskId: String, executionId: String): Flow<InstructionLogItem>*/
+
+
+    @Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
+            "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
+            "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
+            "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
+    suspend fun list(taskId: String, executionId: String): List<InstructionLogItem>
 
 
     /*@Query("DELETE FROM ${InstructionLogItem.TABLE_NAME} " +

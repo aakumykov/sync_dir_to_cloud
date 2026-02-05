@@ -17,13 +17,13 @@ class FileOperationLogRepository2 @Inject constructor(
         dao.add(taskLogItem)
     }
 
-    suspend fun getAsFlow(taskId: String, executionId: String): Flow<FileOperationLogItem> = withContext(dispatcher) {
+    /*suspend fun getAsFlow(taskId: String, executionId: String): Flow<FileOperationLogItem> = withContext(dispatcher) {
         dao.getAsFlow(taskId, executionId)
-    }
-
-    /*suspend fun list(taskId: String, executionId: String): List<FileOperationLogItem> = withContext(dispatcher) {
-        dao.list(taskId, executionId)
     }*/
+
+    suspend fun list(taskId: String, executionId: String): List<FileOperationLogItem> = withContext(dispatcher) {
+        dao.list(taskId, executionId)
+    }
 
     /*suspend fun deleteAllFor(taskId: String) = withContext(dispatcher) {
         dao.deleteAllForTask(taskId)

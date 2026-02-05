@@ -21,7 +21,10 @@ class InstructionLogger @AssistedInject constructor(
     private val resources: Resources,
     private val repository: InstructionLogRepository,
 ) {
-    suspend fun getLogs(): Flow<InstructionLogItem> = repository.getAsFlow(taskId, executionId)
+//    suspend fun getLogs(): Flow<InstructionLogItem> = repository.getAsFlow(taskId, executionId)
+
+
+    suspend fun list(): List<InstructionLogItem> = repository.list(taskId, executionId)
 
 
     suspend fun logInstructionExecutionStarted(logMessage: TextMessage) {

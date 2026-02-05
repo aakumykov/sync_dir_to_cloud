@@ -16,13 +16,13 @@ class InstructionLogRepository @Inject constructor(
         dao.add(item)
     }
 
-    suspend fun getAsFlow(taskId: String, executionId: String): Flow<InstructionLogItem> = withContext(dispatcher) {
+    /*suspend fun getAsFlow(taskId: String, executionId: String): Flow<InstructionLogItem> = withContext(dispatcher) {
         dao.getAsFlow(taskId, executionId)
-    }
-
-    /*suspend fun list(taskId: String, executionId: String): List<InstructionLogItem> = withContext(dispatcher) {
-        dao.list(taskId, executionId)
     }*/
+
+    suspend fun list(taskId: String, executionId: String): List<InstructionLogItem> = withContext(dispatcher) {
+        dao.list(taskId, executionId)
+    }
 
     /*suspend fun deleteAllFor(taskId: String) = withContext(dispatcher) {
         dao.deleteAllForTask(taskId)

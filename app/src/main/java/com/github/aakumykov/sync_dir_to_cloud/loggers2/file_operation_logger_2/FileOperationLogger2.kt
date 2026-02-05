@@ -23,9 +23,9 @@ class FileOperationLogger2 @AssistedInject constructor(
     private val repository: FileOperationLogRepository2,
     private val resources: Resources,
 ) {
-    suspend fun getLogs(): Flow<FileOperationLogItem> {
-        return repository.getAsFlow(taskId, executionId)
-    }
+//    suspend fun getLogs(): Flow<FileOperationLogItem> = repository.getAsFlow(taskId, executionId)
+
+    suspend fun list(): List<FileOperationLogItem> = repository.list(taskId, executionId)
 
     suspend fun logStarted(
         jobId: String,
