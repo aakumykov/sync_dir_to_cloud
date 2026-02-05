@@ -4,6 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -14,6 +15,10 @@ class FileOperationLogRepository2 @Inject constructor(
 ) {
     suspend fun add(taskLogItem: FileOperationLogItem2) = withContext(dispatcher) {
         dao.add(taskLogItem)
+    }
+
+    suspend fun getAsFlow(taskId: String, executionId: String): Flow<FileOperationLogItem2> = withContext(dispatcher) {
+        dao.getAsFlow(taskId, executionId)
     }
 
     /*suspend fun list(taskId: String, executionId: String): List<FileOperationLogItem2> = withContext(dispatcher) {

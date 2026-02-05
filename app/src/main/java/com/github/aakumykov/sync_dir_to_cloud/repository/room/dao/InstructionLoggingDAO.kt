@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface InstructionLoggingDAO {
@@ -12,6 +13,11 @@ interface InstructionLoggingDAO {
     @Insert
     fun add(instructionLogItem: InstructionLogItem)
 
+    @Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
+            "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
+            "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
+            "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
+    suspend fun getAsFlow(taskId: String, executionId: String): Flow<InstructionLogItem>
 
     /*@Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +

@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.Flow
 
 class InstructionLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -20,6 +21,9 @@ class InstructionLogger @AssistedInject constructor(
     private val resources: Resources,
     private val repository: InstructionLogRepository,
 ) {
+    suspend fun getLogs(): Flow<InstructionLogItem> = repository.getAsFlow(taskId, executionId)
+
+
     suspend fun logInstructionExecutionStarted(logMessage: TextMessage) {
         runNonCancellable {
             InstructionLogItem.create(

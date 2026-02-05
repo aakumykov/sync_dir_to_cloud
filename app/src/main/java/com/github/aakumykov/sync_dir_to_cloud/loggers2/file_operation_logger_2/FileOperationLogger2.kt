@@ -15,6 +15,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
 
 class FileOperationLogger2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -22,6 +23,10 @@ class FileOperationLogger2 @AssistedInject constructor(
     private val repository: FileOperationLogRepository2,
     private val resources: Resources,
 ) {
+    suspend fun getLogs(): Flow<FileOperationLogItem2> {
+        return repository.getAsFlow(taskId, executionId)
+    }
+
     suspend fun logStarted(
         jobId: String,
         @StringRes operationName: Int,
