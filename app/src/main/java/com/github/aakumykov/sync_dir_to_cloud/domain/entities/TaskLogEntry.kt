@@ -56,6 +56,5 @@ class TaskLogEntry(
 
     companion object {
         const val TABLE_NAME = "sync_task_logs"
-        const val OLD_TABLE_NAME = "task_logs"
     }
 }

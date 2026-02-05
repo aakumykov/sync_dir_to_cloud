@@ -5,8 +5,6 @@ import androidx.room.DeleteTable
 import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.migration.AutoMigrationSpec
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.OLD_TABLE_NAME
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.TABLE_NAME
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
 
 class FirstAddThisObjectSpec : AutoMigrationSpec
@@ -68,11 +66,11 @@ class RenameColumnsAutoMigrationSpec1 : AutoMigrationSpec
 class RemoveOperationStateFieldSpec : AutoMigrationSpec
 
 
-@RenameTable(fromTableName = OLD_TABLE_NAME, toTableName = TABLE_NAME)
+@RenameTable(fromTableName = "task_logs", toTableName = "sync_task_logs")
 class RenameTableFromTaskLogsToSyncTaskLogs : AutoMigrationSpec
 
 
-@RenameColumn(tableName = TABLE_NAME, fromColumnName = "timestamp", toColumnName = "start_time")
+@RenameColumn(tableName = "sync_task_logs", fromColumnName = "timestamp", toColumnName = "start_time")
 class RenameColumnFromTimestampToStartTime : AutoMigrationSpec
 
 
