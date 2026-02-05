@@ -53,6 +53,8 @@ data class InstructionLogItem(
     }
 
     override fun toString(): String {
-        return "InstructionLogItem('$message', taskId='$taskId', executionId='$executionId')"
+        return "InstructionLogItem(id='$id', logItemType=$logItemType, taskId='$taskId', executionId='$executionId', message='$message', timestamp=$timestamp)"
     }
+
+
 }

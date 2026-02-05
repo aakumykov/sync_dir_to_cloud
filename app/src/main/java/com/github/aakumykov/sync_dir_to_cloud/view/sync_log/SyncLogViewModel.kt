@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLogger
@@ -12,7 +11,11 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
@@ -26,17 +29,50 @@ class SyncLogViewModel(
     private val _logOfSync: MutableStateFlow<List<LogOfSync>> = MutableStateFlow(emptyList())
     val logOfSync: Flow<List<LogOfSync>> = _logOfSync
 
+
     suspend fun startWorking(taskId: String, executionId: String) {
         if (isFirstRun) {
             isFirstRun = false
         }
 
-        val il = instructionLogger(taskId, executionId)
-        val fol = fileOperationLogger(taskId, executionId)
+        val instructionLogs = instructionLogger(taskId, executionId)
+            .getLogs()
+            .distinctUntilChangedBy { instructionLogItem ->
+                "${instructionLogItem.taskId}--${instructionLogItem.executionId}--${instructionLogItem.message}"
+            }
+            .map {
+                LogOfSync(
+                    timestamp = it.timestamp,
+                    logItemType = it.logItemType,
+                    taskId = it.taskId,
+                    executionId = it.executionId,
+                    jobId = null,
+                    text = it.message,
+                )
+            }
 
-        il.getLogs().combine(fol.getLogs()) { instructionLogItem, fileOperationLogItem ->
+        val fileOperationLogs = fileOperationLogger(taskId, executionId)
+            .getLogs()
+            .distinctUntilChangedBy { fileOperationLogItem ->
+                "${fileOperationLogItem.taskId}--${fileOperationLogItem.executionId}--${fileOperationLogItem.message}"
+            }
+            .map{
+                LogOfSync(
+                    timestamp = it.timestamp,
+                    logItemType = it.logItemType,
+                    taskId = it.taskId,
+                    executionId = it.executionId,
+                    jobId = null,
+                    text = it.message,
+                    subText = "${it.firstItem}, ${it.secondItem}"
+                )
+            }
 
-        }
+        merge(instructionLogs, fileOperationLogs)
+            .toList()
+            .also {
+                _logOfSync.emit(it)
+            }
     }
 
     fun cancelJob(id: String) {
