@@ -23,7 +23,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.ResourcesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.RoomDAOModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SharedPreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskLoggerInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
@@ -54,7 +53,6 @@ import dagger.Component
         RoomDAOModule::class,
         SyncTaskRepositoryInterfacesModule::class,
         SyncTaskLoggerInterfacesModule::class,
-        SyncObjectLoggerInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
         SyncObjectRepositoryInterfacesModule::class,
         ExecutionLogRepositoryInterfacesModule::class,

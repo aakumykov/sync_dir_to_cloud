@@ -5,10 +5,6 @@ import androidx.room.DeleteTable
 import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.migration.AutoMigrationSpec
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem.Companion.ITEM_NAME_FILED
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem.Companion.OPERATION_NAME_FILED
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObjectLogItem.Companion.PROGRESS_FIELD
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.EXECUTION_ID_FIELD_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.OPERATION_STATE_FIELD_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.TASK_ID_FIELD_NAME
@@ -83,25 +79,25 @@ class RenameTableFromTaskLogsToSyncTaskLogs : AutoMigrationSpec
 class RenameColumnFromTimestampToStartTime : AutoMigrationSpec
 
 
-@RenameColumn(tableName = SyncObjectLogItem.Companion.TABLE_NAME, fromColumnName = "message", toColumnName = OPERATION_NAME_FILED)
+@RenameColumn(tableName = "sync_object_logs", fromColumnName = "message", toColumnName = "operation_name")
 class RenameColumnMessageToOperationName : AutoMigrationSpec
 
-@RenameColumn(tableName = SyncObjectLogItem.Companion.TABLE_NAME, fromColumnName = "name", toColumnName = ITEM_NAME_FILED)
+@RenameColumn(tableName = "sync_object_logs", fromColumnName = "name", toColumnName = "item_name")
 class RenameColumnNameToItemName : AutoMigrationSpec
 
-@DeleteColumn(tableName = SyncObjectLogItem.Companion.TABLE_NAME, columnName = "is_successful")
+@DeleteColumn(tableName = "sync_object_logs", columnName = "is_successful")
 class DeleteColumnIsSuccessful : AutoMigrationSpec
 
-@DeleteColumn(tableName = SyncObjectLogItem.Companion.TABLE_NAME, columnName = "progress")
+@DeleteColumn(tableName = "sync_object_logs", columnName = "progress")
 class DeleteColumnProgress : AutoMigrationSpec
 
-@RenameColumn(tableName = SyncObjectLogItem.Companion.TABLE_NAME, fromColumnName = "qwerty", toColumnName = "abc")
+@RenameColumn(tableName = "sync_object_logs", fromColumnName = "qwerty", toColumnName = "abc")
 class RenameColumnFromQwertyToAbc : AutoMigrationSpec
 
-@RenameColumn(tableName = SyncObjectLogItem.Companion.TABLE_NAME, fromColumnName = "progress_as_part_of_100", toColumnName = PROGRESS_FIELD)
+@RenameColumn(tableName = "sync_object_logs", fromColumnName = "progress_as_part_of_100", toColumnName = "progress")
 class RenameColumnProgressAsPartOf100ToProgress : AutoMigrationSpec
 
-@DeleteColumn(tableName = SyncObjectLogItem.Companion.TABLE_NAME, columnName = "abc")
+@DeleteColumn(tableName = "sync_object_logs", columnName = "abc")
 class DeleteColumnAbc : AutoMigrationSpec
 
 
@@ -171,3 +167,6 @@ class FileOperationLogItem2RenameFirstSecondItems : AutoMigrationSpec
 @DeleteTable(tableName = "file_operation_logs")
 class FileOperationLogItemDeletion : AutoMigrationSpec
 
+
+@DeleteTable(tableName = "sync_object_logs")
+class SyncObjectLogItemDeletion : AutoMigrationSpec
