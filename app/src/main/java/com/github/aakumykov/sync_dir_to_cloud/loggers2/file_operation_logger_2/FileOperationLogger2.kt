@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.FileOperationLogRepository2
 import com.github.aakumykov.sync_dir_to_cloud.utils.runNonCancellable
 import dagger.assisted.Assisted
@@ -23,7 +23,7 @@ class FileOperationLogger2 @AssistedInject constructor(
     private val repository: FileOperationLogRepository2,
     private val resources: Resources,
 ) {
-    suspend fun getLogs(): Flow<FileOperationLogItem2> {
+    suspend fun getLogs(): Flow<FileOperationLogItem> {
         return repository.getAsFlow(taskId, executionId)
     }
 
@@ -34,7 +34,7 @@ class FileOperationLogger2 @AssistedInject constructor(
         secondItem: String?
     ) {
         runNonCancellable {
-            FileOperationLogItem2.create(
+            FileOperationLogItem.create(
                 logItemType = LogItemType.BUSY,
                 taskId = taskId,
                 executionId = executionId,
@@ -55,7 +55,7 @@ class FileOperationLogger2 @AssistedInject constructor(
         secondItem: String?
     ) {
         runNonCancellable {
-            FileOperationLogItem2.create(
+            FileOperationLogItem.create(
                 logItemType = LogItemType.SUCCESS,
                 taskId = taskId,
                 executionId = executionId,
@@ -78,7 +78,7 @@ class FileOperationLogger2 @AssistedInject constructor(
     ) {
         val message = resources.getString(operationName) + " (${e.errorMsg})"
         runNonCancellable {
-            FileOperationLogItem2.create(
+            FileOperationLogItem.create(
                 logItemType = LogItemType.CANCELLED,
                 taskId = taskId,
                 executionId = executionId,
@@ -101,7 +101,7 @@ class FileOperationLogger2 @AssistedInject constructor(
     ) {
         val message = resources.getString(operationName) + " (${t.errorMsgExtended})"
         runNonCancellable {
-            FileOperationLogItem2.create(
+            FileOperationLogItem.create(
                 logItemType = LogItemType.ERROR,
                 taskId = taskId,
                 executionId = executionId,

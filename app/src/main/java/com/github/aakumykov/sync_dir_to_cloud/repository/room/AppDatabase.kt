@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
@@ -41,7 +41,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         SyncInstruction::class,
         TaskLogItem::class,
         InstructionLogItem::class,
-        FileOperationLogItem2::class,
+        FileOperationLogItem::class,
    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -120,19 +120,20 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         AutoMigration(from = 129, to = 130), // Новый объект [TaskLogItem]
         AutoMigration(from = 130, to = 131), // fix: внешний ключ в TaskLogItem
         AutoMigration(from = 131, to = 132), // Новый объект [InstructionLogItem]
-        AutoMigration(from = 132, to = 133), // Новый объект [FileOperationLogItem2]
+        AutoMigration(from = 132, to = 133), // Новый объект [FileOperationLogItem]
         AutoMigration(from = 133, to = 134, spec = RenameLogEntryTypeToLogItemType::class),
-        AutoMigration(from = 134, to = 135, spec = DeleteFilePathFromFileOperationLogItem2::class), // FileOperationLogItem2: +description -filePath
-        AutoMigration(from = 135, to = 136), // FileOperationLogItem2().description стало nullable.
-        AutoMigration(from = 136, to = 137), // FileOperationLogItem2().description вновь не-nullable.
-        AutoMigration(from = 137, to = 138, spec = FileOperationLogItem2SourceItemTargetItem::class), // FileOperationLogItem2().sourceItem,targetItem.
-        AutoMigration(from = 138, to = 139), // FileOperationLogItem2().firstItem теперь nullable.
+        AutoMigration(from = 134, to = 135, spec = DeleteFilePathFromFileOperationLogItem2::class), // FileOperationLogItem: +description -filePath
+        AutoMigration(from = 135, to = 136), // FileOperationLogItem().description стало nullable.
+        AutoMigration(from = 136, to = 137), // FileOperationLogItem().description вновь не-nullable.
+        AutoMigration(from = 137, to = 138, spec = FileOperationLogItem2SourceItemTargetItem::class), // FileOperationLogItem().sourceItem,targetItem.
+        AutoMigration(from = 138, to = 139), // FileOperationLogItem().firstItem теперь nullable.
         AutoMigration(from = 139, to = 140, spec = FileOperationLogItem2RenameFirstSecondItems::class),
         AutoMigration(from = 140, to = 141, spec = FileOperationLogItemDeletion::class),
         AutoMigration(from = 141, to = 142, spec = SyncObjectLogItemDeletion::class),
         AutoMigration(from = 142, to = 143, spec = TaskExecutionLogItemDeletion::class),
+        AutoMigration(from = 143, to = 144, spec = RenameFileOperationLogItem2ToFileOperationLogItem::class),
     ],
-    version = 143,
+    version = 144,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

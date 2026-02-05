@@ -5,7 +5,6 @@ import androidx.room.DeleteTable
 import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.migration.AutoMigrationSpec
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
 
 class FirstAddThisObjectSpec : AutoMigrationSpec
 
@@ -147,12 +146,12 @@ class FileOperationLogItem2SourceItemTargetItem : AutoMigrationSpec
 
 
 @RenameColumn(
-    tableName = FileOperationLogItem2.TABLE_NAME,
+    tableName = "file_operation_logs_2",
     fromColumnName = "firstItem",
     toColumnName = "first_item"
 )
 @RenameColumn(
-    tableName = FileOperationLogItem2.TABLE_NAME,
+    tableName = "file_operation_logs_2",
     fromColumnName = "secondItem",
     toColumnName = "second_item"
 )
@@ -169,3 +168,7 @@ class SyncObjectLogItemDeletion : AutoMigrationSpec
 
 @DeleteTable(tableName = "task_execution_log")
 class TaskExecutionLogItemDeletion : AutoMigrationSpec
+
+
+@RenameTable(fromTableName = "file_operation_logs_2", toTableName = "file_operation_logs")
+class RenameFileOperationLogItem2ToFileOperationLogItem : AutoMigrationSpec

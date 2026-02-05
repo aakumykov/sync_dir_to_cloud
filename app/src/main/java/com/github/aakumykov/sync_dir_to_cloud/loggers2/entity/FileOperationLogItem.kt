@@ -13,7 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 
 @Entity(
-    tableName = FileOperationLogItem2.TABLE_NAME,
+    tableName = FileOperationLogItem.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -24,7 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
         )
     ]
 )
-data class FileOperationLogItem2(
+data class FileOperationLogItem(
     @PrimaryKey val id: String,
 
     @ColumnInfo(name = GlobalConstants.FIELD_LOG_ITEM_TYPE)
@@ -61,9 +61,9 @@ data class FileOperationLogItem2(
             secondItem: String?,
             jobId: String?
         )
-            : FileOperationLogItem2
+            : FileOperationLogItem
         {
-            return FileOperationLogItem2(
+            return FileOperationLogItem(
                 id = newRandomId,
                 logItemType = logItemType,
                 taskId = taskId,
@@ -76,6 +76,6 @@ data class FileOperationLogItem2(
             )
         }
 
-        const val TABLE_NAME = "file_operation_logs_2"
+        const val TABLE_NAME = "file_operation_logs"
     }
 }

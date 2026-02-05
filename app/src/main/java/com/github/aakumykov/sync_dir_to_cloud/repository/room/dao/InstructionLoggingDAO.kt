@@ -17,7 +17,7 @@ interface InstructionLoggingDAO {
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
             "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
             "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
-    suspend fun getAsFlow(taskId: String, executionId: String): Flow<InstructionLogItem>
+    fun getAsFlow(taskId: String, executionId: String): Flow<InstructionLogItem>
 
     /*@Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
