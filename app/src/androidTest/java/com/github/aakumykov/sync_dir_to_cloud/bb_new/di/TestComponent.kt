@@ -16,7 +16,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudReaderFactoriesMod
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterFactoriesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.ExecutionLogRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
@@ -51,7 +50,6 @@ import dagger.Component
         SyncTaskLoggerInterfacesModule::class,
         CloudAuthRepositoryInterfacesModule::class,
         SyncObjectRepositoryInterfacesModule::class,
-        ExecutionLogRepositoryInterfacesModule::class,
         SyncInstructionRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,
         WorkerModule::class,

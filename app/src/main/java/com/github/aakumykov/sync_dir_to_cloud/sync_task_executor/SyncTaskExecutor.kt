@@ -2,17 +2,14 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.content.res.Resources
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.execution_log.ExecutionLogger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -48,7 +45,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLogger: TaskLogger,
     private val taskLogger2AssistedFactory: TaskLogger2AssistedFactory,
-    private val executionLogger: ExecutionLogger,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val resources: Resources,
 ){
@@ -123,11 +119,11 @@ class SyncTaskExecutor @AssistedInject constructor(
     @Deprecated("Избавиться от него")
     private suspend fun logExecutionStart(taskId: String) {
 
-        executionLogger.log(TaskExecutionLogItem.createStartingItem(
+        /*executionLogger.log(TaskExecutionLogItem.createStartingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_begins)
-        ))
+        ))*/
 
         taskLogger.logRunning(TaskLogEntry(
             executionId = hashCode().toString(),
@@ -139,11 +135,11 @@ class SyncTaskExecutor @AssistedInject constructor(
     @Deprecated("Избавиться от него")
     private suspend fun logExecutionFinish(taskId: String) {
 
-        executionLogger.log(TaskExecutionLogItem.createFinishingItem(
+        /*executionLogger.log(TaskExecutionLogItem.createFinishingItem(
             taskId = taskId,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_ends)
-        ))
+        ))*/
 
         taskLogger.logSuccess(TaskLogEntry(
             executionId = hashCode().toString(),
@@ -155,12 +151,12 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private suspend fun logExecutionError(syncTask: SyncTask, t: Throwable) {
 
-        executionLogger.log(TaskExecutionLogItem.createErrorItem(
+        /*executionLogger.log(TaskExecutionLogItem.createErrorItem(
             taskId = syncTask.id,
             executionId = executionId,
             message = resources.getString(R.string.EXECUTION_LOG_work_error),
             details = t.errorMsg
-        ))
+        ))*/
 
         taskLogger.logError(TaskLogEntry(
             executionId = hashCode().toString(),

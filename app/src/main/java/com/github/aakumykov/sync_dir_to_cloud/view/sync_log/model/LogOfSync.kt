@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.OperationState
 
@@ -15,17 +14,6 @@ data class LogOfSync(
     val progress: Int? = null,
 ) {
     companion object {
-
-        fun fromTaskExecutionLogItem(item: TaskExecutionLogItem): LogOfSync {
-            return LogOfSync(
-                taskId = item.taskId,
-                executionId = item.executionId,
-                text = item.message,
-                subText = item.details ?: "",
-                timestamp = item.timestamp,
-                operationState = executionLogItemTypeToOperationState(item.type),
-            )
-        }
 
         private fun executionLogItemTypeToOperationState(executionLogItemType: ExecutionLogItemType): OperationState {
             return when(executionLogItemType) {

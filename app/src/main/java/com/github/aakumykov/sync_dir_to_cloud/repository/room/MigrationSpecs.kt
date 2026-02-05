@@ -5,9 +5,6 @@ import androidx.room.DeleteTable
 import androidx.room.RenameColumn
 import androidx.room.RenameTable
 import androidx.room.migration.AutoMigrationSpec
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.EXECUTION_ID_FIELD_NAME
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.OPERATION_STATE_FIELD_NAME
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem.Companion.TASK_ID_FIELD_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.OLD_TABLE_NAME
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry.Companion.TABLE_NAME
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
@@ -62,12 +59,12 @@ class RenameSyncTaskBackupDirNameToTaskBackupDirName : AutoMigrationSpec
 class RenameTableFromExecutionLogToTaskExecutionLog : AutoMigrationSpec
 
 
-@RenameColumn(tableName = "execution_log", fromColumnName = "executionId", toColumnName = EXECUTION_ID_FIELD_NAME)
-@RenameColumn(tableName = "execution_log", fromColumnName = "taskId", toColumnName = TASK_ID_FIELD_NAME)
+@RenameColumn(tableName = "execution_log", fromColumnName = "executionId", toColumnName = "execution_id")
+@RenameColumn(tableName = "execution_log", fromColumnName = "taskId", toColumnName = "task_id")
 class RenameColumnsAutoMigrationSpec1 : AutoMigrationSpec
 
 
-@DeleteColumn(tableName = "execution_log", columnName = OPERATION_STATE_FIELD_NAME)
+@DeleteColumn(tableName = "execution_log", columnName = "operation_state")
 class RemoveOperationStateFieldSpec : AutoMigrationSpec
 
 
@@ -170,3 +167,7 @@ class FileOperationLogItemDeletion : AutoMigrationSpec
 
 @DeleteTable(tableName = "sync_object_logs")
 class SyncObjectLogItemDeletion : AutoMigrationSpec
+
+
+@DeleteTable(tableName = "task_execution_log")
+class TaskExecutionLogItemDeletion : AutoMigrationSpec

@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskExecutionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
@@ -16,7 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ExecutionLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.InstructionLoggingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
@@ -39,7 +37,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         SyncObject::class,
         CloudAuth::class,
         TaskLogEntry::class,
-        TaskExecutionLogItem::class,
         ComparisonState::class,
         SyncInstruction::class,
         TaskLogItem::class,
@@ -133,8 +130,9 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
         AutoMigration(from = 139, to = 140, spec = FileOperationLogItem2RenameFirstSecondItems::class),
         AutoMigration(from = 140, to = 141, spec = FileOperationLogItemDeletion::class),
         AutoMigration(from = 141, to = 142, spec = SyncObjectLogItemDeletion::class),
+        AutoMigration(from = 142, to = 143, spec = TaskExecutionLogItemDeletion::class),
     ],
-    version = 142,
+    version = 143,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -150,7 +148,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncObjectBadStateResettingDAO(): SyncObjectBadStateResettingDAO
     abstract fun getSyncTaskResettingDAO(): SyncTaskResettingDAO
     abstract fun getTaskLogDAO(): SyncTaskLogDAO
-    abstract fun getExecutionLogDAO(): ExecutionLogDAO
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
     abstract fun getSyncInstructionDAO6(): SyncInstructionDAO
     abstract fun getSyncTaskBackupDirDAO(): SyncTaskBackupDirDAO
