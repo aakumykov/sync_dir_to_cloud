@@ -202,12 +202,12 @@
     <string name="TASK_LOG_task_cancelled">Task cancelled</string>
     <string name="TASK_LOG_task_error">Task error: %1$s</string>
     <string name="title_activity_sync_log_compose">SyncLogComposeActivity</string>
-    <string name="LOG_ITEM_copying_from_source_to_target">Копируется файл из источника в приёмник</string>
-    <string name="LOG_ITEM_backing_up_dir">Резервное копирование каталога</string>
-    <string name="LOG_ITEM_backing_up_file">Резервное копирование файла</string>
-    <string name="LOG_ITEM_copying_from_target_to_source">Копируется файл из приёмника в источник</string>
-    <string name="LOG_ITEM_deleting_file">Удаление файла</string>
-    <string name="LOG_ITEM_deleting_dir">Удаление каталога</string>
-    <string name="LOG_ITEM_creating_dir_from_source_in_target">В приёмнике создаётся каталог из источника</string>
-    <string name="LOG_ITEM_creating_dir_from_target_in_source">В источнике создаётся каталог из приёмника</string>
+    <string name="LOG_ITEM_copying_from_source_to_target">Copying file from source to target</string>
+    <string name="LOG_ITEM_backing_up_dir">Backing up directory</string>
+    <string name="LOG_ITEM_backing_up_file">Backing up file</string>
+    <string name="LOG_ITEM_copying_from_target_to_source">Copying file from target to source</string>
+    <string name="LOG_ITEM_deleting_file">Deleting file</string>
+    <string name="LOG_ITEM_deleting_dir">Deleting dir</string>
+    <string name="LOG_ITEM_creating_dir_from_source_in_target">Creating in target dir from source</string>
+    <string name="LOG_ITEM_creating_dir_from_target_in_source">Creating in source dir from target</string>
 </resources>
