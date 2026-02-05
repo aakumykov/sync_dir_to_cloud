@@ -24,6 +24,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
         )
     ]
 )
+// Не удаляй, это новый класс.
 data class TaskLogItem(
     @PrimaryKey val id: String,
     @ColumnInfo(name = GlobalConstants.FIELD_TASK_ID) val taskId: String,
