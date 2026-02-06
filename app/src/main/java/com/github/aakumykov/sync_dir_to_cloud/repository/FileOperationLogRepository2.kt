@@ -25,6 +25,10 @@ class FileOperationLogRepository2 @Inject constructor(
         dao.list(taskId, executionId)
     }
 
+    suspend fun listAsFlow(taskId: String, executionId: String): Flow<List<FileOperationLogItem>> = withContext(dispatcher) {
+        dao.listAsFlow(taskId, executionId)
+    }
+
     /*suspend fun deleteAllFor(taskId: String) = withContext(dispatcher) {
         dao.deleteAllForTask(taskId)
     }*/

@@ -28,6 +28,13 @@ interface InstructionLoggingDAO {
     suspend fun list(taskId: String, executionId: String): List<InstructionLogItem>
 
 
+    @Query("SELECT * FROM ${InstructionLogItem.TABLE_NAME} " +
+            "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
+            "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
+            "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
+    fun listAsFlow(taskId: String, executionId: String): Flow<List<InstructionLogItem>>
+
+
     /*@Query("DELETE FROM ${InstructionLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId")
     suspend fun deleteAllForTask(taskId: String)*/

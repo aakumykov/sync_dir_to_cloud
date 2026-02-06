@@ -28,6 +28,13 @@ interface FileOperationLogDAO {
     suspend fun list(taskId: String, executionId: String): List<FileOperationLogItem>
 
 
+    @Query("SELECT * FROM ${FileOperationLogItem.TABLE_NAME} " +
+            "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId " +
+            "AND ${GlobalConstants.FIELD_EXECUTION_ID} = :executionId " +
+            "ORDER BY ${GlobalConstants.FIELD_TIMESTAMP}")
+    fun listAsFlow(taskId: String, executionId: String): Flow<List<FileOperationLogItem>>
+
+
     /*@Query("DELETE FROM ${FileOperationLogItem.TABLE_NAME} " +
             "WHERE ${GlobalConstants.FIELD_TASK_ID} = :taskId")
     suspend fun deleteAllForTask(taskId: String)*/
