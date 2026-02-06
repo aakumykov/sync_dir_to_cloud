@@ -16,6 +16,8 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 class FileOperationLogger2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -27,6 +29,11 @@ class FileOperationLogger2 @AssistedInject constructor(
 
     suspend fun list(): List<FileOperationLogItem> = repository.list(taskId, executionId)
     suspend fun listAsFlow(): Flow<List<FileOperationLogItem>> = repository.listAsFlow(taskId, executionId)
+
+    private val _listFlow: MutableSharedFlow<List<FileOperationLogItem>> get() = MutableSharedFlow()
+    val listFlow: SharedFlow<List<FileOperationLogItem>> get() {
+        listAsFlow().collect {  }
+    }
 
     suspend fun logStarted(
         jobId: String,
