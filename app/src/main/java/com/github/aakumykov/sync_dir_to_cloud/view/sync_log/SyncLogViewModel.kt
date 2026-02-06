@@ -12,6 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
@@ -35,8 +36,9 @@ class SyncLogViewModel(
             isFirstRun = false
 
 //            commonList(taskId, executionId).sortedBy { it.timestamp }.also { _SyncLogItem.emit(it) }
-//            commonListFlow(taskId, executionId).sortedBy { it.timestamp }.also { _SyncLogItem.emit(it) }
-            fileOperationLogger(taskId,executionId).listFlow
+            commonListFlow(taskId, executionId).collect {
+                _SyncLogItem.emit(it)
+            }
         }
     }
 
@@ -85,7 +87,7 @@ class SyncLogViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun commonListFlow(taskId: String, executionId: String): Flow<List<SyncLogItem>> {
 
-        /*val instructionLogsFlow = instructionLogger(taskId, executionId)
+        val instructionLogsFlow = instructionLogger(taskId, executionId)
             .listAsFlow()
             .flatMapConcat { list ->
                 flow {
@@ -122,9 +124,9 @@ class SyncLogViewModel(
                         }
                     }
                 }
-            }*/
+            }
 
-
+        return merge(instructionLogsFlow, fileOperationLogsFlow)
     }
 
 

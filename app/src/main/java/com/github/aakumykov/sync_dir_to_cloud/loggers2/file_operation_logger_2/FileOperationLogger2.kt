@@ -30,11 +30,6 @@ class FileOperationLogger2 @AssistedInject constructor(
     suspend fun list(): List<FileOperationLogItem> = repository.list(taskId, executionId)
     suspend fun listAsFlow(): Flow<List<FileOperationLogItem>> = repository.listAsFlow(taskId, executionId)
 
-    private val _listFlow: MutableSharedFlow<List<FileOperationLogItem>> get() = MutableSharedFlow()
-    val listFlow: SharedFlow<List<FileOperationLogItem>> get() {
-        listAsFlow().collect {  }
-    }
-
     suspend fun logStarted(
         jobId: String,
         @StringRes operationName: Int,
