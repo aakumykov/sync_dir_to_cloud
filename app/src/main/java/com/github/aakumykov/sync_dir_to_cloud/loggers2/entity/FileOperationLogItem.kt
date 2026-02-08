@@ -8,6 +8,7 @@ import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
@@ -30,6 +31,9 @@ data class FileOperationLogItem(
     @ColumnInfo(name = GlobalConstants.FIELD_LOG_ITEM_TYPE)
     val logItemType: LogItemType,
 
+    @ColumnInfo(name = GlobalConstants.FIELD_LOG_ITEM_ABOUT, defaultValue = "UNKNOWN")
+    val logItemAbout: LogItemAbout,
+
     @ColumnInfo(name = GlobalConstants.FIELD_TASK_ID)
     val taskId: String,
 
@@ -38,17 +42,15 @@ data class FileOperationLogItem(
 
     val message: String,
 
-    @ColumnInfo(name = "first_item", defaultValue = "null")
+    @ColumnInfo(name = "first_item", defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val firstItem: String?,
 
-    @ColumnInfo(name = "second_item", defaultValue = "null")
+    @ColumnInfo(name = "second_item", defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val secondItem: String?,
 
     val timestamp: Long,
 
-    @ColumnInfo(
-        name = GlobalConstants.FIELD_JOB_ID,
-        defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
+    @ColumnInfo(name = GlobalConstants.FIELD_JOB_ID, defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val jobId: String?
 ) {
     companion object {
@@ -66,6 +68,7 @@ data class FileOperationLogItem(
             return FileOperationLogItem(
                 id = newRandomId,
                 logItemType = logItemType,
+                logItemAbout = LogItemAbout.FILE,
                 taskId = taskId,
                 executionId = executionId,
                 message = message,

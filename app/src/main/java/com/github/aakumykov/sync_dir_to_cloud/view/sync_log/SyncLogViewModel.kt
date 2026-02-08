@@ -36,9 +36,9 @@ class SyncLogViewModel(
             isFirstRun = false
 
 //            commonList(taskId, executionId).sortedBy { it.timestamp }.also { _SyncLogItem.emit(it) }
-            commonListFlow(taskId, executionId).collect {
+            /*commonListFlow(taskId, executionId).collect {
                 _SyncLogItem.emit(it)
-            }
+            }*/
         }
     }
 
@@ -84,7 +84,7 @@ class SyncLogViewModel(
         return instructionLogs + fileOperationLogs
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    /*@OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun commonListFlow(taskId: String, executionId: String): Flow<List<SyncLogItem>> {
 
         val instructionLogsFlow = instructionLogger(taskId, executionId)
@@ -127,7 +127,7 @@ class SyncLogViewModel(
             }
 
         return merge(instructionLogsFlow, fileOperationLogsFlow)
-    }
+    }*/
 
 
 
