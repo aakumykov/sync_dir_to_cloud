@@ -14,11 +14,11 @@ data class SyncLogItem(
     val taskId: String,
     val executionId: String,
     val text: String?,
-    val subText: String? = null,
 ) {
     val key: String get() = "${taskId}${executionId}${timestamp}"
 
+
     override fun toString(): String {
-        return "SyncLogItem(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, taskId='$taskId', executionId='$executionId', jobId=$jobId, text=$text, subText=$subText, progress=$progress, key='$key')"
+        return "SyncLogItem(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, taskId='$taskId', executionId='$executionId', text=$text, key='$key')"
     }
 }
