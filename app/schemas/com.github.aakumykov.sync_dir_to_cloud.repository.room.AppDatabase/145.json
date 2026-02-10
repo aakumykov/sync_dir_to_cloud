@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 145,
-    "identityHash": "0369a732630b4fdb4772256e06e54c5b",
+    "identityHash": "d034b7aae429c2cb1cc612a522514a04",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -709,11 +709,23 @@
       },
       {
         "tableName": "task_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `log_item_type` TEXT NOT NULL, `log_item_about` TEXT NOT NULL DEFAULT 'UNKNOWN', `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `message` TEXT, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `log_item_type` TEXT NOT NULL, `log_item_about` TEXT NOT NULL DEFAULT 'UNKNOWN', `message` TEXT, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "task_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "executionId",
+            "columnName": "execution_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -729,18 +741,6 @@
             "affinity": "TEXT",
             "notNull": true,
             "defaultValue": "'UNKNOWN'"
-          },
-          {
-            "fieldPath": "taskId",
-            "columnName": "task_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "executionId",
-            "columnName": "execution_id",
-            "affinity": "TEXT",
-            "notNull": true
           },
           {
             "fieldPath": "message",
@@ -761,17 +761,7 @@
             "id"
           ]
         },
-        "indices": [
-          {
-            "name": "index_task_logs_task_id",
-            "unique": false,
-            "columnNames": [
-              "task_id"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_task_logs_task_id` ON `${TABLE_NAME}` (`task_id`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": [
           {
             "table": "sync_tasks",
@@ -788,7 +778,7 @@
       },
       {
         "tableName": "instruction_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `log_item_type` TEXT NOT NULL, `log_item_about` TEXT NOT NULL DEFAULT 'UNKNOWN', `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `message` TEXT, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `log_item_type` TEXT NOT NULL, `log_item_about` TEXT NOT NULL DEFAULT 'UNKNOWN', `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `message` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -825,7 +815,7 @@
             "fieldPath": "message",
             "columnName": "message",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "timestamp",
@@ -840,17 +830,7 @@
             "id"
           ]
         },
-        "indices": [
-          {
-            "name": "index_instruction_logs_task_id",
-            "unique": false,
-            "columnNames": [
-              "task_id"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_instruction_logs_task_id` ON `${TABLE_NAME}` (`task_id`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": [
           {
             "table": "sync_tasks",
@@ -867,11 +847,42 @@
       },
       {
         "tableName": "file_operation_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `first_item` TEXT DEFAULT null, `second_item` TEXT DEFAULT null, `job_id` TEXT DEFAULT null, `log_item_type` TEXT NOT NULL, `log_item_about` TEXT NOT NULL DEFAULT 'UNKNOWN', `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `message` TEXT, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `log_item_type` TEXT NOT NULL, `log_item_about` TEXT NOT NULL DEFAULT 'UNKNOWN', `task_id` TEXT NOT NULL, `execution_id` TEXT NOT NULL, `message` TEXT NOT NULL, `first_item` TEXT DEFAULT null, `second_item` TEXT DEFAULT null, `timestamp` INTEGER NOT NULL, `job_id` TEXT DEFAULT null, PRIMARY KEY(`id`), FOREIGN KEY(`task_id`) REFERENCES `sync_tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "logItemType",
+            "columnName": "log_item_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "logItemAbout",
+            "columnName": "log_item_about",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'UNKNOWN'"
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "task_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "executionId",
+            "columnName": "execution_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -890,48 +901,17 @@
             "defaultValue": "null"
           },
           {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "jobId",
             "columnName": "job_id",
             "affinity": "TEXT",
             "notNull": false,
             "defaultValue": "null"
-          },
-          {
-            "fieldPath": "logItemType",
-            "columnName": "log_item_type",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "logItemAbout",
-            "columnName": "log_item_about",
-            "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "'UNKNOWN'"
-          },
-          {
-            "fieldPath": "taskId",
-            "columnName": "task_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "executionId",
-            "columnName": "execution_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "message",
-            "columnName": "message",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -940,17 +920,7 @@
             "id"
           ]
         },
-        "indices": [
-          {
-            "name": "index_file_operation_logs_task_id",
-            "unique": false,
-            "columnNames": [
-              "task_id"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_operation_logs_task_id` ON `${TABLE_NAME}` (`task_id`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": [
           {
             "table": "sync_tasks",
@@ -969,7 +939,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0369a732630b4fdb4772256e06e54c5b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd034b7aae429c2cb1cc612a522514a04')"
     ]
   }
 }

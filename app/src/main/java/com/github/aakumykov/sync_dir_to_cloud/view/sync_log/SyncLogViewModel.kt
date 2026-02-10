@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLogger
@@ -62,7 +61,6 @@ class SyncLogViewModel(
                     executionId = it.executionId,
                     jobId = null,
                     text = it.message,
-                    logItemAbout = LogItemAbout.INSTRUCTION
                 )
             }
 
@@ -79,8 +77,7 @@ class SyncLogViewModel(
                     executionId = it.executionId,
                     jobId = null,
                     text = it.message,
-                    subText = "${it.firstItem}, ${it.secondItem}",
-                    logItemAbout = LogItemAbout.FILE
+                    subText = "${it.firstItem}, ${it.secondItem}"
                 )
             }
 

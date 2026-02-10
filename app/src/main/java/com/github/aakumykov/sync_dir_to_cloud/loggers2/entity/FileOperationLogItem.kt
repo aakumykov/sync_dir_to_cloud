@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.ForeignKey.Companion.NO_ACTION
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -13,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
 
 @Entity(
     tableName = FileOperationLogItem.TABLE_NAME,
@@ -25,18 +23,24 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
             onDelete = CASCADE,
             onUpdate = NO_ACTION,
         )
-    ],
-    indices = [
-        Index(GlobalConstants.FIELD_TASK_ID)
     ]
 )
-class FileOperationLogItem(
+data class FileOperationLogItem(
     @PrimaryKey val id: String,
-    logItemType: LogItemType,
-    taskId: String,
-    executionId: String,
-    message: String?,
-    timestamp: Long,
+
+    @ColumnInfo(name = GlobalConstants.FIELD_LOG_ITEM_TYPE)
+    val logItemType: LogItemType,
+
+    @ColumnInfo(name = GlobalConstants.FIELD_LOG_ITEM_ABOUT, defaultValue = "UNKNOWN")
+    val logItemAbout: LogItemAbout,
+
+    @ColumnInfo(name = GlobalConstants.FIELD_TASK_ID)
+    val taskId: String,
+
+    @ColumnInfo(name = GlobalConstants.FIELD_EXECUTION_ID)
+    val executionId: String,
+
+    val message: String,
 
     @ColumnInfo(name = "first_item", defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val firstItem: String?,
@@ -44,24 +48,17 @@ class FileOperationLogItem(
     @ColumnInfo(name = "second_item", defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val secondItem: String?,
 
+    val timestamp: Long,
+
     @ColumnInfo(name = GlobalConstants.FIELD_JOB_ID, defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val jobId: String?
-)
-    : BasicLogItem(
-        logItemAbout = LogItemAbout.FILE,
-        logItemType = logItemType,
-        taskId = taskId,
-        executionId = executionId,
-        message = message,
-        timestamp = timestamp,
-    )
-{
+) {
     companion object {
         fun create(
             logItemType: LogItemType,
             taskId: String,
             executionId: String,
-            message: String?,
+            message: String,
             firstItem: String?,
             secondItem: String?,
             jobId: String?
@@ -71,6 +68,7 @@ class FileOperationLogItem(
             return FileOperationLogItem(
                 id = newRandomId,
                 logItemType = logItemType,
+                logItemAbout = LogItemAbout.FILE,
                 taskId = taskId,
                 executionId = executionId,
                 message = message,

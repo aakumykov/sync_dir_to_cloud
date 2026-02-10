@@ -18,8 +18,8 @@ import kotlinx.coroutines.flow.Flow
 class InstructionLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val repository: InstructionLogRepository,
     private val resources: Resources,
+    private val repository: InstructionLogRepository,
 ) {
 //    suspend fun getLogs(): Flow<InstructionLogItem> = repository.getAsFlow(taskId, executionId)
 
@@ -34,7 +34,7 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.BUSY,
-                message = logMessage.get(resources),
+                logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {
                 repository.add(it)
@@ -50,7 +50,7 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.SUCCESS,
-                message = logMessage.get(resources),
+                logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {
                 repository.add(it)
@@ -66,7 +66,7 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.CANCELLED,
-                message = logMessage.get(resources),
+                logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {
                 repository.add(it)
@@ -82,7 +82,7 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.ERROR,
-                message = logMessage.get(resources),
+                logMessage = logMessage.get(resources),
                 timestamp = currentTime
             ).also {
                 repository.add(it)
