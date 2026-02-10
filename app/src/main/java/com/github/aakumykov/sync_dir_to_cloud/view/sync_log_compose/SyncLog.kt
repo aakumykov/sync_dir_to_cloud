@@ -29,7 +29,7 @@ fun SyncLog(modifier: Modifier = Modifier,
         viewModel.startWorking(taskId, executionId)
     }
 
-    val listState = viewModel.logOfSync
+    val listState = viewModel.logOfSyncListFlow
         .collectAsState(emptyList())
 
     LazyColumn(modifier = modifier.fillMaxSize()) {

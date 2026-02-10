@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 
 @DatabaseView(
-    viewName = "sync_logs",
+    viewName = LogOfSync.TABLE_NAME,
     value = "SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM task_logs " +
             "UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM instruction_logs " +
             "UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM file_operation_logs"
@@ -37,5 +37,7 @@ data class LogOfSync(
         return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, taskId='$taskId', executionId='$executionId', text=$text, key='$key')"
     }
 
-
+    companion object {
+        const val TABLE_NAME = "sync_logs"
+    }
 }

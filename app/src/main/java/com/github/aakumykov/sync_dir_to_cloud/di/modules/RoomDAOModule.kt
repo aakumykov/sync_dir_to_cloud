@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.InstructionLoggingDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.LogOfSyncDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
@@ -25,9 +26,7 @@ import dagger.Provides
 class RoomDAOModule {
 
     @Provides
-    fun provideSyncTaskDAO(appDatabase: AppDatabase): SyncTaskDAO {
-        return appDatabase.getSyncTaskDAO()
-    }
+    fun provideSyncTaskDAO(appDatabase: AppDatabase): SyncTaskDAO = appDatabase.getSyncTaskDAO()
 
     @Provides
     fun provideSyncTaskStateDAO(appDatabase: AppDatabase): SyncTaskStateDAO = appDatabase.getSyncTaskStateDAO()
@@ -45,58 +44,39 @@ class RoomDAOModule {
     fun provideSyncTaskExecutionStateDAO(appDatabase: AppDatabase): SyncTaskSyncStateDAO = appDatabase.getSyncTaskExecutionStateDAO()
 
     @Provides
-    fun provideCloudAuthDAO(appDatabase: AppDatabase): CloudAuthDAO {
-        return appDatabase.getCloudAuthDAO()
-    }
+    fun provideCloudAuthDAO(appDatabase: AppDatabase): CloudAuthDAO = appDatabase.getCloudAuthDAO()
 
     @Provides
-    fun provideSyncObjectDAO(appDatabase: AppDatabase): SyncObjectDAO {
-        return appDatabase.getSyncObjectDAO()
-    }
+    fun provideSyncObjectDAO(appDatabase: AppDatabase): SyncObjectDAO = appDatabase.getSyncObjectDAO()
 
     @Provides
-    fun provideSyncTaskResettingDAO(appDatabase: AppDatabase): SyncTaskResettingDAO {
-        return appDatabase.getSyncTaskResettingDAO()
-    }
+    fun provideSyncTaskResettingDAO(appDatabase: AppDatabase): SyncTaskResettingDAO = appDatabase.getSyncTaskResettingDAO()
 
     @Provides
-    fun provideSyncObjectStateDAO(appDatabase: AppDatabase): SyncObjectStateSetterDAO {
-        return appDatabase.getSyncObjectStateDAO()
-    }
+    fun provideSyncObjectStateDAO(appDatabase: AppDatabase): SyncObjectStateSetterDAO = appDatabase.getSyncObjectStateDAO()
 
     @Provides
-    fun provideSyncObjectStateResettingDAO(appDatabase: AppDatabase): SyncObjectBadStateResettingDAO {
-        return appDatabase.getSyncObjectBadStateResettingDAO()
-    }
+    fun provideSyncObjectStateResettingDAO(appDatabase: AppDatabase): SyncObjectBadStateResettingDAO = appDatabase.getSyncObjectBadStateResettingDAO()
 
     @Provides
-    fun provideTaskLogDAO(appDatabase: AppDatabase): SyncTaskLogDAO {
-        return appDatabase.getTaskLogDAO()
-    }
+    fun provideTaskLogDAO(appDatabase: AppDatabase): SyncTaskLogDAO = appDatabase.getTaskLogDAO()
 
 
     @Provides
-    fun provideComparisonStateDAO(appDatabase: AppDatabase): ComparisonStateDAO {
-        return appDatabase.getComparisonStateDAO()
-    }
+    fun provideComparisonStateDAO(appDatabase: AppDatabase): ComparisonStateDAO = appDatabase.getComparisonStateDAO()
 
     @Provides
-    fun provideSyncInstructionDAO6(appDatabase: AppDatabase): SyncInstructionDAO {
-        return appDatabase.getSyncInstructionDAO6()
-    }
+    fun provideSyncInstructionDAO6(appDatabase: AppDatabase): SyncInstructionDAO = appDatabase.getSyncInstructionDAO6()
 
     @Provides
-    fun provideTaskLoggerDAO2(appDatabase: AppDatabase): TaskLogger2DAO {
-        return appDatabase.getTaskLogger2DAO()
-    }
+    fun provideTaskLoggerDAO2(appDatabase: AppDatabase): TaskLogger2DAO = appDatabase.getTaskLogger2DAO()
 
     @Provides
-    fun provideInstructionLoggingDAO(appDatabase: AppDatabase): InstructionLoggingDAO {
-        return appDatabase.getInstructionLoggingDAO()
-    }
+    fun provideInstructionLoggingDAO(appDatabase: AppDatabase): InstructionLoggingDAO = appDatabase.getInstructionLoggingDAO()
 
     @Provides
-    fun provideFileOperationLogDAO(appDatabase: AppDatabase): FileOperationLogDAO {
-        return appDatabase.getFileOperationLogDAO()
-    }
+    fun provideFileOperationLogDAO(appDatabase: AppDatabase): FileOperationLogDAO = appDatabase.getFileOperationLogDAO()
+
+    @Provides
+    fun provideLogOfSyncDAO(appDatabase: AppDatabase): LogOfSyncDAO = appDatabase.getLogOfSyncDAO()
 }
