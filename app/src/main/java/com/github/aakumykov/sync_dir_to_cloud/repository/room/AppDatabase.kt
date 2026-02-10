@@ -29,7 +29,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedu
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 @Database(
     entities = [
@@ -43,7 +43,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
         InstructionLogItem::class,
         FileOperationLogItem::class,
    ],
-    views = [ SyncLogItem::class ],
+    views = [ LogOfSync::class ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?

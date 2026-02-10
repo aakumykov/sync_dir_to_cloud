@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
             "UNION ALL SELECT id as orig_log_id, task_id, execution_id, message as text FROM instruction_logs " +
             "UNION ALL SELECT id as orig_log_id, task_id, execution_id, message as text FROM file_operation_logs"
 )
-data class SyncLogItem(
+data class LogOfSync(
     @ColumnInfo(name = "orig_log_id")
     val origLogId: String,
 
@@ -30,7 +30,7 @@ data class SyncLogItem(
     val key: String get() = "${taskId}${executionId}${timestamp}"
 
     override fun toString(): String {
-        return "SyncLogItem(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, taskId='$taskId', executionId='$executionId', text=$text, key='$key')"
+        return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, taskId='$taskId', executionId='$executionId', text=$text, key='$key')"
     }
 
 

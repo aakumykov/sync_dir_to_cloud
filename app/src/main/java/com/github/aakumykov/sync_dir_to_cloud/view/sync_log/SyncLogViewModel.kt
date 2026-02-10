@@ -7,16 +7,10 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.F
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLoggerAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
@@ -27,34 +21,34 @@ class SyncLogViewModel(
 
     private var isFirstRun = true
 
-    private val _SyncLogItem: MutableStateFlow<List<SyncLogItem>> = MutableStateFlow(emptyList())
-    val syncLogItem: Flow<List<SyncLogItem>> = _SyncLogItem
+    private val _LogOfSync: MutableStateFlow<List<LogOfSync>> = MutableStateFlow(emptyList())
+    val logOfSync: Flow<List<LogOfSync>> = _LogOfSync
 
 
     suspend fun startWorking(taskId: String, executionId: String) {
         if (isFirstRun) {
             isFirstRun = false
 
-//            commonList(taskId, executionId).sortedBy { it.timestamp }.also { _SyncLogItem.emit(it) }
+//            commonList(taskId, executionId).sortedBy { it.timestamp }.also { _LogOfSync.emit(it) }
             /*commonListFlow(taskId, executionId).collect {
-                _SyncLogItem.emit(it)
+                _LogOfSync.emit(it)
             }*/
         }
     }
 
 
-    private suspend fun commonList(taskId: String, executionId: String): List<SyncLogItem> {
+    private suspend fun commonList(taskId: String, executionId: String): List<LogOfSync> {
 
         val instructionLogger = instructionLogger(taskId, executionId)
         val fileOperationLogger = fileOperationLogger(taskId, executionId)
 
-        val instructionLogs: List<SyncLogItem> = instructionLogger
+        val instructionLogs: List<LogOfSync> = instructionLogger
             .list()
             .distinctBy {
                 "${it.taskId}--${it.executionId}--${it.message}"
             }
             .map {
-                SyncLogItem(
+                LogOfSync(
                     origLogId = it.id,
                     timestamp = it.timestamp,
                     logItemType = it.logItemType,
@@ -64,13 +58,13 @@ class SyncLogViewModel(
                 )
             }
 
-        val fileOperationLogs: List<SyncLogItem> = fileOperationLogger
+        val fileOperationLogs: List<LogOfSync> = fileOperationLogger
             .list()
             .distinctBy {
                 "${it.taskId}--${it.executionId}--${it.message}"
             }
             .map{
-                SyncLogItem(
+                LogOfSync(
                     origLogId = it.id,
                     timestamp = it.timestamp,
                     logItemType = it.logItemType,
@@ -85,14 +79,14 @@ class SyncLogViewModel(
     }
 
     /*@OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun commonListFlow(taskId: String, executionId: String): Flow<List<SyncLogItem>> {
+    private suspend fun commonListFlow(taskId: String, executionId: String): Flow<List<LogOfSync>> {
 
         val instructionLogsFlow = instructionLogger(taskId, executionId)
             .listAsFlow()
             .flatMapConcat { list ->
                 flow {
                     list.forEach {
-                        SyncLogItem(
+                        LogOfSync(
                             timestamp = it.timestamp,
                             logItemType = it.logItemType,
                             taskId = it.taskId,
@@ -111,7 +105,7 @@ class SyncLogViewModel(
             .flatMapConcat { list ->
                 flow {
                     list.forEach {
-                        SyncLogItem(
+                        LogOfSync(
                             timestamp = it.timestamp,
                             logItemType = it.logItemType,
                             taskId = it.taskId,

@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 @Composable
 fun SyncLog(modifier: Modifier = Modifier,
@@ -29,11 +29,11 @@ fun SyncLog(modifier: Modifier = Modifier,
         viewModel.startWorking(taskId, executionId)
     }
 
-    val listState = viewModel.syncLogItem
+    val listState = viewModel.logOfSync
         .collectAsState(emptyList())
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        items(items = listState.value, key = { it.key }) { syncLogItem: SyncLogItem ->
+        items(items = listState.value, key = { it.key }) { logOfSync: LogOfSync ->
             Column (
                 modifier = Modifier
                     .padding(4.dp)
@@ -42,12 +42,12 @@ fun SyncLog(modifier: Modifier = Modifier,
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = syncLogItem.text ?: "",
+                    text = logOfSync.text ?: "",
                     fontSize = 16.sp,
                 )
-                /*if (null != syncLogItem.subText) {
+                /*if (null != logOfSync.subText) {
                     Text(
-                        text = syncLogItem.subText,
+                        text = logOfSync.subText,
                         fontSize = 13.sp,
                         modifier = Modifier
                             .padding(top = 5.dp)
