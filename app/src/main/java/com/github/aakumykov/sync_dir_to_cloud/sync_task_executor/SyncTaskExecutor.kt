@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import android.content.res.Resources
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -17,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessorAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -46,7 +46,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val taskLogger: TaskLogger,
     private val taskLogger2AssistedFactory: TaskLogger2AssistedFactory,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
-    private val resources: Resources,
 ){
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy {
         appComponent.getSyncTaskRunningTimeUpdater() }
@@ -61,6 +60,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         Log.d(TAG, "executeSyncTask() called with: scope = $parentScope, taskId = $taskId")
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
+        val logItemId = newRandomId
 
         // FIXME: TODO внедрять?
         // TODO: вместо того, чтобы мудрить здесь с запуском в Scope,
@@ -68,17 +68,17 @@ class SyncTaskExecutor @AssistedInject constructor(
         val taskEH = CoroutineExceptionHandler { context, throwable ->
             parentScope.launch (NonCancellable) {
                 logExecutionError(syncTask, throwable)
-                taskLogger2.logTaskError(throwable)
+                taskLogger2.logTaskError(logItemId, throwable)
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
             }
         }
 
         parentScope.launch (Dispatchers.IO + taskEH) {
             try {
-                executeSyncTaskReal(this, syncTask)
+                executeSyncTaskReal(this, syncTask, logItemId)
             } catch (e: CancellationException) {
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
-                taskLogger2.logTaskCancelled(e)
+                taskLogger2.logTaskCancelled(logItemId, e)
             }
         }.also { job ->
             TaskJobsHolder.addJob(taskId, job)
@@ -86,14 +86,18 @@ class SyncTaskExecutor @AssistedInject constructor(
     }
 
 
-    private suspend fun executeSyncTaskReal(parentScope: CoroutineScope, syncTask: SyncTask) {
+    private suspend fun executeSyncTaskReal(
+        parentScope: CoroutineScope,
+        syncTask: SyncTask,
+        logItemId: String,
+    ) {
         Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] СТАРТ ========")
 
         val taskId = syncTask.id
 
         try {
             logExecutionStart(taskId)
-            taskLogger2.logTaskStarted()
+            taskLogger2.logTaskStarted(logItemId)
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
@@ -102,7 +106,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 .processSyncTask()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
-            taskLogger2.logTaskFinished()
+            taskLogger2.logTaskFinished(logItemId)
         }
         finally {
             // TODO: ошибочное расположение

@@ -51,13 +51,14 @@ class TaskLogItem(
         const val TABLE_NAME = "task_logs"
 
         fun create(
+            id: String,
             entryType: LogItemType,
             taskId: String,
             executionId: String,
             message: String?
         ) = TaskLogItem(
+            id = id,
             logItemType = entryType,
-            id = newRandomId,
             message = message,
             taskId = taskId,
             executionId = executionId,

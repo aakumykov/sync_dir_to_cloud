@@ -14,6 +14,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import kotlin.math.log
 
 class TaskLogger2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -21,38 +22,43 @@ class TaskLogger2 @AssistedInject constructor(
     private val repository: TaskLogRepository2,
     private val resources: Resources,
 ) {
-    suspend fun logTaskStarted() = runNonCancellable {
-        taskLogWithMessage(LogItemType.BUSY)
+    suspend fun logTaskStarted(logItemId: String) = runNonCancellable {
+        taskLogWithMessage(logItemId, LogItemType.BUSY)
             .also {
                 repository.add(it)
                 Log.d(TAG, "${it.message}, ${it.timestamp}")
             }
     }
 
-    suspend fun logTaskFinished() = runNonCancellable {
-        taskLogWithMessage(LogItemType.SUCCESS)
+    suspend fun logTaskFinished(logItemId: String) = runNonCancellable {
+        taskLogWithMessage(logItemId, LogItemType.SUCCESS)
             .also {
                 repository.add(it)
                 Log.d(TAG, "${it.message}, ${it.timestamp}")
             }
     }
 
-    suspend fun logTaskCancelled(e: CancellationException) = runNonCancellable {
-        taskLogWithMessage(LogItemType.CANCELLED)
+    suspend fun logTaskCancelled(logItemId: String, e: CancellationException) = runNonCancellable {
+        taskLogWithMessage(logItemId, LogItemType.CANCELLED)
             .also {
                 repository.add(it)
                 Log.i(TAG, "${it.message}, ${it.timestamp} (${e.errorMsgExtended})")
             }
     }
 
-    suspend fun logTaskError(t: Throwable) = runNonCancellable {
-        taskLogWithMessage(LogItemType.ERROR, t.errorMsg).also {
+    suspend fun logTaskError(logItemId: String, t: Throwable) = runNonCancellable {
+        taskLogWithMessage(logItemId, LogItemType.ERROR, t.errorMsg).also {
             repository.add(it)
             Log.e(TAG, "${it.message}, ${it.timestamp}", t)
         }
     }
 
-    private fun taskLogWithMessage(logItemType: LogItemType, message: String? = null): TaskLogItem = TaskLogItem.create(
+    private fun taskLogWithMessage(
+        logItemId: String,
+        logItemType: LogItemType,
+        message: String? = null
+    ): TaskLogItem = TaskLogItem.create(
+        id = logItemId,
         entryType = logItemType,
         taskId = taskId,
         executionId = executionId,
