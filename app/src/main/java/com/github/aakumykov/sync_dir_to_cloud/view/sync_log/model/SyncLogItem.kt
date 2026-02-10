@@ -15,7 +15,6 @@ data class SyncLogItem(
     val executionId: String,
     val text: String?,
     val subText: String? = null,
-    val progress: Int? = null,
 ) {
     val key: String get() = "${taskId}${executionId}${timestamp}"
 
