@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 146,
-    "identityHash": "a4ff5466d38dec16f7ed496871698d98",
+    "identityHash": "0369a732630b4fdb4772256e06e54c5b",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -966,15 +966,10 @@
         ]
       }
     ],
-    "views": [
-      {
-        "viewName": "sync_log",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT id as orig_log_id, task_id, execution_id, message as text FROM task_logs UNION ALL SELECT id as orig_log_id, task_id, execution_id, message as text FROM instruction_logs UNION ALL SELECT id as orig_log_id, task_id, execution_id, message as text FROM file_operation_logs"
-      }
-    ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a4ff5466d38dec16f7ed496871698d98')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0369a732630b4fdb4772256e06e54c5b')"
     ]
   }
 }

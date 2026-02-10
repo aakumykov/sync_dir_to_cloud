@@ -29,7 +29,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedu
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
 
 @Database(
     entities = [
@@ -43,9 +42,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
         InstructionLogItem::class,
         FileOperationLogItem::class,
    ],
-    views = [
-        SyncLogItem::class
-    ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -137,9 +133,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.SyncLogItem
         AutoMigration(from = 143, to = 144, spec = RenameFileOperationLogItem2ToFileOperationLogItem::class),
         AutoMigration(from = 144, to = 145), // Новые поля "log_item_about".
         AutoMigration(from = 145, to = 146), // BasicLogItem.
-        AutoMigration(from = 146, to = 147), // @DatabaseView "sync_log"
     ],
-    version = 147,
+    version = 146,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
