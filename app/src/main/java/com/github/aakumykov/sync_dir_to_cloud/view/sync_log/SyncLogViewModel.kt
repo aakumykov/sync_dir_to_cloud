@@ -28,11 +28,6 @@ class SyncLogViewModel(
 
             logOfSyncRepository
                 .listAsFlow(taskId, executionId)
-                .map { list: List<LogOfSync> ->
-                    list.distinctBy {
-                        it.distinctValue
-                    }
-                }
                 .collect {
                     _logOfSyncListFlow.emit(it)
                 }

@@ -28,12 +28,14 @@ class BasicInstructionsProcessor @AssistedInject constructor(
         codeBlock: suspend () -> Unit
     ): Job {
         val jobId = newRandomId
+        val logItemId = newRandomId
 
         return runInCoroutineExtended(
             scope = scope,
             onStart = { job ->
                 operationJobsHolder.addJob(jobId, job)
                 fileOperationLogger2.logStarted(
+                    logItemId = logItemId,
                     jobId,
                     operationName,
                     firstItem,
@@ -42,6 +44,7 @@ class BasicInstructionsProcessor @AssistedInject constructor(
             },
             onFinish = {
                 fileOperationLogger2.logFinished(
+                    logItemId = logItemId,
                     operationName,
                     firstItem,
                     secondItem
@@ -49,6 +52,7 @@ class BasicInstructionsProcessor @AssistedInject constructor(
             },
             onCancel = { e ->
                 fileOperationLogger2.logCancelled(
+                    logItemId = logItemId,
                     operationName,
                     firstItem,
                     secondItem,
@@ -57,6 +61,7 @@ class BasicInstructionsProcessor @AssistedInject constructor(
             },
             onError = { t ->
                 fileOperationLogger2.logError(
+                    logItemId = logItemId,
                     operationName,
                     firstItem,
                     secondItem,

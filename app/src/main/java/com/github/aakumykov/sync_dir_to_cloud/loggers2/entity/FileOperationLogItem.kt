@@ -58,6 +58,7 @@ class FileOperationLogItem(
 {
     companion object {
         fun create(
+            id: String,
             logItemType: LogItemType,
             taskId: String,
             executionId: String,
@@ -69,7 +70,7 @@ class FileOperationLogItem(
             : FileOperationLogItem
         {
             return FileOperationLogItem(
-                id = newRandomId,
+                id = id,
                 logItemType = logItemType,
                 taskId = taskId,
                 executionId = executionId,

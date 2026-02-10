@@ -34,19 +34,11 @@ data class LogOfSync(
 ) {
     val key: String get() = "${taskId}${executionId}${timestamp}"
 
-    private val isIntermediate: Boolean get() = LogItemType.BUSY == this.logItemType
-
-    private val busyOrResult: Boolean get() = (LogItemType.BUSY == logItemType) || listOf(LogItemType.ERROR, LogItemType.SUCCESS, LogItemType.CANCELLED).contains(logItemType)
-
-    val distinctValue: String get() = "${busyOrResult}${text}"
-
     companion object {
         const val TABLE_NAME = "sync_logs"
     }
 
     override fun toString(): String {
-        return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, key='$key', distinctValue='$distinctValue')"
+        return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, key='$key')"
     }
-
-
 }

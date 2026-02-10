@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,22 +15,9 @@ class FileOperationLogRepository2 @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) {
     suspend fun add(taskLogItem: FileOperationLogItem) = withContext(dispatcher) {
-        dao.add(taskLogItem)
+        when(taskLogItem.logItemType) {
+            LogItemType.BUSY -> dao.add(taskLogItem)
+            else -> dao.update(taskLogItem)
+        }
     }
-
-    /*suspend fun getAsFlow(taskId: String, executionId: String): Flow<FileOperationLogItem> = withContext(dispatcher) {
-        dao.getAsFlow(taskId, executionId)
-    }*/
-
-    suspend fun list(taskId: String, executionId: String): List<FileOperationLogItem> = withContext(dispatcher) {
-        dao.list(taskId, executionId)
-    }
-
-    suspend fun listAsFlow(taskId: String, executionId: String): Flow<List<FileOperationLogItem>> = withContext(dispatcher) {
-        dao.listAsFlow(taskId, executionId)
-    }
-
-    /*suspend fun deleteAllFor(taskId: String) = withContext(dispatcher) {
-        dao.deleteAllForTask(taskId)
-    }*/
 }
