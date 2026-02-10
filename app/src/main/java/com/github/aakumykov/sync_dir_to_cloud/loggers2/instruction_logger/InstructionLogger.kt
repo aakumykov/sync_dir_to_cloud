@@ -21,16 +21,10 @@ class InstructionLogger @AssistedInject constructor(
     private val resources: Resources,
     private val repository: InstructionLogRepository,
 ) {
-//    suspend fun getLogs(): Flow<InstructionLogItem> = repository.getAsFlow(taskId, executionId)
-
-
-    suspend fun list(): List<InstructionLogItem> = repository.list(taskId, executionId)
-    suspend fun listAsFlow(): Flow<List<InstructionLogItem>> = repository.listAsFlow(taskId, executionId)
-
-
-    suspend fun logInstructionExecutionStarted(logMessage: TextMessage) {
+    suspend fun logInstructionExecutionStarted(logItemId: String, logMessage: TextMessage) {
         runNonCancellable {
             InstructionLogItem.create(
+                id = logItemId,
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.BUSY,
@@ -44,9 +38,10 @@ class InstructionLogger @AssistedInject constructor(
     }
 
 
-    suspend fun logInstructionExecutionFinished(logMessage: TextMessage) {
+    suspend fun logInstructionExecutionFinished(logItemId: String, logMessage: TextMessage) {
         runNonCancellable {
             InstructionLogItem.create(
+                id = logItemId,
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.SUCCESS,
@@ -60,9 +55,10 @@ class InstructionLogger @AssistedInject constructor(
     }
 
 
-    suspend fun logInstructionExecutionCancelled(logMessage: TextMessage) {
+    suspend fun logInstructionExecutionCancelled(logItemId: String, logMessage: TextMessage) {
         runNonCancellable {
             InstructionLogItem.create(
+                id = logItemId,
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.CANCELLED,
@@ -76,9 +72,10 @@ class InstructionLogger @AssistedInject constructor(
     }
 
 
-    suspend fun logInstructionExecutionError(logMessage: TextMessage, throwable: Throwable) {
+    suspend fun logInstructionExecutionError(logItemId: String, logMessage: TextMessage, throwable: Throwable) {
         runNonCancellable {
             InstructionLogItem.create(
+                id = logItemId,
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.ERROR,

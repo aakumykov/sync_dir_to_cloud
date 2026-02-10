@@ -50,6 +50,7 @@ class InstructionLogItem(
         const val TABLE_NAME = "instruction_logs"
 
         fun create(
+            id: String,
             logItemType: LogItemType,
             taskId: String,
             executionId: String,
@@ -57,7 +58,7 @@ class InstructionLogItem(
             timestamp: Long,
         ): InstructionLogItem {
             return InstructionLogItem(
-                id = newRandomId,
+                id = id,
                 logItemType = logItemType,
                 taskId = taskId,
                 executionId = executionId,

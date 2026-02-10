@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLoggerAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -29,9 +30,11 @@ class OneStageOfTaskExecutor @AssistedInject constructor(
      ) {
         Log.d(TAG, "process(isCritical:$isCritical)")
 
+        val logItemId = newRandomId
+
          scope.launch {
              try {
-                 instructionLogger.logInstructionExecutionStarted(logMessage)
+                 instructionLogger.logInstructionExecutionStarted(logItemId, logMessage)
 
                  val nonCriticalExceptionHandler = CoroutineExceptionHandler { context, throwable ->
                      Log.w(TAG, "Некритичная ошибка: ${throwable.errorMsgExtended}")
@@ -50,15 +53,15 @@ class OneStageOfTaskExecutor @AssistedInject constructor(
                      }.join()
                  }
 
-                 instructionLogger.logInstructionExecutionFinished(logMessage)
+                 instructionLogger.logInstructionExecutionFinished(logItemId, logMessage)
 
              } catch (e: CancellationException) {
-                 instructionLogger.logInstructionExecutionCancelled(logMessage)
+                 instructionLogger.logInstructionExecutionCancelled(logItemId, logMessage)
                  // FIXME: Нужно ли перевыбрасывать это исключение? Кому оно нужно?
                  throw e
              }
              catch (throwable: Throwable) {
-                 instructionLogger.logInstructionExecutionError(logMessage, throwable)
+                 instructionLogger.logInstructionExecutionError(logItemId, logMessage, throwable)
                  if (isCritical)
                      throw throwable
              }
