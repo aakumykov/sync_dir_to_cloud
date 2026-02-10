@@ -1,8 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
+import androidx.room.DatabaseView
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 
+/*@DatabaseView(
+    viewName = "sync_log",
+    value = "SELECT id,"
+)*/
 data class SyncLogItem(
+    val origLogId: String,
     val timestamp: Long,
     val logItemType: LogItemType,
     val taskId: String,
@@ -15,16 +21,6 @@ data class SyncLogItem(
     val key: String get() = "${taskId}${executionId}${timestamp}"
 
     override fun toString(): String {
-        return "SyncLogItem(" +
-                "timestamp=$timestamp, " +
-                "logItemType=$logItemType, " +
-                "text='$text', " +
-                "taskId='$taskId', " +
-                "executionId='$executionId', " +
-                "jobId=$jobId, " +
-                "subText='$subText', " +
-                "progress=$progress" +
-                ")"
+        return "SyncLogItem(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, taskId='$taskId', executionId='$executionId', jobId=$jobId, text=$text, subText=$subText, progress=$progress, key='$key')"
     }
-
 }

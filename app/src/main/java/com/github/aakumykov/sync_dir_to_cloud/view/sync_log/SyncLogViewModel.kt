@@ -55,6 +55,7 @@ class SyncLogViewModel(
             }
             .map {
                 SyncLogItem(
+                    origLogId = it.id,
                     timestamp = it.timestamp,
                     logItemType = it.logItemType,
                     taskId = it.taskId,
@@ -71,6 +72,7 @@ class SyncLogViewModel(
             }
             .map{
                 SyncLogItem(
+                    origLogId = it.id,
                     timestamp = it.timestamp,
                     logItemType = it.logItemType,
                     taskId = it.taskId,
