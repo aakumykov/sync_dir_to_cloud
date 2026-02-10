@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
+import androidx.room.Ignore
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 
@@ -33,11 +34,17 @@ data class LogOfSync(
 ) {
     val key: String get() = "${taskId}${executionId}${timestamp}"
 
-    override fun toString(): String {
-        return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, taskId='$taskId', executionId='$executionId', text=$text, key='$key')"
-    }
+//    private val isIntermediate: Boolean get() = LogItemType.BUSY == this.logItemType
+
+    val distinctValue: String get() = "${taskId}${executionId}${text}"
 
     companion object {
         const val TABLE_NAME = "sync_logs"
     }
+
+    override fun toString(): String {
+        return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, key='$key', distinctValue='$distinctValue')"
+    }
+
+
 }

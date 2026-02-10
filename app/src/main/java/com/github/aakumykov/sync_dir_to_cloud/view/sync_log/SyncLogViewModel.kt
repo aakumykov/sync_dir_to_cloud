@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
@@ -27,6 +28,11 @@ class SyncLogViewModel(
 
             logOfSyncRepository
                 .listAsFlow(taskId, executionId)
+                .map { list: List<LogOfSync> ->
+                    list.distinctBy {
+                        it.distinctValue
+                    }
+                }
                 .collect {
                     _logOfSyncListFlow.emit(it)
                 }
