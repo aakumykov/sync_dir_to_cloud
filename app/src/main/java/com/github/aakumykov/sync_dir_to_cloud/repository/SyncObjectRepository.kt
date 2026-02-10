@@ -13,7 +13,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExis
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.enums.extensions.isNew
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
@@ -23,7 +22,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
@@ -34,7 +32,6 @@ class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
     private val syncObjectStateSetterDAO: SyncObjectStateSetterDAO,
     private val syncObjectBadStateResettingDAO: SyncObjectBadStateResettingDAO,
-    private val badObjectStateResettingDAO: BadObjectStateResettingDAO,
 )
     : SyncObjectAdder,
         SyncObjectDBReader,

@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.BadObjectStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.CloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.ComparisonStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
@@ -68,11 +67,6 @@ class RoomDAOModule {
     @Provides
     fun provideSyncObjectStateResettingDAO(appDatabase: AppDatabase): SyncObjectBadStateResettingDAO {
         return appDatabase.getSyncObjectBadStateResettingDAO()
-    }
-
-    @Provides
-    fun provideSyncObjectResettingDAO(appDatabase: AppDatabase): BadObjectStateResettingDAO {
-        return appDatabase.getSyncObjectResettingDAO()
     }
 
     @Provides
