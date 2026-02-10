@@ -60,7 +60,6 @@ class SyncLogViewModel(
                     logItemType = it.logItemType,
                     taskId = it.taskId,
                     executionId = it.executionId,
-                    jobId = null,
                     text = it.message,
                 )
             }
@@ -77,7 +76,6 @@ class SyncLogViewModel(
                     logItemType = it.logItemType,
                     taskId = it.taskId,
                     executionId = it.executionId,
-                    jobId = null,
                     text = it.message,
                     subText = "${it.firstItem}, ${it.secondItem}"
                 )

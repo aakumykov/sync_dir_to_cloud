@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 
 /*@DatabaseView(
     viewName = "sync_log",
-    value = "SELECT id,"
+    value = "SELECT id as origLogId, task_id, execution_id, message, "
 )*/
 data class SyncLogItem(
     val origLogId: String,
@@ -13,7 +13,6 @@ data class SyncLogItem(
     val logItemType: LogItemType,
     val taskId: String,
     val executionId: String,
-    val jobId: String? = null,
     val text: String?,
     val subText: String? = null,
     val progress: Int? = null,
