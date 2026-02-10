@@ -45,7 +45,7 @@ fun SyncLog(modifier: Modifier = Modifier,
                     text = syncLogItem.text ?: "",
                     fontSize = 16.sp,
                 )
-                if (null != syncLogItem.subText) {
+                /*if (null != syncLogItem.subText) {
                     Text(
                         text = syncLogItem.subText,
                         fontSize = 13.sp,
@@ -54,7 +54,7 @@ fun SyncLog(modifier: Modifier = Modifier,
                             .background(Color(0xFFFCFCFC), shape = RoundedCornerShape(4.dp))
                             .padding(horizontal = 6.dp)
                     )
-                }
+                }*/
             }
         }
     }

@@ -77,7 +77,7 @@ class SyncLogViewModel(
                     taskId = it.taskId,
                     executionId = it.executionId,
                     text = it.message,
-                    subText = "${it.firstItem}, ${it.secondItem}"
+//                    subText = "${it.firstItem}, ${it.secondItem}"
                 )
             }
 
