@@ -172,3 +172,11 @@ class TaskExecutionLogItemDeletion : AutoMigrationSpec
 
 @RenameTable(fromTableName = "file_operation_logs_2", toTableName = "file_operation_logs")
 class RenameFileOperationLogItem2ToFileOperationLogItem : AutoMigrationSpec
+
+
+@RenameColumn(
+    tableName = "sync_logs",
+    fromColumnName = "orig_log_id",
+    toColumnName = "log_id"
+)
+class LogOfSyncAssLogItemAboutRenameOrigLogId : AutoMigrationSpec
