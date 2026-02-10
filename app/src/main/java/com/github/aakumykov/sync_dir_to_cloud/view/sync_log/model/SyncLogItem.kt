@@ -8,7 +8,7 @@ data class SyncLogItem(
     val taskId: String,
     val executionId: String,
     val jobId: String? = null,
-    val text: String,
+    val text: String?,
     val subText: String? = null,
     val progress: Int? = null,
 ) {

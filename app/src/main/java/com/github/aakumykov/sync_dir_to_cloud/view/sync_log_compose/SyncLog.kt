@@ -42,7 +42,7 @@ fun SyncLog(modifier: Modifier = Modifier,
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = syncLogItem.text,
+                    text = syncLogItem.text ?: "",
                     fontSize = 16.sp,
                 )
                 if (null != syncLogItem.subText) {
