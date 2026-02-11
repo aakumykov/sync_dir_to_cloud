@@ -210,4 +210,8 @@
     <string name="LOG_ITEM_deleting_dir">Deleting dir</string>
     <string name="LOG_ITEM_creating_dir_from_source_in_target">Creating in target dir from source</string>
     <string name="LOG_ITEM_creating_dir_from_target_in_source">Creating in source dir from target</string>
+    <string name="LOG_ITEM_task_started">Задача стартовала</string>
+    <string name="LOG_ITEM_task_finished">Задача финишировала</string>
+    <string name="LOG_ITEM_task_cancelled">Задача отменена</string>
+    <string name="LOG_ITEM_task_failed">Ошибка задачи</string>
 </resources>

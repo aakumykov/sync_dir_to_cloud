@@ -208,4 +208,8 @@
     <string name="LOG_ITEM_deleting_dir">Удаляю каталог</string>
     <string name="LOG_ITEM_creating_dir_from_source_in_target">Создаю в приёмнике каталог из источника</string>
     <string name="LOG_ITEM_creating_dir_from_target_in_source">Создаю в источнике каталог из приёмника</string>
+    <string name="LOG_ITEM_task_started">Задача стартовала</string>
+    <string name="LOG_ITEM_task_finished">Задача финишировала</string>
+    <string name="LOG_ITEM_task_cancelled">Задача отменена</string>
+    <string name="LOG_ITEM_task_failed">Ошибка задачи</string>
 </resources>

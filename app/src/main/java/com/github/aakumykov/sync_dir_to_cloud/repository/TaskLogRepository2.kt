@@ -14,9 +14,6 @@ class TaskLogRepository2 @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) {
     suspend fun add(taskLogItem: TaskLogItem) = withContext(dispatcher) {
-        when(taskLogItem.logItemType) {
-            LogItemType.BUSY -> dao.add(taskLogItem)
-            else -> dao.update(taskLogItem)
-        }
+        dao.add(taskLogItem)
     }
 }

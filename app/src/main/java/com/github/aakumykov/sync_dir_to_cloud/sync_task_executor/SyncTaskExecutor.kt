@@ -60,7 +60,6 @@ class SyncTaskExecutor @AssistedInject constructor(
         Log.d(TAG, "executeSyncTask() called with: scope = $parentScope, taskId = $taskId")
 
         val syncTask = syncTaskReader.getSyncTask(taskId)
-        val logItemId = newRandomId
 
         // FIXME: TODO внедрять?
         // TODO: вместо того, чтобы мудрить здесь с запуском в Scope,
@@ -68,17 +67,17 @@ class SyncTaskExecutor @AssistedInject constructor(
         val taskEH = CoroutineExceptionHandler { context, throwable ->
             parentScope.launch (NonCancellable) {
                 logExecutionError(syncTask, throwable)
-                taskLogger2.logTaskError(logItemId, throwable)
+                taskLogger2.logTaskError(throwable)
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
             }
         }
 
         parentScope.launch (Dispatchers.IO + taskEH) {
             try {
-                executeSyncTaskReal(this, syncTask, logItemId)
+                executeSyncTaskReal(this, syncTask)
             } catch (e: CancellationException) {
                 syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
-                taskLogger2.logTaskCancelled(logItemId, e)
+                taskLogger2.logTaskCancelled(e)
             }
         }.also { job ->
             TaskJobsHolder.addJob(taskId, job)
@@ -89,7 +88,6 @@ class SyncTaskExecutor @AssistedInject constructor(
     private suspend fun executeSyncTaskReal(
         parentScope: CoroutineScope,
         syncTask: SyncTask,
-        logItemId: String,
     ) {
         Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] СТАРТ ========")
 
@@ -97,7 +95,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
         try {
             logExecutionStart(taskId)
-            taskLogger2.logTaskStarted(logItemId)
+            taskLogger2.logTaskStarted()
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
@@ -106,7 +104,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 .processSyncTask()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
-            taskLogger2.logTaskFinished(logItemId)
+            taskLogger2.logTaskFinished()
         }
         finally {
             // TODO: ошибочное расположение
