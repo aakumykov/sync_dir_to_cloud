@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 148,
-    "identityHash": "5d59c5142844f6afe1f977b30eff42e2",
+    "version": 149,
+    "identityHash": "519f530775dc73bf2186a587c9ad38bb",
     "entities": [
       {
         "tableName": "sync_tasks",
@@ -969,12 +969,12 @@
     "views": [
       {
         "viewName": "sync_logs",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM task_logs UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM instruction_logs UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM file_operation_logs"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM task_logs UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM instruction_logs  UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM file_operation_logs ORDER BY timestamp ASC"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5d59c5142844f6afe1f977b30eff42e2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '519f530775dc73bf2186a587c9ad38bb')"
     ]
   }
 }
