@@ -36,7 +36,8 @@ data class LogOfSync(
     @ColumnInfo(name = BasicLogItem.FIELD_SUB_TEXT)
     val subText: String?,
 ) {
-    val key: String get() = "${taskId}${executionId}${timestamp}"
+    // timestamp здесь не обеспечивает уникальности, так как может быть одинаковым (!)
+    val key: String get() = origLogId
 
     companion object {
         const val TABLE_NAME = "sync_logs"
