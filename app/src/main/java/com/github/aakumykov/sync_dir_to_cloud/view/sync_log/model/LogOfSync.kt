@@ -2,16 +2,15 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
+import androidx.room.Ignore
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS
 
 @DatabaseView(
     viewName = LogOfSync.TABLE_NAME,
-    value = "SELECT $BASIC_LOG_ITEM_FIELDS FROM task_logs " +
-            "UNION ALL SELECT $BASIC_LOG_ITEM_FIELDS FROM instruction_logs  " +
-            "UNION ALL SELECT $BASIC_LOG_ITEM_FIELDS FROM file_operation_logs " +
-            "ORDER BY timestamp ASC"
+    value = "SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM task_logs " +
+            "UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM instruction_logs " +
+            "UNION ALL SELECT id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp FROM file_operation_logs"
 )
 data class LogOfSync(
     @ColumnInfo(name = "log_id")
@@ -37,7 +36,6 @@ data class LogOfSync(
 
     companion object {
         const val TABLE_NAME = "sync_logs"
-        const val BASIC_LOG_ITEM_FIELDS = "id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp"
     }
 
     override fun toString(): String {

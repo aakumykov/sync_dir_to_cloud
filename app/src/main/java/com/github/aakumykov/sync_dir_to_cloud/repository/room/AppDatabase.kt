@@ -138,9 +138,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 145, to = 146), // BasicLogItem.
         AutoMigration(from = 146, to = 147), // SQL-представление "sync_logs".
         AutoMigration(from = 147, to = 148, spec = LogOfSyncAssLogItemAboutRenameOrigLogId::class),
-        AutoMigration(from = 148, to = 149), // Сортировка представления "sync_logs".
     ],
-    version = 149,
+    version = 148,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
