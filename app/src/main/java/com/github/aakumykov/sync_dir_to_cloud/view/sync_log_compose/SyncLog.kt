@@ -26,10 +26,10 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 @Composable
-fun SyncLogItem(modifier: Modifier = Modifier,
-                viewModel: SyncLogViewModel,
-                taskId: String,
-                executionId: String) {
+fun SyncLog(modifier: Modifier = Modifier,
+            viewModel: SyncLogViewModel,
+            taskId: String,
+            executionId: String) {
 
     LaunchedEffect(key1 = Unit) {
         viewModel.startWorking(taskId, executionId)
