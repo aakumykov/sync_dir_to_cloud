@@ -67,7 +67,7 @@ fun SyncLog(modifier: Modifier = Modifier,
                         fontSize = 16.sp,
                     )
                 }
-                /*if (null != logOfSync.subText) {
+                if (null != logOfSync.subText) {
                     Text(
                         text = logOfSync.subText,
                         fontSize = 13.sp,
@@ -76,7 +76,7 @@ fun SyncLog(modifier: Modifier = Modifier,
                             .background(Color(0xFFFCFCFC), shape = RoundedCornerShape(4.dp))
                             .padding(horizontal = 6.dp)
                     )
-                }*/
+                }
             }
         }
     }
