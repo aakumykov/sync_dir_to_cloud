@@ -2,11 +2,9 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose
 
 import android.os.Bundle
 import android.view.View
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
@@ -34,7 +32,7 @@ class SyncLogFragmentCompose : Fragment(R.layout.fragment_sync_log_compose) {
                 setContent {
                     Sync_dir_to_cloudTheme {
                         if (null != taskId && null != executionId) {
-                            SyncLog(
+                            SyncLogItem(
                                 modifier = Modifier.fillMaxSize(),
                                 viewModel = syncLogViewModel,
                                 taskId = taskId!!,

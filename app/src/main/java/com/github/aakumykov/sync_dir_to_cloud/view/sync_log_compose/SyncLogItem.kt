@@ -24,13 +24,12 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
-import kotlin.math.log
 
 @Composable
-fun SyncLog(modifier: Modifier = Modifier,
-            viewModel: SyncLogViewModel,
-            taskId: String,
-            executionId: String) {
+fun SyncLogItem(modifier: Modifier = Modifier,
+                viewModel: SyncLogViewModel,
+                taskId: String,
+                executionId: String) {
 
     LaunchedEffect(key1 = Unit) {
         viewModel.startWorking(taskId, executionId)
