@@ -180,3 +180,21 @@ class RenameFileOperationLogItem2ToFileOperationLogItem : AutoMigrationSpec
     toColumnName = "log_id"
 )
 class LogOfSyncAssLogItemAboutRenameOrigLogId : AutoMigrationSpec
+
+
+@RenameColumn(
+    tableName = "task_logs",
+    fromColumnName = "message",
+    toColumnName = "text"
+)
+@RenameColumn(
+    tableName = "instruction_logs",
+    fromColumnName = "message",
+    toColumnName = "text"
+)
+@RenameColumn(
+    tableName = "file_operation_logs",
+    fromColumnName = "message",
+    toColumnName = "text"
+)
+class RenameMessageToText : AutoMigrationSpec

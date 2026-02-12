@@ -13,7 +13,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.Flow
 
 class InstructionLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -28,12 +27,12 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.BUSY,
-                message = logMessage.get(resources),
+                text = logMessage.get(resources),
                 subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.d(TAG, "${it.logItemType}: ${it.message}")
+                Log.d(TAG, "${it.logItemType}: ${it.text}")
             }
         }
     }
@@ -46,12 +45,12 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.SUCCESS,
-                message = logMessage.get(resources),
+                text = logMessage.get(resources),
                 subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.d(TAG, "${it.logItemType}: ${it.message}")
+                Log.d(TAG, "${it.logItemType}: ${it.text}")
             }
         }
     }
@@ -64,12 +63,12 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.CANCELLED,
-                message = logMessage.get(resources),
+                text = logMessage.get(resources),
                 subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.i(TAG, "${it.logItemType}: ${it.message}")
+                Log.i(TAG, "${it.logItemType}: ${it.text}")
             }
         }
     }
@@ -82,12 +81,12 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.ERROR,
-                message = logMessage.get(resources),
+                text = logMessage.get(resources),
                 subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)
-                Log.e(TAG, "${it.logItemType}: ${it.message}", throwable)
+                Log.e(TAG, "${it.logItemType}: ${it.text}", throwable)
             }
         }
     }

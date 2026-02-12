@@ -35,7 +35,7 @@ class TaskLogItem(
     taskId: String,
     executionId: String,
     logItemType: LogItemType,
-    message: String?,
+    text: String?,
     subText: String?,
     timestamp: Long,
 )
@@ -44,7 +44,7 @@ class TaskLogItem(
         logItemType = logItemType,
         taskId = taskId,
         executionId = executionId,
-        message = message,
+        text = text,
         subText = subText,
         timestamp = timestamp,
     )
@@ -57,12 +57,12 @@ class TaskLogItem(
             entryType: LogItemType,
             taskId: String,
             executionId: String,
-            message: String?,
+            text: String?,
             subText: String?
         ) = TaskLogItem(
             id = id,
             logItemType = entryType,
-            message = message,
+            text = text,
             subText = subText,
             taskId = taskId,
             executionId = executionId,

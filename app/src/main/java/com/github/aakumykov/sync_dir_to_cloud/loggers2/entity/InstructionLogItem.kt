@@ -34,7 +34,7 @@ class InstructionLogItem(
     logItemType: LogItemType,
     taskId: String,
     executionId: String,
-    message: String?,
+    text: String?,
     subText: String?,
     timestamp: Long,
 )
@@ -43,7 +43,7 @@ class InstructionLogItem(
         logItemType = logItemType,
         taskId = taskId,
         executionId = executionId,
-        message = message,
+        text = text,
         subText = subText,
         timestamp = timestamp,
     )
@@ -56,7 +56,7 @@ class InstructionLogItem(
             logItemType: LogItemType,
             taskId: String,
             executionId: String,
-            message: String?,
+            text: String?,
             subText: String?,
             timestamp: Long,
         ): InstructionLogItem {
@@ -65,7 +65,7 @@ class InstructionLogItem(
                 logItemType = logItemType,
                 taskId = taskId,
                 executionId = executionId,
-                message = message,
+                text = text,
                 subText = subText,
                 timestamp = timestamp,
             )
@@ -73,7 +73,7 @@ class InstructionLogItem(
     }
 
     override fun toString(): String {
-        return "InstructionLogItem(id='$id', logItemType=$logItemType, taskId='$taskId', executionId='$executionId', message='$message', timestamp=$timestamp)"
+        return "InstructionLogItem(id='$id', logItemType=$logItemType, taskId='$taskId', executionId='$executionId', text='$text', timestamp=$timestamp)"
     }
 
 

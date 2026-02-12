@@ -40,7 +40,7 @@ data class LogOfSync(
 
     companion object {
         const val TABLE_NAME = "sync_logs"
-        const val BASIC_LOG_ITEM_FIELDS = "id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, ${BasicLogItem.FIELD_SUB_TEXT}, timestamp"
+        const val BASIC_LOG_ITEM_FIELDS = "id as log_id, task_id, log_item_type, log_item_about, execution_id, text, ${BasicLogItem.FIELD_SUB_TEXT}, timestamp"
     }
 
     override fun toString(): String {

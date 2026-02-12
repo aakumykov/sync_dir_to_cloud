@@ -30,7 +30,7 @@ class TaskLogger2 @AssistedInject constructor(
         taskLogWithMessage(newRandomId, LogItemType.SUCCESS, R.string.LOG_ITEM_task_started)
             .also {
                 repository.add(it)
-                Log.d(TAG, "${it.message}, ${it.timestamp}")
+                Log.d(TAG, "${it.text}, ${it.timestamp}")
             }
     }
 
@@ -38,7 +38,7 @@ class TaskLogger2 @AssistedInject constructor(
         taskLogWithMessage(newRandomId, LogItemType.SUCCESS, R.string.LOG_ITEM_task_finished)
             .also {
                 repository.add(it)
-                Log.d(TAG, "${it.message}, ${it.timestamp}")
+                Log.d(TAG, "${it.text}, ${it.timestamp}")
             }
     }
 
@@ -46,14 +46,14 @@ class TaskLogger2 @AssistedInject constructor(
         taskLogWithMessage(newRandomId, LogItemType.CANCELLED, R.string.LOG_ITEM_task_cancelled)
             .also {
                 repository.add(it)
-                Log.i(TAG, "${it.message}, ${it.timestamp} (${e.errorMsgExtended})")
+                Log.i(TAG, "${it.text}, ${it.timestamp} (${e.errorMsgExtended})")
             }
     }
 
     suspend fun logTaskError(t: Throwable) = runNonCancellable {
         taskLogWithMessage(newRandomId, LogItemType.ERROR, R.string.LOG_ITEM_task_failed, t.errorMsg).also {
             repository.add(it)
-            Log.e(TAG, "${it.message}, ${it.timestamp}", t)
+            Log.e(TAG, "${it.text}, ${it.timestamp}", t)
         }
     }
 
@@ -67,7 +67,7 @@ class TaskLogger2 @AssistedInject constructor(
         entryType = logItemType,
         taskId = taskId,
         executionId = executionId,
-        message = resources.getString(messageId),
+        text = resources.getString(messageId),
         subText = details
     )
 

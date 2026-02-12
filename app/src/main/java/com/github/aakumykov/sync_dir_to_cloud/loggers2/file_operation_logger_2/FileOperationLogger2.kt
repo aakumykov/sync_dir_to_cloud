@@ -15,9 +15,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 
 class FileOperationLogger2 @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
@@ -38,14 +35,14 @@ class FileOperationLogger2 @AssistedInject constructor(
                 logItemType = LogItemType.BUSY,
                 taskId = taskId,
                 executionId = executionId,
-                message = resources.getString(operationName),
+                text = resources.getString(operationName),
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = jobId
             ).also {
                 repository.add(it)
-                Log.d(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+                Log.d(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
             }
         }
     }
@@ -62,14 +59,14 @@ class FileOperationLogger2 @AssistedInject constructor(
                 logItemType = LogItemType.SUCCESS,
                 taskId = taskId,
                 executionId = executionId,
-                message = resources.getString(operationName),
+                text = resources.getString(operationName),
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null
             ).also {
                 repository.add(it)
-                Log.d(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+                Log.d(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
             }
         }
     }
@@ -81,21 +78,21 @@ class FileOperationLogger2 @AssistedInject constructor(
         secondItem: String?,
         e: CancellationException
     ) {
-        val message = resources.getString(operationName) + " (${e.errorMsg})"
+        val text = resources.getString(operationName) + " (${e.errorMsg})"
         runNonCancellable {
             FileOperationLogItem.create(
                 id = logItemId,
                 logItemType = LogItemType.CANCELLED,
                 taskId = taskId,
                 executionId = executionId,
-                message = message,
+                text = text,
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null
             ).also {
                 repository.add(it)
-                Log.i(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)")
+                Log.i(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
             }
         }
     }
@@ -107,21 +104,21 @@ class FileOperationLogger2 @AssistedInject constructor(
         secondItem: String?,
         t: Throwable
     ) {
-        val message = resources.getString(operationName) + " (${t.errorMsgExtended})"
+        val text = resources.getString(operationName) + " (${t.errorMsgExtended})"
         runNonCancellable {
             FileOperationLogItem.create(
                 id = logItemId,
                 logItemType = LogItemType.ERROR,
                 taskId = taskId,
                 executionId = executionId,
-                message = message,
+                text = text,
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null
             ).also {
                 repository.add(it)
-                Log.e(TAG, "${it.logItemType}: ${it.message} ($firstItem --> $secondItem)", t)
+                Log.e(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)", t)
             }
         }
     }

@@ -20,7 +20,7 @@ abstract class BasicLogItem(
     @ColumnInfo(name = GlobalConstants.FIELD_EXECUTION_ID)
     val executionId: String,
 
-    val message: String?,
+    val text: String?,
 
     @ColumnInfo(name = FIELD_SUB_TEXT, defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val subText: String?,
