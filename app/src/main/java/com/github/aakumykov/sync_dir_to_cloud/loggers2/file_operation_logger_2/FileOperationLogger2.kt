@@ -39,6 +39,7 @@ class FileOperationLogger2 @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 message = resources.getString(operationName),
+                subText = null,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = jobId
@@ -62,6 +63,7 @@ class FileOperationLogger2 @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 message = resources.getString(operationName),
+                subText = null,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null
@@ -87,6 +89,7 @@ class FileOperationLogger2 @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 message = message,
+                subText = null,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null
@@ -112,6 +115,7 @@ class FileOperationLogger2 @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 message = message,
+                subText = null,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null

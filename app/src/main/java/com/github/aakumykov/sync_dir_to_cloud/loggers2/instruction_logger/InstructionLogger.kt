@@ -29,6 +29,7 @@ class InstructionLogger @AssistedInject constructor(
                 executionId = executionId,
                 logItemType = LogItemType.BUSY,
                 message = logMessage.get(resources),
+                subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)
@@ -46,6 +47,7 @@ class InstructionLogger @AssistedInject constructor(
                 executionId = executionId,
                 logItemType = LogItemType.SUCCESS,
                 message = logMessage.get(resources),
+                subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)
@@ -63,6 +65,7 @@ class InstructionLogger @AssistedInject constructor(
                 executionId = executionId,
                 logItemType = LogItemType.CANCELLED,
                 message = logMessage.get(resources),
+                subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)
@@ -80,6 +83,7 @@ class InstructionLogger @AssistedInject constructor(
                 executionId = executionId,
                 logItemType = LogItemType.ERROR,
                 message = logMessage.get(resources),
+                subText = null,
                 timestamp = currentTime
             ).also {
                 repository.add(it)

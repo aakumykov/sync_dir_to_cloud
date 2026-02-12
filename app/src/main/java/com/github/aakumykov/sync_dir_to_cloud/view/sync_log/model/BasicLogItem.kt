@@ -22,6 +22,13 @@ abstract class BasicLogItem(
 
     val message: String?,
 
+    @ColumnInfo(name = FIELD_SUB_TEXT, defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
+    val subText: String?,
+
     @ColumnInfo(name = GlobalConstants.FIELD_TIMESTAMP)
     val timestamp: Long,
-)
+) {
+    companion object {
+        const val FIELD_SUB_TEXT = "sub_text"
+    }
+}

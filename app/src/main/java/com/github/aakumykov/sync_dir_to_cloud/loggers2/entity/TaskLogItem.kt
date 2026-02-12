@@ -36,6 +36,7 @@ class TaskLogItem(
     executionId: String,
     logItemType: LogItemType,
     message: String?,
+    subText: String?,
     timestamp: Long,
 )
     : BasicLogItem(
@@ -44,6 +45,7 @@ class TaskLogItem(
         taskId = taskId,
         executionId = executionId,
         message = message,
+        subText = subText,
         timestamp = timestamp,
     )
 {
@@ -55,11 +57,13 @@ class TaskLogItem(
             entryType: LogItemType,
             taskId: String,
             executionId: String,
-            message: String?
+            message: String?,
+            subText: String?
         ) = TaskLogItem(
             id = id,
             logItemType = entryType,
             message = message,
+            subText = subText,
             taskId = taskId,
             executionId = executionId,
             timestamp = currentTime,

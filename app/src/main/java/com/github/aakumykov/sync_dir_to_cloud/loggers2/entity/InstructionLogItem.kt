@@ -35,6 +35,7 @@ class InstructionLogItem(
     taskId: String,
     executionId: String,
     message: String?,
+    subText: String?,
     timestamp: Long,
 )
     : BasicLogItem(
@@ -43,6 +44,7 @@ class InstructionLogItem(
         taskId = taskId,
         executionId = executionId,
         message = message,
+        subText = subText,
         timestamp = timestamp,
     )
 {
@@ -55,6 +57,7 @@ class InstructionLogItem(
             taskId: String,
             executionId: String,
             message: String?,
+            subText: String?,
             timestamp: Long,
         ): InstructionLogItem {
             return InstructionLogItem(
@@ -63,6 +66,7 @@ class InstructionLogItem(
                 taskId = taskId,
                 executionId = executionId,
                 message = message,
+                subText = subText,
                 timestamp = timestamp,
             )
         }

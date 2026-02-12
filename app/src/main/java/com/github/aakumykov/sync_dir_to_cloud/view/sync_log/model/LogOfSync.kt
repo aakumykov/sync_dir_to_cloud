@@ -32,15 +32,19 @@ data class LogOfSync(
     val executionId: String,
 
     val text: String?,
+
+    @ColumnInfo(name = BasicLogItem.FIELD_SUB_TEXT)
+    val subText: String?,
 ) {
     val key: String get() = "${taskId}${executionId}${timestamp}"
 
     companion object {
         const val TABLE_NAME = "sync_logs"
-        const val BASIC_LOG_ITEM_FIELDS = "id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, timestamp"
+        const val BASIC_LOG_ITEM_FIELDS = "id as log_id, task_id, log_item_type, log_item_about, execution_id, message as text, ${BasicLogItem.FIELD_SUB_TEXT}, timestamp"
     }
 
     override fun toString(): String {
-        return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, key='$key')"
+        return "LogOfSync(origLogId='$origLogId', timestamp=$timestamp, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, subText=$subText, key='$key')"
     }
+
 }

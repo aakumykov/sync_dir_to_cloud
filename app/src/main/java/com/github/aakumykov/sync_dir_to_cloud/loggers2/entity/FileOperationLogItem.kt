@@ -36,6 +36,7 @@ class FileOperationLogItem(
     taskId: String,
     executionId: String,
     message: String?,
+    subText: String?,
     timestamp: Long,
 
     @ColumnInfo(name = "first_item", defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
@@ -53,6 +54,7 @@ class FileOperationLogItem(
         taskId = taskId,
         executionId = executionId,
         message = message,
+        subText = subText,
         timestamp = timestamp,
     )
 {
@@ -63,6 +65,7 @@ class FileOperationLogItem(
             taskId: String,
             executionId: String,
             message: String?,
+            subText: String?,
             firstItem: String?,
             secondItem: String?,
             jobId: String?
@@ -75,6 +78,7 @@ class FileOperationLogItem(
                 taskId = taskId,
                 executionId = executionId,
                 message = message,
+                subText = subText,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 timestamp = currentTime,

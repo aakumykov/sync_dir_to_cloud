@@ -67,7 +67,8 @@ class TaskLogger2 @AssistedInject constructor(
         entryType = logItemType,
         taskId = taskId,
         executionId = executionId,
-        message = resources.getString(messageId)
+        message = resources.getString(messageId),
+        subText = details
     )
 
     companion object {
