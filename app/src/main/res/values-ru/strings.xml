@@ -212,4 +212,6 @@
     <string name="LOG_ITEM_task_finished">Задача финишировала</string>
     <string name="LOG_ITEM_task_cancelled">Задача отменена</string>
     <string name="LOG_ITEM_task_failed">Ошибка задачи</string>
+    <string name="SETTINGS_dry_run">Имитировать работу</string>
+    <string name="SETTINGS_SUMMARY_dry_run">Подготавливать действия, но не выполнять их</string>
 </resources>

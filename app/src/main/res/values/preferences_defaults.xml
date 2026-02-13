@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="DEFAULT_re_create_missing_source_and_target_dirs" type="bool">false</item>
+    <item name="DEFAULT_settings_re_create_missing_source_and_target_dirs" type="bool">false</item>
+    <bool name="DEFAULT_settings_backup_is_critical_operation">true</bool>
+    <bool name="DEFAULT_settings_dry_run">false</bool>
+    <integer name="DEFAULT_settings_file_transfer_retardation_ms">0</integer>
 </resources>

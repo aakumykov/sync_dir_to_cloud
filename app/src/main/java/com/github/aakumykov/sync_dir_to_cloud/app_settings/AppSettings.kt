@@ -5,4 +5,5 @@ interface AppSettings {
     var restoreLostSourceAndTargetDirs: Boolean
     var fileTransferRetardationMs: Int
     var backupIsCriticalOperation: Boolean
+    var dryRun: Boolean
 }

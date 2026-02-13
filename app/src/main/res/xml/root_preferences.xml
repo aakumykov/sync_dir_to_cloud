@@ -2,8 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <CheckBoxPreference
-        android:defaultValue="@bool/DEFAULT_re_create_missing_source_and_target_dirs"
-        android:key="@string/KEY_re_create_missing_source_and_target_dirs"
+        android:defaultValue="@bool/DEFAULT_settings_re_create_missing_source_and_target_dirs"
+        android:key="@string/KEY_settings_re_create_missing_source_and_target_dirs"
         android:title="@string/SETTINGS_re_create_missing_source_and_target_dirs"
         android:summary="@string/SETTINGS_SUMMARY_re_create_missing_source_and_target_dirs"
         />
@@ -11,8 +11,8 @@
     <androidx.preference.EditTextPreference
         android:icon="@drawable/ic_time"
         android:dialogIcon="@drawable/ic_time"
-        android:defaultValue="@integer/DEFAULT_file_transfer_retardation_ms"
-        android:key="@string/KEY_file_transfer_retardation_ms"
+        android:defaultValue="@integer/DEFAULT_settings_file_transfer_retardation_ms"
+        android:key="@string/KEY_settings_file_transfer_retardation_ms"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         app:singleLineTitle="true"
@@ -20,6 +20,13 @@
         android:summary="@string/SETTINGS_SUMMARY_file_transfer_retardation_ms"
         app:useSimpleSummaryProvider="true"
         android:inputType="numberDecimal"
+        />
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/DEFAULT_settings_dry_run"
+        android:key="@string/KEY_settings_dry_run"
+        android:title="@string/SETTINGS_dry_run"
+        android:summary="@string/SETTINGS_SUMMARY_dry_run"
         />
 
 </PreferenceScreen>

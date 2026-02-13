@@ -20,7 +20,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_SETTINGS_title))
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        findPreference<EditTextPreference>(getString(R.string.KEY_file_transfer_retardation_ms))
+        findPreference<EditTextPreference>(getString(R.string.KEY_settings_file_transfer_retardation_ms))
             ?.setOnBindEditTextListener { editText ->
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
             }
