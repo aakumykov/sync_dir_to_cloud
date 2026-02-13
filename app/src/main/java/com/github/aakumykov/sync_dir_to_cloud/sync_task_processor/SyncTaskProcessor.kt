@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator.Instructi
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.OneStageOfTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.OneStageOfTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
+import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -79,6 +80,8 @@ class SyncTaskProcessor @AssistedInject constructor(
     private val comparisonsDeleter: ComparisonsDeleter,
     private val syncObjectDeleter:SyncObjectDBDeleter,
     private val syncInstructionRepository:SyncInstructionRepository,
+
+    private val appSettings: AppSettings,
 ) {
     suspend fun processSyncTask() {
 
@@ -120,6 +123,13 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun checkTaskDirs() {
+        Log.d(TAG, "checkTaskDirs()")
+
+        if (appSettings.dryRun) {
+            Log.d(TAG, "Имитация работы, операции с файлами выполнены не будут.")
+            return
+        }
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.checking_task_dirs),
@@ -131,6 +141,13 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun prepareBackupDirs(@StringRes logMessageId: Int) {
+        Log.d(TAG, "prepareBackupDirs()")
+
+        if (appSettings.dryRun) {
+            Log.d(TAG, "Имитация работы, операции с файлами выполнены не будут.")
+            return
+        }
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(logMessageId),
@@ -209,6 +226,11 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private suspend fun processFileInstructions(unprocessed: Boolean) {
         Log.d(TAG, "processFileInstructions(unprocessed:$unprocessed)")
+
+        if (appSettings.dryRun) {
+            Log.d(TAG, "Имитация работы, операции с файлами выполнены не будут.")
+            return
+        }
 
         val logMessage = if (unprocessed) TextMessage(R.string.processing_unprocessed_file_instructions)
                          else TextMessage(R.string.processing_file_instructions)

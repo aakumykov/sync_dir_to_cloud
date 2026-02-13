@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -27,6 +28,7 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     private val syncObjectDBReader: SyncObjectDBReader,
     private val dirCreatorAssistedFactory: DirCreator5AssistedFactory,
     private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
+    private val syncInstructionUpdater: SyncInstructionUpdater,
 ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
         processReal(
@@ -56,7 +58,11 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
                 sourceObjectId,
                 SyncSide.TARGET,
                 R.string.LOG_ITEM_creating_dir_from_source_in_target
-            )
+            ).also {
+                syncInstructionUpdater.markAsProcessed(instruction.id)
+            }
+
+
         }.joinAll()
     }
 

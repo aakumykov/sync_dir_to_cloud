@@ -27,8 +27,10 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
 ){
     // FIXME: верен ли порядок?
     suspend fun processFileInstructions(isUnprocessed: Boolean) {
-        // 10 - создание
+        // 10 - создание каталогов
         dirCreationInstructionsProcessor.process(list(isUnprocessed))
+
+        // 11 - копирование файлов
         copyInstructionsProcessor.process(list(isUnprocessed))
 
         // 20 - разрешение коллизий
