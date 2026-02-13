@@ -41,7 +41,8 @@ fun SyncLog(modifier: Modifier = Modifier,
 
     val listState = viewModel.logOfSyncListFlow.collectAsState(emptyList())
 
-    ListWithoutScroll(listState, modifier = modifier)
+//    ListWithoutScroll(listState, modifier = modifier)
+    AutoScrollingLazyColumn(listState, modifier = modifier)
 }
 
 
@@ -67,7 +68,7 @@ fun AutoScrollingLazyColumn(listState: State<List<LogOfSync>>, modifier: Modifie
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         state = lazyListState
     ) {
         items(listState.value, key = { it.key }) { logOfSync: LogOfSync ->
