@@ -198,3 +198,10 @@ class LogOfSyncAssLogItemAboutRenameOrigLogId : AutoMigrationSpec
     toColumnName = "text"
 )
 class RenameMessageToText : AutoMigrationSpec
+
+
+@RenameTable(
+    fromTableName = "sync_instructions",
+    toTableName = "file_instructions"
+)
+class RenameSyncInstructionsToFileInstructions : AutoMigrationSpec

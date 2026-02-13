@@ -6,13 +6,12 @@ import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 
 @Entity(
-    tableName = "sync_instructions",
+    tableName = SyncInstruction.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -86,6 +85,9 @@ class SyncInstruction (
 
     companion object {
         val TAG: String = SyncInstruction::class.java.simpleName
+
+        const val TABLE_NAME = "file_instructions"
+
         fun from(
             comparisonState: ComparisonState,
             operation: SyncOperation,
