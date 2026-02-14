@@ -78,7 +78,6 @@ fun AutoScrollingLazyColumn(
         state = lazyListState,
         modifier = modifier
             .fillMaxSize()
-            .border(2.dp, color = Color.Black)
             .padding(top = 4.dp, bottom = 8.dp)
     ) {
         items(listState.value, key = { it.key }) { logOfSync: LogOfSync ->
