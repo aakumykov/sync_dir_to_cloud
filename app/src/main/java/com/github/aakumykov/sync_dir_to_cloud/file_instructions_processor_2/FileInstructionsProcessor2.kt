@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -24,6 +25,8 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     private val dirCreationInstructionsProcessorAssistedFactory: DirCreationInstructionsProcessorAssistedFactory,
     private val fileCopyInstructionsProcessorAssistedFactory: FileCopyInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
+
+    private val syncObjectStateChanger: SyncObjectStateChanger,
 ){
     // FIXME: верен ли порядок?
     suspend fun processFileInstructions(isUnprocessed: Boolean) {

@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputS
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.progressAsPartOf100
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -21,6 +22,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
     private val syncOptions: SyncOptions,
     private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
     private val streamToFileWriterAssistedFactory: StreamToFileWriterAssistedFactory,
+    private val syncObjectStateChanger: SyncObjectStateChanger,
 ) {
     @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
     suspend fun copyFileFromSourceToTarget(
@@ -45,6 +47,8 @@ class SyncObjectFileCopier @AssistedInject constructor(
                 )*/
             }
         }
+
+        syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
     }
 
     @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
@@ -70,6 +74,8 @@ class SyncObjectFileCopier @AssistedInject constructor(
                 )*/
             }
         }
+
+        syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
     }
 
     private fun logProgress(fileSize: Long, transferredBytes: Long, percent: Int) {

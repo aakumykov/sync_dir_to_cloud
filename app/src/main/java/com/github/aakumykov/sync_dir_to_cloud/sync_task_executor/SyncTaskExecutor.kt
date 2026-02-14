@@ -57,34 +57,36 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 
     suspend fun executeSyncTask(parentScope: CoroutineScope, taskId: String) {
-        Log.d(TAG, "executeSyncTask() called with: scope = $parentScope, taskId = $taskId")
+        try {
+            Log.d(TAG, "executeSyncTask() called with: scope = $parentScope, taskId = $taskId")
 
-        val syncTask = syncTaskReader.getSyncTask(taskId)
+            val syncTask = syncTaskReader.getSyncTask(taskId)
 
-        // FIXME: TODO внедрять?
-        // TODO: вместо того, чтобы мудрить здесь с запуском в Scope,
-        //  можно (нужно) внедрить его в класс-журналёр.
-        val taskEH = CoroutineExceptionHandler { context, throwable ->
-            parentScope.launch (NonCancellable) {
-                logExecutionError(syncTask, throwable)
-                taskLogger2.logTaskError(throwable)
-                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
+            // FIXME: TODO внедрять?
+            // TODO: вместо того, чтобы мудрить здесь с запуском в Scope,
+            //  можно (нужно) внедрить его в класс-журналёр.
+            val taskEH = CoroutineExceptionHandler { context, throwable ->
+                parentScope.launch (NonCancellable) {
+                    logExecutionError(syncTask, throwable)
+                    taskLogger2.logTaskError(throwable)
+                    syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
+                }
             }
+
+            parentScope.launch (Dispatchers.IO + taskEH) {
+                try {
+                    executeSyncTaskReal(this, syncTask)
+                } catch (e: CancellationException) {
+                    syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
+                    taskLogger2.logTaskCancelled(e)
+                }
+            }.also { job ->
+                TaskJobsHolder.addJob(taskId, job)
+            }.join() // Этот join() нужен для синхронного выполнения метода в scope.
+
+        } finally {
+            TaskJobsHolder.removeJob(taskId)
         }
-
-        parentScope.launch (Dispatchers.IO + taskEH) {
-            try {
-                executeSyncTaskReal(this, syncTask)
-            } catch (e: CancellationException) {
-                syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
-                taskLogger2.logTaskCancelled(e)
-            }
-        }.also { job ->
-            TaskJobsHolder.addJob(taskId, job)
-        }.join() // Этот join() нужен для синхронного выполнения метода в scope.
-
-        // FIXME: нужно сделать это устойчивым к ошибкам.
-        TaskJobsHolder.removeJob(taskId)
     }
 
 

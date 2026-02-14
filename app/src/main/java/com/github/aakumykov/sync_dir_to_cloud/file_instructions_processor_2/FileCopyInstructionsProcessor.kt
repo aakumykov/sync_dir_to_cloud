@@ -2,11 +2,14 @@ package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizer
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.absolutePathOfSide
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
@@ -31,7 +34,8 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
     private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
-) {
+    private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory,
+    ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
         processReal(
             list
@@ -104,6 +108,12 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
                 targetPath,
                 true // FIXME: убрать!
             )
+
+            syncObjectActualizer.actualizeInfoAboutObject(
+                correspondingObject = fromObject,
+                syncSide = toSide,
+                syncState = ExecutionState.SUCCESS,
+            )
         }
     }
 
@@ -131,6 +141,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
             executionId = executionId,
             databaseInteractingScope = CoroutineScope(Dispatchers.IO)
         )
+    }
+
+    private val syncObjectActualizer: SyncObjectActualizer by lazy {
+        syncObjectActualizerAssistedFactory.create(syncTask, executionId)
     }
 }
 
