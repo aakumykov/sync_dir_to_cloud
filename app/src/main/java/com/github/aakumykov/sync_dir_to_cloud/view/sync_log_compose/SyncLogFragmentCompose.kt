@@ -32,7 +32,7 @@ class SyncLogFragmentCompose : Fragment(R.layout.fragment_sync_log_compose) {
                 setContent {
                     Sync_dir_to_cloudTheme {
                         if (null != taskId && null != executionId) {
-                            SyncLog(
+                            SyncLogComposable(
                                 modifier = Modifier.fillMaxSize(),
                                 viewModel = syncLogViewModel,
                                 taskId = taskId!!,

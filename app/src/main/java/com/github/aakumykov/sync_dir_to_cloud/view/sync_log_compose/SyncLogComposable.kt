@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,10 +29,10 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 @Composable
-fun SyncLog(modifier: Modifier = Modifier,
-            viewModel: SyncLogViewModel,
-            taskId: String,
-            executionId: String) {
+fun SyncLogComposable(modifier: Modifier = Modifier,
+                      viewModel: SyncLogViewModel,
+                      taskId: String,
+                      executionId: String) {
 
     LaunchedEffect(key1 = Unit) {
         viewModel.startWorking(taskId, executionId)
@@ -74,8 +75,11 @@ fun AutoScrollingLazyColumn(
     }
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        state = lazyListState
+        state = lazyListState,
+        modifier = modifier
+            .fillMaxSize()
+            .border(2.dp, color = Color.Black)
+            .padding(top = 4.dp, bottom = 8.dp)
     ) {
         items(listState.value, key = { it.key }) { logOfSync: LogOfSync ->
             LogListItem(logOfSync)
@@ -88,7 +92,7 @@ fun AutoScrollingLazyColumn(
 fun LogListItem(logOfSync: LogOfSync, modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
-            .padding(4.dp)
+            .padding(vertical = 4.dp, horizontal = 8.dp)
             .background(Color(0xffeeeeee), shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .fillMaxWidth()
