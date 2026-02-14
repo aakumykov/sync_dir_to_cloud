@@ -4,9 +4,13 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SyncTaskStateDAO {
+
+    @Query("SELECT execution_state FROM sync_tasks WHERE id = :taskId")
+    fun getTaskStateFlow(taskId: String): Flow<ExecutionState>
 
     @Deprecated("Используй suspend-вариант")
     @Query("UPDATE sync_tasks SET state = :state WHERE id = :taskId")

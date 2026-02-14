@@ -18,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.F
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
+import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
@@ -131,11 +132,13 @@ class ViewModelsModule {
     @ViewModelKey(SyncLogViewModel::class)
     fun provideSyncLogViewModel(
         logOfSyncRepository: LogOfSyncRepository,
+        syncTaskRepository: SyncTaskRepository,
         operationCancellationHolder: OperationCancellationHolder
     ): ViewModel {
         return SyncLogViewModel(
             operationCancellationHolder = operationCancellationHolder,
             logOfSyncRepository = logOfSyncRepository,
+            syncTaskRepository = syncTaskRepository
         )
     }
 }

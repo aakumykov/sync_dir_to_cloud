@@ -82,6 +82,9 @@ class SyncTaskExecutor @AssistedInject constructor(
         }.also { job ->
             TaskJobsHolder.addJob(taskId, job)
         }.join() // Этот join() нужен для синхронного выполнения метода в scope.
+
+        // FIXME: нужно сделать это устойчивым к ошибкам.
+        TaskJobsHolder.removeJob(taskId)
     }
 
 

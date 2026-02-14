@@ -49,6 +49,10 @@ class SyncTaskRepository @Inject constructor(
     SyncTaskRunningTimeUpdater,
     SyncTaskMetadataReader
 {
+    fun getTaskStateFlow(taskId: String): Flow<ExecutionState> {
+        return syncTaskStateDAO.getTaskStateFlow(taskId)
+    }
+
     @Deprecated("Сделать возвращаемые значения nullable")
     override suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
 //        return syncTaskLocalDataSource.listSyncTasks()

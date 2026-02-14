@@ -16,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,9 +38,10 @@ fun SyncLog(modifier: Modifier = Modifier,
     }
 
     val listState = viewModel.logOfSyncListFlow.collectAsState(emptyList())
+    val isRunningState = viewModel.isRunningFlow.collectAsState(false)
 
 //    ListWithoutScroll(listState, modifier = modifier)
-    AutoScrollingLazyColumn(listState, modifier = modifier)
+    AutoScrollingLazyColumn(listState, isRunningState, modifier = modifier)
 }
 
 
@@ -57,18 +56,25 @@ fun ListWithoutScroll(listState: State<List<LogOfSync>>, modifier: Modifier = Mo
 
 
 @Composable
-fun AutoScrollingLazyColumn(listState: State<List<LogOfSync>>, modifier: Modifier = Modifier) {
+fun AutoScrollingLazyColumn(
+    listState: State<List<LogOfSync>>,
+    isRunningState: State<Boolean>,
+    modifier: Modifier = Modifier
+) {
 
     val lazyListState = rememberLazyListState()
 
     LaunchedEffect(listState.value.size) {
         if (listState.value.isNotEmpty()) {
-            lazyListState.animateScrollToItem(listState.value.size - 1)
+//            lazyListState.animateScrollToItem(listState.value.size - 1)
+            println("isRunningState: ${isRunningState.value}")
+            if (isRunningState.value)
+                lazyListState.scrollToItem(listState.value.size - 1)
         }
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         state = lazyListState
     ) {
         items(listState.value, key = { it.key }) { logOfSync: LogOfSync ->
