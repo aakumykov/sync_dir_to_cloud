@@ -49,3 +49,8 @@ data class LogOfSync(
     }
 
 }
+
+val LogOfSync.isActiveFileOperation: Boolean get() {
+    return LogItemType.BUSY == logItemType &&
+            LogItemAbout.FILE == logItemAbout
+}

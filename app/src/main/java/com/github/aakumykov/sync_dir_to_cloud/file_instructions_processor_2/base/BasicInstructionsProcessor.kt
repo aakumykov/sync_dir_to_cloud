@@ -36,10 +36,10 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                 operationJobsHolder.addJob(jobId, job)
                 fileOperationLogger2.logStarted(
                     logItemId = logItemId,
-                    jobId,
-                    operationName,
-                    firstItem,
-                    secondItem
+                    jobId = jobId,
+                    operationName = operationName,
+                    firstItem = firstItem,
+                    secondItem = secondItem
                 )
             },
             onFinish = {

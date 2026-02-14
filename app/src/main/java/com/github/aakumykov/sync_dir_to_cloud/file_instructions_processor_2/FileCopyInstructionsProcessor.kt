@@ -5,6 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizer
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -35,7 +36,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
     private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory,
-    ) {
+) {
     suspend fun process(list: Iterable<SyncInstruction>) {
         processReal(
             list
@@ -102,7 +103,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
             operationName = operationName,
             firstItem = sourcePath,
             secondItem = targetPath,
-        ){
+        ) {
             syncObjectCopier.copyFileFromSourceToTarget(
                 fromObject,
                 targetPath,

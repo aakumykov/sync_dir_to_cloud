@@ -7,11 +7,10 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SyncLogViewModel(
@@ -48,10 +47,9 @@ class SyncLogViewModel(
     }
 
 
-    fun cancelJob(id: String) {
-        // FIXME: не ViewMdodelScope, а "application scope" (!)
-        viewModelScope.launch {
-            operationCancellationHolder.getJob(id)?.cancelAndJoin()
+    fun cancelJob(jobId: String) {
+        viewModelScope.launch(NonCancellable) {
+            operationCancellationHolder.getJob(jobId)?.cancelAndJoin()
         }
     }
 }
