@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.di
 
 import com.github.aakumykov.sync_dir_to_cloud.ViewModelFactory
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppScope
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.AppDatabaseModule
@@ -14,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.CloudWriterFactoriesMod
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ContextModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.CoroutineModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileListerCreatorsModule
+import com.github.aakumykov.sync_dir_to_cloud.di.modules.FileOperationLogRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.GsonModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.NotificationModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.OkhttpModule
@@ -55,6 +55,7 @@ import dagger.Component
         CloudAuthRepositoryInterfacesModule::class,
         SyncObjectRepositoryInterfacesModule::class,
         SyncInstructionRepositoryInterfacesModule::class,
+        FileOperationLogRepositoryInterfacesModule::class,
         WorkerInterfacesModule::class,
         WorkerModule::class,
         CoroutineModule::class,
@@ -94,8 +95,6 @@ interface AppComponent {
     fun getCloudAuthenticatorFactoryAssistedFactory(): CloudAuthenticatorFactoryAssistedFactory
 
     fun getProgressInfoHolder(): ProgressInfoHolder
-
-    fun getOperationCancellationHolder(): OperationCancellationHolder
 
     fun getBackuperRestorer(): BackuperRestorer
 

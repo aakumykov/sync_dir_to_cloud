@@ -25,8 +25,6 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
     private val dirCreationInstructionsProcessorAssistedFactory: DirCreationInstructionsProcessorAssistedFactory,
     private val fileCopyInstructionsProcessorAssistedFactory: FileCopyInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
-
-    private val syncObjectStateChanger: SyncObjectStateChanger,
 ){
     // FIXME: верен ли порядок?
     suspend fun processFileInstructions(isUnprocessed: Boolean) {

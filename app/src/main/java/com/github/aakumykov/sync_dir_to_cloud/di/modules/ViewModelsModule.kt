@@ -2,20 +2,17 @@ package com.github.aakumykov.sync_dir_to_cloud.di.modules
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ViewModelKey
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationJobIdReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthAdder
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.TaskLogger
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.instruction_logger.InstructionLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
@@ -114,7 +111,6 @@ class ViewModelsModule {
                                  syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
                                  syncTaskNotificator: SyncTaskNotificator,
                                  syncObjectDBDeleter: SyncObjectDBDeleter,
-                                 taskCancellationHolder: TaskCancellationHolder,
     ): ViewModel {
         return TaskListViewModel(
             application = application,
@@ -123,7 +119,6 @@ class ViewModelsModule {
             syncTaskSchedulingUseCase = syncTaskSchedulingUseCase,
             syncTaskNotificator = syncTaskNotificator,
             syncObjectDBDeleter = syncObjectDBDeleter,
-            taskCancellationHolder = taskCancellationHolder,
         )
     }
 
@@ -133,12 +128,12 @@ class ViewModelsModule {
     fun provideSyncLogViewModel(
         logOfSyncRepository: LogOfSyncRepository,
         syncTaskRepository: SyncTaskRepository,
-        operationCancellationHolder: OperationCancellationHolder
+        fileOperationJobIdReader: FileOperationJobIdReader,
     ): ViewModel {
         return SyncLogViewModel(
-            operationCancellationHolder = operationCancellationHolder,
             logOfSyncRepository = logOfSyncRepository,
-            syncTaskRepository = syncTaskRepository
+            syncTaskRepository = syncTaskRepository,
+            fileOperationJobIdReader = fileOperationJobIdReader,
         )
     }
 }

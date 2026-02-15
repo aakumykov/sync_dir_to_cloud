@@ -16,4 +16,9 @@ interface FileOperationLogDAO {
 
     @Update
     suspend fun update(item: FileOperationLogItem)
+
+    @Query("SELECT ${GlobalConstants.FIELD_JOB_ID} " +
+            "FROM ${FileOperationLogItem.TABLE_NAME} " +
+            "WHERE id = :logItemId")
+    suspend fun getJobId(logItemId: String): String?
 }

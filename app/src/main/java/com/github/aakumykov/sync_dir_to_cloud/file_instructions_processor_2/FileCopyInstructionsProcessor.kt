@@ -5,7 +5,6 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizer
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.OperationCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask

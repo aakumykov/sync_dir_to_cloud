@@ -82,7 +82,9 @@ fun AutoScrollingLazyColumn(
         items(listState.value, key = { it.key }) { logOfSync: LogOfSync ->
             LogListItem(
                 logOfSync = logOfSync,
-                onCancelClicked = onItemCancelClicked
+                onCancelClicked = {
+                    onItemCancelClicked.invoke(logOfSync.origLogId)
+                }
             )
         }
     }
@@ -92,7 +94,7 @@ fun AutoScrollingLazyColumn(
 @Composable
 fun LogListItem(
     logOfSync: LogOfSync,
-    onCancelClicked: (jobId: String) -> Unit,
+    onCancelClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column (
@@ -121,7 +123,7 @@ fun LogListItem(
                 fontSize = 16.sp,
             )
             if (logOfSync.isActiveFileOperation)
-                CancelIcon(logOfSync)
+                CancelIcon(onCancelClicked = onCancelClicked)
         }
         if (null != logOfSync.subText) {
             Text(
@@ -138,14 +140,15 @@ fun LogListItem(
 
 
 @Composable
-fun CancelIcon(logOfSync: LogOfSync, modifier: Modifier = Modifier) {
+fun CancelIcon(
+    onCancelClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Icon(
         painter = painterResource(R.drawable.ic_task_stop),
         contentDescription = stringResource(R.string.description_cancel_file_operation),
         modifier = modifier
-            .clickable(onClick = {
-                println("logOfSync.origLogId: ${logOfSync.origLogId}")
-            })
+            .clickable(onClick = { onCancelClicked.invoke() })
             .size(64.dp)
     )
 }

@@ -70,10 +70,11 @@ class BasicInstructionsProcessor @AssistedInject constructor(
             },
             finally = {
                 operationJobsHolder.removeJob(jobId)
+            },
+            block = {
+                codeBlock.invoke()
             }
-        ) {
-            codeBlock.invoke()
-        }
+        )
     }
 
     private val fileOperationLogger2 by lazy {

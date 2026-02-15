@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.github.aakumykov.sync_dir_to_cloud.cancellation_holders.TaskCancellationHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
@@ -15,7 +14,6 @@ import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class TaskListViewModel(
@@ -25,7 +23,6 @@ class TaskListViewModel(
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
     private val syncTaskNotificator: SyncTaskNotificator,
     private val syncObjectDBDeleter: SyncObjectDBDeleter,
-    private val taskCancellationHolder: TaskCancellationHolder,
 )
     : PageOpStateViewModel(application)
 {
