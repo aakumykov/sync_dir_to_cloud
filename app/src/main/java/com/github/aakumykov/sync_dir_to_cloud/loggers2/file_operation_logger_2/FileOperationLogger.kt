@@ -16,7 +16,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 
-class FileOperationLogger2 @AssistedInject constructor(
+class FileOperationLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     private val repository: FileOperationLogRepository2,
@@ -124,15 +124,15 @@ class FileOperationLogger2 @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = FileOperationLogger2::class.java.simpleName
+        val TAG: String = FileOperationLogger::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface FileOperationLogger2AssistedFactory {
+interface FileOperationLoggerAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
-    ): FileOperationLogger2
+    ): FileOperationLogger
 }

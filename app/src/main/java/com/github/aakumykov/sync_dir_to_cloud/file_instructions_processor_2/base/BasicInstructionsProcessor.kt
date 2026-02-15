@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
 import dagger.assisted.Assisted
@@ -16,7 +16,7 @@ import kotlinx.coroutines.Job
 class BasicInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val fileOperationLogger2Factory: FileOperationLogger2AssistedFactory,
+    private val fileOperationLogger2Factory: FileOperationLoggerAssistedFactory,
     private val operationJobsHolder: OperationJobsHolder,
 ): InstructionsProcessor {
 

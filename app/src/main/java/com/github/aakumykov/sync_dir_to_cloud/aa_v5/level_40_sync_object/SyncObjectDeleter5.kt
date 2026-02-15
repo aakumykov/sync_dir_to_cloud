@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLoggerAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,7 +18,7 @@ import dagger.assisted.AssistedInject
 class SyncObjectDeleter5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    private val fileOperationLogger2AssistedFactory: FileOperationLogger2AssistedFactory,
+    private val fileOperationLoggerAssistedFactory: FileOperationLoggerAssistedFactory,
     private val fileDeleterAssistedFactory: FileDeleterAssistedFactory5,
     private val dirDeleterAssistedFactory: DirDeleterAssistedFactory5,
 ) {
@@ -75,7 +75,7 @@ class SyncObjectDeleter5 @AssistedInject constructor(
     }
 
     private val fileOperationLogger by lazy {
-        fileOperationLogger2AssistedFactory.create(syncTask.id, executionId)
+        fileOperationLoggerAssistedFactory.create(syncTask.id, executionId)
     }
 
     private val dirDeleter: DirDeleter5 by lazy {
