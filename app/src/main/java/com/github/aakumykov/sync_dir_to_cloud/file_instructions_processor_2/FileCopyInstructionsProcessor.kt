@@ -14,7 +14,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 class FileCopyInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -31,7 +32,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
-    private val basicFileInstructionsProcessorAssistedFactory: BasicFileInstructionsProcessorAssistedFactory,
+    private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
     private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory,
 ) {
@@ -131,7 +132,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
     private val basicInstructionsProcessor by lazy {
-        basicFileInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
+        basicInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
     }
 
     private val syncObjectCopier by lazy {

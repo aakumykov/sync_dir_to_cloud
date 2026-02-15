@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
@@ -19,6 +19,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 class DirCreationInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -26,7 +27,7 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val dirCreatorAssistedFactory: DirCreator5AssistedFactory,
-    private val basicFileInstructionsProcessorAssistedFactory: BasicFileInstructionsProcessorAssistedFactory,
+    private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
     private val syncInstructionUpdater: SyncInstructionUpdater,
 ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
@@ -136,7 +137,7 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     }
 
     private val basicInstructionsProcessor by lazy {
-        basicFileInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
+        basicInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
     }
 
     private val dirCreator by lazy {
