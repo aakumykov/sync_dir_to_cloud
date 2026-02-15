@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.utils.BytesToHumanSizeFormatter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.IOException
 import java.io.InputStream
@@ -25,12 +26,18 @@ import kotlin.coroutines.resume
  *
  * Для решения проблемы вызова suspend-функций в коллбеках этого класса,
  * нуужно применять scope в вышележащих методах.
+ *
+ * Для обработки отмены копирования пользователем класс
+ * вынужден хранить состояние: объект Throwable, полученный
+ * в коллбеке Coroutine.invokeOnCancellation.
  */
 class StreamToFileWriter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
     private val appSettings: AppSettings,
 ) {
+    private var receivedCancellationThrowable: Throwable? = null
+
     @Throws(StreamWriterCancelledException::class)
     suspend fun putStreamToTarget(inputStream: InputStream,
                                   filePath: String,
@@ -85,6 +92,7 @@ class StreamToFileWriter @AssistedInject constructor(
 
             cancellableContinuation.invokeOnCancellation {
                 Log.d(TAG, "cancellableContinuation.invokeOnCancellation{${it?.errorMsg}}")
+                receivedCancellationThrowable = it
                 inputStream.close()
             }
 
@@ -116,7 +124,12 @@ class StreamToFileWriter @AssistedInject constructor(
                     )
             } catch (t: Throwable) {
                 Log.e(TAG, t.errorMsg, t)
-//                throw t
+
+                if (receivedCancellationThrowable !is CancellationException) {
+                    receivedCancellationThrowable = null
+                    throw t
+                }
+
             } finally {
                 inputStream.close()
             }
