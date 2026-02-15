@@ -13,10 +13,10 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 
-class BasicInstructionsProcessor @AssistedInject constructor(
+class BasicFileInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val fileOperationLogger2Factory: FileOperationLoggerAssistedFactory,
+    private val fileOperationLoggerFactory: FileOperationLoggerAssistedFactory,
     private val operationJobsHolder: OperationJobsHolder,
 ): InstructionsProcessor {
 
@@ -78,15 +78,15 @@ class BasicInstructionsProcessor @AssistedInject constructor(
     }
 
     private val fileOperationLogger2 by lazy {
-        fileOperationLogger2Factory.create(taskId, executionId)
+        fileOperationLoggerFactory.create(taskId, executionId)
     }
 }
 
 
 @AssistedFactory
-interface BasicInstructionsProcessorAssistedFactory {
+interface BasicFileInstructionsProcessorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
-    ): BasicInstructionsProcessor
+    ): BasicFileInstructionsProcessor
 }

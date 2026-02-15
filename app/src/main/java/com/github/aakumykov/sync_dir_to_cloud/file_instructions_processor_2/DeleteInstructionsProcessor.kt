@@ -6,7 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.Delete
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessorAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -17,7 +17,7 @@ class DeleteInstructionsProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
     private val deleteInstructionExecutorAssistedFactory: DeleteInstructionExecutorAssistedFactory,
-    private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
+    private val basicFileInstructionsProcessorAssistedFactory: BasicFileInstructionsProcessorAssistedFactory,
 ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
         processReal(list.filter { it.isDeletion })
@@ -46,7 +46,7 @@ class DeleteInstructionsProcessor @AssistedInject constructor(
     }
 
     private val basicInstructionsProcessor by lazy {
-        basicInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
+        basicFileInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
     }
 }
 
