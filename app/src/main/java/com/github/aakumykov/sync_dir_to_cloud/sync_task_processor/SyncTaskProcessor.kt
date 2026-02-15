@@ -17,7 +17,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.FileInstructionsProcessor2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.FileInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
@@ -64,7 +64,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
 
     private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,
-    private val fileInstructionsProcessor2AssistedFactory: FileInstructionsProcessor2AssistedFactory,
+    private val fileInstructionsProcessorAssistedFactory: FileInstructionsProcessorAssistedFactory,
 
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
@@ -359,7 +359,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }*/
 
     private val fileInstructionsProcessor2 by lazy {
-        fileInstructionsProcessor2AssistedFactory.create(scope, syncTask, executionId)
+        fileInstructionsProcessorAssistedFactory.create(scope, syncTask, executionId)
     }
 
     // FIXME: логика

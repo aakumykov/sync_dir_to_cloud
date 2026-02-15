@@ -3,7 +3,6 @@ package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -13,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 /**
  * Исполняет инструкции в определённом порядке.
  */
-class FileInstructionsProcessor2 @AssistedInject constructor(
+class FileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
@@ -83,10 +82,10 @@ class FileInstructionsProcessor2 @AssistedInject constructor(
 }
 
 @AssistedFactory
-interface FileInstructionsProcessor2AssistedFactory {
+interface FileInstructionsProcessorAssistedFactory {
     fun create(
         scope: CoroutineScope,
         syncTask: SyncTask,
         executionId: String
-    ): FileInstructionsProcessor2
+    ): FileInstructionsProcessor
 }
