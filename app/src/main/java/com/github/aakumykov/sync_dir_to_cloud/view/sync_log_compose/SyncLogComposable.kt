@@ -68,7 +68,7 @@ fun AutoScrollingLazyColumn(
     LaunchedEffect(listState.value.size) {
         if (listState.value.isNotEmpty()) {
             if (isRunningState.value) {
-                lazyListState.scrollToItem(listState.value.size - 1)
+                lazyListState.animateScrollToItem(listState.value.size - 1)
             }
         }
     }
@@ -80,7 +80,7 @@ fun AutoScrollingLazyColumn(
             .padding(top = 4.dp, bottom = 8.dp)
     ) {
         items(listState.value, key = { it.key }) { logOfSync: LogOfSync ->
-            LogListItem(
+            SyncLogItem(
                 logOfSync = logOfSync,
                 onCancelClicked = {
                     onItemCancelClicked.invoke(logOfSync.origLogId)
@@ -92,7 +92,7 @@ fun AutoScrollingLazyColumn(
 
 
 @Composable
-fun LogListItem(
+fun SyncLogItem(
     logOfSync: LogOfSync,
     onCancelClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -105,50 +105,73 @@ fun LogListItem(
             .fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                painter = painterResource(
-                    when(logOfSync.logItemType) {
-                        LogItemType.BUSY -> R.drawable.ic_sync_log_busy
-                        LogItemType.SUCCESS -> R.drawable.ic_sync_log_success
-                        LogItemType.ERROR -> R.drawable.ic_sync_log_error
-                        LogItemType.CANCELLED -> R.drawable.ic_sync_log_cancelled
-                    }
-                ),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 10.dp),
-                tint = Color(0xFFB9B9B9)
-            )
-            Text(
-                text = logOfSync.text ?: "",
-                fontSize = 16.sp,
-            )
-            if (logOfSync.isActiveFileOperation)
-                CancelIcon(onCancelClicked = onCancelClicked)
+            LogItemIcon(logOfSync)
+            LogItemText(logOfSync)
+            LogItemCancelIcon(logOfSync, onCancelClicked = onCancelClicked)
         }
-        if (null != logOfSync.subText) {
-            Text(
-                text = logOfSync.subText,
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .background(Color(0xFFFCFCFC), shape = RoundedCornerShape(4.dp))
-                    .padding(horizontal = 6.dp)
-            )
-        }
+        LogItemSubText(logOfSync)
     }
 }
 
 
 @Composable
-fun CancelIcon(
+fun LogItemSubText(logOfSync: LogOfSync) {
+    if (null != logOfSync.subText) {
+        Text(
+            text = logOfSync.subText,
+            fontSize = 13.sp,
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .background(Color(0xFFFCFCFC), shape = RoundedCornerShape(4.dp))
+                .padding(horizontal = 6.dp)
+        )
+    }
+}
+
+
+@Composable
+fun LogItemText(logOfSync: LogOfSync) {
+    Text(
+        text = logOfSync.text ?: "",
+        fontSize = 16.sp,
+    )
+}
+
+@Composable
+fun LogItemIcon(logOfSync: LogOfSync) {
+    Icon(
+        painter = painterResource(
+            when(logOfSync.logItemType) {
+                LogItemType.BUSY -> R.drawable.ic_sync_log_busy
+                LogItemType.SUCCESS -> R.drawable.ic_sync_log_success
+                LogItemType.ERROR -> R.drawable.ic_sync_log_error
+                LogItemType.CANCELLED -> R.drawable.ic_sync_log_cancelled
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier.padding(end = 10.dp),
+        tint = when(logOfSync.logItemType) {
+            LogItemType.CANCELLED -> Color(0xFFFFA726)
+            LogItemType.ERROR -> Color(0xFFEF5350)
+            else -> Color(0xFFB9B9B9)
+        }
+    )
+}
+
+
+@Composable
+fun LogItemCancelIcon(
+    logOfSync: LogOfSync,
     onCancelClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Icon(
-        painter = painterResource(R.drawable.ic_task_stop),
-        contentDescription = stringResource(R.string.description_cancel_file_operation),
-        modifier = modifier
-            .clickable(onClick = { onCancelClicked.invoke() })
-            .size(64.dp)
-    )
+    if (logOfSync.isActiveFileOperation) {
+        Icon(
+            painter = painterResource(R.drawable.ic_task_stop),
+            contentDescription = stringResource(R.string.description_cancel_file_operation),
+            modifier = modifier
+                .clickable(onClick = { onCancelClicked.invoke() })
+                .size(64.dp)
+        )
+    }
 }
