@@ -16,7 +16,7 @@ import dagger.assisted.AssistedInject
 // согласно инструкции, отправить их на выполнение.
 // Реагировать на аномалии (как?).
 //
-class BackupInstructionExecutor2 @AssistedInject constructor(
+class BackupInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectBackuper3AssistedFactory: SyncObjectBackuper3AssistedFactory,
@@ -62,6 +62,6 @@ class BackupInstructionExecutor2 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface BackupInstructionExecutor2AssistedFactory {
-    fun create(syncTask: SyncTask): BackupInstructionExecutor2
+interface BackupInstructionExecutorAssistedFactory {
+    fun create(syncTask: SyncTask): BackupInstructionExecutor
 }

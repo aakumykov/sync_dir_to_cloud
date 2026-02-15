@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.BackupInstructionExecutor2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.BackupInstructionExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
@@ -16,7 +16,7 @@ class BackupInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
-    private val backupInstructionExecutorAssistedFactory: BackupInstructionExecutor2AssistedFactory,
+    private val backupInstructionExecutorAssistedFactory: BackupInstructionExecutorAssistedFactory,
     private val basicInstructionsProcessorAssistedFactory: BasicInstructionsProcessorAssistedFactory,
 ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
