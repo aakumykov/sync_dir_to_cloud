@@ -115,9 +115,8 @@ class StreamToFileWriter @AssistedInject constructor(
                         }
                     )
             } catch (t: Throwable) {
-                Log.e(TAG, t.errorMsg)
-                t.printStackTrace()
-                throw t
+                Log.e(TAG, t.errorMsg, t)
+//                throw t
             } finally {
                 inputStream.close()
             }
