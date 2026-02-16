@@ -7,7 +7,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskUpdater
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task_log.SyncTaskLogDeleter
 import javax.inject.Inject
 
 @AppScope
@@ -16,7 +15,6 @@ class SyncTaskManagingUseCase @Inject constructor(
     private val syncTaskUpdater: SyncTaskUpdater,
     private val syncTaskResetter: SyncTaskResetter,
     private val syncTaskCreatorDeleter: SyncTaskCreatorDeleter,
-    private val syncTaskLogDeleter: SyncTaskLogDeleter,
 ) {
 
     suspend fun listSyncTasks(): LiveData<List<SyncTask>> {
@@ -31,7 +29,6 @@ class SyncTaskManagingUseCase @Inject constructor(
 
     suspend fun deleteSyncTask(syncTask: SyncTask) {
         syncTaskCreatorDeleter.deleteSyncTask(syncTask)
-        syncTaskLogDeleter.deleteLogsForTask(syncTask.id)
     }
 
 
