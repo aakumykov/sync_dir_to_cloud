@@ -112,7 +112,9 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
 
     private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
-        taskLogEntries?.also { taskLogAdapter.setList(it) }
+        taskLogEntries?.also {
+            taskLogAdapter.setList(it)
+        }
     }
 
 
