@@ -215,4 +215,5 @@
     <string name="SETTINGS_dry_run">Имитировать работу</string>
     <string name="SETTINGS_SUMMARY_dry_run">Подготавливать действия, но не выполнять их</string>
     <string name="description_cancel_file_operation">Отменить операцию с файлом</string>
+    <string name="there_is_no_execution_id">Нет executionId</string>
 </resources>
