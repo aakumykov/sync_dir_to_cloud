@@ -18,7 +18,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -102,10 +101,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
             lifecycleScope.launch {
                 taskDetailsViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::onTaskChanged)
-
-                taskDetailsViewModel.getTaskLogEntriesLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogListChanged)
-
-//                taskDetailsViewModel.getTaskLogItemsLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogItemsListChanged)
+                taskDetailsViewModel.getTaskLogsLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogListChanged)
             }
 
         } ?: {
@@ -118,13 +114,6 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
         taskLogEntries?.also {
             taskLogAdapter.setList(it)
-        }
-    }
-
-
-    private fun onTaskLogItemsListChanged(list: List<TaskLogItem>) {
-        list?.also {
-//            taskLogAdapter.setList(it)
         }
     }
 
