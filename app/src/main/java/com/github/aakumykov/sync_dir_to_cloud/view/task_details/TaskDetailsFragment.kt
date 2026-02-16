@@ -66,8 +66,11 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskDetailsViewHolder>
 
     private var currentTaskId: String? = null
+    private var currentExecutionId: String? = null
 
     private lateinit var progressInfoHolder: ProgressInfoHolder
+
+//    private val executionId: String get() = arguments?.getString(GlobalConstants.EXECUTION_ID, null)!!
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -102,12 +105,17 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     private fun processArguments() {
 
         currentTaskId = arguments?.getString(KEY_TASK_ID)
+        currentExecutionId = arguments?.getString(KEY_EXECUTION_ID)
 
         if (null == currentTaskId) {
             showToast(R.string.there_is_no_task_id)
             navigationViewModel.navigateBack()
             return
-        }
+        } else if (null == currentExecutionId) {
+            showToast(R.string.there_is_no_execution_id)
+            navigationViewModel.navigateBack()
+            return
+        } else { }
 
         lifecycleScope.launch {
             taskDetailsViewModel.getSyncTask(currentTaskId!!)
@@ -116,7 +124,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
             taskDetailsViewModel.getTaskLogEntriesLiveData(currentTaskId!!)
                 .observe(viewLifecycleOwner, ::onTaskLogListChanged)
 
-            taskDetailsViewModel.getTaskDetailsLiveData(currentTaskId!!)
+            taskDetailsViewModel.getTaskDetailsLiveData(currentTaskId!!, currentExecutionId!!)
                 .observe(viewLifecycleOwner, ::onTaskDetailsListChanged)
         }
     }

@@ -218,4 +218,5 @@
     <string name="SETTINGS_dry_run">Dry run</string>
     <string name="SETTINGS_SUMMARY_dry_run">Prepare work, but not really do it</string>
     <string name="description_cancel_file_operation">Отменить операцию с файлом</string>
+    <string name="there_is_no_execution_id">Where is no executionId</string>
 </resources>
