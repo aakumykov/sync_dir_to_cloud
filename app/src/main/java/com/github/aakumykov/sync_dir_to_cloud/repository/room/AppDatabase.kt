@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
@@ -22,6 +23,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
@@ -35,6 +37,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         SyncTask::class,
         SyncObject::class,
         CloudAuth::class,
+        TaskLogEntry::class,
         ComparisonState::class,
         SyncInstruction::class,
         TaskLogItem::class,
@@ -139,9 +142,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 149, to = 150), // Новое поле BasicLogItem.subText с вытекающими.
         AutoMigration(from = 150, to = 151, spec = RenameMessageToText::class), // Новое поле BasicLogItem.subText с вытекающими.
         AutoMigration(from = 151, to = 152, spec = RenameSyncInstructionsToFileInstructions::class), // Новое поле BasicLogItem.subText с вытекающими.
-        AutoMigration(from = 152, to = 153, spec = SyncTaskLogsDatabaseDeletion::class), // Новое поле BasicLogItem.subText с вытекающими.
     ],
-    version = 153,
+    version = 152,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -155,6 +157,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskRunningTimeDAO(): SyncTaskRunningTimeDAO
     abstract fun getSyncObjectBadStateResettingDAO(): SyncObjectBadStateResettingDAO
     abstract fun getSyncTaskResettingDAO(): SyncTaskResettingDAO
+    abstract fun getTaskLogDAO(): SyncTaskLogDAO
     abstract fun getComparisonStateDAO(): ComparisonStateDAO
     abstract fun getSyncInstructionDAO6(): SyncInstructionDAO
     abstract fun getSyncTaskBackupDirDAO(): SyncTaskBackupDirDAO

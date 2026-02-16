@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskLogDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
@@ -56,6 +57,10 @@ class RoomDAOModule {
 
     @Provides
     fun provideSyncObjectStateResettingDAO(appDatabase: AppDatabase): SyncObjectBadStateResettingDAO = appDatabase.getSyncObjectBadStateResettingDAO()
+
+    @Provides
+    fun provideTaskLogDAO(appDatabase: AppDatabase): SyncTaskLogDAO = appDatabase.getTaskLogDAO()
+
 
     @Provides
     fun provideComparisonStateDAO(appDatabase: AppDatabase): ComparisonStateDAO = appDatabase.getComparisonStateDAO()

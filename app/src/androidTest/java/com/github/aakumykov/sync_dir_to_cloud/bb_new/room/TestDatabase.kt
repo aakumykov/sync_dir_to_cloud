@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
 
 @Database(
@@ -17,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
         SyncTask::class,
         SyncObject::class,
         CloudAuth::class,
+        TaskLogEntry::class,
         ComparisonState::class,
         SyncInstruction::class,
     ],
