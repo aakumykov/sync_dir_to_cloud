@@ -24,7 +24,6 @@ import com.github.aakumykov.sync_dir_to_cloud.di.modules.SharedPreferencesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncInstructionRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncObjectRepositoryInterfacesModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.SyncTaskRepositoryInterfacesModule
-import com.github.aakumykov.sync_dir_to_cloud.di.modules.TaskLoggerModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.TempModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.ViewModelsModule
 import com.github.aakumykov.sync_dir_to_cloud.di.modules.WorkerInterfacesModule
@@ -63,7 +62,6 @@ import dagger.Component
         FileListerCreatorsModule::class,
         CloudReaderFactoriesModule::class,
         CloudWriterFactoriesModule::class,
-        TaskLoggerModule::class,
         PreferencesModule::class,
         SharedPreferencesModule::class,
         AppSettingsModule::class,
