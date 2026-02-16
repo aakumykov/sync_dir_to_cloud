@@ -11,8 +11,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger2AssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessorAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -38,7 +38,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     @Assisted private val taskId: String,
     private val syncTaskReader: SyncTaskReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
-    private val taskLogger2AssistedFactory: TaskLogger2AssistedFactory,
+    private val taskLoggerAssistedFactory: TaskLoggerAssistedFactory,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
 ){
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy {
@@ -46,8 +46,8 @@ class SyncTaskExecutor @AssistedInject constructor(
 
     private val executionId: String get() = hashCode().toString()
 
-    private val taskLogger2: TaskLogger2 by lazy {
-        taskLogger2AssistedFactory.create(taskId = taskId, executionId = executionId) }
+    private val taskLogger: TaskLogger by lazy {
+        taskLoggerAssistedFactory.create(taskId = taskId, executionId = executionId) }
 
 
     suspend fun executeSyncTask(parentScope: CoroutineScope, taskId: String) {
@@ -61,7 +61,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             //  можно (нужно) внедрить его в класс-журналёр.
             val taskEH = CoroutineExceptionHandler { context, throwable ->
                 parentScope.launch (NonCancellable) {
-                    taskLogger2.logTaskError(throwable)
+                    taskLogger.logTaskError(throwable)
                     syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
                 }
             }
@@ -71,7 +71,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                     executeSyncTaskReal(this, syncTask)
                 } catch (e: CancellationException) {
                     syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
-                    taskLogger2.logTaskCancelled(e)
+                    taskLogger.logTaskCancelled(e)
                 }
             }.also { job ->
                 TaskJobsHolder.addJob(taskId, job)
@@ -92,7 +92,7 @@ class SyncTaskExecutor @AssistedInject constructor(
         val taskId = syncTask.id
 
         try {
-            taskLogger2.logTaskStarted()
+            taskLogger.logTaskStarted()
             syncTaskRunningTimeUpdater.updateStartTime(taskId)
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
 
@@ -101,7 +101,7 @@ class SyncTaskExecutor @AssistedInject constructor(
                 .processSyncTask()
 
             syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
-            taskLogger2.logTaskFinished()
+            taskLogger.logTaskFinished()
         }
         finally {
             // TODO: ошибочное расположение

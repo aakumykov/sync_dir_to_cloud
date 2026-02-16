@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger
 
-import android.R.id.message
 import android.content.res.Resources
 import android.util.Log
 import androidx.annotation.StringRes
@@ -18,9 +17,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
-import kotlin.math.log
 
-class TaskLogger2 @AssistedInject constructor(
+class TaskLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     private val repository: TaskLogRepository2,
@@ -72,15 +70,15 @@ class TaskLogger2 @AssistedInject constructor(
     )
 
     companion object {
-        val TAG: String = TaskLogger2::class.java.simpleName
+        val TAG: String = TaskLogger::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface TaskLogger2AssistedFactory {
+interface TaskLoggerAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
-    ): TaskLogger2
+    ): TaskLogger
 }
