@@ -18,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunnin
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskDetailsDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
 import dagger.Module
 import dagger.Provides
@@ -79,4 +80,7 @@ class RoomDAOModule {
 
     @Provides
     fun provideLogOfSyncDAO(appDatabase: AppDatabase): LogOfSyncDAO = appDatabase.getLogOfSyncDAO()
+
+    @Provides
+    fun provideTaskDetailsDAO(appDatabase: AppDatabase): TaskDetailsDAO = appDatabase.getTaskDetailsDAO()
 }

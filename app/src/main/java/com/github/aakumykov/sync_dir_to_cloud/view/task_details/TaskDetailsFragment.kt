@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
+import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskDetailsBinding
@@ -18,7 +19,10 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -29,6 +33,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuI
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsAdapter
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsViewHolder
+import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetailsItem
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import kotlinx.coroutines.launch
 
@@ -39,7 +44,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
             id = R.id.actionStartStopTask,
             title = R.string.MENU_ITEM_action_start_stop_task,
             icon = R.drawable.ic_task_start_toolbar,
-            action = { taskDetailsViewModel.startStopTask(currentTaskId) }),
+            action = { taskDetailsViewModel.startStopTask(currentTaskId!!) }),
         CustomMenuItem(
             id = R.id.actionEditTask,
             title = R.string.MENU_ITEM_action_edit_task,
@@ -60,7 +65,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskDetailsViewHolder>
 
-    private lateinit var currentTaskId: String
+    private var currentTaskId: String? = null
 
     private lateinit var progressInfoHolder: ProgressInfoHolder
 
@@ -96,21 +101,23 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     private fun processArguments() {
 
-        arguments?.getString(KEY_TASK_ID)?.also { taskId ->
+        currentTaskId = arguments?.getString(KEY_TASK_ID)
 
-            currentTaskId = taskId
-
-            lifecycleScope.launch {
-                taskDetailsViewModel.getSyncTask(currentTaskId).observe(viewLifecycleOwner, ::onTaskChanged)
-
-                taskDetailsViewModel.getTaskLogEntriesLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogListChanged)
-
-//                taskDetailsViewModel.getTaskLogItemsLiveData(currentTaskId).observe(viewLifecycleOwner, ::onTaskLogItemsListChanged)
-            }
-
-        } ?: {
+        if (null == currentTaskId) {
             showToast(R.string.there_is_no_task_id)
             navigationViewModel.navigateBack()
+            return
+        }
+
+        lifecycleScope.launch {
+            taskDetailsViewModel.getSyncTask(currentTaskId!!)
+                .observe(viewLifecycleOwner, ::onTaskChanged)
+
+            taskDetailsViewModel.getTaskLogEntriesLiveData(currentTaskId!!)
+                .observe(viewLifecycleOwner, ::onTaskLogListChanged)
+
+            taskDetailsViewModel.getTaskDetailsLiveData(currentTaskId!!)
+                .observe(viewLifecycleOwner, ::onTaskDetailsListChanged)
         }
     }
 
@@ -122,9 +129,24 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     }
 
 
-    private fun onTaskLogItemsListChanged(list: List<TaskLogItem>) {
-        list?.also {
-//            taskLogAdapter.setList(it)
+    private fun onTaskDetailsListChanged(list: List<TaskDetailsItem>) {
+        list.map {
+            TaskLogEntry(
+                id = newRandomId,
+                taskId = it.taskId,
+                executionId = it.executionId,
+                entryType = when(it.logItemType) {
+                    LogItemType.BUSY -> ExecutionLogItemType.START
+                    LogItemType.SUCCESS -> ExecutionLogItemType.FINISH
+                    else -> ExecutionLogItemType.ERROR
+                },
+                startTime = it.startTimestamp,
+                finishTime = it.finishTimestamp,
+                errorMsg = it.text
+            )
+        }
+        .also {
+            taskLogAdapter.setList(it)
         }
     }
 
@@ -287,7 +309,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     // TODO: как насчёт делать это через самописную навигацию?
     private fun onTaskEditClicked() {
-        TaskEditFragment.create(currentTaskId).also {
+        TaskEditFragment.create(currentTaskId!!).also {
             parentFragmentManager.beginTransaction()
                 .addToBackStack(DEFAULT_BACK_STACK_NAME)
                 .replace(R.id.fragmentContainerView, it)
@@ -299,6 +321,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     companion object {
 
         const val KEY_TASK_ID = "TASK_ID"
+        const val KEY_EXECUTION_ID = "EXECUTION_ID"
 
         fun create(taskId: String?): TaskDetailsFragment {
             return TaskDetailsFragment().apply {
