@@ -38,8 +38,8 @@ class TaskDetailsViewModel(
         return taskLogRepository.getLogsForTask(taskId)
     }
 
-    fun getTaskDetailsLiveData(taskId: String, executionId: String): LiveData<List<TaskDetailsItem>> {
-        return taskDetailsRepository.getLogsForTask(taskId, executionId)
+    fun getTaskDetailsLiveData(taskId: String): LiveData<List<TaskDetailsItem>> {
+        return taskDetailsRepository.getLogsForTask(taskId)
     }
 
 //    fun getTaskLogsFlow(taskId: String) = taskLogProvider.taskLogsFlow

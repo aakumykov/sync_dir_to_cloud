@@ -11,7 +11,7 @@ class TaskDetailsRepository @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val dao: TaskDetailsDAO
 ) {
-    fun getLogsForTask(taskId: String, executionId: String): LiveData<List<TaskDetailsItem>> {
-        return dao.getLogsForTask(taskId, executionId)
+    fun getLogsForTask(taskId: String): LiveData<List<TaskDetailsItem>> {
+        return dao.getLogsForTask(taskId)
     }
 }
