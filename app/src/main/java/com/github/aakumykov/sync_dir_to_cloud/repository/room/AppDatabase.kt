@@ -29,10 +29,8 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunnin
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskDetailsDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
-import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetailsItem
 
 @Database(
     entities = [
@@ -46,10 +44,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetail
         InstructionLogItem::class,
         FileOperationLogItem::class,
    ],
-    views = [
-        LogOfSync::class,
-        TaskDetailsItem::class
-    ],
+    views = [ LogOfSync::class ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
         AutoMigration(from = 57, to = 58), // SyncObjectLogItem.message типа String?
@@ -147,9 +142,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetail
         AutoMigration(from = 149, to = 150), // Новое поле BasicLogItem.subText с вытекающими.
         AutoMigration(from = 150, to = 151, spec = RenameMessageToText::class), // Новое поле BasicLogItem.subText с вытекающими.
         AutoMigration(from = 151, to = 152, spec = RenameSyncInstructionsToFileInstructions::class), // Новое поле BasicLogItem.subText с вытекающими.
-        AutoMigration(from = 152, to = 153), // Новое представление "task_details".
     ],
-    version = 153,
+    version = 152,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -171,5 +165,4 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getInstructionLoggingDAO(): InstructionLoggingDAO
     abstract fun getFileOperationLogDAO(): FileOperationLogDAO
     abstract fun getLogOfSyncDAO(): LogOfSyncDAO
-    abstract fun getTaskDetailsDAO(): TaskDetailsDAO
 }

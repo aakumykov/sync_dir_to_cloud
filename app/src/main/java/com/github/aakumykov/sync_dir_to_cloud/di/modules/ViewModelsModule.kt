@@ -15,7 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
-import com.github.aakumykov.sync_dir_to_cloud.repository.TaskDetailsRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository2
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -70,7 +69,7 @@ class ViewModelsModule {
                                  syncObjectDBReader: SyncObjectDBReader,
                                  startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
                                  taskLogRepository: TaskLogRepository,
-                                 taskDetailsRepository: TaskDetailsRepository
+                                 taskLogRepository2: TaskLogRepository2,
     ): ViewModel
     {
         return TaskDetailsViewModel(
@@ -78,7 +77,7 @@ class ViewModelsModule {
             syncObjectDBReader = syncObjectDBReader,
             startStopSyncTaskUseCase = startStopSyncTaskUseCase,
             taskLogRepository = taskLogRepository,
-            taskDetailsRepository = taskDetailsRepository,
+            taskLogRepository2 = taskLogRepository2,
         )
     }
 
