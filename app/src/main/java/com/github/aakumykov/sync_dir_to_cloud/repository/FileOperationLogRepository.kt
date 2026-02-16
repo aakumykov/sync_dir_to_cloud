@@ -6,12 +6,11 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationJobIdReade
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 // Двойка в названии косметическая.
-class FileOperationLogRepository2 @Inject constructor(
+class FileOperationLogRepository @Inject constructor(
     private val dao: FileOperationLogDAO,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 )

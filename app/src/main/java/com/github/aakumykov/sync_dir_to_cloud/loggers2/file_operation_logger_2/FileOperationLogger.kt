@@ -9,7 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
-import com.github.aakumykov.sync_dir_to_cloud.repository.FileOperationLogRepository2
+import com.github.aakumykov.sync_dir_to_cloud.repository.FileOperationLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.runNonCancellable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,7 +19,7 @@ import kotlinx.coroutines.CancellationException
 class FileOperationLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val repository: FileOperationLogRepository2,
+    private val repository: FileOperationLogRepository,
     private val resources: Resources,
 ) {
     suspend fun logStarted(
