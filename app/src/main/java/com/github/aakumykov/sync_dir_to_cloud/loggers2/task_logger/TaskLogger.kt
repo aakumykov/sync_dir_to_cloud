@@ -25,7 +25,7 @@ class TaskLogger @AssistedInject constructor(
     private val resources: Resources,
 ) {
     suspend fun logTaskStarted() = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.BUSY, R.string.LOG_ITEM_task_started)
+        taskLogWithMessage(newRandomId, LogItemType.SUCCESS, R.string.LOG_ITEM_task_started)
             .also {
                 repository.add(it)
                 Log.d(TAG, "${it.text}, ${it.timestamp}")
