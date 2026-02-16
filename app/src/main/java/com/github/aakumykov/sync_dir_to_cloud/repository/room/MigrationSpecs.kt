@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository.room
 
+import androidx.room.Delete
 import androidx.room.DeleteColumn
 import androidx.room.DeleteTable
 import androidx.room.RenameColumn
@@ -205,3 +206,7 @@ class RenameMessageToText : AutoMigrationSpec
     toTableName = "file_instructions"
 )
 class RenameSyncInstructionsToFileInstructions : AutoMigrationSpec
+
+
+@DeleteTable(tableName = "sync_task_logs")
+class SyncTaskLogsDatabaseDeletion: AutoMigrationSpec

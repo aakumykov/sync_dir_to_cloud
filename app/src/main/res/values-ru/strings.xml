@@ -121,6 +121,7 @@
     <string name="TASK_STATE_running">Выполняется с %1$s</string>
     <string name="TASK_STATE_finished">Выполнено. Начало: %1$s, длительность: %2$s</string>
     <string name="TASK_STATE_error">Ошибка: %1$s; начало: %2$s, выполнялось: %3$s</string>
+    <string name="TASK_STATE_cancelled">Отменено: %1$s</string>
     <string name="SYNC_OPERATION_backuping_deleted_dir">Бекап удалённого каталога</string>
     <string name="SYNC_OPERATION_deleting_deleted_dir">Удаление каталога</string>
     <string name="SYNC_OPERATION_creating_new_dir">Создание нового каталога</string>

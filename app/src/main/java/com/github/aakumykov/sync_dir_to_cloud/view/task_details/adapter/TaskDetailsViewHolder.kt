@@ -6,12 +6,12 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.getString
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 
-class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() {
+class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
 
     private lateinit var titleView: TextView
     private lateinit var primaryStateIcon: ImageView
@@ -19,29 +19,30 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() 
 
 
     override fun fill(
-        taskLogEntry: TaskLogEntry,
+        taskLogItem: TaskLogItem,
         isSelected: Boolean
     ) {
-        titleView.text = when(taskLogEntry.entryType) {
-            ExecutionLogItemType.START -> startText(taskLogEntry)
-            ExecutionLogItemType.FINISH -> finishText(taskLogEntry)
-            ExecutionLogItemType.ERROR -> errorText(taskLogEntry)
+        titleView.text = when(taskLogItem.logItemType) {
+            LogItemType.BUSY -> startText(taskLogItem)
+            LogItemType.SUCCESS -> finishText(taskLogItem)
+            LogItemType.ERROR -> errorText(taskLogItem)
+            LogItemType.CANCELLED -> cancelledText(taskLogItem)
         }
     }
 
 
-    private fun startText(taskLogEntry: TaskLogEntry): String {
+    private fun startText(taskLogItem: TaskLogItem): String {
         return titleView.resources.getString(
             R.string.TASK_STATE_running,
-            CurrentDateTime.format(taskLogEntry.startTime)
+            CurrentDateTime.format(taskLogItem.timestamp)
         )
     }
 
 
-    private fun finishText(taskLogEntry: TaskLogEntry): String {
+    private fun finishText(taskLogItem: TaskLogItem): String {
 
-        val startTime = CurrentDateTime.format(taskLogEntry.startTime)
-        val timeDiff = CurrentDateTime.format(taskLogEntry.finishTime - taskLogEntry.startTime)
+        val startTime = CurrentDateTime.format(taskLogItem.timestamp)
+        val timeDiff = CurrentDateTime.format(taskLogItem.timestamp - taskLogItem.timestamp)
 
         return titleView.resources.getString(
             R.string.TASK_STATE_finished,
@@ -51,14 +52,21 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogEntry>() 
     }
 
 
-    private fun errorText(taskLogEntry: TaskLogEntry): String {
+    private fun cancelledText(taskLogItem: TaskLogItem): String {
+        return getString(
+            R.string.TASK_STATE_cancelled,
+            taskLogItem.text ?: "-",
+        )
+    }
 
-        val startTime = CurrentDateTime.format(taskLogEntry.startTime)
-        val timeDiff = CurrentDateTime.format(taskLogEntry.finishTime - taskLogEntry.startTime)
+    private fun errorText(taskLogItem: TaskLogItem): String {
+
+        val startTime = CurrentDateTime.format(taskLogItem.timestamp)
+        val timeDiff = CurrentDateTime.format(taskLogItem.timestamp - taskLogItem.timestamp)
 
         return getString(
             R.string.TASK_STATE_error,
-            taskLogEntry.errorMsg ?: "-",
+            taskLogItem.text ?: "-",
             startTime,
             timeDiff
         )

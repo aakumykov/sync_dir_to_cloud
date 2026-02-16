@@ -14,10 +14,10 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskDetailsBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -57,7 +57,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
 
-    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskDetailsViewHolder>
+    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogItem, TaskDetailsViewHolder>
 
     private lateinit var currentTaskId: String
 
@@ -111,7 +111,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     }
 
 
-    private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
+    private fun onTaskLogListChanged(taskLogEntries: List<TaskLogItem>?) {
         taskLogEntries?.also { taskLogAdapter.setList(it) }
     }
 
@@ -130,8 +130,8 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     private fun onTaskLogItemClicked(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
 //        showToast(taskLogAdapter.getItem(i).taskId)
-        taskLogAdapter.getItem(i).also { taskLogEntry: TaskLogEntry ->
-            navigationViewModel.navigateTo(NavTarget.SyncLog(taskLogEntry.taskId, taskLogEntry.executionId))
+        taskLogAdapter.getItem(i).also { taskLogItem: TaskLogItem ->
+            navigationViewModel.navigateTo(NavTarget.SyncLog(taskLogItem.taskId, taskLogItem.executionId))
         }
     }
 
