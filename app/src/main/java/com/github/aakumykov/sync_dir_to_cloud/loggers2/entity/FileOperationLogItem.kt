@@ -37,7 +37,8 @@ class FileOperationLogItem(
     executionId: String,
     text: String?,
     subText: String?,
-    timestamp: Long,
+    startTime: Long?,
+    finishTime: Long?,
 
     @ColumnInfo(name = "first_item", defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
     val firstItem: String?,
@@ -55,7 +56,8 @@ class FileOperationLogItem(
         executionId = executionId,
         text = text,
         subText = subText,
-        timestamp = timestamp,
+        startTime = startTime,
+        finishTime = finishTime
     )
 {
     companion object {
@@ -68,7 +70,9 @@ class FileOperationLogItem(
             subText: String?,
             firstItem: String?,
             secondItem: String?,
-            jobId: String?
+            jobId: String?,
+            startTime: Long?,
+            finishTime: Long?
         )
             : FileOperationLogItem
         {
@@ -81,11 +85,14 @@ class FileOperationLogItem(
                 subText = subText,
                 firstItem = firstItem,
                 secondItem = secondItem,
-                timestamp = currentTime,
+                startTime = startTime,
+                finishTime = finishTime,
                 jobId = jobId
             )
         }
 
         const val TABLE_NAME = "file_operation_logs"
     }
+
+
 }

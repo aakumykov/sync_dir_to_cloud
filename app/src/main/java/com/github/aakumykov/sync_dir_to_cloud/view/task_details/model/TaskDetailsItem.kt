@@ -8,8 +8,8 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 @DatabaseView(
     viewName = TaskDetailsItem.TABLE_NAME,
     value = "SELECT ${TaskDetailsItem.BASIC_FIELDS_TO_SELECT}, " +
-            "t1.timestamp AS start_timestamp, " +
-            "t1.timestamp AS finish_timestamp " +
+            "t1.start_time AS start_timestamp, " +
+            "t1.finish_time AS finish_timestamp " +
             "FROM task_logs AS t1 " +
             "INNER JOIN task_logs AS t2 " +
             "ON t1.text = t2.text " +

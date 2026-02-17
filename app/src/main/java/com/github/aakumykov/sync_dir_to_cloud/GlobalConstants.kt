@@ -7,10 +7,7 @@ object GlobalConstants {
     // TODO: выделить это в "DbFieldNames"
     const val FIELD_TASK_ID = "task_id"
     const val FIELD_EXECUTION_ID = "execution_id"
-    const val FIELD_LOG_ITEM_TYPE = "log_item_type"
-    const val FIELD_LOG_ITEM_ABOUT = "log_item_about"
     const val FIELD_JOB_ID = "job_id"
-    const val FIELD_TIMESTAMP = "timestamp"
 
     const val FIELD_CONTENT_NULL = "null"
 }

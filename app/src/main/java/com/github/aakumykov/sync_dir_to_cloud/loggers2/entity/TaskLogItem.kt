@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
 
@@ -37,7 +36,8 @@ class TaskLogItem(
     logItemType: LogItemType,
     text: String?,
     subText: String?,
-    timestamp: Long,
+    startTime: Long?,
+    finishTime: Long?
 )
     : BasicLogItem(
         logItemAbout = LogItemAbout.TASK,
@@ -46,7 +46,8 @@ class TaskLogItem(
         executionId = executionId,
         text = text,
         subText = subText,
-        timestamp = timestamp,
+        startTime = startTime,
+        finishTime = finishTime
     )
 {
     companion object {
@@ -58,7 +59,9 @@ class TaskLogItem(
             taskId: String,
             executionId: String,
             text: String?,
-            subText: String?
+            subText: String?,
+            startTime: Long?,
+            finishTime: Long?,
         ) = TaskLogItem(
             id = id,
             logItemType = entryType,
@@ -66,7 +69,8 @@ class TaskLogItem(
             subText = subText,
             taskId = taskId,
             executionId = executionId,
-            timestamp = currentTime,
+            startTime = startTime,
+            finishTime = finishTime,
         )
     }
 }

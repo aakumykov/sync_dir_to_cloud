@@ -148,8 +148,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetail
         AutoMigration(from = 150, to = 151, spec = RenameMessageToText::class), // Новое поле BasicLogItem.subText с вытекающими.
         AutoMigration(from = 151, to = 152, spec = RenameSyncInstructionsToFileInstructions::class), // Новое поле BasicLogItem.subText с вытекающими.
         AutoMigration(from = 152, to = 153), // Новое представление "task_details".
+        AutoMigration(from = 153, to = 154, spec = BasicLogItemStartTimeFinishTime::class),
     ],
-    version = 153,
+    version = 154,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

@@ -205,3 +205,21 @@ class RenameMessageToText : AutoMigrationSpec
     toTableName = "file_instructions"
 )
 class RenameSyncInstructionsToFileInstructions : AutoMigrationSpec
+
+
+@RenameColumn(
+    tableName = "task_logs",
+    fromColumnName = "timestamp",
+    toColumnName = "start_time"
+)
+@RenameColumn(
+    tableName = "instruction_logs",
+    fromColumnName = "timestamp",
+    toColumnName = "start_time"
+)
+@RenameColumn(
+    tableName = "file_operation_logs",
+    fromColumnName = "timestamp",
+    toColumnName = "start_time"
+)
+class BasicLogItemStartTimeFinishTime : AutoMigrationSpec

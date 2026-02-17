@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.FileOperationLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.runNonCancellable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -39,7 +40,9 @@ class FileOperationLogger @AssistedInject constructor(
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
-                jobId = jobId
+                jobId = jobId,
+                startTime = currentTime,
+                finishTime = null
             ).also {
                 repository.add(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
@@ -63,7 +66,9 @@ class FileOperationLogger @AssistedInject constructor(
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
-                jobId = null
+                jobId = null,
+                startTime = null,
+                finishTime = currentTime
             ).also {
                 repository.add(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
@@ -89,7 +94,9 @@ class FileOperationLogger @AssistedInject constructor(
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
-                jobId = null
+                jobId = null,
+                startTime = null,
+                finishTime = currentTime
             ).also {
                 repository.add(it)
                 Log.i(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
@@ -115,7 +122,9 @@ class FileOperationLogger @AssistedInject constructor(
                 subText = "$firstItem --> $secondItem",
                 firstItem = firstItem,
                 secondItem = secondItem,
-                jobId = null
+                jobId = null,
+                startTime = null,
+                finishTime = currentTime
             ).also {
                 repository.add(it)
                 Log.e(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)", t)

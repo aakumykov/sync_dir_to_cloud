@@ -12,6 +12,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository2
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.runNonCancellable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -25,33 +26,42 @@ class TaskLogger @AssistedInject constructor(
     private val resources: Resources,
 ) {
     suspend fun logTaskStarted() = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.BUSY, R.string.LOG_ITEM_task_started)
+        taskLogWithMessage(newRandomId, LogItemType.BUSY, R.string.LOG_ITEM_task_started,
+            startTime = currentTime)
             .also {
                 repository.add(it)
-                Log.d(TAG, "${it.text}, ${it.timestamp}")
+                Log.d(TAG, "${it.text}, ${it.startTime}")
             }
     }
 
     suspend fun logTaskFinished() = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.SUCCESS, R.string.LOG_ITEM_task_finished)
+        taskLogWithMessage(newRandomId, LogItemType.SUCCESS, R.string.LOG_ITEM_task_finished,
+            finishTime = currentTime)
             .also {
                 repository.add(it)
-                Log.d(TAG, "${it.text}, ${it.timestamp}")
+                Log.d(TAG, "${it.text}, ${it.finishTime}")
             }
     }
 
     suspend fun logTaskCancelled(e: CancellationException) = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.CANCELLED, R.string.LOG_ITEM_task_cancelled)
+        taskLogWithMessage(newRandomId, LogItemType.CANCELLED, R.string.LOG_ITEM_task_cancelled,
+            finishTime = currentTime)
             .also {
                 repository.add(it)
-                Log.i(TAG, "${it.text}, ${it.timestamp} (${e.errorMsgExtended})")
+                Log.i(TAG, "${it.text}, ${it.finishTime} (${e.errorMsgExtended})")
             }
     }
 
     suspend fun logTaskError(t: Throwable) = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.ERROR, R.string.LOG_ITEM_task_failed, t.errorMsg).also {
+        taskLogWithMessage(
+            newRandomId,
+            LogItemType.ERROR,
+            R.string.LOG_ITEM_task_failed,
+            t.errorMsg,
+            finishTime = currentTime
+        ).also {
             repository.add(it)
-            Log.e(TAG, "${it.text}, ${it.timestamp}", t)
+            Log.e(TAG, "${it.text}, ${it.finishTime}", t)
         }
     }
 
@@ -59,14 +69,18 @@ class TaskLogger @AssistedInject constructor(
         logItemId: String,
         logItemType: LogItemType,
         @StringRes messageId: Int,
-        details: String? = null
+        details: String? = null,
+        startTime: Long? = null,
+        finishTime: Long? = null
     ): TaskLogItem = TaskLogItem.create(
         id = logItemId,
         entryType = logItemType,
         taskId = taskId,
         executionId = executionId,
         text = resources.getString(messageId),
-        subText = details
+        subText = details,
+        startTime = startTime,
+        finishTime = finishTime
     )
 
     companion object {

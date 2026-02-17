@@ -36,7 +36,8 @@ class InstructionLogItem(
     executionId: String,
     text: String?,
     subText: String?,
-    timestamp: Long,
+    startTime: Long?,
+    finishTime: Long?
 )
     : BasicLogItem(
         logItemAbout = LogItemAbout.INSTRUCTION,
@@ -45,7 +46,8 @@ class InstructionLogItem(
         executionId = executionId,
         text = text,
         subText = subText,
-        timestamp = timestamp,
+        startTime = startTime,
+        finishTime = finishTime
     )
 {
     companion object {
@@ -58,7 +60,8 @@ class InstructionLogItem(
             executionId: String,
             text: String?,
             subText: String?,
-            timestamp: Long,
+            startTime: Long?,
+            finishTime: Long?
         ): InstructionLogItem {
             return InstructionLogItem(
                 id = id,
@@ -67,14 +70,9 @@ class InstructionLogItem(
                 executionId = executionId,
                 text = text,
                 subText = subText,
-                timestamp = timestamp,
+                startTime = startTime,
+                finishTime = finishTime
             )
         }
     }
-
-    override fun toString(): String {
-        return "InstructionLogItem(id='$id', logItemType=$logItemType, taskId='$taskId', executionId='$executionId', text='$text', timestamp=$timestamp)"
-    }
-
-
 }

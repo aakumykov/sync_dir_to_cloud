@@ -29,7 +29,8 @@ class InstructionLogger @AssistedInject constructor(
                 logItemType = LogItemType.BUSY,
                 text = logMessage.get(resources),
                 subText = null,
-                timestamp = currentTime
+                startTime = currentTime,
+                finishTime = null
             ).also {
                 repository.add(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text}")
@@ -47,7 +48,8 @@ class InstructionLogger @AssistedInject constructor(
                 logItemType = LogItemType.SUCCESS,
                 text = logMessage.get(resources),
                 subText = null,
-                timestamp = currentTime
+                startTime = null,
+                finishTime = currentTime
             ).also {
                 repository.add(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text}")
@@ -65,7 +67,8 @@ class InstructionLogger @AssistedInject constructor(
                 logItemType = LogItemType.CANCELLED,
                 text = logMessage.get(resources),
                 subText = null,
-                timestamp = currentTime
+                startTime = null,
+                finishTime = currentTime
             ).also {
                 repository.add(it)
                 Log.i(TAG, "${it.logItemType}: ${it.text}")
@@ -83,7 +86,8 @@ class InstructionLogger @AssistedInject constructor(
                 logItemType = LogItemType.ERROR,
                 text = logMessage.get(resources),
                 subText = null,
-                timestamp = currentTime
+                startTime = null,
+                finishTime = currentTime
             ).also {
                 repository.add(it)
                 Log.e(TAG, "${it.logItemType}: ${it.text}", throwable)
