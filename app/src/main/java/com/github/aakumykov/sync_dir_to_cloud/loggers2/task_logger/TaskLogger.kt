@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
-import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository2
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.runNonCancellable
@@ -25,8 +24,8 @@ class TaskLogger @AssistedInject constructor(
     private val repository: TaskLogRepository2,
     private val resources: Resources,
 ) {
-    suspend fun logTaskStarted() = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.BUSY, R.string.LOG_ITEM_task_started,
+    suspend fun logTaskStarted(logItemId: String) = runNonCancellable {
+        taskLogWithMessage(logItemId, LogItemType.BUSY, R.string.LOG_ITEM_task_started,
             startTime = currentTime)
             .also {
                 repository.add(it)
@@ -34,33 +33,33 @@ class TaskLogger @AssistedInject constructor(
             }
     }
 
-    suspend fun logTaskFinished() = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.SUCCESS, R.string.LOG_ITEM_task_finished,
+    suspend fun logTaskFinished(logItemId: String) = runNonCancellable {
+        taskLogWithMessage(logItemId, LogItemType.SUCCESS, R.string.LOG_ITEM_task_finished,
             finishTime = currentTime)
             .also {
-                repository.add(it)
+                repository.update(it)
                 Log.d(TAG, "${it.text}, ${it.finishTime}")
             }
     }
 
-    suspend fun logTaskCancelled(e: CancellationException) = runNonCancellable {
-        taskLogWithMessage(newRandomId, LogItemType.CANCELLED, R.string.LOG_ITEM_task_cancelled,
+    suspend fun logTaskCancelled(logItemId: String, e: CancellationException) = runNonCancellable {
+        taskLogWithMessage(logItemId, LogItemType.CANCELLED, R.string.LOG_ITEM_task_cancelled,
             finishTime = currentTime)
             .also {
-                repository.add(it)
+                repository.update(it)
                 Log.i(TAG, "${it.text}, ${it.finishTime} (${e.errorMsgExtended})")
             }
     }
 
-    suspend fun logTaskError(t: Throwable) = runNonCancellable {
+    suspend fun logTaskError(logItemId: String, t: Throwable) = runNonCancellable {
         taskLogWithMessage(
-            newRandomId,
+            logItemId,
             LogItemType.ERROR,
             R.string.LOG_ITEM_task_failed,
             t.errorMsg,
             finishTime = currentTime
         ).also {
-            repository.add(it)
+            repository.update(it)
             Log.e(TAG, "${it.text}, ${it.finishTime}", t)
         }
     }
