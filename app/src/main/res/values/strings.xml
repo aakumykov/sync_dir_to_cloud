@@ -124,7 +124,7 @@
     <string name="LOG_ITEM_DETAILS_DIALOG_item_name_quotes">«%1$s»</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_error_with_details">Error:\n%1$s</string>
     <string name="TASK_STATE_running">Executed since %1$s</string>
-    <string name="TASK_STATE_finished">Completed. Started: %1$s, finished: %2$s</string>
+    <string name="TASK_STATE_finished">Completed. Started: %1$s, duration: %2$s</string>
     <string name="TASK_STATE_error">Error: %1$s; started: %2$s, executed for: %3$s</string>
     <string name="SYNC_OPERATION_backuping_deleted_dir">Deleted dir backup</string>
     <string name="SYNC_OPERATION_deleting_deleted_dir">Deleting dir</string>

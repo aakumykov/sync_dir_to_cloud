@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.getString
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
+import kotlin.time.Duration.Companion.milliseconds
 
 class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
 
@@ -42,13 +43,19 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
 
     private fun finishText(taskLogItem: TaskLogItem): String {
 
-        val startTime = CurrentDateTime.format(taskLogItem.startTime!!)
-        val timeDiff = CurrentDateTime.format(taskLogItem.finishTime!! - taskLogItem.startTime)
-        currentTime
+        val timeDiffMillis = taskLogItem.finishTime!! - taskLogItem.startTime!!
+        val duration: kotlin.time.Duration = timeDiffMillis.milliseconds
+
+        val days = duration.inWholeDays % 365
+        val hours = duration.inWholeHours % 24
+        val minutes = duration.inWholeMinutes % 60
+        val seconds = duration.inWholeSeconds % 60
+        val milliseconds = duration.inWholeMilliseconds % 1000
+
         return titleView.resources.getString(
             R.string.TASK_STATE_finished,
-            startTime,
-            timeDiff
+            CurrentDateTime.format(taskLogItem.startTime),
+            "$days дней, $hours часов, $minutes минут, ${seconds}.${milliseconds} секунд"
         )
     }
 
