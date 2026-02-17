@@ -225,7 +225,3 @@ class RenameSyncInstructionsToFileInstructions : AutoMigrationSpec
 class BasicLogItemStartTimeFinishTime : AutoMigrationSpec
 
 
-@DeleteTable(tableName = "task_details")
-class DeleteTaskDetailsView : AutoMigrationSpec
-
-

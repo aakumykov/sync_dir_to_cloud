@@ -31,7 +31,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
-import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetailsItem
 
 @Database(
     entities = [
@@ -47,7 +46,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetail
    ],
     views = [
         LogOfSync::class,
-        TaskDetailsItem::class
     ],
     autoMigrations = [
         AutoMigration(from = 56, to = 57, spec = RenameTableFromTaskLogsToSyncTaskLogs::class),
@@ -148,8 +146,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetail
         AutoMigration(from = 151, to = 152, spec = RenameSyncInstructionsToFileInstructions::class), // Новое поле BasicLogItem.subText с вытекающими.
         AutoMigration(from = 152, to = 153), // Новое представление "task_details".
         AutoMigration(from = 153, to = 154, spec = BasicLogItemStartTimeFinishTime::class),
+        AutoMigration(from = 154, to = 155), // Отключено представление "task_details" (TaskDetailsItem). "Отключено", потому что не удаляется из БД.
     ],
-    version = 154,
+    version = 155,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
