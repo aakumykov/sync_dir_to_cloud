@@ -37,7 +37,7 @@ class FileOperationLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 text = resources.getString(operationName),
-                subText = "$firstItem --> $secondItem",
+                subText = null,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = jobId,
@@ -63,14 +63,14 @@ class FileOperationLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 text = resources.getString(operationName),
-                subText = "$firstItem --> $secondItem",
+                subText = null,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null,
                 startTime = null,
                 finishTime = currentTime
             ).also {
-                repository.add(it)
+                repository.update(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
             }
         }
@@ -91,14 +91,14 @@ class FileOperationLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 text = text,
-                subText = "$firstItem --> $secondItem",
+                subText = e.errorMsg,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null,
                 startTime = null,
                 finishTime = currentTime
             ).also {
-                repository.add(it)
+                repository.update(it)
                 Log.i(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)")
             }
         }
@@ -119,14 +119,14 @@ class FileOperationLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 text = text,
-                subText = "$firstItem --> $secondItem",
+                subText = t.errorMsg,
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null,
                 startTime = null,
                 finishTime = currentTime
             ).also {
-                repository.add(it)
+                repository.update(it)
                 Log.e(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)", t)
             }
         }

@@ -17,10 +17,16 @@ class FileOperationLogRepository @Inject constructor(
     : FileOperationJobIdReader
 {
     suspend fun add(taskLogItem: FileOperationLogItem) = withContext(dispatcher) {
-        when(taskLogItem.logItemType) {
-            LogItemType.BUSY -> dao.add(taskLogItem)
-            else -> dao.update(taskLogItem)
-        }
+        dao.add(taskLogItem)
+    }
+
+    suspend fun update(item: FileOperationLogItem) = withContext(dispatcher) {
+        dao.update(
+            id = item.id,
+            logItemType = item.logItemType,
+            subText = item.subText,
+            finishTime = item.finishTime
+        )
     }
 
     override suspend fun getJobId(logItemId: String): String?
