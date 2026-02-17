@@ -10,19 +10,14 @@ import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
-import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskDetailsBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
-import com.github.aakumykov.sync_dir_to_cloud.newRandomId
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
@@ -33,7 +28,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuI
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsAdapter
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsViewHolder
-import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetailsItem
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import kotlinx.coroutines.launch
 
@@ -115,37 +109,12 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
             taskDetailsViewModel.getTaskLogEntriesLiveData(currentTaskId!!)
                 .observe(viewLifecycleOwner, ::onTaskLogListChanged)
-
-            taskDetailsViewModel.getTaskDetailsLiveData(currentTaskId!!)
-                .observe(viewLifecycleOwner, ::onTaskDetailsListChanged)
         }
     }
 
 
     private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
         taskLogEntries?.also {
-            taskLogAdapter.setList(it)
-        }
-    }
-
-
-    private fun onTaskDetailsListChanged(list: List<TaskDetailsItem>) {
-        list.map {
-            TaskLogEntry(
-                id = newRandomId,
-                taskId = it.taskId,
-                executionId = it.executionId,
-                entryType = when(it.logItemType) {
-                    LogItemType.BUSY -> ExecutionLogItemType.START
-                    LogItemType.SUCCESS -> ExecutionLogItemType.FINISH
-                    else -> ExecutionLogItemType.ERROR
-                },
-                startTime = it.startTimestamp,
-                finishTime = it.finishTimestamp,
-                errorMsg = it.text
-            )
-        }
-        .also {
             taskLogAdapter.setList(it)
         }
     }

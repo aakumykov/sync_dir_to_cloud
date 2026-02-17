@@ -29,7 +29,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunnin
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskDetailsDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.model.TaskDetailsItem
@@ -172,5 +171,4 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getInstructionLoggingDAO(): InstructionLoggingDAO
     abstract fun getFileOperationLogDAO(): FileOperationLogDAO
     abstract fun getLogOfSyncDAO(): LogOfSyncDAO
-    abstract fun getTaskDetailsDAO(): TaskDetailsDAO
 }

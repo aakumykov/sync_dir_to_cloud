@@ -223,3 +223,9 @@ class RenameSyncInstructionsToFileInstructions : AutoMigrationSpec
     toColumnName = "start_time"
 )
 class BasicLogItemStartTimeFinishTime : AutoMigrationSpec
+
+
+@DeleteTable(tableName = "task_details")
+class DeleteTaskDetailsView : AutoMigrationSpec
+
+
