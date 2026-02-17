@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class TaskLogRepository2 @Inject constructor(
+class TaskLogRepository @Inject constructor(
     private val dao: TaskLogger2DAO,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) {

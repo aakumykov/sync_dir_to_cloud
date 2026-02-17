@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
-import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository2
+import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.utils.runNonCancellable
 import dagger.assisted.Assisted
@@ -21,7 +21,7 @@ import kotlinx.coroutines.CancellationException
 class TaskLogger @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val repository: TaskLogRepository2,
+    private val repository: TaskLogRepository,
     private val resources: Resources,
 ) {
     suspend fun logTaskStarted(logItemId: String) = runNonCancellable {
