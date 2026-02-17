@@ -15,10 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STAC
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskDetailsBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
-import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
@@ -60,7 +57,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
     private lateinit var pageTitleViewModel: PageTitleViewModel
     private lateinit var menuStateViewModel: MenuStateViewModel
 
-    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogEntry, TaskDetailsViewHolder>
+    private lateinit var taskLogAdapter: ListHoldingListAdapter<TaskLogItem, TaskDetailsViewHolder>
 
     private var currentTaskId: String? = null
 
@@ -118,23 +115,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     private fun onTaskLogChanged(list: List<TaskLogItem>?) {
         list?.also {
-            list.map {
-                TaskLogEntry(
-                    id = it.id,
-                    taskId = it.taskId,
-                    executionId = it.executionId,
-                    entryType = when(it.logItemType) {
-                        LogItemType.BUSY -> ExecutionLogItemType.START
-                        LogItemType.SUCCESS -> ExecutionLogItemType.FINISH
-                        else -> ExecutionLogItemType.ERROR
-                    },
-                    startTime = it.startTime ?: 0L,
-                    finishTime = it.finishTime ?: 0L,
-                    errorMsg = it.text,
-                )
-            }.also {
-                taskLogAdapter.setList(it)
-            }
+            taskLogAdapter.setList(it)
         }
     }
 
@@ -153,8 +134,8 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     private fun onTaskLogItemClicked(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
 //        showToast(taskLogAdapter.getItem(i).taskId)
-        taskLogAdapter.getItem(i).also { taskLogEntry: TaskLogEntry ->
-            navigationViewModel.navigateTo(NavTarget.SyncLog(taskLogEntry.taskId, taskLogEntry.executionId))
+        taskLogAdapter.getItem(i).also { taskLogItem: TaskLogItem ->
+            navigationViewModel.navigateTo(NavTarget.SyncLog(taskLogItem.taskId, taskLogItem.executionId))
         }
     }
 

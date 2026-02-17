@@ -8,7 +8,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.InstructionLogItem
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
@@ -36,7 +35,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         SyncTask::class,
         SyncObject::class,
         CloudAuth::class,
-        TaskLogEntry::class,
         ComparisonState::class,
         SyncInstruction::class,
         TaskLogItem::class,
@@ -146,8 +144,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 152, to = 153), // Новое представление "task_details".
         AutoMigration(from = 153, to = 154, spec = BasicLogItemStartTimeFinishTime::class),
         AutoMigration(from = 154, to = 155), // Отключено представление "task_details" (TaskDetailsItem). "Отключено", потому что не удаляется из БД.
+        AutoMigration(from = 155, to = 156, spec = DeleteTaskLogEntry::class),
     ],
-    version = 155,
+    version = 156,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

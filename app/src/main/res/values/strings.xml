@@ -217,5 +217,6 @@
     <string name="LOG_ITEM_task_failed">Task error</string>
     <string name="SETTINGS_dry_run">Dry run</string>
     <string name="SETTINGS_SUMMARY_dry_run">Prepare work, but not really do it</string>
-    <string name="description_cancel_file_operation">Отменить операцию с файлом</string>
+    <string name="description_cancel_file_operation">Cancel file operation</string>
+    <string name="TASK_STATE_cancelled">Task cancelled</string>
 </resources>
