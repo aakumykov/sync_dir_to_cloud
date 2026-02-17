@@ -20,6 +20,7 @@ abstract class BasicLogItem(
     @ColumnInfo(name = GlobalConstants.FIELD_EXECUTION_ID)
     val executionId: String,
 
+    @ColumnInfo(name = FIELD_TEXT)
     val text: String?,
 
     @ColumnInfo(name = FIELD_SUB_TEXT, defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
@@ -34,6 +35,7 @@ abstract class BasicLogItem(
     companion object {
         const val FIELD_LOG_ITEM_TYPE = "log_item_type"
         const val FIELD_LOG_ITEM_ABOUT = "log_item_about"
+        const val FIELD_TEXT = "text"
         const val FIELD_SUB_TEXT = "sub_text"
         const val FIELD_START_TIME = "start_time"
         const val FIELD_FINISH_TIME = "finish_time"

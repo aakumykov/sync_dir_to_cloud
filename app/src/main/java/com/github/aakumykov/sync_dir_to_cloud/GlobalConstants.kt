@@ -5,6 +5,7 @@ object GlobalConstants {
     @Deprecated("добавить префикс KEY_") const val EXECUTION_ID: String = "EXECUTION_ID"
 
     // TODO: выделить это в "DbFieldNames"
+    const val FIELD_ID = "id"
     const val FIELD_TASK_ID = "task_id"
     const val FIELD_EXECUTION_ID = "execution_id"
     const val FIELD_JOB_ID = "job_id"

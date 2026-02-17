@@ -16,8 +16,13 @@ class TaskLogRepository @Inject constructor(
         dao.add(taskLogItem)
     }
 
-    suspend fun update(taskLogItem: TaskLogItem) {
-        dao.update(taskLogItem)
+    suspend fun update(item: TaskLogItem) {
+        dao.update(
+            id = item.id,
+            logItemType = item.logItemType,
+            subText = item.subText,
+            finishTime = item.finishTime!!
+        )
     }
 
     fun listForTaskAsLiveData(taskId: String): LiveData<List<TaskLogItem>> {
