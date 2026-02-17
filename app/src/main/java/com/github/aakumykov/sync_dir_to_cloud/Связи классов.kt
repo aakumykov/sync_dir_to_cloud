@@ -31,7 +31,7 @@ import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
  * [BackupInstructionsProcessor] 🡨 [BasicInstructionsProcessor],
  * [DeleteInstructionsProcessor] 🡨 [BasicInstructionsProcessor]
  * 🡫
- * [SyncObjectFileCopier]
+ * [SyncObjectFileCopier] (сюда приходит прогресс)
  * 🡫
  * [StreamToFileWriter]
  * 🡫

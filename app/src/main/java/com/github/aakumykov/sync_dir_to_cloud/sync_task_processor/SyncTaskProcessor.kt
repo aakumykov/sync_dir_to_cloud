@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_processor
 
 import android.util.Log
 import androidx.annotation.StringRes
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseListerAssistedFactory
@@ -60,7 +61,7 @@ FIXME: удалённо пропал и локально пропал...
 class SyncTaskProcessor @AssistedInject constructor(
 
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
+    @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val scope: CoroutineScope,
 
     private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,

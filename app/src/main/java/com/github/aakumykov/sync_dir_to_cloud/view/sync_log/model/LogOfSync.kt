@@ -16,6 +16,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync.Comp
             "ORDER BY ${BasicLogItem.FIELD_START_TIME}, ${BasicLogItem.FIELD_FINISH_TIME} ASC"
 )
 data class LogOfSync(
+    @Deprecated("Переименовать в origLogItemId")
     @ColumnInfo(name = "log_id")
     val origLogId: String,
 

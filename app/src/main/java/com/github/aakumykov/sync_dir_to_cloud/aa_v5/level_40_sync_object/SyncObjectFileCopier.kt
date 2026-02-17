@@ -9,23 +9,20 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.progressAsPartOf100
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ProgressHolder
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 class SyncObjectFileCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
-    @Assisted private val databaseInteractingScope: CoroutineScope,
     private val syncOptions: SyncOptions,
     private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
     private val streamToFileWriterAssistedFactory: StreamToFileWriterAssistedFactory,
     private val syncObjectStateChanger: SyncObjectStateChanger,
 ) {
     @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
-    suspend fun copyFileFromSourceToTarget(
+    suspend fun copy(
         syncObject: SyncObject,
         absolutePathInTarget: String,
         overwriteIfExists: Boolean = syncOptions.overwriteIfExists
@@ -38,14 +35,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
 
             logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
 
-            databaseInteractingScope.launch {
-                /*syncObjectLogProgressUpdater.updateProgress(
-                    objectId = syncObject.id,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    progressAsPartOf100 = syncObject.progressAsPartOf100(transferredBytes)
-                )*/
-            }
+            ProgressHolder.setProgress("", transferredBytes.toFloat())
         }
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
@@ -62,17 +52,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
             absolutePathInSource,
             overwriteIfExists
         ) { transferredBytes ->
-
             logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
-
-            databaseInteractingScope.launch {
-                /*syncObjectLogProgressUpdater.updateProgress(
-                    objectId = syncObject.id,
-                    taskId = syncTask.id,
-                    executionId = executionId,
-                    progressAsPartOf100 = syncObject.progressAsPartOf100(transferredBytes)
-                )*/
-            }
         }
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
@@ -98,9 +78,5 @@ class SyncObjectFileCopier @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncObjectFileCopierAssistedFactory {
-    fun create(
-        syncTask: SyncTask,
-        executionId: String,
-        databaseInteractingScope: CoroutineScope,
-    ): SyncObjectFileCopier
+    fun create(syncTask: SyncTask): SyncObjectFileCopier
 }

@@ -1,5 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_OPERATION_ID
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
@@ -15,7 +17,8 @@ import kotlinx.coroutines.CoroutineScope
 class FileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
+    @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
+    @Assisted(QUALIFIER_OPERATION_ID) private val operationId: String,
 
     private val syncInstructionRepository: SyncInstructionRepository,
 
@@ -86,6 +89,6 @@ interface FileInstructionsProcessorAssistedFactory {
     fun create(
         scope: CoroutineScope,
         syncTask: SyncTask,
-        executionId: String
+        executionId: String,
     ): FileInstructionsProcessor
 }

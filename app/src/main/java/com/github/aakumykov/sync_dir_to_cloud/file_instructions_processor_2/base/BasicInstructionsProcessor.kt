@@ -7,6 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ProgressHolder
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,13 +28,15 @@ class BasicInstructionsProcessor @AssistedInject constructor(
         secondItem: String?,
         codeBlock: suspend () -> Unit
     ): Job {
-        val jobId = newRandomId
+        val jobId = newRandomId // TODO: возможно, не нужно
         val logItemId = newRandomId
 
         return runInCoroutineExtended(
             scope = scope,
             onStart = { job ->
-                operationJobsHolder.addJob(jobId, job)
+                operationJobsHolder.addJob(logItemId, job)
+                ProgressHolder.addProgressState(logItemId)
+
                 fileOperationLogger2.logStarted(
                     logItemId = logItemId,
                     jobId = jobId,
@@ -69,7 +72,8 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                 )
             },
             finally = {
-                operationJobsHolder.removeJob(jobId)
+                operationJobsHolder.removeJob(logItemId)
+                ProgressHolder.removeProgressState(logItemId)
             },
             block = {
                 codeBlock.invoke()

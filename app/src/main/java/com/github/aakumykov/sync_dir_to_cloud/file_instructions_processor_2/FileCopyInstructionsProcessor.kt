@@ -21,14 +21,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 
 class FileCopyInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
+    private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
@@ -103,7 +101,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
             firstItem = sourcePath,
             secondItem = targetPath,
         ) {
-            syncObjectCopier.copyFileFromSourceToTarget(
+            syncObjectCopier.copy(
                 fromObject,
                 targetPath,
                 true // FIXME: убрать!
@@ -136,11 +134,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
     private val syncObjectCopier by lazy {
-        syncObjectCopierFactory.create(
-            syncTask = syncTask,
-            executionId = executionId,
-            databaseInteractingScope = CoroutineScope(Dispatchers.IO)
-        )
+        syncObjectCopierFactory.create(syncTask)
     }
 
     private val syncObjectActualizer: SyncObjectActualizer by lazy {

@@ -2,23 +2,19 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOperation
@@ -83,21 +79,4 @@ fun LogItemCancelIcon(
                 .size(64.dp)
         )
     }
-}
-
-
-@Composable
-fun LogItemProgress(logOfSync: LogOfSync, modifier: Modifier = Modifier) {
-    if (LogItemAbout.FILE ==logOfSync.logItemAbout) {
-        LinearProgressIndicator(
-            progress = { 0.5f },
-            modifier = modifier.fillMaxWidth().padding(top = 8.dp),
-        )
-    }
-}
-
-@Composable
-@Preview
-fun LogItemProgressPreview() {
-    LogItemProgress(LogOfSync.createPreviewStub(LogItemAbout.FILE))
 }
