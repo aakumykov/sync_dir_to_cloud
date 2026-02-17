@@ -37,7 +37,7 @@ class FileOperationLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 text = resources.getString(operationName),
-                subText = null,
+                subText = fromToFile(firstItem, secondItem),
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = jobId,
@@ -63,7 +63,7 @@ class FileOperationLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 text = resources.getString(operationName),
-                subText = null,
+                subText = fromToFile(firstItem,secondItem),
                 firstItem = firstItem,
                 secondItem = secondItem,
                 jobId = null,
@@ -130,6 +130,10 @@ class FileOperationLogger @AssistedInject constructor(
                 Log.e(TAG, "${it.logItemType}: ${it.text} ($firstItem --> $secondItem)", t)
             }
         }
+    }
+
+    private fun fromToFile(firstItem: String?, secondItem: String?): String {
+        return "$firstItem --> $secondItem"
     }
 
     companion object {
