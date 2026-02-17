@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
 
 @Dao
-interface TaskLogger2DAO {
+interface TaskLoggerDAO {
 
     @Insert
     suspend fun add(taskLogItem: TaskLogItem)

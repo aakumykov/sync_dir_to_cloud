@@ -3,13 +3,13 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLoggerDAO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class TaskLogRepository @Inject constructor(
-    private val dao: TaskLogger2DAO,
+    private val dao: TaskLoggerDAO,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) {
     suspend fun add(taskLogItem: TaskLogItem) = withContext(dispatcher) {
