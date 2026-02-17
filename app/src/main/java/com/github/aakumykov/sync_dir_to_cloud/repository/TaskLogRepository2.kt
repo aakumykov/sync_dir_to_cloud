@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
+import androidx.lifecycle.LiveData
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLogger2DAO
@@ -17,5 +18,9 @@ class TaskLogRepository2 @Inject constructor(
 
     suspend fun update(taskLogItem: TaskLogItem) {
         dao.update(taskLogItem)
+    }
+
+    fun listForTaskAsLiveData(taskId: String): LiveData<List<TaskLogItem>> {
+        return dao.listAsLiveData(taskId)
     }
 }

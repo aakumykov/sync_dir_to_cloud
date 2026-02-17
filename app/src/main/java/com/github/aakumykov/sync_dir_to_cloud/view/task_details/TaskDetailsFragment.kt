@@ -16,7 +16,10 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskDetailsBin
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.TaskLogEntry
+import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionLogItemType
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -107,15 +110,31 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
             taskDetailsViewModel.getSyncTask(currentTaskId!!)
                 .observe(viewLifecycleOwner, ::onTaskChanged)
 
-            taskDetailsViewModel.getTaskLogEntriesLiveData(currentTaskId!!)
-                .observe(viewLifecycleOwner, ::onTaskLogListChanged)
+            taskDetailsViewModel.getTaskLogLiveData(currentTaskId!!)
+                .observe(viewLifecycleOwner, ::onTaskLogChanged)
         }
     }
 
 
-    private fun onTaskLogListChanged(taskLogEntries: List<TaskLogEntry>?) {
-        taskLogEntries?.also {
-            taskLogAdapter.setList(it)
+    private fun onTaskLogChanged(list: List<TaskLogItem>?) {
+        list?.also {
+            list.map {
+                TaskLogEntry(
+                    id = it.id,
+                    taskId = it.taskId,
+                    executionId = it.executionId,
+                    entryType = when(it.logItemType) {
+                        LogItemType.BUSY -> ExecutionLogItemType.START
+                        LogItemType.SUCCESS -> ExecutionLogItemType.FINISH
+                        else -> ExecutionLogItemType.ERROR
+                    },
+                    startTime = it.startTime ?: 0L,
+                    finishTime = it.finishTime ?: 0L,
+                    errorMsg = it.text,
+                )
+            }.also {
+                taskLogAdapter.setList(it)
+            }
         }
     }
 
