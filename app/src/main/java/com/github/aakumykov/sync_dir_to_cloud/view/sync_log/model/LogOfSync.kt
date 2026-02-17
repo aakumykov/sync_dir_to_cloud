@@ -4,6 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS
 
 @DatabaseView(
@@ -55,13 +57,25 @@ data class LogOfSync(
             "execution_id, " +
             "text, " +
             BasicLogItem.FIELD_SUB_TEXT
+
+        fun createPreviewStub() = createPreviewStub(LogItemAbout.random)
+
+        fun createPreviewStub(logItemAbout: LogItemAbout) = LogOfSync(
+            origLogId = newRandomId,
+            startTime = currentTime,
+            finishTime = currentTime + 60L,
+            logItemType = LogItemType.random,
+            logItemAbout = logItemAbout,
+            taskId = newRandomId,
+            executionId = newRandomId,
+            text = "Предпросмотр",
+            subText = "Предпросмотр"
+        )
     }
 
     override fun toString(): String {
         return "LogOfSync(origLogId='$origLogId', startTime=$startTime, finishTime=$finishTime, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, subText=$subText, key='$key')"
     }
-
-
 }
 
 val LogOfSync.isActiveFileOperation: Boolean get() {

@@ -5,4 +5,9 @@ enum class LogItemAbout {
     INSTRUCTION,
     FILE,
     UNKNOWN;
+
+    companion object {
+//        fun random() = LogItemAbout.entries.toTypedArray().random()
+        val random: LogItemAbout get() = LogItemAbout.entries.toTypedArray().random()
+    }
 }

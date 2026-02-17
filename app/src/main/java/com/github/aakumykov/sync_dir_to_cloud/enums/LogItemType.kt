@@ -4,5 +4,9 @@ enum class LogItemType {
     BUSY,
     SUCCESS,
     CANCELLED,
-    ERROR
+    ERROR;
+
+    companion object {
+        val random: LogItemType get() = LogItemType.entries.toTypedArray().random()
+    }
 }
