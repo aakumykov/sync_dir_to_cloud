@@ -17,15 +17,20 @@ interface TaskLoggerDAO {
     suspend fun add(taskLogItem: TaskLogItem)
 
 
-    @Query("UPDATE ${TaskLogItem.TABLE_NAME} " +
-            "SET ${BasicLogItem.FIELD_LOG_ITEM_TYPE} = :logItemType, " +
-            "${BasicLogItem.FIELD_SUB_TEXT} = :subText, " +
-            "${BasicLogItem.FIELD_FINISH_TIME} = :finishTime " +
-            "WHERE ${GlobalConstants.FIELD_ID} = :id")
-    suspend fun update(id: String,
-                       logItemType: LogItemType,
-                       subText: String?,
-                       finishTime: Long)
+    @Query(
+        "UPDATE ${TaskLogItem.TABLE_NAME} " +
+                "SET ${BasicLogItem.FIELD_LOG_ITEM_TYPE} = :logItemType, " +
+                "${BasicLogItem.FIELD_SUB_TEXT} = :subText, " +
+                "${BasicLogItem.FIELD_FINISH_TIME} = :finishTime " +
+                "WHERE ${GlobalConstants.FIELD_ID} = :id"
+    )
+    suspend fun update(
+        id: String,
+        logItemType: LogItemType,
+        subText: String?,
+        finishTime: Long
+    )
+
 
 
     @Query("SELECT * FROM ${TaskLogItem.TABLE_NAME} " +

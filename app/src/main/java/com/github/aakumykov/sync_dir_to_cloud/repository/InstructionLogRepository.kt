@@ -13,9 +13,15 @@ class InstructionLogRepository @Inject constructor(
     private val dao: InstructionLoggingDAO,
 ){
     suspend fun add(item: InstructionLogItem) = withContext(dispatcher) {
-        when(item.logItemType) {
-            LogItemType.BUSY -> dao.add(item)
-            else -> dao.update(item)
-        }
+        dao.add(item)
+    }
+
+    suspend fun update(item: InstructionLogItem) = withContext(dispatcher) {
+        dao.update(
+            id = item.id,
+            logItemType = item.logItemType,
+            subText = item.subText,
+            finishTime = item.finishTime
+        )
     }
 }

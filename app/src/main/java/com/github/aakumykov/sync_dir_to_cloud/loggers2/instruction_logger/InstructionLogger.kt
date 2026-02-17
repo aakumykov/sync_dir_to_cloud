@@ -51,7 +51,7 @@ class InstructionLogger @AssistedInject constructor(
                 startTime = null,
                 finishTime = currentTime
             ).also {
-                repository.add(it)
+                repository.update(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text}")
             }
         }
@@ -70,7 +70,7 @@ class InstructionLogger @AssistedInject constructor(
                 startTime = null,
                 finishTime = currentTime
             ).also {
-                repository.add(it)
+                repository.update(it)
                 Log.i(TAG, "${it.logItemType}: ${it.text}")
             }
         }
@@ -84,12 +84,12 @@ class InstructionLogger @AssistedInject constructor(
                 taskId = taskId,
                 executionId = executionId,
                 logItemType = LogItemType.ERROR,
-                text = logMessage.get(resources),
-                subText = null,
+                text = null,
+                subText = logMessage.get(resources),
                 startTime = null,
                 finishTime = currentTime
             ).also {
-                repository.add(it)
+                repository.update(it)
                 Log.e(TAG, "${it.logItemType}: ${it.text}", throwable)
             }
         }
