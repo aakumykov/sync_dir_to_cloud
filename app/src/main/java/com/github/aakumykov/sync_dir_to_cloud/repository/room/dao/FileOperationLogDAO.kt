@@ -37,4 +37,10 @@ interface FileOperationLogDAO {
             "FROM ${FileOperationLogItem.TABLE_NAME} " +
             "WHERE id = :logItemId")
     suspend fun getJobId(logItemId: String): String?
+
+
+    @Query("UPDATE ${FileOperationLogItem.TABLE_NAME} " +
+            "SET ${BasicLogItem.FIELD_PROGRESS} = :progress " +
+            "WHERE ${GlobalConstants.FIELD_ID} = :logItemId")
+    suspend fun updateProgress(logItemId: String, progress: Float)
 }

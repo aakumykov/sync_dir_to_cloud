@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputS
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.progressAsPartOf100
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationLogProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ProgressHolder
 import dagger.assisted.Assisted
@@ -20,6 +21,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
     private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
     private val streamToFileWriterAssistedFactory: StreamToFileWriterAssistedFactory,
     private val syncObjectStateChanger: SyncObjectStateChanger,
+    private val fileOperationLogProgressUpdater: FileOperationLogProgressUpdater
 ) {
     @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
     suspend fun copy(

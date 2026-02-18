@@ -42,12 +42,16 @@ data class LogOfSync(
 
     @ColumnInfo(name = BasicLogItem.FIELD_SUB_TEXT)
     val subText: String?,
+
+    @ColumnInfo(name = BasicLogItem.FIELD_PROGRESS)
+    val progress: Float?
 ) {
     // timestamp здесь не обеспечивает уникальности, так как может быть одинаковым (!)
     val key: String get() = origLogId
 
     companion object {
         const val TABLE_NAME = "sync_logs"
+
         const val BASIC_LOG_ITEM_FIELDS =
             "id as log_id, " +
             "${BasicLogItem.FIELD_START_TIME}, " +
@@ -57,11 +61,15 @@ data class LogOfSync(
             "log_item_about, " +
             "execution_id, " +
             "text, " +
-            BasicLogItem.FIELD_SUB_TEXT
+            "${BasicLogItem.FIELD_SUB_TEXT}, " +
+            BasicLogItem.FIELD_PROGRESS
 
         fun createPreviewStub() = createPreviewStub(LogItemAbout.random)
 
-        fun createPreviewStub(logItemAbout: LogItemAbout) = LogOfSync(
+        fun createPreviewStub(
+            logItemAbout: LogItemAbout,
+            progress: Float? = 0f
+        ) = LogOfSync(
             origLogId = newRandomId,
             startTime = currentTime,
             finishTime = currentTime + 60L,
@@ -70,7 +78,8 @@ data class LogOfSync(
             taskId = newRandomId,
             executionId = newRandomId,
             text = "Предпросмотр",
-            subText = "Предпросмотр"
+            subText = "Предпросмотр",
+            progress = progress
         )
     }
 

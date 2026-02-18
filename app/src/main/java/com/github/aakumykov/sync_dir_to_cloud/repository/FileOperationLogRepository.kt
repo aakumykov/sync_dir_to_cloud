@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationJobIdReader
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationLogProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.FileOperationLogDAO
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,7 +15,8 @@ class FileOperationLogRepository @Inject constructor(
     private val dao: FileOperationLogDAO,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 )
-    : FileOperationJobIdReader
+    : FileOperationJobIdReader,
+    FileOperationLogProgressUpdater
 {
     suspend fun add(taskLogItem: FileOperationLogItem) = withContext(dispatcher) {
         dao.add(taskLogItem)
@@ -31,4 +33,8 @@ class FileOperationLogRepository @Inject constructor(
 
     override suspend fun getJobId(logItemId: String): String?
         = dao.getJobId(logItemId)
+
+    override suspend fun updateProgress(logItemId: String, progress: Float) {
+        dao.updateProgress(logItemId, progress)
+    }
 }

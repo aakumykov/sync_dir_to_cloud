@@ -11,8 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.newRandomId
-import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
 
 @Entity(
@@ -47,7 +45,7 @@ class FileOperationLogItem(
     val secondItem: String?,
 
     @ColumnInfo(name = GlobalConstants.FIELD_JOB_ID, defaultValue = GlobalConstants.FIELD_CONTENT_NULL)
-    val jobId: String?
+    val jobId: String?,
 )
     : BasicLogItem(
         logItemAbout = LogItemAbout.FILE,
@@ -57,7 +55,7 @@ class FileOperationLogItem(
         text = text,
         subText = subText,
         startTime = startTime,
-        finishTime = finishTime
+        finishTime = finishTime,
     )
 {
     companion object {
@@ -72,7 +70,7 @@ class FileOperationLogItem(
             secondItem: String?,
             jobId: String?,
             startTime: Long?,
-            finishTime: Long?
+            finishTime: Long?,
         )
             : FileOperationLogItem
         {
@@ -87,12 +85,10 @@ class FileOperationLogItem(
                 secondItem = secondItem,
                 startTime = startTime,
                 finishTime = finishTime,
-                jobId = jobId
+                jobId = jobId,
             )
         }
 
         const val TABLE_NAME = "file_operation_logs"
     }
-
-
 }
