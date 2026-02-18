@@ -10,7 +10,6 @@ import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
 
 @Entity(
@@ -50,6 +49,13 @@ class TaskLogItem(
         finishTime = finishTime
     )
 {
+    val timeDiffMillis: Long get() {
+        return (finishTime ?: 0L) - (startTime ?: 0L)
+    }
+
+    @Deprecated("неудачное название")
+    val startTimeMillisOrZero: Long get() = startTime ?: 0L
+
     companion object {
         const val TABLE_NAME = "task_logs"
 

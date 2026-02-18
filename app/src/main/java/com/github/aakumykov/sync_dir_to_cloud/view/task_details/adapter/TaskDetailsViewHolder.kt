@@ -10,7 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.getString
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
-import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
@@ -36,15 +36,15 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
     private fun startText(taskLogItem: TaskLogItem): String {
         return titleView.resources.getString(
             R.string.TASK_STATE_running,
-            CurrentDateTime.format(taskLogItem.startTime!!)
+            CurrentDateTime.format(taskLogItem.startTimeMillisOrZero)
         )
     }
 
 
     private fun finishText(taskLogItem: TaskLogItem): String {
 
-        val timeDiffMillis = taskLogItem.finishTime!! - taskLogItem.startTime!!
-        val duration: kotlin.time.Duration = timeDiffMillis.milliseconds
+        val timeDiffMillis = taskLogItem.timeDiffMillis
+        val duration: Duration = timeDiffMillis.milliseconds
 
         val days = duration.inWholeDays % 365
         val hours = duration.inWholeHours % 24
@@ -54,7 +54,7 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
 
         return titleView.resources.getString(
             R.string.TASK_STATE_finished,
-            CurrentDateTime.format(taskLogItem.startTime),
+            CurrentDateTime.format(taskLogItem.startTimeMillisOrZero),
             "$days дней, $hours часов, $minutes минут, ${seconds}.${milliseconds} секунд"
         )
     }
@@ -62,8 +62,8 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
 
     private fun errorText(taskLogItem: TaskLogItem): String {
 
-        val startTime = CurrentDateTime.format(taskLogItem.startTime!!)
-        val timeDiff = CurrentDateTime.format(taskLogItem.finishTime!! - taskLogItem.startTime)
+        val startTime = CurrentDateTime.format(taskLogItem.startTimeMillisOrZero)
+        val timeDiff = taskLogItem.timeDiffMillis
 
         return getString(
             R.string.TASK_STATE_error,
@@ -75,8 +75,8 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
 
     private fun cancelledText(taskLogItem: TaskLogItem): String {
 
-        val startTime = CurrentDateTime.format(taskLogItem.startTime!!)
-        val timeDiff = CurrentDateTime.format(taskLogItem.finishTime!! - taskLogItem.startTime)
+        val startTime = CurrentDateTime.format(taskLogItem.startTimeMillisOrZero)
+        val timeDiff = taskLogItem.timeDiffMillis
 
         return getString(
             R.string.TASK_STATE_cancelled,
