@@ -1,6 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
 
 import androidx.annotation.StringRes
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizer
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizerAssistedFactory
@@ -25,8 +27,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
 
 class FileCopyInstructionsProcessor @AssistedInject constructor(
-    @Assisted private val syncTask: SyncTask,
-    private val executionId: String,
+    @Assisted(QUALIFIER_TASK_ID) private val syncTask: SyncTask,
+    @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
@@ -146,8 +148,8 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
 @AssistedFactory
 interface FileCopyInstructionsProcessorAssistedFactory {
     fun create(
-        syncTask: SyncTask,
-        executionId: String,
+        @Assisted(QUALIFIER_TASK_ID) syncTask: SyncTask,
+        @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
         parentScope: CoroutineScope,
     ): FileCopyInstructionsProcessor
 }
