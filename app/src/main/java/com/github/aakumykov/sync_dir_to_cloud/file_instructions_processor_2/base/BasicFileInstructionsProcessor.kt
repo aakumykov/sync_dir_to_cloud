@@ -87,7 +87,7 @@ class BasicFileInstructionsProcessor @AssistedInject constructor(
 
 
 @AssistedFactory
-interface BasicInstructionsProcessorAssistedFactory {
+interface BasicFileInstructionsProcessorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
