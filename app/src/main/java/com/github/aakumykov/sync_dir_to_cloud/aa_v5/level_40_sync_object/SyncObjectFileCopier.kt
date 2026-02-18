@@ -1,10 +1,12 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetter5
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.progressAsPartOf100
@@ -14,6 +16,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ProgressHold
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class SyncObjectFileCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
@@ -21,12 +25,14 @@ class SyncObjectFileCopier @AssistedInject constructor(
     private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
     private val streamToFileWriterAssistedFactory: StreamToFileWriterAssistedFactory,
     private val syncObjectStateChanger: SyncObjectStateChanger,
-    private val fileOperationLogProgressUpdater: FileOperationLogProgressUpdater
+    private val fileOperationLogProgressUpdater: FileOperationLogProgressUpdater,
+    @ExecutionScope private val executionScope: CoroutineScope,
 ) {
     @Throws(StreamToFileWriter.StreamWriterCancelledException::class)
-    suspend fun copy(
+    suspend fun copyFileFromSourceToTarget(
         syncObject: SyncObject,
         absolutePathInTarget: String,
+        fileOperationLogItemId: String,
         overwriteIfExists: Boolean = syncOptions.overwriteIfExists
     ) {
         streamToFileWriter.putStreamToTarget(
@@ -35,9 +41,16 @@ class SyncObjectFileCopier @AssistedInject constructor(
             overwriteIfExists
         ) { transferredBytes ->
 
-            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
+            val progress = 1f * transferredBytes / syncObject.size
+            Log.d(TAG, "progress: $progress")
 
-            ProgressHolder.setProgress("", transferredBytes.toFloat())
+            executionScope.launch {
+                fileOperationLogProgressUpdater.updateProgress(fileOperationLogItemId, progress)
+            }
+
+//            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
+
+//            ProgressHolder.setProgress("", transferredBytes.toFloat())
         }
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
@@ -47,6 +60,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
     suspend fun copyFileFromTargetToSource(
         syncObject: SyncObject,
         absolutePathInSource: String,
+        fileOperationLogItemId: String,
         overwriteIfExists: Boolean = syncOptions.overwriteIfExists
     ) {
         streamToFileWriter.putStreamToSource(
@@ -54,7 +68,15 @@ class SyncObjectFileCopier @AssistedInject constructor(
             absolutePathInSource,
             overwriteIfExists
         ) { transferredBytes ->
-            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
+
+            val progress = 1f * transferredBytes / syncObject.size
+            Log.d(TAG, "progress: $progress")
+
+            executionScope.launch {
+                fileOperationLogProgressUpdater.updateProgress(fileOperationLogItemId, progress)
+            }
+
+//            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
         }
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)

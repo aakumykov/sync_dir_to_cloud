@@ -19,6 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -97,16 +98,20 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
         val sourcePath = fromObject.absolutePathIn(syncTask)
         val targetPath = fromObject.absolutePathIn(syncTask.absolutePathOfSide(toSide))
 
+        val logItemId = newRandomId
+
         return basicInstructionsProcessor.process(
             scope = parentScope,
             operationName = operationName,
+            logItemId = logItemId,
             firstItem = sourcePath,
             secondItem = targetPath,
         ) {
-            syncObjectCopier.copy(
-                fromObject,
-                targetPath,
-                true // FIXME: убрать!
+            syncObjectCopier.copyFileFromSourceToTarget(
+                syncObject = fromObject,
+                absolutePathInTarget = targetPath,
+                fileOperationLogItemId = logItemId,
+                overwriteIfExists = true // FIXME: убрать!
             )
 
             syncObjectActualizer.actualizeInfoAboutObject(

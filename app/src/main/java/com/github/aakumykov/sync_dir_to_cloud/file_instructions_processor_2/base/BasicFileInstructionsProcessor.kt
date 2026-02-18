@@ -14,22 +14,21 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 
-class BasicInstructionsProcessor @AssistedInject constructor(
+class BasicFileInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
-    private val fileOperationLogger2Factory: FileOperationLoggerAssistedFactory,
+    private val fileOperationLoggerFactory: FileOperationLoggerAssistedFactory,
     private val operationJobsHolder: OperationJobsHolder,
-): InstructionsProcessor {
-
-    override suspend fun process(
+) {
+    fun process(
         scope: CoroutineScope,
         @StringRes operationName: Int,
+        logItemId: String,
         firstItem: String?,
         secondItem: String?,
         codeBlock: suspend () -> Unit
     ): Job {
         val jobId = newRandomId // TODO: возможно, не нужно
-        val logItemId = newRandomId
 
         return runInCoroutineExtended(
             scope = scope,
@@ -37,7 +36,7 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                 operationJobsHolder.addJob(logItemId, job)
                 ProgressHolder.addProgressState(logItemId)
 
-                fileOperationLogger2.logStarted(
+                fileOperationLogger.logStarted(
                     logItemId = logItemId,
                     jobId = jobId,
                     operationName = operationName,
@@ -46,7 +45,7 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                 )
             },
             onFinish = {
-                fileOperationLogger2.logFinished(
+                fileOperationLogger.logFinished(
                     logItemId = logItemId,
                     operationName,
                     firstItem,
@@ -54,7 +53,7 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                 )
             },
             onCancel = { e ->
-                fileOperationLogger2.logCancelled(
+                fileOperationLogger.logCancelled(
                     logItemId = logItemId,
                     operationName,
                     firstItem,
@@ -63,7 +62,7 @@ class BasicInstructionsProcessor @AssistedInject constructor(
                 )
             },
             onError = { t ->
-                fileOperationLogger2.logError(
+                fileOperationLogger.logError(
                     logItemId = logItemId,
                     operationName,
                     firstItem,
@@ -81,8 +80,8 @@ class BasicInstructionsProcessor @AssistedInject constructor(
         )
     }
 
-    private val fileOperationLogger2 by lazy {
-        fileOperationLogger2Factory.create(taskId, executionId)
+    private val fileOperationLogger by lazy {
+        fileOperationLoggerFactory.create(taskId, executionId)
     }
 }
 
@@ -92,5 +91,5 @@ interface BasicInstructionsProcessorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) taskId: String,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String
-    ): BasicInstructionsProcessor
+    ): BasicFileInstructionsProcessor
 }

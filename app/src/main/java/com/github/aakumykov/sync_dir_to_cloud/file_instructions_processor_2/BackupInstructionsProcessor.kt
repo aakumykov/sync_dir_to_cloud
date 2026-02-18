@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -33,6 +34,7 @@ class BackupInstructionsProcessor @AssistedInject constructor(
             basicInstructionsProcessor.process(
                 scope = parentScope,
                 operationName = R.string.LOG_ITEM_backing_up_dir,
+                logItemId = newRandomId,
                 firstItem = instruction.relativePath,
                 secondItem = null
             ) {
@@ -48,6 +50,7 @@ class BackupInstructionsProcessor @AssistedInject constructor(
             basicInstructionsProcessor.process(
                 scope = parentScope,
                 operationName = R.string.LOG_ITEM_backing_up_file,
+                logItemId = newRandomId,
                 firstItem = instruction.relativePath,
                 secondItem = null
             ) {

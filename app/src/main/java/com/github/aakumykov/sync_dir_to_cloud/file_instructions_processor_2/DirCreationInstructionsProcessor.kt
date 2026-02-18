@@ -13,6 +13,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -101,6 +102,7 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
         return basicInstructionsProcessor.process(
             scope = scope,
             operationName = operationName,
+            logItemId = newRandomId,
             firstItem = fromObject.absolutePathIn(syncTask),
             secondItem = fromObject.absolutePathIn(basePath),
         ) {

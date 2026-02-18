@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud
 
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicInstructionsProcessor
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessor
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopier
@@ -25,11 +25,11 @@ import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
  * 🡫
  * [FileInstructionsProcessor]
  * 🡫
- * [FileCopyInstructionsProcessor] 🡨 [BasicInstructionsProcessor] 🡨 [runInCoroutineExtended] 🡨 [FileOperationLogger],
- * [DirCreationInstructionsProcessor] 🡨 [BasicInstructionsProcessor],
+ * [FileCopyInstructionsProcessor] 🡨 [BasicFileInstructionsProcessor] 🡨 [runInCoroutineExtended] 🡨 [FileOperationLogger],
+ * [DirCreationInstructionsProcessor] 🡨 [BasicFileInstructionsProcessor],
  * [CollisionResolverInstructionsProcessor],
- * [BackupInstructionsProcessor] 🡨 [BasicInstructionsProcessor],
- * [DeleteInstructionsProcessor] 🡨 [BasicInstructionsProcessor]
+ * [BackupInstructionsProcessor] 🡨 [BasicFileInstructionsProcessor],
+ * [DeleteInstructionsProcessor] 🡨 [BasicFileInstructionsProcessor]
  * 🡫
  * [SyncObjectFileCopier] (сюда приходит прогресс)
  * 🡫
