@@ -111,8 +111,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
                 syncObject = fromObject,
                 absolutePathInTarget = targetPath,
                 fileOperationLogItemId = logItemId,
-                overwriteIfExists = true // FIXME: убрать!
-            )
+                overwriteIfExists = true, // FIXME: убрать!
+            ) { transferredBytes: Long ->
+
+            }
 
             syncObjectActualizer.actualizeInfoAboutObject(
                 correspondingObject = fromObject,

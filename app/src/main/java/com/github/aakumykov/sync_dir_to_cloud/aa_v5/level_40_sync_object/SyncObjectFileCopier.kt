@@ -33,25 +33,15 @@ class SyncObjectFileCopier @AssistedInject constructor(
         syncObject: SyncObject,
         absolutePathInTarget: String,
         fileOperationLogItemId: String,
-        overwriteIfExists: Boolean = syncOptions.overwriteIfExists
+        overwriteIfExists: Boolean = syncOptions.overwriteIfExists,
+        progressCallback: ((transferredBytes: Long) -> Unit)
     ) {
         streamToFileWriter.putStreamToTarget(
             inputStreamGetter.getInputStreamInSource(syncObject),
             absolutePathInTarget,
-            overwriteIfExists
-        ) { transferredBytes ->
-
-            val progress = 1f * transferredBytes / syncObject.size
-            Log.d(TAG, "progress: $progress")
-
-            executionScope.launch {
-                fileOperationLogProgressUpdater.updateProgress(fileOperationLogItemId, progress)
-            }
-
-//            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
-
-//            ProgressHolder.setProgress("", transferredBytes.toFloat())
-        }
+            overwriteIfExists,
+            progressCallback
+        )
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
     }
@@ -61,23 +51,15 @@ class SyncObjectFileCopier @AssistedInject constructor(
         syncObject: SyncObject,
         absolutePathInSource: String,
         fileOperationLogItemId: String,
-        overwriteIfExists: Boolean = syncOptions.overwriteIfExists
+        overwriteIfExists: Boolean = syncOptions.overwriteIfExists,
+        progressCallback: ((transferredBytes: Long) -> Unit)
     ) {
         streamToFileWriter.putStreamToSource(
             inputStreamGetter.getInputStreamInTarget(syncObject),
             absolutePathInSource,
-            overwriteIfExists
-        ) { transferredBytes ->
-
-            val progress = 1f * transferredBytes / syncObject.size
-            Log.d(TAG, "progress: $progress")
-
-            executionScope.launch {
-                fileOperationLogProgressUpdater.updateProgress(fileOperationLogItemId, progress)
-            }
-
-//            logProgress(syncObject.size, transferredBytes, syncObject.progressAsPartOf100(transferredBytes))
-        }
+            overwriteIfExists,
+            progressCallback
+        )
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
     }
