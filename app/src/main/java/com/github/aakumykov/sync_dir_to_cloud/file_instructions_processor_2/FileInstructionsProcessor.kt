@@ -25,21 +25,25 @@ class FileInstructionsProcessor @AssistedInject constructor(
     private val fileCopyInstructionsProcessorAssistedFactory: FileCopyInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
-    // FIXME: верен ли порядок?
+    // FIXME: верен ли порядок? Нет, не верен: бекапить нужно раньше, чем копировать(!)
     suspend fun processFileInstructions(isUnprocessed: Boolean) {
-        // 10 - создание каталогов
-        dirCreationInstructionsProcessor.process(list(isUnprocessed))
+        // TODO: что раньше: разрешение коллизий или бекап:
+        //  Разрешение коллизий - отчасти тоже своеобразный бекап...
 
-        // 11 - копирование файлов
-        copyInstructionsProcessor.process(list(isUnprocessed))
-
-        // 20 - разрешение коллизий
+        // Разрешение коллизий
 //        collisionResolverInstructionsProcessor.process(list(isUnprocessed))
 
-        // 30 - бекап
+        // Бекап
         backupInstructionsProcessor.process(list(isUnprocessed))
 
-        // 40 - удаление
+        // Создание каталогов
+        dirCreationInstructionsProcessor.process(list(isUnprocessed))
+
+        // Копирование файлов
+        copyInstructionsProcessor.process(list(isUnprocessed))
+
+        // TODO: удалять перед копированием или после - можно (и нужно) настраивать.
+        // Удаление
         deleteInstructionsProcessor.process(list(isUnprocessed))
     }
 
