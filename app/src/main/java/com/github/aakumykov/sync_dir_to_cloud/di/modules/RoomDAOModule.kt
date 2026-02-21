@@ -9,7 +9,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.LogOfSyncDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
@@ -50,9 +49,6 @@ class RoomDAOModule {
 
     @Provides
     fun provideSyncTaskResettingDAO(appDatabase: AppDatabase): SyncTaskResettingDAO = appDatabase.getSyncTaskResettingDAO()
-
-    @Provides
-    fun provideSyncObjectStateDAO(appDatabase: AppDatabase): SyncObjectStateSetterDAO = appDatabase.getSyncObjectStateDAO()
 
     @Provides
     fun provideSyncObjectStateResettingDAO(appDatabase: AppDatabase): SyncObjectBadStateResettingDAO = appDatabase.getSyncObjectBadStateResettingDAO()

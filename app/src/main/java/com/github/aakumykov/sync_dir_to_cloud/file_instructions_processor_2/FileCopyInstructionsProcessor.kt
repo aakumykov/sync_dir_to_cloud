@@ -34,8 +34,8 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
     private val basicFileInstructionsProcessorAssistedFactory: BasicFileInstructionsProcessorAssistedFactory,
-    private val syncInstructionUpdater: SyncInstructionUpdater,
-    private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory,
+    private val syncInstructionUpdater: SyncInstructionUpdater, // Этому место в базовом классе.
+    private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory, // Это мне не нравится...
 ) {
     suspend fun process(list: Iterable<SyncInstruction>) {
         processReal(

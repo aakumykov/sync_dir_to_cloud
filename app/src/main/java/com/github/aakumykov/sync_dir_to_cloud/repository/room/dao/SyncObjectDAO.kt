@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 
 @Dao
@@ -28,10 +28,6 @@ interface SyncObjectDAO {
 
     @Query("DELETE FROM sync_objects WHERE task_id = :taskId")
     suspend fun deleteObjectsForTask(taskId: String)
-
-
-    @Query("UPDATE sync_objects SET sync_date = :date WHERE id = :objectId")
-    suspend fun setSyncDate(objectId: String, date: Long)
 
 
     @Query("SELECT * FROM sync_objects WHERE id = :objectId")

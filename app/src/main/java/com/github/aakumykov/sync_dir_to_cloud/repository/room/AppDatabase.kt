@@ -19,7 +19,6 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.LogOfSyncDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
@@ -152,7 +151,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
     abstract fun getSyncObjectDAO(): SyncObjectDAO
-    abstract fun getSyncObjectStateDAO(): SyncObjectStateSetterDAO
     abstract fun getCloudAuthDAO(): CloudAuthDAO
 
     abstract fun getSyncTaskStateDAO(): SyncTaskStateDAO

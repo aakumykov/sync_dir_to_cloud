@@ -2,8 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_processor
 
 import android.util.Log
 import androidx.annotation.StringRes
-import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
-import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseLister
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_60_sync_object_list.StorageToDatabaseListerAssistedFactory
@@ -65,14 +63,15 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
 
-    private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,
-    private val fileInstructionsProcessorAssistedFactory: FileInstructionsProcessorAssistedFactory,
-
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
     private val backupDirsPreparerAssistedFactory: BackupDirsPreparerAssistedFactory,
     private val taskDirsFixerAssistedFactory: TaskDirsFixerAssistedFactory,
     private val storageToDatabaseListerAssistedFactory: StorageToDatabaseListerAssistedFactory,
+
+    private val fileInstructionsProcessorAssistedFactory: FileInstructionsProcessorAssistedFactory,
+
+    private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,
 
     private val cloudAuthReader: CloudAuthReader,
     private val syncTaskNotificator: SyncTaskNotificator,
@@ -241,7 +240,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = !unprocessed,
             logMessage = logMessage,
             codeBlock = {
-                fileInstructionsProcessor2.processFileInstructions(unprocessed)
+                fileInstructionsProcessor.processFileInstructions(unprocessed)
             }
         )
     }
@@ -360,7 +359,7 @@ class SyncTaskProcessor @AssistedInject constructor(
         fileInstructionsProcessorAssistedFactory.create(syncTask, executionId, scope)
     }*/
 
-    private val fileInstructionsProcessor2 by lazy {
+    private val fileInstructionsProcessor by lazy {
         fileInstructionsProcessorAssistedFactory.create(scope, syncTask, executionId)
     }
 

@@ -10,6 +10,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessor
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader

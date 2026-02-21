@@ -13,7 +13,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notExis
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.StateInStorage
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
-import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.nullIfEmpty
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncTaskFileObjectReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectAdder
@@ -24,13 +23,11 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadStateResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
-import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectStateSetterDAO
 import javax.inject.Inject
 
 @AppScope
 class SyncObjectRepository @Inject constructor(
     private val syncObjectDAO: SyncObjectDAO,
-    private val syncObjectStateSetterDAO: SyncObjectStateSetterDAO,
     private val syncObjectBadStateResettingDAO: SyncObjectBadStateResettingDAO,
 )
     : SyncObjectAdder,
@@ -110,30 +107,10 @@ class SyncObjectRepository @Inject constructor(
         )
     }
 
-    override suspend fun markAsBusy(objectId: String) {
-        changeSyncState(objectId, ExecutionState.RUNNING)
-    }
-
     @Deprecated("Нужна транзакция")
     override suspend fun markAsSuccessfullySynced(objectId: String) {
         changeSyncState(objectId, ExecutionState.SUCCESS)
         setIsExistsInTarget(objectId, true)
-    }
-
-    override suspend fun setTargetReadingState(
-        objectId: String,
-        state: ExecutionState,
-        errorMsg: String
-    ) {
-        syncObjectStateSetterDAO.setTargetReadingState(objectId, state, errorMsg)
-    }
-
-    override suspend fun setBackupState(
-        objectId: String,
-        state: ExecutionState,
-        errorMsg: String
-    ) {
-        syncObjectStateSetterDAO.setBackupState(objectId, state, errorMsg)
     }
 
     override suspend fun deleteAllObjectsForTask(taskId: String) {
@@ -148,46 +125,12 @@ class SyncObjectRepository @Inject constructor(
         syncObjectDAO.deleteObjectWithId(objectId)
     }
 
-    override suspend fun setDeletionState(
-        objectId: String,
-        state: ExecutionState,
-        errorMsg: String
-    ) {
-        syncObjectStateSetterDAO.setDeletionState(objectId, state, errorMsg)
-    }
-
-    override suspend fun setRestorationState(
-        objectId: String,
-        state: ExecutionState,
-        errorMsg: String
-    ) {
-        syncObjectStateSetterDAO.setRestorationState(objectId, state, errorMsg)
-    }
-
-    override suspend fun setSyncState(objectId: String, state: ExecutionState, errorMsg: String) {
-        syncObjectStateSetterDAO.setSyncState(objectId, state, errorMsg)
-    }
-
-    override suspend fun markAsError(objectId: String, errorMsg: String) {
-        changeSyncState(objectId, ExecutionState.ERROR, errorMsg)
-    }
-
-    override suspend fun markAsError(objectId: String, t: Throwable) {
-        markAsError(objectId, t.errorMsg)
-    }
-
-
     override suspend fun changeSyncState(objectId: String, syncState: ExecutionState, errorMsg: String) {
         syncObjectDAO.setSyncState(objectId, syncState, errorMsg)
     }
 
-
     override suspend fun getSyncObjectListAsLiveData(taskId: String): LiveData<List<SyncObject>>
         = syncObjectDAO.getSyncObjectListAsLiveData(taskId)
-
-
-    override suspend fun setSyncDate(objectId: String, date: Long)
-        = syncObjectDAO.setSyncDate(objectId, date)
 
 
     override suspend fun markAllObjectsAsNotChecked(taskId: String)
@@ -259,28 +202,6 @@ class SyncObjectRepository @Inject constructor(
             justChecked = true
         )
     }
-
-    /*override suspend fun getAllObjectsForTask(
-        side: SyncSide,
-        taskId: String,
-        executionId: String
-    ): List<SyncObject> {
-        return syncObjectDAO.getAllObjectsForTask(side, taskId, executionId)
-    }*/
-
-
-    override suspend fun changeModificationState(
-        syncObject: SyncObject,
-        stateInStorage: StateInStorage
-    ) {
-        syncObjectDAO.changeModificationState(
-            name = syncObject.name,
-            relativeParentDirPath = syncObject.relativeParentDirPath,
-            taskId = syncObject.taskId,
-            stateInStorage = stateInStorage
-        )
-    }
-
 
     override suspend fun resetTargetReadingBadState(taskId: String) {
         syncObjectBadStateResettingDAO.resetTargetReadingBadState(taskId)

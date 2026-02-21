@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriterAssistedFactory
@@ -9,15 +8,12 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputS
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.progressAsPartOf100
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationLogProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ProgressHolder
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 class SyncObjectFileCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
