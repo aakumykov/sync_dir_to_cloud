@@ -21,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.DatabaseFileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ProgressHolder
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -98,10 +99,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
         toSide: SyncSide,
         @StringRes operationName: Int,
     ): Job {
-        val fromObject = getObjectOrFail(fromObjectId)
+        val syncObject = getObjectOrFail(fromObjectId)
 
-        val fromPath = fromObject.absolutePathIn(syncTask)
-        val toPath = fromObject.absolutePathIn(syncTask.absolutePathOfSide(toSide))
+        val fromPath = syncObject.absolutePathIn(syncTask)
+        val toPath = syncObject.absolutePathIn(syncTask.absolutePathOfSide(toSide))
 
         val logItemId = newRandomId
         val jobId = newRandomId
@@ -117,21 +118,26 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
 
         return runInCoroutineExtended(
             scope = parentScope,
-            onStart = { logStarted(logBaseInfo, jobId = jobId) },
+            onStart = {
+                logStarted(logBaseInfo, jobId = jobId)
+                ProgressHolder.addProgressState(logItemId)
+             },
             onFinish = { logFinished(logBaseInfo) },
             onCancel = { logCancelled(logBaseInfo, it) },
             onError = { logError(logBaseInfo, it) },
+            finally = { ProgressHolder.removeProgressState(logItemId) }
         ) {
             syncObjectCopier.copyFileFromSourceToTarget(
-                syncObject = fromObject,
+                syncObject = syncObject,
                 absolutePathInTarget = toPath,
                 overwriteIfExists = true, // FIXME: убрать!
             ) { transferredBytes: Long ->
-
+                val progress = 1f * transferredBytes / syncObject.size
+                ProgressHolder.setProgress(logItemId, progress)
             }
 
             virtualSyncObjectAdder.actualizeInfoAboutObject(
-                correspondingObject = fromObject,
+                correspondingObject = syncObject,
                 syncSide = toSide,
                 syncState = ExecutionState.SUCCESS,
             )
