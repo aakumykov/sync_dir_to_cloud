@@ -28,13 +28,13 @@ fun SyncLogItem(
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .fillMaxWidth()
     ) {
+        LogItemProgress(logOfSync)
         Row(verticalAlignment = Alignment.Companion.CenterVertically) {
             LogItemIcon(logOfSync)
             LogItemText(logOfSync)
             LogItemCancelIcon(logOfSync, onCancelClicked = onCancelClicked)
         }
         LogItemSubText(logOfSync)
-        LogItemProgress(logOfSync)
     }
 }
 

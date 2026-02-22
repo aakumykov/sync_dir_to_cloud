@@ -14,11 +14,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 @Composable
 fun LogItemProgress(logOfSync: LogOfSync, modifier: Modifier = Modifier) {
 
-    val progress = remember { ProgressHolder.getProgressState(logOfSync.origLogId) }
-
-    if (LogItemAbout.FILE ==logOfSync.logItemAbout) {
+    if (LogItemAbout.FILE == logOfSync.logItemAbout) {
         LinearProgressIndicator(
-            progress = { progress?.value ?: 0f },
+            progress = { logOfSync.progress ?: 0f },
             modifier = modifier.fillMaxWidth().padding(top = 8.dp),
         )
     }
