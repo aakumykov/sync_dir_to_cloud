@@ -19,7 +19,7 @@ import dagger.assisted.AssistedInject
 //    FileRenamer
 //    SyncObjectRenamer
 //
-class SyncObjectRenamer5 @AssistedInject constructor(
+class SyncObjectRenamer @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
     private val syncObjectUpdater: SyncObjectUpdater,
@@ -86,6 +86,6 @@ class SyncObjectRenamer5 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface SyncObjectRenamerAssistedFactory5 {
-    fun create(syncTask: SyncTask): SyncObjectRenamer5
+interface SyncObjectRenamerAssistedFactory {
+    fun create(syncTask: SyncTask): SyncObjectRenamer
 }

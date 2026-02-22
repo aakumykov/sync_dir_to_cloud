@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleterAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -71,11 +71,11 @@ class FileAndDirDeleter @AssistedInject constructor(
             throw IllegalArgumentException("SyncObject is not a file object (id: ${syncObject.id}, name:${syncObject.name}).")
     }
 
-    private val dirDeleter: DirDeleter5 by lazy {
+    private val dirDeleter: DirDeleter by lazy {
         dirDeleterAssistedFactory.create(syncTask)
     }
 
-    private val fileDeleter: FileDeleter5 by lazy {
+    private val fileDeleter: FileDeleter by lazy {
         fileDeleterAssistedFactory.create(syncTask)
     }
 }

@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleterAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -12,7 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class FSItemDeleter5 @AssistedInject constructor(
+class FSItemDeleter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val fileDeleterAssistedFactory: FileDeleterAssistedFactory,
     private val dirDeleterAssistedFactory: DirDeleterAssistedFactory,
@@ -64,12 +64,12 @@ class FSItemDeleter5 @AssistedInject constructor(
     }
 
 
-    private val fileDeleter: FileDeleter5 by lazy { fileDeleterAssistedFactory.create(syncTask) }
-    private val dirDeleter: DirDeleter5 by lazy { dirDeleterAssistedFactory.create(syncTask) }
+    private val fileDeleter: FileDeleter by lazy { fileDeleterAssistedFactory.create(syncTask) }
+    private val dirDeleter: DirDeleter by lazy { dirDeleterAssistedFactory.create(syncTask) }
 }
 
 
 @AssistedFactory
 interface ItemDeleterAssistedFactory {
-    fun create(syncTask: SyncTask): FSItemDeleter5
+    fun create(syncTask: SyncTask): FSItemDeleter
 }

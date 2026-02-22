@@ -18,7 +18,7 @@ import dagger.assisted.AssistedInject
 class SyncObjectCollisionResolver @AssistedInject constructor(
     @Assisted syncTask: SyncTask,
     private val syncObjectDBReader: SyncObjectDBReader,
-    private val syncObjectRenamer5assistedFactory: SyncObjectRenamerAssistedFactory5,
+    private val syncObjectRenamer5assistedFactory: SyncObjectRenamerAssistedFactory,
 ) {
     suspend fun resolveCollision(sourceObjectId: String, targetObjectId: String) {
 
@@ -45,7 +45,7 @@ class SyncObjectCollisionResolver @AssistedInject constructor(
         return "${syncObject.name}_${prefix}_${suffix}"
     }
 
-    private val syncObjectRenamer: SyncObjectRenamer5 by lazy {
+    private val syncObjectRenamer: SyncObjectRenamer by lazy {
         syncObjectRenamer5assistedFactory.create(syncTask)
     }
 }

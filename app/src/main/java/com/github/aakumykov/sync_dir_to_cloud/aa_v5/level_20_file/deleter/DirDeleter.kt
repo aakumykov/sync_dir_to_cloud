@@ -12,7 +12,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class DirDeleter5 @AssistedInject constructor(
+class DirDeleter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
 ) {
@@ -67,5 +67,5 @@ class DirDeleter5 @AssistedInject constructor(
 
 @AssistedFactory
 interface DirDeleterAssistedFactory {
-    fun create(syncTask: SyncTask): DirDeleter5
+    fun create(syncTask: SyncTask): DirDeleter
 }
