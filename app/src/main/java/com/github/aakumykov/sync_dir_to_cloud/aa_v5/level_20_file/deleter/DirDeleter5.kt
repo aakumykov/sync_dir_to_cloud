@@ -66,6 +66,6 @@ class DirDeleter5 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface DirDeleterAssistedFactory5 {
+interface DirDeleterAssistedFactory {
     fun create(syncTask: SyncTask): DirDeleter5
 }

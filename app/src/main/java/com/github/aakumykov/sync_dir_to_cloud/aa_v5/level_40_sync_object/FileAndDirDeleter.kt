@@ -1,26 +1,23 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
-import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger_2.FileOperationLoggerAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 @Deprecated("FIXME: 'deleter' означает и интерфейс БД, и удаляльщик файлов")
-class SyncObjectDeleter5 @AssistedInject constructor(
+class FileAndDirDeleter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
-    private val fileOperationLoggerAssistedFactory: FileOperationLoggerAssistedFactory,
-    private val fileDeleterAssistedFactory: FileDeleterAssistedFactory5,
-    private val dirDeleterAssistedFactory: DirDeleterAssistedFactory5,
+    private val fileDeleterAssistedFactory: FileDeleterAssistedFactory,
+    private val dirDeleterAssistedFactory: DirDeleterAssistedFactory,
 ) {
     @Throws(Exception::class)
     suspend fun deleteEmptyDirInSource(syncObject: SyncObject) {
@@ -74,10 +71,6 @@ class SyncObjectDeleter5 @AssistedInject constructor(
             throw IllegalArgumentException("SyncObject is not a file object (id: ${syncObject.id}, name:${syncObject.name}).")
     }
 
-    private val fileOperationLogger by lazy {
-        fileOperationLoggerAssistedFactory.create(syncTask.id, executionId)
-    }
-
     private val dirDeleter: DirDeleter5 by lazy {
         dirDeleterAssistedFactory.create(syncTask)
     }
@@ -89,6 +82,6 @@ class SyncObjectDeleter5 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface SyncObjectDeleterAssistedFactory5 {
-    fun create(syncTask: SyncTask, executionId: String): SyncObjectDeleter5
+interface FileAndDirDeleterAssistedFactory {
+    fun create(syncTask: SyncTask): FileAndDirDeleter
 }

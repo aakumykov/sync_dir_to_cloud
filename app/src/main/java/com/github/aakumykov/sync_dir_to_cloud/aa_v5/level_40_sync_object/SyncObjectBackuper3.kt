@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.Custom
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.CustomRootFileHelperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.SourceTargetFileHelperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -29,7 +29,7 @@ class SyncObjectBackuper3 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudWriterGetter: CloudWriterGetter,
     private val customRootFileHelperAssistedFactory: CustomRootFileHelperAssistedFactory,
-    private val fileDeleterAssistedFactory5: FileDeleterAssistedFactory5,
+    private val fileDeleterAssistedFactory: FileDeleterAssistedFactory,
     private val sourceTargetFileHelperAssistedFactory: SourceTargetFileHelperAssistedFactory,
     private val syncObjectDBDeleter: SyncObjectDBDeleter,
 ) {
@@ -115,7 +115,7 @@ class SyncObjectBackuper3 @AssistedInject constructor(
 
 
     private val fileDeleter: FileDeleter5 by lazy {
-        fileDeleterAssistedFactory5.create(syncTask)
+        fileDeleterAssistedFactory.create(syncTask)
     }
 
 

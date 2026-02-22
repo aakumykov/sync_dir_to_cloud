@@ -28,7 +28,6 @@ class SyncObjectFileCopier @AssistedInject constructor(
     suspend fun copyFileFromSourceToTarget(
         syncObject: SyncObject,
         absolutePathInTarget: String,
-        fileOperationLogItemId: String,
         overwriteIfExists: Boolean = syncOptions.overwriteIfExists,
         progressCallback: ((transferredBytes: Long) -> Unit)
     ) {
@@ -46,7 +45,6 @@ class SyncObjectFileCopier @AssistedInject constructor(
     suspend fun copyFileFromTargetToSource(
         syncObject: SyncObject,
         absolutePathInSource: String,
-        fileOperationLogItemId: String,
         overwriteIfExists: Boolean = syncOptions.overwriteIfExists,
         progressCallback: ((transferredBytes: Long) -> Unit)
     ) {

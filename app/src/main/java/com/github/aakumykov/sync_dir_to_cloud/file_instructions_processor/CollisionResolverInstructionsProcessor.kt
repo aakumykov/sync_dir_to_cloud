@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
+package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID

@@ -29,10 +29,8 @@ import kotlin.jvm.Throws
 
  * Актуализация производится путём считывания данных о файле (папке?)
  * из хранилища.
- *
- * // FIXME: неудачное название. Действительная функция - добавление объекта.
  */
-class SyncObjectActualizer @AssistedInject constructor(
+class VirtualSyncObjectAdder @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     private val syncObjectDBReader: SyncObjectDBReader,
@@ -156,6 +154,6 @@ class SyncObjectActualizer @AssistedInject constructor(
 
 
 @AssistedFactory
-interface SyncObjectActualizerAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): SyncObjectActualizer
+interface VirtualSyncObjectAdderAssistedFactory {
+    fun create(syncTask: SyncTask, executionId: String): VirtualSyncObjectAdder
 }

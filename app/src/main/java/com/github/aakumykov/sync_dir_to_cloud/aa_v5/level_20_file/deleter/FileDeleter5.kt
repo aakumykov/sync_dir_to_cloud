@@ -62,6 +62,6 @@ class FileDeleter5 @AssistedInject constructor(
 
 
 @AssistedFactory
-interface FileDeleterAssistedFactory5 {
+interface FileDeleterAssistedFactory {
     fun create(syncTask: SyncTask): FileDeleter5
 }

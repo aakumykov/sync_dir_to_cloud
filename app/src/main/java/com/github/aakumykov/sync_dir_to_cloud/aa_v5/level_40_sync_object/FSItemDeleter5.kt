@@ -1,9 +1,9 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.DirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.deleter.FileDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
@@ -14,8 +14,8 @@ import dagger.assisted.AssistedInject
 
 class FSItemDeleter5 @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    private val fileDeleterAssistedFactory: FileDeleterAssistedFactory5,
-    private val dirDeleterAssistedFactory: DirDeleterAssistedFactory5,
+    private val fileDeleterAssistedFactory: FileDeleterAssistedFactory,
+    private val dirDeleterAssistedFactory: DirDeleterAssistedFactory,
     private val syncObjectUpdater: SyncObjectUpdater,
 ) {
     suspend fun deleteItemInSource(syncObject: SyncObject) {

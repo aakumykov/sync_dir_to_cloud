@@ -1,11 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectDeleter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectDeleterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FileAndDirDeleter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FileAndDirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
@@ -17,11 +16,9 @@ import kotlinx.coroutines.CoroutineScope
 
 class DeleteInstructionExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
-    @Assisted private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
     private val syncObjectDBReader: SyncObjectDBReader,
-    private val syncObjectDeleterAssistedFactory: SyncObjectDeleterAssistedFactory5,
-    private val syncInstructionUpdater: SyncInstructionUpdater,
+    private val fileAndDirDeleterAssistedFactory: FileAndDirDeleterAssistedFactory,
 ) {
     suspend fun execute(syncInstruction: SyncInstruction) {
         val jobId = newRandomId
@@ -39,25 +36,19 @@ class DeleteInstructionExecutor @AssistedInject constructor(
     private suspend fun deleteInSource(syncInstruction: SyncInstruction) {
         val syncObject = syncObjectDBReader.getSyncObject(syncInstruction.objectIdInSource!!)
 
-        if (syncInstruction.isDir) syncObjectDeleter.deleteEmptyDirInSource(syncObject!!)
-        else syncObjectDeleter.deleteFileInSource(syncObject!!)
-
-        markInstructionAsProcessed(syncInstruction)
+        if (syncInstruction.isDir) fileAndDirDeleter.deleteEmptyDirInSource(syncObject!!)
+        else fileAndDirDeleter.deleteFileInSource(syncObject!!)
     }
 
     private suspend fun deleteInTarget(syncInstruction: SyncInstruction) {
         val syncObject = syncObjectDBReader.getSyncObject(syncInstruction.objectIdInTarget!!)
-        if (syncInstruction.isDir) syncObjectDeleter.deleteEmptyDirInTarget(syncObject!!)
-        else syncObjectDeleter.deleteFileInTarget(syncObject!!)
-        markInstructionAsProcessed(syncInstruction)
+
+        if (syncInstruction.isDir) fileAndDirDeleter.deleteEmptyDirInTarget(syncObject!!)
+        else fileAndDirDeleter.deleteFileInTarget(syncObject!!)
     }
 
-    private suspend fun markInstructionAsProcessed(syncInstruction: SyncInstruction) {
-        syncInstructionUpdater.markAsProcessed(syncInstruction.id)
-    }
-
-    private val syncObjectDeleter: SyncObjectDeleter5 by lazy {
-        syncObjectDeleterAssistedFactory.create(syncTask, executionId)
+    private val fileAndDirDeleter: FileAndDirDeleter by lazy {
+        fileAndDirDeleterAssistedFactory.create(syncTask)
     }
 }
 
@@ -65,6 +56,5 @@ class DeleteInstructionExecutor @AssistedInject constructor(
 @AssistedFactory
 interface DeleteInstructionExecutorAssistedFactory {
     fun create(syncTask: SyncTask,
-               executionId: String,
                scope: CoroutineScope): DeleteInstructionExecutor
 }

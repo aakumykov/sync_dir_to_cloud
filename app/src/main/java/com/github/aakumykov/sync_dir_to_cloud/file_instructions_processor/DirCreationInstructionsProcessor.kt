@@ -1,20 +1,19 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
+package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessor
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.DatabaseFileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
+import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -26,11 +25,14 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
-    private val syncObjectDBReader: SyncObjectDBReader,
+    fileOperationLogger: DatabaseFileOperationLogger,
+    syncInstructionUpdater: SyncInstructionUpdater,
+    syncObjectDBReader: SyncObjectDBReader,
     private val dirCreatorAssistedFactory: DirCreator5AssistedFactory,
-    private val basicFileInstructionsProcessorAssistedFactory: BasicFileInstructionsProcessorAssistedFactory,
-    private val syncInstructionUpdater: SyncInstructionUpdater,
-) {
+)
+    : CommonFileInstructionsProcessor(
+        fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
+{
     suspend fun process(list: Iterable<SyncInstruction>) {
         processReal(
             list
@@ -60,7 +62,7 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
                 SyncSide.TARGET,
                 R.string.LOG_ITEM_creating_dir_from_source_in_target
             ).also {
-                syncInstructionUpdater.markAsProcessed(instruction.id)
+                markInstructionAsProcessed(instruction)
             }
 
 
@@ -99,12 +101,27 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
             SyncSide.TARGET -> fromObject.basePathIn(syncTask.targetPath!!)
         }
 
-        return basicInstructionsProcessor.process(
-            scope = scope,
+        val firstItem = fromObject.absolutePathIn(syncTask)
+        val secondItem = fromObject.absolutePathIn(basePath)
+
+        val logItemId = newRandomId
+        val jobId = newRandomId
+
+        val logBaseInfo = DatabaseFileOperationLogger.LogBaseInfo(
+            taskId = syncTask.id,
+            executionId = executionId,
+            logItemId = logItemId,
             operationName = operationName,
-            logItemId = newRandomId,
-            firstItem = fromObject.absolutePathIn(syncTask),
-            secondItem = fromObject.absolutePathIn(basePath),
+            firstItem = firstItem,
+            secondItem = secondItem
+        )
+
+        return runInCoroutineExtended(
+            scope = parentScope,
+            onStart = { logStarted(logBaseInfo, jobId = jobId) },
+            onFinish = { logFinished(logBaseInfo) },
+            onCancel = { logCancelled(logBaseInfo, it) },
+            onError = { logError(logBaseInfo, it) },
         ) {
             when(toSyncSide) {
                 SyncSide.SOURCE -> {
@@ -123,24 +140,6 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
         }
     }
 
-
-    // TODO: вынести в базовый класс
-    private suspend fun getObjectOrFail(objectId: String): SyncObject {
-        return syncObjectDBReader.getSyncObject(objectId)
-            .let {
-                if (null == it)
-                    throwNoObjectWithId(objectId)
-                it!!
-            }
-    }
-
-    private fun throwNoObjectWithId(objectId: String) {
-        throw IllegalStateException("${SyncObject.TAG} with id '$objectId' not found.")
-    }
-
-    private val basicInstructionsProcessor by lazy {
-        basicFileInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
-    }
 
     private val dirCreator by lazy {
         dirCreatorAssistedFactory.create(syncTask)

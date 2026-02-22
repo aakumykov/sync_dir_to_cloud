@@ -1,25 +1,26 @@
-package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2
+package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizer
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectActualizerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.VirtualSyncObjectAdder
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.VirtualSyncObjectAdderAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.absolutePathOfSide
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
+import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundException
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor_2.base.BasicFileInstructionsProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.DatabaseFileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
+import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -31,12 +32,15 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val syncTask: SyncTask,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
-    private val syncObjectDBReader: SyncObjectDBReader,
+    fileOperationLogger: DatabaseFileOperationLogger,
+    syncInstructionUpdater: SyncInstructionUpdater,
+    syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
-    private val basicFileInstructionsProcessorAssistedFactory: BasicFileInstructionsProcessorAssistedFactory,
-    private val syncInstructionUpdater: SyncInstructionUpdater, // Этому место в базовом классе.
-    private val syncObjectActualizerAssistedFactory: SyncObjectActualizerAssistedFactory, // Это мне не нравится...
-) {
+    private val virtualSyncObjectAdderAssistedFactory: VirtualSyncObjectAdderAssistedFactory, // Это мне не нравится...
+)
+    : CommonFileInstructionsProcessor(
+        fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
+{
     suspend fun process(list: Iterable<SyncInstruction>) {
         processReal(
             list
@@ -64,7 +68,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
                 SyncSide.TARGET,
                 R.string.LOG_ITEM_copying_from_source_to_target
             ).also {
-                syncInstructionUpdater.markAsProcessed(instruction.id)
+                markInstructionAsProcessed(instruction)
             }
 
         }.joinAll()
@@ -88,6 +92,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
 
+    @Throws(SyncObjectNotFoundException::class)
     private suspend fun copyFromTo(
         fromObjectId: String,
         toSide: SyncSide,
@@ -95,28 +100,37 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     ): Job {
         val fromObject = getObjectOrFail(fromObjectId)
 
-        val sourcePath = fromObject.absolutePathIn(syncTask)
-        val targetPath = fromObject.absolutePathIn(syncTask.absolutePathOfSide(toSide))
+        val fromPath = fromObject.absolutePathIn(syncTask)
+        val toPath = fromObject.absolutePathIn(syncTask.absolutePathOfSide(toSide))
 
         val logItemId = newRandomId
+        val jobId = newRandomId
 
-        return basicInstructionsProcessor.process(
-            scope = parentScope,
-            operationName = operationName,
+        val logBaseInfo = DatabaseFileOperationLogger.LogBaseInfo(
+            taskId = syncTask.id,
+            executionId = executionId,
             logItemId = logItemId,
-            firstItem = sourcePath,
-            secondItem = targetPath,
+            operationName = operationName,
+            firstItem = fromPath,
+            secondItem = toPath
+        )
+
+        return runInCoroutineExtended(
+            scope = parentScope,
+            onStart = { logStarted(logBaseInfo, jobId = jobId) },
+            onFinish = { logFinished(logBaseInfo) },
+            onCancel = { logCancelled(logBaseInfo, it) },
+            onError = { logError(logBaseInfo, it) },
         ) {
             syncObjectCopier.copyFileFromSourceToTarget(
                 syncObject = fromObject,
-                absolutePathInTarget = targetPath,
-                fileOperationLogItemId = logItemId,
+                absolutePathInTarget = toPath,
                 overwriteIfExists = true, // FIXME: убрать!
             ) { transferredBytes: Long ->
 
             }
 
-            syncObjectActualizer.actualizeInfoAboutObject(
+            virtualSyncObjectAdder.actualizeInfoAboutObject(
                 correspondingObject = fromObject,
                 syncSide = toSide,
                 syncState = ExecutionState.SUCCESS,
@@ -124,30 +138,12 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
         }
     }
 
-
-    private suspend fun getObjectOrFail(objectId: String): SyncObject {
-        return syncObjectDBReader.getSyncObject(objectId)
-            .let {
-                if (null == it)
-                    throwNoObjectWithId(objectId)
-                it!!
-            }
-    }
-
-    private fun throwNoObjectWithId(objectId: String) {
-        throw IllegalStateException("${SyncObject.TAG} with id '$objectId' not found.")
-    }
-
-    private val basicInstructionsProcessor by lazy {
-        basicFileInstructionsProcessorAssistedFactory.create(syncTask.id, executionId)
-    }
-
     private val syncObjectCopier by lazy {
         syncObjectCopierFactory.create(syncTask)
     }
 
-    private val syncObjectActualizer: SyncObjectActualizer by lazy {
-        syncObjectActualizerAssistedFactory.create(syncTask, executionId)
+    private val virtualSyncObjectAdder: VirtualSyncObjectAdder by lazy {
+        virtualSyncObjectAdderAssistedFactory.create(syncTask, executionId)
     }
 }
 
