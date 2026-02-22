@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.ComparisonStateRepository
@@ -24,7 +24,7 @@ open class BasicFileInstructionGenerator(
      */
     suspend fun generateSyncInstructionsFrom(
         comparisonStateList: Iterable<ComparisonState>,
-        syncOperation: SyncOperation,
+        fileOperation: FileOperation,
         partsLabel: PartsLabel,
         nextOrderNum: Int
     ): Int {
@@ -36,7 +36,7 @@ open class BasicFileInstructionGenerator(
                     SyncInstruction.from(
                         partsLabel = partsLabel,
                         comparisonState = comparisonState,
-                        operation = syncOperation,
+                        operation = fileOperation,
                         orderNum = n++
                     )
                 )

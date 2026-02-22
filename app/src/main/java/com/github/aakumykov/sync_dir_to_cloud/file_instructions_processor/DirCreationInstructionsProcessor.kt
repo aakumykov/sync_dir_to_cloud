@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
@@ -43,8 +43,8 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
 
 
     private suspend fun processReal(list: Iterable<SyncInstruction>) {
-       createDirsFromSourceInTarget(list.filter { SyncOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
-       createDirsFromTargetInSource(list.filter { SyncOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
+       createDirsFromSourceInTarget(list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
+       createDirsFromTargetInSource(list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
     }
 
 

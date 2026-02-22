@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.enums
 
-enum class SyncOperation {
+enum class FileOperation {
 
     DO_NOTHING_IN_SOURCE,
     DO_NOTHING_IN_TARGET,
@@ -17,6 +17,6 @@ enum class SyncOperation {
     BACKUP_IN_TARGET;
 
     companion object {
-        val TAG: String = SyncOperation::class.java.simpleName
+        val TAG: String = FileOperation::class.java.simpleName
     }
 }

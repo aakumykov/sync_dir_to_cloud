@@ -4,7 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObj
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectBackuperAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,8 +20,8 @@ class BackupInstructionExecutor @AssistedInject constructor(
 ) {
     suspend fun execute(syncInstruction: SyncInstruction) {
         when(syncInstruction.operation) {
-            SyncOperation.BACKUP_IN_SOURCE -> backupInSource(syncInstruction)
-            SyncOperation.BACKUP_IN_TARGET -> backupInTarget(syncInstruction)
+            FileOperation.BACKUP_IN_SOURCE -> backupInSource(syncInstruction)
+            FileOperation.BACKUP_IN_TARGET -> backupInTarget(syncInstruction)
             else -> throw IllegalArgumentException("Unsupported operation: '$syncInstruction'")
         }
     }

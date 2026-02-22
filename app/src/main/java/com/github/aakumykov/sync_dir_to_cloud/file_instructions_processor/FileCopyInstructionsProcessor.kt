@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.absolutePathOfSide
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundException
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
@@ -50,8 +50,8 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
     private suspend fun processReal(list: Iterable<SyncInstruction>) {
-        copyFromSourceToTarget(list.filter { SyncOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
-        copyFromTargetToSource(list.filter { SyncOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
+        copyFromSourceToTarget(list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
+        copyFromTargetToSource(list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
     }
 
 

@@ -4,7 +4,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FileAnd
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.FileAndDirDeleterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
@@ -26,8 +26,8 @@ class DeleteInstructionExecutor @AssistedInject constructor(
             OperationJobsHolder.addJob(jobId, job)
         }) {
             when(syncInstruction.operation) {
-                SyncOperation.DELETE_IN_SOURCE -> deleteInSource(syncInstruction)
-                SyncOperation.DELETE_IN_TARGET -> deleteInTarget(syncInstruction)
+                FileOperation.DELETE_IN_SOURCE -> deleteInSource(syncInstruction)
+                FileOperation.DELETE_IN_TARGET -> deleteInTarget(syncInstruction)
                 else -> throw IllegalArgumentException("Unsupported operation: '$syncInstruction'")
             }
         }.join()

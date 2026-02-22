@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -55,7 +55,7 @@ class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
                 .filter { it.isModifiedOrDeletedInSource || it.isModifiedInTarget }
                 .filter { it.notDeletedInTarget }
                 .let {
-                    createInstructionsFor(it, SyncOperation.BACKUP_IN_TARGET, nextOrderNum)
+                    createInstructionsFor(it, FileOperation.BACKUP_IN_TARGET, nextOrderNum)
                 }
         } else nextOrderNum
     }
@@ -102,16 +102,16 @@ class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
             }
     }
 
-    private fun deleteOrBackupInTarget(isDir: Boolean): List<SyncOperation> {
+    private fun deleteOrBackupInTarget(isDir: Boolean): List<FileOperation> {
         return buildList {
             if (syncTask.withBackup) {
-                add(SyncOperation.BACKUP_IN_TARGET)
+                add(FileOperation.BACKUP_IN_TARGET)
                 // Бекап файла делается перемещением, что эквивалентно удалению,
                 // поэтому собственно удаление требуется только каталогу.
                 if (isDir)
-                    add(SyncOperation.DELETE_IN_TARGET)
+                    add(FileOperation.DELETE_IN_TARGET)
             }
-            else add(SyncOperation.DELETE_IN_TARGET)
+            else add(FileOperation.DELETE_IN_TARGET)
         }
     }
 
@@ -136,7 +136,7 @@ class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isDir }
             .filter { it.isDeletedInTarget }
             .filter { it.notDeletedInSource }
-            .let { createInstructionsFor(it, SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it, FileOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
     }
 
     private suspend fun copyToTargetFilesNewAndModifiedInSource(nextOrderNum: Int): Int {
@@ -165,7 +165,7 @@ class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
 //                    Log.d(TAG, "STORAGE_STATE, notDeletedInSource: ${this.joinToString(",") { it.toString() }}")
                 }
             }
-            .let { createInstructionsFor(it,SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it,FileOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
 
     }
 
@@ -175,22 +175,22 @@ class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
             .filter { it.isNewModifiedDeletedInTarget }
             .filter { it.notDeletedInSource }
             .filter { it.isUnchangedInSource }
-            .let { createInstructionsFor(it, SyncOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
+            .let { createInstructionsFor(it, FileOperation.COPY_FROM_SOURCE_TO_TARGET, nextOrderNum) }
     }
 
     private suspend fun createInstructionsFor(
         list: List<ComparisonState>,
-        syncOperationList: List<SyncOperation>,
+        fileOperationList: List<FileOperation>,
         nextOrderNum: Int
     ): Int {
-//        Log.d(TAG, "----- STORAGE_STATE createInstructionsFor(${syncOperationList.joinToString(",")}) -----")
+//        Log.d(TAG, "----- STORAGE_STATE createInstructionsFor(${fileOperationList.joinToString(",")}) -----")
 
         var n = nextOrderNum
         list.forEach { comparisonState ->
 //            Log.d(TAG, comparisonState.toString())
 ////            Log.d(TAG, "STORAGE_STATE, ${comparisonState.toString()}")
             syncInstructionRepository.apply {
-                syncOperationList.forEach { syncOperation ->
+                fileOperationList.forEach { syncOperation ->
                     add(
                         SyncInstruction.from(
                             partsLabel = PartsLabel.ST,
@@ -208,12 +208,12 @@ class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
 
     private suspend fun createInstructionsFor(
         list: List<ComparisonState>,
-        syncOperation: SyncOperation,
+        fileOperation: FileOperation,
         nextOrderNum: Int
     ): Int {
         return createInstructionsFor(
             list = list,
-            syncOperationList = listOf(syncOperation),
+            fileOperationList = listOf(fileOperation),
             nextOrderNum = nextOrderNum
         )
     }

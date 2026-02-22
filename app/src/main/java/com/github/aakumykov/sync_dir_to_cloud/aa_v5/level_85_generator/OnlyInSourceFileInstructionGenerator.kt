@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.notDeletedInSource
@@ -64,7 +64,7 @@ class OnlyInSourceFileInstructionGenerator @AssistedInject constructor(
                 generateSyncInstructionsFrom(
                     partsLabel = PartsLabel.S,
                     comparisonStateList = it,
-                    syncOperation = SyncOperation.DELETE_IN_TARGET,
+                    fileOperation = FileOperation.DELETE_IN_TARGET,
                     nextOrderNum = nextOrderNum
                 )
             }
@@ -78,7 +78,7 @@ class OnlyInSourceFileInstructionGenerator @AssistedInject constructor(
                 generateSyncInstructionsFrom(
                     partsLabel = PartsLabel.S,
                     comparisonStateList = it,
-                    syncOperation = SyncOperation.DELETE_IN_TARGET,
+                    fileOperation = FileOperation.DELETE_IN_TARGET,
                     nextOrderNum = nextOrderNum
                 )
             }
@@ -94,7 +94,7 @@ class OnlyInSourceFileInstructionGenerator @AssistedInject constructor(
                 generateSyncInstructionsFrom(
                     partsLabel = PartsLabel.S,
                     comparisonStateList = it,
-                    syncOperation = SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
+                    fileOperation = FileOperation.COPY_FROM_SOURCE_TO_TARGET,
                     nextOrderNum = nextOrderNum,
                 )
             }
@@ -111,7 +111,7 @@ class OnlyInSourceFileInstructionGenerator @AssistedInject constructor(
                 generateSyncInstructionsFrom(
                     partsLabel = PartsLabel.S,
                     comparisonStateList = it,
-                    syncOperation = SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
+                    fileOperation = FileOperation.COPY_FROM_SOURCE_TO_TARGET,
                     nextOrderNum = nextOrderNum
                 )
             }

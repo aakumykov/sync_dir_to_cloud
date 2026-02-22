@@ -7,7 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 
 @Entity(
@@ -39,7 +39,7 @@ class SyncInstruction (
     @Deprecated("не используется")
     @ColumnInfo(name = "order_num", defaultValue = "0") val orderNum: Int,
 
-    @ColumnInfo(name = "operation") val operation: SyncOperation,
+    @ColumnInfo(name = "operation") val operation: FileOperation,
 
     @ColumnInfo(name = "is_dir", defaultValue = "false") val isDir: Boolean,
     @ColumnInfo(name = "relative_path", defaultValue = "") val relativePath: String,
@@ -49,31 +49,31 @@ class SyncInstruction (
     // TODO: вынести в расширения...
 
     @Ignore
-    val isDeletion: Boolean = SyncOperation.DELETE_IN_TARGET == operation ||
-            SyncOperation.DELETE_IN_SOURCE == operation
+    val isDeletion: Boolean = FileOperation.DELETE_IN_TARGET == operation ||
+            FileOperation.DELETE_IN_SOURCE == operation
 
     @Ignore
-    val isCollisionResolution: Boolean = SyncOperation.RESOLVE_COLLISION == operation
+    val isCollisionResolution: Boolean = FileOperation.RESOLVE_COLLISION == operation
 
     val isBackup: Boolean get() = isBackupInSource || isBackupInTarget
 
     @Ignore
     val isBackupInSource: Boolean =
-        SyncOperation.BACKUP_IN_SOURCE == operation
+        FileOperation.BACKUP_IN_SOURCE == operation
 
     @Ignore
     val isBackupInTarget: Boolean =
-        SyncOperation.BACKUP_IN_TARGET == operation
+        FileOperation.BACKUP_IN_TARGET == operation
 
     @Ignore
     val notDeletion: Boolean =
-        SyncOperation.DELETE_IN_TARGET != operation &&
-                SyncOperation.DELETE_IN_SOURCE != operation
+        FileOperation.DELETE_IN_TARGET != operation &&
+                FileOperation.DELETE_IN_SOURCE != operation
 
     @Ignore
     val isCopying: Boolean =
-        SyncOperation.COPY_FROM_TARGET_TO_SOURCE == operation ||
-                SyncOperation.COPY_FROM_SOURCE_TO_TARGET == operation
+        FileOperation.COPY_FROM_TARGET_TO_SOURCE == operation ||
+                FileOperation.COPY_FROM_SOURCE_TO_TARGET == operation
 
     /*override fun toString(): String {
         return SyncInstruction::class.java.simpleName + "{ $operation, $relativePath }"
@@ -90,7 +90,7 @@ class SyncInstruction (
 
         fun from(
             comparisonState: ComparisonState,
-            operation: SyncOperation,
+            operation: FileOperation,
             partsLabel: PartsLabel,
             orderNum: Int,
         ): SyncInstruction = SyncInstruction(

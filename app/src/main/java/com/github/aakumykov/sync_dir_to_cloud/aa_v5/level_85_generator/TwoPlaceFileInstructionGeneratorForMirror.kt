@@ -4,7 +4,7 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
-import com.github.aakumykov.sync_dir_to_cloud.enums.SyncOperation
+import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInTarget
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
@@ -50,7 +50,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
     /*private suspend fun processWhatToBackup(isDir: Boolean, nextOrderNum: Int): Int {
         return createSyncInstructionsFrom(
             getStatesForDeletionInTarget(isDir),
-            SyncOperation.BACKUP_IN_TARGET_WITH_MOVE,
+            FileOperation.BACKUP_IN_TARGET_WITH_MOVE,
             nextOrderNum
         )
     }*/
@@ -85,29 +85,29 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
     }
 
 
-    private fun deleteOrBackupInTarget(isDir: Boolean): List<SyncOperation> {
+    private fun deleteOrBackupInTarget(isDir: Boolean): List<FileOperation> {
         return buildList {
             if (syncTask.withBackup) {
-                add(SyncOperation.BACKUP_IN_TARGET)
+                add(FileOperation.BACKUP_IN_TARGET)
                 // Бекап файла делается перемещением, что эквивалентно удалению,
                 // поэтому собственно удаление требуется только каталогу.
                 if (isDir)
-                    add(SyncOperation.DELETE_IN_TARGET)
+                    add(FileOperation.DELETE_IN_TARGET)
             }
-            else add(SyncOperation.DELETE_IN_TARGET)
+            else add(FileOperation.DELETE_IN_TARGET)
         }
     }
 
-    private fun deleteOrBackupInSource(isDir: Boolean): List<SyncOperation> {
+    private fun deleteOrBackupInSource(isDir: Boolean): List<FileOperation> {
         return buildList {
             if (syncTask.withBackup) {
-                add(SyncOperation.BACKUP_IN_SOURCE)
+                add(FileOperation.BACKUP_IN_SOURCE)
                 // Бекап файла делается перемещением, что эквивалентно удалению,
                 // поэтому собственно удаление требуется только каталогу.
                 if (isDir)
-                    add(SyncOperation.DELETE_IN_SOURCE)
+                    add(FileOperation.DELETE_IN_SOURCE)
             }
-            else add(SyncOperation.DELETE_IN_SOURCE)
+            else add(FileOperation.DELETE_IN_SOURCE)
         }
     }
 
@@ -146,9 +146,9 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
                 createSyncInstructionsFrom(
                     it,
                     listOf(
-                        SyncOperation.RESOLVE_COLLISION,
-                        SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
-                        SyncOperation.COPY_FROM_TARGET_TO_SOURCE
+                        FileOperation.RESOLVE_COLLISION,
+                        FileOperation.COPY_FROM_SOURCE_TO_TARGET,
+                        FileOperation.COPY_FROM_TARGET_TO_SOURCE
                     ),
                     nextOrderNum
                 )
@@ -189,7 +189,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
                 SyncInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
-                    operation = SyncOperation.COPY_FROM_TARGET_TO_SOURCE,
+                    operation = FileOperation.COPY_FROM_TARGET_TO_SOURCE,
                     orderNum = non++
                 ).also {
                     syncInstructionRepository.add(it)
@@ -202,17 +202,17 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
 
 
 
-    private fun doNothingOrBackupInSource(comparisonState: ComparisonState): SyncOperation {
+    private fun doNothingOrBackupInSource(comparisonState: ComparisonState): FileOperation {
         return if (syncTask.withBackup && comparisonState.isModifiedInSource)
-            SyncOperation.BACKUP_IN_SOURCE
-        else SyncOperation.DO_NOTHING_IN_SOURCE
+            FileOperation.BACKUP_IN_SOURCE
+        else FileOperation.DO_NOTHING_IN_SOURCE
     }
 
 
-    private fun doNothingOrBackupInTarget(comparisonState: ComparisonState): SyncOperation {
+    private fun doNothingOrBackupInTarget(comparisonState: ComparisonState): FileOperation {
         return if (syncTask.withBackup && comparisonState.isModifiedInTarget)
-            SyncOperation.BACKUP_IN_SOURCE
-        else SyncOperation.DO_NOTHING_IN_TARGET
+            FileOperation.BACKUP_IN_SOURCE
+        else FileOperation.DO_NOTHING_IN_TARGET
     }
 
 
@@ -238,7 +238,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
                 SyncInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
-                    operation = SyncOperation.COPY_FROM_SOURCE_TO_TARGET,
+                    operation = FileOperation.COPY_FROM_SOURCE_TO_TARGET,
                     orderNum = non++
                 ).also {
                     syncInstructionRepository.add(it)
@@ -253,13 +253,13 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
 
     private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
-        syncOperationList: List<SyncOperation>,
+        fileOperationList: List<FileOperation>,
         nextOrderNum: Int
     ): Int {
         var n = nextOrderNum
         list.forEach { comparisonState ->
             syncInstructionRepository.apply {
-                syncOperationList.forEach { syncOperation ->
+                fileOperationList.forEach { syncOperation ->
                     add(SyncInstruction.from(
                         partsLabel = PartsLabel.ST,
                         comparisonState = comparisonState,
@@ -274,12 +274,12 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
 
     private suspend fun createSyncInstructionsFrom(
         list: List<ComparisonState>,
-        syncOperation: SyncOperation,
+        fileOperation: FileOperation,
         nextOrderNum: Int
     ): Int {
         return createSyncInstructionsFrom(
             list,
-            listOf(syncOperation),
+            listOf(fileOperation),
             nextOrderNum
         )
     }
