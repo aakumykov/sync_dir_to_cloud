@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
@@ -47,18 +47,18 @@ class FileInstructionsProcessor @AssistedInject constructor(
         deleteInstructionsProcessor.process(list(isUnprocessed))
     }
 
-    private suspend fun list(selectUnprocessed: Boolean): Iterable<SyncInstruction> {
+    private suspend fun list(selectUnprocessed: Boolean): Iterable<FileInstruction> {
         return if (selectUnprocessed) getNonProcessedInstructionsForTask()
         else getNonProcessedSyncInstructionsForTaskAndExecution()
     }
 
-    private suspend fun getNonProcessedInstructionsForTask(): Iterable<SyncInstruction> {
+    private suspend fun getNonProcessedInstructionsForTask(): Iterable<FileInstruction> {
         return syncInstructionRepository
             .getAllWithoutExecutionId(syncTask.id)
             .filter { it.notProcessed }
     }
 
-    private suspend fun getNonProcessedSyncInstructionsForTaskAndExecution(): Iterable<SyncInstruction> {
+    private suspend fun getNonProcessedSyncInstructionsForTaskAndExecution(): Iterable<FileInstruction> {
         return syncInstructionRepository
             .getAllFor(syncTask.id, executionId)
             .filter { it.notProcessed }

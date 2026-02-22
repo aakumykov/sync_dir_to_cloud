@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
@@ -35,7 +35,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         SyncObject::class,
         CloudAuth::class,
         ComparisonState::class,
-        SyncInstruction::class,
+        FileInstruction::class,
         TaskLogItem::class,
         InstructionLogItem::class,
         FileOperationLogItem::class,
@@ -69,10 +69,10 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 78, to = 79, spec = RemoveOperationStateFieldSpec::class), // Удаление поля ExecutionLogItem.operationState
         AutoMigration(from = 79, to = 80), // Новое поле SyncObject.side
         AutoMigration(from = 80, to = 81), // Новое поле SyncObject.executionId
-        AutoMigration(from = 81, to = 82, spec = FirstAddThisObjectSpec::class), // Новый объект "SyncInstruction"
+        AutoMigration(from = 81, to = 82, spec = FirstAddThisObjectSpec::class), // Новый объект "FileInstruction"
         AutoMigration(from = 82, to = 83, spec = DeleteColumnExecutionIdSpec::class),
-        AutoMigration(from = 83, to = 84), // Добавил внешний ключ к SyncInstruction.
-        AutoMigration(from = 84, to = 85), // Добавил поле SyncInstruction.isDir
+        AutoMigration(from = 83, to = 84), // Добавил внешний ключ к FileInstruction.
+        AutoMigration(from = 84, to = 85), // Добавил поле FileInstruction.isDir
         AutoMigration(from = 85, to = 86, spec = RenameSideToSyncSideMigration::class), // SyncObject.side --> syncSide
         AutoMigration(from = 86, to = 87), // Новый объект SyncInstruction5
         AutoMigration(from = 87, to = 88), // Переместил поля в SyncInstruction5
@@ -105,12 +105,12 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 114, to = 115), // Внешний ключ в FileOperationLogItem
         AutoMigration(from = 115, to = 116), // Внешний ключ в ExecutionLogItem
         AutoMigration(from = 116, to = 117), // Внешний ключ в TaskLogEntry
-        AutoMigration(from = 117, to = 118, spec = DeleteTableSyncInstructions::class), // Удалил SyncInstruction
-        AutoMigration(from = 118, to = 119, spec = RenameTableFromSyncInstructions6ToSyncInstructions::class), // Удалил SyncInstruction
+        AutoMigration(from = 117, to = 118, spec = DeleteTableSyncInstructions::class), // Удалил FileInstruction
+        AutoMigration(from = 118, to = 119, spec = RenameTableFromSyncInstructions6ToSyncInstructions::class), // Удалил FileInstruction
         AutoMigration(from = 119, to = 120), // Новые поля SyncTask.sourceBackupDir, targetBackupDir
-        AutoMigration(from = 120, to = 121), // Индексы поля task_id в ComparisonState, SyncInstruction, ExecutionLogItem, FileOperationLogItem, TaskLogEntry.
+        AutoMigration(from = 120, to = 121), // Индексы поля task_id в ComparisonState, FileInstruction, ExecutionLogItem, FileOperationLogItem, TaskLogEntry.
         AutoMigration(from = 121, to = 122), // Новые поля SyncTask.sourceExecutionBackupDir, targetExecutionBackupDir
-        AutoMigration(from = 122, to = 123), // Новое поле SyncInstruction.partsLabel
+        AutoMigration(from = 122, to = 123), // Новое поле FileInstruction.partsLabel
         AutoMigration(from = 123, to = 124, spec = RenameSyncTaskBackupDirToDirName::class),
         AutoMigration(from = 124, to = 125, spec = RenameSyncTaskBackupDirNameToTaskBackupDirName::class),
         AutoMigration(from = 125, to = 126), // Новое поле ExecutionLogItem.details: String?

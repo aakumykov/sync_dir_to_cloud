@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
@@ -20,16 +20,16 @@ class SyncInstructionRepository @Inject constructor(
         val TAG: String = SyncInstructionRepository::class.java.simpleName
     }
 
-    suspend fun add(syncInstruction: SyncInstruction) {
-        Log.d(TAG, "add($syncInstruction)")
-        syncInstructionDAO.add(syncInstruction)
+    suspend fun add(fileInstruction: FileInstruction) {
+        Log.d(TAG, "add($fileInstruction)")
+        syncInstructionDAO.add(fileInstruction)
     }
 
-    override suspend fun getAllFor(taskId: String, executionId: String): List<SyncInstruction> {
+    override suspend fun getAllFor(taskId: String, executionId: String): List<FileInstruction> {
         return syncInstructionDAO.getAllFor(taskId, executionId)
     }
 
-    override suspend fun getAllWithoutExecutionId(taskId: String): List<SyncInstruction> {
+    override suspend fun getAllWithoutExecutionId(taskId: String): List<FileInstruction> {
         return syncInstructionDAO.getAllWithoutExecutionId(taskId)
     }
 
@@ -41,7 +41,7 @@ class SyncInstructionRepository @Inject constructor(
         syncInstructionDAO.markAsProcessed(instructionId)
     }
 
-    override fun getSyncInstructionsForObjectInSource(syncObjectId: String): List<SyncInstruction> {
+    override fun getSyncInstructionsForObjectInSource(syncObjectId: String): List<FileInstruction> {
         return syncInstructionDAO.getSyncInstructionsForSourceId(syncObjectId)
     }
 
@@ -66,7 +66,7 @@ class SyncInstructionRepository @Inject constructor(
         syncInstructionDAO.deleteFinishedInstructionsForTask(taskId)
     }
 
-    override fun getSyncInstructionsFor(taskId: String): List<SyncInstruction> {
+    override fun getSyncInstructionsFor(taskId: String): List<FileInstruction> {
         return syncInstructionDAO.getSyncInstructionsFor(taskId)
     }
 }

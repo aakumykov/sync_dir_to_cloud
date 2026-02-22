@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
@@ -18,7 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.AppDatabase
         SyncObject::class,
         CloudAuth::class,
         ComparisonState::class,
-        SyncInstruction::class,
+        FileInstruction::class,
     ],
     version = 1
 )

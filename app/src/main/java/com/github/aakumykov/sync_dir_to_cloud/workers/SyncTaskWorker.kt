@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
@@ -44,7 +45,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
         appComponent.injectToSyncTaskWorker(this)
 
-        val taskId = inputData.getString(KEY_TASK_ID)
+        val taskId = inputData.getString(GlobalKeys.KEY_TASK_ID)
 
         if (null == taskId) {
             // TODO: показывать уведомление об ошибке
@@ -93,7 +94,6 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
 
     companion object {
         val TAG: String = SyncTaskWorker::class.java.simpleName
-        const val KEY_TASK_ID: String = "TASK_ID"
-        fun dataWithTaskId(taskId: String): Data = Data.Builder().putString(KEY_TASK_ID, taskId).build()
+        fun dataWithTaskId(taskId: String): Data = Data.Builder().putString(GlobalKeys.KEY_TASK_ID, taskId).build()
     }
 }

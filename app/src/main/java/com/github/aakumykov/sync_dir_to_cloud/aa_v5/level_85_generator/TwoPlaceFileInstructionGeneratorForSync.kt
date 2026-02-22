@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInSource
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInTarget
@@ -192,7 +192,7 @@ class TwoPlaceFileInstructionGeneratorForSync @AssistedInject constructor(
             syncInstructionRepository.apply {
                 fileOperationList.forEach { syncOperation ->
                     add(
-                        SyncInstruction.from(
+                        FileInstruction.from(
                             partsLabel = PartsLabel.ST,
                             comparisonState = comparisonState,
                             operation = syncOperation,

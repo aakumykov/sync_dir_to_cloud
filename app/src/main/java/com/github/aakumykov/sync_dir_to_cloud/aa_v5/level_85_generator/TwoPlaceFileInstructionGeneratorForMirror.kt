@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isDeletedInSource
@@ -177,7 +177,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
             .let { it }
             .forEach { comparisonState ->
 
-                SyncInstruction.from(
+                FileInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
                     operation = doNothingOrBackupInSource(comparisonState),
@@ -186,7 +186,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
                     syncInstructionRepository.add(it)
                 }
 
-                SyncInstruction.from(
+                FileInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
                     operation = FileOperation.COPY_FROM_TARGET_TO_SOURCE,
@@ -226,7 +226,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
             .filter { it.isUnchangedOrDeletedInTarget }
             .forEach { comparisonState ->
 
-                SyncInstruction.from(
+                FileInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
                     operation = doNothingOrBackupInTarget(comparisonState),
@@ -235,7 +235,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
                     syncInstructionRepository.add(it)
                 }
 
-                SyncInstruction.from(
+                FileInstruction.from(
                     partsLabel = PartsLabel.ST,
                     comparisonState = comparisonState,
                     operation = FileOperation.COPY_FROM_SOURCE_TO_TARGET,
@@ -260,7 +260,7 @@ class TwoPlaceFileInstructionGeneratorForMirror @AssistedInject constructor(
         list.forEach { comparisonState ->
             syncInstructionRepository.apply {
                 fileOperationList.forEach { syncOperation ->
-                    add(SyncInstruction.from(
+                    add(FileInstruction.from(
                         partsLabel = PartsLabel.ST,
                         comparisonState = comparisonState,
                         operation = syncOperation,

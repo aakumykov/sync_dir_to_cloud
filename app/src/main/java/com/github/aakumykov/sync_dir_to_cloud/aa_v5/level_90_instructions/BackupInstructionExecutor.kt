@@ -2,7 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions
 
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectBackuper
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectBackuperAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
@@ -18,24 +18,24 @@ class BackupInstructionExecutor @AssistedInject constructor(
     private val syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectBackuperAssistedFactory: SyncObjectBackuperAssistedFactory,
 ) {
-    suspend fun execute(syncInstruction: SyncInstruction) {
-        when(syncInstruction.operation) {
-            FileOperation.BACKUP_IN_SOURCE -> backupInSource(syncInstruction)
-            FileOperation.BACKUP_IN_TARGET -> backupInTarget(syncInstruction)
-            else -> throw IllegalArgumentException("Unsupported operation: '$syncInstruction'")
+    suspend fun execute(fileInstruction: FileInstruction) {
+        when(fileInstruction.operation) {
+            FileOperation.BACKUP_IN_SOURCE -> backupInSource(fileInstruction)
+            FileOperation.BACKUP_IN_TARGET -> backupInTarget(fileInstruction)
+            else -> throw IllegalArgumentException("Unsupported operation: '$fileInstruction'")
         }
     }
 
-    suspend fun backupInSource(syncInstruction: SyncInstruction) {
-        val objectId = syncInstruction.objectIdInSource
+    suspend fun backupInSource(fileInstruction: FileInstruction) {
+        val objectId = fileInstruction.objectIdInSource
             ?: throw IllegalStateException("Sync instruction has no object id in source.")
 
         backup(objectId)
     }
 
 
-    suspend fun backupInTarget(syncInstruction: SyncInstruction) {
-        val objectId = syncInstruction.objectIdInTarget
+    suspend fun backupInTarget(fileInstruction: FileInstruction) {
+        val objectId = fileInstruction.objectIdInTarget
             ?: throw IllegalStateException("Sync instruction has no object id in target.")
 
         backup(objectId)

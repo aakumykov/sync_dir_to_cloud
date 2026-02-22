@@ -1,6 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.workers
 
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+import androidx.work.await
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.config.WorkManagerConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isNotLocal
@@ -20,7 +28,7 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
         val workName = workName(syncTask.id)
 
         val inputData = Data.Builder().apply {
-            putString(TASK_ID, syncTask.id)
+            putString(GlobalKeys.KEY_TASK_ID, syncTask.id)
         }.build()
 
         val networkConstraints = Constraints.Builder().apply {
@@ -55,9 +63,5 @@ class WorkManagerSyncTaskStarterStopper @Inject constructor(
 
     override suspend fun stopSyncTask(syncTask: SyncTask) {
         workManager.cancelUniqueWork(workName(syncTask.id)).await()
-    }
-
-    companion object {
-        const val TASK_ID = "TASK_ID"
     }
 }

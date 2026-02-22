@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
@@ -116,7 +117,7 @@ class SyncTaskNotificator @Inject constructor(
     private fun intent(taskId: String): Intent {
         return Intent(appContext, MainActivity::class.java).apply {
             action = MainActivity.ACTION_SHOW_TASK_STATE
-            putExtra(TaskDetailsFragment.KEY_TASK_ID, taskId)
+            putExtra(GlobalKeys.KEY_TASK_ID, taskId)
         }
     }
 

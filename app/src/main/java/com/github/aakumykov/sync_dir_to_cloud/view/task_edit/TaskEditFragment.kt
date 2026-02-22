@@ -18,6 +18,7 @@ import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
 import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -194,7 +195,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     private fun prepareForCreationOfEdition() {
 
         if (firstRun) {
-            val taskId = arguments?.getString(TASK_ID)
+            val taskId = arguments?.getString(GlobalKeys.KEY_TASK_ID)
 
             if (null != taskId) {
                 taskEditViewModel.prepareForEdit(taskId)
@@ -582,7 +583,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         val TAG: String = TaskEditFragment::class.java.simpleName
         const val SOURCE_PATH_SELECTION_REQUEST_KEY = "SOURCE_PATH_SELECTION_REQUEST_KEY"
         const val TARGET_PATH_SELECTION_REQUEST_KEY = "TARGET_PATH_SELECTION_REQUEST_KEY"
-        private const val TASK_ID = "TASK_ID"
 
 
         fun create(): TaskEditFragment
@@ -592,7 +592,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
             = createFragment(taskId)
 
         private fun createFragment(taskId: String?) = TaskEditFragment().apply {
-            arguments = bundleOf(TASK_ID to taskId)
+            arguments = bundleOf(GlobalKeys.KEY_TASK_ID to taskId)
         }
     }
 }

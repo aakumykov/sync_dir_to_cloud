@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.DeleteInstructionExecutor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.DeleteInstructionExecutorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
@@ -30,16 +30,16 @@ class DeleteInstructionsProcessor @AssistedInject constructor(
     : CommonFileInstructionsProcessor(
         fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
 {
-    suspend fun process(list: Iterable<SyncInstruction>) {
+    suspend fun process(list: Iterable<FileInstruction>) {
         processReal(list.filter { it.isDeletion })
     }
 
-    private suspend fun processReal(deletionInstructionList: Iterable<SyncInstruction>) {
+    private suspend fun processReal(deletionInstructionList: Iterable<FileInstruction>) {
         processDeletion(deletionInstructionList.filter { it.isFile }, R.string.LOG_ITEM_deleting_file)
         processDeletion(deletionInstructionList.filter { it.isDir }, R.string.LOG_ITEM_deleting_dir)
     }
 
-    private suspend fun processDeletion(list: Iterable<SyncInstruction>, @StringRes operationName: Int) {
+    private suspend fun processDeletion(list: Iterable<FileInstruction>, @StringRes operationName: Int) {
         list.map { instruction ->
 
             val jobId = newRandomId

@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.App
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskDetailsBinding
@@ -95,7 +96,7 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     private fun processArguments() {
 
-        currentTaskId = arguments?.getString(KEY_TASK_ID)
+        currentTaskId = arguments?.getString(GlobalKeys.KEY_TASK_ID)
 
         if (null == currentTaskId) {
             showToast(R.string.there_is_no_task_id)
@@ -289,17 +290,14 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
     companion object {
 
-        const val KEY_TASK_ID = "TASK_ID"
-        const val KEY_EXECUTION_ID = "EXECUTION_ID"
-
         fun create(taskId: String?): TaskDetailsFragment {
             return TaskDetailsFragment().apply {
-                arguments = Bundle().apply { putString(KEY_TASK_ID, taskId) }
+                arguments = Bundle().apply { putString(GlobalKeys.KEY_TASK_ID, taskId) }
             }
         }
 
         fun create(intent: Intent): TaskDetailsFragment {
-            return create(intent.getStringExtra(KEY_TASK_ID))
+            return create(intent.getStringExtra(GlobalKeys.KEY_TASK_ID))
         }
     }
 }

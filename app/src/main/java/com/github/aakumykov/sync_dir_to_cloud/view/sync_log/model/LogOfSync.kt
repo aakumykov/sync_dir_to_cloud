@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
 
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
+import com.github.aakumykov.sync_dir_to_cloud.DbFieldNames
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
@@ -17,7 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync.Comp
 )
 data class LogOfSync(
     @Deprecated("Переименовать в origLogItemId")
-    @ColumnInfo(name = "log_id")
+    @ColumnInfo(name = BasicLogItem.FIELD_LOG_ID)
     val origLogId: String,
 
     @ColumnInfo(name = BasicLogItem.FIELD_START_TIME)
@@ -26,18 +27,19 @@ data class LogOfSync(
     @ColumnInfo(name = BasicLogItem.FIELD_FINISH_TIME)
     val finishTime: Long,
 
-    @ColumnInfo(name = "log_item_type")
+    @ColumnInfo(name = BasicLogItem.FIELD_LOG_ITEM_TYPE)
     val logItemType: LogItemType,
 
-    @ColumnInfo("log_item_about")
+    @ColumnInfo(BasicLogItem.FIELD_LOG_ITEM_ABOUT)
     val logItemAbout: LogItemAbout,
 
-    @ColumnInfo(name = "task_id")
+    @ColumnInfo(name = DbFieldNames.FIELD_TASK_ID)
     val taskId: String,
 
-    @ColumnInfo(name = "execution_id")
+    @ColumnInfo(name = DbFieldNames.FIELD_EXECUTION_ID)
     val executionId: String,
 
+    @ColumnInfo(name = BasicLogItem.FIELD_TEXT)
     val text: String?,
 
     @ColumnInfo(name = BasicLogItem.FIELD_SUB_TEXT)
@@ -53,14 +55,14 @@ data class LogOfSync(
         const val TABLE_NAME = "sync_logs"
 
         const val BASIC_LOG_ITEM_FIELDS =
-            "id as log_id, " +
+            "${DbFieldNames.FIELD_ID} as ${BasicLogItem.FIELD_LOG_ID}, " +
             "${BasicLogItem.FIELD_START_TIME}, " +
             "${BasicLogItem.FIELD_FINISH_TIME}, " +
-            "task_id, " +
-            "log_item_type, " +
-            "log_item_about, " +
-            "execution_id, " +
-            "text, " +
+            "${DbFieldNames.FIELD_TASK_ID}, " +
+            "${BasicLogItem.FIELD_LOG_ITEM_TYPE}, " +
+            "${BasicLogItem.FIELD_LOG_ITEM_ABOUT}, " +
+            "${DbFieldNames.FIELD_EXECUTION_ID}, " +
+            "${BasicLogItem.FIELD_TEXT}, " +
             "${BasicLogItem.FIELD_SUB_TEXT}, " +
             BasicLogItem.FIELD_PROGRESS
 

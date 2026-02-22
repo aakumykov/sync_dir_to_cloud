@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
-import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogComposeBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
@@ -19,8 +19,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ui.theme.Syn
 class SyncLogFragmentCompose : Fragment(R.layout.fragment_sync_log_compose) {
 
     private lateinit var syncLogViewModel: SyncLogViewModel
-    private val taskId: String? get() = arguments?.getString(GlobalConstants.TASK_ID)
-    private val executionId: String? get() = arguments?.getString(GlobalConstants.EXECUTION_ID)
+    private val taskId: String? get() = arguments?.getString(GlobalKeys.KEY_TASK_ID)
+    private val executionId: String? get() = arguments?.getString(GlobalKeys.KEY_EXECUTION_ID)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -57,8 +57,8 @@ class SyncLogFragmentCompose : Fragment(R.layout.fragment_sync_log_compose) {
         fun create(taskId: String, executionId: String): SyncLogFragmentCompose {
             return SyncLogFragmentCompose().apply {
                 arguments = bundleOf(
-                    GlobalConstants.TASK_ID to taskId,
-                    GlobalConstants.EXECUTION_ID to executionId,
+                    GlobalKeys.KEY_TASK_ID to taskId,
+                    GlobalKeys.KEY_EXECUTION_ID to executionId,
                 )
             }
         }

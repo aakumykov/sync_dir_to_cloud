@@ -7,7 +7,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.VirtualSyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.VirtualSyncObjectAdderAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.absolutePathOfSide
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
@@ -41,7 +41,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     : CommonFileInstructionsProcessor(
         fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
 {
-    suspend fun process(list: Iterable<SyncInstruction>) {
+    suspend fun process(list: Iterable<FileInstruction>) {
         processReal(
             list
                 .filter { it.isCopying }
@@ -49,19 +49,19 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
         )
     }
 
-    private suspend fun processReal(list: Iterable<SyncInstruction>) {
+    private suspend fun processReal(list: Iterable<FileInstruction>) {
         copyFromSourceToTarget(list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
         copyFromTargetToSource(list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
     }
 
 
-    private suspend fun copyFromSourceToTarget(list: Iterable<SyncInstruction>) {
+    private suspend fun copyFromSourceToTarget(list: Iterable<FileInstruction>) {
         list.map { instruction ->
 
             val sourceObjectId = instruction.objectIdInSource
 
             if (null == sourceObjectId)
-                throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+                throw IllegalArgumentException("Source object id cannot be null, but is in ${FileInstruction.TAG}: $instruction")
 
             copyFromTo(
                 sourceObjectId,
@@ -75,13 +75,13 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun copyFromTargetToSource(list: Iterable<SyncInstruction>) {
+    private suspend fun copyFromTargetToSource(list: Iterable<FileInstruction>) {
         list.map { instruction ->
 
             val targetObjectId = instruction.objectIdInTarget
 
             if (null == targetObjectId)
-                throw IllegalArgumentException("Target object id (from that to be copying to source) cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+                throw IllegalArgumentException("Target object id (from that to be copying to source) cannot be null, but is in ${FileInstruction.TAG}: $instruction")
 
             copyFromTo(
                 targetObjectId,

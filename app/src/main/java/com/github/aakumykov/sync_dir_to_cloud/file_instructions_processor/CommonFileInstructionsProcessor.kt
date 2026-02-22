@@ -1,6 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundException
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
@@ -15,8 +15,8 @@ abstract class CommonFileInstructionsProcessor (
 )
     : FileOperationLogger by databaseFileOperationLogger
 {
-    suspend fun markInstructionAsProcessed(syncInstruction: SyncInstruction) {
-        syncInstructionUpdater.markAsProcessed(syncInstruction.id)
+    suspend fun markInstructionAsProcessed(fileInstruction: FileInstruction) {
+        syncInstructionUpdater.markAsProcessed(fileInstruction.id)
     }
 
     @Throws(SyncObjectNotFoundException::class)

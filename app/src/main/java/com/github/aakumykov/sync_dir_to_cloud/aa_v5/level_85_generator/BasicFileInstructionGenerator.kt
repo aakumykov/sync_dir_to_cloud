@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_85_generator
 
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.ComparisonState
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.PartsLabel
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
@@ -33,7 +33,7 @@ open class BasicFileInstructionGenerator(
             comparisonStateList.forEach { comparisonState ->
 //                Log.d(TAG, "$comparisonState")
                 add(
-                    SyncInstruction.from(
+                    FileInstruction.from(
                         partsLabel = partsLabel,
                         comparisonState = comparisonState,
                         operation = fileOperation,

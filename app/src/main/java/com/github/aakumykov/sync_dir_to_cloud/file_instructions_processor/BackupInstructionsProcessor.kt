@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.BackupInstructionExecutor
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.BackupInstructionExecutorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
@@ -31,32 +31,32 @@ class BackupInstructionsProcessor @AssistedInject constructor(
     : CommonFileInstructionsProcessor(
     fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
 {
-    suspend fun process(list: Iterable<SyncInstruction>) {
+    suspend fun process(list: Iterable<FileInstruction>) {
         processReal(list.filter { it.isBackup })
     }
 
 
-    private suspend fun processReal(list: List<SyncInstruction>) {
+    private suspend fun processReal(list: List<FileInstruction>) {
         backupDirs(list.filter { it.isDir })
         backupFiles(list.filter { it.isFile })
     }
 
 
-    private suspend fun backupDirs(list: List<SyncInstruction>) {
+    private suspend fun backupDirs(list: List<FileInstruction>) {
         list.map { instruction ->
             backupItem(instruction, R.string.LOG_ITEM_backing_up_dir)
         }.joinAll()
     }
 
 
-    private suspend fun backupFiles(list: List<SyncInstruction>) {
+    private suspend fun backupFiles(list: List<FileInstruction>) {
         list.map { instruction ->
             backupItem(instruction, R.string.LOG_ITEM_backing_up_file)
         }.joinAll()
     }
 
 
-    private suspend fun backupItem(instruction: SyncInstruction, @StringRes operationName: Int): Job {
+    private suspend fun backupItem(instruction: FileInstruction, @StringRes operationName: Int): Job {
 
         val logItemId = newRandomId
         val itemRelativePath = instruction.relativePath

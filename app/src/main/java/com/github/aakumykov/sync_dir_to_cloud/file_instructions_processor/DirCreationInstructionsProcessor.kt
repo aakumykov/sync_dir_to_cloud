@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.DirCreator5AssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncInstruction
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
@@ -33,7 +33,7 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     : CommonFileInstructionsProcessor(
         fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
 {
-    suspend fun process(list: Iterable<SyncInstruction>) {
+    suspend fun process(list: Iterable<FileInstruction>) {
         processReal(
             list
                 .filter { it.isCopying }
@@ -42,19 +42,19 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun processReal(list: Iterable<SyncInstruction>) {
+    private suspend fun processReal(list: Iterable<FileInstruction>) {
        createDirsFromSourceInTarget(list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
        createDirsFromTargetInSource(list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
     }
 
 
-    private suspend fun createDirsFromSourceInTarget(list: List<SyncInstruction>) {
+    private suspend fun createDirsFromSourceInTarget(list: List<FileInstruction>) {
         list.map { instruction ->
 
             val sourceObjectId = instruction.objectIdInSource
 
             if (null == sourceObjectId)
-                throw IllegalArgumentException("Source object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+                throw IllegalArgumentException("Source object id cannot be null, but is in ${FileInstruction.TAG}: $instruction")
 
             createDir(
                 scope = parentScope,
@@ -70,13 +70,13 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     }
 
 
-    private suspend fun createDirsFromTargetInSource(list: List<SyncInstruction>) {
+    private suspend fun createDirsFromTargetInSource(list: List<FileInstruction>) {
         list.map { instruction ->
 
             val targetObjectId = instruction.objectIdInTarget
 
             if (null == targetObjectId)
-                throw IllegalArgumentException("Target object id cannot be null, but is in ${SyncInstruction.TAG}: $instruction")
+                throw IllegalArgumentException("Target object id cannot be null, but is in ${FileInstruction.TAG}: $instruction")
 
             createDir(
                 scope = parentScope,

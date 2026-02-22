@@ -11,7 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 
 @Entity(
-    tableName = SyncInstruction.TABLE_NAME,
+    tableName = FileInstruction.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
@@ -25,7 +25,7 @@ import com.github.aakumykov.sync_dir_to_cloud.newRandomId
         Index(value = ["task_id"])
     ]
 )
-class SyncInstruction (
+class FileInstruction (
 
     @ColumnInfo(name = "parts_label", defaultValue = "") val partsLabel: PartsLabel,
 
@@ -76,15 +76,15 @@ class SyncInstruction (
                 FileOperation.COPY_FROM_SOURCE_TO_TARGET == operation
 
     /*override fun toString(): String {
-        return SyncInstruction::class.java.simpleName + "{ $operation, $relativePath }"
+        return FileInstruction::class.java.simpleName + "{ $operation, $relativePath }"
     }*/
 
     override fun toString(): String {
-        return "SyncInstruction(partsLabel=$partsLabel, id='$id', taskId='$taskId', executionId='$executionId', objectIdInSource=$objectIdInSource, objectIdInTarget=$objectIdInTarget, orderNum=$orderNum, operation=$operation, isDir=$isDir, relativePath='$relativePath', isProcessed=$isProcessed, isDeletion=$isDeletion, isCollisionResolution=$isCollisionResolution, isBackup=$isBackup, isBackupInSource=$isBackupInSource, isBackupInTarget=$isBackupInTarget, notDeletion=$notDeletion, isCopying=$isCopying)"
+        return "FileInstruction(partsLabel=$partsLabel, id='$id', taskId='$taskId', executionId='$executionId', objectIdInSource=$objectIdInSource, objectIdInTarget=$objectIdInTarget, orderNum=$orderNum, operation=$operation, isDir=$isDir, relativePath='$relativePath', isProcessed=$isProcessed, isDeletion=$isDeletion, isCollisionResolution=$isCollisionResolution, isBackup=$isBackup, isBackupInSource=$isBackupInSource, isBackupInTarget=$isBackupInTarget, notDeletion=$notDeletion, isCopying=$isCopying)"
     }
 
     companion object {
-        val TAG: String = SyncInstruction::class.java.simpleName
+        val TAG: String = FileInstruction::class.java.simpleName
 
         const val TABLE_NAME = "file_instructions"
 
@@ -93,7 +93,7 @@ class SyncInstruction (
             operation: FileOperation,
             partsLabel: PartsLabel,
             orderNum: Int,
-        ): SyncInstruction = SyncInstruction(
+        ): FileInstruction = FileInstruction(
             partsLabel = partsLabel,
             id = newRandomId,
             taskId = comparisonState.taskId,

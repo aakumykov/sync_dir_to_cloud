@@ -6,11 +6,10 @@ import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.ForeignKey.Companion.NO_ACTION
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.github.aakumykov.sync_dir_to_cloud.GlobalConstants
+import com.github.aakumykov.sync_dir_to_cloud.DbFieldNames
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
 
 @Entity(
@@ -18,14 +17,14 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
     foreignKeys = [
         ForeignKey(
             entity = SyncTask::class,
-            parentColumns = ["id"],
-            childColumns = [GlobalConstants.FIELD_TASK_ID],
+            parentColumns = [ DbFieldNames.FIELD_ID ],
+            childColumns = [ DbFieldNames.FIELD_TASK_ID ],
             onDelete = CASCADE,
             onUpdate = NO_ACTION
         )
     ],
     indices = [
-        Index(GlobalConstants.FIELD_TASK_ID)
+        Index(DbFieldNames.FIELD_TASK_ID)
     ]
 )
 class InstructionLogItem(
