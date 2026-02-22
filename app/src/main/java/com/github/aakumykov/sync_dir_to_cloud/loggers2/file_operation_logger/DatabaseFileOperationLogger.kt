@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationLogProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.FileOperationLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.FileOperationLogRepository
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
@@ -16,7 +17,7 @@ import javax.inject.Inject
 class DatabaseFileOperationLogger @Inject constructor(
     private val repository: FileOperationLogRepository,
     private val resources: Resources,
-): FileOperationLogger {
+): FileOperationLogger, FileOperationLogProgressUpdater {
 
     data class LogBaseInfo(
         val taskId: String,
@@ -26,6 +27,10 @@ class DatabaseFileOperationLogger @Inject constructor(
         val firstItem: String?,
         val secondItem: String?
     )
+
+    override suspend fun updateProgress(logItemId: String, progress: Float) {
+        repository.updateProgress(logItemId, progress)
+    }
 
     override suspend fun logStarted(baseInfo: LogBaseInfo, jobId: String) {
         runNonCancellable {

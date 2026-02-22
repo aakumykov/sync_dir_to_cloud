@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
+@Deprecated("убрать")
 object ProgressHolder {
 
     private val jobToProgressMap: ConcurrentMap<String, MutableState<Float>> = ConcurrentHashMap()

@@ -22,16 +22,16 @@ fun AutoScrollingLazyColumn(
 
     val lazyListState = rememberLazyListState()
 
-    LaunchedEffect(listState.value.size) {
+    /*LaunchedEffect(listState.value.size) {
         if (listState.value.isNotEmpty()) {
             if (isRunningState.value) {
                 lazyListState.animateScrollToItem(listState.value.size - 1)
             }
         }
-    }
+    }*/
 
     LazyColumn(
-        state = lazyListState,
+//        state = lazyListState,
         modifier = modifier
             .fillMaxSize()
             .padding(top = 4.dp, bottom = 8.dp)

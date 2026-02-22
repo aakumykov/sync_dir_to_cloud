@@ -14,4 +14,5 @@ interface FileOperationLogger {
     suspend fun logFinished(baseInfo: DatabaseFileOperationLogger.LogBaseInfo)
     suspend fun logCancelled(baseInfo: DatabaseFileOperationLogger.LogBaseInfo, e: CancellationException)
     suspend fun logError(baseInfo: DatabaseFileOperationLogger.LogBaseInfo, t: Throwable)
+
 }

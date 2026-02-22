@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
+import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
@@ -21,13 +22,13 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_obj
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.DatabaseFileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.ProgressHolder
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 class FileCopyInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val syncTask: SyncTask,
@@ -40,7 +41,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     private val virtualSyncObjectAdderAssistedFactory: VirtualSyncObjectAdderAssistedFactory, // Это мне не нравится...
 )
     : CommonFileInstructionsProcessor(
-        fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
+    fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
 {
     suspend fun process(list: Iterable<FileInstruction>) {
         processReal(
@@ -118,14 +119,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
 
         return runInCoroutineExtended(
             scope = parentScope,
-            onStart = {
-                logStarted(logBaseInfo, jobId = jobId)
-                ProgressHolder.addProgressState(logItemId)
-             },
+            onStart = { logStarted(logBaseInfo, jobId = jobId) },
             onFinish = { logFinished(logBaseInfo) },
             onCancel = { logCancelled(logBaseInfo, it) },
             onError = { logError(logBaseInfo, it) },
-            finally = { ProgressHolder.removeProgressState(logItemId) }
         ) {
             syncObjectCopier.copyFileFromSourceToTarget(
                 syncObject = syncObject,
@@ -133,7 +130,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
                 overwriteIfExists = true, // FIXME: убрать!
             ) { transferredBytes: Long ->
                 val progress = 1f * transferredBytes / syncObject.size
-                ProgressHolder.setProgress(logItemId, progress)
+                parentScope.launch {
+                    Log.d(TAG, "progress: $progress")
+                    updateProgress(logItemId, progress)
+                }
             }
 
             virtualSyncObjectAdder.actualizeInfoAboutObject(
@@ -150,6 +150,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
 
     private val virtualSyncObjectAdder: VirtualSyncObjectAdder by lazy {
         virtualSyncObjectAdderAssistedFactory.create(syncTask, executionId)
+    }
+
+    companion object {
+        val TAG: String = FileCopyInstructionsProcessor::class.java.simpleName
     }
 }
 

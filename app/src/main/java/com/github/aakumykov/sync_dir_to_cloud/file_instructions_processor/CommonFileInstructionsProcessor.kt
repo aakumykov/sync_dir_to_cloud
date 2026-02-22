@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundException
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationLogProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.FileOperationLogger
@@ -13,7 +14,8 @@ abstract class CommonFileInstructionsProcessor (
     private val syncInstructionUpdater: SyncInstructionUpdater,
     private val syncObjectDBReader: SyncObjectDBReader,
 )
-    : FileOperationLogger by databaseFileOperationLogger
+    : FileOperationLogger by databaseFileOperationLogger,
+    FileOperationLogProgressUpdater by databaseFileOperationLogger
 {
     suspend fun markInstructionAsProcessed(fileInstruction: FileInstruction) {
         syncInstructionUpdater.markAsProcessed(fileInstruction.id)
