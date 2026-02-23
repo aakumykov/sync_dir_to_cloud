@@ -7,15 +7,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
+import com.github.aakumykov.sync_dir_to_cloud.extensions.roundTo
+import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlin.math.roundToLong
 
 @Composable
 fun LogItemProgress(logOfSync: LogOfSync, modifier: Modifier = Modifier) {
     if (LogItemAbout.FILE == logOfSync.logItemAbout) {
+//        remember { mutableFloatStateOf(logOfSync.progress ?: 0f) },
         ProgressWithText(
-            remember { mutableFloatStateOf(logOfSync.progress ?: 0f) },
-            modifier = Modifier.fillMaxWidth()
+            logOfSync.progress ?: 0f,
+            modifier = modifier.fillMaxWidth()
         )
     }
 }

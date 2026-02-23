@@ -11,23 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
 
 @Composable
 fun ProgressWithText(
-    progress: State<Float>,
+//    progress: State<Float>,
+    progress: Float,
     modifier: Modifier = Modifier
 ) {
-    val p = progress.value
     Row(
         verticalAlignment = Alignment.Companion.CenterVertically,
         modifier = modifier.fillMaxWidth()
     ) {
         LinearProgressIndicator(
-            progress = { p },
+            progress = { progress },
             modifier = Modifier.Companion.fillMaxWidth().weight(1f, true)
         )
         Text(
-            text = "${p}%",
+            text = "${progress.toPercentOf100()}%",
             fontSize = 12.sp,
             modifier = Modifier.Companion.padding(start = 8.dp, end = 4.dp)
         )
