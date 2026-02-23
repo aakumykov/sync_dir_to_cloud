@@ -1,11 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger
 
 import kotlinx.coroutines.CancellationException
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.CommonFileInstructionsProcessor
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.BasicFileInstructionsProcessor
 
 /**
  * Интерфейс создан для того, чтобы делегировать его
- * функционал в классе [CommonFileInstructionsProcessor].
+ * функционал в классе [BasicFileInstructionsProcessor].
  * Не очень красиво, зато позволяет делегировать и потенциально
  * добавлять другие типы журналирования.
  */

@@ -11,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
+import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.DatabaseFileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
@@ -30,7 +31,7 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
     syncObjectDBReader: SyncObjectDBReader,
     private val dirCreatorAssistedFactory: DirCreator5AssistedFactory,
 )
-    : CommonFileInstructionsProcessor(
+    : BasicFileInstructionsProcessor(
         fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
 {
     suspend fun process(list: Iterable<FileInstruction>) {
@@ -118,10 +119,16 @@ class DirCreationInstructionsProcessor @AssistedInject constructor(
 
         return runInCoroutineExtended(
             scope = parentScope,
-            onStart = { logStarted(logBaseInfo, jobId = jobId) },
+            onStart = {
+                logStarted(logBaseInfo, jobId = jobId)
+                OperationJobsHolder.addJob(jobId, it)
+            },
             onFinish = { logFinished(logBaseInfo) },
             onCancel = { logCancelled(logBaseInfo, it) },
             onError = { logError(logBaseInfo, it) },
+            finally = {
+                OperationJobsHolder.removeJob(jobId)
+            }
         ) {
             when(toSyncSide) {
                 SyncSide.SOURCE -> {

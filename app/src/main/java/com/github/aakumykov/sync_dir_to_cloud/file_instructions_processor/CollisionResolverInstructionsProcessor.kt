@@ -13,7 +13,7 @@ class CollisionResolverInstructionsProcessor @AssistedInject constructor(
 
     ) {
     fun process(instruction: Iterable<FileInstruction>) {
-
+        TODO("Разрешение коллизий ещё не реализовано")
     }
 }
 

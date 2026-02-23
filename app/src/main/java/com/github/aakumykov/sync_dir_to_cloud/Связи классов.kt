@@ -8,7 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.Collis
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.DeleteInstructionsProcessor
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.DirCreationInstructionsProcessor
 import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.FileCopyInstructionsProcessor
-import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.FileInstructionsProcessor
+import com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor.CommonFileInstructionsProcessor
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.DatabaseFileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutor
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessor
@@ -22,9 +22,9 @@ import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
  * 🡫
  * [SyncTaskProcessor]
  * 🡫
- * [FileInstructionsProcessor]
+ * [CommonFileInstructionsProcessor]
  * 🡫
- * [CommonFileInstructionsProcessor (абстрактный)]
+ * [BasicFileInstructionsProcessor (абстрактный)]
  * 🡫
  * [FileCopyInstructionsProcessor] 🡨 [runInCoroutineExtended] 🡨 [DatabaseFileOperationLogger],
  * [DirCreationInstructionsProcessor],
