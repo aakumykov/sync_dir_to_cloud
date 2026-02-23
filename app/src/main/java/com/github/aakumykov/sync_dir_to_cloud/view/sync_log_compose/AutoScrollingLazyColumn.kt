@@ -19,7 +19,7 @@ fun AutoScrollingLazyColumn(
     modifier: Modifier = Modifier
 ) {
 
-    val lazyListState = rememberLazyListState()
+//    val lazyListState = rememberLazyListState()
 
     /*LaunchedEffect(listState.value.size) {
         if (listState.value.isNotEmpty()) {
