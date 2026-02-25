@@ -34,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingHorizontal="12dp"
-        android:paddingBottom="3dp"
+        android:paddingBottom="6dp"
         app:layout_constraintEnd_toEndOf="@id/log_of_sync_text"
         app:layout_constraintStart_toStartOf="@id/log_of_sync_text"
         app:layout_constraintTop_toBottomOf="@id/log_of_sync_text"

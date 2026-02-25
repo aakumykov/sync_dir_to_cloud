@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.os.bundleOf
@@ -23,7 +24,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private var _binding: FragmentSyncLogBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter: SyncLogAdapter = SyncLogAdapter(::onItemClick)
+    private val adapter = SyncLogAdapter(::onItemClick)
     private lateinit var syncLogViewModel: SyncLogViewModel
 
     private val taskId: String? get() = arguments?.getString(GlobalKeys.KEY_TASK_ID)
@@ -44,9 +45,13 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         syncLogViewModel = DaggerViewModelHelper.get(this, SyncLogViewModel::class.java)
 
         lifecycleScope.launch {
-            syncLogViewModel.startWorking(taskId!!, executionId!!)
             syncLogViewModel.logOfSyncListFlow.collect(::onListChanged)
+        }
 
+        if (null == savedInstanceState) {
+            lifecycleScope.launch {
+                syncLogViewModel.startWorking(taskId!!, executionId!!)
+            }
         }
 
         /*if (null == savedInstanceState) {
@@ -72,6 +77,8 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     }
 
     companion object {
+        val TAG: String = SyncLogFragment::class.java.simpleName
+
         fun create(taskId: String, executionId: String): SyncLogFragment {
             return SyncLogFragment().apply {
                 arguments = bundleOf(

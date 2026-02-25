@@ -31,6 +31,7 @@ class SyncLogViewHolder(
                 if (item.isActiveFileOperation) {
                     setOnClickListener { onItemClick.invoke(item) }
                     visibility = View.VISIBLE
+                    progress = item.progress?.toPercentOf100() ?: 0
                 } else {
                     setOnClickListener {  }
                     visibility = View.GONE

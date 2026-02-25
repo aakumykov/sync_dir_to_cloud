@@ -13,7 +13,10 @@ class SyncLogAdapter(
     private val list: MutableList<LogOfSync> = mutableListOf()
 
     fun setList(list: List<LogOfSync>) {
-        this.list.addAll(list)
+        this.list.apply {
+            clear()
+            addAll(list)
+        }
         notifyItemRangeChanged(0, list.size)
     }
 
