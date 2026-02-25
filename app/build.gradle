@@ -208,6 +208,7 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.9.4"
 
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
