@@ -49,22 +49,15 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         }
 
         if (null == savedInstanceState) {
-            lifecycleScope.launch {
-                syncLogViewModel.startWorking(taskId!!, executionId!!)
-            }
-        }
-
-        /*if (null == savedInstanceState) {
             if (null != taskId || null != executionId) {
-
-                    syncLogViewModel.logOfSyncListFlow.collect(::onListChanged)
+                lifecycleScope.launch {
                     syncLogViewModel.startWorking(taskId!!, executionId!!)
                 }
             } else {
                 showToast(resources.getString(R.string.SYNC_LOG_error_insufficient_arguments))
                 parentFragmentManager.popBackStack()
             }
-        }*/
+        }
     }
 
     private fun onListChanged(list: List<LogOfSync>) {
