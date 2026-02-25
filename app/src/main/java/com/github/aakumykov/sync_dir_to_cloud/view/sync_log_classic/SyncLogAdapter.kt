@@ -2,15 +2,18 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 class SyncLogAdapter(
     private val onItemClick: (logOfSync: LogOfSync) -> Unit
-) : RecyclerView.Adapter<SyncLogViewHolder>() {
+) : ListAdapter<LogOfSync, SyncLogViewHolder>(LogOfSyncDiffer()) {
 
     private val list: MutableList<LogOfSync> = mutableListOf()
+
+    override fun getItemCount(): Int = list.size
 
     fun setList(list: List<LogOfSync>) {
         this.list.apply {
@@ -35,6 +38,11 @@ class SyncLogAdapter(
         holder.init(list[position])
     }
 
-    override fun getItemCount(): Int = list.size
-
+    /*override fun onBindViewHolder(
+        holder: SyncLogViewHolder,
+        position: Int,
+        payloads: List<Any?>
+    ) {
+        super.onBindViewHolder(holder, position, payloads)
+    }*/
 }
