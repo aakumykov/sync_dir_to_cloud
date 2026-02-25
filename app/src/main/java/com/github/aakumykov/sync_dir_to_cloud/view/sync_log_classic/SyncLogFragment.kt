@@ -31,7 +31,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private val executionId: String? get() = arguments?.getString(GlobalKeys.KEY_EXECUTION_ID)
 
     private fun onItemClick(logOfSync: LogOfSync) {
-        showToast(logOfSync.text ?: logOfSync.origLogId)
+        syncLogViewModel.cancelJob(logOfSync.origLogId)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
