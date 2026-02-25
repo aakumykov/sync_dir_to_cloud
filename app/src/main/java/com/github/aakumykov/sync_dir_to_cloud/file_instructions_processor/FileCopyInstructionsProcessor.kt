@@ -138,7 +138,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
             ) { transferredBytes: Long ->
                 val progress = 1f * transferredBytes / syncObject.size
                 parentScope.launch {
-                    Log.d(TAG, "progress: $progress")
+//                    Log.d(TAG, "progress: $progress")
                     updateProgress(logItemId, progress)
                 }
             }
