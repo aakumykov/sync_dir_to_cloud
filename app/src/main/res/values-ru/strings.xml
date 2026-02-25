@@ -216,4 +216,5 @@
     <string name="SETTINGS_SUMMARY_dry_run">Подготавливать действия, но не выполнять их</string>
     <string name="description_cancel_file_operation">Отменить операцию с файлом</string>
     <string name="TASK_STATE_cancelled">Задача отменена</string>
+    <string name="description_stop_sync_operation">Остановить операцию</string>
 </resources>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/log_of_sync_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:textSize="16sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="@+id/log_of_sync_stop_button"
+        app:layout_constraintEnd_toStartOf="@+id/log_of_sync_stop_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="text" />
+
+    <ImageButton
+        android:id="@+id/log_of_sync_stop_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/description_stop_sync_operation"
+        app:layout_constraintBottom_toBottomOf="@id/log_of_sync_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/log_of_sync_text"
+        app:srcCompat="@drawable/ic_task_stop" />
+
+    <TextView
+        android:id="@+id/log_of_sync_sub_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        app:layout_constraintEnd_toEndOf="@id/log_of_sync_text"
+        app:layout_constraintStart_toStartOf="@id/log_of_sync_text"
+        app:layout_constraintTop_toBottomOf="@id/log_of_sync_text"
+        tools:text="sub_text" />
+
+    <ProgressBar
+        android:id="@+id/log_of_sync_sub_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/log_of_sync_sub_text"
+        tools:progress="37"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
