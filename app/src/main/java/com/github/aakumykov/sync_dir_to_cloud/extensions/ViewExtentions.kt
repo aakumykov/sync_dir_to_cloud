@@ -6,7 +6,3 @@ import androidx.annotation.StringRes
 fun View.getString(@StringRes stringRes: Int, vararg args: Any): String {
     return resources.getString(stringRes)
 }
-
-fun View.makeVisible() { visibility = View.VISIBLE }
-fun View.makeInvisible() { visibility = View.INVISIBLE }
-fun View.makeGone() { visibility = View.GONE }

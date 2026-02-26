@@ -18,7 +18,6 @@ class SyncLogAdapter(
         return SyncLogViewHolder(view, onItemClick = onItemClick)
     }
 
-
     override fun onBindViewHolder(
         holder: SyncLogViewHolder,
         position: Int
@@ -26,17 +25,11 @@ class SyncLogAdapter(
         holder.init(getItem(position))
     }
 
-
-    override fun onBindViewHolder(
+    /*override fun onBindViewHolder(
         holder: SyncLogViewHolder,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: List<Any?>
     ) {
-        payloads.lastOrNull()?.also {
-            val payload = it as LogOfSyncChangePayload
-            payload.logItemType?.also { holder.init(payload) }
-        } ?: run {
-            onBindViewHolder(holder, position)
-        }
-    }
+        super.onBindViewHolder(holder, position, payloads)
+    }*/
 }
