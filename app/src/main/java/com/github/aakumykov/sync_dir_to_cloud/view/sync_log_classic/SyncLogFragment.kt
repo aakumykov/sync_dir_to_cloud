@@ -33,6 +33,12 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         syncLogViewModel.cancelJob(origLogId)
     }
 
+    private fun onListSubmitted() {
+        binding.recyclerView
+//            .smoothScrollToPosition(adapter.currentList.size-1)
+            .scrollToPosition(adapter.currentList.size-1)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,9 +68,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     }
 
     private fun onListChanged(list: List<LogOfSync>) {
-        adapter.submitList(list
-//            .filter { LogItemAbout.FILE == it.logItemAbout }
-        )
+        adapter.submitList(list) { onListSubmitted() }
     }
 
     override fun onDestroyView() {
