@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
 
 import androidx.recyclerview.widget.DiffUtil
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOperation
 
 class LogOfSyncDiffer()  : DiffUtil.ItemCallback<LogOfSync>() {
 
@@ -23,17 +24,25 @@ class LogOfSyncDiffer()  : DiffUtil.ItemCallback<LogOfSync>() {
                 areProgressEquals
     }
 
-    /*override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
+    override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
+        val changePayload = LogOfSyncChangePayload().apply {
 
-        val userChangePayload = LogOfSyncChangePayload()
+            isActiveFileOperation = newItem.isActiveFileOperation
 
-        if (oldItem.firstName != newItem.firstName)
-            userChangePayload.fistName = newItem.firstName
+            if (oldItem.logItemType != newItem.logItemType)
+                logItemType = newItem.logItemType
 
-        if (oldItem.lastName != newItem.lastName)
-            userChangePayload.lastName = newItem.lastName
+            if (oldItem.text != newItem.text)
+                text = newItem.text
 
-        return if (userChangePayload.isChanged) userChangePayload
+            if (oldItem.subText != newItem.subText)
+                subText = newItem.subText
+
+            if (oldItem.progress != newItem.progress)
+                progress = newItem.progress
+        }
+
+        return if (changePayload.isChanged) changePayload
         else super.getChangePayload(oldItem, newItem)
-    }*/
+    }
 }
