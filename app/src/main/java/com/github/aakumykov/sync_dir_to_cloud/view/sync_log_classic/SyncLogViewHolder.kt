@@ -71,7 +71,17 @@ class SyncLogViewHolder(
     }
 
     fun init(payload: LogOfSyncChangePayload) {
-        payload.progress.also { initProgress(it, payload.isActiveFileOperation) }
+        initLogItemType(
+            payload.logItemType
+        )
+        initProgress(
+            payload.progress,
+            payload.isActiveFileOperation
+        )
+        initCancelButton(
+            payload.origLogId,
+            payload.isActiveFileOperation
+        )
     }
 
     fun init(item: LogOfSync) {
