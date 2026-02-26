@@ -11,10 +11,16 @@ class LogOfSyncDiffer()  : DiffUtil.ItemCallback<LogOfSync>() {
     }
 
     override fun areContentsTheSame(oldItem: LogOfSync, newItem: LogOfSync): Boolean {
+
+        val areTypeEquals = oldItem.logItemType == newItem.logItemType
         val areTextEquals = oldItem.text == newItem.text
         val areSubTextEquals = oldItem.subText == newItem.subText
         val areProgressEquals = oldItem.progress == newItem.progress
-        return areTextEquals && areSubTextEquals && areProgressEquals
+
+        return areTypeEquals &&
+                areTextEquals &&
+                areSubTextEquals &&
+                areProgressEquals
     }
 
     /*override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
