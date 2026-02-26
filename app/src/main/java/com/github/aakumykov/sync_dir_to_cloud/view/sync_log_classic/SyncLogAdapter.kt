@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.ListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
+typealias OnSyncLogItemClick = (origLogItem: String) -> Unit
+
 class SyncLogAdapter(
-    private val onItemClick: (logOfSync: LogOfSync) -> Unit
+    private val onItemClick: OnSyncLogItemClick
 ) : ListAdapter<LogOfSync, SyncLogViewHolder>(LogOfSyncDiffer()) {
 
     override fun onCreateViewHolder(

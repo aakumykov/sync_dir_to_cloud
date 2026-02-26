@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
 
+import android.R.attr.text
 import androidx.recyclerview.widget.DiffUtil
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOperation
@@ -27,6 +28,8 @@ class LogOfSyncDiffer()  : DiffUtil.ItemCallback<LogOfSync>() {
     override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
         val changePayload = LogOfSyncChangePayload().apply {
 
+            origLogId = oldItem.origLogId
+
             isActiveFileOperation = newItem.isActiveFileOperation
 
             if (oldItem.logItemType != newItem.logItemType)
@@ -42,7 +45,7 @@ class LogOfSyncDiffer()  : DiffUtil.ItemCallback<LogOfSync>() {
                 progress = newItem.progress
         }
 
-        return if (changePayload.isChanged) changePayload
+        return if (oldItem.hashCode() != newItem.hashCode()) changePayload
         else super.getChangePayload(oldItem, newItem)
     }
 }
