@@ -28,18 +28,7 @@ class LogOfSyncDiffer()  : DiffUtil.ItemCallback<LogOfSync>() {
     override fun getChangePayload(oldItem: LogOfSync, newItem: LogOfSync): Any? {
         val changePayload = LogOfSyncChangePayload().apply {
 
-            origLogId = oldItem.origLogId
-
             isActiveFileOperation = newItem.isActiveFileOperation
-
-            if (oldItem.logItemType != newItem.logItemType)
-                logItemType = newItem.logItemType
-
-            if (oldItem.text != newItem.text)
-                text = newItem.text
-
-            if (oldItem.subText != newItem.subText)
-                subText = newItem.subText
 
             if (oldItem.progress != newItem.progress)
                 progress = newItem.progress

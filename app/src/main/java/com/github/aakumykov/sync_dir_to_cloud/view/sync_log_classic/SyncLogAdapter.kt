@@ -36,7 +36,7 @@ class SyncLogAdapter(
     ) {
         payloads.lastOrNull()?.also {
             val payload = it as LogOfSyncChangePayload
-            payload.logItemType?.also { holder.init(payload) }
+            holder.init(payload)
         } ?: run {
             onBindViewHolder(holder, position)
         }

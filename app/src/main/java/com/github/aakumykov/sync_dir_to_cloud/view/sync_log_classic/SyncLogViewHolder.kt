@@ -10,9 +10,11 @@ import com.github.aakumykov.sync_dir_to_cloud.Constants
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeGone
+import com.github.aakumykov.sync_dir_to_cloud.extensions.makeInvisible
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeVisible
 import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOperation
 
 class SyncLogViewHolder(
     itemView: View,
@@ -54,31 +56,29 @@ class SyncLogViewHolder(
         }
     }
 
-    private fun initProgress(progressValue: Float?) {
+    private fun initProgress(progressValue: Float?, isActiveFileOperation: Boolean) {
         itemView.findViewById<ProgressBar>(R.id.log_of_sync_sub_progress_bar).apply {
             progress = progressValue?.toPercentOf100() ?: 0
+            if (isActiveFileOperation) makeVisible() else makeInvisible()
         }
     }
 
-    private fun initCancelButton(origLogId: String) {
+    private fun initCancelButton(origLogId: String, isActiveFileOperation: Boolean) {
         itemView.findViewById<ImageButton>(R.id.log_of_sync_stop_button).apply {
             setOnClickListener { onItemClick.invoke(origLogId) }
+            if (isActiveFileOperation) makeVisible() else makeInvisible()
         }
     }
 
     fun init(payload: LogOfSyncChangePayload) {
-        payload.logItemType?.also { initLogItemType(it) }
-        payload.text?.also { initText(it) }
-        payload.subText.also { initSubText(it) }
-        payload.progress.also { initProgress(it) }
-        initCancelButton(payload.origLogId)
+        payload.progress.also { initProgress(it, payload.isActiveFileOperation) }
     }
 
     fun init(item: LogOfSync) {
         initLogItemType(item.logItemType)
         initText(item.text)
         initSubText(item.subText)
-        initProgress(item.progress)
-        initCancelButton(item.origLogId)
+        initProgress(item.progress, item.isActiveFileOperation)
+        initCancelButton(item.origLogId, item.isActiveFileOperation)
     }
 }
