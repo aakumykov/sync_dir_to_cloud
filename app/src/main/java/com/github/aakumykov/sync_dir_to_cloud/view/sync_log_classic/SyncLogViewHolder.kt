@@ -34,7 +34,7 @@ class SyncLogViewHolder(
                     progress = item.progress?.toPercentOf100() ?: 0
                 } else {
                     setOnClickListener {  }
-                    visibility = View.GONE
+                    visibility = View.INVISIBLE
                 }
             }
 

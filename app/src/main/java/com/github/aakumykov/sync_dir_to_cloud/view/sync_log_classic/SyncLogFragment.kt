@@ -61,7 +61,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     }
 
     private fun onListChanged(list: List<LogOfSync>) {
-        adapter.setList(list)
+        adapter.submitList(list)
     }
 
     override fun onDestroyView() {
