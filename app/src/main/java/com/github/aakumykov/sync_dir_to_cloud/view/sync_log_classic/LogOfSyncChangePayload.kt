@@ -1,24 +1,26 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
 
-class LogOfSyncChangePayload {
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
+
+class LogOfSyncChangePayload() {
 
     private var _isChanged: Boolean = false
-
     val isChanged get() = _isChanged
 
-    private fun markChanged() {
-        _isChanged = true
-    }
+    private fun markChanged() { _isChanged = true }
 
-    var fistName: String? = null
-        set(value) {
-            markChanged()
-            field = value
-        }
+    var isActiveFileOperation: Boolean = false
+        set(value) { field = value; markChanged() }
 
-    var lastName: String? = null
-        set(value) {
-            markChanged()
-            field = value
-        }
+    var logItemType: LogItemType? = null
+        set(value) { field = value; markChanged() }
+
+    var text: String? = null
+        set(value) { field = value; markChanged() }
+
+    var subText: String? = null
+        set(value) { field = value; markChanged() }
+
+    var progress: Float? = null
+        set(value) { field = value; markChanged() }
 }

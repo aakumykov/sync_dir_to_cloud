@@ -14,9 +14,12 @@ import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.launch
 
 class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
@@ -45,7 +48,9 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         syncLogViewModel = DaggerViewModelHelper.get(this, SyncLogViewModel::class.java)
 
         lifecycleScope.launch {
-            syncLogViewModel.logOfSyncListFlow.collect(::onListChanged)
+            syncLogViewModel
+                .logOfSyncListFlow
+                .collect(::onListChanged)
         }
 
         if (null == savedInstanceState) {
@@ -61,7 +66,10 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     }
 
     private fun onListChanged(list: List<LogOfSync>) {
-        adapter.submitList(list)
+        adapter.submitList(
+            list
+                .filter { it.logItemAbout == LogItemAbout.FILE }
+        )
     }
 
     override fun onDestroyView() {
