@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -70,26 +69,6 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         adapter.submitList(list
 //            .filter { LogItemAbout.FILE == it.logItemAbout }
         )
-        binding.recyclerView.scrollToPosition(adapter.currentList.size-1)
-    }
-
-    private val adapterDataObserver by lazy {
-        object: RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                binding.recyclerView.scrollToPosition(positionStart)
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adapter.registerAdapterDataObserver(adapterDataObserver)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        adapter.unregisterAdapterDataObserver(adapterDataObserver)
     }
 
     override fun onDestroyView() {
