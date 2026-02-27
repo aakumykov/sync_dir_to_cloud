@@ -18,8 +18,27 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOp
 
 class SyncLogViewHolder(
     itemView: View,
-    private val onItemClick: (origLogItem: String) -> Unit
+    private val onItemClicked: (origLogItem: String) -> Unit,
+    private val onOperationCancellationButtonClicked: (origLogItem: String) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
+
+
+    fun init(item: LogOfSync) {
+        initLogItemType(item.logItemType)
+        initText(item.text)
+        initSubText(item.subText)
+        initProgress(item.progress, item.isActiveFileOperation)
+        initItemClick(item.origLogId)
+        initCancelButton(item.origLogId, item.isActiveFileOperation)
+    }
+
+
+    fun initDifferential(payload: LogOfSyncChangePayload) {
+        initLogItemType(payload.logItemType)
+        initProgress(payload.progress, payload.isActiveFileOperation)
+        initCancelButton(payload.origLogId, payload.isActiveFileOperation)
+    }
+
 
     private fun initLogItemType(logItemType: LogItemType) {
         itemView.findViewById<ImageView>(R.id.log_of_sync_status_icon).setImageResource(
@@ -63,32 +82,16 @@ class SyncLogViewHolder(
         }
     }
 
-    private fun initCancelButton(origLogId: String, isActiveFileOperation: Boolean) {
-        itemView.findViewById<ImageButton>(R.id.log_of_sync_stop_button).apply {
-            setOnClickListener { onItemClick.invoke(origLogId) }
-            if (isActiveFileOperation) makeVisible() else makeInvisible()
+    private fun initItemClick(origLogId: String) {
+        itemView.setOnClickListener {
+            onItemClicked.invoke(origLogId)
         }
     }
 
-    fun init(payload: LogOfSyncChangePayload) {
-        initLogItemType(
-            payload.logItemType
-        )
-        initProgress(
-            payload.progress,
-            payload.isActiveFileOperation
-        )
-        initCancelButton(
-            payload.origLogId,
-            payload.isActiveFileOperation
-        )
-    }
-
-    fun init(item: LogOfSync) {
-        initLogItemType(item.logItemType)
-        initText(item.text)
-        initSubText(item.subText)
-        initProgress(item.progress, item.isActiveFileOperation)
-        initCancelButton(item.origLogId, item.isActiveFileOperation)
+    private fun initCancelButton(origLogId: String, isActiveFileOperation: Boolean) {
+        itemView.findViewById<ImageButton>(R.id.log_of_sync_stop_button).apply {
+            setOnClickListener { onOperationCancellationButtonClicked.invoke(origLogId) }
+            if (isActiveFileOperation) makeVisible() else makeInvisible()
+        }
     }
 }

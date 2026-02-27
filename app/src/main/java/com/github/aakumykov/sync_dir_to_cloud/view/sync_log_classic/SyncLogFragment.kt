@@ -12,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
@@ -23,13 +22,18 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private var _binding: FragmentSyncLogBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = SyncLogAdapter(::onItemClick)
+    private val adapter = SyncLogAdapter(::onItemClicked, ::onOperationCancelClicked)
     private lateinit var syncLogViewModel: SyncLogViewModel
 
     private val taskId: String? get() = arguments?.getString(GlobalKeys.KEY_TASK_ID)
     private val executionId: String? get() = arguments?.getString(GlobalKeys.KEY_EXECUTION_ID)
 
-    private fun onItemClick(origLogId: String) {
+
+    private fun onItemClicked(origLogId: String) {
+        showToast(origLogId)
+    }
+
+    private fun onOperationCancelClicked(origLogId: String) {
         syncLogViewModel.cancelJob(origLogId)
     }
 

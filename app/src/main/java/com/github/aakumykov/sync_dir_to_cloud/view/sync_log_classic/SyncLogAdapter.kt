@@ -7,7 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 class SyncLogAdapter(
-    private val onItemClick: (origLogItem: String) -> Unit
+    private val onItemClicked: (origLogItem: String) -> Unit,
+    private val onOperationCancellationButtonClicked: (origLogItem: String) -> Unit
 ) : ListAdapter<LogOfSync, SyncLogViewHolder>(LogOfSyncDiffer()) {
 
     override fun onCreateViewHolder(
@@ -15,7 +16,11 @@ class SyncLogAdapter(
         viewType: Int
     ): SyncLogViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.sync_log_item, parent,false)
-        return SyncLogViewHolder(view, onItemClick = onItemClick)
+        return SyncLogViewHolder(
+            view,
+            onItemClicked = onItemClicked,
+            onOperationCancellationButtonClicked = onOperationCancellationButtonClicked
+        )
     }
 
 
@@ -34,7 +39,7 @@ class SyncLogAdapter(
     ) {
         payloads.lastOrNull()?.also {
             val payload = it as LogOfSyncChangePayload
-            holder.init(payload)
+            holder.initDifferential(payload)
         } ?: run {
             onBindViewHolder(holder, position)
         }
