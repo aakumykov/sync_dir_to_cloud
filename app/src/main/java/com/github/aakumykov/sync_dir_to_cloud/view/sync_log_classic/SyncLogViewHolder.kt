@@ -18,7 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOp
 
 class SyncLogViewHolder(
     itemView: View,
-    private val onItemClick: OnSyncLogItemClick
+    private val onItemClick: (origLogItem: String) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
     private fun initLogItemType(logItemType: LogItemType) {
