@@ -6,6 +6,7 @@ import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_10_drivers.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.utils.BytesToHumanSizeFormatter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -91,7 +92,7 @@ class StreamToFileWriter @AssistedInject constructor(
         return suspendCancellableCoroutine { cancellableContinuation ->
 
             cancellableContinuation.invokeOnCancellation {
-                Log.d(TAG, "cancellableContinuation.invokeOnCancellation{${it?.errorMsg}}")
+                Log.d(TAG, "cancellableContinuation.invokeOnCancellation(): ${it?.errorMsgExtended}")
                 receivedCancellationThrowable = it
                 inputStream.close()
             }
@@ -127,6 +128,7 @@ class StreamToFileWriter @AssistedInject constructor(
 
                 if (receivedCancellationThrowable !is CancellationException) {
                     receivedCancellationThrowable = null
+                    Log.d(TAG, "Перевыбрасываю исключение '${t.errorMsgExtended}'")
                     throw t
                 }
 

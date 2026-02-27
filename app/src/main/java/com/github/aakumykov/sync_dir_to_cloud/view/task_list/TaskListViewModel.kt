@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SchedulingSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTaskManagingUseCase
+import com.github.aakumykov.sync_dir_to_cloud.exceptions.CancelledByUserException
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
@@ -35,7 +36,7 @@ class TaskListViewModel(
             if (syncTaskStartStopUseCase.isRunning(taskId)) {
 
                 TaskJobsHolder.getJob(taskId)?.also {
-                    it.cancel(CancellationException("Прервано пользователем"))
+                    it.cancel(CancelledByUserException())
                 } ?: run {
                     Log.e(TAG, "CoroutineScope не найден для задачи '$taskId'")
                 }

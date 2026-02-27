@@ -16,6 +16,8 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundException
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
@@ -125,7 +127,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
                 OperationJobsHolder.addJob(jobId, it)
             },
             onFinish = { logFinished(logBaseInfo) },
-            onCancel = { logCancelled(logBaseInfo, it) },
+            onCancel = {
+                Log.d(TAG, "copyFromTo(), runInCoroutineExtended() отменено: ${it.errorMsgExtended}")
+                logCancelled(logBaseInfo, it)
+            },
             onError = { logError(logBaseInfo, it) },
             finally = {
                 OperationJobsHolder.removeJob(jobId)
