@@ -22,6 +22,20 @@ class AppSettingsImpl @Inject constructor(
 
     private val DEFAULT_FILE_TRANSFER_RETARDATION_MS by lazy { getInteger(R.integer.DEFAULT_settings_file_transfer_retardation_ms) }
 
+    override var fileParallelism: Int
+        get() = sharedPreferences.getInt(
+            keyFromResources(R.string.KEY_settings_file_transfer_parallelism),
+            getInteger(R.integer.DEFAULT_settings_file_transfer_parallelism)
+        )
+        set(value) { sharedPreferences.edit {
+            val x = if (value <= 0) getInteger(R.integer.DEFAULT_settings_file_transfer_parallelism)
+            else value
+
+            putInt(
+                keyFromResources(R.string.KEY_settings_file_transfer_parallelism),
+                x
+            )
+        }}
 
     override var restoreLostSourceAndTargetDirs: Boolean
         get() = sharedPreferences.getBoolean(
@@ -29,10 +43,7 @@ class AppSettingsImpl @Inject constructor(
             getBoolean(R.bool.DEFAULT_settings_re_create_missing_source_and_target_dirs)
         )
         set(value) { sharedPreferences.edit {
-            putBoolean(
-                keyFromResources(R.string.KEY_settings_re_create_missing_source_and_target_dirs),
-                value
-            )
+            putBoolean(keyFromResources(R.string.KEY_settings_re_create_missing_source_and_target_dirs), value)
         } }
 
 

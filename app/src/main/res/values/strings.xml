@@ -178,6 +178,7 @@
     <string name="KEY_settings_file_transfer_retardation_ms" translatable="false">settings_file_transfer_retardation_ms</string>
     <string name="KEY_settings_backup_is_critical_operation" translatable="false">settings_backup_is_critical_operation</string>
     <string name="KEY_settings_dry_run" translatable="false">settings_dry_run</string>
+    <string name="KEY_settings_file_transfer_parallelism" translatable="false">file_transfer_parallelism</string>
     <string name="description_operation_cancel_icon">Cancel operation</string>
     <string name="SETTINGS_file_transfer_retardation_ms">File copying retardation, ms</string>
     <string name="SETTINGS_SUMMARY_file_transfer_retardation_ms">Waiting after transferring each piece of data when copying files</string>
@@ -220,4 +221,6 @@
     <string name="description_cancel_file_operation">Cancel file operation</string>
     <string name="TASK_STATE_cancelled">Task cancelled</string>
     <string name="description_stop_sync_operation">Stop sync operation</string>
+    <string name="SETTINGS_file_transfer_parallelism">File parallelism</string>
+    <string name="SETTINGS_SUMMARY_file_transfer_parallelism">Process file at a time</string>
 </resources>

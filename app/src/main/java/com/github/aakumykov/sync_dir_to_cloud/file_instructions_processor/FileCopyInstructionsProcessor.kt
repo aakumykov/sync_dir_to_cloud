@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
+import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
@@ -7,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.SyncObjectFileCopierAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.VirtualSyncObjectAdder
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object.VirtualSyncObjectAdderAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.app_settings.AppSettings
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.absolutePathOfSide
@@ -15,7 +17,6 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.FileOperation
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundException
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
-import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
@@ -41,6 +42,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     syncObjectDBReader: SyncObjectDBReader,
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
     private val virtualSyncObjectAdderAssistedFactory: VirtualSyncObjectAdderAssistedFactory, // Это мне не нравится...
+    private val appSettings: AppSettings,
 )
     : BasicFileInstructionsProcessor(
     fileOperationLogger, syncInstructionUpdater, syncObjectDBReader)
@@ -54,10 +56,10 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
     private suspend fun processReal(list: Iterable<FileInstruction>) {
-        processByChunks(3, list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation }) {
+        processByChunks(appSettings.fileParallelism, list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation }) {
             copyFromSourceToTarget(it)
         }
-        processByChunks(3, list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation }) {
+        processByChunks(appSettings.fileParallelism, list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation }) {
             copyFromTargetToSource(it)
         }
     }

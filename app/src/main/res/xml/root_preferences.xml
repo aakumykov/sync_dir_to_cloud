@@ -29,4 +29,18 @@
         android:summary="@string/SETTINGS_SUMMARY_dry_run"
         />
 
+    <androidx.preference.EditTextPreference
+        android:icon="@drawable/ic_parallelism"
+        android:dialogIcon="@drawable/ic_parallelism"
+        android:defaultValue="@integer/DEFAULT_settings_file_transfer_parallelism"
+        android:key="@string/KEY_settings_file_transfer_parallelism"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        app:singleLineTitle="true"
+        android:title="@string/SETTINGS_file_transfer_parallelism"
+        android:summary="@string/SETTINGS_SUMMARY_file_transfer_parallelism"
+        app:useSimpleSummaryProvider="true"
+        android:inputType="numberDecimal"
+        />
+
 </PreferenceScreen>

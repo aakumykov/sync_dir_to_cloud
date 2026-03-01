@@ -217,4 +217,6 @@
     <string name="description_cancel_file_operation">Отменить операцию с файлом</string>
     <string name="TASK_STATE_cancelled">Задача отменена</string>
     <string name="description_stop_sync_operation">Остановить операцию</string>
+    <string name="SETTINGS_file_transfer_parallelism">Файловый паралеллизм</string>
+    <string name="SETTINGS_SUMMARY_file_transfer_parallelism">Обрабатывать файлов одновременно</string>
 </resources>

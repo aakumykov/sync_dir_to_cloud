@@ -6,4 +6,5 @@ interface AppSettings {
     var fileTransferRetardationMs: Int
     var backupIsCriticalOperation: Boolean
     var dryRun: Boolean
+    var fileParallelism: Int
 }
