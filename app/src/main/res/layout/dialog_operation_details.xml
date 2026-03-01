@@ -7,6 +7,18 @@
     android:paddingTop="16dp">
 
     <TextView
+        android:id="@+id/stateView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        tools:text="Статус"
+        android:textAllCaps="true"
+        android:textStyle="italic"
+        android:textAlignment="center"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp" />
+
+    <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,6 +27,16 @@
         tools:text="Текст"
         android:paddingVertical="8dp"
         android:paddingHorizontal="16dp" />
+
+    <TextView
+        android:id="@+id/startTimeView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        tools:text="Дата"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp" />
+
 
     <TextView
         android:id="@+id/subTextView"
@@ -26,7 +48,7 @@
         android:paddingHorizontal="16dp" />
 
     <TextView
-        android:id="@+id/startedDateView"
+        android:id="@+id/finishTimeView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
@@ -35,12 +57,32 @@
         android:paddingHorizontal="16dp" />
 
     <TextView
-        android:id="@+id/errorView"
+        android:id="@+id/durationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/error"
-        tools:text="Ошибка"
         android:textSize="16sp"
+        tools:text="Дата"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp" />
+
+    <TextView
+        android:id="@+id/idView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        tools:text="log Id"
+        android:paddingVertical="4dp"
+        android:paddingHorizontal="16dp" />
+
+    <TextView
+        android:id="@+id/dataErrorView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:visibility="gone"
+        tools:text="Ошибка данных"
+        android:textColor="@color/error"
+        tools:visibility="visible"
         android:paddingVertical="8dp"
         android:paddingHorizontal="16dp" />
 

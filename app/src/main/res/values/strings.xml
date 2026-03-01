@@ -225,4 +225,8 @@
     <string name="SETTINGS_SUMMARY_file_transfer_parallelism">Process file at a time</string>
     <string name="ERROR_insufficient_arguments">Insufficient arguments</string>
     <string name="data_not_found">Data not found</string>
+    <string name="DIALOG_OPERATION_DETAILS_start_time">Started: %1$s</string>
+    <string name="DIALOG_OPERATION_DETAILS_finish_time">Finished: %1$s</string>
+    <string name="DIALOG_OPERATION_DETAILS_duration">Duration: %1$s</string>
+    <string name="DIALOG_OPERATION_DETAILS_id" translatable="false">id: %1$s</string>
 </resources>

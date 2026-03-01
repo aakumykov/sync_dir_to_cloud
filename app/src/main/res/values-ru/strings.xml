@@ -221,4 +221,7 @@
     <string name="SETTINGS_SUMMARY_file_transfer_parallelism">Обрабатывать файлов одновременно</string>
     <string name="ERROR_insufficient_arguments">Недостаточно аргументов</string>
     <string name="data_not_found">Данные не найдены</string>
+    <string name="DIALOG_OPERATION_DETAILS_start_time">Старт: %1$s</string>
+    <string name="DIALOG_OPERATION_DETAILS_finish_time">Финиш: %1$s</string>
+    <string name="DIALOG_OPERATION_DETAILS_duration">Продолжительность: %1$s</string>
 </resources>

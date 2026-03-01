@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS
+import kotlin.math.roundToInt
 
 @DatabaseView(
     viewName = LogOfSync.TABLE_NAME,
@@ -96,3 +97,10 @@ val LogOfSync.isActiveFileOperation: Boolean get() {
 }
 
 val LogOfSync.isError: Boolean get() = LogItemType.ERROR == logItemType
+
+val LogOfSync.duration: Long get() = finishTime - startTime
+
+val LogOfSync.startTimeUnix: Long get() = (startTime.toFloat() / 1000).roundToInt().toLong()
+val LogOfSync.finishTimeUnix: Long get() = (finishTime.toFloat() / 1000).roundToInt().toLong()
+val LogOfSync.durationUnix: Long get() = finishTimeUnix - startTimeUnix
+

@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
 
-import android.R.attr.text
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.TextView
@@ -9,7 +8,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import com.github.aakumykov.file_lister_navigator_selector.utils.DateFormatter
 import com.github.aakumykov.sync_dir_to_cloud.Constants
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
@@ -17,8 +15,12 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogOperationDetails
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeGone
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeVisible
+import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.durationUnix
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.finishTimeUnix
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isError
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.startTimeUnix
 import kotlinx.coroutines.launch
 
 /**
@@ -48,7 +50,6 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
         prepareViewModel(null == savedInstanceState)
 
         return AlertDialog.Builder(requireContext())
-            .setTitle("$logItemAbout / $origLogId")
             .setView(binding.root)
             .setNeutralButton(R.string.DIALOG_BUTTON_close) { dialog, which ->
                 dismiss()
@@ -75,28 +76,55 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
         logOfSync?.also {
             fillViewWithData(logOfSync)
         } ?: run {
-            fillViewWithCommonError(R.string.data_not_found)
+            fillViewWithDataError(R.string.data_not_found)
         }
     }
 
     private fun fillViewWithData(logOfSync: LogOfSync) {
         binding.apply {
-            showTextIfNotNull(textView, logOfSync.text)
-
-            showTextIfNotNull(subTextView, logOfSync.subText)
 
             showTextIfNotNull(
-                startedDateView,
-                DateFormatter.humanReadableDate(logOfSync.startTime)
+                stateView,
+                "${logOfSync.logItemAbout}: ${logOfSync.logItemType.name}"
+            )
+
+            showTextIfNotNull(
+                textView,
+                logOfSync.text
+            )
+
+            showTextIfNotNull(
+                subTextView,
+                logOfSync.subText
+            )
+
+            showTextIfNotNull(
+                startTimeView,
+                resources.getString(R.string.DIALOG_OPERATION_DETAILS_start_time, CurrentDateTime.format(logOfSync.startTimeUnix))
+            )
+
+            showTextIfNotNull(
+                finishTimeView,
+                resources.getString(R.string.DIALOG_OPERATION_DETAILS_finish_time, CurrentDateTime.format(logOfSync.finishTimeUnix))
+            )
+
+            showTextIfNotNull(
+                durationView,
+                resources.getString(R.string.DIALOG_OPERATION_DETAILS_duration, CurrentDateTime.format(logOfSync.durationUnix))
+            )
+
+            showTextIfNotNull(
+                idView,
+                resources.getString(R.string.DIALOG_OPERATION_DETAILS_id, logOfSync.origLogId)
             )
         }
 
         colorizeSubText(logOfSync)
     }
 
-    private fun fillViewWithCommonError(@StringRes errorMessageId: Int) {
+    private fun fillViewWithDataError(@StringRes errorMessageId: Int) {
         binding.apply {
-            errorView.text = resources.getString(errorMessageId)
+            dataErrorView.text = resources.getString(errorMessageId)
             hideAllItems()
             showErrorItem()
         }
@@ -104,12 +132,20 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
 
     private val allViewItems: List<TextView> by lazy {
         with(binding) {
-            listOf(textView, subTextView, errorView, startedDateView)
+            listOf(
+                stateView,
+                textView,
+                subTextView,
+                startTimeView,
+                durationView,
+                finishTimeView,
+                idView,
+                dataErrorView)
         }
     }
 
     private fun hideAllItems() = allViewItems.forEach { it.makeGone() }
-    private fun showErrorItem() = binding.errorView.makeVisible()
+    private fun showErrorItem() = binding.dataErrorView.makeVisible()
 
     private fun showTextIfNotNull(textView: TextView, someText: String?) {
         someText?.also {
