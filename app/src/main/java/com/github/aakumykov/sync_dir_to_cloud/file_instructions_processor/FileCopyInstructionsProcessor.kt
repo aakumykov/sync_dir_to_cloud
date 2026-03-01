@@ -1,6 +1,5 @@
 package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 
-import android.util.Log
 import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
@@ -55,10 +54,23 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
     private suspend fun processReal(list: Iterable<FileInstruction>) {
-        copyFromSourceToTarget(list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation })
-        copyFromTargetToSource(list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation })
+        processByChunks(3, list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation }) {
+            copyFromSourceToTarget(it)
+        }
+        processByChunks(3, list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation }) {
+            copyFromTargetToSource(it)
+        }
     }
 
+    private suspend fun processByChunks(
+        chunkSize: Int,
+        instructionList: List<FileInstruction>,
+        block: suspend (oneChunk: Iterable<FileInstruction>) -> Unit
+    ) {
+        instructionList.chunked(chunkSize).map { oneChunk ->
+            block.invoke(oneChunk)
+        }
+    }
 
     private suspend fun copyFromSourceToTarget(list: Iterable<FileInstruction>) {
         list.map { instruction ->
