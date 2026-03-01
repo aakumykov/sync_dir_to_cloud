@@ -17,8 +17,8 @@ class OperationDetailsDialogViewModel(
     suspend fun startWorking(logItemAbout: LogItemAbout,
                              origLogId: String)
     {
-        _logOfSync.emit(
-            logOfSyncRepository.get(logItemAbout, origLogId)
-        )
+        logOfSyncRepository.get(logItemAbout, origLogId).also {
+            _logOfSync.emit(it)
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
 
+import android.R.attr.text
 import android.app.Dialog
 import android.os.Bundle
-import android.view.View
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -41,14 +41,11 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
             .let { LogItemAbout.valueOf(it) }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        prepareViewModel(null != savedInstanceState)
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         _binding = DialogOperationDetailsBinding.inflate(layoutInflater)
+
+        prepareViewModel(null == savedInstanceState)
 
         return AlertDialog.Builder(requireContext())
             .setTitle("$logItemAbout / $origLogId")
@@ -65,18 +62,39 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
             OperationDetailsDialogViewModel::class.java)
 
         lifecycleScope.launch {
+            viewModel.logOfSync.collect(::onLogOfSyncChanged)
+        }
+
+        lifecycleScope.launch {
             if (isFirstRun)
                 viewModel.startWorking(logItemAbout, origLogId)
-            viewModel.logOfSync.collect(::onLogOfSyncChanged)
         }
     }
 
     private suspend fun onLogOfSyncChanged(logOfSync: LogOfSync?) {
-        logOfSync?.also { fillViewWithData(logOfSync) }
-            ?: run { fillViewWithError(R.string.data_not_found) }
+        logOfSync?.also {
+            fillViewWithData(logOfSync)
+        } ?: run {
+            fillViewWithCommonError(R.string.data_not_found)
+        }
     }
 
-    private fun fillViewWithError(@StringRes errorMessageId: Int) {
+    private fun fillViewWithData(logOfSync: LogOfSync) {
+        binding.apply {
+            showTextIfNotNull(textView, logOfSync.text)
+
+            showTextIfNotNull(subTextView, logOfSync.subText)
+
+            showTextIfNotNull(
+                startedDateView,
+                DateFormatter.humanReadableDate(logOfSync.startTime)
+            )
+        }
+
+        colorizeSubText(logOfSync)
+    }
+
+    private fun fillViewWithCommonError(@StringRes errorMessageId: Int) {
         binding.apply {
             errorView.text = resources.getString(errorMessageId)
             hideAllItems()
@@ -84,42 +102,16 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
         }
     }
 
-    private fun hideAllItems() {
-        binding.apply {
-            text.makeGone()
-            subText.makeGone()
-            errorView.makeGone()
-            date.makeGone()
+    private val allViewItems: List<TextView> by lazy {
+        with(binding) {
+            listOf(textView, subTextView, errorView, startedDateView)
         }
     }
 
-    private fun showAllItems() {
-        binding.apply {
-            text.makeVisible()
-            subText.makeVisible()
-            errorView.makeVisible()
-            date.makeVisible()
-        }
-    }
-
+    private fun hideAllItems() = allViewItems.forEach { it.makeGone() }
     private fun showErrorItem() = binding.errorView.makeVisible()
-    private fun hideErrorItem() = binding.errorView.makeGone()
 
-    private fun fillViewWithData(logOfSync: LogOfSync) {
-        binding.apply {
-            showTextIfNotNull(logOfSync.text, text)
-
-            showTextIfNotNull(logOfSync.subText, text)
-
-            showTextIfNotNull(
-                DateFormatter.humanReadableDate(logOfSync.startTime),
-                text)
-        }
-
-        colorizeSubText(logOfSync)
-    }
-
-    private fun showTextIfNotNull(someText: String?, textView: TextView) {
+    private fun showTextIfNotNull(textView: TextView, someText: String?) {
         someText?.also {
             textView.text = it
             textView.makeVisible()
@@ -130,7 +122,7 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
     }
 
     private fun colorizeSubText(logOfSync: LogOfSync) {
-        binding.subText.setTextColor(
+        binding.subTextView.setTextColor(
             (if (logOfSync.isError) R.color.error
             else android.R.color.tab_indicator_text).let {
                 resources.getColor(it, null)
