@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakumykov.sync_dir_to_cloud.Constants
 import com.github.aakumykov.sync_dir_to_cloud.R
+import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeGone
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeInvisible
@@ -18,7 +19,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOp
 
 class SyncLogViewHolder(
     itemView: View,
-    private val onItemClicked: (origLogItem: String) -> Unit,
+    private val onItemClicked: (origLogItem: String, logItemAbout: LogItemAbout) -> Unit,
     private val onOperationCancellationButtonClicked: (origLogItem: String) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
@@ -28,7 +29,7 @@ class SyncLogViewHolder(
         initText(item.text)
         initSubText(item.subText)
         initProgress(item.progress, item.isActiveFileOperation)
-        initItemClick(item.origLogId)
+        initItemClick(item.origLogId, item.logItemAbout)
         initCancelButton(item.origLogId, item.isActiveFileOperation)
     }
 
@@ -82,9 +83,9 @@ class SyncLogViewHolder(
         }
     }
 
-    private fun initItemClick(origLogId: String) {
+    private fun initItemClick(origLogId: String, logItemAbout: LogItemAbout) {
         itemView.setOnClickListener {
-            onItemClicked.invoke(origLogId)
+            onItemClicked.invoke(origLogId, logItemAbout)
         }
     }
 

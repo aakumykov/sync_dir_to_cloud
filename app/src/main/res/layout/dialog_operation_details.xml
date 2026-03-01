@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="16dp"
+    android:background="#ffff00">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        tools:text="Текст"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp" />
+
+    <TextView
+        android:id="@+id/subText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        tools:text="Пояснение"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        tools:text="Дата"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp" />
+
+    <TextView
+        android:id="@+id/errorView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/error"
+        tools:text="Ошибка"
+        android:textSize="16sp"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp" />
+
+</LinearLayout>

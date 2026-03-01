@@ -223,4 +223,6 @@
     <string name="description_stop_sync_operation">Stop sync operation</string>
     <string name="SETTINGS_file_transfer_parallelism">File parallelism</string>
     <string name="SETTINGS_SUMMARY_file_transfer_parallelism">Process file at a time</string>
+    <string name="ERROR_insufficient_arguments">Insufficient arguments</string>
+    <string name="data_not_found">Data not found</string>
 </resources>
