@@ -26,7 +26,7 @@ android {
             }
         }
 
-        manifestPlaceholders = [YANDEX_CLIENT_ID:"87e03664d7e24970ba8b7661d25c7dcc"]
+        manifestPlaceholders = [YANDEX_CLIENT_ID:"3e3024536a8a4588b70de15451e7f7c6"]
     }
 
 
