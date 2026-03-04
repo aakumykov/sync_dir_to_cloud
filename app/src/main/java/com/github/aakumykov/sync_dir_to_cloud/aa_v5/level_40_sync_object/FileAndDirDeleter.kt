@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.extensions.isFile
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.basePathIn
+import com.github.aakumykov.sync_dir_to_cloud.extensions.relativePath
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -44,7 +45,7 @@ class FileAndDirDeleter @AssistedInject constructor(
     suspend fun deleteFileInSource(syncObject: SyncObject) {
         throwBadArgumentExceptionIfNotAFile(syncObject)
         fileDeleter.deleteFileInSource(
-            syncObject.basePathIn(syncTask.sourcePath!!),
+            syncObject.relativeParentDirPath,
             syncObject.name
         )
     }
@@ -53,7 +54,7 @@ class FileAndDirDeleter @AssistedInject constructor(
     suspend fun deleteFileInTarget(syncObject: SyncObject) {
         throwBadArgumentExceptionIfNotAFile(syncObject)
         fileDeleter.deleteFileInTarget(
-            syncObject.basePathIn(syncTask.targetPath!!),
+            syncObject.relativeParentDirPath,
             syncObject.name
         )
     }
