@@ -68,7 +68,8 @@ class ViewModelsModule {
     fun provideTaskInfoViewModel(syncTaskReader: SyncTaskReader,
                                  syncObjectDBReader: SyncObjectDBReader,
                                  startStopSyncTaskUseCase: StartStopSyncTaskUseCase,
-                                 taskLogRepository: TaskLogRepository
+                                 taskLogRepository: TaskLogRepository,
+                                 logOfSyncRepository: LogOfSyncRepository,
     ): ViewModel
     {
         return TaskDetailsViewModel(
@@ -76,6 +77,7 @@ class ViewModelsModule {
             syncObjectDBReader = syncObjectDBReader,
             startStopSyncTaskUseCase = startStopSyncTaskUseCase,
             taskLogRepository = taskLogRepository,
+            logOfSyncRepository = logOfSyncRepository
         )
     }
 

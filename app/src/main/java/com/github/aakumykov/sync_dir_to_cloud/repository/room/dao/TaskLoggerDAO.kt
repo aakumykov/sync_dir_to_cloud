@@ -8,6 +8,7 @@ import com.github.aakumykov.sync_dir_to_cloud.DbFieldNames
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskLoggerDAO {
@@ -31,9 +32,17 @@ interface TaskLoggerDAO {
     )
 
 
-
-    @Query("SELECT * FROM ${TaskLogItem.TABLE_NAME} " +
-            "WHERE ${DbFieldNames.FIELD_TASK_ID} = :taskId " +
-            "ORDER BY ${BasicLogItem.FIELD_FINISH_TIME} DESC")
+    @Query(SIMPLE_LIST_QUERY)
     fun listAsLiveData(taskId: String): LiveData<List<TaskLogItem>>
+
+
+    @Query(SIMPLE_LIST_QUERY)
+    fun listAsFlow(taskId: String): Flow<List<TaskLogItem>>
+
+
+    companion object {
+        const val SIMPLE_LIST_QUERY = "SELECT * FROM ${TaskLogItem.TABLE_NAME} " +
+                "WHERE ${DbFieldNames.FIELD_TASK_ID} = :taskId " +
+                "ORDER BY ${BasicLogItem.FIELD_FINISH_TIME} DESC"
+    }
 }
