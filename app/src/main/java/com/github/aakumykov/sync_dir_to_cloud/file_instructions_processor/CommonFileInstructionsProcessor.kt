@@ -86,7 +86,7 @@ class CommonFileInstructionsProcessor @AssistedInject constructor(
 }
 
 @AssistedFactory
-interface FileInstructionsProcessorAssistedFactory {
+interface CommonFileInstructionsProcessorAssistedFactory {
     fun create(
         scope: CoroutineScope,
         syncTask: SyncTask,
