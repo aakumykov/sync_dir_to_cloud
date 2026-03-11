@@ -150,15 +150,31 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
                 OperationJobsHolder.removeJob(jobId)
             }
         ) {
-            syncObjectCopier.copyFileFromSourceToTarget(
-                syncObject = syncObject,
-                absolutePathInTarget = toPath,
-                overwriteIfExists = true, // FIXME: убрать!
-            ) { transferredBytes: Long ->
+            val progressCallback = { transferredBytes: Long ->
                 val progress = 1f * transferredBytes / syncObject.size
                 parentScope.launch {
 //                    Log.d(TAG, "progress: $progress")
                     updateProgress(logItemId, progress)
+                }
+                Unit
+            }
+
+            when(toSide) {
+                SyncSide.SOURCE -> {
+                    syncObjectCopier.copyFileFromTargetToSource(
+                        syncObject = syncObject,
+                        absolutePathInSource = toPath,
+                        overwriteIfExists = true, // FIXME: убрать!
+                        progressCallback = progressCallback
+                    )
+                }
+                SyncSide.TARGET -> {
+                    syncObjectCopier.copyFileFromSourceToTarget(
+                        syncObject = syncObject,
+                        absolutePathInTarget = toPath,
+                        overwriteIfExists = true, // FIXME: убрать!
+                        progressCallback = progressCallback
+                    )
                 }
             }
 
