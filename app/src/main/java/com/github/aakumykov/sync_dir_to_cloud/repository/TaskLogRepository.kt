@@ -33,4 +33,8 @@ class TaskLogRepository @Inject constructor(
     suspend fun listAsFlow(taskId: String): Flow<List<TaskLogItem>> = withContext(dispatcher) {
         dao.listAsFlow(taskId)
     }
+
+    suspend fun list(taskId: String): List<TaskLogItem> = withContext(dispatcher) {
+        dao.list(taskId)
+    }
 }

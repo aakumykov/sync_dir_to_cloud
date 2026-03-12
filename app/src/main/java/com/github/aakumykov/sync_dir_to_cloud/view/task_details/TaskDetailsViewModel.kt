@@ -6,18 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.StartStopSyncTaskUseCase
-import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class TaskDetailsViewModel(
@@ -28,16 +26,18 @@ class TaskDetailsViewModel(
     private val logOfSyncRepository: LogOfSyncRepository,
 ) : ViewModel() {
 
-    suspend fun logStateFlow(taskId: String): Flow<List<LogItemType>> {
-        return taskLogRepository
-            .listAsFlow(taskId)
-            .map { taskLogItems ->
-                taskLogItems.map { it.executionId }
-            }.flatMapMerge { strings ->
-                strings.asFlow().flatMapMerge { str ->
-                    logOfSyncRepository.listAsFlow(taskId, str)
-                }
+    suspend fun taskDetailsItemList(taskId: String): List<TaskDetailsItem> {
+         return taskLogRepository.list(taskId)
+            .map { taskLogItem ->
+                logOfSyncRepository.list(taskLogItem.taskId, taskLogItem.executionId)
             }
+            .filter {
+                it.isNotEmpty()
+            }
+            .map { list: List<LogOfSync> ->
+                TaskDetailsItem.fromSyncLog(list)
+            }
+            .toList()
     }
 
     suspend fun getSyncTask(taskId: String): LiveData<SyncTask> {

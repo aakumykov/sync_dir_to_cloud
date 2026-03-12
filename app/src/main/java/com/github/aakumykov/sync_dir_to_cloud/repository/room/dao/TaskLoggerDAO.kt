@@ -40,6 +40,9 @@ interface TaskLoggerDAO {
     fun listAsFlow(taskId: String): Flow<List<TaskLogItem>>
 
 
+    @Query(SIMPLE_LIST_QUERY)
+    fun list(taskId: String): List<TaskLogItem>
+
     companion object {
         const val SIMPLE_LIST_QUERY = "SELECT * FROM ${TaskLogItem.TABLE_NAME} " +
                 "WHERE ${DbFieldNames.FIELD_TASK_ID} = :taskId " +

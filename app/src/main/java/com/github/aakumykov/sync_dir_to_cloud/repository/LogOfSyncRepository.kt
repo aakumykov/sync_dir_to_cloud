@@ -14,10 +14,12 @@ class LogOfSyncRepository @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val dao: LogOfSyncDAO,
 ) {
-    suspend fun listAsFlow(taskId: String, executionId: String): Flow<List<LogOfSync>> {
-        return withContext(dispatcher) {
-            dao.listAsFlow(taskId, executionId)
-        }
+    suspend fun listAsFlow(taskId: String, executionId: String): Flow<List<LogOfSync>> = withContext(dispatcher) {
+        dao.listAsFlow(taskId, executionId)
+    }
+
+    suspend fun list(taskId: String, executionId: String): List<LogOfSync> = withContext(dispatcher) {
+        dao.list(taskId, executionId)
     }
 
     suspend fun get(logItemAbout: LogItemAbout, origLogId: String): LogOfSync? {

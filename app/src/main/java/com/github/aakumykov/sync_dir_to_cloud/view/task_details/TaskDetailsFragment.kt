@@ -18,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
@@ -110,14 +111,32 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
 
             taskDetailsViewModel.getTaskLogLiveData(currentTaskId!!)
                 .observe(viewLifecycleOwner, ::onTaskLogChanged)
+
+            taskDetailsViewModel
+                .taskDetailsItemList(currentTaskId!!)
+                .map {
+                    TaskLogItem.create(
+                        id = newRandomId,
+                        entryType = it.logItemType,
+                        taskId = it.taskId,
+                        executionId = it.executionId,
+                        startTime = it.startTimestamp,
+                        finishTime = it.finishTimestamp,
+                        text = "Старт: ${it.startTimestamp}",
+                        subText = "Финиш: ${it.startTimestamp}"
+                    )
+                }
+                .also {
+                    taskLogAdapter.setList(it)
+                }
         }
     }
 
 
     private fun onTaskLogChanged(list: List<TaskLogItem>?) {
-        list?.also {
+        /*list?.also {
             taskLogAdapter.setList(it)
-        }
+        }*/
     }
 
 
