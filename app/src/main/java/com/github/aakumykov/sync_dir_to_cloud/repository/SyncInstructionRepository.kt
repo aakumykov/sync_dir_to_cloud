@@ -1,12 +1,11 @@
 package com.github.aakumykov.sync_dir_to_cloud.repository
 
 import android.util.Log
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_90_instructions.SyncInstructionDeleter
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncInstructionDAO
-import okhttp3.internal.toImmutableList
 import javax.inject.Inject
 
 class SyncInstructionRepository @Inject constructor(
@@ -49,7 +48,7 @@ class SyncInstructionRepository @Inject constructor(
 
         val initialList = syncInstructionDAO.getAllWithoutExecutionId(taskId).toMutableList()
 
-        initialList.toImmutableList()
+        initialList
             .distinctBy {
                 "${it.isDir}:${it.relativePath}:${it.operation}"
             }.also { uniqueOperationsList ->
