@@ -31,6 +31,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsAdapter
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter.TaskDetailsViewHolder
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
@@ -109,11 +110,10 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
             taskDetailsViewModel.getSyncTask(currentTaskId!!)
                 .observe(viewLifecycleOwner, ::onTaskChanged)
 
-            taskDetailsViewModel.getTaskLogLiveData(currentTaskId!!)
-                .observe(viewLifecycleOwner, ::onTaskLogChanged)
+//            taskDetailsViewModel.getTaskLogLiveData(currentTaskId!!)
+//                .observe(viewLifecycleOwner, ::onTaskLogChanged)
 
-            taskDetailsViewModel
-                .taskDetailsItemList(currentTaskId!!)
+            /*taskDetailsViewModel.taskDetailsItemList(currentTaskId!!)
                 .map {
                     TaskLogItem.create(
                         id = newRandomId,
@@ -128,15 +128,32 @@ class TaskDetailsFragment : Fragment(R.layout.fragment_task_details) {
                 }
                 .also {
                     taskLogAdapter.setList(it)
+                }*/
+
+            taskDetailsViewModel.taskDetailsItemListFlow(currentTaskId!!)
+                .map {list ->
+                    list.map { item ->
+                        TaskLogItem.create(
+                            id = newRandomId,
+                            entryType = item.logItemType,
+                            taskId = item.taskId,
+                            executionId = item.executionId,
+                            startTime = item.startTimestamp,
+                            finishTime = item.finishTimestamp,
+                            text = "Старт: ${item.startTimestamp}",
+                            subText = "Финиш: ${item.startTimestamp}"
+                        )
+                    }
                 }
+                .collect(::onTaskLogChanged)
         }
     }
 
 
     private fun onTaskLogChanged(list: List<TaskLogItem>?) {
-        /*list?.also {
+        list?.also {
             taskLogAdapter.setList(it)
-        }*/
+        }
     }
 
 
