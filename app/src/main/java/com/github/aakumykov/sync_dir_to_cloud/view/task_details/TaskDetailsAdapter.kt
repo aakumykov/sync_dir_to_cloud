@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter
+package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import com.github.aakumykov.list_holding_list_adapter.ListHoldingListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R

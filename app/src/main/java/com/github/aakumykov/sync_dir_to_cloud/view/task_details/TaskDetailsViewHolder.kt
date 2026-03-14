@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.task_details.adapter
+package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import android.view.View
 import android.widget.ImageView
