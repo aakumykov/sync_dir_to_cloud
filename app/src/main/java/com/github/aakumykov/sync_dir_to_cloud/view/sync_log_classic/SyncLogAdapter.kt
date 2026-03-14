@@ -16,7 +16,8 @@ class SyncLogAdapter(
         parent: ViewGroup,
         viewType: Int
     ): SyncLogViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.sync_log_item, parent,false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.log_item, parent,false)
         return SyncLogViewHolder(
             view,
             onItemClicked = onItemClicked,

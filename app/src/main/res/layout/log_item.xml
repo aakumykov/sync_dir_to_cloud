@@ -14,7 +14,8 @@
         app:layout_constraintBottom_toTopOf="@id/log_of_sync_sub_progress_bar"
         android:src="@drawable/ic_sync_log_success"
         android:paddingStart="10dp"
-        android:paddingEnd="4dp"/>
+        android:paddingEnd="4dp"
+        android:contentDescription="@string/description_sync_task_state"/>
 
     <TextView
         android:id="@+id/log_of_sync_text"
