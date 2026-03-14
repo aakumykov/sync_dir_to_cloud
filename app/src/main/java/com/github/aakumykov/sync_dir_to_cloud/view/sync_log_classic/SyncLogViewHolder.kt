@@ -42,7 +42,7 @@ class SyncLogViewHolder(
 
 
     private fun initLogItemType(logItemType: LogItemType) {
-        itemView.findViewById<ImageView>(R.id.log_of_sync_status_icon).setImageResource(
+        itemView.findViewById<ImageView>(R.id.log_item_state_icon).setImageResource(
             when(logItemType) {
                 LogItemType.BUSY -> R.drawable.ic_sync_log_busy
                 LogItemType.SUCCESS -> R.drawable.ic_sync_log_success
@@ -53,7 +53,7 @@ class SyncLogViewHolder(
     }
 
     private fun initText(text: String?) {
-        itemView.findViewById<TextView>(R.id.log_of_sync_text).apply {
+        itemView.findViewById<TextView>(R.id.log_item_text).apply {
             if (null != text) {
                 this.text = text
                 makeVisible()
@@ -65,7 +65,7 @@ class SyncLogViewHolder(
     }
 
     private fun initSubText(subText: String?) {
-        itemView.findViewById<TextView>(R.id.log_of_sync_sub_text).apply {
+        itemView.findViewById<TextView>(R.id.log_item_sub_text).apply {
             subText?.also {
                 text = it
                 makeVisible()
@@ -77,7 +77,7 @@ class SyncLogViewHolder(
     }
 
     private fun initProgress(progressValue: Float?, isActiveFileOperation: Boolean) {
-        itemView.findViewById<ProgressBar>(R.id.log_of_sync_sub_progress_bar).apply {
+        itemView.findViewById<ProgressBar>(R.id.log_item_progress_bar).apply {
             progress = progressValue?.toPercentOf100() ?: 0
             if (isActiveFileOperation) makeVisible() else makeInvisible()
         }
@@ -90,7 +90,7 @@ class SyncLogViewHolder(
     }
 
     private fun initCancelButton(origLogId: String, isActiveFileOperation: Boolean) {
-        itemView.findViewById<ImageButton>(R.id.log_of_sync_stop_button).apply {
+        itemView.findViewById<ImageButton>(R.id.log_item_stop_button).apply {
             setOnClickListener { onOperationCancellationButtonClicked.invoke(origLogId) }
             if (isActiveFileOperation) makeVisible() else makeInvisible()
         }
