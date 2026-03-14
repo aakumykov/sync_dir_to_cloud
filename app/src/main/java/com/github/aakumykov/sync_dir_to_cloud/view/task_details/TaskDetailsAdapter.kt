@@ -5,7 +5,7 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 
 class TaskDetailsAdapter : ListHoldingListAdapter<TaskLogItem, TaskDetailsViewHolder>(
-    R.layout.task_state_item
+    R.layout.log_item
 ) {
     override fun createViewHolder(): ViewHolder<TaskLogItem> {
         return TaskDetailsViewHolder()
