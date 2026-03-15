@@ -27,7 +27,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
         Index(DbFieldNames.FIELD_TASK_ID)
     ]
 )
-// Не удаляй, это новый класс.
+@Deprecated("Теперь удаляй: он, по идее, не нужен")
 class TaskLogItem(
     @PrimaryKey val id: String,
     taskId: String,
