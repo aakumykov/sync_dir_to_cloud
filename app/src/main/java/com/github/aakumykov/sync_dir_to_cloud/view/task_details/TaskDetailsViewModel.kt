@@ -1,5 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
+import android.util.Log
+import androidx.collection.longFloatMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,20 +13,20 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.LogItemText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.all
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.switchMap
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
@@ -53,7 +55,7 @@ class TaskDetailsViewModel(
              }
     }*/
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    /*@OptIn(ExperimentalCoroutinesApi::class)
     suspend fun taskDetailsItemListFlow(taskId: String): Flow<List<TaskDetailsItem>> {
         return taskLogRepository.listAsFlow(taskId)
             .filter { it.isNotEmpty() }
@@ -68,7 +70,35 @@ class TaskDetailsViewModel(
             .let {
                 flow { emit(it) }
             }
+    }*/
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun taskDetailsItemListFlow(taskId: String): Flow<List<TaskDetailsItem>> {
+        return taskLogRepository.listAsFlow(taskId)
+            .flatMapLatest { taskLogItems ->
+                flow { emit(
+                    taskLogItems.map { it.executionId }
+                ) }
+            }
+            .flatMapLatest { executionIds ->
+                Log.d(TAG, executionIds.joinToString(","))
+                flow { executionIds.forEach {
+                    emit(
+                        logOfSyncRepository.list(taskId,it)
+                    )
+                } }
+            }
+            .flatMapLatest { value ->
+//                Log.d(TAG, value.joinToString(",") { it.origLogId })
+                flow { emit(TaskDetailsItem.fromSyncLog(value)) }
+            }
+            .flatMapLatest {
+                Log.d(TAG, it.toString())
+                emptyFlow()
+            }
     }
+
+
 
     suspend fun getSyncTask(taskId: String): LiveData<SyncTask> {
         return syncTaskReader.getSyncTaskAsLiveData(taskId)
@@ -84,5 +114,9 @@ class TaskDetailsViewModel(
 
     fun getTaskLogLiveData(taskId: String): LiveData<List<TaskLogItem>> {
         return taskLogRepository.listForTaskAsLiveData(taskId)
+    }
+
+    companion object {
+        val TAG: String = TaskDetailsViewModel::class.java.simpleName
     }
 }
