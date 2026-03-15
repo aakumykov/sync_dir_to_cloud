@@ -37,7 +37,7 @@ class TaskDetailsViewHolder : ListHoldingListAdapter.ViewHolder<TaskLogItem>() {
         }
 
         stateIcon.setImageResource(when(item.logItemType) {
-            LogItemType.BUSY -> R.drawable.ic_sync_log_busy
+            LogItemType.BUSY -> R.drawable.ic_task_state_running
             LogItemType.SUCCESS -> R.drawable.ic_sync_log_success
             LogItemType.CANCELLED -> R.drawable.ic_sync_log_cancelled
             LogItemType.ERROR -> R.drawable.ic_sync_log_error
