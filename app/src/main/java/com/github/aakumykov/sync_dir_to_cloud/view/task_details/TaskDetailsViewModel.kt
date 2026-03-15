@@ -38,40 +38,6 @@ class TaskDetailsViewModel(
     private val logOfSyncRepository: LogOfSyncRepository,
 ) : ViewModel() {
 
-    /*suspend fun taskDetailsItemListFlow(taskId: String): Flow<List<TaskDetailsItem>> {
-         return taskLogRepository.list(taskId)
-            .map { taskLogItem ->
-                logOfSyncRepository.list(taskLogItem.taskId, taskLogItem.executionId)
-            }
-            .filter {
-                it.isNotEmpty()
-            }
-            .map { logOfSyncList ->
-                TaskDetailsItem.fromSyncLog(logOfSyncList)
-            }
-            .toList()
-             .let {
-                 flow { emit(it) }
-             }
-    }*/
-
-    /*@OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun taskDetailsItemListFlow(taskId: String): Flow<List<TaskDetailsItem>> {
-        return taskLogRepository.listAsFlow(taskId)
-            .filter { it.isNotEmpty() }
-            .flatMapLatest { taskLogItems ->
-                val executionId = taskLogItems.first().executionId
-                logOfSyncRepository.listAsFlow(taskId, executionId)
-            }
-            .map { logOfSyncs ->
-                TaskDetailsItem.fromSyncLog(logOfSyncs)
-            }
-            .toList(mutableListOf())
-            .let {
-                flow { emit(it) }
-            }
-    }*/
-
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun taskDetailsItemListFlow(taskId: String): Flow<List<TaskDetailsItem>> {
         return taskLogRepository.listAsFlow(taskId)
@@ -82,19 +48,20 @@ class TaskDetailsViewModel(
             }
             .flatMapLatest { executionIds ->
                 Log.d(TAG, executionIds.joinToString(","))
-                flow { executionIds.forEach {
-                    emit(
-                        logOfSyncRepository.list(taskId,it)
-                    )
-                } }
+                flow {
+                    repeat(executionIds.size) {
+                        emit(
+                            executionIds.map {
+                                logOfSyncRepository.list(taskId, it)
+                            }
+                        )
+                    }
+                }
             }
             .flatMapLatest { value ->
-//                Log.d(TAG, value.joinToString(",") { it.origLogId })
-                flow { emit(TaskDetailsItem.fromSyncLog(value)) }
-            }
-            .flatMapLatest {
-                Log.d(TAG, it.toString())
-                emptyFlow()
+                flow { emit(
+                    value.map { TaskDetailsItem.fromSyncLog(it) }
+                ) }
             }
     }
 
