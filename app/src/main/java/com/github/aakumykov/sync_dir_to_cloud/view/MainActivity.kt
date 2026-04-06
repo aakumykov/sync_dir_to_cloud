@@ -23,7 +23,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.settings.SettingsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic.SyncLogFragment
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.SyncLogFragmentCompose
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment

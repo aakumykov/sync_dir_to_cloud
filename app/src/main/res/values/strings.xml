@@ -203,7 +203,6 @@
     <string name="TASK_LOG_task_finished">Task finished</string>
     <string name="TASK_LOG_task_cancelled">Task cancelled</string>
     <string name="TASK_LOG_task_error">Task error: %1$s</string>
-    <string name="title_activity_sync_log_compose">SyncLogComposeActivity</string>
     <string name="LOG_ITEM_copying_from_source_to_target">Copying file from source to target</string>
     <string name="LOG_ITEM_backing_up_dir">Backing up directory</string>
     <string name="LOG_ITEM_backing_up_file">Backing up file</string>
