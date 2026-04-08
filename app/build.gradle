@@ -7,7 +7,9 @@ plugins {
 
 android {
     namespace 'com.github.aakumykov.sync_dir_to_cloud'
-    compileSdk 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId "com.github.aakumykov.sync_dir_to_cloud"
