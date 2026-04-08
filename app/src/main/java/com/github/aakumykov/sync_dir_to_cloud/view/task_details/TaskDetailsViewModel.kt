@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import android.util.Log
-import androidx.collection.longFloatMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,21 +12,10 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_compose.LogItemText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.fold
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class TaskDetailsViewModel(

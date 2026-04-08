@@ -2,20 +2,18 @@ package com.github.aakumykov.sync_dir_to_cloud.app_settings
 
 import android.content.SharedPreferences
 import android.content.res.Resources
-import android.util.Log
 import androidx.annotation.BoolRes
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
-import androidx.compose.ui.unit.IntRect
-import com.github.aakumykov.sync_dir_to_cloud.R
-import javax.inject.Inject
 import androidx.core.content.edit
+import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.DEFAULT_BACKUP_IS_CRITICAL_OPERATION
 import com.github.aakumykov.sync_dir_to_cloud.config.DEFAULT_FILE_TRANSFER_PARALLELISM
 import com.github.aakumykov.sync_dir_to_cloud.config.DEFAULT_FILE_TRANSFER_RETARDATION_MS
 import com.github.aakumykov.sync_dir_to_cloud.config.SETTINGS_KEY_BACKUP_IS_CRITICAL_OPERATION
 import com.github.aakumykov.sync_dir_to_cloud.config.SETTINGS_KEY_FILE_TRANSFER_PARALLELISM
 import com.github.aakumykov.sync_dir_to_cloud.config.SETTINGS_KEY_FILE_TRANSFER_RETARDATION_MS
+import javax.inject.Inject
 
 class AppSettingsImpl @Inject constructor(
     private val resources: Resources,
