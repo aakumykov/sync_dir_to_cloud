@@ -24,10 +24,7 @@ android {
 //                arg("room.incremental", true)
             }
         }
-
-        manifestPlaceholders = [YANDEX_CLIENT_ID:"3e3024536a8a4588b70de15451e7f7c6"]
     }
-
 
     def keystorePropertiesFileName = "../local.properties"
     def keystoreProperties = new Properties()
@@ -94,9 +91,11 @@ android {
             dimension 'installation_source'
             applicationIdSuffix '.local'
             getIsDefault().set(true)
+            manifestPlaceholders = [YANDEX_CLIENT_ID:"a7cc72e6ff1143be83656d6a1d357c69"]
         }
         google {
             dimension 'installation_source'
+            manifestPlaceholders = [YANDEX_CLIENT_ID:"3e3024536a8a4588b70de15451e7f7c6"]
         }
     }
 
