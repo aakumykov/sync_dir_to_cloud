@@ -2,13 +2,19 @@
     <string name="app_name" translatable="false">sync_dir_to_cloud</string>
     <string name="description_sync_task_add_button">Добавление задачи по синхронизации</string>
     <string name="BUTTON_dots">…</string>
+    <string name="FRAGMENT_TASK_EDIT_sync_mode_label">Work mode:</string>
     <string name="tools_source_path">Source path</string>
     <string name="tools_target_path">Target path</string>
     <string name="hint_target_path_input">Target path</string>
     <string name="hint_source_path_input">Source path</string>
+
     <string name="FRAGMENT_TASK_LIST_title">Sync tasks</string>
     <string name="FRAGMENT_TASK_EDIT_creation_title">New task</string>
     <string name="FRAGMENT_TASK_EDIT_edition_title">Edit task</string>
+    <string name="FRAGMENT_SETTINGS_title">Settings</string>
+    <string name="FRAGMENT_SYNC_LOG_page_title">Synchronization log</string>
+    <string name="FRAGMENT_TASK_INFO_title">Task properties</string>
+
     <string name="BUTTON_task_edit_cancel">Cancel</string>
     <string name="BUTTON_task_edit_save">Save</string>
     <string name="description_sync_task_play_button">Start task</string>
@@ -57,7 +63,6 @@
     <string name="NOTIFICATION_error">Synchronization error</string>
     <string name="MENU_ITEM_app_properties">App properties</string>
     <string name="there_is_no_task_id">TaskId missing</string>
-    <string name="FRAGMENT_TASK_INFO_title">Task properties</string>
     <string name="ERROR_storage_access_required">Storage access required</string>
     <string name="MENU_ITEM_manage_external_storage">Manage external storage</string>
     <string name="MENU_ITEM_action_delete">Delete</string>
@@ -116,7 +121,6 @@
     <string name="SYNC_OBJECT_LOGGER_deleting_file">File deleting</string>
     <string name="SYNC_OBJECT_LOGGER_backuping_dir">Dir backup</string>
     <string name="SYNC_OBJECT_LOGGER_backuping_file">File backup</string>
-    <string name="FRAGMENT_SYNC_LOG_page_title">Synchronization log</string>
     <string name="SYNC_LOG_error_insufficient_arguments">Insufficient arguments count</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_no_log_item_supplied">There is no object to display</string>
     <string name="LOG_ITEM_DETAILS_DIALOG_title">Operation details</string>
@@ -152,7 +156,6 @@
     <string name="EXECUTION_LOG_work_ends">Work finished</string>
     <string name="EXECUTION_LOG_work_error">Work error</string>
     <string name="SYNC_OBJECT_LOGGER_copying_file">File copying %1$s</string>
-    <string name="FRAGMENT_TASK_EDIT_sync_mode_label">Work mode:</string>
     <string name="SYNC_OBJECT_LOGGER_resolving_collision">Resolving names conflict</string>
     <string name="SYNC_OPERATION_copying_from_source_to_target">Copying from source to target</string>
     <string name="SYNC_OPERATION_copying_from_target_to_source">Copying from target to source</string>

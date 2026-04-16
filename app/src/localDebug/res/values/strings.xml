@@ -6,6 +6,6 @@
     <string name="FRAGMENT_SETTINGS_title">LD: Settings</string>
     <string name="FRAGMENT_TASK_INFO_title">LD: Task properties</string>
     <string name="FRAGMENT_SYNC_LOG_page_title">LD: Synchronization log</string>
-    <string name="FRAGMENT_TASK_EDIT_creation_title">ЛД: New task</string>
-    <string name="FRAGMENT_TASK_EDIT_edition_title">ЛД: Edit task</string>
+    <string name="FRAGMENT_TASK_EDIT_creation_title">LD: New task</string>
+    <string name="FRAGMENT_TASK_EDIT_edition_title">LD: Edit task</string>
 </resources>
