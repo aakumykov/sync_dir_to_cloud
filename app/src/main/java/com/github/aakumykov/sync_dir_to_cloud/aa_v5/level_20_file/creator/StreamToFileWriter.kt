@@ -101,8 +101,9 @@ class StreamToFileWriter @AssistedInject constructor(
                 cloudWriter
                     .putStream(
                         inputStream = inputStream,
-                        targetPath = filePath,
+                        targetAbsolutePath = filePath,
                         overwriteIfExists = overwriteIfExists,
+                        bufferSize = 5,
                         writingCallback = { progress ->
 
                             Log.d(TAG, "прогресс записи файла: ${BytesToHumanSizeFormatter.format(progress)}")
