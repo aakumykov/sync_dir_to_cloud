@@ -17,6 +17,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 /**
  * Методы этого класса обязаны быть "suspend",
@@ -45,6 +47,9 @@ class StreamToFileWriter @AssistedInject constructor(
                                   overwriteIfExists: Boolean,
                                   progressCallback: ((transferredBytes: Long) -> Unit)? = null,
     ) {
+        /*if (Random.nextInt(1,101) < 30)
+            throw Exception("Случайная ошибка")*/
+
         Log.d(TAG, "putFileToTarget('$filePath', $overwriteIfExists)")
         putStreamReal(
             cloudWriterGetter.getTargetCloudWriter(syncTask),
