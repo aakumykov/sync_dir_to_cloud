@@ -103,7 +103,7 @@ class StreamToFileWriter @AssistedInject constructor(
                         inputStream = inputStream,
                         targetAbsolutePath = filePath,
                         overwriteIfExists = overwriteIfExists,
-                        bufferSize = 5,
+                        bufferSize = appSettings.streamCopyingBufferSize,
                         writingCallback = { progress ->
 
                             Log.d(TAG, "прогресс записи файла: ${BytesToHumanSizeFormatter.format(progress)}")

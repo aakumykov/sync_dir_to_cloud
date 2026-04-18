@@ -43,4 +43,18 @@
         android:inputType="numberDecimal"
         />
 
+    <androidx.preference.EditTextPreference
+        android:icon="@drawable/ic_buffer_size"
+        android:dialogIcon="@drawable/ic_buffer_size"
+        android:defaultValue="@integer/DEFAULT_stream_copying_buffer_size"
+        android:key="@string/KEY_settings_stream_copying_buffer_size"
+        android:singleLine="true"
+        app:singleLineTitle="true"
+        android:selectAllOnFocus="true"
+        android:title="@string/SETTINGS_stream_copying_buffer_size"
+        android:summary="@string/SETTINGS_SUMMARY_stream_copying_buffer_size"
+        app:useSimpleSummaryProvider="true"
+        android:inputType="numberDecimal"
+        />
+
 </PreferenceScreen>

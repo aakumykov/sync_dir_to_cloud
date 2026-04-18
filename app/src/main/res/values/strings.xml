@@ -182,6 +182,7 @@
     <string name="KEY_settings_backup_is_critical_operation" translatable="false">settings_backup_is_critical_operation</string>
     <string name="KEY_settings_dry_run" translatable="false">settings_dry_run</string>
     <string name="KEY_settings_file_transfer_parallelism" translatable="false">file_transfer_parallelism</string>
+    <string name="KEY_settings_stream_copying_buffer_size" translatable="false">stream_copying_buffer_size</string>
     <string name="description_operation_cancel_icon">Cancel operation</string>
     <string name="SETTINGS_file_transfer_retardation_ms">File copying retardation, ms</string>
     <string name="SETTINGS_SUMMARY_file_transfer_retardation_ms">Waiting after transferring each piece of data when copying files</string>
@@ -224,11 +225,13 @@
     <string name="TASK_STATE_cancelled">Task cancelled</string>
     <string name="description_stop_sync_operation">Stop sync operation</string>
     <string name="SETTINGS_file_transfer_parallelism">File parallelism</string>
-    <string name="SETTINGS_SUMMARY_file_transfer_parallelism">Process file at a time</string>
+    <string name="SETTINGS_SUMMARY_file_transfer_parallelism">Process files count at a time</string>
     <string name="ERROR_insufficient_arguments">Insufficient arguments</string>
     <string name="data_not_found">Data not found</string>
     <string name="DIALOG_OPERATION_DETAILS_start_time">Started: %1$s</string>
     <string name="DIALOG_OPERATION_DETAILS_finish_time">Finished: %1$s</string>
     <string name="DIALOG_OPERATION_DETAILS_duration">Duration: %1$s</string>
     <string name="DIALOG_OPERATION_DETAILS_id" translatable="false">id: %1$s</string>
+    <string name="SETTINGS_SUMMARY_stream_copying_buffer_size">Stream to stream copying buffer size</string>
+    <string name="SETTINGS_stream_copying_buffer_size">Stream copying buffer size</string>
 </resources>

@@ -7,4 +7,5 @@ interface AppSettings {
     var backupIsCriticalOperation: Boolean
     var dryRun: Boolean
     var fileParallelism: Int
+    var streamCopyingBufferSize: Int
 }

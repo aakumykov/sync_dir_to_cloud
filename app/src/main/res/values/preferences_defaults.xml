@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="DEFAULT_settings_re_create_missing_source_and_target_dirs" type="bool">false</item>
+    <bool name="DEFAULT_settings_re_create_missing_source_and_target_dirs">false</bool>
     <bool name="DEFAULT_settings_backup_is_critical_operation">true</bool>
     <bool name="DEFAULT_settings_dry_run">false</bool>
+
     <integer name="DEFAULT_settings_file_transfer_retardation_ms">0</integer>
-    <item name="DEFAULT_settings_file_transfer_parallelism" type="integer">3</item>
+    <integer name="DEFAULT_settings_file_transfer_parallelism">3</integer>
+    <integer name="DEFAULT_stream_copying_buffer_size">8192</integer>
 </resources>

@@ -17,13 +17,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val menuItems = emptyArray<CustomMenuItem>()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+
         pageTitleViewModel.setPageTitle(getString(R.string.FRAGMENT_SETTINGS_title))
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        findPreference<EditTextPreference>(getString(R.string.KEY_settings_file_transfer_retardation_ms))
-            ?.setOnBindEditTextListener { editText ->
-                editText.inputType = InputType.TYPE_CLASS_NUMBER
-            }
+        listOf(
+            R.string.KEY_settings_file_transfer_retardation_ms,
+            R.string.KEY_settings_file_transfer_parallelism,
+            R.string.KEY_settings_stream_copying_buffer_size,
+        ).forEach { key ->
+            findPreference<EditTextPreference>(getString(key))
+                ?.setOnBindEditTextListener { editText ->
+                    editText.inputType = InputType.TYPE_CLASS_NUMBER }
+        }
     }
 
 

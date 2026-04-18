@@ -56,10 +56,20 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
     private suspend fun processReal(list: Iterable<FileInstruction>) {
-        processByChunks(appSettings.fileParallelism, list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation }) {
+
+        val parallelism = appSettings.fileParallelism
+
+        processByChunks(
+            chunkSize = appSettings.fileParallelism,
+            instructionList = list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation }
+        ) {
             copyFromSourceToTarget(it)
         }
-        processByChunks(appSettings.fileParallelism, list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation }) {
+
+        processByChunks(
+            appSettings.fileParallelism,
+            list.filter { FileOperation.COPY_FROM_TARGET_TO_SOURCE == it.operation }
+        ) {
             copyFromTargetToSource(it)
         }
     }
