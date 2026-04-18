@@ -19,10 +19,10 @@ class AppSettingsImpl @Inject constructor(
     private fun getInteger(@IntegerRes intRes: Int): Int = resources.getInteger(intRes)
 
     override var streamCopyingBufferSize: Int
-        get() = sharedPreferences.getInt(
+        get() = sharedPreferences.getString(
             keyFromResources(R.string.KEY_settings_stream_copying_buffer_size),
-            getInteger(R.integer.DEFAULT_stream_copying_buffer_size)
-        )
+            getInteger(R.integer.DEFAULT_stream_copying_buffer_size).toString()
+        )!!.toInt()
         set(value) {
             sharedPreferences.edit(commit = true) {
                 putInt(
@@ -34,10 +34,10 @@ class AppSettingsImpl @Inject constructor(
 
 
     override var fileParallelism: Int
-        get() = sharedPreferences.getInt(
+        get() = sharedPreferences.getString(
             keyFromResources(R.string.KEY_settings_file_transfer_parallelism),
-            getInteger(R.integer.DEFAULT_settings_file_transfer_parallelism)
-        )
+            getInteger(R.integer.DEFAULT_settings_file_transfer_parallelism).toString()
+        )!!.toInt()
         set(value) {
             return sharedPreferences.edit(commit = true) {
                 putInt(
@@ -65,10 +65,10 @@ class AppSettingsImpl @Inject constructor(
 
     override var fileTransferRetardationMs: Int
         get() {
-            return sharedPreferences.getInt(
+            return sharedPreferences.getString(
                 keyFromResources(R.string.KEY_settings_file_transfer_retardation_ms),
-                getInteger(R.integer.DEFAULT_settings_file_transfer_retardation_ms)
-            )
+                getInteger(R.integer.DEFAULT_settings_file_transfer_retardation_ms).toString()
+            )!!.toInt()
         }
         set(value) {
             sharedPreferences.edit(commit = true) {
