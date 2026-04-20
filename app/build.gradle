@@ -15,8 +15,8 @@ android {
         applicationId "com.github.aakumykov.sync_dir_to_cloud"
         minSdk 23
         targetSdk 36
-        versionCode 11
-        versionName "0.0.11-alpha"
+        versionCode 12
+        versionName "0.0.12-alpha"
 
         testInstrumentationRunner "com.github.aakumykov.sync_dir_to_cloud.bb_new.system.TestRunner"
 
@@ -145,9 +145,9 @@ dependencies {
     kapt "androidx.room:room-compiler:2.8.4"
     implementation "androidx.room:room-ktx:2.8.4"
 
-//    implementation 'com.yandex.android:authsdk:3.1.0'
+    implementation 'com.yandex.android:authsdk:3.1.0'
 //    implementation 'com.github.aakumykov:yandex-login-sdk-android-ng:3.1.0'
-    implementation 'com.yandex.android:authsdk:3.1.5'
+//    implementation 'com.yandex.android:authsdk:3.1.5'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
 
