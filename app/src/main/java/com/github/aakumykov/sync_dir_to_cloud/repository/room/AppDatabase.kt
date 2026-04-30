@@ -145,8 +145,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 154, to = 155), // Отключено представление "task_details" (TaskDetailsItem). "Отключено", потому что не удаляется из БД.
         AutoMigration(from = 155, to = 156, spec = DeleteTaskLogEntry::class),
         AutoMigration(from = 156, to = 157), // Новое поле BasicLogItem.progress
+        AutoMigration(from = 157, to = 158), // Новые поля "параллельность" и "скорость".
     ],
-    version = 157,
+    version = 158,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
