@@ -162,7 +162,7 @@ dependencies {
 //    implementation 'com.github.aakumykov:cloud_reader_2:4.0.0-alpha'
 //    implementation 'com.github.aakumykov:cloud_writer_2:7.4.0-alpha'
     implementation 'com.github.aakumykov:cloud_reader_2:4.1.0-alpha'
-    implementation 'com.github.aakumykov:cloud_writer_2:7.8.0-alpha'
+    implementation 'com.github.aakumykov:cloud_writer_2:7.9.1-alpha'
 
     implementation 'com.github.aakumykov:storage_access_helper:2.0.0-alpha'
 
