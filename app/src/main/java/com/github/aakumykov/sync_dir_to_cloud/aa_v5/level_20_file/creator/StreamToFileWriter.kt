@@ -127,7 +127,8 @@ class StreamToFileWriter @AssistedInject constructor(
                         },
                         finishCallback = { _,_ ->
                             cancellableContinuation.resume(Unit)
-                        }
+                        },
+                        requiredSpeedBytesPerSecondSupplier = { syncTask.speedBytesPerSecond }
                     )
             } catch (t: Throwable) {
                 Log.e(TAG, t.errorMsg, t)

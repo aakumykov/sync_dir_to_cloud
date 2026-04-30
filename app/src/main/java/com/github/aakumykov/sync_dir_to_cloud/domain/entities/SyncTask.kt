@@ -62,7 +62,7 @@ class SyncTask {
     @ColumnInfo(name = "sync_mode") var syncMode: SyncMode?
 
     @ColumnInfo(name = "speed", defaultValue = "-1") var speedBytesPerSecond: Long = -1
-    @ColumnInfo(name = "parallelism", defaultValue = "1") var parallelism: Long = 1
+    @ColumnInfo(name = "parallelism", defaultValue = "1") var parallelism: Int = 1
 
     @ColumnInfo(name = "interval_h") var intervalHours: Int
     @ColumnInfo(name = "interval_m") var intervalMinutes: Int

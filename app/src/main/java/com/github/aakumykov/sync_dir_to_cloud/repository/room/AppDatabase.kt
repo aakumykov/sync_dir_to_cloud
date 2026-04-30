@@ -146,8 +146,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 155, to = 156, spec = DeleteTaskLogEntry::class),
         AutoMigration(from = 156, to = 157), // Новое поле BasicLogItem.progress
         AutoMigration(from = 157, to = 158), // Новые поля "параллельность" и "скорость".
+        AutoMigration(from = 158, to = 159), // fix: SyncTask.parallelism: Long --> Int
     ],
-    version = 158,
+    version = 159,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

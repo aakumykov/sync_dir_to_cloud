@@ -58,7 +58,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     private suspend fun processReal(list: Iterable<FileInstruction>) {
 
         processByChunks(
-            chunkSize = appSettings.fileParallelism,
+            chunkSize = syncTask.parallelism,
             instructionList = list.filter { FileOperation.COPY_FROM_SOURCE_TO_TARGET == it.operation }
         ) {
             copyFromSourceToTarget(it)
