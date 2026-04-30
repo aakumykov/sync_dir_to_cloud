@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.github.aakumykov.sync_dir_to_cloud"
-        minSdk 23
+        minSdk 24
         targetSdk 36
         versionCode 12
         versionName "0.0.12-alpha"
