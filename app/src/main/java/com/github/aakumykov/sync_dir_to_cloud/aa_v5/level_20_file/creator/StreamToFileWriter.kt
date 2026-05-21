@@ -108,9 +108,7 @@ class StreamToFileWriter @AssistedInject constructor(
                         inputStream = inputStream,
                         targetAbsolutePath = filePath,
                         overwriteIfExists = overwriteIfExists,
-                        bufferSize = appSettings.streamCopyingBufferSize,
-                        writingCallback = { progress ->
-
+                        progressCallback = { progress, speed ->
                             Log.d(TAG, "прогресс записи файла: ${BytesToHumanSizeFormatter.format(progress)}")
 
                             dataTransferDelay.also { delayMs ->
@@ -120,10 +118,9 @@ class StreamToFileWriter @AssistedInject constructor(
 
                             // TODO: вернуть это?
                             /*if (!cancellableContinuation.isActive)
-                                return@putStream*/
+                            return@putStream*/
 
                             progressCallback?.invoke(progress)
-
                         },
                         finishCallback = { _,_ ->
                             cancellableContinuation.resume(Unit)

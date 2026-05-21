@@ -7,5 +7,7 @@ interface AppSettings {
     var backupIsCriticalOperation: Boolean
     var dryRun: Boolean
     var fileParallelism: Int
+
+    @Deprecated("удалить")
     var streamCopyingBufferSize: Int
 }
