@@ -225,4 +225,6 @@
     <string name="DIALOG_OPERATION_DETAILS_duration">Продолжительность: %1$s</string>
     <string name="SETTINGS_SUMMARY_stream_copying_buffer_size">Размер буфера при копировании из потока в поток</string>
     <string name="SETTINGS_stream_copying_buffer_size">Размер буфера копирования</string>
+    <string name="speed_input_hint">Скорость, байт/с</string>
+    <string name="speed_per_second">%1$s/с</string>
 </resources>

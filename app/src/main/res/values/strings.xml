@@ -234,4 +234,7 @@
     <string name="DIALOG_OPERATION_DETAILS_id" translatable="false">id: %1$s</string>
     <string name="SETTINGS_SUMMARY_stream_copying_buffer_size">Stream to stream copying buffer size</string>
     <string name="SETTINGS_stream_copying_buffer_size">Stream copying buffer size</string>
+    <string name="speed_input_hint">Speed, byte/s</string>
+    <string name="infinity_symbol" translatable="false">∞</string>
+    <string name="speed_per_second">%1$s/s</string>
 </resources>

@@ -158,6 +158,32 @@
             android:textOn="@string/TOGGLE_with_backup_on"
             android:textOff="@string/TOGGLE_with_backup_off" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/speedInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:textAlignment="center"
+                android:inputType="numberDecimal"
+                android:hint="@string/speed_input_hint" />
+
+            <TextView
+                android:id="@+id/speedIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20sp"
+                tools:text="∞" />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/saveButton"
             android:layout_width="match_parent"

@@ -12,6 +12,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.copy_between_streams_with_speed.utils.humanReadableByteCount
 import com.github.aakumykov.file_lister_navigator_selector.extensions.listenForFragmentResult
 import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSelector
 import com.github.aakumykov.file_lister_navigator_selector.fs_item.FSItem
@@ -240,6 +241,14 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                 currentTask?.intervalMinutes = s.toString().toInt()
             }
         })
+
+        binding.speedInput.addTextChangedListener(object: SimpleTextWatcher(){
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                displaySpeed(s.toString().toIntOrNull())
+            }
+        })
+
+        displaySpeed(currentTask?.speedBytesPerSecond)
     }
 
     private fun prepareButtons() {
@@ -267,6 +276,15 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         binding.withBackupTtoggleButton.setOnCheckedChangeListener { buttonView, isChecked ->
             onWithBackupChanged(isChecked)
+        }
+    }
+
+
+    private fun displaySpeed(valueBytesPerSec: Int?) {
+        binding.speedIndicator.text = when(valueBytesPerSec) {
+            null -> getString(R.string.infinity_symbol)
+            -1 -> getString(R.string.infinity_symbol)
+            else -> getString(R.string.speed_per_second, humanReadableByteCount(valueBytesPerSec))
         }
     }
 
