@@ -244,11 +244,12 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
         binding.speedInput.addTextChangedListener(object: SimpleTextWatcher(){
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                displaySpeed(s.toString().toIntOrNull())
+                s.toString().toIntOrNull()?.also {
+                    taskEditViewModel.setSpeed(it)
+                    displaySpeed(it)
+                }
             }
         })
-
-        displaySpeed(currentTask?.speedBytesPerSecond)
     }
 
     private fun prepareButtons() {
@@ -281,11 +282,20 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
 
 
     private fun displaySpeed(valueBytesPerSec: Int?) {
-        binding.speedIndicator.text = when(valueBytesPerSec) {
-            null -> getString(R.string.infinity_symbol)
-            -1 -> getString(R.string.infinity_symbol)
-            else -> getString(R.string.speed_per_second, humanReadableByteCount(valueBytesPerSec))
+        when(valueBytesPerSec) {
+            null -> displayUnrestrictedSpeed()
+            -1 -> displayUnrestrictedSpeed()
+            else -> displayRestrictedSpeed(valueBytesPerSec)
         }
+    }
+
+    private fun displayRestrictedSpeed(valueBytesPerSec: Int) {
+        binding.speedIndicator.text = getString(R.string.speed_per_second, humanReadableByteCount(valueBytesPerSec, decimalNotation = false))
+//        binding.speedInput.setText(valueBytesPerSec.toString())
+    }
+
+    private fun displayUnrestrictedSpeed() {
+        getString(R.string.infinity_symbol)
     }
 
 
@@ -479,6 +489,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
         fillPeriodView(syncTask)
         initSpinner()
         initBackupToggler(syncTask)
+        displaySpeed(syncTask.speedBytesPerSecond)
     }
 
     private fun initBackupToggler(syncTask: SyncTask) {

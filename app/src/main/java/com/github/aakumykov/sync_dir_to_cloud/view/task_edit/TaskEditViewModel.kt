@@ -103,4 +103,10 @@ class TaskEditViewModel(
             intervalMinutes = minutesCount
         }
     }
+
+    fun setSpeed(valueBytesPerSecond: Int) {
+        currentTask?.apply {
+            speedBytesPerSecond = valueBytesPerSecond
+        }
+    }
 }
