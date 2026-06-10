@@ -168,10 +168,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:hint="@string/speed_input_hint"
+                android:inputType="number|numberDecimal|numberSigned"
                 android:singleLine="true"
-                android:textAlignment="center"
-                android:inputType="numberDecimal"
-                android:hint="@string/speed_input_hint" />
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/speedIndicator"
