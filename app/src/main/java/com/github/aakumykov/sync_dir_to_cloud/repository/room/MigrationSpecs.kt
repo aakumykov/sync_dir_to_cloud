@@ -227,3 +227,11 @@ class BasicLogItemStartTimeFinishTime : AutoMigrationSpec
 
 @DeleteTable(tableName = "sync_task_logs")
 class DeleteTaskLogEntry : AutoMigrationSpec
+
+@RenameColumn(
+    tableName = "sync_tasks",
+    fromColumnName = "notification_id",
+    toColumnName = "current_notification_id"
+)
+class RenameNotificationId : AutoMigrationSpec
+

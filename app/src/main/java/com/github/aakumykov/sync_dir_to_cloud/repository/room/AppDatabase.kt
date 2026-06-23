@@ -148,8 +148,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 157, to = 158), // Новые поля "параллельность" и "скорость".
         AutoMigration(from = 158, to = 159), // fix: SyncTask.parallelism: Long --> Int
         AutoMigration(from = 159, to = 160), // fix: SyncTask.speedBytesPerSecond: Long --> Int
+        AutoMigration(from = 160, to = 161, spec = RenameNotificationId::class), // notification_id --> current_notification_id
     ],
-    version = 160,
+    version = 161,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

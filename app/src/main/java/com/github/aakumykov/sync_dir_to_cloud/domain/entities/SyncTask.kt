@@ -29,7 +29,7 @@ class SyncTask {
     // FIXME: var|val
 
     @PrimaryKey var id: String = UUID.randomUUID().toString()
-    @ColumnInfo(name = "notification_id") var notificationId: Int = View.generateViewId()
+    @ColumnInfo(name = "current_notification_id") var currentNotificationId: Int = View.generateViewId()
 
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
@@ -160,7 +160,7 @@ class SyncTask {
     @Ignore
     fun summary() = "SyncTask($id): [$sourceStorageType] $sourcePath --> [$targetStorageType] $targetPath"
     override fun toString(): String {
-        return "SyncTask(id='$id', notificationId=$notificationId, state=$state, isEnabled=$isEnabled, schedulingState=$schedulingState, schedulingError=$schedulingError, executionState=$executionState, executionError=$executionError, sourceReadingState=$sourceReadingState, sourceReadingError=$sourceReadingError, sourceStorageType=$sourceStorageType, targetStorageType=$targetStorageType, sourcePath=$sourcePath, targetPath=$targetPath, syncMode=$syncMode, intervalHours=$intervalHours, intervalMinutes=$intervalMinutes, oldIntervalH=$oldIntervalH, oldIntervalM=$oldIntervalM, sourceAuthId=$sourceAuthId, targetAuthId=$targetAuthId, cTime=$cTime, lastStart=$lastStart, lastFinish=$lastFinish, totalObjectsCount=$totalObjectsCount, syncedObjectsCount=$syncedObjectsCount, withBackup=$withBackup, sourceTaskBackupDirName=$sourceTaskBackupDirName, targetTaskBackupDirName=$targetTaskBackupDirName, sourceExecutionBackupDirName=$sourceExecutionBackupDirName, targetExecutionBackupDirName=$targetExecutionBackupDirName)"
+        return "SyncTask(id='$id', notificationId=$currentNotificationId, state=$state, isEnabled=$isEnabled, schedulingState=$schedulingState, schedulingError=$schedulingError, executionState=$executionState, executionError=$executionError, sourceReadingState=$sourceReadingState, sourceReadingError=$sourceReadingError, sourceStorageType=$sourceStorageType, targetStorageType=$targetStorageType, sourcePath=$sourcePath, targetPath=$targetPath, syncMode=$syncMode, intervalHours=$intervalHours, intervalMinutes=$intervalMinutes, oldIntervalH=$oldIntervalH, oldIntervalM=$oldIntervalM, sourceAuthId=$sourceAuthId, targetAuthId=$targetAuthId, cTime=$cTime, lastStart=$lastStart, lastFinish=$lastFinish, totalObjectsCount=$totalObjectsCount, syncedObjectsCount=$syncedObjectsCount, withBackup=$withBackup, sourceTaskBackupDirName=$sourceTaskBackupDirName, targetTaskBackupDirName=$targetTaskBackupDirName, sourceExecutionBackupDirName=$sourceExecutionBackupDirName, targetExecutionBackupDirName=$targetExecutionBackupDirName)"
     }
 
     val description: String get() = summary()

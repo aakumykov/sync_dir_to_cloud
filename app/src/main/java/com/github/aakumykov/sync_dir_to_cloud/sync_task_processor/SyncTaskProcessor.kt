@@ -334,11 +334,11 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun showWritingTargetNotification(syncTask: SyncTask) {
-        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.WRITING_TARGET)
+        syncTaskNotificator.showNotification(syncTask.id, syncTask.currentNotificationId, SyncTask.State.WRITING_TARGET)
     }
 
     private suspend fun showReadingSourceNotification(syncTask: SyncTask) {
-        syncTaskNotificator.showNotification(syncTask.id, syncTask.notificationId, SyncTask.State.READING_SOURCE)
+        syncTaskNotificator.showNotification(syncTask.id, syncTask.currentNotificationId, SyncTask.State.READING_SOURCE)
     }
 
 
