@@ -12,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
@@ -109,7 +108,6 @@ class ViewModelsModule {
                                  syncTaskManagingUseCase: SyncTaskManagingUseCase,
                                  syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
                                  syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
-                                 syncTaskNotificator: SyncTaskNotificator,
                                  syncObjectDBDeleter: SyncObjectDBDeleter,
     ): ViewModel {
         return TaskListViewModel(
@@ -117,7 +115,6 @@ class ViewModelsModule {
             syncTaskManagingUseCase =  syncTaskManagingUseCase,
             syncTaskStartStopUseCase = syncTaskStartStopUseCase,
             syncTaskSchedulingUseCase = syncTaskSchedulingUseCase,
-            syncTaskNotificator = syncTaskNotificator,
             syncObjectDBDeleter = syncObjectDBDeleter,
         )
     }

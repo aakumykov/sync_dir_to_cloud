@@ -227,4 +227,13 @@
     <string name="SETTINGS_stream_copying_buffer_size">Размер буфера копирования</string>
     <string name="speed_input_hint">Скорость, байт/с</string>
     <string name="speed_per_second">%1$s/с</string>
+    <string name="sync_task_progress_notifications_channel_name">Выполнение задач</string>
+    <string name="sync_task_progress_notifications_channel_description">Прогресс выполнения задач синхронизации</string>
+    <string name="sync_task_success_notifications_channel_name">Успешное завершение задач</string>
+    <string name="sync_task_success_notifications_channel_description">Уведомления об успешном завершении синхронизации</string>
+    <string name="sync_task_error_notifications_channel_name">Ошибки задач</string>
+    <string name="sync_task_error_notifications_channel_description">Сведения об ошибках выполнения задач</string>
+    <string name="sync_task_progress_notification_title">Синхронизация идёт</string>
+    <string name="sync_task_success_notification_title">Синхронизация завершена</string>
+    <string name="sync_task_error_notification_title">Ошибка синхронизации</string>
 </resources>

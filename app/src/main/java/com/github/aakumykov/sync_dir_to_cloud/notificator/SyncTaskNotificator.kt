@@ -1,131 +1,95 @@
 package com.github.aakumykov.sync_dir_to_cloud.notificator
 
-import android.Manifest
-import android.app.PendingIntent
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import androidx.annotation.StringRes
-import androidx.core.app.ActivityCompat
+import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.config.ProgressNotificationsConfig
+import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
-import com.github.aakumykov.sync_dir_to_cloud.utils.MyLogger
-import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
-import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
-import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
-import javax.inject.Inject
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-class SyncTaskNotificator @Inject constructor(
-    @AppContext private val appContext: Context,
+class SyncTaskNotificator @AssistedInject constructor(
+    @Assisted private val syncTask: SyncTask,
+    @param:AppContext private val appContext: Context,
     private val notificationManagerCompat: NotificationManagerCompat,
-    private val notificationChannelHelper: NotificationChannelHelper
+    private val syncTaskNotificationChannelHelper: SyncTaskNotificationChannelHelper,
+    private val notificationChannelConfig: NotificationChannelConfig
 ) {
-    private val notificationBuilder: NotificationCompat.Builder by lazy {
+    private val newNotificationId: Int get() = View.generateViewId()
+    private var progressNotificationId: Int? = null
 
-        NotificationCompat.Builder(appContext, ProgressNotificationsConfig.CHANNEL_ID).apply {
-            setSmallIcon(ProgressNotificationsConfig.SMALL_ICON)
-            setOngoing(true)
-            setProgress(0,0,true)
-            setContentTitle(string(R.string.NOTIFICATION_title))
-//            setContentInfo(":-) - content info")
-//            setSubText(";-) sub text")
+    private val progressNotificationBuilder: NotificationCompat.Builder by lazy {
+        NotificationCompat.Builder(appContext, notificationChannelConfig.progress.channelId)
+            .setContentTitle(getString(R.string.sync_task_progress_notification_title))
+            .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
+            .setSmallIcon(R.drawable.ic_sync_task_notification_progress)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setUsesChronometer(true)
+    }
+
+    private val successNotificationBuilder: NotificationCompat.Builder by lazy {
+        NotificationCompat.Builder(appContext, notificationChannelConfig.success.channelId)
+            .setContentTitle(getString(R.string.sync_task_success_notification_title))
+            .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
+            .setSmallIcon(R.drawable.ic_sync_task_notification_success)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setUsesChronometer(true)
+    }
+
+    private val errorNotificationBuilder: NotificationCompat.Builder by lazy {
+        NotificationCompat.Builder(appContext, notificationChannelConfig.error.channelId)
+            .setContentTitle(getString(R.string.sync_task_error_notification_title))
+            .setSmallIcon(R.drawable.ic_sync_task_notification_error)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setUsesChronometer(true)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun showProgressNotification() {
+        syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
+        val id = newNotificationId
+        notificationManagerCompat.notify(id, progressNotificationBuilder.build())
+        progressNotificationId = id
+    }
+
+    fun hideProgressNotification() {
+        progressNotificationId?.also {
+            notificationManagerCompat.cancel(it)
         }
     }
 
-
-    fun showNotification(taskId: String, notificationId: Int, state: SyncTask.State) {
-
-//        MyLogger.d(tagWithHashCode(), "showNotification($taskId, $notificationId, $state)")
-
-        prepareNotificationChannel()
-
-        // FIXME: отдельный статус для этого процесса
-        when (state) {
-            SyncTask.State.IDLE -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_idle)
-            SyncTask.State.READING_SOURCE -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_reading_source)
-            SyncTask.State.WRITING_TARGET -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_writing_target)
-            SyncTask.State.SEMI_SUCCESS -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_semi_success)
-            // FIXME: ошибочное уведомление должно быть скрываемым
-            SyncTask.State.EXECUTION_ERROR -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_error)
-            SyncTask.State.SUCCESS -> showNotificationReal(taskId, notificationId, R.string.NOTIFICATION_success)
-            // В этом состоянии уведомления быть не должно.
-            SyncTask.State.SCHEDULING_ERROR -> {}
-        }
-    }
-
-    fun hideNotification(taskId: String, notificationId: Int) {
-//        MyLogger.d(tagWithHashCode(), "hideNotification($taskId, $notificationId)")
-        notificationManagerCompat.cancel(taskId, notificationId)
-    }
-
-    private fun showNotificationReal(taskId: String ,notificationId: Int, @StringRes textRes: Int) {
-
-        // Проверка наличия разрешения на уведомления
-        if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            MyLogger.e(TAG, "Нет разрешения на показ уведомлений.")
-            return
-        }
-
-        notificationBuilder
-            .apply {
-                setContentText(string(textRes))
-                setContentIntent(contentPendingIntent(taskId))
-            }
-            .also {
-                notificationManagerCompat.notify(taskId, notificationId, it.build())
-            }
+    @SuppressLint("MissingPermission")
+    fun showSuccessNotification() {
+        syncTaskNotificationChannelHelper.createSuccessNotificationChannelItNotExists()
+        notificationManagerCompat.notify(newNotificationId, successNotificationBuilder.build())
     }
 
 
-    private fun prepareNotificationChannel() {
-        deleteNotificationsChannel()
-
-        if (!notificationChannelHelper.channelExists(ProgressNotificationsConfig.CHANNEL_ID)) {
-            notificationChannelHelper.createChannel(
-                channelId = ProgressNotificationsConfig.CHANNEL_ID,
-                channelImportance = ProgressNotificationsConfig.CHANNEL_IMPORTANCE,
-                channelName = string(ProgressNotificationsConfig.CHANNEL_NAME_RES),
-                channelDescription = string(ProgressNotificationsConfig.CHANNEL_DESCRIPTION_RES)
-            )
-        }
-    }
-
-
-    private fun deleteNotificationsChannel() {
-        notificationManagerCompat.deleteNotificationChannel(ProgressNotificationsConfig.CHANNEL_ID)
-    }
-
-
-    private fun string(@StringRes strRes: Int): String = appContext.resources.getString(strRes)
-
-
-    // FIXME: для запуска Activity нежелательно использовать ApplicationContext ...
-    private fun contentPendingIntent(taskId: String): PendingIntent {
-        return PendingIntent.getActivity(
-            appContext,
-            CODE_SHOW_TASK_STATE,
-            intent(taskId),
-            flags()
+    @SuppressLint("MissingPermission")
+    fun showErrorNotification(throwable: Throwable) {
+        syncTaskNotificationChannelHelper.createErrorNotificationChannelItNotExists()
+        notificationManagerCompat.notify(
+            newNotificationId,
+            errorNotificationBuilder
+                .setContentText(throwable.errorMsgExtended)
+                .build()
         )
     }
 
-    private fun intent(taskId: String): Intent {
-        return Intent(appContext, MainActivity::class.java).apply {
-            action = MainActivity.ACTION_SHOW_TASK_STATE
-            putExtra(GlobalKeys.KEY_TASK_ID, taskId)
-        }
-    }
-
-    private fun flags(): Int = PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    private fun getString(stringRes: Int): String = appContext.getString(stringRes)
+}
 
 
-    companion object {
-        val TAG: String = SyncTaskNotificator::class.java.simpleName
-        const val CODE_SHOW_TASK_STATE: Int = 10
-    }
+@AssistedFactory
+interface SyncTaskNotificatorAssistedFactory {
+    fun create(syncTask: SyncTask): SyncTaskNotificator
 }

@@ -22,7 +22,6 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker.TaskDirsFixerAssistedFactory
@@ -74,7 +73,6 @@ class SyncTaskProcessor @AssistedInject constructor(
     private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,
 
     private val cloudAuthReader: CloudAuthReader,
-    private val syncTaskNotificator: SyncTaskNotificator,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val syncInstructionDeleter: SyncInstructionDeleter,
@@ -330,15 +328,6 @@ class SyncTaskProcessor @AssistedInject constructor(
                 sourceWithTargetComparator.compareSourceWithTarget()
             }
         )
-    }
-
-
-    private suspend fun showWritingTargetNotification(syncTask: SyncTask) {
-        syncTaskNotificator.showNotification(syncTask.id, syncTask.currentNotificationId, SyncTask.State.WRITING_TARGET)
-    }
-
-    private suspend fun showReadingSourceNotification(syncTask: SyncTask) {
-        syncTaskNotificator.showNotification(syncTask.id, syncTask.currentNotificationId, SyncTask.State.READING_SOURCE)
     }
 
 

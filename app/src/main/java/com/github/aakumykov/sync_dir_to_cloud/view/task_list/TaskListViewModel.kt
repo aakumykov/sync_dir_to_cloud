@@ -11,7 +11,6 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.use_cases.sync_task.SyncTas
 import com.github.aakumykov.sync_dir_to_cloud.exceptions.CancelledByUserException
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.PageOpStateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +20,6 @@ class TaskListViewModel(
     private val syncTaskManagingUseCase: SyncTaskManagingUseCase,
     private val syncTaskStartStopUseCase: StartStopSyncTaskUseCase,
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
-    private val syncTaskNotificator: SyncTaskNotificator,
     private val syncObjectDBDeleter: SyncObjectDBDeleter,
 )
     : PageOpStateViewModel(application)
@@ -56,7 +54,6 @@ class TaskListViewModel(
     fun deleteTask(syncTask: SyncTask) {
         viewModelScope.launch {
             syncTaskStartStopUseCase.stopSyncTask(syncTask)
-            syncTaskNotificator.hideNotification(syncTask.id, syncTask.currentNotificationId)
             syncTaskSchedulingUseCase.unScheduleSyncTask(syncTask)
             syncTaskManagingUseCase.deleteSyncTask(syncTask)
         }

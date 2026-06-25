@@ -237,4 +237,13 @@
     <string name="speed_input_hint">Speed, byte/s</string>
     <string name="infinity_symbol" translatable="false">∞</string>
     <string name="speed_per_second">%1$s/s</string>
+    <string name="sync_task_progress_notifications_channel_name">Sync task progress</string>
+    <string name="sync_task_progress_notifications_channel_description">Sync task progress notifications</string>
+    <string name="sync_task_success_notifications_channel_name">Sync task success</string>
+    <string name="sync_task_success_notifications_channel_description">Sync task success notifications</string>
+    <string name="sync_task_error_notifications_channel_name">Sync task error</string>
+    <string name="sync_task_error_notifications_channel_description">Sync task error notifications</string>
+    <string name="sync_task_progress_notification_title">Sync in progress</string>
+    <string name="sync_task_success_notification_title">Sync success</string>
+    <string name="sync_task_error_notification_title">Sync error</string>
 </resources>

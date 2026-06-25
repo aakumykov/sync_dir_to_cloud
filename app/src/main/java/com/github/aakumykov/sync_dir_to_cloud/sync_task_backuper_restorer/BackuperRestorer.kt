@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 
 class BackuperRestorer @Inject constructor(
-    @AppContext private val appContext: Context,
+    @param:AppContext private val appContext: Context,
     private val syncTaskRepository: SyncTaskRepository,
     private val syncTaskManagingUseCase: SyncTaskManagingUseCase,
     private val syncTaskSchedulingUseCase: SchedulingSyncTaskUseCase,
