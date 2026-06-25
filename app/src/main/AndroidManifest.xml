@@ -36,10 +36,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
-        <service
-            android:name=".utils.SampleService"
-            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

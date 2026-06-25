@@ -9,7 +9,6 @@ import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.utils.SampleService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +64,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     private suspend fun doWorkReal(taskId: String, scope: CoroutineScope) {
         Log.d(TAG, "doWorkReal(), scope = $scope")
         try {
-            SampleService.start(applicationContext)
+//            SampleService.start(applicationContext)
 
             syncTaskExecutorFactory
                 .create(taskId)
@@ -86,7 +85,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
         finally {
             withContext(NonCancellable) {
                 Log.d(TAG, "doWorkReal() finally{}")
-                SampleService.stop(applicationContext)
+//                SampleService.stop(applicationContext)
             }
         }
     }
