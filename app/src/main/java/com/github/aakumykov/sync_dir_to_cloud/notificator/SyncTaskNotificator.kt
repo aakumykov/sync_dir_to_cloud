@@ -1,13 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.notificator
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.PendingIntentCompat
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
@@ -80,6 +77,7 @@ class SyncTaskNotificator @AssistedInject constructor(
             newNotificationId,
             errorNotificationBuilder
                 .setContentText(throwable.errorMsgExtended)
+                .setContentIntent()
                 .build()
         )
     }

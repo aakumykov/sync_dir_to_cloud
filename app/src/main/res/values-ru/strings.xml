@@ -236,4 +236,5 @@
     <string name="sync_task_progress_notification_title">Синхронизация идёт</string>
     <string name="sync_task_success_notification_title">Синхронизация завершена</string>
     <string name="sync_task_error_notification_title">Ошибка синхронизации</string>
+    <string name="error_there_is_no_data_to_display">Нет данных для отображения</string>
 </resources>

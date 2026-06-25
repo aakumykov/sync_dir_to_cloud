@@ -18,12 +18,14 @@ import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
+import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskErrorBinding
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuHelper
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 import com.github.aakumykov.sync_dir_to_cloud.view.settings.SettingsFragment
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_error.TaskErrrorFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic.SyncLogFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
@@ -75,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         setFragment(
             when(intent?.action) {
                 ACTION_SHOW_TASK_STATE -> TaskDetailsFragment.create(intent)
+                ACTION_SHOW_TASK_ERROR -> TaskErrrorFragment.create(intent)
                 else -> TaskListFragment.create()
             }
         )
@@ -197,6 +200,7 @@ class MainActivity : AppCompatActivity() {
         val TAG: String = MainActivity::class.java.simpleName
 
         const val ACTION_SHOW_TASK_STATE: String = "SHOW_TASK_STATE"
+        const val ACTION_SHOW_TASK_ERROR: String = "SHOW_TASK_ERROR"
         const val CODE_OPEN_MAIN_ACTIVITY = 1000
 
         fun pendingIntent(context: Context): PendingIntent {

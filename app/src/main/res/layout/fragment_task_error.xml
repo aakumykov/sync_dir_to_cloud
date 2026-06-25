@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/errorTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Заголовок ошибки" />
+
+            <TextView
+                android:id="@+id/errorDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Подробности ошибки" />
+
+        </LinearLayout>
+
+</ScrollView>
