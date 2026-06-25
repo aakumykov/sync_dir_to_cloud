@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class TaskLogRepository @Inject constructor(
     private val dao: TaskLoggerDAO,
-    @DispatcherIO private val dispatcher: CoroutineDispatcher,
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) {
     suspend fun add(taskLogItem: TaskLogItem) = withContext(dispatcher) {
         dao.add(taskLogItem)

@@ -2,11 +2,8 @@ package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
 import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
-import com.github.aakumykov.sync_dir_to_cloud.extensions.classNameWithHash
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
-import com.github.aakumykov.sync_dir_to_cloud.extensions.tag
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
@@ -15,7 +12,6 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessorAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -43,20 +39,13 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLoggerAssistedFactory: TaskLoggerAssistedFactory,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
-    private val syncTaskNotificatorAssistedFactory: SyncTaskNotificatorAssistedFactory
+    private val syncTaskNotificator: SyncTaskNotificator
 ){
-    private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy {
-        appComponent.getSyncTaskRunningTimeUpdater() }
-
     private val executionId: String by lazy { hashCode().toString() }
-
     private val logItemId: String by lazy { newRandomId }
 
-    private val taskLogger: TaskLogger by lazy {
-        taskLoggerAssistedFactory.create(taskId, executionId)
-    }
-
-    private fun getNotificator(syncTask: SyncTask): SyncTaskNotificator = syncTaskNotificatorAssistedFactory.create(syncTask)
+    private val taskLogger: TaskLogger by lazy { taskLoggerAssistedFactory.create(taskId, executionId) }
+    private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
 
     suspend fun executeSyncTask(parentScope: CoroutineScope, taskId: String) {
@@ -65,69 +54,72 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             val syncTask = syncTaskReader.getSyncTask(taskId)
 
-            val notificator = getNotificator(syncTask)
-
 
             // FIXME: TODO внедрять?
             // TODO: вместо того, чтобы мудрить здесь с запуском в Scope,
             //  можно (нужно) внедрить его в класс-журналёр.
+
+            // FIXME: проблема: если  упала сразу, до того, как
+            //  запись о её начале появилась в журнале задач,
+            //  сообщение об ошибке
+
             val taskEH = CoroutineExceptionHandler { context, throwable ->
                 parentScope.launch (NonCancellable) {
-                    taskLogger.logTaskError(logItemId, throwable)
-                    syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
-                    notificator.showErrorNotification(throwable)
+                    syncTaskNotificator.showErrorNotification(throwable)
+                    actionsOnError(throwable)
                 }
             }
 
             parentScope.launch (Dispatchers.IO + taskEH) {
                 try {
-                    notificator.showProgressNotification()
-                    executeSyncTaskReal(this, syncTask)
-                    notificator.showSuccessNotification()
+                    beforeStart()
+                    syncTaskNotificator.showProgressNotification(syncTask)
+
+                    syncTaskProcessorFactory
+                        .create(syncTask, executionId, parentScope)
+                        .processSyncTask()
+
+                    syncTaskNotificator.showSuccessNotification(syncTask)
+                    afterFinish()
+
                 } catch (e: CancellationException) {
                     syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
                     taskLogger.logTaskCancelled(logItemId, e)
                 } finally {
-                    notificator.hideProgressNotification()
+                    syncTaskNotificator.hideProgressNotification()
                 }
             }.also { job ->
                 TaskJobsHolder.addJob(taskId, job)
-            }.join() // Этот join() нужен для синхронного выполнения метода в scope.
+            }.join()
 
         } finally {
+            finallyActions()
             TaskJobsHolder.removeJob(taskId)
         }
     }
 
-
-    private suspend fun executeSyncTaskReal(
-        parentScope: CoroutineScope,
-        syncTask: SyncTask,
-    ) {
-        Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] СТАРТ ========")
-
-        val taskId = syncTask.id
-
-        try {
-            taskLogger.logTaskStarted(logItemId)
-            syncTaskRunningTimeUpdater.updateStartTime(taskId)
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
-
-            syncTaskProcessorFactory
-                .create(syncTask, executionId, parentScope)
-                .processSyncTask()
-
-            syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
-            taskLogger.logTaskFinished(logItemId)
-        }
-        finally {
-            // TODO: ошибочное расположение
-            // TODO: сделать не прерываемым
-            syncTaskRunningTimeUpdater.updateFinishTime(taskId)
-        }
-
-        Log.d(tag, "========= executeSyncTaskReal() [${classNameWithHash()}] ФИНИШ ========")
+    private suspend fun actionsOnError(throwable: Throwable) {
+        taskLogger.logTaskError(logItemId, throwable)
+        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.ERROR, throwable.errorMsg)
     }
+
+    private suspend fun beforeStart() {
+        taskLogger.logTaskStarted(logItemId)
+        syncTaskRunningTimeUpdater.updateStartTime(taskId)
+        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.RUNNING)
+    }
+
+    private suspend fun afterFinish() {
+        syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.SUCCESS)
+        taskLogger.logTaskFinished(logItemId)
+    }
+
+    private suspend fun finallyActions() {
+        // TODO: ошибочное расположение
+        // TODO: сделать непрерываемым
+        syncTaskRunningTimeUpdater.updateFinishTime(taskId)
+    }
+
 
     companion object {
         val TAG: String = SyncTaskExecutor::class.java.simpleName

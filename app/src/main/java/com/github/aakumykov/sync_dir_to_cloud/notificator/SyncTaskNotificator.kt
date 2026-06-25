@@ -1,25 +1,19 @@
 package com.github.aakumykov.sync_dir_to_cloud.notificator
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.PendingIntentCompat
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import javax.inject.Inject
 
-class SyncTaskNotificator @AssistedInject constructor(
-    @Assisted private val syncTask: SyncTask,
+class SyncTaskNotificator @Inject constructor(
     @param:AppContext private val appContext: Context,
     private val notificationManagerCompat: NotificationManagerCompat,
     private val syncTaskNotificationChannelHelper: SyncTaskNotificationChannelHelper,
@@ -31,7 +25,6 @@ class SyncTaskNotificator @AssistedInject constructor(
     private val progressNotificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(appContext, notificationChannelConfig.progress.channelId)
             .setContentTitle(getString(R.string.sync_task_progress_notification_title))
-            .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
             .setSmallIcon(R.drawable.ic_sync_task_notification_progress)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
@@ -42,7 +35,6 @@ class SyncTaskNotificator @AssistedInject constructor(
     private val successNotificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(appContext, notificationChannelConfig.success.channelId)
             .setContentTitle(getString(R.string.sync_task_success_notification_title))
-            .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
             .setSmallIcon(R.drawable.ic_sync_task_notification_success)
     }
 
@@ -53,10 +45,17 @@ class SyncTaskNotificator @AssistedInject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun showProgressNotification() {
+    fun showProgressNotification(syncTask: SyncTask) {
         syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
+
         val id = newNotificationId
-        notificationManagerCompat.notify(id, progressNotificationBuilder.build())
+        notificationManagerCompat.notify(
+            id,
+            progressNotificationBuilder
+                .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
+                .build()
+        )
+
         progressNotificationId = id
     }
 
@@ -67,15 +66,22 @@ class SyncTaskNotificator @AssistedInject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun showSuccessNotification() {
+    fun showSuccessNotification(syncTask: SyncTask) {
         syncTaskNotificationChannelHelper.createSuccessNotificationChannelItNotExists()
-        notificationManagerCompat.notify(newNotificationId, successNotificationBuilder.build())
+
+        notificationManagerCompat.notify(
+            newNotificationId,
+            successNotificationBuilder
+                .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
+                .build()
+        )
     }
 
 
     @SuppressLint("MissingPermission")
     fun showErrorNotification(throwable: Throwable) {
         syncTaskNotificationChannelHelper.createErrorNotificationChannelItNotExists()
+
         notificationManagerCompat.notify(
             newNotificationId,
             errorNotificationBuilder
@@ -89,10 +95,4 @@ class SyncTaskNotificator @AssistedInject constructor(
     companion object {
         val TAG: String = SyncTaskNotificator::class.java.simpleName
     }
-}
-
-
-@AssistedFactory
-interface SyncTaskNotificatorAssistedFactory {
-    fun create(syncTask: SyncTask): SyncTaskNotificator
 }
