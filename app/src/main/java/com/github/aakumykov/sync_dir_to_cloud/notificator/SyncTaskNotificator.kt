@@ -1,15 +1,19 @@
 package com.github.aakumykov.sync_dir_to_cloud.notificator
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.PendingIntentCompat
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
+import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -32,6 +36,7 @@ class SyncTaskNotificator @AssistedInject constructor(
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setUsesChronometer(true)
+            .setContentIntent(MainActivity.pendingIntent(appContext))
     }
 
     private val successNotificationBuilder: NotificationCompat.Builder by lazy {
@@ -39,18 +44,12 @@ class SyncTaskNotificator @AssistedInject constructor(
             .setContentTitle(getString(R.string.sync_task_success_notification_title))
             .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
             .setSmallIcon(R.drawable.ic_sync_task_notification_success)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setUsesChronometer(true)
     }
 
     private val errorNotificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(appContext, notificationChannelConfig.error.channelId)
             .setContentTitle(getString(R.string.sync_task_error_notification_title))
             .setSmallIcon(R.drawable.ic_sync_task_notification_error)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setUsesChronometer(true)
     }
 
     @SuppressLint("MissingPermission")
@@ -86,6 +85,10 @@ class SyncTaskNotificator @AssistedInject constructor(
     }
 
     private fun getString(stringRes: Int): String = appContext.getString(stringRes)
+
+    companion object {
+        val TAG: String = SyncTaskNotificator::class.java.simpleName
+    }
 }
 
 
