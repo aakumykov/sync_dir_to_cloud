@@ -1,5 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view
 
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -195,5 +197,15 @@ class MainActivity : AppCompatActivity() {
         val TAG: String = MainActivity::class.java.simpleName
 
         const val ACTION_SHOW_TASK_STATE: String = "SHOW_TASK_STATE"
+        const val CODE_OPEN_MAIN_ACTIVITY = 1000
+
+        fun pendingIntent(context: Context): PendingIntent {
+            return PendingIntent.getActivity(
+                context,
+                CODE_OPEN_MAIN_ACTIVITY,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        }
     }
 }
