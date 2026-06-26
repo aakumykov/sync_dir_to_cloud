@@ -65,7 +65,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             val taskEH = CoroutineExceptionHandler { context, throwable ->
                 parentScope.launch (NonCancellable) {
-                    syncTaskNotificator.showErrorNotification(throwable)
+                    syncTaskNotificator.showErrorNotification(throwable, syncTask, executionId)
                     actionsOnError(throwable)
                 }
             }
@@ -73,13 +73,13 @@ class SyncTaskExecutor @AssistedInject constructor(
             parentScope.launch (Dispatchers.IO + taskEH) {
                 try {
                     beforeStart()
-                    syncTaskNotificator.showProgressNotification(syncTask)
+                    syncTaskNotificator.showProgressNotification(syncTask, executionId)
 
                     syncTaskProcessorFactory
                         .create(syncTask, executionId, parentScope)
                         .processSyncTask()
 
-                    syncTaskNotificator.showSuccessNotification(syncTask)
+                    syncTaskNotificator.showSuccessNotification(syncTask, executionId)
                     afterFinish()
 
                 } catch (e: CancellationException) {

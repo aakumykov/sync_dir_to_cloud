@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         setFragment(
             when(intent?.action) {
                 ACTION_SHOW_TASK_STATE -> TaskDetailsFragment.create(intent)
+                ACTION_SHOW_SYNC_LOG -> SyncLogFragment.create(intent.extras)
                 else -> TaskListFragment.create()
             }
         )
@@ -196,14 +197,19 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val TAG: String = MainActivity::class.java.simpleName
 
-        const val ACTION_SHOW_TASK_STATE: String = "SHOW_TASK_STATE"
+        const val ACTION_SHOW_TASK_STATE: String = "ACTION_SHOW_TASK_STATE"
+        const val ACTION_SHOW_SYNC_LOG: String = "ACTION_SHOW_SYNC_LOG"
         const val CODE_OPEN_MAIN_ACTIVITY = 1000
 
-        fun pendingIntent(context: Context): PendingIntent {
+        fun pendingIntentWithAction(context: Context, action: String, arguments: Bundle): PendingIntent {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                setAction(action)
+                putExtras(arguments)
+            }
             return PendingIntent.getActivity(
                 context,
                 CODE_OPEN_MAIN_ACTIVITY,
-                Intent(context, MainActivity::class.java),
+                intent,
                 PendingIntent.FLAG_UPDATE_CURRENT,
             )
         }

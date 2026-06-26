@@ -1,10 +1,14 @@
 package com.github.aakumykov.sync_dir_to_cloud.notificator
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.os.bundleOf
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
@@ -29,7 +33,7 @@ class SyncTaskNotificator @Inject constructor(
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setUsesChronometer(true)
-            .setContentIntent(MainActivity.pendingIntent(appContext))
+//            .setContentIntent(SyncLogFragment.pendingIntent())
     }
 
     private val successNotificationBuilder: NotificationCompat.Builder by lazy {
@@ -45,14 +49,16 @@ class SyncTaskNotificator @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun showProgressNotification(syncTask: SyncTask) {
+    fun showProgressNotification(syncTask: SyncTask, executionId: String) {
         syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
 
         val id = newNotificationId
+
         notificationManagerCompat.notify(
             id,
             progressNotificationBuilder
                 .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
+                .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
                 .build()
         )
 
@@ -66,27 +72,44 @@ class SyncTaskNotificator @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun showSuccessNotification(syncTask: SyncTask) {
+    fun showSuccessNotification(syncTask: SyncTask, executionId: String) {
         syncTaskNotificationChannelHelper.createSuccessNotificationChannelItNotExists()
 
         notificationManagerCompat.notify(
             newNotificationId,
             successNotificationBuilder
                 .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
+                .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
                 .build()
         )
     }
 
 
     @SuppressLint("MissingPermission")
-    fun showErrorNotification(throwable: Throwable) {
+    fun showErrorNotification(throwable: Throwable, syncTask: SyncTask, executionId: String) {
         syncTaskNotificationChannelHelper.createErrorNotificationChannelItNotExists()
 
         notificationManagerCompat.notify(
             newNotificationId,
             errorNotificationBuilder
                 .setContentText(throwable.errorMsgExtended)
+                .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
                 .build()
+        )
+    }
+
+
+    private fun pendingIntentForSyncLog(taskId: String, executionId: String): PendingIntent {
+
+        val arguments = bundleOf().apply {
+            putString(KEY_TASK_ID, taskId)
+            putString(KEY_EXECUTION_ID, executionId)
+        }
+
+        return MainActivity.pendingIntentWithAction(
+            appContext,
+            MainActivity.ACTION_SHOW_SYNC_LOG,
+            arguments
         )
     }
 
