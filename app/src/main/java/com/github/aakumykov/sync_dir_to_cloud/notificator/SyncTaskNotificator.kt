@@ -23,8 +23,7 @@ class SyncTaskNotificator @Inject constructor(
     private val syncTaskNotificationChannelHelper: SyncTaskNotificationChannelHelper,
     private val notificationChannelConfig: NotificationChannelConfig
 ) {
-    private val newNotificationId: Int get() = View.generateViewId()
-    private var progressNotificationId: Int? = null
+    private val notificationId: Int by lazy { View.generateViewId() }
 
     private val progressNotificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(appContext, notificationChannelConfig.progress.channelId)
@@ -55,23 +54,17 @@ class SyncTaskNotificator @Inject constructor(
     fun showProgressNotification(syncTask: SyncTask, executionId: String) {
         syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
 
-        val id = newNotificationId
-
         notificationManagerCompat.notify(
-            id,
+            notificationId,
             progressNotificationBuilder
                 .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
                 .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
                 .build()
         )
-
-        progressNotificationId = id
     }
 
     fun hideProgressNotification() {
-        progressNotificationId?.also {
-            notificationManagerCompat.cancel(it)
-        }
+        notificationManagerCompat.cancel(notificationId)
     }
 
     @SuppressLint("MissingPermission")
@@ -79,7 +72,7 @@ class SyncTaskNotificator @Inject constructor(
         syncTaskNotificationChannelHelper.createSuccessNotificationChannelItNotExists()
 
         notificationManagerCompat.notify(
-            newNotificationId,
+            notificationId,
             successNotificationBuilder
                 .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
                 .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
@@ -93,7 +86,7 @@ class SyncTaskNotificator @Inject constructor(
         syncTaskNotificationChannelHelper.createErrorNotificationChannelItNotExists()
 
         notificationManagerCompat.notify(
-            newNotificationId,
+            notificationId,
             errorNotificationBuilder
                 .setContentText(throwable.errorMsgExtended)
                 .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))

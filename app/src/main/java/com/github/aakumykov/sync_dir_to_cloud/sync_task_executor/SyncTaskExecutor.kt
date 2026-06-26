@@ -85,8 +85,6 @@ class SyncTaskExecutor @AssistedInject constructor(
                 } catch (e: CancellationException) {
                     syncTaskStateChanger.changeExecutionState(taskId, ExecutionState.CANCELLED)
                     taskLogger.logTaskCancelled(logItemId, e)
-                } finally {
-                    syncTaskNotificator.hideProgressNotification()
                 }
             }.also { job ->
                 TaskJobsHolder.addJob(taskId, job)
