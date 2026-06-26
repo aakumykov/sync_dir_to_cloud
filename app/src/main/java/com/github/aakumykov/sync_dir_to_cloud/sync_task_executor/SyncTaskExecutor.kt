@@ -48,6 +48,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
 
+    // TODO: разобраться с этим "parent scope": что он и зачем именно родительский.
     suspend fun executeSyncTask(parentScope: CoroutineScope, taskId: String) {
         try {
             Log.d(TAG, "executeSyncTask() called with: scope = $parentScope, taskId = $taskId")

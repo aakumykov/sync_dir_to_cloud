@@ -34,6 +34,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
+import com.github.aakumykov.sync_dir_to_cloud.service.SyncTaskService
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
@@ -73,6 +74,8 @@ import dagger.Component
 interface AppComponent {
 
     fun injectToSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
+
+    fun injectToSyncTaskService(syncTaskService: SyncTaskService)
 
     fun getViewModelFactory(): ViewModelFactory
 
