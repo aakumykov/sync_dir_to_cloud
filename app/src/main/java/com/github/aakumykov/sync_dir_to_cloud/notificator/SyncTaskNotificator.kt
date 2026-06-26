@@ -30,6 +30,7 @@ class SyncTaskNotificator @Inject constructor(
         NotificationCompat.Builder(appContext, notificationChannelConfig.progress.channelId)
             .setContentTitle(getString(R.string.sync_task_progress_notification_title))
             .setSmallIcon(R.drawable.ic_sync_task_notification_progress)
+            .setAutoCancel(true)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setUsesChronometer(true)
@@ -40,12 +41,14 @@ class SyncTaskNotificator @Inject constructor(
         NotificationCompat.Builder(appContext, notificationChannelConfig.success.channelId)
             .setContentTitle(getString(R.string.sync_task_success_notification_title))
             .setSmallIcon(R.drawable.ic_sync_task_notification_success)
+            .setAutoCancel(true)
     }
 
     private val errorNotificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(appContext, notificationChannelConfig.error.channelId)
             .setContentTitle(getString(R.string.sync_task_error_notification_title))
             .setSmallIcon(R.drawable.ic_sync_task_notification_error)
+            .setAutoCancel(true)
     }
 
     @SuppressLint("MissingPermission")
