@@ -39,7 +39,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLoggerAssistedFactory: TaskLoggerAssistedFactory,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
-    private val syncTaskNotificator: SyncTaskNotificator
+//    private val syncTaskNotificator: SyncTaskNotificator
 ){
     private val executionId: String by lazy { hashCode().toString() }
     private val logItemId: String by lazy { newRandomId }

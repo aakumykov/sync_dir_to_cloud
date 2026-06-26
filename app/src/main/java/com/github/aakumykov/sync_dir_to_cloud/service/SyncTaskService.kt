@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.service
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
@@ -8,7 +9,6 @@ import androidx.annotation.StringRes
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import kotlinx.coroutines.CancellationException
@@ -64,7 +64,7 @@ class SyncTaskService : Service() {
     }
 
     private fun cancelWork(intent: Intent): Int {
-
+        stopSelf()
         return START_NOT_STICKY
     }
 
@@ -76,6 +76,17 @@ class SyncTaskService : Service() {
     }
 
     companion object {
+        fun intentForStart(context: Context, taskId: String): Intent {
+            return Intent(context, SyncTaskService::class.java).apply {
+                putExtra(KEY_TASK_ID, taskId)
+                setAction(ACTION_START)
+            }
+        }
+
+        fun intentForStop(context: Context): Intent {
+            return Intent(context, SyncTaskService::class.java)
+        }
+
         val TAG: String = SyncTaskService::class.java.simpleName
         const val ACTION_START = "ACTION_STOP"
         const val ACTION_CANCEL = "ACTION_CANCEL"
