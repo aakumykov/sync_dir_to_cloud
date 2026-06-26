@@ -28,8 +28,8 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     private val adapter = SyncLogAdapter(::onItemClicked, ::onOperationCancelClicked)
     private lateinit var syncLogViewModel: SyncLogViewModel
 
-    private val taskId: String? get() = arguments?.getString(GlobalKeys.KEY_TASK_ID)
-    private val executionId: String? get() = arguments?.getString(GlobalKeys.KEY_EXECUTION_ID)
+    private val taskId: String? get() = arguments?.getString(KEY_TASK_ID)
+    private val executionId: String? get() = arguments?.getString(KEY_EXECUTION_ID)
 
 
     private fun onItemClicked(origLogId: String, logItemAbout: LogItemAbout) {
@@ -85,9 +85,9 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
 
         fun create(taskId: String?, executionId: String?): SyncLogFragment {
             return SyncLogFragment().apply {
-                arguments = bundleOf().apply {
-                    KEY_TASK_ID to taskId
-                    KEY_EXECUTION_ID to executionId
+                arguments = Bundle().apply {
+                    putString(KEY_TASK_ID, taskId)
+                    putString(KEY_EXECUTION_ID, executionId)
                 }
             }
         }
@@ -95,10 +95,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         fun create(bundle: Bundle?): SyncLogFragment {
             val taskId = bundle?.getString(KEY_TASK_ID)
             val executionId = bundle?.getString(KEY_EXECUTION_ID)
-//            return create(taskId, executionId)
-//            return create(null, executionId)
-//            return create(taskId, null)
-            return create(null, null)
+            return create(taskId, executionId)
         }
     }
 }
