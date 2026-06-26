@@ -72,13 +72,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadInitialFragment(intent: Intent?) {
-        setFragment(
-            when(intent?.action) {
-                ACTION_SHOW_TASK_STATE -> TaskDetailsFragment.create(intent)
-                ACTION_SHOW_SYNC_LOG -> SyncLogFragment.create(intent.extras)
-                else -> TaskListFragment.create()
-            }
-        )
+        when(intent?.action) {
+            ACTION_SHOW_TASK_STATE -> addFragment(TaskDetailsFragment.create(intent))
+            ACTION_SHOW_SYNC_LOG -> addFragment(SyncLogFragment.create(intent.extras))
+            else -> setFragment(TaskListFragment.create())
+        }
     }
 
 
@@ -156,12 +154,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun onNewNavTarget(navTarget: NavTarget) {
         when (navTarget) {
-            is NavTarget.Add -> loadFragment(TaskEditFragment.create())
-            is NavTarget.Edit -> loadFragment(TaskEditFragment.create(navTarget.id))
+            is NavTarget.Add -> addFragment(TaskEditFragment.create())
+            is NavTarget.Edit -> addFragment(TaskEditFragment.create(navTarget.id))
             is NavTarget.Back -> returnToPrevFragment()
-            is NavTarget.TaskInfo -> loadFragment(TaskDetailsFragment.create(navTarget.id))
-            is NavTarget.SyncLog -> loadFragment(SyncLogFragment.create(navTarget.taskId, navTarget.executionId))
-            is NavTarget.AppSettings -> loadFragment(SettingsFragment.create())
+            is NavTarget.TaskInfo -> addFragment(TaskDetailsFragment.create(navTarget.id))
+            is NavTarget.SyncLog -> addFragment(SyncLogFragment.create(navTarget.taskId, navTarget.executionId))
+            is NavTarget.AppSettings -> addFragment(SettingsFragment.create())
             else -> loadInitialFragment(intent)
         }
     }
@@ -177,7 +175,7 @@ class MainActivity : AppCompatActivity() {
             .commitNow()
     }
 
-    private fun loadFragment(fragment: Fragment) {
+    private fun addFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .addToBackStack(DEFAULT_BACK_STACK_NAME)
 //            .setReorderingAllowed(true)
@@ -210,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                 context,
                 CODE_OPEN_MAIN_ACTIVITY,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
         }
     }
