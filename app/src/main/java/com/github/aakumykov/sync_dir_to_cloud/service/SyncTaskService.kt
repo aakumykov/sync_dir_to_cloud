@@ -2,7 +2,6 @@ package com.github.aakumykov.sync_dir_to_cloud.service
 
 import android.Manifest
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -13,7 +12,6 @@ import androidx.annotation.RequiresPermission
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.graphics.drawable.IconCompat
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
@@ -33,7 +31,7 @@ class SyncTaskService : Service() {
     lateinit var syncTaskExecutorFactory: SyncTaskExecutorAssistedFactory
 
     private val notificationManager by lazy { NotificationManagerCompat.from(this) }
-    private var currentId: Int? = null
+    private var notificationId: Int? = null
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
@@ -52,7 +50,6 @@ class SyncTaskService : Service() {
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        currentId = startId
         return when(intent?.action) {
             ACTION_START -> startWork(startId, intent)
             ACTION_CANCEL -> cancelWork(intent)
@@ -62,6 +59,8 @@ class SyncTaskService : Service() {
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun startWork(startId: Int, intent: Intent): Int {
+
+        notificationId = startId
         val taskId = intent.getStringExtra(KEY_TASK_ID)
 
         if (null == taskId) {
@@ -82,7 +81,7 @@ class SyncTaskService : Service() {
     }
 
     private fun hideNotification() {
-        currentId?.also {
+        notificationId?.also {
             notificationManager.cancel(it)
         }
     }
