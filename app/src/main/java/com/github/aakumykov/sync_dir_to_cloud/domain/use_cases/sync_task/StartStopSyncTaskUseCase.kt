@@ -5,11 +5,12 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_work_manager.SyncTaskStarterStopper
 import javax.inject.Inject
+import javax.inject.Named
 
 // FIXME: если Starter-Stopper является простой обёрткой над WorkManager-ом, то можно его убрать.
 class StartStopSyncTaskUseCase @Inject constructor(
     private val syncTaskReader: SyncTaskReader,
-    private val syncTaskStarterStopper: SyncTaskStarterStopper
+    @param:Named("service") private val syncTaskStarterStopper: SyncTaskStarterStopper
 ) {
     suspend fun startStopSyncTask(taskId: String) {
 

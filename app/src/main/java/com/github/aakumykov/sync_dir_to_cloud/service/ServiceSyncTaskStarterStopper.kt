@@ -17,5 +17,6 @@ class ServiceSyncTaskStarterStopper @Inject constructor(
 
     override suspend fun stopSyncTask(syncTask: SyncTask) {
         val intent = SyncTaskService.intentForStop(appContext)
+        appContext.stopService(intent)
     }
 }

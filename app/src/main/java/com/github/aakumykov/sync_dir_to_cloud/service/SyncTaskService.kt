@@ -84,7 +84,10 @@ class SyncTaskService : Service() {
         }
 
         fun intentForStop(context: Context): Intent {
-            return Intent(context, SyncTaskService::class.java)
+            return Intent(context, SyncTaskService::class.java).apply {
+//                putExtra(KEY_TASK_ID, taskId)
+                setAction(ACTION_CANCEL)
+            }
         }
 
         val TAG: String = SyncTaskService::class.java.simpleName
