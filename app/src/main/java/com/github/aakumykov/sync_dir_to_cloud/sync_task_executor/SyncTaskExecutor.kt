@@ -39,7 +39,7 @@ class SyncTaskExecutor @AssistedInject constructor(
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLoggerAssistedFactory: TaskLoggerAssistedFactory,
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
-    private val syncTaskNotificator: SyncTaskNotificator
+//    private val syncTaskNotificator: SyncTaskNotificator
 ){
     private val executionId: String by lazy { hashCode().toString() }
     private val logItemId: String by lazy { newRandomId }
@@ -66,7 +66,7 @@ class SyncTaskExecutor @AssistedInject constructor(
 
             val taskEH = CoroutineExceptionHandler { context, throwable ->
                 parentScope.launch (NonCancellable) {
-                    syncTaskNotificator.showErrorNotification(throwable, syncTask, executionId)
+//                    syncTaskNotificator.showErrorNotification(throwable, syncTask, executionId)
                     actionsOnError(throwable)
                 }
             }
@@ -74,13 +74,13 @@ class SyncTaskExecutor @AssistedInject constructor(
             parentScope.launch (Dispatchers.IO + taskEH) {
                 try {
                     beforeStart()
-                    syncTaskNotificator.showProgressNotification(syncTask, executionId)
+//                    syncTaskNotificator.showProgressNotification(syncTask, executionId)
 
                     syncTaskProcessorFactory
                         .create(syncTask, executionId, parentScope)
                         .processSyncTask()
 
-                    syncTaskNotificator.showSuccessNotification(syncTask, executionId)
+//                    syncTaskNotificator.showSuccessNotification(syncTask, executionId)
                     afterFinish()
 
                 } catch (e: CancellationException) {

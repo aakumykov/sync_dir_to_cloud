@@ -246,5 +246,6 @@
     <string name="sync_task_progress_notification_title">Sync in progress</string>
     <string name="sync_task_success_notification_title">Sync success</string>
     <string name="sync_task_error_notification_title">Sync error</string>
-    <string name="error_there_is_no_task_id">Отсутствует id задачи</string>
+    <string name="error_there_is_no_task_id">There is no task id</string>
+    <string name="notification_action_cancel_task">Cancel</string>
 </resources>
