@@ -1,29 +1,23 @@
 package com.github.aakumykov.sync_dir_to_cloud.sync_task_executor
 
-import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
-import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskRunningTimeUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessorAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.launch
 
 /**
+ * Выполняет задачу и регистрирует ошибки выполнения.
+ *
  * Задача класса - запускать выполнение задачи и журналировать это выполнение.
  * Он ловит все ошибки выполнения Задачи и регистрирует их как "ошибки задачи".
  *
@@ -32,29 +26,24 @@ import kotlinx.coroutines.launch
  * InstructionLogItem
  */
 // TODO: поменять именами Executor и Processor ...
-// TODO: передавать в @AssistedInject taskId, чтобы получать SyncTask как свойство...
 class SyncTaskExecutor @AssistedInject constructor(
-    @Assisted private val taskId: String,
-    private val syncTaskReader: SyncTaskReader,
+    @Assisted private val syncTask: SyncTask,
+    @Assisted private val executionId: String,
+    private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLoggerAssistedFactory: TaskLoggerAssistedFactory,
-    private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
-//    private val syncTaskNotificator: SyncTaskNotificator
 ){
-    private val executionId: String by lazy { hashCode().toString() }
     private val logItemId: String by lazy { newRandomId }
+    private val taskId: String get() = syncTask.id
 
     private val taskLogger: TaskLogger by lazy { taskLoggerAssistedFactory.create(taskId, executionId) }
     private val syncTaskRunningTimeUpdater: SyncTaskRunningTimeUpdater by lazy { appComponent.getSyncTaskRunningTimeUpdater() }
 
 
-    // TODO: разобраться с этим "parent scope": что он и зачем именно родительский.
+   /* // TODO: разобраться с этим "parent scope": что он и зачем именно родительский.
     suspend fun executeSyncTask(parentScope: CoroutineScope, taskId: String) {
         try {
             Log.d(TAG, "executeSyncTask() called with: scope = $parentScope, taskId = $taskId")
-
-            val syncTask = syncTaskReader.getSyncTask(taskId)
-
 
             // FIXME: TODO внедрять?
             // TODO: вместо того, чтобы мудрить здесь с запуском в Scope,
@@ -64,7 +53,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             //  запись о её начале появилась в журнале задач,
             //  сообщение об ошибке
 
-            val taskEH = CoroutineExceptionHandler { context, throwable ->
+            val taskEH = CoroutineExceptionHandler { _, throwable ->
                 parentScope.launch (NonCancellable) {
 //                    syncTaskNotificator.showErrorNotification(throwable, syncTask, executionId)
                     actionsOnError(throwable)
@@ -95,7 +84,30 @@ class SyncTaskExecutor @AssistedInject constructor(
             finallyActions()
             TaskJobsHolder.removeJob(taskId)
         }
+    }*/
+
+
+    /**
+     * @throws Exception during work.
+     */
+    @Throws(Throwable::class)
+    suspend fun executeSyncTaskSimple(coroutineScope: CoroutineScope) {
+        try {
+            beforeStart()
+            // FIXME: что будет с исключениями, возникшими в parentScope?
+            syncTaskProcessorFactory
+                .create(syncTask, executionId, coroutineScope)
+                .processSyncTask()
+            afterFinish()
+
+        } catch (t: Throwable) {
+            actionsOnError(t)
+            throw t
+        } finally {
+            finallyActions()
+        }
     }
+
 
     private suspend fun actionsOnError(throwable: Throwable) {
         taskLogger.logTaskError(logItemId, throwable)
@@ -128,5 +140,5 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncTaskExecutorAssistedFactory {
-    fun create(taskId: String): SyncTaskExecutor
+    fun create(syncTask: SyncTask, executionId: String): SyncTaskExecutor
 }

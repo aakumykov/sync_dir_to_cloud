@@ -62,12 +62,12 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
     }
 
     private suspend fun doWorkReal(taskId: String, scope: CoroutineScope) {
-        Log.d(TAG, "doWorkReal(), scope = $scope")
+        /*Log.d(TAG, "doWorkReal(), scope = $scope")
         try {
 //            SampleService.start(applicationContext)
 
             syncTaskExecutorFactory
-                .create(taskId)
+                .create(syncTask = )
                 .also { syncTaskExecutor ->
                     Log.d(TAG, "doWorkReal() Задача taskId: $taskId начала    выполнение")
                     syncTaskExecutor.executeSyncTask(scope, taskId = taskId)
@@ -87,7 +87,7 @@ class SyncTaskWorker(context: Context, workerParameters: WorkerParameters) : Cor
                 Log.d(TAG, "doWorkReal() finally{}")
 //                SampleService.stop(applicationContext)
             }
-        }
+        }*/
     }
 
 
