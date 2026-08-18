@@ -29,6 +29,8 @@ class SyncTask {
     // FIXME: var|val
 
     @PrimaryKey var id: String = UUID.randomUUID().toString()
+
+    // FIXME: это значение нужно устанавливать во время выполнения
     @ColumnInfo(name = "current_notification_id") var currentNotificationId: Int = View.generateViewId()
 
     @ColumnInfo(name = "state") var state: State = State.IDLE
