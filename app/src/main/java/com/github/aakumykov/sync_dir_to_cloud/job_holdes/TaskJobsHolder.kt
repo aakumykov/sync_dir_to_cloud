@@ -30,4 +30,6 @@ object TaskJobsHolder {
             Log.d(TAG, "[${hashCode()}] removeJob(): taskId:$taskId, $it")
         }
     }
+
+    fun hasNoJobs(): Boolean = jobsMap.isEmpty()
 }

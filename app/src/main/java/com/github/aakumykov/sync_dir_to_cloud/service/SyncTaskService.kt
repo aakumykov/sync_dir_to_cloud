@@ -1,7 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.service
 
 import android.Manifest
-import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -16,21 +15,19 @@ import androidx.core.app.NotificationManagerCompat
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
-import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
-import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsg
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
+import com.github.aakumykov.sync_dir_to_cloud.job_holdes.TaskJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,19 +42,22 @@ class SyncTaskService : Service() {
     @Inject
     lateinit var syncTaskReader: SyncTaskReader
 
-    private val notificationManager by lazy { NotificationManagerCompat.from(this) }
-    private val notificationId: Int by lazy { View.generateViewId() }
+    private val taskJobsHolder: TaskJobsHolder by lazy { TaskJobsHolder }
 
+    private val notificationManager by lazy { NotificationManagerCompat.from(this) }
+
+    // FIXME: определить значение [serviceJob].
     private val serviceJob = SupervisorJob()
-    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+    private val serviceDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val serviceScope = CoroutineScope(serviceDispatcher + serviceJob)
 
     override fun onBind(p0: Intent?): IBinder? = null
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return when(intent?.action) {
-            ACTION_START -> startWork(intent)
-            ACTION_CANCEL -> cancelWork()
+            ACTION_START -> startTask(intent)
+            ACTION_CANCEL -> cancelTask(intent)
             else -> super.onStartCommand(intent, flags, startId)
         }
     }
@@ -65,17 +65,20 @@ class SyncTaskService : Service() {
     override fun onCreate() {
         super.onCreate()
         appComponent.injectToSyncTaskService(this)
+
+        /*while(taskJobsHolder.hasJobs()) {
+            TimeUnit.SECONDS.sleep(1)
+        }
+        stopSelf()*/
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         serviceJob.cancel(CancellationException("SyncTaskService().onDestroy()"))
+        super.onDestroy()
     }
 
-    private var job: Job? = null
-
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun startWork(intent: Intent): Int {
+    private fun startTask(intent: Intent): Int {
 
         val taskId = intent.getStringExtra(KEY_TASK_ID)
 
@@ -84,22 +87,24 @@ class SyncTaskService : Service() {
             return START_NOT_STICKY
         }
 
-        val eh = CoroutineExceptionHandler { context, throwable ->
-            // FIXME: как показывать уведомление здесь?
+        val executionId = newRandomId
+        val notificationId = View.generateViewId()
+
+        val notificator = syncTaskNotificatorAssistedFactory.create(
+            taskId = taskId,
+            executionId = executionId,
+            notificationId = notificationId,
+        )
+
+        val eh = CoroutineExceptionHandler { _, throwable ->
+            notificator.showErrorNotification(throwable)
         }
 
-        job = serviceScope.launch {
-
-            val syncTask = syncTaskReader.getSyncTask(taskId)
-            val executionId = newRandomId
-
-            val notificator = syncTaskNotificatorAssistedFactory.create(
-                taskId = taskId,
-                executionId = executionId,
-                notificationId = notificationId,
-            )
+        serviceScope.launch (serviceDispatcher + eh) {
 
             try {
+                val syncTask = syncTaskReader.getSyncTask(taskId)
+
                 notificator.showProgressNotification(notificationId, syncTask, executionId)
 
                 syncTaskExecutorFactory
@@ -110,46 +115,38 @@ class SyncTaskService : Service() {
                     )
                     .executeSyncTaskSimple(this)
 
-                notificator.hideProgressNotification(notificationId)
-
-            } catch (e: CancellationException) {
-                notificator.showErrorNotification(e)
             }
+            catch (e: CancellationException) {
+                // TODO: что делать здесь?
+                Log.e(TAG, e.errorMsg, e)
+            }
+            finally {
+                taskJobsHolder.removeJob(taskId)
+                notificator.hideProgressNotification(notificationId)
+                if (taskJobsHolder.hasNoJobs())
+                    stopSelf()
+            }
+        }.also {
+            taskJobsHolder.addJob(taskId, it)
         }
 
         return START_STICKY
     }
 
-    private fun cancelWork(): Int {
-        hideNotification()
-        stopSelf()
+    private fun cancelTask(intent: Intent): Int {
+
+        val taskId = intent.getStringExtra(KEY_TASK_ID)
+
+        if (null == taskId) {
+            showError(R.string.error_there_is_no_task_id)
+            return START_NOT_STICKY
+        }
+
+        taskJobsHolder.getJob(taskId)?.cancel(CancellationException("Manual cancellation"))
+
         return START_NOT_STICKY
     }
 
-
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun showNotification(startId: Int) {
-        notificationManager.notify(
-            startId, createNotification())
-    }
-
-    private fun hideNotification() {
-        notificationId?.also {
-            notificationManager.cancel(it)
-        }
-    }
-
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, NotificationChannelConfig.progress.channelId)
-            .setContentTitle(getString(R.string.sync_task_progress_notification_title))
-            .setSmallIcon(R.drawable.ic_sync_task_notification_progress)
-            .setAutoCancel(true)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setUsesChronometer(true)
-            .addAction(stopServiceAction())
-            .build()
-    }
 
     private fun stopServiceAction(): NotificationCompat.Action {
         return NotificationCompat.Action(

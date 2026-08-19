@@ -274,7 +274,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
         lifecycleScope.launch (Dispatchers.IO) {
             backuperRestorer.restoreTasks() ?: run {
                 withContext(Dispatchers.Main) {
-                    showToast("Нет бекапов")
+                    showToast("Нет сохранённых заданч")
                 }
             }
         }
