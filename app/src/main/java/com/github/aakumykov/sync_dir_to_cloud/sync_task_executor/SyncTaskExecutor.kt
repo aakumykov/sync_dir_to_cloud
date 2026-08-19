@@ -9,6 +9,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLogger
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.task_logger.TaskLoggerAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessorAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -29,7 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 class SyncTaskExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
-    @Assisted private val notificationId: Int,
+    @Assisted private val notificator: SyncTaskNotificator,
 
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val syncTaskStateChanger: SyncTaskStateChanger,
@@ -96,10 +97,16 @@ class SyncTaskExecutor @AssistedInject constructor(
     suspend fun executeSyncTaskSimple(coroutineScope: CoroutineScope) {
         try {
             beforeStart()
+
             // FIXME: что будет с исключениями, возникшими в parentScope?
             syncTaskProcessorFactory
-                .create(syncTask, executionId, notificationId, coroutineScope)
-                .processSyncTask()
+                .create(
+                    syncTask = syncTask,
+                    coroutineScope = coroutineScope,
+                    executionId = executionId,
+                    notificator = notificator
+                ).processSyncTask()
+
             afterFinish()
 
         } catch (t: Throwable) {
@@ -145,6 +152,6 @@ interface SyncTaskExecutorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
-        notificationId: Int,
+        notificator: SyncTaskNotificator,
     ): SyncTaskExecutor
 }

@@ -8,27 +8,33 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.os.bundleOf
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_TASK_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_EXECUTION_ID
+import com.github.aakumykov.sync_dir_to_cloud.QUALIFIER_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-//
-// TODO: сделать синглтоном?
-//  Хотя, чтобы не переделывать NotificationBuilder-ы, можно держать по одному
-//  на каждую выполняющуюся задачу.
-//
-class SyncTaskNotificator @Inject constructor(
+/**
+ * Создаётся отдельный экземпляр для каждой
+ * выполняющейся задачи.
+ */
+class SyncTaskNotificator @AssistedInject constructor(
+    @Assisted(QUALIFIER_TASK_ID) private val taskId: String,
+    @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
+    @Assisted private val notificationId: Int,
+
     @param:AppContext private val appContext: Context,
     private val notificationManagerCompat: NotificationManagerCompat,
     private val syncTaskNotificationChannelHelper: SyncTaskNotificationChannelHelper,
+
     private val notificationChannelConfig: NotificationChannelConfig
-)
-    : SyncTaskNotificationUpdater
-{
+) {
     @SuppressLint("MissingPermission")
     fun showProgressNotification(notificationId: Int, syncTask: SyncTask, executionId: String) {
         syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
@@ -42,25 +48,18 @@ class SyncTaskNotificator @Inject constructor(
         )
     }
 
-    override fun updateProgressNotification(
-        message: String,
-        notificationId: Int,
-        taskId: String,
-        executionId: String
-    ) {
+    @SuppressLint("MissingPermission")
+    fun updateProgressNotification(message: String) {
         progressNotificationBuilder
             .setContentText(message)
-            .setContentIntent(pendingIntentForSyncLog(taskId, executionId))
             .build()
+            .also {
+                notificationManagerCompat.notify(notificationId, it)
+            }
     }
 
-    override fun updateProgressNotification(
-        messageId: Int,
-        notificationId: Int,
-        taskId: String,
-        executionId: String
-    ) {
-        updateProgressNotification(getString(messageId), notificationId, taskId, executionId)
+    fun updateProgressNotification(messageId: Int) {
+        updateProgressNotification(getString(messageId))
     }
 
     fun hideProgressNotification(notificationId: Int) {
@@ -82,14 +81,13 @@ class SyncTaskNotificator @Inject constructor(
 
 
     @SuppressLint("MissingPermission")
-    fun showErrorNotification(throwable: Throwable, notificationId: Int, syncTask: SyncTask, executionId: String) {
+    fun showErrorNotification(throwable: Throwable) {
         syncTaskNotificationChannelHelper.createErrorNotificationChannelItNotExists()
 
         notificationManagerCompat.notify(
             notificationId,
             errorNotificationBuilder
                 .setContentText(throwable.errorMsgExtended)
-                .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
                 .build()
         )
     }
@@ -120,7 +118,7 @@ class SyncTaskNotificator @Inject constructor(
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setUsesChronometer(true)
-//            .setContentIntent(SyncLogFragment.pendingIntent())
+            .setContentIntent(pendingIntentForSyncLog(taskId, executionId))
     }
 
 
@@ -137,9 +135,17 @@ class SyncTaskNotificator @Inject constructor(
             .setContentTitle(getString(R.string.sync_task_error_notification_title))
             .setSmallIcon(R.drawable.ic_sync_task_notification_error)
             .setAutoCancel(true)
+            .setContentIntent(pendingIntentForSyncLog(taskId, executionId))
     }
 
     companion object {
         val TAG: String = SyncTaskNotificator::class.java.simpleName
     }
+}
+
+@AssistedFactory
+interface SyncTaskNotificatorAssistedFactory {
+    fun create(@Assisted(QUALIFIER_TASK_ID) taskId: String,
+               @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
+               @Assisted notificationId: Int,): SyncTaskNotificator
 }

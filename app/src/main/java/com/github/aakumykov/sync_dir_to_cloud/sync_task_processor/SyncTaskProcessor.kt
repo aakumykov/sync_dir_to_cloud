@@ -22,7 +22,8 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
-import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificationUpdater
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker.TaskDirsFixerAssistedFactory
@@ -63,9 +64,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
-    @Assisted private val notificationId: Int,
-
-    private val notificationUpdater: SyncTaskNotificationUpdater,
+    @Assisted private val notificator: SyncTaskNotificator,
 
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
@@ -129,13 +128,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     private suspend fun checkTaskDirs() {
         Log.d(TAG, "checkTaskDirs()")
 
-        notificationUpdater.updateProgressNotification(
-            messageId = R.string.checking_task_dirs,
-            notificationId = notificationId,
-            taskId = taskId,
-            executionId = executionId
-        )
-        delay(60_000)
+        updateNotification(messageId = R.string.checking_task_dirs)
 
         if (appSettings.dryRun) {
             Log.d(TAG, "Имитация работы, операции с файлами выполнены не будут.")
@@ -160,6 +153,8 @@ class SyncTaskProcessor @AssistedInject constructor(
             return
         }
 
+        updateNotification(logMessageId)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(logMessageId),
@@ -171,6 +166,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun removeDuplicatedUnprocessedSyncInstructions() {
+        updateNotification(R.string.removing_duplicate_file_instructions)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.removing_duplicate_file_instructions),
@@ -182,6 +179,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun clearProcessedSyncObjectsWithDeletedState() {
+        updateNotification(R.string.clearing_processed_sync_objects_with_deleted_state)
+
         oneStageOfTaskExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.clearing_processed_sync_objects_with_deleted_state),
@@ -193,6 +192,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun markAllNotCheckedObjectsAsDeleted() {
+        updateNotification(R.string.marking_all_not_checked_objects_as_deleted)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_not_checked_objects_as_deleted),
@@ -204,6 +205,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun deleteOldComparisonStates() {
+        updateNotification(R.string.deleting_old_comparison_results)
+
         oneStageOfTaskExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.deleting_old_comparison_results),
@@ -215,6 +218,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun deleteProcessedSyncInstructions() {
+        updateNotification(R.string.removing_processed_file_instructions)
+
         oneStageOfTaskExecutor.process(
             isCritical = false,
             logMessage = TextMessage(R.string.removing_processed_file_instructions),
@@ -226,6 +231,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun generateFileInstructions() {
+        updateNotification(R.string.generating_file_instructions)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.generating_file_instructions),
@@ -244,8 +251,12 @@ class SyncTaskProcessor @AssistedInject constructor(
             return
         }
 
-        val logMessage = if (unprocessed) TextMessage(R.string.processing_unprocessed_file_instructions)
-                         else TextMessage(R.string.processing_file_instructions)
+        val logMessageId: Int = if (unprocessed) R.string.processing_unprocessed_file_instructions
+                                else R.string.processing_file_instructions
+
+        val logMessage = TextMessage(logMessageId)
+
+        updateNotification(logMessageId)
 
         oneStageOfTaskExecutor.process(
             isCritical = !unprocessed,
@@ -259,6 +270,9 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun resetTaskBadStates() {
+
+        updateNotification(R.string.resetting_task_bad_states)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_task_bad_states),
@@ -269,6 +283,8 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
     private suspend fun resetObjectsBadState() {
+        updateNotification(R.string.resetting_objects_bad_states)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.resetting_objects_bad_states),
@@ -284,6 +300,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun markAllObjectsAsNotChecked() {
+        updateNotification(R.string.marking_all_objects_as_not_checked)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.marking_all_objects_as_not_checked),
@@ -298,6 +316,8 @@ class SyncTaskProcessor @AssistedInject constructor(
      * @return Флаг успешности чтения источника.
      */
     private suspend fun readSource() {
+        updateNotification(R.string.reading_source)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_source),
@@ -316,6 +336,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun readTarget() {
+        updateNotification(R.string.reading_target)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.reading_target),
@@ -334,6 +356,8 @@ class SyncTaskProcessor @AssistedInject constructor(
 
 
     private suspend fun compareSourceWithTarget() {
+        updateNotification(R.string.comparing_source_with_target)
+
         oneStageOfTaskExecutor.process(
             isCritical = true,
             logMessage = TextMessage(R.string.comparing_source_with_target),
@@ -342,6 +366,17 @@ class SyncTaskProcessor @AssistedInject constructor(
             }
         )
     }
+
+
+    private suspend fun updateNotification(@StringRes messageId: Int) {
+        notificator.updateProgressNotification(messageId)
+        delay(1000)
+    }
+
+    /*private suspend fun updateNotification(message: String) {
+        notificator.updateProgressNotification(message)
+        delay(1000)
+    }*/
 
 
     suspend fun stopExecutingTask(taskId: String) {
@@ -394,7 +429,7 @@ interface SyncTaskProcessorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
-        notificationId: Int,
-        coroutineScope: CoroutineScope
+        coroutineScope: CoroutineScope,
+        notificator: SyncTaskNotificator,
     ): SyncTaskProcessor
 }

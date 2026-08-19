@@ -21,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskReader
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificatorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_executor.SyncTaskExecutorAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
 import kotlinx.coroutines.CancellationException
@@ -29,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +40,7 @@ class SyncTaskService : Service() {
     lateinit var syncTaskExecutorFactory: SyncTaskExecutorAssistedFactory
 
     @Inject
-    lateinit var syncTaskNotificator: SyncTaskNotificator
+    lateinit var syncTaskNotificatorAssistedFactory: SyncTaskNotificatorAssistedFactory
 
     @Inject
     lateinit var syncTaskReader: SyncTaskReader
@@ -87,20 +89,31 @@ class SyncTaskService : Service() {
         }
 
         job = serviceScope.launch {
+
             val syncTask = syncTaskReader.getSyncTask(taskId)
             val executionId = newRandomId
 
+            val notificator = syncTaskNotificatorAssistedFactory.create(
+                taskId = taskId,
+                executionId = executionId,
+                notificationId = notificationId,
+            )
+
             try {
-                syncTaskNotificator.showProgressNotification(notificationId, syncTask, executionId)
+                notificator.showProgressNotification(notificationId, syncTask, executionId)
 
                 syncTaskExecutorFactory
-                    .create(syncTask = syncTask, executionId = executionId, notificationId = notificationId)
+                    .create(
+                        syncTask = syncTask,
+                        executionId = executionId,
+                        notificator = notificator
+                    )
                     .executeSyncTaskSimple(this)
 
-                syncTaskNotificator.hideProgressNotification(notificationId)
+                notificator.hideProgressNotification(notificationId)
 
             } catch (e: CancellationException) {
-                syncTaskNotificator.showErrorNotification(e, notificationId, syncTask, executionId)
+                notificator.showErrorNotification(e)
             }
         }
 
