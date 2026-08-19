@@ -1,10 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.domain.entities
 
-import android.view.View
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.github.aakumykov.sync_dir_to_cloud.Constants.STRING_NULL
 import com.github.aakumykov.sync_dir_to_cloud.enums.ExecutionState
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
@@ -30,8 +30,7 @@ class SyncTask {
 
     @PrimaryKey var id: String = UUID.randomUUID().toString()
 
-    // FIXME: это значение нужно устанавливать во время выполнения
-    @ColumnInfo(name = "current_notification_id") var currentNotificationId: Int = View.generateViewId()
+    @ColumnInfo(name = "current_notification_id", defaultValue = STRING_NULL) var currentNotificationId: Int? = null
 
     @ColumnInfo(name = "state") var state: State = State.IDLE
     @ColumnInfo(name = "is_enabled") var isEnabled: Boolean = false
@@ -87,11 +86,11 @@ class SyncTask {
 
     @ColumnInfo(name = "with_backup", defaultValue = "false") var withBackup = false
 
-    @ColumnInfo(name = "source_task_backup_dir_name", defaultValue = "null") var sourceTaskBackupDirName: String? = null
-    @ColumnInfo(name = "target_task_backup_dir_name", defaultValue = "null") var targetTaskBackupDirName: String? = null
+    @ColumnInfo(name = "source_task_backup_dir_name", defaultValue = STRING_NULL) var sourceTaskBackupDirName: String? = null
+    @ColumnInfo(name = "target_task_backup_dir_name", defaultValue = STRING_NULL) var targetTaskBackupDirName: String? = null
 
-    @ColumnInfo(name = "source_execution_backup_dir_name", defaultValue = "null") var sourceExecutionBackupDirName: String? = null
-    @ColumnInfo(name = "target_execution_backup_dir_name", defaultValue = "null") var targetExecutionBackupDirName: String? = null
+    @ColumnInfo(name = "source_execution_backup_dir_name", defaultValue = STRING_NULL) var sourceExecutionBackupDirName: String? = null
+    @ColumnInfo(name = "target_execution_backup_dir_name", defaultValue = STRING_NULL) var targetExecutionBackupDirName: String? = null
 
     @Ignore
     constructor() {
