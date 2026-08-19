@@ -29,6 +29,8 @@ import kotlinx.coroutines.CoroutineScope
 class SyncTaskExecutor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
+    @Assisted private val notificationId: Int,
+
     private val syncTaskProcessorFactory: SyncTaskProcessorAssistedFactory,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val taskLoggerAssistedFactory: TaskLoggerAssistedFactory,
@@ -96,7 +98,7 @@ class SyncTaskExecutor @AssistedInject constructor(
             beforeStart()
             // FIXME: что будет с исключениями, возникшими в parentScope?
             syncTaskProcessorFactory
-                .create(syncTask, executionId, coroutineScope)
+                .create(syncTask, executionId, notificationId, coroutineScope)
                 .processSyncTask()
             afterFinish()
 
@@ -140,5 +142,9 @@ class SyncTaskExecutor @AssistedInject constructor(
 
 @AssistedFactory
 interface SyncTaskExecutorAssistedFactory {
-    fun create(syncTask: SyncTask, executionId: String): SyncTaskExecutor
+    fun create(
+        syncTask: SyncTask,
+        executionId: String,
+        notificationId: Int,
+    ): SyncTaskExecutor
 }

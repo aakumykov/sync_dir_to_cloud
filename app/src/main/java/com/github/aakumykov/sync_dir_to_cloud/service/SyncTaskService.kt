@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import android.view.View
 import androidx.annotation.RequiresPermission
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
@@ -43,7 +44,7 @@ class SyncTaskService : Service() {
     lateinit var syncTaskReader: SyncTaskReader
 
     private val notificationManager by lazy { NotificationManagerCompat.from(this) }
-    private var notificationId: Int? = null
+    private val notificationId: Int by lazy { View.generateViewId() }
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
@@ -53,8 +54,8 @@ class SyncTaskService : Service() {
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return when(intent?.action) {
-            ACTION_START -> startWork(startId, intent)
-            ACTION_CANCEL -> cancelWork(intent)
+            ACTION_START -> startWork(intent)
+            ACTION_CANCEL -> cancelWork()
             else -> super.onStartCommand(intent, flags, startId)
         }
     }
@@ -72,9 +73,8 @@ class SyncTaskService : Service() {
     private var job: Job? = null
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun startWork(startId: Int, intent: Intent): Int {
+    private fun startWork(intent: Intent): Int {
 
-        notificationId = startId
         val taskId = intent.getStringExtra(KEY_TASK_ID)
 
         if (null == taskId) {
@@ -91,23 +91,23 @@ class SyncTaskService : Service() {
             val executionId = newRandomId
 
             try {
-                syncTaskNotificator.showProgressNotification(syncTask, executionId)
+                syncTaskNotificator.showProgressNotification(notificationId, syncTask, executionId)
 
                 syncTaskExecutorFactory
-                    .create(syncTask = syncTask, executionId = executionId)
+                    .create(syncTask = syncTask, executionId = executionId, notificationId = notificationId)
                     .executeSyncTaskSimple(this)
 
-                syncTaskNotificator.hideProgressNotification()
+                syncTaskNotificator.hideProgressNotification(notificationId)
 
             } catch (e: CancellationException) {
-                syncTaskNotificator.showErrorNotification(e, syncTask, executionId)
+                syncTaskNotificator.showErrorNotification(e, notificationId, syncTask, executionId)
             }
         }
 
         return START_STICKY
     }
 
-    private fun cancelWork(intent: Intent): Int {
+    private fun cancelWork(): Int {
         hideNotification()
         stopSelf()
         return START_NOT_STICKY

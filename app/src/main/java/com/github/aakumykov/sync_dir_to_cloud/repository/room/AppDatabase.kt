@@ -21,6 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectBadS
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskBackupDirDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskNotificationIdDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskResettingDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskRunningTimeDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedulingStateDAO
@@ -149,8 +150,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
         AutoMigration(from = 158, to = 159), // fix: SyncTask.parallelism: Long --> Int
         AutoMigration(from = 159, to = 160), // fix: SyncTask.speedBytesPerSecond: Long --> Int
         AutoMigration(from = 160, to = 161, spec = RenameNotificationId::class), // notification_id --> current_notification_id
+        AutoMigration(from = 161, to = 162), // SyncTask.currentNotificationId: Int --> Int?
     ],
-    version = 161,
+    version = 162,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO
@@ -170,4 +172,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getInstructionLoggingDAO(): InstructionLoggingDAO
     abstract fun getFileOperationLogDAO(): FileOperationLogDAO
     abstract fun getLogOfSyncDAO(): LogOfSyncDAO
+    abstract fun getSyncTaskNotificationIdDAO(): SyncTaskNotificationIdDAO
 }

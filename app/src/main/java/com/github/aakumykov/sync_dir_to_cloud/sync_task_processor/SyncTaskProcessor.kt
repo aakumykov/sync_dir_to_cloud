@@ -22,6 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_au
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBDeleter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateResetter
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_task.SyncTaskStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificationUpdater
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import com.github.aakumykov.sync_dir_to_cloud.strategy.ChangesDetectionStrategy
 import com.github.aakumykov.sync_dir_to_cloud.task_dirs_checker.TaskDirsFixerAssistedFactory
@@ -31,6 +32,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 
 /*
 FIXME: отображается прогресс только в первой порции копируемых файлов.
@@ -61,6 +63,9 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
     @Assisted private val scope: CoroutineScope,
+    @Assisted private val notificationId: Int,
+
+    private val notificationUpdater: SyncTaskNotificationUpdater,
 
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
@@ -123,6 +128,14 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private suspend fun checkTaskDirs() {
         Log.d(TAG, "checkTaskDirs()")
+
+        notificationUpdater.updateProgressNotification(
+            messageId = R.string.checking_task_dirs,
+            notificationId = notificationId,
+            taskId = taskId,
+            executionId = executionId
+        )
+        delay(60_000)
 
         if (appSettings.dryRun) {
             Log.d(TAG, "Имитация работы, операции с файлами выполнены не будут.")
@@ -381,6 +394,7 @@ interface SyncTaskProcessorAssistedFactory {
     fun create(
         syncTask: SyncTask,
         executionId: String,
+        notificationId: Int,
         coroutineScope: CoroutineScope
     ): SyncTaskProcessor
 }
