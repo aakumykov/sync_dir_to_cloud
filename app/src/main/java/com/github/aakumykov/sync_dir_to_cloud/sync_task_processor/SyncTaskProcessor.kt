@@ -371,7 +371,7 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private suspend fun updateNotification(@StringRes messageId: Int) {
         notificator.updateProgressNotification(messageId)
-        delay(1000)
+//        delay(1000)
     }
 
     /*private suspend fun updateNotification(message: String) {
