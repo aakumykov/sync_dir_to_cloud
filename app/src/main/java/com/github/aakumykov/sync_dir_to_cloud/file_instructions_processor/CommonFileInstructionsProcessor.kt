@@ -10,7 +10,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 
 /**
- * Исполняет инструкции в определённом порядке.
+ * Исполняет файловые инструкции в нужном порядке.
  */
 class CommonFileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
@@ -22,7 +22,7 @@ class CommonFileInstructionsProcessor @AssistedInject constructor(
     private val backupInstructionsProcessorAssistedFactory: BackupInstructionsProcessorAssistedFactory,
     private val collisionResolverInstructionsProcessorAssistedFactory: CollisionResolverInstructionsProcessorAssistedFactory,
     private val dirCreationInstructionsProcessorAssistedFactory: DirCreationInstructionsProcessorAssistedFactory,
-    private val fileCopyInstructionsProcessorAssistedFactory: FileCopyInstructionsProcessorAssistedFactory,
+    private val fileCopyingInstructionsProcessorAssistedFactory: FileCopyingInstructionsProcessorAssistedFactory,
     private val deleteInstructionsProcessorAssistedFactory: DeleteInstructionsProcessorAssistedFactory,
 ){
     // FIXME: верен ли порядок? Нет, не верен: бекапить нужно раньше, чем копировать(!)
@@ -81,7 +81,7 @@ class CommonFileInstructionsProcessor @AssistedInject constructor(
     }
 
     private val copyInstructionsProcessor by lazy {
-        fileCopyInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
+        fileCopyingInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
     }
 }
 

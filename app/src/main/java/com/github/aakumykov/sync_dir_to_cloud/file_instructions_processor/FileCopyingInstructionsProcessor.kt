@@ -33,13 +33,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
-class FileCopyInstructionsProcessor @AssistedInject constructor(
+class FileCopyingInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val syncTask: SyncTask,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
+
     fileOperationLogger: DatabaseFileOperationLogger,
     syncInstructionUpdater: SyncInstructionUpdater,
     syncObjectDBReader: SyncObjectDBReader,
+
     private val syncObjectCopierFactory: SyncObjectFileCopierAssistedFactory,
     private val virtualSyncObjectAdderAssistedFactory: VirtualSyncObjectAdderAssistedFactory, // Это мне не нравится...
     private val appSettings: AppSettings,
@@ -161,7 +163,7 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
             val progressCallback = { transferredBytes: Long ->
                 val progress = 1f * transferredBytes / syncObject.size
                 parentScope.launch {
-//                    Log.d(TAG, "progress: $progress")
+                    Log.d(TAG, "progress: $progress")
                     updateProgress(logItemId, progress)
                 }
                 Unit
@@ -203,16 +205,16 @@ class FileCopyInstructionsProcessor @AssistedInject constructor(
     }
 
     companion object {
-        val TAG: String = FileCopyInstructionsProcessor::class.java.simpleName
+        val TAG: String = FileCopyingInstructionsProcessor::class.java.simpleName
     }
 }
 
 
 @AssistedFactory
-interface FileCopyInstructionsProcessorAssistedFactory {
+interface FileCopyingInstructionsProcessorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) syncTask: SyncTask,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
         parentScope: CoroutineScope,
-    ): FileCopyInstructionsProcessor
+    ): FileCopyingInstructionsProcessor
 }

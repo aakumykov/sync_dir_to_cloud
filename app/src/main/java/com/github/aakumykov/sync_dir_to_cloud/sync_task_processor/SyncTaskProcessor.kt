@@ -66,6 +66,9 @@ class SyncTaskProcessor @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
     @Assisted private val notificator: SyncTaskNotificator,
 
+    private val syncInstructionRepository:SyncInstructionRepository,
+    private val cloudAuthReader: CloudAuthReader,
+
     private val sourceWithTargetComparatorAssistedFactory: SourceWithTargetComparatorAssistedFactory,
     private val instructionsGeneratorAssistedFactory: InstructionsGeneratorAssistedFactory,
     private val backupDirsPreparerAssistedFactory: BackupDirsPreparerAssistedFactory,
@@ -76,13 +79,11 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private val oneStageOfTaskExecutorAssistedFactory: OneStageOfTaskExecutorAssistedFactory,
 
-    private val cloudAuthReader: CloudAuthReader,
     private val syncTaskStateChanger: SyncTaskStateChanger,
     private val syncObjectStateResetter: SyncObjectStateResetter,
     private val syncInstructionDeleter: SyncInstructionDeleter,
     private val comparisonsDeleter: ComparisonsDeleter,
     private val syncObjectDeleter:SyncObjectDBDeleter,
-    private val syncInstructionRepository:SyncInstructionRepository,
 
     private val appSettings: AppSettings,
 ) {
