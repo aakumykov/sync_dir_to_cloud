@@ -21,7 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEd
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic.OperationDetailsDialogViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.OperationDetailsDialogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListViewModel

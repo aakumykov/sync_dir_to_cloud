@@ -7,14 +7,13 @@ import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS
 import kotlin.math.roundToInt
 
 @DatabaseView(
     viewName = LogOfSync.TABLE_NAME,
-    value = "SELECT $BASIC_LOG_ITEM_FIELDS FROM task_logs " +
-            "UNION ALL SELECT $BASIC_LOG_ITEM_FIELDS FROM instruction_logs  " +
-            "UNION ALL SELECT $BASIC_LOG_ITEM_FIELDS FROM file_operation_logs " +
+    value = "SELECT ${LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS} FROM task_logs " +
+            "UNION ALL SELECT ${LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS} FROM instruction_logs  " +
+            "UNION ALL SELECT ${LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS} FROM file_operation_logs " +
             "ORDER BY ${BasicLogItem.FIELD_START_TIME}, ${BasicLogItem.FIELD_FINISH_TIME} ASC"
 )
 data class LogOfSync(

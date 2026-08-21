@@ -1,22 +1,19 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
-import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_EXECUTION_ID
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys.KEY_TASK_ID
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentSyncLogBinding
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.view.other.ext_functions.showToast
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.coroutines.launch
 

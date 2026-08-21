@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.view.View
 import android.widget.ImageButton

@@ -1,4 +1,4 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import androidx.lifecycle.ViewModel
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout

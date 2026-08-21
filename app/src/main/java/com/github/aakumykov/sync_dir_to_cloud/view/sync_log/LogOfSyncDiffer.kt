@@ -1,6 +1,5 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log_classic
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
-import android.R.attr.text
 import androidx.recyclerview.widget.DiffUtil
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOperation
