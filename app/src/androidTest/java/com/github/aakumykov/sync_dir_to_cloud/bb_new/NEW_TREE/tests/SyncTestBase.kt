@@ -1,5 +1,10 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests
 
+import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
+import android.view.View
+import androidx.core.app.NotificationManagerCompat
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.aakumykov.cloud_writer.CloudWriter
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.StorageAccessTestCase
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.TestComponentHolder
@@ -14,9 +19,14 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.local_file_helper.Loc
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_bytes.randomBytes
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomDeepDirName
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.random_name.randomName
+import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.sourceTaskBackupsDirAbsolutePath
 import com.github.aakumykov.sync_dir_to_cloud.extensions.targetTaskBackupsDirAbsolutePath
+import com.github.aakumykov.sync_dir_to_cloud.newRandomId
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificationChannelHelper
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
+import com.github.aakumykov.sync_dir_to_cloud.utils.NotificationChannelHelper
 import org.junit.Assert
 import org.junit.Before
 import java.io.File
@@ -30,8 +40,44 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     protected val fileHelper get() = LocalFileHelper(taskConfig)
 
-    private val syncTask: SyncTask
+    protected val syncTask: SyncTask
         get() = TestComponentHolder.testSyncTaskDAO.get(taskConfig.TASK_ID)!!
+
+    protected val executionId: String by lazy { newRandomId }
+
+    protected val appContext: Context
+        get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    protected val notificationManagerCompat: NotificationManagerCompat by lazy {
+        NotificationManagerCompat.from(appContext)
+    }
+
+    private val notificationChannelConfig: NotificationChannelConfig
+        get() = NotificationChannelConfig
+
+    private val notificationChannelHelper: NotificationChannelHelper by lazy {
+        NotificationChannelHelper(appContext)
+    }
+
+    private val syncTaskNotificationChannelHelper: SyncTaskNotificationChannelHelper by lazy {
+        SyncTaskNotificationChannelHelper(
+            appContext,
+            channelHelper = notificationChannelHelper,
+            notificationChannelConfig = notificationChannelConfig
+        )
+    }
+
+    protected val syncTaskNotificator: SyncTaskNotificator by lazy {
+        SyncTaskNotificator(
+            taskId = syncTask.id,
+            executionId = executionId,
+            notificationId = View.generateViewId(),
+            appContext = appContext,
+            notificationManagerCompat = notificationManagerCompat,
+            syncTaskNotificationChannelHelper = syncTaskNotificationChannelHelper,
+            notificationChannelConfig = notificationChannelConfig,
+        )
+    }
 
     //
     // Настройки файлов
@@ -155,7 +201,11 @@ abstract class SyncTestBase : StorageAccessTestCase() {
 
     protected fun doSync(delayAfterWork: Boolean = false) = run {
 
-        scenario(RunSyncScenario(taskConfig.TASK_ID))
+        scenario(RunSyncScenario(
+            syncTask = syncTask,
+            executionId = executionId,
+            notificator = syncTaskNotificator
+        ))
 
         if (delayAfterWork)
             TimeUnit.MILLISECONDS.sleep(inDeviceChangesRelaxationTimeoutMs)

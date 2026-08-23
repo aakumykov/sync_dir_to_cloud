@@ -7,6 +7,8 @@ import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestCloudAuthDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncInstructionDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncObjectDAO
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.room.dao.TestSyncTaskDAO
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessor
 import kotlinx.coroutines.CoroutineScope
 
@@ -35,8 +37,13 @@ val testComponent: TestComponent
     get() = TestComponentHolder.testComponent
 
 
-fun syncTaskExecutor(coroutineScope: CoroutineScope): SyncTaskProcessor {
+fun syncTaskProcessor(
+    syncTask: SyncTask,
+    executionId: String,
+    coroutineScope: CoroutineScope,
+    notificator: SyncTaskNotificator,
+): SyncTaskProcessor {
     return testComponent
         .getSyncTaskProcessorAssistedFactory()
-        .create(coroutineScope)
+        .create(syncTask,executionId, coroutineScope, notificator)
 }

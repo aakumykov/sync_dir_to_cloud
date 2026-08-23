@@ -2,10 +2,11 @@ package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.common
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.SyncTestBase
-import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.syncTaskExecutor
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.common.syncTaskProcessor
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.unreadableSourceNoBackupTaskConfig
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,8 +25,13 @@ class SyncFromUnreadableSource : SyncTestBase() {
     @Test
     fun sync_from_unreadable_source_throws_exception() {
         Assert.assertThrows(Exception::class.java) {
-            runBlocking {
-                syncTaskExecutor(this).executeSyncTask(taskConfig.TASK_ID)
+            runTest {
+                syncTaskProcessor(
+                    syncTask = syncTask,
+                    executionId = executionId,
+                    coroutineScope = this,
+                    notificator = syncTaskNotificator
+                ).processSyncTask()
             }
         }
     }
