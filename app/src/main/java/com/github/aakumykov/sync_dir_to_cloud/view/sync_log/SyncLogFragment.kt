@@ -67,9 +67,9 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
     }
 
     private fun onListChanged(list: List<LogOfSync>) {
-        adapter.submitList(list
-//            .filter { LogItemAbout.FILE == it.logItemAbout }
-        )
+        adapter.submitList(list) {
+            binding.recyclerView.scrollToPosition(adapter.itemCount-1)
+        }
     }
 
     override fun onDestroyView() {

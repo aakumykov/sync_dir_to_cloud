@@ -4,9 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.github.aakumykov.sync_dir_to_cloud.view_utils.AutoScrollRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="8dp"/>
+
 </FrameLayout>
