@@ -45,6 +45,7 @@ class SyncLogFragment : Fragment(R.layout.fragment_sync_log) {
         binding.recyclerView.adapter = this.adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(),  LinearLayout.VERTICAL))
+        binding.recyclerView.itemAnimator = null
 
         syncLogViewModel = DaggerViewModelHelper.get(this, SyncLogViewModel::class.java)
 
