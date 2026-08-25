@@ -142,6 +142,9 @@ abstract class SyncTestBase : StorageAccessTestCase() {
     protected val sDeepDirName = randomDeepDirName
     protected val tDeepDirName = randomDeepDirName
 
+    protected fun sDeepDirName(depth: Int): String = randomDeepDirName(depth, depth)
+    protected fun tDeepDirName(depth: Int): String = randomDeepDirName(depth, depth)
+
     protected val sDeepDir = fileHelper.dirInSource(sDeepDirName)
     protected val tDeepDir = fileHelper.dirInTarget(tDeepDirName)
 
