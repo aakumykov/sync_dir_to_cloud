@@ -263,8 +263,7 @@ class SyncTaskProcessor @AssistedInject constructor(
             isCritical = !unprocessed,
             logMessage = logMessage,
             codeBlock = {
-                commonFileInstructionsProcessor
-                    .processFileInstructions(unprocessed)
+                commonFileInstructionsProcessor.processFileInstructions(unprocessed)
             }
         )
     }
@@ -372,8 +371,13 @@ class SyncTaskProcessor @AssistedInject constructor(
 
     private suspend fun updateNotification(@StringRes messageId: Int) {
         notificator.updateProgressNotification(messageId)
-        delay(1000)
+//        delay(1000)
     }
+
+    /*private suspend fun updateNotification(message: String) {
+        notificator.updateProgressNotification(message)
+        delay(1000)
+    }*/
 
 
     suspend fun stopExecutingTask(taskId: String) {
@@ -390,7 +394,7 @@ class SyncTaskProcessor @AssistedInject constructor(
     }
 
     private val commonFileInstructionsProcessor by lazy {
-        commonFileInstructionsProcessorAssistedFactory.create(scope, syncTask, executionId, notificator)
+        commonFileInstructionsProcessorAssistedFactory.create(scope, syncTask, executionId)
     }
 
     // FIXME: логика

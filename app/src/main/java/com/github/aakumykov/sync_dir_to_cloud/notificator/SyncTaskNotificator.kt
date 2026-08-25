@@ -15,7 +15,6 @@ import com.github.aakumykov.sync_dir_to_cloud.config.NotificationChannelConfig
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.AppContext
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
-import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -61,16 +60,6 @@ class SyncTaskNotificator @AssistedInject constructor(
 
     fun updateProgressNotification(messageId: Int) {
         updateProgressNotification(getString(messageId))
-    }
-
-    @SuppressLint("MissingPermission")
-    fun updateProgressInNotification(progress: Float) {
-        progressNotificationBuilder
-            .setProgress(100, progress.toPercentOf100(), false)
-            .build()
-            .also {
-                notificationManagerCompat.notify(notificationId, it)
-            }
     }
 
     fun hideProgressNotification(notificationId: Int) {
