@@ -39,8 +39,8 @@ abstract class StaticDeepDirsBase : SyncTestBase() {
 
     // ====== sync =====>
     open fun diff_name_deep_dirs_in_source_and_target() {
-        fileHelper.createDirInSource(sDeepDirName(2))
-        fileHelper.createDirInTarget(tDeepDirName(2))
+        fileHelper.createDirInSource(sDeepDirName)
+        fileHelper.createDirInTarget(tDeepDirName)
         doSync()
     }
 }
