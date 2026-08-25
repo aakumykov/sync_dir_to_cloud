@@ -19,11 +19,13 @@ import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundExcep
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
+import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
 import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.DatabaseFileOperationLogger
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -32,11 +34,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class FileCopyingInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val syncTask: SyncTask,
     @Assisted(QUALIFIER_EXECUTION_ID) private val executionId: String,
     @Assisted private val parentScope: CoroutineScope,
+    @Assisted private val notificator: SyncTaskNotificator,
 
     fileOperationLogger: DatabaseFileOperationLogger,
     syncInstructionUpdater: SyncInstructionUpdater,
@@ -165,6 +169,7 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
                 parentScope.launch {
                     Log.d(TAG, "progress: $progress")
                     updateProgress(logItemId, progress)
+                    notificator.updateProgressInNotification(progress)
                 }
                 Unit
             }
@@ -215,6 +220,7 @@ interface FileCopyingInstructionsProcessorAssistedFactory {
     fun create(
         @Assisted(QUALIFIER_TASK_ID) syncTask: SyncTask,
         @Assisted(QUALIFIER_EXECUTION_ID) executionId: String,
+        notificator: SyncTaskNotificator,
         parentScope: CoroutineScope,
     ): FileCopyingInstructionsProcessor
 }
