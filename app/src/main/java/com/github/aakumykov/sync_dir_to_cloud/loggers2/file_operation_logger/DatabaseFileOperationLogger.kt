@@ -23,7 +23,7 @@ class DatabaseFileOperationLogger @Inject constructor(
         val taskId: String,
         val executionId: String,
         val logItemId: String,
-        @StringRes val operationName: Int,
+        @param:StringRes val operationName: Int,
         val firstItem: String?,
         val secondItem: String?
     )
