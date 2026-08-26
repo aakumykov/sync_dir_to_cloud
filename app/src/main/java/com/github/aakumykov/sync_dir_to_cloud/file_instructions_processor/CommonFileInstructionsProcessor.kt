@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.file_instructions_processor
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.FileInstruction
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.notProcessed
+import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncInstructionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -16,6 +17,7 @@ class CommonFileInstructionsProcessor @AssistedInject constructor(
     @Assisted private val parentScope: CoroutineScope,
     @Assisted private val syncTask: SyncTask,
     @Assisted private val executionId: String,
+    @Assisted private val notificator: SyncTaskNotificator,
 
     private val syncInstructionRepository: SyncInstructionRepository,
 
@@ -81,7 +83,8 @@ class CommonFileInstructionsProcessor @AssistedInject constructor(
     }
 
     private val copyInstructionsProcessor by lazy {
-        fileCopyingInstructionsProcessorAssistedFactory.create(syncTask, executionId, parentScope)
+        fileCopyingInstructionsProcessorAssistedFactory.create(
+            syncTask, executionId, notificator, parentScope)
     }
 }
 
@@ -91,5 +94,6 @@ interface CommonFileInstructionsProcessorAssistedFactory {
         scope: CoroutineScope,
         syncTask: SyncTask,
         executionId: String,
+        notificator: SyncTaskNotificator,
     ): CommonFileInstructionsProcessor
 }
