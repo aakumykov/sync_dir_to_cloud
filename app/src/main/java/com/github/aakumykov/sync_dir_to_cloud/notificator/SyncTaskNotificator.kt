@@ -38,6 +38,7 @@ class SyncTaskNotificator @AssistedInject constructor(
 
     private val notificationChannelConfig: NotificationChannelConfig
 ) {
+    @Deprecated("назвать по-другому: прогресс это с процентами")
     @SuppressLint("MissingPermission")
     fun showProgressNotification(notificationId: Int, syncTask: SyncTask, executionId: String) {
         syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
@@ -51,6 +52,7 @@ class SyncTaskNotificator @AssistedInject constructor(
         )
     }
 
+    @Deprecated("назвать по-другому: прогресс это с процентами")
     @SuppressLint("MissingPermission")
     fun updateProgressNotification(message: String) {
         progressNotificationBuilder
@@ -61,6 +63,7 @@ class SyncTaskNotificator @AssistedInject constructor(
             }
     }
 
+    @Deprecated("назвать по-другому: прогресс это с процентами")
     fun updateProgressNotification(messageId: Int) {
         updateProgressNotification(getString(messageId))
     }
