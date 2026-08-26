@@ -129,6 +129,7 @@ class SyncTaskNotificator @AssistedInject constructor(
         NotificationCompat.Builder(appContext, notificationChannelConfig.progress.channelId)
             .setContentTitle(getString(R.string.sync_task_progress_notification_title))
             .setSmallIcon(R.drawable.ic_sync_task_notification_progress)
+            .setStyle(NotificationCompat.BigTextStyle())
             .setAutoCancel(false)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
