@@ -171,8 +171,9 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
                 parentScope.launch {
                     Log.d(TAG, "progress: $progress")
                     updateProgress(logItemId, progress)
-                    notificator.updateProgressNotification(
-                        TextMessage(R.string.file_operation_copying_from_to, syncObject.name, fromPath, toPath),
+                    notificator.updateProgressNotificationAsFileCopying(
+                        syncObject.name,
+                        TextMessage(R.string.file_operation_copying_to, toPath),
                         progress
                     )
                 }

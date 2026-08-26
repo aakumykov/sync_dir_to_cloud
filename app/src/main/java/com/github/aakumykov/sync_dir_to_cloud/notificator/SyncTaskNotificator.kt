@@ -69,8 +69,9 @@ class SyncTaskNotificator @AssistedInject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun updateProgressNotification(textMessage: TextMessage, progress: Float) {
+    suspend fun updateProgressNotificationAsFileCopying(title: String, textMessage: TextMessage, progress: Float) {
         progressNotificationBuilder
+            .setContentTitle(title)
             .setContentText(textMessage.get(appContext))
             .setProgress(100, progress.toPercentOf100(), false)
             .build()
