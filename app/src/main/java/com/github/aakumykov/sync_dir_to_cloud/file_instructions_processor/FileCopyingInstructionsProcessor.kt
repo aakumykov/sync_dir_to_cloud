@@ -27,11 +27,13 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.file_operation_logger.Dat
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.notificator.SyncTaskNotificator
 import com.github.aakumykov.sync_dir_to_cloud.utils.runInCoroutineExtended
+import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -169,7 +171,10 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
                 parentScope.launch {
                     Log.d(TAG, "progress: $progress")
                     updateProgress(logItemId, progress)
-                    notificator.updateProgressInNotification(progress)
+                    notificator.updateProgressNotification(
+                        TextMessage(R.string.file_operation_copying_from_to, syncObject.name, fromPath, toPath),
+                        progress
+                    )
                 }
                 Unit
             }

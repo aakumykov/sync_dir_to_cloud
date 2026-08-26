@@ -248,4 +248,5 @@
     <string name="sync_task_error_notification_title">Sync error</string>
     <string name="error_there_is_no_task_id">There is no task id</string>
     <string name="notification_action_cancel_task">Cancel</string>
+    <string name="file_operation_copying_from_to">Copying \"%1$s\" from \"%2$s\" to \"%3$s\"</string>
 </resources>

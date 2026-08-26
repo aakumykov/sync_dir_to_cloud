@@ -17,9 +17,11 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
 import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
+import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.delay
 
 /**
  * Создаётся отдельный экземпляр для каждой
@@ -64,13 +66,15 @@ class SyncTaskNotificator @AssistedInject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun updateProgressInNotification(progress: Float) {
+    suspend fun updateProgressNotification(textMessage: TextMessage, progress: Float) {
         progressNotificationBuilder
+            .setContentText(textMessage.get(appContext))
             .setProgress(100, progress.toPercentOf100(), false)
             .build()
             .also {
                 notificationManagerCompat.notify(notificationId, it)
             }
+        delay(1000)
     }
 
     fun hideProgressNotification(notificationId: Int) {
