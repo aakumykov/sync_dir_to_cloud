@@ -78,7 +78,7 @@ class SyncTaskNotificator @AssistedInject constructor(
             .also {
                 notificationManagerCompat.notify(notificationId, it)
             }
-        delay(1000)
+//        delay(1000)
     }
 
     fun hideProgressNotification(notificationId: Int) {
