@@ -76,7 +76,7 @@ class SyncTaskService : Service() {
     }
 
     override fun onDestroy() {
-        serviceJob.cancel(CancellationException("SyncTaskService().onDestroy()"))
+        serviceJob.cancel(CancellationException("SyncTaskService onDestroy() called."))
         super.onDestroy()
     }
 
@@ -123,7 +123,7 @@ class SyncTaskService : Service() {
             }
             catch (e: CancellationException) {
                 // TODO: что делать здесь?
-                Log.e(TAG, e.errorMsg, e)
+                Log.i(TAG, e.errorMsg, e)
             }
             finally {
                 taskJobsHolder.removeJob(taskId)
