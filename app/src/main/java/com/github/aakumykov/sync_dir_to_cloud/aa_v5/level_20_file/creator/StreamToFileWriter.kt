@@ -109,7 +109,7 @@ class StreamToFileWriter @AssistedInject constructor(
                         targetAbsolutePath = filePath,
                         overwriteIfExists = overwriteIfExists,
                         requiredSpeedBytesPerSecondSupplier = { syncTask.speedBytesPerSecond },
-                        progressCallback = { progress, speed ->
+                        /*progressCallback = { progress, speed ->
                             Log.d(TAG, "прогресс записи файла: ${BytesToHumanSizeFormatter.format(progress)}")
 
                             dataTransferDelay.also { delayMs ->
@@ -118,11 +118,11 @@ class StreamToFileWriter @AssistedInject constructor(
                             }
 
                             // TODO: вернуть это?
-                            /*if (!cancellableContinuation.isActive)
-                            return@putStream*/
+                            *//*if (!cancellableContinuation.isActive)
+                            return@putStream*//*
 
                             progressCallback?.invoke(progress)
-                        },
+                        },*/
                         finishCallback = { _,_,_ ->
                             cancellableContinuation.resume(Unit)
                         },
