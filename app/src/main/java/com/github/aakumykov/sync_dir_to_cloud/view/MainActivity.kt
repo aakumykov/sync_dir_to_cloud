@@ -14,10 +14,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener
+import androidx.lifecycle.lifecycleScope
+import com.github.aakumykov.storage_access_helper.StorageAccessHelper
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.appComponent
 import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STACK_NAME
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
+import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
+import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel
@@ -28,6 +32,9 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.SyncLogFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_details.TaskDetailsFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_edit.TaskEditFragment
 import com.github.aakumykov.sync_dir_to_cloud.view.task_list.TaskListFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,11 +48,18 @@ class MainActivity : AppCompatActivity() {
 
     private val menuHelper: MenuHelper by lazy { MenuHelper(this@MainActivity, R.color.onPrimary, R.color.primary) }
 
+    private lateinit var storageAccessHelper: StorageAccessHelper
+
+    @Inject
+    lateinit var cloudAuthReader: CloudAuthReader
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Log.d(TAG, "appComponent: ${appComponent.hashCode()}")
+
+        appComponent.injectToMainActivity(this)
 
         prepareLayout()
         prepareFragmentManager()
@@ -53,6 +67,9 @@ class MainActivity : AppCompatActivity() {
         subscribeToPageTitle()
         subscribeToPageNavigation()
         // Подписка на меню производится в onCreateOptionsMenu()
+
+        prepareStorageAccessHelper()
+        checkStorageAccessPermission()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -191,6 +208,24 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun prepareStorageAccessHelper() {
+        storageAccessHelper = StorageAccessHelper.create(this).apply {
+            prepareForFullAccess()
+        }
+    }
+
+    // FIXME: временное решение
+    private fun checkStorageAccessPermission() {
+        lifecycleScope.launch (Dispatchers.IO) {
+            if (cloudAuthReader.list().any { StorageType.LOCAL == it.storageType }) {
+                launch (Dispatchers.Main) {
+                    if (!storageAccessHelper.hasFullAccess()) {
+                        storageAccessHelper.requestFullAccess {}
+                    }
+                }
+            }
+        }
+    }
 
     companion object {
         val TAG: String = MainActivity::class.java.simpleName

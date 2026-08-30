@@ -37,6 +37,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateD
 import com.github.aakumykov.sync_dir_to_cloud.service.SyncTaskService
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_backuper_restorer.BackuperRestorer
 import com.github.aakumykov.sync_dir_to_cloud.sync_task_processor.SyncTaskProcessorAssistedFactory
+import com.github.aakumykov.sync_dir_to_cloud.view.MainActivity
 import com.github.aakumykov.sync_dir_to_cloud.workers.SyncTaskWorker
 import com.google.gson.Gson
 import dagger.Component
@@ -72,6 +73,8 @@ import dagger.Component
 @AppScope
 @ExecutionScope
 interface AppComponent {
+
+    fun injectToMainActivity(mainActivity: MainActivity)
 
     fun injectToSyncTaskWorker(syncTaskWorker: SyncTaskWorker)
 

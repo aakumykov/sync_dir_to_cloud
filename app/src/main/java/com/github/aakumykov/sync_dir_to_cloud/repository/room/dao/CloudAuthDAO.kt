@@ -10,7 +10,10 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 interface CloudAuthDAO {
 
     @Query("SELECT * FROM cloud_auth")
-    fun list(): LiveData<List<CloudAuth>>
+    fun listAsLiveData(): LiveData<List<CloudAuth>>
+
+    @Query("SELECT * FROM cloud_auth")
+    fun list(): List<CloudAuth>
 
     @Insert
     suspend fun add(cloudAuth: CloudAuth)
