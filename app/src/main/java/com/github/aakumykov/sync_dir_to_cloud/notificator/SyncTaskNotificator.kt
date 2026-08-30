@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.notificator
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import androidx.core.app.NotificationCompat
@@ -38,6 +39,10 @@ class SyncTaskNotificator @AssistedInject constructor(
 
     private val notificationChannelConfig: NotificationChannelConfig
 ) {
+    val progressNotification: Notification get() {
+        return progressNotificationBuilder.build()
+    }
+
     @Deprecated("назвать по-другому: прогресс это с процентами")
     @SuppressLint("MissingPermission")
     fun showProgressNotification(notificationId: Int, syncTask: SyncTask, executionId: String) {
