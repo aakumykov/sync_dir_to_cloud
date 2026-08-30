@@ -1,10 +1,13 @@
 package com.github.aakumykov.sync_dir_to_cloud.service
 
 import android.Manifest
+import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.View
@@ -96,6 +99,8 @@ class SyncTaskService : Service() {
             notificationId = notificationId,
         )
 
+        makeServiceForeground(notificationId, notificator.progressNotification)
+
         val eh = CoroutineExceptionHandler { _, throwable ->
             notificator.showErrorNotification(throwable)
         }
@@ -131,6 +136,14 @@ class SyncTaskService : Service() {
         }
 
         return START_STICKY
+    }
+
+    private fun makeServiceForeground(notificationId: Int, notification: Notification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            startForeground(notificationId, notification)
+        }
     }
 
     private fun cancelTask(intent: Intent): Int {
