@@ -1,5 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_40_sync_object
 
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriterAssistedFactory
@@ -10,6 +11,7 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.FileOperationLogProgressUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectStateChanger
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -31,12 +33,14 @@ class SyncObjectFileCopier @AssistedInject constructor(
         overwriteIfExists: Boolean = syncOptions.overwriteIfExists,
         progressCallback: ((transferredBytes: Long) -> Unit)
     ) {
+        val startTime = currentTime
         streamToFileWriter.putStreamToTarget(
             inputStreamGetter.getInputStreamInSource(syncObject),
             absolutePathInTarget,
             overwriteIfExists,
             progressCallback
         )
+        Log.d(TAG, "copyFileFromSourceToTarget(...,'$absolutePathInTarget'): ${currentTime-startTime}мс")
 
         syncObjectStateChanger.markAsSuccessfullySynced(syncObject.id)
     }
