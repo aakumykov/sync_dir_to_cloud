@@ -1,9 +1,15 @@
 package com.github.aakumykov.sync_dir_to_cloud.bb_new.NEW_TREE.tests.v2.files.flat_files.static_files
 
+import android.os.Environment
+import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.config.task_config.LocalToLocalSyncNoBackupTaskConfig
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.default_dirs.defaultLocalSourceDir
+import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.default_dirs.defaultLocalTargetDir
 import com.github.aakumykov.sync_dir_to_cloud.bb_new.utils.file_is_empty.isEmpty
+import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 // TODO: тесты, где бы эти методы выдавали ошибку
 
@@ -137,5 +143,36 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
             fileHelper.getFileContents(sFile).joinToString(),
             fileHelper.getFileContents(sFileInTarget).joinToString()
         )
+    }
+
+
+    // ===== sync =====>
+    @Test
+    fun big_file_in_source_and_no_files_in_target_copy_time_probe() {
+
+        val TAG = "big_file_in_source_and_no_files_in_target_copy_time_probe"
+
+        val bigFileName = "debian.iso"
+        val bigFileDir = File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS)
+        val bigFile = File(bigFileDir, bigFileName)
+
+        Assert.assertTrue(bigFile.exists())
+        Assert.assertTrue(bigFile.length() > 1024 * 1024 * 100)
+
+        val sourceFile = File(defaultLocalSourceDir, bigFileName)
+        val targetFile = File(defaultLocalTargetDir, bigFileName)
+
+        bigFile.copyTo(sourceFile, true)
+
+        Assert.assertTrue(sourceFile.exists())
+
+        val startTime = currentTime
+        doSync()
+        val duration = currentTime - startTime
+
+        Assert.assertTrue(targetFile.exists())
+        Assert.assertEquals(sourceFile.length(), targetFile.length())
+
+        Log.d(TAG, "время синхронизации одного большого файла '$bigFileName': $duration")
     }
 }
