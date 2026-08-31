@@ -22,7 +22,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.delay
 
 /**
  * Создаётся отдельный экземпляр для каждой
@@ -39,22 +38,18 @@ class SyncTaskNotificator @AssistedInject constructor(
 
     private val notificationChannelConfig: NotificationChannelConfig
 ) {
-    val progressNotification: Notification get() {
-        return progressNotificationBuilder.build()
-    }
-
     @Deprecated("назвать по-другому: прогресс это с процентами")
     @SuppressLint("MissingPermission")
-    fun showProgressNotification(notificationId: Int, syncTask: SyncTask, executionId: String) {
+    fun showProgressNotification(notificationId: Int, syncTask: SyncTask, executionId: String): Notification {
         syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
 
-        notificationManagerCompat.notify(
-            notificationId,
-            progressNotificationBuilder
-                .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
-                .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
-                .build()
-        )
+        return progressNotificationBuilder
+            .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
+            .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
+            .build()
+            .also {
+                notificationManagerCompat.notify(notificationId, it)
+            }
     }
 
     @Deprecated("назвать по-другому: прогресс это с процентами")

@@ -99,8 +99,6 @@ class SyncTaskService : Service() {
             notificationId = notificationId,
         )
 
-        makeServiceForeground(notificationId, notificator.progressNotification)
-
         val eh = CoroutineExceptionHandler { _, throwable ->
             notificator.showErrorNotification(throwable)
         }
@@ -109,8 +107,11 @@ class SyncTaskService : Service() {
 
             try {
                 val syncTask = syncTaskReader.getSyncTask(taskId)
+                // FIXME: проверять на null
 
-                notificator.showProgressNotification(notificationId, syncTask, executionId)
+                notificator.showProgressNotification(notificationId, syncTask, executionId).also {
+                    makeServiceForeground(notificationId, it)
+                }
 
                 syncTaskExecutorFactory
                     .create(
