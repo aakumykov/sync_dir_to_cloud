@@ -156,7 +156,7 @@ open class StaticFlatFilesWithoutBackup : StaticFlatFilesBase() {
         val bigFileDir = File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS)
         val bigFile = File(bigFileDir, bigFileName)
 
-        Assert.assertTrue(bigFile.exists())
+        Assert.assertTrue("File '${bigFile.absoluteFile}' does not exists.", bigFile.exists())
         Assert.assertTrue(bigFile.length() > 1024 * 1024 * 100)
 
         val sourceFile = File(defaultLocalSourceDir, bigFileName)
