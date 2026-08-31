@@ -38,7 +38,7 @@ class SyncTaskNotificator @AssistedInject constructor(
 
     private val notificationChannelConfig: NotificationChannelConfig
 ) {
-    @Deprecated("назвать по-другому: прогресс это с процентами")
+
     @SuppressLint("MissingPermission")
     fun showProgressNotification(notificationId: Int, syncTask: SyncTask, executionId: String): Notification {
         syncTaskNotificationChannelHelper.createProgressNotificationChannelItNotExists()
@@ -52,24 +52,20 @@ class SyncTaskNotificator @AssistedInject constructor(
             }
     }
 
-    @Deprecated("назвать по-другому: прогресс это с процентами")
+
     @SuppressLint("MissingPermission")
-    fun updateProgressNotification(message: String) {
+    fun updateProgressNotification(messageId: Int) {
         progressNotificationBuilder
-            .setContentText(message)
+            .setContentText(getString(messageId))
             .build()
             .also {
                 notificationManagerCompat.notify(notificationId, it)
             }
     }
 
-    @Deprecated("назвать по-другому: прогресс это с процентами")
-    fun updateProgressNotification(messageId: Int) {
-        updateProgressNotification(getString(messageId))
-    }
 
     @SuppressLint("MissingPermission")
-    suspend fun updateProgressNotificationAsFileCopying(title: String, textMessage: TextMessage, progress: Float) {
+    fun updateFileCopyingProgressNotification(title: String, textMessage: TextMessage, progress: Float) {
         progressNotificationBuilder
             .setContentTitle(title)
             .setContentText(textMessage.get(appContext))
@@ -78,25 +74,13 @@ class SyncTaskNotificator @AssistedInject constructor(
             .also {
                 notificationManagerCompat.notify(notificationId, it)
             }
-//        delay(1000)
     }
+
 
     fun hideProgressNotification(notificationId: Int) {
         notificationManagerCompat.cancel(notificationId)
     }
 
-    @SuppressLint("MissingPermission")
-    fun showSuccessNotification(notificationId: Int, syncTask: SyncTask, executionId: String) {
-        syncTaskNotificationChannelHelper.createSuccessNotificationChannelItNotExists()
-
-        notificationManagerCompat.notify(
-            notificationId,
-            successNotificationBuilder
-                .setContentText("${syncTask.sourcePath} --> ${syncTask.targetPath}")
-                .setContentIntent(pendingIntentForSyncLog(syncTask.id, executionId))
-                .build()
-        )
-    }
 
 
     @SuppressLint("MissingPermission")
@@ -139,14 +123,6 @@ class SyncTaskNotificator @AssistedInject constructor(
             .setOnlyAlertOnce(true)
             .setUsesChronometer(true)
             .setContentIntent(pendingIntentForSyncLog(taskId, executionId))
-    }
-
-
-    private val successNotificationBuilder: NotificationCompat.Builder by lazy {
-        NotificationCompat.Builder(appContext, notificationChannelConfig.success.channelId)
-            .setContentTitle(getString(R.string.sync_task_success_notification_title))
-            .setSmallIcon(R.drawable.ic_sync_task_notification_success)
-            .setAutoCancel(true)
     }
 
 

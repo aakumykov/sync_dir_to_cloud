@@ -19,7 +19,6 @@ import com.github.aakumykov.sync_dir_to_cloud.exceptions.SyncObjectNotFoundExcep
 import com.github.aakumykov.sync_dir_to_cloud.extensions.absolutePathIn
 import com.github.aakumykov.sync_dir_to_cloud.extensions.errorMsgExtended
 import com.github.aakumykov.sync_dir_to_cloud.extensions.isFile
-import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.SyncInstructionUpdater
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_object.SyncObjectDBReader
 import com.github.aakumykov.sync_dir_to_cloud.job_holdes.OperationJobsHolder
@@ -33,10 +32,8 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 class FileCopyingInstructionsProcessor @AssistedInject constructor(
     @Assisted(QUALIFIER_TASK_ID) private val syncTask: SyncTask,
@@ -171,7 +168,7 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
                 parentScope.launch {
                     Log.d(TAG, "progress: $progress")
                     updateProgress(logItemId, progress)
-                    notificator.updateProgressNotificationAsFileCopying(
+                    notificator.updateFileCopyingProgressNotification(
                         syncObject.name,
                         TextMessage(R.string.file_operation_copying_to, toPath),
                         progress
