@@ -103,6 +103,7 @@ class StreamToFileWriter @AssistedInject constructor(
             }
 
             try {
+                Log.d(TAG, "cloudWriter.putStream() СТАРТ")
                 cloudWriter
                     .putStream(
                         inputStream = inputStream,
@@ -127,6 +128,7 @@ class StreamToFileWriter @AssistedInject constructor(
                             cancellableContinuation.resume(Unit)
                         },
                     )
+                Log.d(TAG, "cloudWriter.putStream() ФИНИШ")
             } catch (t: Throwable) {
                 Log.e(TAG, t.errorMsg, t)
 
