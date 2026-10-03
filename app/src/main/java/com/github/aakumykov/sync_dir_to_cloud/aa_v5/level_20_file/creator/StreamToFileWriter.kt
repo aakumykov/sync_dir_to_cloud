@@ -15,10 +15,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.IOException
 import java.io.InputStream
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 /**
  * Методы этого класса обязаны быть "suspend",
@@ -110,20 +107,10 @@ class StreamToFileWriter @AssistedInject constructor(
                         targetAbsolutePath = filePath,
                         overwriteIfExists = overwriteIfExists,
                         requiredSpeedBytesPerSecondSupplier = { syncTask.speedBytesPerSecond },
-                        /*progressCallback = { progress, speed ->
+                        progressCallback = { progress, _ ->
                             Log.d(TAG, "прогресс записи файла: ${BytesToHumanSizeFormatter.format(progress)}")
-
-                            dataTransferDelay.also { delayMs ->
-                                if (delayMs > 0)
-                                    TimeUnit.MILLISECONDS.sleep(delayMs.toLong())
-                            }
-
-                            // TODO: вернуть это?
-                            *//*if (!cancellableContinuation.isActive)
-                            return@putStream*//*
-
                             progressCallback?.invoke(progress)
-                        },*/
+                        },
                         finishCallback = { _,_,_ ->
                             cancellableContinuation.resume(Unit)
                         },
