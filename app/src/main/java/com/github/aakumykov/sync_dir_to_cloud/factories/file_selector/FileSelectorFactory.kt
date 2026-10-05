@@ -17,8 +17,8 @@ class FileSelectorFactory {
         : FileSelector<SimpleSortingMode>
     {
         return when(sourceStorageType) {
-            StorageType.LOCAL -> LocalFileSelector.create(fragmentResultKey)
-            StorageType.YANDEX_DISK -> YandexDiskFileSelector.create(fragmentResultKey, cloudAuth.authToken)
+            StorageType.LOCAL -> LocalFileSelector().prepare()
+            StorageType.YANDEX_DISK -> YandexDiskFileSelector().prepare(cloudAuth.authToken)
         }
     }
 }
