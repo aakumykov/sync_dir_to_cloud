@@ -5,27 +5,24 @@ import com.github.aakumykov.file_lister_navigator_selector.file_selector.FileSel
 import com.github.aakumykov.local_file_lister_navigator_selector.local_file_selector.LocalFileSelector
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
-import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_lister.YandexDiskFileLister
 import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
-import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_fs_navigator.YandexDiskFileExplorer
 
 class FileSelectorFactory {
 
     fun create(
-        sourceStorageType: StorageType,
+        resultKey: String,
+        storageType: StorageType,
         cloudAuth: CloudAuth,
-        initialPath: String = "/"
+        initialPath: String
     )
         : FileSelector<SimpleSortingMode>
     {
-        return when(sourceStorageType) {
+        return when(storageType) {
 
-            // FIXME: а здесь начальный путь?
-            StorageType.LOCAL -> LocalFileSelector().prepare()
+            StorageType.LOCAL -> LocalFileSelector.create(resultKey, initialPath)
 
             StorageType.YANDEX_DISK -> YandexDiskFileSelector
-                .createDefault(cloudAuth.authToken, initialPath)
-                .prepare(cloudAuth.authToken)
+                .create(resultKey,cloudAuth.authToken, initialPath)
         }
     }
 }

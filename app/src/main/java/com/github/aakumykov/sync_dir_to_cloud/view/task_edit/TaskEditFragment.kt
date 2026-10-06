@@ -36,7 +36,6 @@ import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.op_state.OpState
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.SimpleTextWatcher
 import com.github.aakumykov.sync_dir_to_cloud.view.other.utils.TextMessage
-import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_disk_file_selector.YandexDiskFileSelector
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.Dispatchers
@@ -339,17 +338,17 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
                     lifecycleScope.launch(Dispatchers.IO) {
 
-                        cloudAuthReader.getCloudAuth(sourceAuthId)?.also { cloudAuth ->
+                        cloudAuthReader.getCloudAuth(sourceAuthId).also { cloudAuth ->
 
                             withContext(Dispatchers.Main) {
 
                                 FileSelectorFactory()
                                     .create(
-                                        storageType,
-                                        cloudAuth
-                                    ).startSelecting(KEY_SOURCE_PATH_SELECTION,
-                                        this@TaskEditFragment,
-                                        this@TaskEditFragment)
+                                        resultKey = KEY_SOURCE_PATH_SELECTION,
+                                        initialPath = initialPath(),
+                                        storageType = storageType,
+                                        cloudAuth = cloudAuth,
+                                    ).startSelecting(this@TaskEditFragment, this@TaskEditFragment)
                             }
                         }
 
@@ -372,11 +371,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                             withContext(Dispatchers.Main) {
                                 FileSelectorFactory()
                                     .create(
-                                        storageType,
-                                        cloudAuth
-                                    ).startSelecting(KEY_TARGET_PATH_SELECTION,
-                                        this@TaskEditFragment,
-                                        this@TaskEditFragment)
+                                        resultKey = KEY_TARGET_PATH_SELECTION,
+                                        initialPath = initialPath(),
+                                        storageType = storageType,
+                                        cloudAuth = cloudAuth,
+                                    ).startSelecting(this@TaskEditFragment, this@TaskEditFragment)
                             }
                         }
 
@@ -607,6 +606,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     private fun hideErrorMessage() {
         binding.errorMessage.visibility = View.GONE
     }
+
+    // FIXME: конкретизировать
+    private fun initialPath(): String = "/"
 
     companion object {
         val TAG: String = TaskEditFragment::class.java.simpleName
