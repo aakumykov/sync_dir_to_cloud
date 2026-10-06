@@ -12,15 +12,20 @@ import com.github.aakumykov.yandex_disk_file_lister_navigator_selector.yandex_di
 class FileSelectorFactory {
 
     fun create(
-        fragmentResultKey: String,
         sourceStorageType: StorageType,
-        cloudAuth: CloudAuth
+        cloudAuth: CloudAuth,
+        initialPath: String = "/"
     )
         : FileSelector<SimpleSortingMode>
     {
         return when(sourceStorageType) {
+
+            // FIXME: а здесь начальный путь?
             StorageType.LOCAL -> LocalFileSelector().prepare()
-            StorageType.YANDEX_DISK -> YandexDiskFileSelector().prepare(cloudAuth.authToken)
+
+            StorageType.YANDEX_DISK -> YandexDiskFileSelector
+                .createDefault(cloudAuth.authToken, initialPath)
+                .prepare(cloudAuth.authToken)
         }
     }
 }

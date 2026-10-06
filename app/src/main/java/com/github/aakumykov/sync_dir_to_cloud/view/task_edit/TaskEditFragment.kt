@@ -139,17 +139,8 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
     }
 
     private fun prepareFragmentResultListeners() {
-
         listenForFragmentResult(AuthListDialog.KEY_SELECT_CLOUD_AUTH) { _, fragmentResult ->
             onCloudAuthSelectionResult(fragmentResult)
-        }
-
-        listenForFragmentResult(SOURCE_PATH_SELECTION_REQUEST_KEY) { _, fragmentResult ->
-            onSourcePathSelectionResult(fragmentResult)
-        }
-
-        listenForFragmentResult(TARGET_PATH_SELECTION_REQUEST_KEY) { _, fragmentResult ->
-            onTargetPathSelectionResult(fragmentResult)
         }
     }
 
@@ -354,7 +345,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
                                 FileSelectorFactory()
                                     .create(
-                                        SOURCE_PATH_SELECTION_REQUEST_KEY,
                                         storageType,
                                         cloudAuth
                                     ).startSelecting(KEY_SOURCE_PATH_SELECTION,
@@ -382,7 +372,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                             withContext(Dispatchers.Main) {
                                 FileSelectorFactory()
                                     .create(
-                                        TARGET_PATH_SELECTION_REQUEST_KEY,
                                         storageType,
                                         cloudAuth
                                     ).startSelecting(KEY_TARGET_PATH_SELECTION,
@@ -621,12 +610,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
 
     companion object {
         val TAG: String = TaskEditFragment::class.java.simpleName
-
-        @Deprecated("Не используется в библиотеке выбора файлов")
-        const val SOURCE_PATH_SELECTION_REQUEST_KEY = "SOURCE_PATH_SELECTION_REQUEST_KEY"
-
-        @Deprecated("Не используется в библиотеке выбора файлов")
-        const val TARGET_PATH_SELECTION_REQUEST_KEY = "TARGET_PATH_SELECTION_REQUEST_KEY"
 
         const val KEY_SOURCE_PATH_SELECTION = "SOURCE_PATH"
         const val KEY_TARGET_PATH_SELECTION = "TARGET_PATH"
