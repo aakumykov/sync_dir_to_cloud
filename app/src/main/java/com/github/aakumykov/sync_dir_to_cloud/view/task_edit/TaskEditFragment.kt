@@ -2,6 +2,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -43,8 +44,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
-
+class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
+    FileSelector.Callbacks
+{
     private var _binding: FragmentTaskEditBinding? = null
     private val binding get() = _binding!!
 
@@ -84,6 +86,16 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
          * [initSpinner] будет вызван в методе [fillForm]
          * после поступления SyncTask от ViewModel, в методе [onSyncTaskChanged]
           */
+    }
+
+    override fun onFileSelected(key: String, list: List<FSItem>) {
+        when(key) {
+            KEY_SOURCE_PATH_SELECTION -> onSourcePathSelected(list.firstOrNull())
+            KEY_TARGET_PATH_SELECTION -> onTargetPathSelected(list.firstOrNull())
+            else -> {
+                Log.e(TAG, "Unknown file selection key '$key'")
+            }
+        }
     }
 
     private fun initSpinner() {
@@ -345,9 +357,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                                         SOURCE_PATH_SELECTION_REQUEST_KEY,
                                         storageType,
                                         cloudAuth
-                                    )
-                                    .show(childFragmentManager, FileSelector.TAG)
-
+                                    ).startSelecting(KEY_SOURCE_PATH_SELECTION,
+                                        this@TaskEditFragment,
+                                        this@TaskEditFragment)
                             }
                         }
 
@@ -373,9 +385,9 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
                                         TARGET_PATH_SELECTION_REQUEST_KEY,
                                         storageType,
                                         cloudAuth
-                                    )
-                                    .show(childFragmentManager, FileSelector.TAG)
-
+                                    ).startSelecting(KEY_TARGET_PATH_SELECTION,
+                                        this@TaskEditFragment,
+                                        this@TaskEditFragment)
                             }
                         }
 
@@ -608,11 +620,16 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit) {
     }
 
     companion object {
-
         val TAG: String = TaskEditFragment::class.java.simpleName
+
+        @Deprecated("Не используется в библиотеке выбора файлов")
         const val SOURCE_PATH_SELECTION_REQUEST_KEY = "SOURCE_PATH_SELECTION_REQUEST_KEY"
+
+        @Deprecated("Не используется в библиотеке выбора файлов")
         const val TARGET_PATH_SELECTION_REQUEST_KEY = "TARGET_PATH_SELECTION_REQUEST_KEY"
 
+        const val KEY_SOURCE_PATH_SELECTION = "SOURCE_PATH"
+        const val KEY_TARGET_PATH_SELECTION = "TARGET_PATH"
 
         fun create(): TaskEditFragment
             = createFragment(null)
