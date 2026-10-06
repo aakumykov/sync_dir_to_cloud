@@ -13,16 +13,17 @@ class FileSelectorFactory {
         resultKey: String,
         storageType: StorageType,
         cloudAuth: CloudAuth,
-        initialPath: String
+        initialPath: String,
+        isDirSelectionMode: Boolean
     )
         : FileSelector<SimpleSortingMode>
     {
         return when(storageType) {
 
-            StorageType.LOCAL -> LocalFileSelector.create(resultKey, initialPath)
+            StorageType.LOCAL -> LocalFileSelector.create(resultKey, initialPath, isDirSelectionMode = isDirSelectionMode)
 
             StorageType.YANDEX_DISK -> YandexDiskFileSelector
-                .create(resultKey,cloudAuth.authToken, initialPath)
+                .create(resultKey,cloudAuth.authToken, initialPath, isDirSelectionMode = isDirSelectionMode)
         }
     }
 }
