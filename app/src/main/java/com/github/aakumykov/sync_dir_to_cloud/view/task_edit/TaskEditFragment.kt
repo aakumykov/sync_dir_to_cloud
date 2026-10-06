@@ -87,6 +87,11 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
           */
     }
 
+    override fun onResume() {
+        super.onResume()
+        FileSelector.restoreConnection(this, this)
+    }
+
     override fun onFileSelected(key: String, list: List<FSItem>) {
         when(key) {
             KEY_SOURCE_PATH_SELECTION -> onSourcePathSelected(list.firstOrNull())
