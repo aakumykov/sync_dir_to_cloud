@@ -353,7 +353,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                                         initialPath = initialPath(),
                                         storageType = storageType,
                                         cloudAuth = cloudAuth,
-                                        isDirSelectionMode = true
                                     ).startSelecting(this@TaskEditFragment, this@TaskEditFragment)
                             }
                         }
@@ -381,7 +380,6 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                                         initialPath = initialPath(),
                                         storageType = storageType,
                                         cloudAuth = cloudAuth,
-                                        isDirSelectionMode = true
                                     ).startSelecting(this@TaskEditFragment, this@TaskEditFragment)
                             }
                         }
