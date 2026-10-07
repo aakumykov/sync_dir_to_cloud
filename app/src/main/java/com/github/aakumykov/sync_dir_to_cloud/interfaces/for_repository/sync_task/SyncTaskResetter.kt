@@ -4,4 +4,5 @@ import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 
 interface SyncTaskResetter {
     suspend fun resetSyncTask(taskId: String): Result<SyncTask>
+    suspend fun resetExecutionState(taskId: String): Result<Boolean>
 }

@@ -200,6 +200,13 @@ class SyncTaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun resetExecutionState(taskId: String): Result<Boolean> {
+        syncTaskDAO.resetExecutionState(taskId)
+        return syncTaskDAO.get(taskId).let {
+            Result.success(ExecutionState.NEVER == it.executionState)
+        }
+    }
+
     suspend fun exists(taskId: String): Boolean {
         return null != getSyncTaskNullable(taskId)
     }

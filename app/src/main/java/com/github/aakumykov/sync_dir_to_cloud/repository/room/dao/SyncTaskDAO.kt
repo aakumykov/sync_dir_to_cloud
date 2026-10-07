@@ -64,4 +64,7 @@ interface SyncTaskDAO {
 
     @Query("SELECT last_start FROM sync_tasks WHERE id = :taskId")
     fun getStartingTime(taskId: String): Long?
+
+    @Query("UPDATE sync_tasks SET execution_state = 'NEVER' WHERE id = :taskId")
+    fun resetExecutionState(taskId: String)
 }

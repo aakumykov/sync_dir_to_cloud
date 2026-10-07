@@ -186,6 +186,10 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
                 resetTask(clickedTask!!.id)
                 true
             }
+            R.id.actionResetExecutionState -> {
+                resetExecutionState(clickedTask!!.id)
+                true
+            }
             else -> false
         }
     }
@@ -198,6 +202,10 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list),
 
     private fun resetTask(taskId: String) {
         taskListViewModel.resetTask(taskId)
+    }
+
+    private fun resetExecutionState(taskId: String) {
+        taskListViewModel.resetExecutionState(taskId)
     }
 
     private fun showDeleteTaskDialog() {

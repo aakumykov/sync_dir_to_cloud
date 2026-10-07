@@ -66,6 +66,12 @@ class TaskListViewModel(
         }
     }
 
+    fun resetExecutionState(taskId: String) {
+        viewModelScope.launch (Dispatchers.IO) {
+            syncTaskManagingUseCase.resetExecutionState(taskId)
+        }
+    }
+
     companion object {
         val TAG: String = TaskListViewModel::class.java.simpleName
     }

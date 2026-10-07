@@ -21,4 +21,11 @@
         android:layout_height="wrap_content"
         android:icon="@drawable/ic_reset"
         android:title="@string/MENU_ITEM_action_reset" />
+
+    <item
+        android:id="@+id/actionResetExecutionState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_task_state_running"
+        android:title="@string/MENU_ITEM_action_reset_execution_state" />
 </menu>

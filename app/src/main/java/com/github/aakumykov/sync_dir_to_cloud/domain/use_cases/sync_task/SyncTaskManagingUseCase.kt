@@ -42,4 +42,8 @@ class SyncTaskManagingUseCase @Inject constructor(
     suspend fun resetSyncTask(taskId: String): Result<SyncTask> {
         return syncTaskResetter.resetSyncTask(taskId)
     }
+
+    suspend fun resetExecutionState(taskId: String): Result<Boolean> {
+        return syncTaskResetter.resetExecutionState(taskId)
+    }
 }

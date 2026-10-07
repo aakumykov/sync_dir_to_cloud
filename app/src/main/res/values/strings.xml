@@ -108,6 +108,7 @@
     <string name="task_is_enabled">Scheduled</string>
     <string name="task_is_disabled">Disabled</string>
     <string name="MENU_ITEM_action_reset">Reset</string>
+    <string name="MENU_ITEM_action_reset_execution_state">Reset execution state</string>
     <string name="SYNC_OBJECT_LOG_lost_dir_creation_success">Missing dir was created</string>
     <string name="SYNC_OBJECT_LOG_lost_dir_creation_error">Error creating missing dir: %1$s</string>
     <string name="SYNC_OBJECT_LOGGER_create_new_dir">Creating new dir</string>
