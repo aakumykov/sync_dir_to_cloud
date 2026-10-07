@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/stateView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textSize="16sp"
         tools:text="Статус"
@@ -17,6 +18,7 @@
 
     <TextView
         android:id="@+id/textView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textStyle="bold"
         android:textSize="16sp"
@@ -24,6 +26,7 @@
 
     <TextView
         android:id="@+id/startTimeView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textSize="16sp"
         tools:text="Дата" />
@@ -31,24 +34,28 @@
 
     <TextView
         android:id="@+id/subTextView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textSize="16sp"
         tools:text="Пояснение" />
 
     <TextView
         android:id="@+id/finishTimeView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textSize="16sp"
         tools:text="Дата" />
 
     <TextView
         android:id="@+id/durationView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textSize="16sp"
         tools:text="Дата" />
 
     <TextView
         android:id="@+id/idView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textSize="14sp"
         tools:text="log Id"
@@ -57,6 +64,7 @@
 
     <TextView
         android:id="@+id/dataErrorView"
+        android:tag="@string/copy_by_long_press_tag"
         style="@style/wide_text"
         android:textSize="16sp"
         android:visibility="gone"

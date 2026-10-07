@@ -2,10 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.Constants
@@ -15,6 +18,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.DialogOperationDetails
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeGone
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeVisible
+import com.github.aakumykov.sync_dir_to_cloud.extensions.putTextToClipboard
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.durationUnix
@@ -47,6 +51,8 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
 
         _binding = DialogOperationDetailsBinding.inflate(layoutInflater)
 
+        prepareViewForTextCopying()
+
         prepareViewModel(null == savedInstanceState)
 
         return AlertDialog.Builder(requireContext())
@@ -72,7 +78,7 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
         }
     }
 
-    private suspend fun onLogOfSyncChanged(logOfSync: LogOfSync?) {
+    private fun onLogOfSyncChanged(logOfSync: LogOfSync?) {
         logOfSync?.also {
             fillViewWithData(logOfSync)
         } ?: run {
@@ -154,6 +160,20 @@ class OperationDetailsDialog : DialogFragment(R.layout.dialog_operation_details)
         } ?: run {
             textView.text = Constants.EMPTY_STRING
             textView.makeGone()
+        }
+    }
+
+    private fun prepareViewForTextCopying() {
+        val targetTag = getString(R.string.copy_by_long_press_tag)
+        binding.root.children.filter {
+            it is TextView
+        }.filter {
+            it.tag == targetTag
+        }.forEach {
+            it.setOnLongClickListener { view ->
+                view.context.putTextToClipboard((view as TextView).text.toString())
+                true
+            }
         }
     }
 
