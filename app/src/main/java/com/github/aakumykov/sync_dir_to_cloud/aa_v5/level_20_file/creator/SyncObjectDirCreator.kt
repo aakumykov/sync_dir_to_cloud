@@ -23,7 +23,7 @@ class SyncObjectDirCreator @AssistedInject constructor(
         Log.d(TAG, "createDirInTarget('$basePath','$dirName')")
         cloudWriterGetter
             .getTargetCloudWriter(syncTask)
-            .createDir(basePath, dirName)
+            .createDirIfNotExists(basePath, dirName)
     }
 
     /**
@@ -35,7 +35,7 @@ class SyncObjectDirCreator @AssistedInject constructor(
         Log.d(TAG, "createDirInSource('$basePath','$dirName')")
         cloudWriterGetter
             .getSourceCloudWriter(syncTask)
-            .createDir(basePath, dirName)
+            .createDirIfNotExists(basePath, dirName)
     }
 
     companion object {
