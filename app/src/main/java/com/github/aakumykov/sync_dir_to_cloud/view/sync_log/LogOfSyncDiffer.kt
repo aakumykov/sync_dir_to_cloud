@@ -1,8 +1,6 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import androidx.recyclerview.widget.DiffUtil
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOperation
 
 class LogOfSyncDiffer()  : DiffUtil.ItemCallback<LogOfSync>() {
 

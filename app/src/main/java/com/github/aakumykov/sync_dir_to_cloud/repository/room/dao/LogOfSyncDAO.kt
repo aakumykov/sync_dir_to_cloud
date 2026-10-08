@@ -5,7 +5,7 @@ import androidx.room.Query
 import com.github.aakumykov.sync_dir_to_cloud.DbFieldNames
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.LogOfSync
 import kotlinx.coroutines.flow.Flow
 
 @Dao

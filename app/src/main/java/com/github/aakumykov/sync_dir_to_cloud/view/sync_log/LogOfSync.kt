@@ -1,19 +1,18 @@
-package com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model
+package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import com.github.aakumykov.sync_dir_to_cloud.DbFieldNames
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.newRandomId
-import com.github.aakumykov.sync_dir_to_cloud.utils.currentTime
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.BasicLogItem
 import kotlin.math.roundToInt
 
 @DatabaseView(
     viewName = LogOfSync.TABLE_NAME,
-    value = "SELECT ${LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS} FROM task_logs " +
-            "UNION ALL SELECT ${LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS} FROM instruction_logs  " +
-            "UNION ALL SELECT ${LogOfSync.Companion.BASIC_LOG_ITEM_FIELDS} FROM file_operation_logs " +
+    value = "SELECT ${LogOfSync.BASIC_LOG_ITEM_FIELDS} FROM task_logs " +
+            "UNION ALL SELECT ${LogOfSync.BASIC_LOG_ITEM_FIELDS} FROM instruction_logs  " +
+            "UNION ALL SELECT ${LogOfSync.BASIC_LOG_ITEM_FIELDS} FROM file_operation_logs " +
             "ORDER BY ${BasicLogItem.FIELD_START_TIME}, ${BasicLogItem.FIELD_FINISH_TIME} ASC"
 )
 data class LogOfSync(
@@ -46,7 +45,10 @@ data class LogOfSync(
     val subText: String?,
 
     @ColumnInfo(name = BasicLogItem.FIELD_PROGRESS)
-    val progress: Float?
+    val progress: Float?,
+
+    @ColumnInfo(name = BasicLogItem.FIELD_SIZE)
+    val size: Long?
 ) {
     // timestamp здесь не обеспечивает уникальности, так как может быть одинаковым (!)
     val key: String get() = origLogId
@@ -64,13 +66,15 @@ data class LogOfSync(
             "${DbFieldNames.FIELD_EXECUTION_ID}, " +
             "${BasicLogItem.FIELD_TEXT}, " +
             "${BasicLogItem.FIELD_SUB_TEXT}, " +
-            BasicLogItem.FIELD_PROGRESS
+            "${BasicLogItem.FIELD_PROGRESS}, " +
+            BasicLogItem.FIELD_SIZE
 
-        fun createPreviewStub() = createPreviewStub(LogItemAbout.random)
+        /*fun createPreviewStub() = createPreviewStub(LogItemAbout.random)
 
         fun createPreviewStub(
             logItemAbout: LogItemAbout,
-            progress: Float? = 0f
+            progress: Float? = 0f,
+            size: Long? = 0L
         ) = LogOfSync(
             origLogId = newRandomId,
             startTime = currentTime,
@@ -81,12 +85,13 @@ data class LogOfSync(
             executionId = newRandomId,
             text = "Предпросмотр",
             subText = "Предпросмотр",
-            progress = progress
-        )
+            progress = progress,
+            size = size
+        )*/
     }
 
     override fun toString(): String {
-        return "LogOfSync(origLogId='$origLogId', startTime=$startTime, finishTime=$finishTime, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, subText=$subText, key='$key')"
+        return "LogOfSync(origLogId='$origLogId', startTime=$startTime, finishTime=$finishTime, logItemType=$logItemType, logItemAbout=$logItemAbout, taskId='$taskId', executionId='$executionId', text=$text, subText=$subText, progress=$progress, size=$size, key='$key')"
     }
 }
 

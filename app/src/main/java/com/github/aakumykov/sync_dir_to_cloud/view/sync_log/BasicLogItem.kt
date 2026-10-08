@@ -35,7 +35,7 @@ abstract class BasicLogItem(
     val finishTime: Long?,
 
     /**
-     * Это поле доступно только через представление [LogOfSync] ("sync_logs").
+     * Это поле доступно только через представление [com.github.aakumykov.sync_dir_to_cloud.view.sync_log.LogOfSync] ("sync_logs").
      * Устанавливается не при создании объектов, а обновляется позже через
      * интерфейс [FileOperationLogProgressUpdater].
      */
@@ -51,5 +51,6 @@ abstract class BasicLogItem(
         const val FIELD_START_TIME = "start_time"
         const val FIELD_FINISH_TIME = "finish_time"
         const val FIELD_PROGRESS = "progress"
+        const val FIELD_SIZE = "size"
     }
 }

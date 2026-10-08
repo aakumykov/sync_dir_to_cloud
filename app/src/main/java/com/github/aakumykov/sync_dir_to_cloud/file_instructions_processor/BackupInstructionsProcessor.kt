@@ -69,7 +69,8 @@ class BackupInstructionsProcessor @AssistedInject constructor(
             logItemId = logItemId,
             operationName = operationName,
             firstItem = itemRelativePath,
-            secondItem = null
+            secondItem = null,
+            size = null
         )
 
         return runInCoroutineExtended(

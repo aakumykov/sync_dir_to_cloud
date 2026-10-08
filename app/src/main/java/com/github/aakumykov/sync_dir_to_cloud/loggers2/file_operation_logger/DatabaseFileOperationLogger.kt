@@ -25,7 +25,8 @@ class DatabaseFileOperationLogger @Inject constructor(
         val logItemId: String,
         @param:StringRes val operationName: Int,
         val firstItem: String?,
-        val secondItem: String?
+        val secondItem: String?,
+        val size: Long?
     )
 
     override suspend fun updateProgress(logItemId: String, progress: Float) {
@@ -45,7 +46,8 @@ class DatabaseFileOperationLogger @Inject constructor(
                 secondItem = baseInfo.secondItem,
                 jobId = jobId,
                 startTime = currentTime,
-                finishTime = null
+                finishTime = null,
+                size = baseInfo.size
             ).also {
                 repository.add(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text} (${baseInfo.firstItem} --> ${baseInfo.secondItem})")
@@ -66,7 +68,8 @@ class DatabaseFileOperationLogger @Inject constructor(
                 secondItem = baseInfo.secondItem,
                 jobId = null,
                 startTime = null,
-                finishTime = currentTime
+                finishTime = currentTime,
+                size = baseInfo.size
             ).also {
                 repository.update(it)
                 Log.d(TAG, "${it.logItemType}: ${it.text} (${baseInfo.firstItem} --> ${baseInfo.secondItem})")
@@ -88,7 +91,8 @@ class DatabaseFileOperationLogger @Inject constructor(
                 secondItem = baseInfo.secondItem,
                 jobId = null,
                 startTime = null,
-                finishTime = currentTime
+                finishTime = currentTime,
+                size = baseInfo.size
             ).also {
                 repository.update(it)
                 Log.i(TAG, "${it.logItemType}: ${it.text} (${baseInfo.firstItem} --> ${baseInfo.secondItem})")
@@ -110,7 +114,8 @@ class DatabaseFileOperationLogger @Inject constructor(
                 secondItem = baseInfo.secondItem,
                 jobId = null,
                 startTime = null,
-                finishTime = currentTime
+                finishTime = currentTime,
+                size = baseInfo.size
             ).also {
                 repository.update(it)
                 Log.e(TAG, "${it.logItemType}: ${it.text} (${baseInfo.firstItem} --> ${baseInfo.secondItem})")

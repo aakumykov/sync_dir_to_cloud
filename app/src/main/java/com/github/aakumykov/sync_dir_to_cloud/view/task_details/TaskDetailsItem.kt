@@ -1,7 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_details
 
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemType
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.LogOfSync
 
 data class TaskDetailsItem(
     val taskId: String,

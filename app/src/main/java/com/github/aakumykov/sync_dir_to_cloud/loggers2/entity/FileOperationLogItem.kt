@@ -47,6 +47,9 @@ class FileOperationLogItem(
 
     @ColumnInfo(name = DbFieldNames.FIELD_JOB_ID, defaultValue = Constants.STRING_NULL)
     val jobId: String?,
+
+    @ColumnInfo(defaultValue = Constants.STRING_NULL)
+    val size: Long?
 )
     : BasicLogItem(
         logItemAbout = LogItemAbout.FILE,
@@ -72,6 +75,7 @@ class FileOperationLogItem(
             jobId: String?,
             startTime: Long?,
             finishTime: Long?,
+            size: Long?
         )
             : FileOperationLogItem
         {
@@ -87,6 +91,7 @@ class FileOperationLogItem(
                 startTime = startTime,
                 finishTime = finishTime,
                 jobId = jobId,
+                size = size
             )
         }
 

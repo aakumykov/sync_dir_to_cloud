@@ -52,7 +52,8 @@ class DeleteInstructionsProcessor @AssistedInject constructor(
                 logItemId = logItemId,
                 operationName = operationName,
                 firstItem = null,
-                secondItem = null
+                secondItem = null,
+                size = null
             )
 
             runInCoroutineExtended(

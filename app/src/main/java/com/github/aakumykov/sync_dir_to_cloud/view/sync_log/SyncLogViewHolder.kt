@@ -14,8 +14,6 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.makeGone
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeInvisible
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeVisible
 import com.github.aakumykov.sync_dir_to_cloud.extensions.toPercentOf100
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isActiveFileOperation
 
 class SyncLogViewHolder(
     itemView: View,
