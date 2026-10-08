@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 class SyncLogAdapter(
     private val onItemClicked: (origLogItem: String, logItemAbout: LogItemAbout) -> Unit,

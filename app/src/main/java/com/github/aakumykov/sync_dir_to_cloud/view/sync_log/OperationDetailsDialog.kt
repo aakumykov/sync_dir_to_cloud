@@ -2,11 +2,13 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.github.aakumykov.sync_dir_to_cloud.Constants
@@ -18,6 +20,11 @@ import com.github.aakumykov.sync_dir_to_cloud.extensions.makeGone
 import com.github.aakumykov.sync_dir_to_cloud.extensions.makeVisible
 import com.github.aakumykov.sync_dir_to_cloud.extensions.putTextToClipboard
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.durationUnix
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.finishTimeUnix
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.isError
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.startTimeUnix
 import kotlinx.coroutines.launch
 
 /**

@@ -3,7 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.repository
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.DispatcherIO
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.LogOfSyncDAO
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

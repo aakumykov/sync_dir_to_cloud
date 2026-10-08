@@ -3,6 +3,7 @@ package com.github.aakumykov.sync_dir_to_cloud.view.sync_log
 import androidx.lifecycle.ViewModel
 import com.github.aakumykov.sync_dir_to_cloud.enums.LogItemAbout
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 

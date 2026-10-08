@@ -28,7 +28,7 @@ import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSchedu
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.SyncTaskSyncStateDAO
 import com.github.aakumykov.sync_dir_to_cloud.repository.room.dao.TaskLoggerDAO
-import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.LogOfSync
+import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.model.LogOfSync
 
 @Database(
     entities = [
@@ -151,9 +151,8 @@ import com.github.aakumykov.sync_dir_to_cloud.view.sync_log.LogOfSync
         AutoMigration(from = 159, to = 160), // fix: SyncTask.speedBytesPerSecond: Long --> Int
         AutoMigration(from = 160, to = 161, spec = RenameNotificationId::class), // notification_id --> current_notification_id
         AutoMigration(from = 161, to = 162), // SyncTask.currentNotificationId: Int --> Int?
-        AutoMigration(from = 162, to = 163), // Новое поле FileOperationLogItem.size: Long?
     ],
-    version = 163,
+    version = 162,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSyncTaskDAO(): SyncTaskDAO

@@ -144,8 +144,7 @@ class FileCopyingInstructionsProcessor @AssistedInject constructor(
             logItemId = logItemId,
             operationName = operationName,
             firstItem = fromPath,
-            secondItem = toPath,
-            size = syncObject.size
+            secondItem = toPath
         )
 
         return runInCoroutineExtended(
