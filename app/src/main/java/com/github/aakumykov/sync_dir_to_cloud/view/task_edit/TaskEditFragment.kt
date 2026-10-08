@@ -1,6 +1,7 @@
 package com.github.aakumykov.sync_dir_to_cloud.view.task_edit
 
 import android.os.Bundle
+import android.os.Environment
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.View
@@ -23,9 +24,11 @@ import com.github.aakumykov.sync_dir_to_cloud.DaggerViewModelHelper
 import com.github.aakumykov.sync_dir_to_cloud.GlobalKeys
 import com.github.aakumykov.sync_dir_to_cloud.R
 import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskEditBinding
+import com.github.aakumykov.sync_dir_to_cloud.domain.entities.CloudAuth
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.enums.SyncMode
+import com.github.aakumykov.sync_dir_to_cloud.enums.SyncSide
 import com.github.aakumykov.sync_dir_to_cloud.factories.file_selector.FileSelectorFactory
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_list.AuthListDialog
@@ -350,7 +353,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                                 FileSelectorFactory()
                                     .create(
                                         resultKey = KEY_SOURCE_PATH_SELECTION,
-                                        initialPath = initialPath(),
+                                        initialPath = initialPath(SyncSide.SOURCE, syncTask, cloudAuth),
                                         storageType = storageType,
                                         cloudAuth = cloudAuth,
                                     ).startSelecting(this@TaskEditFragment, this@TaskEditFragment)
@@ -377,7 +380,7 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
                                 FileSelectorFactory()
                                     .create(
                                         resultKey = KEY_TARGET_PATH_SELECTION,
-                                        initialPath = initialPath(),
+                                        initialPath = initialPath(SyncSide.TARGET, syncTask, cloudAuth),
                                         storageType = storageType,
                                         cloudAuth = cloudAuth,
                                     ).startSelecting(this@TaskEditFragment, this@TaskEditFragment)
@@ -612,8 +615,23 @@ class TaskEditFragment : Fragment(R.layout.fragment_task_edit),
         binding.errorMessage.visibility = View.GONE
     }
 
-    // FIXME: конкретизировать
-    private fun initialPath(): String = "/"
+
+    private fun initialPath(syncSide: SyncSide, syncTask: SyncTask, cloudAuth: CloudAuth): String {
+
+        fun defaultInitialPathFor(storageType: StorageType): String = when(storageType) {
+            StorageType.LOCAL -> Environment.getExternalStorageDirectory().absolutePath
+            else -> "/"
+        }
+
+        return when(syncSide) {
+            SyncSide.SOURCE -> syncTask.sourcePath ?: defaultInitialPathFor(cloudAuth.storageType)
+            SyncSide.TARGET -> syncTask.targetPath ?: defaultInitialPathFor(cloudAuth.storageType)
+        }.let {
+            it.ifEmpty {
+                defaultInitialPathFor(cloudAuth.storageType)
+            }
+        }
+    }
 
     companion object {
         val TAG: String = TaskEditFragment::class.java.simpleName
