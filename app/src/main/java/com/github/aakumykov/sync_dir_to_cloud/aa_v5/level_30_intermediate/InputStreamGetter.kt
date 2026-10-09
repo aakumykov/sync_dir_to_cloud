@@ -9,7 +9,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.io.InputStream
 
-class InputStreamGetter5 @AssistedInject constructor(
+class InputStreamGetter @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val cloudReaderGetter: CloudReaderGetter
 ) {
@@ -33,6 +33,6 @@ class InputStreamGetter5 @AssistedInject constructor(
 }
 
 @AssistedFactory
-interface InputStreamGetterAssistedFactory5 {
-    fun create(syncTask: SyncTask): InputStreamGetter5
+interface InputStreamGetterAssistedFactory {
+    fun create(syncTask: SyncTask): InputStreamGetter
 }

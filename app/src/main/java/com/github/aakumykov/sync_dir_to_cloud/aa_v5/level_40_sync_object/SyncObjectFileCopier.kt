@@ -4,8 +4,8 @@ import android.util.Log
 import com.github.aakumykov.sync_dir_to_cloud.SyncOptions
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriter
 import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_20_file.creator.StreamToFileWriterAssistedFactory
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetter5
-import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetterAssistedFactory5
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetter
+import com.github.aakumykov.sync_dir_to_cloud.aa_v5.level_30_intermediate.InputStreamGetterAssistedFactory
 import com.github.aakumykov.sync_dir_to_cloud.di.annotations.ExecutionScope
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncObject
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
@@ -20,7 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 class SyncObjectFileCopier @AssistedInject constructor(
     @Assisted private val syncTask: SyncTask,
     private val syncOptions: SyncOptions,
-    private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory5,
+    private val inputStreamGetterAssistedFactory: InputStreamGetterAssistedFactory,
     private val streamToFileWriterAssistedFactory: StreamToFileWriterAssistedFactory,
     private val syncObjectStateChanger: SyncObjectStateChanger,
     private val fileOperationLogProgressUpdater: FileOperationLogProgressUpdater,
@@ -67,7 +67,7 @@ class SyncObjectFileCopier @AssistedInject constructor(
     }
 
 
-    private val inputStreamGetter: InputStreamGetter5
+    private val inputStreamGetter: InputStreamGetter
         get() = inputStreamGetterAssistedFactory.create(syncTask)
 
     private val streamToFileWriter: StreamToFileWriter
