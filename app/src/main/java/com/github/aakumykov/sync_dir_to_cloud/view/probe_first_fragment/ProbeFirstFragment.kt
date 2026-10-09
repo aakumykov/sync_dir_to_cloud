@@ -4,7 +4,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.github.aakumykov.sync_dir_to_cloud.R
-import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.CustomMenuItem
 import com.github.aakumykov.sync_dir_to_cloud.view.other.menu_helper.MenuState
 

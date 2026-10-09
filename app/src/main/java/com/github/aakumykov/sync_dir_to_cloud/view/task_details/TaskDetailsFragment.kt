@@ -21,7 +21,7 @@ import com.github.aakumykov.sync_dir_to_cloud.loggers2.entity.TaskLogItem
 import com.github.aakumykov.sync_dir_to_cloud.newRandomId
 import com.github.aakumykov.sync_dir_to_cloud.progress_info_holder.ProgressInfoHolder
 import com.github.aakumykov.sync_dir_to_cloud.utils.CurrentDateTime
-import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel

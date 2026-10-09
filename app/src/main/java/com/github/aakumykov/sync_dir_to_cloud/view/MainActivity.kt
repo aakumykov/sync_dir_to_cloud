@@ -22,6 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.config.Constants.DEFAULT_BACK_STAC
 import com.github.aakumykov.sync_dir_to_cloud.databinding.ActivityMainBinding
 import com.github.aakumykov.sync_dir_to_cloud.enums.StorageType
 import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.cloud_auth.CloudAuthReader
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel

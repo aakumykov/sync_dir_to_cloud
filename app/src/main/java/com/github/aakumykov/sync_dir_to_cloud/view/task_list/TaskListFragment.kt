@@ -22,7 +22,7 @@ import com.github.aakumykov.sync_dir_to_cloud.databinding.FragmentTaskListBindin
 import com.github.aakumykov.sync_dir_to_cloud.domain.entities.SyncTask
 import com.github.aakumykov.sync_dir_to_cloud.extensions.openAppProperties
 import com.github.aakumykov.sync_dir_to_cloud.utils.isAndroidTiramisuOrLater
-import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavTarget
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.navigation.NavigationViewModel

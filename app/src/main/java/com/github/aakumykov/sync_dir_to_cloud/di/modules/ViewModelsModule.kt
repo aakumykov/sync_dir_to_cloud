@@ -15,7 +15,7 @@ import com.github.aakumykov.sync_dir_to_cloud.interfaces.for_repository.sync_tas
 import com.github.aakumykov.sync_dir_to_cloud.repository.LogOfSyncRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.SyncTaskRepository
 import com.github.aakumykov.sync_dir_to_cloud.repository.TaskLogRepository
-import com.github.aakumykov.sync_dir_to_cloud.view.MenuStateViewModel
+import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.MenuStateViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit.AuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.cloud_auth_edit_2.CloudAuthEditViewModel
 import com.github.aakumykov.sync_dir_to_cloud.view.common_view_models.PageTitleViewModel
